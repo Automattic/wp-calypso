@@ -1,4 +1,4 @@
-	/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -50,7 +50,7 @@ const InserterMenuTrackingEvent = function () {
 		 * to the temporary solution below if the core version
 		 * is equal to 7.8.1.
 		 */
-		if ( pluginVersion && pluginVersion === '7.8.1' ) {
+		if ( ! pluginVersion || ( pluginVersion && pluginVersion === '7.8.1' ) ) {
 			return null;
 		}
 
