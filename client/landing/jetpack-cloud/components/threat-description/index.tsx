@@ -35,14 +35,16 @@ class ThreatDescription extends React.PureComponent< Props > {
 					<strong>{ translate( 'What was the problem?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( problem ) }
-				<p className="threat-description__section-title">
-					<strong>
-						{ ! isThreatFixedOrIgnored
-							? translate( 'How we will fix it?' )
-							: translate( 'How did Jetpack fix it?' ) }
-					</strong>
-				</p>
-				{ this.renderTextOrNode( fix ) }
+				{ fix && (
+					<p className="threat-description__section-title">
+						<strong>
+							{ ! isThreatFixedOrIgnored
+								? translate( 'How we will fix it?' )
+								: translate( 'How did Jetpack fix it?' ) }
+						</strong>
+					</p>
+				) }
+				{ fix && this.renderTextOrNode( fix ) }
 				<p className="threat-description__section-title">
 					<strong>{ translate( 'The technical details' ) }</strong>
 				</p>

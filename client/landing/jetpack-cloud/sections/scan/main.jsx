@@ -67,11 +67,6 @@ class ScanPage extends Component {
 		);
 	}
 
-	renderThreats() {
-		const { threats, site } = this.props;
-		return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
-	}
-
 	renderScanError() {
 		const { siteSlug } = this.props;
 
@@ -100,6 +95,7 @@ class ScanPage extends Component {
 	}
 
 	renderScanState() {
+		const { site } = this.props;
 		if ( ! this.props.scanState ) {
 			return <div className="scan__is-loading" />;
 		}
@@ -115,7 +111,7 @@ class ScanPage extends Component {
 
 		const threats = this.props.scanState.threats;
 		if ( threats && threats.length ) {
-			return this.renderThreats();
+			return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
 		}
 
 		return this.renderScanOkay();
