@@ -18,6 +18,7 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Module variables
@@ -55,7 +56,15 @@ export function acceptInvite( context, next ) {
 				debug( 'Accepted invite for VIP sites' );
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
-				const redirect = getRedirectAfterAccept( acceptedInvite );
+				const siteId = acceptedInvite.site.ID;
+				const isWPForTeamsSite = isSiteWPForTeams( context.store.getState(), siteId );
+
+				let redirect = getRedirectAfterAccept( acceptedInvite );
+
+				if ( isWPForTeamsSite ) {
+					redirect = `https://${ acceptedInvite.site.domain }`;
+				}
+
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}
