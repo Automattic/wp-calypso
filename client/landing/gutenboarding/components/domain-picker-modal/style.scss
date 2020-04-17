@@ -20,7 +20,7 @@
 	// than the viewport height, it will expand taller
 	// than the provided min-height, triggering
 	// the appearance of the <body> element's scrollbar.
-	min-height: calc( 100vh - $gutenboarding-header-height );
+	min-height: calc( 100vh - #{$gutenboarding-header-height} );
 	width: 100%;
 
 	background: var( --studio-white );
