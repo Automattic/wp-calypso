@@ -18,7 +18,14 @@ export * from './types';
 export { State };
 
 let isRegistered = false;
-export function register( vendor: string ): typeof STORE_KEY {
+interface StoreConfiguration {
+	/**
+	 * The default vendor to pass to domain queries.
+	 * Can be overridden in individual queries.
+	 */
+	vendor: string;
+}
+export function register( { vendor }: StoreConfiguration ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
