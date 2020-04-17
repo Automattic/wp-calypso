@@ -847,7 +847,9 @@ Undocumented.prototype.setCart = function ( cartKey, data, fn ) {
 /**
  * Get a list of the user's stored cards
  *
- * @param {Function} fn The callback function
+ * @param {Function} [fn] The callback function.
+ *
+ * @returns {Promise} Returns a promise when the `callback` is not provided.
  */
 Undocumented.prototype.getStoredCards = function ( fn ) {
 	debug( '/me/stored-cards query' );
@@ -858,7 +860,9 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
  * Get a list of the user's stored payment methods
  *
  * @param {object} query The query parameters
- * @param {Function} fn The callback function
+ * @param {Function} [fn] The callback function.
+ *
+ * @returns {Promise} Returns a promise when the `callback` is not provided.
  */
 Undocumented.prototype.getPaymentMethods = function( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
