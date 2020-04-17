@@ -5,6 +5,12 @@ import React, { ReactNode } from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import MarkedLines from 'components/marked-lines';
+import DiffViewer from 'components/diff-viewer';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -12,9 +18,13 @@ import './style.scss';
 export interface Props {
 	children?: ReactNode;
 	action?: 'ignored' | 'fixed';
+	name: string;
 	details: string | ReactNode;
 	fix: string | ReactNode;
 	problem: string | ReactNode;
+	context?: object;
+	diff?: string;
+	filename?: string;
 }
 
 class ThreatDescription extends React.PureComponent< Props > {
@@ -25,8 +35,31 @@ class ThreatDescription extends React.PureComponent< Props > {
 		return content;
 	}
 
+	renderFilename(): ReactNode | null {
+		const { filename, name } = this.props;
+		if ( ! filename ) {
+			return null;
+		}
+
+		return (
+			<>
+				<p className="threat-description__section-text">
+					{ translate( 'Threat {{threatSignature/}} found in file:', {
+						comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+						components: {
+							threatSignature: (
+								<code className="threat-description__alert-signature">{ name }</code>
+							),
+						},
+					} ) }
+				</p>
+				<pre className="threat-description__alert-filename">{ filename }</pre>
+			</>
+		);
+	}
+
 	render() {
-		const { children, action, details, problem, fix } = this.props;
+		const { children, action, details, problem, fix, diff, context } = this.props;
 		const isThreatFixedOrIgnored = !! action;
 
 		return (
@@ -49,6 +82,9 @@ class ThreatDescription extends React.PureComponent< Props > {
 					<strong>{ translate( 'The technical details' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( details ) }
+				{ this.renderFilename() }
+				{ context && <MarkedLines context={ context } /> }
+				{ diff && <DiffViewer diff={ diff } /> }
 				{ children }
 			</div>
 		);

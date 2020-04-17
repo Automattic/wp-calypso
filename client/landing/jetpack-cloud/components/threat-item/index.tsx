@@ -12,8 +12,7 @@ import { Button } from '@automattic/components';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
-import MarkedLines from 'components/marked-lines';
-import DiffViewer from 'components/diff-viewer';
+import { getThreatType } from './threat';
 
 /**
  * Style dependencies
@@ -50,34 +49,8 @@ class ThreatItem extends Component< Props > {
 		);
 	}
 
-	getDetailType( threat: Threat ) {
-		if ( threat.hasOwnProperty( 'diff' ) ) {
-			return 'core';
-		}
-
-		if ( threat.hasOwnProperty( 'context' ) ) {
-			return 'file';
-		}
-
-		if ( threat.hasOwnProperty( 'extension' ) ) {
-			// 'plugin' or 'theme'
-			const { extension = { type: 'unknown' } } = threat;
-			return extension;
-		}
-
-		if ( threat.hasOwnProperty( 'rows' ) ) {
-			return 'database';
-		}
-
-		if ( 'Suspicious.Links' === threat.signature ) {
-			return 'database';
-		}
-
-		return 'none';
-	}
-
 	getSubtitle( threat: Threat ) {
-		switch ( this.getDetailType( threat ) ) {
+		switch ( getThreatType( threat ) ) {
 			case 'core':
 				return translate( 'Vulnerability found in WordPress' );
 
@@ -103,14 +76,14 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getTitle( threat: Threat ): string | {} | React.ReactNodeArray | null {
+	getTitle( threat: Threat ): string | {} | React.ReactNodeArray {
 		// This should be temprary since this data should be coming from the api
 		// and not something that we should change to accompadate the results.
 		const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
 
 		const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
-		switch ( this.getDetailType( threat ) ) {
+		switch ( getThreatType( threat ) ) {
 			case 'core':
 				return translate( 'Infected core file: {{filename/}} ', {
 					components: {
@@ -143,7 +116,7 @@ class ThreatItem extends Component< Props > {
 
 			case 'database':
 				if ( ! threat.rows ) {
-					return null;
+					return translate( 'Database threat' );
 				}
 				return translate( 'Database %(threatCount)d threat', 'Database %(threatCount)d threats', {
 					count: Object.keys( threat.rows ).length,
@@ -158,36 +131,10 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getThreatFix( threat: Threat ): JSX.Element {
-		switch ( this.getDetailType( threat ) ) {
-			case 'database':
-				return <>TODO:FIX THIS CASE></>;
+	getThreatFix( threat: Threat ): string {
+		switch ( getThreatType( threat ) ) {
 			default:
-				return (
-					<>
-						<p className="threat-item__section-text">{ threat.description }</p>
-						{ threat.filename ? (
-							<>
-								<p>
-									{ translate( 'Threat {{threatSignature/}} found in file:', {
-										comment:
-											'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-										components: {
-											threatSignature: (
-												<span className="threat-item__alert-signature">{ threat.signature }</span>
-											),
-										},
-									} ) }
-								</p>
-								<pre className="threat-item__alert-filename">{ threat.filename }</pre>
-							</>
-						) : (
-							<p className="threat-item__section-text">{ threat.signature }</p>
-						) }
-						{ threat.context && <MarkedLines context={ threat.context } /> }
-						{ threat.diff && <DiffViewer diff={ threat.diff } /> }
-					</>
-				);
+				return 'TODO:FIX THIS CASE';
 		}
 	}
 
@@ -207,10 +154,12 @@ class ThreatItem extends Component< Props > {
 				highlight="error"
 			>
 				<ThreatDescription
+					name={ threat.signature }
 					action={ threat.action }
 					details={ this.getThreatFix( threat ) }
 					fix={ null }
 					problem={ threat.description }
+					filename={ threat.filename }
 				/>
 
 				<div className="threat-item__buttons">
