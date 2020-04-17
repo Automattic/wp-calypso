@@ -57,7 +57,6 @@ class JetpackAds extends Component {
 				plan={ PLAN_JETPACK_PREMIUM }
 				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
 				showIcon={ true }
-				jetpack={ true }
 			/>
 		);
 	}

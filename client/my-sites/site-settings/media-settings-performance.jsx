@@ -136,7 +136,6 @@ class MediaSettingsPerformance extends Component {
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
 					plan={ PLAN_JETPACK_PREMIUM }
 					showIcon={ true }
-					jetpack={ true }
 					title={ translate(
 						'Host video right on your site! Upgrade to Jetpack Premium to get started'
 					) }

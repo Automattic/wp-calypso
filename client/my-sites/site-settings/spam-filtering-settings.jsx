@@ -61,7 +61,6 @@ const SpamFilteringSettings = ( {
 				plan={ PLAN_JETPACK_PERSONAL }
 				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
 				showIcon={ true }
-				jetpack={ true }
 			/>
 		);
 	}
