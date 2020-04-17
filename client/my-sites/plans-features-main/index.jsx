@@ -121,6 +121,7 @@ export class PlansFeaturesMain extends Component {
 		if (
 			isValidFeatureKey( selectedFeature ) &&
 			getPlan( selectedPlan ) &&
+			! isPersonalPlan( selectedPlan ) &&
 			! previousRoute.startsWith( '/plans/' )
 		) {
 			return true;
@@ -162,15 +163,6 @@ export class PlansFeaturesMain extends Component {
 					}
 					if ( isPremiumPlan( selectedPlan ) ) {
 						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
-					}
-
-					if ( isPersonalPlan( selectedPlan ) ) {
-						return (
-							isPersonalPlan( plan ) ||
-							isPremiumPlan( plan ) ||
-							isBusinessPlan( plan ) ||
-							isEcommercePlan( plan )
-						);
 					}
 			  } )
 			: visiblePlans;
