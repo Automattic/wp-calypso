@@ -65,7 +65,6 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 
 export const DotPager = ( { children } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const numberOfPages = Children.count( children );
 	return (
 		<Card>
 			<div className="dot-pager__pages">
@@ -84,7 +83,7 @@ export const DotPager = ( { children } ) => {
 			</div>
 			<Controls
 				currentPage={ currentPage }
-				numberOfPages={ numberOfPages }
+				numberOfPages={ Children.count( children ) }
 				setCurrentPage={ setCurrentPage }
 			/>
 		</Card>

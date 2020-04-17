@@ -1,5 +1,4 @@
 .dot-pager__pages {
-	position: relative;
 	overflow: hidden;
 	display: flex;
 }
@@ -7,7 +6,6 @@
 .dot-pager__page {
 	width: 100%;
 	flex-shrink: 0;
-	height: 100%;
 	margin-left: 0;
 	transition: all 0.5s ease-in-out;
 	opacity: 1;
