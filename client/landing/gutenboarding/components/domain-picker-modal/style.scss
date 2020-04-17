@@ -1,3 +1,6 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
+
 .domain-picker-modal-overlay {
 	// Absolute positioning allows the modal
 	// to reuse the <body> element's scrollbar.
@@ -24,6 +27,14 @@
 }
 
 .domain-picker-modal {
+
+	.domain-picker__panel-row-main {
+		padding: 64px 88px;
+	}
+
+	.domain-picker__header-title {
+		@include onboarding-heading-text;
+	}
 
 	// Do not display domain picker footer which contains
 	// the confirm button when showing inside a modal.
