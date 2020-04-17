@@ -5,7 +5,7 @@ jest.mock( 'lib/abtest', () => ( {
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
@@ -68,14 +68,14 @@ describe( 'SeoPreviewNudge basic tests', () => {
 	} );
 } );
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
+describe( 'UpsellNudge should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
 		} );
 	} );
 
@@ -84,8 +84,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 			const comp = shallow(
 				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
+			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
 		} );
 	} );
 
@@ -101,8 +101,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 			const comp = shallow(
 				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );
 		} );
 	} );
 } );
