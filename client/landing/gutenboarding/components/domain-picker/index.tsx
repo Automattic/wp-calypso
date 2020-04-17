@@ -115,11 +115,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const [ railcarId, setRailcarId ] = useState( getNewRailcarId() );
+	const [ railcarId, setRailcarId ] = useState< string | undefined >();
 
 	useEffect( () => {
-		setRailcarId( getNewRailcarId() );
-	}, [ domainSearch ] );
+		// Only generate a railcarId when the domain suggestions change and are not empty.
+		if ( allSuggestions ) {
+			setRailcarId( getNewRailcarId() );
+		}
+	}, [ allSuggestions ] );
 
 	return (
 		<Panel className="domain-picker">
@@ -155,7 +158,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									suggestion={ freeSuggestions[ 0 ] }
 									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onSelect={ onDomainSelect }
-									railcarId={ `${ railcarId }0` }
+									railcarId={ railcarId ? `${ railcarId }0` : undefined }
 									uiAlgo={ uiAlgo }
 									uiPosition={ 0 }
 								/>
@@ -173,7 +176,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
-										railcarId={ `${ railcarId }${ i + 1 }` }
+										railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
 										uiAlgo={ uiAlgo }
 										uiPosition={ i + 1 }
 									/>

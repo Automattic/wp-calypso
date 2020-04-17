@@ -21,7 +21,7 @@ interface Props {
 	isRecommended?: boolean;
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
-	railcarId: string;
+	railcarId: string | undefined;
 	uiAlgo: string;
 	uiPosition: number;
 }
@@ -48,8 +48,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
 	useEffect( () => {
-		// Only record TrainTracks render event when the domain name changes
-		if ( domain !== previousDomain || previousRailcarId !== railcarId ) {
+		// Only record TrainTracks render event when the domain name and railcarId change.
+		// This effectively records the render event only once for each set of search results.
+		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
 			recordTrainTracksRender( {
 				fetchAlgo,
 				query: domainSearch,
@@ -74,7 +75,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	] );
 
 	const onDomainSelect = () => {
-		recordTrainTracksInteract( { action: 'domain_selected', railcarId } );
+		if ( railcarId ) {
+			recordTrainTracksInteract( { action: 'domain_selected', railcarId } );
+		}
 		onSelect( suggestion );
 	};
 
