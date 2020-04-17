@@ -25,19 +25,35 @@ import { getSite, isJetpackSite } from 'state/sites/selectors';
 import './style.scss';
 
 export const UpsellNudge = ( {
+	callToAction,
+	canManageSite,
 	className,
-	showIcon = false,
+	compact,
+	description,
+	disableHref,
+	dismissPreferenceName,
+	event,
+	feature,
+	forceDisplay,
+	forceHref,
+	href,
+	icon,
 	isJetpack,
 	isVip,
-	canManageSite,
-	site,
-	feature,
-	href,
+	list,
+	onClick,
+	onDismissClick,
 	plan,
 	planHasFeature,
-	disableHref,
-	forceDisplay,
-	...props
+	showIcon = false,
+	site,
+	title,
+	tracksClickName,
+	tracksClickProperties,
+	tracksDismissName,
+	tracksDismissProperties,
+	tracksImpressionName,
+	tracksImpressionProperties,
 } ) => {
 	const classes = classnames( 'upsell-nudge', className );
 
@@ -63,11 +79,30 @@ export const UpsellNudge = ( {
 
 	return (
 		<Banner
-			{ ...props }
-			showIcon={ showIcon }
-			disableHref={ disableHref }
+			callToAction={ callToAction }
 			className={ classes }
+			compact={ compact }
+			description={ description }
+			disableHref={ disableHref }
+			dismissPreferenceName={ dismissPreferenceName }
+			event={ event }
+			feature={ feature }
+			forceHref={ forceHref }
 			href={ href }
+			icon={ icon }
+			jetpack={ isJetpack }
+			list={ list }
+			onClick={ onClick }
+			onDismissClick={ onDismissClick }
+			plan={ plan }
+			showIcon={ showIcon }
+			title={ title }
+			tracksClickName={ tracksClickName }
+			tracksClickProperties={ tracksClickProperties }
+			tracksDismissName={ tracksDismissName }
+			tracksDismissProperties={ tracksDismissProperties }
+			tracksImpressionName={ tracksImpressionName }
+			tracksImpressionProperties={ tracksImpressionProperties }
 		/>
 	);
 };
