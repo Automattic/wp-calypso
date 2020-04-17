@@ -22,7 +22,7 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	uiAlgo: string;
+	uiAlgo?: string;
 	uiPosition: number;
 }
 

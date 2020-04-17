@@ -58,7 +58,7 @@ export interface Props {
 	/**
 	 * String denoting where the UI is displayed, e.g. `/gutenboarding/domain-popover`
 	 */
-	uiAlgo: string;
+	uiAlgo?: string;
 }
 
 const SearchIcon = () => (

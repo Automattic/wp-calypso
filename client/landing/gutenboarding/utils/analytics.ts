@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 interface TrainTracksRenderProps {
 	railcarId: string;
-	uiAlgo: string;
+	uiAlgo?: string;
 	uiPosition: number;
 	fetchAlgo: string;
 	result: string;
