@@ -20,6 +20,7 @@
 		@include breakpoint( '>800px' ) {
 			justify-content: flex-end;
 			padding-right: 48px;
+			padding-left: 20px;
 		}
 	}
 
