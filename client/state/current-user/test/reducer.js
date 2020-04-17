@@ -32,6 +32,7 @@ describe( 'reducer', () => {
 			'flags',
 			'gravatarStatus',
 			'emailVerification',
+			'lasagnaJwt',
 		] );
 	} );
 
