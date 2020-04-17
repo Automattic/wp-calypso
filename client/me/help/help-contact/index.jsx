@@ -555,7 +555,7 @@ class HelpContact extends React.Component {
 							hideAt="2020-04-20 06:00Z"
 							heading="Live Chat closed"
 							message={
-								<p>
+								<div>
 									<p>
 										Live Chat will be closed between Saturday, April 18 00:00 UTC and Monday, April
 										20 06:00 UTC.
@@ -569,7 +569,7 @@ class HelpContact extends React.Component {
 										Thank you for patience and we aim to return to normal weekend chat coverage
 										soon.
 									</p>
-								</p>
+								</div>
 							}
 							compact={ compact }
 						/>
