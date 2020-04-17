@@ -93,19 +93,14 @@ class ActivityCardList extends Component {
 	}
 
 	renderData() {
-		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
-	render() {
 		const {
-			allowRestore,
 			filter,
 			logs,
-			moment,
 			pageSize,
 			showActivityTypeSelector,
 			showDateRangeSelector,
 			showPagination,
 			siteId,
-			siteSlug,
 		} = this.props;
 		const { page: requestedPage } = filter;
 
@@ -116,10 +111,6 @@ class ActivityCardList extends Component {
 		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
 		return (
 			<>
-				{ showFilter && (
-			<div className="activity-card-list">
-				<QueryRewindCapabilities siteId={ siteId } />
-				<QueryRewindState siteId={ siteId } />
 				{ ( showActivityTypeSelector || showDateRangeSelector ) && (
 					<Filterbar
 						{ ...{

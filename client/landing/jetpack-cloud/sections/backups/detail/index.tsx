@@ -17,7 +17,10 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
 import { setFilter } from 'state/activity-log/actions';
-import { useApplySiteOffset } from 'landing/jetpack-cloud/components/site-offset';
+import {
+	useApplySiteOffset,
+	applySiteOffsetType,
+} from 'landing/jetpack-cloud/components/site-offset';
 import { useLocalizedMoment } from 'components/localized-moment';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import BackupDetailSummary from './summary';
@@ -45,71 +48,70 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 	const filter = useSelector( state => getActivityLogFilter( state, siteId ) );
 	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
 
-	const backupMoment = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) );
-	const fromTimestamp = moment( backupMoment )
-		?.startOf( 'day' )
-		.toISOString();
-	const toTimeStamp = moment( backupMoment )
-		?.endOf( 'day' )
-		.toISOString();
-
 	// when we load this page update the filter, locking it to the date of the backup
 	useEffect( () => {
 		// future work: move filter modification functions to utils
-		dispatch( setFilter( siteId, { page: 1, before: toTimeStamp, after: fromTimestamp } ) );
-	}, [ dispatch, fromTimestamp, siteId, toTimeStamp ] );
+		// we need applySiteOffset to figure out what dates we want, so wait until we get it
+		if ( applySiteOffset ) {
+			const backupMoment = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) );
+			dispatch(
+				setFilter( siteId, {
+					page: 1,
+					before: moment( backupMoment )
+						.endOf( 'day' )
+						.toISOString(),
+					after: moment( backupMoment )
+						.startOf( 'day' )
+						.toISOString(),
+				} )
+			);
+		}
+	}, [ applySiteOffset, dispatch, moment, siteId, rewindId ] );
 
 	//when the filter changes, re-request the logs
 	useEffect( () => {
 		requestActivityLogs( siteId, filter );
 	}, [ filter, siteId ] );
 
-	const backups = logs && logs.filter( event => event.rewindId === rewindId );
-	const thisBackup = backups && backups[ 0 ];
+	const render = ( loadedApplySiteOffset: applySiteOffsetType ) => {
+		const backupMoment = loadedApplySiteOffset( moment( parseFloat( rewindId ) * 1000 ) );
+		const backups = logs && logs.filter( event => event.rewindId === rewindId );
+		const thisBackup = backups && backups[ 0 ];
 
-	const render = loadedLogs => (
-		<>
-			{ /* backup summary is hidden when filtered out  */ }
-			{ thisBackup && <BackupDetailSummary thisBackup={ thisBackup } /> }
-			{ loadedLogs.length > 1 ? (
-				<ActivityCardList
-					showDateRangeSelector={ false }
-					logs={ loadedLogs }
-					pageSize={ DETAIL_PAGE_SIZE }
-				/>
-			) : (
-				<div>{ translate( 'This backup contains no changes.' ) }</div>
-			) }
-		</>
-	);
-
-	const loading = ! ( backupMoment && logs );
+		return (
+			<>
+				<div>
+					<Gridicon icon="cloud-upload" />
+					{ backupMoment.format( 'YYYY-MM-DD' ) }
+				</div>
+				<div>
+					<Button primary={ false } href={ siteSlug && backupDownloadPath( siteSlug, rewindId ) }>
+						{ translate( 'Download backup' ) }
+					</Button>
+					<Button primary={ true } href={ siteSlug && backupRestorePath( siteSlug, rewindId ) }>
+						{ translate( 'Restore to this point' ) }
+					</Button>
+				</div>
+				{ /* backup summary is hidden when filtered out  */ }
+				{ thisBackup && <BackupDetailSummary thisBackup={ thisBackup } /> }
+				{ logs && logs.length > 1 ? (
+					<ActivityCardList
+						showDateRangeSelector={ false }
+						logs={ logs }
+						pageSize={ DETAIL_PAGE_SIZE }
+					/>
+				) : (
+					<div>{ translate( 'This backup contains no changes.' ) }</div>
+				) }
+			</>
+		);
+	};
 
 	return (
 		<Main>
 			<DocumentHead title="Backup Details" />
 			<SidebarNavigation />
-			<div>
-				<Gridicon icon="cloud-upload" />
-				{ backupMoment?.format( 'YYYY-MM-DD' ) }
-			</div>
-			<div>
-				<Button
-					disabled={ loading }
-					primary={ false }
-					href={ siteSlug && backupDownloadPath( siteSlug, rewindId ) }
-				>
-					{ translate( 'Download backup' ) }
-				</Button>
-				<Button
-					disabled={ loading }
-					primary={ true }
-					href={ siteSlug && backupRestorePath( siteSlug, rewindId ) }
-				>
-					{ translate( 'Restore to this point' ) }
-				</Button>
-			</div>
-			{ loading ? <Spinner /> : render( logs ) }
+			{ applySiteOffset ? render( applySiteOffset ) : <Spinner /> }
 		</Main>
 	);
 };
