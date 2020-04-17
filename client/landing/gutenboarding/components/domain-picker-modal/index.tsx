@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import Modal from 'react-modal';
 
 /**
@@ -14,30 +14,10 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
-
-// TODO: Extend modal props?
-// interface Props extends DomainPickerProps {
-// }
-
-const DomainPickerModal: FunctionComponent< DomainPickerProps > = ( {
-	currentDomain,
-	onDomainSelect,
-	onClose,
-} ) => {
+const DomainPickerModal: React.FunctionComponent< DomainPickerProps > = props => {
 	return (
-		<Modal
-			isOpen={ true }
-			className="domain-picker-modal"
-			overlayClassName="domain-picker-modal-overlay"
-		>
-			<DomainPicker
-				showDomainConnectButton
-				showDomainCategories
-				currentDomain={ currentDomain }
-				onDomainSelect={ onDomainSelect }
-				onClose={ onClose }
-			/>
+		<Modal isOpen className="domain-picker-modal" overlayClassName="domain-picker-modal-overlay">
+			<DomainPicker showDomainConnectButton showDomainCategories { ...props } />
 		</Modal>
 	);
 };

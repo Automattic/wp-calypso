@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import { Button, Popover } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 import config from 'config';
@@ -22,20 +22,13 @@ import CloseButton from '../close-button';
  */
 import './style.scss';
 
-// TODO: Extend popover props?
 interface Props extends DomainPickerProps {
 	onMoreOptions?: () => void;
 }
 
-const DomainPickerPopover: FunctionComponent< Props > = ( {
-	showDomainConnectButton,
-	showDomainCategories,
-	onDomainSelect,
-	onMoreOptions,
-	onClose,
-	currentDomain,
-} ) => {
+const DomainPickerPopover: React.FunctionComponent< Props > = ( { onMoreOptions, ...props } ) => {
 	const { __ } = useI18n();
+	const onClose = props.onClose;
 
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
@@ -50,13 +43,7 @@ const DomainPickerPopover: FunctionComponent< Props > = ( {
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker
-					showDomainConnectButton={ showDomainConnectButton }
-					showDomainCategories={ showDomainCategories }
-					currentDomain={ currentDomain }
-					onDomainSelect={ onDomainSelect }
-					onClose={ onClose }
-				/>
+				<DomainPicker { ...props } />
 				{ config.isEnabled( 'gutenboarding/domain-picker-modal' ) && (
 					<Button
 						className="domain-picker-popover__more-button"
