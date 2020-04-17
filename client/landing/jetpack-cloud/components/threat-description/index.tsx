@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactNode } from 'react';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import './style.scss';
 export interface Props {
 	children?: ReactNode;
 	action?: 'ignored' | 'fixed';
-	name: string;
 	details: string | ReactNode;
 	fix: string | ReactNode;
 	problem: string | ReactNode;
@@ -28,15 +27,12 @@ export interface Props {
 }
 
 class ThreatDescription extends React.PureComponent< Props > {
-	renderTextOrNode( content: string | ReactNode ) {
-		if ( typeof content === 'string' ) {
-			return <p className="threat-description__section-text">{ content }</p>;
-		}
-		return content;
+	renderTextOrNode( content: string | TranslateResult | ReactNode ) {
+		return <p className="threat-description__section-text">{ content }</p>;
 	}
 
 	renderFilename(): ReactNode | null {
-		const { filename, name } = this.props;
+		const { filename } = this.props;
 		if ( ! filename ) {
 			return null;
 		}
@@ -44,13 +40,8 @@ class ThreatDescription extends React.PureComponent< Props > {
 		return (
 			<>
 				<p className="threat-description__section-text">
-					{ translate( 'Threat {{threatSignature/}} found in file:', {
+					{ translate( 'Threat found in file:', {
 						comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-						components: {
-							threatSignature: (
-								<code className="threat-description__alert-signature">{ name }</code>
-							),
-						},
 					} ) }
 				</p>
 				<pre className="threat-description__alert-filename">{ filename }</pre>
@@ -59,7 +50,7 @@ class ThreatDescription extends React.PureComponent< Props > {
 	}
 
 	render() {
-		const { children, action, details, problem, fix, diff, context } = this.props;
+		const { children, action, details, problem, fix, diff, context, filename } = this.props;
 		const isThreatFixedOrIgnored = !! action;
 
 		return (
@@ -78,9 +69,11 @@ class ThreatDescription extends React.PureComponent< Props > {
 					</p>
 				) }
 				{ fix && this.renderTextOrNode( fix ) }
-				<p className="threat-description__section-title">
-					<strong>{ translate( 'The technical details' ) }</strong>
-				</p>
+				{ ( details || filename || context || diff ) && (
+					<p className="threat-description__section-title">
+						<strong>{ translate( 'The technical details' ) }</strong>
+					</p>
+				) }
 				{ this.renderTextOrNode( details ) }
 				{ this.renderFilename() }
 				{ context && <MarkedLines context={ context } /> }

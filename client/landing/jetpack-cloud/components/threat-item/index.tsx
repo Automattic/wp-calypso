@@ -76,7 +76,7 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getTitle( threat: Threat ): string | {} | React.ReactNodeArray {
+	getTitle( threat: Threat ): i18nCalypso.TranslateResult {
 		// This should be temprary since this data should be coming from the api
 		// and not something that we should change to accompadate the results.
 		const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
@@ -131,10 +131,31 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getThreatFix( threat: Threat ): string {
-		switch ( getThreatType( threat ) ) {
+	getThreatFix(): null | i18nCalypso.TranslateResult {
+		const { threat } = this.props;
+		if ( ! threat.fixable ) {
+			return translate(
+				'Jetpack Scan cannot automatically fix this threat. Please {{link}}contact us{{/link}} for help.',
+				{
+					components: {
+						link: <a href="https://jetpack.com/contact-support/" />,
+					},
+				}
+			);
+		}
+		switch ( threat.fixable.fixer ) {
+			case 'replace':
+				return translate( 'Jetpack Scan will replace the affected file or directory.' );
+			case 'delete':
+				return translate( 'Jetpack Scan will delete the affected file or directory.' );
+			case 'update':
+				return translate( 'Jetpack Scan can update to a newer version (%(version)s).', {
+					args: {
+						version: threat.fixable.target || 'unknown',
+					},
+				} );
 			default:
-				return 'TODO:FIX THIS CASE';
+				return translate( 'Jetpack Scan will resolve the threat.' );
 		}
 	}
 
@@ -154,11 +175,12 @@ class ThreatItem extends Component< Props > {
 				highlight="error"
 			>
 				<ThreatDescription
-					name={ threat.signature }
 					action={ threat.action }
-					details={ this.getThreatFix( threat ) }
-					fix={ null }
+					details={ null }
+					fix={ this.getThreatFix() }
 					problem={ threat.description }
+					context={ threat.context }
+					diff={ threat.diff }
 					filename={ threat.filename }
 				/>
 

@@ -13,6 +13,7 @@ export type ThreatFixType = 'replace' | 'delete' | 'update' | string;
 export type ThreatFix = {
 	fixer: ThreatFixType;
 	file?: string;
+	target?: string;
 };
 
 export type Threat = {
