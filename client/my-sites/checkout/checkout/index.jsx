@@ -484,7 +484,6 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
-			isJetpackNotAtomic,
 			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
 
@@ -532,8 +531,15 @@ export class Checkout extends React.Component {
 
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
-		// if it is a Jetpack product, use product info as a parameter
-		if ( isJetpackNotAtomic && product ) {
+		// if it is one of the Jetpack products, use product info as a parameter.
+		// We want to be product-specific, as the same path will likely be used for
+		// WP.com sites purchasing Search.
+		if (
+			product === 'jetpack_search' ||
+			product === 'jetpack_scan' ||
+			product === 'jetpack_backup_daily' ||
+			product === 'jetpack_backup_monthly'
+		) {
 			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
 		} else {
 			signupDestination =
