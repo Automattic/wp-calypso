@@ -1,12 +1,8 @@
-.theme-jetpack-cloud .main {
-	margin-left: 0;
-}
 .theme-jetpack-cloud .main.sites {
 	margin-left: auto;
 }
 
 .scan__main {
-	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -24,7 +20,7 @@
 }
 
 .scan__content {
-	padding: 40px 16px 0;
+	padding-top: 40px;
 	flex: 1 0 auto;
 
 	.security-icon {

@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 function ScanUpsellPage( props ) {
 	return (
-		<Main wideLayout className="scan__main">
+		<Main className="scan__main">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<div className="scan__content">

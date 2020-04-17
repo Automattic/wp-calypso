@@ -141,7 +141,7 @@ class ScanHistoryPage extends Component {
 		const logEntries = this.filteredEntries();
 		const { value: filter } = this.getCurrentFilter();
 		return (
-			<Main wideLayout className="history">
+			<Main className="history">
 				<QueryJetpackScanHistory siteId={ this.props.siteId } />
 				<DocumentHead title={ translate( 'History' ) } />
 				<SidebarNavigation />
