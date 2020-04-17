@@ -38,6 +38,7 @@ export const Sharing = ( {
 	showConnections,
 	showTraffic,
 	siteId,
+	isJetpack,
 	isVip,
 	siteSlug,
 	translate,
@@ -105,7 +106,7 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && (
+			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ FEATURE_NO_ADS }
@@ -146,5 +147,6 @@ export default connect( ( state ) => {
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		isJetpack: isJetpack,
 	};
 } )( localize( Sharing ) );
