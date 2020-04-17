@@ -39,10 +39,9 @@ const StoredCard: FunctionComponent< Props > = ( {
 
 	// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
 	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ) : null;
-	const displayExpirationDate =
-		expirationDate && expirationDate.isValid() ? expirationDate.format( 'MM/YY' ) : null;
+	const displayExpirationDate = expirationDate?.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
-	const type = cardType ? cardType.toLocaleLowerCase() : paymentPartner || '';
+	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
 	const typeStyle = {
 		backgroundImage: getPaymentMethodImageURL( type, selected ),
 	};
