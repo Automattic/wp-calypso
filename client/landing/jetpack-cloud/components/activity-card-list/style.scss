@@ -24,79 +24,81 @@
 	border-bottom: 1px solid #000000;
 }
 
+// draw vertical lines through each date "group"
 .activity-card-list__date-group-content {
 	position: relative;
 
 	&::before {
-		content: '';
-		position: absolute;
-		// center on the icons ( .5px is half the width )
-		left: 0.55rem;
-		width: 1px;
-	}
-
-	&::before {
-		top: 0;
-		height: 100%;
-		z-index: -2;
 		background: var( --color-neutral-5 );
+		content: '';
+		height: 100%;
+		// center on the icons ( they render @ 1.1rem, so half that )
+		left: 0.55rem;
+		position: absolute;
+		top: 0;
+		width: 1px;
+		z-index: -2;
 	}
 }
 
+// make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
 	.activity-card .activity-card__time-icon.gridicon {
 		background: var( --color-surface-backdrop );
 	}
 }
 
+// primary cards get primary card emphasis on the left
 .activity-card-list__primary-card {
 	.card {
-		padding-left: 21px; // reduce standard 24px padding by 3
-		border-left: 3px solid var( --color-primary-40 );
+		padding-left: 20px; // reduce standard 24px padding by 4
+		border-left: 4px solid var( --color-primary-40 );
 	}
 }
 
+// work happens in the secondary cards
 .activity-card-list__secondary-card {
+	// this brings in the right side, otherwise the translated elements would look the same
+	// 32px to adjust for the scooch, 16px to make the card shorted than the primary one
 	width: calc( 100% - 32px - 16px );
 
+	// scooch secondary card elements over
 	.activity-card__time,
 	.card {
 		transform: translateX( 32px );
-		// width: calc( auto - 32px );
 	}
 
-	position: relative;
-
-	&::before {
-		content: '';
-		position: absolute;
-		// center on the icons ( 1px is half the width )
-		left: calc( 0.55rem + 0.5px );
-		height: 1px;
-	}
-
-	&::before {
-		top: 50%;
-		width: 100%;
-		z-index: -2;
-		background: var( --color-neutral-5 );
-	}
-
-	// draw over the line that goes off the screen
-	&:last-of-type {
-		&::after {
+	.card {
+		// this draws the horizontal line
+		&::before {
+			// same as the left on the vertical line above
+			background: var( --color-neutral-5 );
 			content: '';
+			height: 1px;
+			left: calc( 0.55rem - 32px );
 			position: absolute;
-			// center on the icons ( .5px is half the width )
-			left: 0.55rem;
-			width: 1px;
+			top: 50%;
+			width: calc( 32px - 0.55rem );
+			z-index: -2;
 		}
+	}
 
-		&::after {
-			top: calc( 50% + 1px );
-			height: 100%;
-			z-index: -1;
-			background: var( --color-surface-backdrop );
+	// draw over the line that goes off the screen on the last card
+	&:last-of-type {
+		.card {
+			&::after {
+				background: var( --color-surface-backdrop );
+				content: '';
+				// make sure we stay in our element
+				height: calc( 50% - 1px );
+				left: calc( 0.55rem - 32px );
+				position: absolute;
+				// immediately after the existing horizontal line draw on over the top of it
+				top: calc( 50% + 1px );
+				visibility: visible;
+				width: 1px;
+				z-index: -1;
+			}
 		}
 	}
 }
