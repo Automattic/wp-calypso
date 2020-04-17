@@ -16,6 +16,12 @@
 		border: 1px solid var( --studio-gray-5 );
 		box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
 		border-radius: 4px;
+
+		// Increase specificity
+		> div.domain-picker-popover__addons {
+			height: 0;
+			overflow: visible;
+		}
 	}
 
 	// Popover component adds a .is-expanded class under mobile view.
@@ -46,9 +52,9 @@
 	}
 
 	.domain-picker-popover__more-button {
-		position: absolute;
-		bottom: 24px;
+		position: relative;
 		left: 36px;
+		top: -60px; // 24px padding - 36px button height 
 
 		&.components-button {
 			@include onboarding-medium-text;
