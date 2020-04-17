@@ -268,7 +268,7 @@ interface ManagedValue {
 }
 
 export function isValid( arg: ManagedValue ): boolean {
-	return arg.errors?.length <= 0 && ( arg.value?.length > 0 || ! arg.isRequired );
+	return ( arg.errors?.length ?? 0 ) <= 0 && ( arg.value?.length > 0 || ! arg.isRequired );
 }
 
 function getInitialManagedValue( initialProperties?: {
