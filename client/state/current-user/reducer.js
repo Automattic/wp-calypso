@@ -123,7 +123,7 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return action.user.lasagna_jwt;
+			return action.user.lasagna_jwt || null;
 	}
 
 	return state;
