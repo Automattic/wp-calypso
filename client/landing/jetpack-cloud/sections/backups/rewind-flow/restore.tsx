@@ -77,8 +77,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 			</div>
-			<h2>{ translate( 'Restore site' ) }</h2>
-			<p>
+			<h3 className="rewind-flow__title">{ translate( 'Restore site' ) }</h3>
+			<p className="rewind-flow__info">
 				{ translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
 					{
@@ -91,7 +91,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h3>{ translate( 'Choose the items you wish to restore:' ) }</h3>
+			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice"
@@ -99,6 +99,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
 			<Button
+				className="rewind-flow__primary-button"
 				primary
 				onClick={ onConfirm }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
@@ -113,9 +114,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 			</div>
-			<h2>{ translate( 'Currently restoring your site' ) }</h2>
+			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
 			<ProgressBar percent={ inProgressRewindPercentComplete } />
-			<p>
+			<p className="rewind-flow__info">
 				{ translate(
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
@@ -144,8 +145,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud restore success"
 				/>
 			</div>
-			<h2>{ translate( 'Your site has been successfully restored.' ) }</h2>
-			<p>
+			<h3 className="rewind-flow__title">
+				{ translate( 'Your site has been successfully restored.' ) }
+			</h3>
+			<p className="rewind-flow__info">
 				{ translate(
 					'All of your selected files are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
@@ -158,7 +161,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl }>
+			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
 		</>
@@ -172,9 +175,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download error"
 				/>
 			</div>
-			<h2>{ translate( 'An error occurred while restoring your site' ) }</h2>
+			<h3 className="rewind-flow__title">
+				{ translate( 'An error occurred while restoring your site' ) }
+			</h3>
 			<Button
+				className="rewind-flow__primary-button"
 				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				primary
 				rel="noopener noreferrer"
 				target="_blank"
 			>

@@ -58,8 +58,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download ready"
 				/>
 			</div>
-			<h2>{ translate( 'Create downloadable backup' ) }</h2>
-			<p>
+			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
+			<p className="rewind-flow__info">
 				{ translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
 					{
@@ -72,7 +72,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h3>{ translate( 'Choose the items you wish to restore:' ) }</h3>
+			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice-outline"
@@ -81,6 +81,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				link="https://jetpack.com/support/backup"
 			/>
 			<Button
+				className="rewind-flow__primary-button"
 				primary
 				onClick={ requestDownload }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
@@ -98,9 +99,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download ready"
 				/>
 			</div>
-			<h2>{ translate( 'Currently creating a downloadable backup of your site' ) }</h2>
+			<h3 className="rewind-flow__title">
+				{ translate( 'Currently creating a downloadable backup of your site' ) }
+			</h3>
 			<ProgressBar percent={ downloadProgress } />
-			<p>
+			<p className="rewind-flow__info">
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
@@ -127,8 +130,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download success"
 				/>
 			</div>
-			<h2>{ translate( 'Your backup is now available for download.' ) }</h2>
-			<p>
+			<h3 className="rewind-flow__title">
+				{ translate( 'Your backup is now available for download.' ) }
+			</h3>
+			<p className="rewind-flow__info">
 				{ translate(
 					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
@@ -141,7 +146,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button href={ downloadUrl } primary>
+			<Button href={ downloadUrl } primary className="rewind-flow__primary-button">
 				{ translate( 'Download file' ) }
 			</Button>
 			<CheckYourEmail
@@ -160,9 +165,13 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download error"
 				/>
 			</div>
-			<h2>{ translate( 'An error occurred while creating your download' ) }</h2>
+			<h3 className="rewind-flow__title">
+				{ translate( 'An error occurred while creating your download' ) }
+			</h3>
 			<Button
+				className="rewind-flow__primary-button"
 				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				primary
 				rel="noopener noreferrer"
 				target="_blank"
 			>
