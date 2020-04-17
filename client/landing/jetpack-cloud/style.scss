@@ -1,6 +1,7 @@
 .theme-jetpack-cloud .main,
 .color-scheme.is-jetpack-cloud .main,
-.theme-jetpack-cloud .ReactModalPortal {
+.theme-jetpack-cloud .ReactModalPortal,
+.theme-jetpack-cloud .popover {
 	.button {
 		color: var( --color-primary-60 );
 		background: var( --studio-white );
