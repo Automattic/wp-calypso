@@ -16,8 +16,10 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	areDomainsInLineItems,
-	domainManagedContactDetails,
-	taxManagedContactDetails,
+	emptyManagedContactDetails,
+	applyContactDetailsRequiredMask,
+	domainRequiredContactDetails,
+	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
@@ -88,7 +90,6 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
-	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -97,7 +98,6 @@ export default function CompositeCheckout( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
-	const hideNudge = isComingFromUpsell;
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -108,7 +108,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
-		hideNudge,
 	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
@@ -214,7 +213,10 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		applyContactDetailsRequiredMask(
+			emptyManagedContactDetails,
+			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+		),
 		updateContactDetailsCache
 	);
 
@@ -281,7 +283,7 @@ export default function CompositeCheckout( {
 	const renderDomainContactFields = (
 		contactDetails,
 		contactDetailsErrors,
-		updateContactDetails,
+		updateDomainContactFields,
 		shouldShowContactDetailsValidationErrors,
 		isDisabled
 	) => {
@@ -294,7 +296,7 @@ export default function CompositeCheckout( {
 					contactDetailsErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					onContactDetailsChange={ updateContactDetails }
+					onContactDetailsChange={ updateDomainContactFields }
 					shouldForceRenderOnPropChange={ true }
 					getIsFieldDisabled={ getIsFieldDisabled }
 				/>

@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
@@ -18,6 +19,7 @@ import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
@@ -39,11 +41,7 @@ class ScanPage extends Component {
 					Run a manual scan now or wait for Jetpack to scan your site later today.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
-					<Button
-						primary
-						href={ `/scan/${ siteSlug }/?scan-state=scanning` }
-						className="scan__button"
-					>
+					<Button primary href={ `/scan/${ siteSlug }` } className="scan__button">
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
@@ -102,16 +100,25 @@ class ScanPage extends Component {
 	}
 
 	renderScanState() {
-		switch ( this.props.scanState ) {
-			case 'okay':
-				return this.renderScanOkay();
-			case 'scanning':
-				return this.renderScanning();
-			case 'threats':
-				return this.renderThreats();
-			case 'error':
-				return this.renderScanError();
+		if ( ! this.props.scanState ) {
+			return <div className="scan__is-loading" />;
 		}
+
+		const status = this.props.scanState.status;
+		if ( status === 'scanning' ) {
+			return this.renderScanning();
+		}
+
+		if ( status !== 'done' ) {
+			return this.renderScanError();
+		}
+
+		const threats = this.props.scanState.threats;
+		if ( threats && threats.length ) {
+			return this.renderThreats();
+		}
+
+		return this.renderScanOkay();
 	}
 
 	render() {
@@ -119,6 +126,7 @@ class ScanPage extends Component {
 			<Main wideLayout className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
+				<QueryJetpackScan siteId={ this.props.site.ID } />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
@@ -127,8 +135,8 @@ class ScanPage extends Component {
 						{ name: 'Plugins', number: 4 },
 						{ name: 'Themes', number: 3 },
 					] }
-					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
-					noticeLink="https://jetpack/upgrade/backups"
+					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
+					noticeLink="https://jetpack.com/upgrade/backup"
 				/>
 			</Main>
 		);
@@ -138,10 +146,7 @@ class ScanPage extends Component {
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteSlug = getSelectedSiteSlug( state );
-
-	// TODO: Get state from actual API.
-	const params = new URL( document.location ).searchParams;
-	const scanState = params.get( 'scan-state' ) || 'okay';
+	const scanState = getSiteScanState( state, site.ID );
 
 	// TODO: Get threats from actual API.
 	const threats = [

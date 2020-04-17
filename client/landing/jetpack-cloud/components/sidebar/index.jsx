@@ -10,8 +10,9 @@ import { memoize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
@@ -203,17 +204,12 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-// This has to be replaced for a real selector once we load the
-// threats information into our Redux store.
-const getSiteThreats = () => {
-	return [ {}, {} ];
-};
-
 export default connect(
 	state => {
+		const siteId = getSelectedSiteId( state );
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
-		const threats = getSiteThreats( state );
+		const threats = getSiteScanThreats( state, siteId );
 
 		return {
 			isBackupSectionOpen,

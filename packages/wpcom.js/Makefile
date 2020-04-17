@@ -30,7 +30,7 @@ build/wpcom.js: build
 install: node_modules
 
 node_modules:
-	@npm install
+	@yarn
 	@touch node_modules
 
 lint:

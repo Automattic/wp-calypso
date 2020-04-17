@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { sprintf } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -27,8 +28,6 @@ import {
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
-
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 const wpcom = wp.undocumented();
 
@@ -117,6 +116,8 @@ const Header: FunctionComponent = () => {
 		}
 	}, [ pathname, setShowSignupDialog ] );
 
+	const isMobile = useViewportMatch( 'mobile', '<' );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
@@ -126,10 +127,12 @@ const Header: FunctionComponent = () => {
 				placeholder: ! recommendedDomainSuggestion,
 			} ) }
 		>
-			{ recommendedDomainSuggestion
-				? /* translators: domain name is available, eg: "yourname.com is available" */
-				  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
-				: 'example.wordpress.com' }
+			{ isMobile && __( 'Domain available' ) }
+			{ ! isMobile &&
+				( recommendedDomainSuggestion
+					? /* translators: domain name is available, eg: "yourname.com is available" */
+					  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
+					: 'example.wordpress.com' ) }
 		</span>
 	);
 

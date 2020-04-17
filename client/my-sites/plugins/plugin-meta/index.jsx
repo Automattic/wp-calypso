@@ -34,7 +34,7 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import UpsellNudge from 'blocks/upsell-nudge';
-import { TYPE_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
@@ -617,6 +617,7 @@ export class PluginMeta extends Component {
 				<UpsellNudge
 					event="calypso_plugin_detail_page_upgrade_nudge"
 					href={ bannerURL }
+					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ plan }
 					title={ title }
 					showIcon={ true }

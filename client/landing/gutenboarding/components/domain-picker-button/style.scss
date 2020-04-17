@@ -1,6 +1,17 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
 
 .domain-picker-button {
+	&.components-button {
+		@include onboarding-medium-text;
+		color: var( --studio-gray-90 );
+		padding: 9px 12px;
+		height: auto; // prevent clipping when there are 2 lines
+		text-align: left;
+	}
+	&__label {
+		word-break: break-word;
+	}
 	.dashicon {
 		margin-left: 0.5em;
 		margin-top: 2px;

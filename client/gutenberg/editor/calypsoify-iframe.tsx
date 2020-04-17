@@ -542,10 +542,31 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
-	onIframeLoaded = ( iframeUrl: string ) => {
+	onIframeLoaded = async ( iframeUrl: string ) => {
 		if ( ! this.successfulIframeLoad ) {
-			window.location.replace( iframeUrl );
-			return;
+			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
+			// the onLoad event is fired. To deal with this case we'll poll
+			// `this.successfulIframeLoad` for a while before redirecting.
+
+			// Checks to see if the iFrame has loaded every 200ms. If it has
+			// loaded, then resolve the promise.
+			let pendingIsLoadedInterval;
+			const pollForLoadedFlag = new Promise( resolve => {
+				pendingIsLoadedInterval = setInterval(
+					() => this.successfulIframeLoad && resolve( 'iframe-loaded' ),
+					200
+				);
+			} );
+
+			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
+
+			const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
+			clearInterval( pendingIsLoadedInterval );
+
+			if ( finishCondition === 'timeout' ) {
+				window.location.replace( iframeUrl );
+				return;
+			}
 		}
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};

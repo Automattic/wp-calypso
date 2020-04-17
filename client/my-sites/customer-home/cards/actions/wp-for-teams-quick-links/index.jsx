@@ -30,12 +30,12 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import ActionBox from 'my-sites/customer-home/cards/primary/quick-links/action-box';
+import ActionBox from 'my-sites/customer-home/cards/actions/quick-links/action-box';
 
 /**
  * Style dependencies
  */
-import 'my-sites/customer-home/cards/primary/quick-links/style.scss';
+import 'my-sites/customer-home/cards/actions/quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,

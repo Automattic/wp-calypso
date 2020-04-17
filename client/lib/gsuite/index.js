@@ -121,6 +121,10 @@ function getGSuiteSupportedDomains( domains ) {
 	} );
 }
 
+function getGSuiteMailboxCount( domain ) {
+	return get( domain, 'googleAppsSubscription.totalUserCount', 0 );
+}
+
 /**
  * Creates the Google ToS redirect url given email and domain
  *
@@ -245,6 +249,7 @@ export {
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
+	getGSuiteMailboxCount,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,

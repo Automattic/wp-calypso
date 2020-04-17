@@ -15,6 +15,7 @@ import { JetpackSignInTour } from './tours/jetpack-sign-in-tour';
 import { JetpackSiteAcceleratorTour } from './tours/jetpack-site-accelerator-tour';
 import { JetpackVideoHostingTour } from './tours/jetpack-video-hosting-tour';
 import { MainTour } from './tours/main-tour';
+import { marketingConnectionsTour } from './tours/marketing-connections-tour';
 import { MediaBasicsTour } from './tours/media-basics-tour';
 import { SimplePaymentsEmailTour } from './tours/simple-payments-email-tour';
 import { SimplePaymentsTour } from './tours/simple-payments-tour';
@@ -35,6 +36,7 @@ export default combineTours( {
 	jetpackSiteAccelerator: JetpackSiteAcceleratorTour,
 	jetpackVideoHosting: JetpackVideoHostingTour,
 	main: MainTour,
+	marketingConnectionsTour: marketingConnectionsTour,
 	mediaBasicsTour: MediaBasicsTour,
 	simplePaymentsEmailTour: SimplePaymentsEmailTour,
 	simplePaymentsTour: SimplePaymentsTour,

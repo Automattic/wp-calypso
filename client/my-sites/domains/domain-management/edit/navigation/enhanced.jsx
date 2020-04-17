@@ -28,6 +28,7 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
 import RemovePurchase from 'me/purchases/remove-purchase';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 
 import './style.scss';
 
@@ -78,18 +79,55 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getEmail() {
 		const { selectedSite, translate, domain } = this.props;
+		const { emailForwardsCount } = domain;
 
 		if ( ! this.isDomainInNormalState() ) {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		let navigationDescription;
+
+		let navigationText = translate( 'Manage your email accounts' );
+
+		if ( hasGSuiteWithUs( domain ) ) {
+			const gSuiteMailboxCount = getGSuiteMailboxCount( domain );
+
+			navigationDescription = translate(
+				'%(gSuiteMailboxCount)d mailbox',
+				'%(gSuiteMailboxCount)d mailboxes',
+				{
+					count: gSuiteMailboxCount,
+					args: {
+						gSuiteMailboxCount,
+					},
+					comment: 'The number of GSuite mailboxes active for the current domain',
+				}
+			);
+		} else if ( emailForwardsCount > 0 ) {
+			navigationDescription = translate(
+				'%(emailForwardsCount)d forward',
+				'%(emailForwardsCount)d forwards',
+				{
+					count: emailForwardsCount,
+					args: {
+						emailForwardsCount,
+					},
+					comment: 'The number of email forwards active for the current domain',
+				}
+			);
+		} else {
+			navigationText = translate( 'Set up your email' );
+			navigationDescription = translate( 'Not connected', {
+				comment: 'The domain is not using any of the WordPress.com email solutions',
+			} );
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ emailManagement( selectedSite.slug, domain.name ) }
 				materialIcon="email"
-				text={ translate( 'Manage your email accounts' ) }
-				description={ '3 G Suite accounts' }
+				text={ navigationText }
+				description={ navigationDescription }
 			/>
 		);
 	}
@@ -154,20 +192,34 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferDomain() {
-		const { selectedSite, translate, domain } = this.props;
-		const { expired } = domain;
+		const { moment, selectedSite, translate, domain } = this.props;
+		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
 		if ( expired && ! this.isDomainInGracePeriod() ) {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		let description;
+
+		if ( transferAwayEligibleAt ) {
+			description = translate( 'Outbound transfers available after %(startDate)s', {
+				args: {
+					startDate: moment( transferAwayEligibleAt ).format( 'LL' ),
+				},
+				comment: '%(startDate)s is a date string, e.g. April 1, 2020',
+			} );
+		} else if ( isLocked ) {
+			description = translate( 'Transfer lock: on' );
+		} else {
+			description = translate( 'Transfer lock: off' );
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
-				description={ 'Transfer lock: off' }
+				description={ description }
 			/>
 		);
 	}

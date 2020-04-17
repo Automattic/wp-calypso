@@ -21,15 +21,6 @@ import GUTENBOARDING_BASE_NAME from '../../basename.json';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
-// TODO: deploy this change to @types/wordpress__element
-declare module '@wordpress/element' {
-	// eslint-disable-next-line no-shadow
-	export function createInterpolateElement(
-		interpolatedString: string,
-		conversionMap: Record< string, ReactElement >
-	): ReactNode;
-}
-
 interface Props {
 	onRequestClose: () => void;
 }

@@ -185,13 +185,11 @@ const trackGlobalStyles = eventName => options => {
  * @param {string} content The error message. Like "Update failed."
  * @param {object} options Optional. Extra data logged with the error in Gutenberg.
  */
-const trackErrorNotices = ( content, options ) => {
-	const logInfo = {
-		errorText: content,
-		errorOptions: options,
-	};
-	tracksRecordEvent( 'wpcom_gutenberg_error_notice', logInfo );
-};
+const trackErrorNotices = ( content, options ) =>
+	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
+		notice_text: content,
+		notice_options: JSON.stringify( options ), // Returns undefined if options is undefined.
+	} );
 
 /**
  * Tracker can be

@@ -14,6 +14,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import QuerySiteStats from 'components/data/query-site-stats';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -39,57 +40,68 @@ export const Stats = ( {
 	}
 
 	return (
-		<Card className="stats">
-			{ siteId && (
-				<>
-					<QuerySiteStats
-						siteId={ siteId }
-						statType={ trafficStatsType }
-						query={ trafficStatsQuery }
-					/>
-					{ showInsights && (
+		<>
+			{ config.isEnabled( 'home/experimental-layout' ) && (
+				<h2 className="stats__heading customer-home__section-heading">
+					{ translate( 'Stats at a glance' ) }
+				</h2>
+			) }
+			<Card className="stats">
+				{ siteId && (
+					<>
 						<QuerySiteStats
 							siteId={ siteId }
-							statType={ insightsStatsType }
-							query={ insightsStatsQuery }
+							statType={ trafficStatsType }
+							query={ trafficStatsQuery }
 						/>
+						{ showInsights && (
+							<QuerySiteStats
+								siteId={ siteId }
+								statType={ insightsStatsType }
+								query={ insightsStatsQuery }
+							/>
+						) }
+					</>
+				) }
+				<CardHeading>
+					{ config.isEnabled( 'home/experimental-layout' )
+						? translate( 'Page views' )
+						: translate( 'Stats at a glance' ) }
+				</CardHeading>
+				<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
+				<div className="stats__data">
+					{ ! showInsights && (
+						<>
+							<div className="stats__data-item">
+								<div className="stats__data-value">
+									{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+								</div>
+								<div className="stats__data-label">{ translate( 'Views' ) }</div>
+							</div>
+							<div className="stats__data-item">
+								<div className="stats__data-value">
+									{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+								</div>
+								<div className="stats__data-label">{ translate( 'Visitors' ) }</div>
+							</div>
+						</>
 					) }
-				</>
-			) }
-			<CardHeading>{ translate( 'Stats at a glance' ) }</CardHeading>
-			<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
-			<div className="stats__data">
-				{ ! showInsights && (
-					<>
-						<div className="stats__data-item">
-							<div className="stats__data-value">
-								{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+					{ showInsights && (
+						<>
+							<div className="stats__data-item">
+								<div className="stats__data-value">{ insightsData?.day ?? '-' }</div>
+								<div className="stats__data-label">{ translate( 'Most popular day' ) }</div>
 							</div>
-							<div className="stats__data-label">{ translate( 'Views' ) }</div>
-						</div>
-						<div className="stats__data-item">
-							<div className="stats__data-value">
-								{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+							<div className="stats__data-item">
+								<div className="stats__data-value">{ insightsData?.hour ?? '-' }</div>
+								<div className="stats__data-label">{ translate( 'Most popular hour' ) }</div>
 							</div>
-							<div className="stats__data-label">{ translate( 'Visitors' ) }</div>
-						</div>
-					</>
-				) }
-				{ showInsights && (
-					<>
-						<div className="stats__data-item">
-							<div className="stats__data-value">{ insightsData?.day ?? '-' }</div>
-							<div className="stats__data-label">{ translate( 'Most popular day' ) }</div>
-						</div>
-						<div className="stats__data-item">
-							<div className="stats__data-value">{ insightsData?.hour ?? '-' }</div>
-							<div className="stats__data-label">{ translate( 'Most popular hour' ) }</div>
-						</div>
-					</>
-				) }
-			</div>
-			<a href={ `/stats/day/${ siteSlug }` }>{ translate( 'See all stats' ) }</a>
-		</Card>
+						</>
+					) }
+				</div>
+				<a href={ `/stats/day/${ siteSlug }` }>{ translate( 'See all stats' ) }</a>
+			</Card>
+		</>
 	);
 };
 

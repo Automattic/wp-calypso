@@ -1,5 +1,5 @@
 .activity-card-list .filterbar {
-    margin-bottom: 2rem;
+	margin-bottom: 2rem;
 }
 
 .activity-card-list__pagination-bottom {
@@ -7,12 +7,20 @@
 }
 
 @include breakpoint( '<660px' ) {
-    .activity-card-list .filterbar__wrap.card {
-        background: transparent;
-        box-shadow: none;
-    }
+	.activity-card-list .filterbar__wrap.card {
+		background: transparent;
+		box-shadow: none;
+	}
 
-    .activity-card-list .filterbar__label {
-        margin-left: 0;
-    }
+	.activity-card-list .filterbar__label {
+		margin-left: 0;
+	}
+}
+
+.activity-card-list__date {
+	font-style: normal;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 23px;
+	border-bottom: 1px solid #000000;
 }

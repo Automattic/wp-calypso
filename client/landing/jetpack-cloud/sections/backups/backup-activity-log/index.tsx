@@ -19,6 +19,11 @@ import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	after?: string;
 	before?: string;

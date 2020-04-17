@@ -27,3 +27,7 @@ render() {
 - `showText` - *optional* (bool) Whether or not to display the link text. Default `true`.
 - `showIcon` - *optional* (bool) Whether or not to display the "help-outline" Gridicon. Default `true`.
 - `iconSize` - *optional* (number) Gridicon size. Default `14`.
+- `tracksEvent` - *optional* (string) Tracks Analytics Event name
+- `tracksOptions` - *optional* (object) Tracks Analytics options
+- `statsGroup` - *optional* (string) Stat analytics group name
+- `statsName` - *optional* (string)  Stat analytics name
