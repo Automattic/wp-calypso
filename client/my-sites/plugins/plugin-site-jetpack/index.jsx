@@ -17,6 +17,7 @@ import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import Site from 'blocks/site';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -82,6 +83,8 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
+		const settingsLink = this.props?.site?.plugin?.action_links?.Settings ?? null;
+
 		return (
 			<FoldableCard
 				compact
@@ -118,6 +121,11 @@ class PluginSiteJetpack extends React.Component {
 					) }
 					{ canToggleRemove && (
 						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+					) }
+					{ settingsLink && (
+						<Button compact href={ settingsLink }>
+							{ this.props.translate( `Settings` ) }
+						</Button>
 					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
