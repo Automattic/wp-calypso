@@ -55,7 +55,7 @@ const InserterMenuTrackingEvent = function () {
 		}
 
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking with Slot parameter', pluginVersion );
+		debug( '%s version: tracking with Slot parameter', pluginVersion );
 
 		if ( has_items ) {
 			return;
@@ -81,7 +81,7 @@ const InserterMenuTrackingEvent = function () {
 			return;
 		}
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking inspecting DOM tree', pluginVersion );
+		debug( '%s: tracking inspecting DOM tree', ( pluginVersion || 'unknown' ) + ' version' );
 
 		if ( ! searchTerm || searchTerm.length < 3 ) {
 			return;
