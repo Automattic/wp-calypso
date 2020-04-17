@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React from 'react';
+import { remove } from 'lodash';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { Suggestions } from '@automattic/components';
-import { useI18n } from '@automattic/react-i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
-import { remove } from 'lodash';
+import { useViewportMatch } from '@wordpress/compose';
+import { Suggestions } from '@automattic/components';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -27,7 +29,11 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-const VerticalSelect: React.FunctionComponent = () => {
+interface Props {
+	onNext: () => void;
+}
+
+const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	const { __ } = useI18n();
 	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
@@ -56,10 +62,11 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	const inputText = inputRef.current.innerText || '';
 	const isInputEmpty = ! inputText.length;
-	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
+	const showArrow = ( ( ! siteTitle && ! siteVertical ) || isMobile ) && inputText.length > 2;
 
 	const animatedPlaceholder = useTyper(
 		[
@@ -118,13 +125,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 		setSuggestions( newSuggestions );
 	};
-	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		const input = e.currentTarget.innerText.trim();
-		if ( ! input.length ) {
-			resetSiteVertical();
-		}
-		updateSuggestions( input );
-	};
 
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
@@ -139,6 +139,24 @@ const VerticalSelect: React.FunctionComponent = () => {
 			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
 			handleSelect( vertical );
 		}
+	};
+
+	const handleArrowClick = () => {
+		handleBlur();
+		onNext();
+	};
+
+	const handleSuggestAction = ( vertical: SiteVertical ) => {
+		handleSelect( vertical );
+		onNext();
+	};
+
+	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+		const input = e.currentTarget.innerText.trim();
+		if ( ! input.length ) {
+			resetSiteVertical();
+		}
+		updateSuggestions( input );
 	};
 
 	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
@@ -173,7 +191,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
 	const madlibTemplateWithPeriod = __( 'My site is about <Input />.' );
 	const madlib = createInterpolateElement(
-		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
+		siteVertical && ! isMobile ? madlibTemplateWithPeriod : madlibTemplate,
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
@@ -193,16 +211,17 @@ const VerticalSelect: React.FunctionComponent = () => {
 							onBlur={ handleBlur }
 						/>
 						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+						{ showArrow && (
+							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
+						) }
 					</span>
-					{ /* us visibility to keep the layout fixed with and without the arrow */ }
-					{ showArrow && <Arrow className="vertical-select__arrow" /> }
 					<div className="vertical-select__suggestions">
-						{ isFocused && !! verticals.length && (
+						{ !! verticals.length && (
 							<Suggestions
 								ref={ suggestionRef }
 								query={ inputText }
 								suggestions={ suggestions }
-								suggest={ handleSelect }
+								suggest={ handleSuggestAction }
 								title={ __( 'Suggestions' ) }
 							/>
 						) }
@@ -212,7 +231,15 @@ const VerticalSelect: React.FunctionComponent = () => {
 		}
 	);
 
-	return <form className="vertical-select">{ madlib }</form>;
+	return (
+		<form
+			className={ classnames( 'vertical-select', {
+				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
+			} ) }
+		>
+			{ madlib }
+		</form>
+	);
 };
 
 export default VerticalSelect;
