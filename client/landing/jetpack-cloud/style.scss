@@ -20,6 +20,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --studio-gray-10 );
+			background: none;
 			border-color: var( --color-gray-10 );
 		}
 	}
@@ -27,16 +28,25 @@
 	.button.is-primary {
 		color: var( --studio-white );
 		background: var( --color-primary-40 );
-		border: none;
 
 		&:hover,
 		&:focus {
 			background: var( --color-primary-30 );
-			border: none;
+			border-color: var( --color-primary-30 );
 		}
 
 		&:active {
 			background: var( --color-primary-50 );
+			border-color: var( --color-primary-50 );
+		}
+
+		&[disabled],
+		&:disabled {
+			background: var( --studio-gray-10 );
+			border-color: var( --studio-gray-10 );
+		}
+	}
+
 	.button.is-scary {
 		color: var( --color-scary-60 );
 		border-color: var( --color-scary-50 );
@@ -78,6 +88,7 @@
 		&[disabled],
 		&:disabled {
 			background: var( --studio-gray-10 );
+			border-color: var( --studio-gray-10 );
 		}
 	}
 
