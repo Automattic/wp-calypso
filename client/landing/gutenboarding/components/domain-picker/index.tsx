@@ -51,7 +51,7 @@ export interface Props {
 	/**
 	 * String denoting where the UI is displayed, e.g. `/gutenboarding/domain-popover`
 	 */
-	recordAnalytics: ( type: string, payload: object ) => void;
+	recordAnalytics?: ( type: string, payload: object ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -159,7 +159,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onSelect={ onDomainSelect }
 									railcarId={ railcarId ? `${ railcarId }0` : undefined }
-									recordAnalytics={ recordAnalytics }
+									recordAnalytics={ recordAnalytics || undefined }
 									uiPosition={ 0 }
 								/>
 							) : (
@@ -177,7 +177,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
 										railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
-										recordAnalytics={ recordAnalytics }
+										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ i + 1 }
 									/>
 								) )
