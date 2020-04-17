@@ -35,7 +35,7 @@ const connectMiddleware = store => next => action => {
 
 	// we match the ROUTE_SET path because SECTION_SET can fire all over
 	// the place on hard loads of full post views and conversations
-	const readerPathRegex = RegExp( '^/read$|^/read/' );
+	const readerPathRegex = new RegExp( '^/read$|^/read/' );
 
 	// connect if we are going to the reader without a socket
 	if ( ! socket && ! socketConnecting && readerPathRegex.test( action.path ) ) {
