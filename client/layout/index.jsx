@@ -278,7 +278,7 @@ export default connect( ( state ) => {
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
 	const isFrankenflow =
-		startsWith( currentRoute, '/start/frankenflow' ) ||
+		startsWith( currentRoute, '/start/new-launch' ) ||
 		startsWith( currentRoute, '/start/prelaunch' );
 
 	return {

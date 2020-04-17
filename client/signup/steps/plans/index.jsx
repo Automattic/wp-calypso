@@ -107,7 +107,7 @@ export class PlansStep extends Component {
 	};
 
 	isGutenboarding = () =>
-		this.props.flowName === 'frankenflow' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
+		this.props.flowName === 'new-launch' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
 
 	getGutenboardingHeader() {
 		if ( this.isGutenboarding() ) {
