@@ -17,10 +17,29 @@
 	}
 }
 
-.activity-card-list__date {
-	font-style: normal;
-	font-weight: bold;
+.activity-card-list__date-group-date {
+	font-weight: 700;
 	font-size: 16px;
 	line-height: 23px;
 	border-bottom: 1px solid #000000;
+}
+
+.activity-card-list__date-group-content {
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		// center on the icons ( 1px is half the width )
+		left: calc( 0.55rem - 1px );
+		width: 2px;
+	}
+
+	&::before {
+		top: 0;
+		height: 100%;
+		z-index: -2;
+		// background: var( --color-neutral-10 );
+		background: red;
+	}
 }

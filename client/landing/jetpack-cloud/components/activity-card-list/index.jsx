@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -33,16 +33,16 @@ class ActivityCardList extends Component {
 		pageSize: PropTypes.number.isRequired,
 		showDateSeparators: PropTypes.bool,
 		showFilter: PropTypes.bool,
-		showPagination: PropTypes.bool,
+		showPagination: PropTypes.bool
 	};
 
 	static defaultProps = {
 		showDateSeparators: true,
 		showFilter: true,
-		showPagination: true,
+		showPagination: true
 	};
 
-	changePage = ( pageNumber ) => {
+	changePage = pageNumber => {
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -71,22 +71,26 @@ class ActivityCardList extends Component {
 
 		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
 			return (
-				<Fragment key={ `activity-card-list__date-group-${ index }` }>
+				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
-						<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
+						<div className="activity-card-list__date-group-date">
+							{ date && date.format( 'MMM Do' ) }
+						</div>
 					) }
-					{ dateLogs.map( ( activity ) => (
-						<ActivityCard
-							{ ...{
-								key: activity.activityId,
-								moment,
-								activity,
-								allowRestore,
-								siteSlug,
-							} }
-						/>
-					) ) }
-				</Fragment>
+					<div className="activity-card-list__date-group-content">
+						{ dateLogs.map( activity => (
+							<ActivityCard
+								{ ...{
+									key: activity.activityId,
+									moment,
+									activity,
+									allowRestore,
+									siteSlug
+								} }
+							/>
+						) ) }
+					</div>
+				</div>
 			);
 		} );
 	}
@@ -108,7 +112,7 @@ class ActivityCardList extends Component {
 							siteId,
 							filter,
 							isLoading: false,
-							isVisible: true,
+							isVisible: true
 						} }
 					/>
 				) }
@@ -156,7 +160,7 @@ class ActivityCardList extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const rewind = getRewindState( state, siteId );
@@ -171,12 +175,12 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		filter,
 		rewind,
-		allowRestore,
+		allowRestore
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
+const mapDispatchToProps = dispatch => ( {
+	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) )
 } );
 
 export default connect(
