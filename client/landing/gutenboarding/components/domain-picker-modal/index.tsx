@@ -20,7 +20,11 @@ interface Props extends DomainPickerProps {
 }
 
 const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props } ) => {
+	// This is needed otherwise it throws a warning.
+	Modal.setAppElement( '#wpcom' );
+
 	if ( ! isOpen ) return null;
+
 	return (
 		<Modal
 			isOpen
