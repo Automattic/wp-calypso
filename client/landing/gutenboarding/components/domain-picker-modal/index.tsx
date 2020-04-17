@@ -22,7 +22,12 @@ interface Props extends DomainPickerProps {
 const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props } ) => {
 	if ( ! isOpen ) return null;
 	return (
-		<Modal isOpen className="domain-picker-modal" overlayClassName="domain-picker-modal-overlay">
+		<Modal
+			isOpen
+			className="domain-picker-modal"
+			overlayClassName="domain-picker-modal-overlay"
+			bodyOpenClassName="has-domain-picker-modal"
+		>
 			<DomainPicker showDomainConnectButton showDomainCategories { ...props } />
 		</Modal>
 	);

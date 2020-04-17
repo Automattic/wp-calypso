@@ -49,3 +49,10 @@
 	top: 0;
 	left: 0;
 }
+
+// Hide onboarding block when domain picker modal is open
+body.has-domain-picker-modal {
+	.onboarding-block {
+		display: none;
+	}
+}
