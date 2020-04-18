@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,19 +51,13 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getDisplayedTimeFromPost( post ) {
+	getDisplayedTimeFromPost() {
 		const moment = this.props.moment;
 
 		const now = moment();
 
-		if ( ! post ) {
-			// Placeholder text: "a few seconds ago" in English locale
-			return now.fromNow();
-		}
-
-		const { status, modified, date } = post;
-		const time = moment( includes( [ 'draft', 'pending', 'future' ], status ) ? modified : date );
-		if ( now.diff( time, 'days' ) >= 7 ) {
+		const time = this.getTimestamp();
+		if ( now.diff( this.getTimestamp(), 'days' ) >= 7 ) {
 			// Like "Mar 15, 2013 6:23 PM" in English locale
 			return time.format( 'lll' );
 		}
@@ -75,16 +68,16 @@ class PostRelativeTime extends React.PureComponent {
 
 	getTimeText() {
 		const time = this.getTimestamp();
-		if ( ! time ) {
-			return null;
-		}
-
 		return (
 			<span className="post-relative-time-status__time">
-				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
-				<time className="post-relative-time-status__time-text" dateTime={ time }>
-					{ this.getDisplayedTimeFromPost( this.props.post ) }
-				</time>
+				{ time && (
+					<>
+						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						<time className="post-relative-time-status__time-text" dateTime={ time }>
+							{ this.getDisplayedTimeFromPost( this.props.post ) }
+						</time>
+					</>
+				) }
 			</span>
 		);
 	}
@@ -105,7 +98,7 @@ class PostRelativeTime extends React.PureComponent {
 		} else if ( status === 'future' ) {
 			const moment = this.props.moment;
 			const now = moment();
-			const scheduledDate = moment( this.props.post.date );
+			const scheduledDate = moment( this.getTimestamp() );
 			// If the content is scheduled to be release within a year, do not display the year at the end
 			const scheduledTime = scheduledDate.calendar( null, {
 				sameElse: this.props.translate( 'll [at] LT', {
@@ -152,18 +145,9 @@ class PostRelativeTime extends React.PureComponent {
 	}
 
 	render() {
-		const { post, showPublishedStatus } = this.props;
+		const { showPublishedStatus } = this.props;
 		const timeText = this.getTimeText();
-		const statusText = this.getStatusText();
-		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
-		const time = this.getTimestamp();
-
-		let innerText = (
-			<span>
-				{ timeText }
-				{ ( post.status === 'future' || showPublishedStatus ) && statusText }
-			</span>
-		);
+		let innerText = <span>{ showPublishedStatus ? this.getStatusText() : timeText }</span>;
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
@@ -180,6 +164,8 @@ class PostRelativeTime extends React.PureComponent {
 			);
 		}
 
+		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
+		const time = this.getTimestamp();
 		return (
 			<div className={ relativeTimeClass } title={ time }>
 				{ innerText }
