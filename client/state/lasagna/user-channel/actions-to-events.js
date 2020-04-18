@@ -7,12 +7,12 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/action-types';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 import { socket } from '../socket';
 
 let channel = null;
 
-const debug = debugFactory( 'lasagna:channel:user:wpcom' );
+const debug = debugFactory( 'lasagna:channel:user' );
 
 const joinChannel = ( store ) => {
 	if ( ! socket || channel ) {
@@ -20,12 +20,13 @@ const joinChannel = ( store ) => {
 	}
 
 	const userId = getCurrentUserId( store.getState() );
+	const jwt = getCurrentUserLasagnaJwt( store.getState() );
 
-	if ( ! userId ) {
+	if ( ! userId || ! jwt ) {
 		return;
 	}
 
-	channel = socket.channel( `user:wpcom:${ userId }` );
+	channel = socket.channel( `push:wordpress.com:user:${ userId }`, { jwt } );
 	// registerEventHandlers here
 
 	channel

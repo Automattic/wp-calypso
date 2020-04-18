@@ -16,8 +16,8 @@ import { socket } from '../socket';
 
 let channel = null;
 
-const channelTopicPrefix = 'public:push:wp_post:';
-const debug = debugFactory( 'lasagna:channel:public:push:wp_post' );
+const channelTopicPrefix = 'push:no_auth:wordpress.com:wp_post:';
+const debug = debugFactory( 'lasagna:channel:push:no_auth:wp_post' );
 
 const joinChannel = ( store, site, post ) => {
 	if ( ! socket || site.is_private ) {
