@@ -20,14 +20,12 @@ class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
 		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,
-		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
 		target: PropTypes.string,
 		gridiconSize: PropTypes.number,
 	};
 
 	static defaultProps = {
-		includeNonDraftStatuses: false,
 		link: null,
 		target: null,
 	};
@@ -124,14 +122,6 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'trashed' );
 			statusClassName += ' is-trash';
 			statusIcon = 'trash';
-		} else if ( this.props.includeBasicStatus ) {
-			if ( status === 'draft' ) {
-				statusText = this.props.translate( 'draft' );
-			} else if ( status === 'publish' ) {
-				statusText = this.props.translate( 'published' );
-			} else if ( status === 'new' ) {
-				statusText = this.props.translate( 'Publish immediately' );
-			}
 		}
 
 		if ( statusText ) {
