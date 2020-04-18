@@ -474,6 +474,10 @@ export class PlansFeaturesMain extends Component {
 				</Button>
 			);
 		}
+		if ( ! headerText ) {
+			return null;
+		}
+
 		return (
 			<FormattedHeader
 				headerText={ headerText }
