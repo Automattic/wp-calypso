@@ -49,30 +49,21 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getDisplayedTimeFromPost() {
-		const moment = this.props.moment;
-
-		const now = moment();
-
-		const time = moment( this.getTimestamp() );
-		if ( now.diff( this.getTimestamp(), 'days' ) >= 7 ) {
-			// Like "Mar 15, 2013 6:23 PM" in English locale
-			return time.format( 'lll' );
-		}
-
-		// Like "3 days ago" in English locale
-		return time.fromNow();
-	}
-
 	getDisplayedTimeForLabel() {
 		const moment = this.props.moment;
 		const now = moment();
 		const scheduledDate = moment( this.getTimestamp() );
+
+		if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
+			const time = moment( this.getTimestamp() );
+			return time.fromNow();
+		}
+
 		// If the content is scheduled to be release within a year, do not display the year at the end
 		const scheduledTime = scheduledDate.calendar( null, {
-			sameElse: this.props.translate( 'll [at] LT', {
+			sameElse: this.props.translate( '[on] ll [at] LT', {
 				comment:
-					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
 			} ),
 		} );
 
@@ -89,7 +80,7 @@ class PostRelativeTime extends React.PureComponent {
 					<>
 						<Gridicon icon="time" size={ this.props.gridIconSize || 18 } />
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
-							{ this.getDisplayedTimeFromPost( this.props.post ) }
+							{ this.getDisplayedTimeForLabel() }
 						</time>
 					</>
 				) }
@@ -97,6 +88,12 @@ class PostRelativeTime extends React.PureComponent {
 		);
 	}
 
+	/**
+	 * Get status label
+	 *
+	 * @param {boolean} onlySticky sends back the "sticky" label. Special case as is using the same template but for is unrelated to the status
+	 *
+	 */
 	getStatusText( onlySticky = false ) {
 		const status = this.props.post.status;
 		let statusClassName = 'post-relative-time-status__status';
@@ -114,7 +111,7 @@ class PostRelativeTime extends React.PureComponent {
 			statusClassName += ' is-trash';
 			statusIcon = 'trash';
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'trashed on %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'trashed %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a post or page was trashed',
 				args: {
 					displayScheduleTime,
@@ -124,7 +121,7 @@ class PostRelativeTime extends React.PureComponent {
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'scheduled for %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'scheduled %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a scheduled post or page is set to be published',
 				args: {
 					displayScheduleTime,
@@ -132,7 +129,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'draft' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft on %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'draft modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a draft post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -140,7 +137,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'publish' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published on %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'published modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -148,7 +145,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'private' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'private on %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'private modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a private post or page was last modified',
 				args: {
 					displayScheduleTime,
