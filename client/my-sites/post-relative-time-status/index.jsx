@@ -33,14 +33,20 @@ class PostRelativeTime extends React.PureComponent {
 		target: null,
 	};
 
+	/**
+	 * Get the date to be displayed depending on the status of the post
+	 */
 	getTimestamp() {
 		switch ( this.props.post.status ) {
 			case 'new':
 				return null;
+
 			case 'draft':
-			case 'future':
+			case 'trash':
 			case 'pending':
 				return this.props.post.modified;
+
+			case 'future':
 			default:
 				return this.props.post.date;
 		}
