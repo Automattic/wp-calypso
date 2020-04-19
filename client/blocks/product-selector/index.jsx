@@ -579,7 +579,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
+					{ hasProductPurchase && this.renderManageButton( product, purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
 							{ product.hasPromo && (
