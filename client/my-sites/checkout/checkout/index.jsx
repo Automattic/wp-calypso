@@ -536,10 +536,9 @@ export class Checkout extends React.Component {
 		// We want to be product-specific, as the same path will likely be used for
 		// WP.com sites purchasing Search.
 		if (
-			product === 'jetpack_search' ||
-			product === 'jetpack_scan' ||
-			product === 'jetpack_backup_daily' ||
-			product === 'jetpack_backup_monthly'
+			startsWith( product, 'jetpack_backup' ) ||
+			startsWith( product, 'jetpack_search' ) ||
+			startsWith( product, 'jetpack_scan' )
 		) {
 			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
 		} else {
