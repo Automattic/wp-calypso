@@ -6,7 +6,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, get, includes } from 'lodash';
+import { concat, flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -33,6 +33,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
+
 import {
 	JPC_PATH_PLANS,
 	JPC_PATH_REMOTE_INSTALL,
@@ -43,6 +44,7 @@ import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
 	IS_DOT_COM,
+	IS_DOT_COM_GET_SEARCH,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
@@ -284,7 +286,13 @@ export class JetpackConnectMain extends Component {
 		) {
 			return WORDPRESS_DOT_COM;
 		}
+
 		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
+			const product = window.location.href.split( '/' )[ 5 ];
+
+			if ( startsWith( product, 'jetpack_search' ) ) {
+				return IS_DOT_COM_GET_SEARCH;
+			}
 			return IS_DOT_COM;
 		}
 		if ( ! this.checkProperty( 'exists' ) ) {
