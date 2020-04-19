@@ -11,8 +11,11 @@ import { localize } from 'i18n-calypso';
  */
 import FoldableCard from 'components/foldable-card';
 import { Button } from '@automattic/components';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
+import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ExportMediaCard extends Component {
@@ -26,6 +29,8 @@ class ExportMediaCard extends Component {
 	render() {
 		const { mediaExportUrl, siteId, translate, recordMediaExportClick } = this.props;
 
+		const hasNoMediaFiles = this.props.mediaStorageUsed === 0 && ! mediaExportUrl;
+
 		const exportMediaButton = (
 			<Button
 				href={ mediaExportUrl }
@@ -33,13 +38,14 @@ class ExportMediaCard extends Component {
 				disabled={ ! mediaExportUrl }
 				onClick={ recordMediaExportClick }
 			>
-				{ translate( 'Download' ) }
+				{ hasNoMediaFiles ? translate( 'Upload files first' ) : translate( 'Download' ) }
 			</Button>
 		);
 
 		return (
 			<div className="export-media-card">
-				<QueryMediaExport siteId={ siteId } />
+				<QueryMediaStorage siteId={ siteId } />
+				{ ! hasNoMediaFiles && <QueryMediaExport siteId={ siteId } /> }
 				<FoldableCard
 					header={
 						<div>
@@ -61,6 +67,7 @@ class ExportMediaCard extends Component {
 export default connect(
 	state => ( {
 		mediaExportUrl: getMediaExportUrl( state ),
+		mediaStorageUsed: getMediaStorageUsed( state, getSelectedSiteId( state ) ),
 	} ),
 	{
 		recordMediaExportClick: () => recordTracksEvent( 'calypso_export_media_download_button_click' ),
