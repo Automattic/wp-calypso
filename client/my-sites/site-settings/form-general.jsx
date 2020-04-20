@@ -45,6 +45,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -478,6 +479,70 @@ export class SiteSettingsFormGeneral extends Component {
 		updateFields( { blog_public, wpcom_coming_soon } );
 	};
 
+	handleEarthDayLiveToggle = () => {
+		const { fields, submitForm, trackEvent, updateFields } = this.props;
+		const earth_day_live = ! fields.earth_day_live;
+		this.props.recordTracksEvent( 'calypso_general_settings_earthdaylive_updated', {
+			earth_day_live: earth_day_live,
+		} );
+		updateFields( { earth_day_live: earth_day_live }, () => {
+			submitForm();
+			trackEvent( 'Toggled Earth Day Live Toggle' );
+		} );
+	};
+
+	earthDayLiveOption() {
+		const { fields, isRequestingSettings, translate } = this.props;
+
+		const today = moment(),
+			lastDay = moment( { year: 2020, month: 4, day: 23 } );
+
+		if ( today.isAfter( lastDay, 'day' ) ) {
+			return null;
+		}
+
+		return(
+			<>
+				<SettingsSectionHeader title={ translate( 'Earth Day Live 2020' ) } />
+				<Card>
+					<FormFieldset>
+						<CompactFormToggle
+							checked={ !! fields.earth_day_live }
+							disabled={ isRequestingSettings }
+							onChange={ this.handleEarthDayLiveToggle }
+						>
+							{ translate(
+								'From April 22 - 24, activists, performers, thought leaders and artists will come together ' +
+									'for a {{earthDayLiveLink}}massive 3 day live stream{{/earthDayLiveLink}} for the future ' +
+									'of our planet. Show your support by displaying the {{earthDayLiveBannerLink}}Earth Day ' +
+									'Live banner{{/earthDayLiveBannerLink}} on your site. On April 22, the 50th anniversary ' +
+									'of Earth Day, the banner will expand to a full-screen overlay that site visitors can dismiss.',
+								{
+									components: {
+										earthDayLiveLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://www.earthdaylive2020.org/' }
+											/>
+										),
+										earthDayLiveBannerLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://www.earthdaylive2020.org/get-involved/#website-banner' }
+											/>
+										),
+									},
+								}
+							) }
+						</CompactFormToggle>
+					</FormFieldset>
+				</Card>
+			</>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = guessTimezone();
@@ -646,6 +711,8 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
+				{ ! siteIsJetpack && this.earthDayLiveOption() }
+
 				<SettingsSectionHeader
 					data-tip-target="settings-site-profile-save"
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -747,6 +814,7 @@ const getFormSettings = settings => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		admin_url: '',
+		earth_day_live: false,
 	};
 
 	if ( ! settings ) {
@@ -760,6 +828,7 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
+		earth_day_live: settings.earth_day_live,
 	};
 
 	if ( settings.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ) ) {
