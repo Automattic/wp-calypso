@@ -54,19 +54,23 @@ class PostRelativeTime extends React.PureComponent {
 		const now = moment();
 		const scheduledDate = moment( this.getTimestamp() );
 
-		if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
+		const isScheduledPost = this.props.post.status === 'future';
+		if ( ! isScheduledPost && Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
 			const time = moment( this.getTimestamp() );
 			return time.fromNow();
 		}
 
-		// If the content is scheduled to be release within a year, do not display the year at the end
 		const scheduledTime = scheduledDate.calendar( null, {
+			nextDay: this.props.translate( '[tomorrow at] LT', {
+				comment: 'LT refers to time (eg. 18:00)',
+			} ),
 			sameElse: this.props.translate( '[on] ll [at] LT', {
 				comment:
 					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
 			} ),
 		} );
 
+		// If the content is scheduled to be release within a year, do not display the year at the end
 		return scheduledDate.diff( now, 'years' ) > 0
 			? scheduledTime
 			: scheduledTime.replace( scheduledDate.format( 'Y' ), '' );
