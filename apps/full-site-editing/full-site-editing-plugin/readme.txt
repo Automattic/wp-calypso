@@ -14,8 +14,7 @@ Enhances your page creation workflow within the Block Editor.
 == Description ==
 
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
-to give you a head start on creating new pages for your site.
-
+to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
 
 == Installation ==
 

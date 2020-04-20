@@ -16,7 +16,8 @@ Alternatively you can manually build the app with `lerna` and copy the built fil
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`
-npx lerna run build --scope="@automattic/notifications"
+cd apps/notifications
+yarn build
 ```
 
 You will need to follow the directions in the Field Guide to deploy these artifacts.

@@ -40,7 +40,7 @@
 		@include breakpoint( '>960px' ) {
 			display: inline-block;
 			background: var( --color-threat-ignored );
-			margin: 0 20px;
+			margin: 0 12px;
 			width: 4px;
 			height: 4px;
 			border-radius: 50%;

@@ -62,6 +62,7 @@ export const SupportArticleDialog = ( {
 		<Dialog
 			isVisible
 			additionalClassNames="support-article-dialog"
+			baseClassName="support-article-dialog__base dialog"
 			buttons={ [
 				<Button onClick={ closeSupportArticleDialog }>
 					{ translate( 'Close', { textOnly: true } ) }

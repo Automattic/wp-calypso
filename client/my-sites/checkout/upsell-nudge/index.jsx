@@ -35,7 +35,6 @@ import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { addQueryArgs } from 'lib/url';
 
 /**
  * Style dependencies
@@ -167,21 +166,12 @@ export class UpsellNudge extends React.Component {
 		}
 	}
 
-	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+	handleClickDecline = () => {
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
+		handleCheckoutCompleteRedirect();
 	};
-
-	getCheckoutUrl( url ) {
-		return addQueryArgs(
-			{
-				upgrade: 1,
-			},
-			url
-		);
-	}
 
 	handleClickAccept = buttonAction => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
@@ -191,8 +181,8 @@ export class UpsellNudge extends React.Component {
 		);
 
 		return siteSlug
-			? page( this.getCheckoutUrl( `/checkout/${ upgradeItem }/${ siteSlug }` ) )
-			: page( this.getCheckoutUrl( `/checkout/${ upgradeItem }` ) );
+			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
+			: page( `/checkout/${ upgradeItem }` );
 	};
 }
 

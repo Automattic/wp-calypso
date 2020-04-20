@@ -17,7 +17,7 @@ import { isFreePlan } from 'lib/products-values';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -25,18 +25,35 @@ import { getSite } from 'state/sites/selectors';
 import './style.scss';
 
 export const UpsellNudge = ( {
-	className,
-	showIcon = false,
-	isVip,
+	callToAction,
 	canManageSite,
-	site,
+	className,
+	compact,
+	description,
+	disableHref,
+	dismissPreferenceName,
+	event,
 	feature,
+	forceDisplay,
+	forceHref,
 	href,
+	icon,
+	isJetpack,
+	isVip,
+	list,
+	onClick,
+	onDismissClick,
 	plan,
 	planHasFeature,
-	jetpack,
-	forceDisplay,
-	...props
+	showIcon = false,
+	site,
+	title,
+	tracksClickName,
+	tracksClickProperties,
+	tracksDismissName,
+	tracksDismissProperties,
+	tracksImpressionName,
+	tracksImpressionProperties,
 } ) => {
 	const classes = classnames( 'upsell-nudge', className );
 
@@ -49,8 +66,8 @@ export const UpsellNudge = ( {
 		( feature && planHasFeature ) ||
 		( ! feature && ! isFreePlan( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-		( ! jetpack && site.jetpack ) ||
-		( jetpack && ! site.jetpack );
+		( ! isJetpack && site.jetpack ) ||
+		( isJetpack && ! site.jetpack );
 
 	if ( shouldNotDisplay && ! forceDisplay ) {
 		return null;
@@ -60,7 +77,34 @@ export const UpsellNudge = ( {
 		href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 	}
 
-	return <Banner { ...props } showIcon={ showIcon } className={ classes } href={ href } />;
+	return (
+		<Banner
+			callToAction={ callToAction }
+			className={ classes }
+			compact={ compact }
+			description={ description }
+			disableHref={ disableHref }
+			dismissPreferenceName={ dismissPreferenceName }
+			event={ event }
+			feature={ feature }
+			forceHref={ forceHref }
+			href={ href }
+			icon={ icon }
+			jetpack={ isJetpack }
+			list={ list }
+			onClick={ onClick }
+			onDismissClick={ onDismissClick }
+			plan={ plan }
+			showIcon={ showIcon }
+			title={ title }
+			tracksClickName={ tracksClickName }
+			tracksClickProperties={ tracksClickProperties }
+			tracksDismissName={ tracksDismissName }
+			tracksDismissProperties={ tracksDismissProperties }
+			tracksImpressionName={ tracksImpressionName }
+			tracksImpressionProperties={ tracksImpressionProperties }
+		/>
+	);
 };
 
 export default connect( ( state, ownProps ) => {
@@ -70,6 +114,7 @@ export default connect( ( state, ownProps ) => {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 	};
 } )( localize( UpsellNudge ) );

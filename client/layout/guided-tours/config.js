@@ -6,6 +6,7 @@ import tutorialSitePreview from 'layout/guided-tours/tours/tutorial-site-preview
 import gdocsIntegrationTour from 'layout/guided-tours/tours/gdocs-integration-tour/meta';
 import simplePaymentsTour from 'layout/guided-tours/tours/simple-payments-tour/meta';
 import editorBasicsTour from 'layout/guided-tours/tours/editor-basics-tour/meta';
+import marketingConnectionsTour from 'layout/guided-tours/tours/marketing-connections-tour/meta';
 import mediaBasicsTour from 'layout/guided-tours/tours/media-basics-tour/meta';
 import checklistSiteTitle from 'layout/guided-tours/tours/checklist-site-title-tour/meta';
 import jetpackBackupsRewind from 'layout/guided-tours/tours/jetpack-backups-rewind-tour/meta';
@@ -32,6 +33,7 @@ export default {
 	jetpackVideoHosting,
 	main,
 	editorBasicsTour,
+	marketingConnectionsTour,
 	mediaBasicsTour,
 	tutorialSitePreview,
 	gdocsIntegrationTour,

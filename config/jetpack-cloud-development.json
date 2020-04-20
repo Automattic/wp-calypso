@@ -21,7 +21,12 @@
 		"jetpack-cloud/settings": true,
 		"jetpack-cloud/scan": true,
 		"jetpack-cloud/scan-history": true,
-		"jetpack-cloud/on-demand-scan": true
+		"jetpack-cloud/on-demand-scan": true,
+		"layout/app-banner": false,
+		"layout/guided-tours": false,
+		"layout/nps-survey-notice": false,
+		"layout/support-article-dialog": false,
+		"layout/query-selected-editor": false
 	},
 	"enable_all_sections": false,
 	"sections": {

@@ -256,10 +256,11 @@ class WpForTeamsSite extends React.Component {
 					errorMessages={ this.getErrorMessagesWithLogin( 'siteTitle' ) }
 					className="wp-for-teams-site__validation-site-title"
 				>
-					<FormLabel htmlFor="site-title">
+					<FormLabel htmlFor="site-title-input">
 						{ this.props.translate( "What's the name of your team or project?" ) }
 					</FormLabel>
 					<FormTextInput
+						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
 						className="wp-for-teams-site__site-title"
@@ -276,8 +277,11 @@ class WpForTeamsSite extends React.Component {
 					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
 					className="wp-for-teams-site__validation-site"
 				>
-					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
+					<FormLabel htmlFor="site-address-input">
+						{ this.props.translate( 'Choose a site address' ) }
+					</FormLabel>
 					<FormTextInput
+						id="site-address-input"
 						autoCapitalize={ 'off' }
 						className="wp-for-teams-site__site-url"
 						disabled={ fieldDisabled }

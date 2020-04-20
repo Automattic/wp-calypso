@@ -1,0 +1,68 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
+
+.domain-picker-modal-overlay {
+	// Absolute positioning allows the modal
+	// to reuse the <body> element's scrollbar.
+	position: absolute;
+
+	// This positions the domain picker modal
+	// right below the gutenboarding header,
+	// keeping the header clickable.
+	top: $gutenboarding-header-height;
+	left: 0;
+
+	// Using min-height lets the overlay cover
+	// the entire viewport ensuring nothing behind
+	// it can be seen.
+	//
+	// When the domain picker's content is taller
+	// than the viewport height, it will expand taller
+	// than the provided min-height, triggering
+	// the appearance of the <body> element's scrollbar.
+	min-height: calc( 100vh - #{$gutenboarding-header-height} );
+	width: 100%;
+
+	background: var( --studio-white );
+}
+
+.domain-picker-modal {
+
+
+	.domain-picker__panel-row-main {
+
+		// Replace domain picker's padding with onboarding block margins
+		padding: 0;
+
+		// Increase specificity to override margin: 0 from .components-panel__row
+		&.components-panel__row {
+			@include onboarding-block-margin;
+		}
+	}
+
+	.domain-picker__header {
+		@include onboarding-heading-padding;
+		margin-bottom: 27px; // Maintain the same 27px bottom margin as in the original domain picker
+
+		@include break-mobile {
+			margin-bottom: 27px;
+		}
+	}
+
+	.domain-picker__header-title {
+		@include onboarding-heading-text;
+	}
+
+	// Do not display domain picker footer which contains
+	// the confirm button when showing inside a modal.
+	.domain-picker__panel-row-footer {
+		display: none;
+	}
+}
+
+// Hide onboarding block when domain picker modal is open
+body.has-domain-picker-modal {
+	.onboarding-block {
+		display: none;
+	}
+}

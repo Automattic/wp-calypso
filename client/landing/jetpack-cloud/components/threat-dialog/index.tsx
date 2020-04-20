@@ -37,11 +37,12 @@ class ThreatDialog extends React.PureComponent< Props > {
 			threatDescription,
 			threatTitle,
 		} = this.props;
+		const isScary = action !== 'fix';
 		const buttons = [
 			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
 				{ translate( 'Go back' ) }
 			</Button>,
-			<Button primary className="threat-dialog__btn" onClick={ onConfirmation }>
+			<Button primary scary={ isScary } className="threat-dialog__btn" onClick={ onConfirmation }>
 				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
 			</Button>,
 		];

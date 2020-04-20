@@ -45,27 +45,29 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		if ( siteVertical?.label ) {
+		if ( siteVertical?.label && isVisible ) {
 			inputRef.current.focus();
 		}
-	}, [ siteVertical, inputRef ] );
+	}, [ siteVertical, isVisible, inputRef ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
 	const madlib = createInterpolateElement( madlibTemplate, {
 		Input: (
-			<span
-				contentEditable
-				tabIndex={ 0 }
-				role="textbox"
-				aria-multiline="true"
-				spellCheck={ false }
-				ref={ inputRef }
-				/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-				className="madlib__input"
-				onKeyDown={ handleKeyDown }
-				onKeyUp={ handleKeyUp }
-			/>
+			<span className="site-title__input-wrapper">
+				<span
+					contentEditable
+					tabIndex={ 0 }
+					role="textbox"
+					aria-multiline="true"
+					spellCheck={ false }
+					ref={ inputRef }
+					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+					className="madlib__input"
+					onKeyDown={ handleKeyDown }
+					onKeyUp={ handleKeyUp }
+				/>
+			</span>
 		),
 	} );
 

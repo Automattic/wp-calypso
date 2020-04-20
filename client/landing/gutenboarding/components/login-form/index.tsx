@@ -15,15 +15,6 @@ import EnterUsernameOrEmailForm from './enter-username-or-email';
 import EnterPasswordForm from './enter-password';
 import './style.scss';
 
-// TODO: deploy this change to @types/wordpress__element
-declare module '@wordpress/element' {
-	// eslint-disable-next-line no-shadow
-	export function createInterpolateElement(
-		interpolatedString: string,
-		conversionMap: Record< string, ReactElement >
-	): ReactNode;
-}
-
 interface Props {
 	onRequestClose: () => void;
 	onOpenSignup: () => void;

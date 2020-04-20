@@ -47,13 +47,11 @@ fi
 
 cd wp-calypso
 nvm use
-npm ci
-
-# Run an initial FSE build so that the plugin can load correctly.
-npx lerna run build --scope='@automattic/full-site-editing' --stream --no-prefix
+yarn
 
 # Where the wp-env.json file lives:
 cd apps/full-site-editing
+yarn build
 
 echo -e "\nWould you like to use the development version of wp-env? You can checkout the correct Gutenberg branch and build it before continuing."
 read -p "Type y to use the development version of wp-env. Otherwise, it will use the published version. "

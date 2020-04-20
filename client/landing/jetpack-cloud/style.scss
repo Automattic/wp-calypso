@@ -1,6 +1,22 @@
+.theme-jetpack-cloud,
+.color-scheme.is-jetpack-cloud {
+
+	.main {
+		box-sizing: border-box;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.current-section {
+		margin-left: -16px;
+		margin-right: -16px;
+	}
+}
+
 .theme-jetpack-cloud .main,
 .color-scheme.is-jetpack-cloud .main,
-.theme-jetpack-cloud .ReactModalPortal {
+.theme-jetpack-cloud .ReactModalPortal,
+.theme-jetpack-cloud .popover {
 	.button {
 		color: var( --color-primary-60 );
 		background: var( --studio-white );
@@ -20,28 +36,76 @@
 		&[disabled],
 		&:disabled {
 			color: var( --studio-gray-10 );
+			background: none;
 			border-color: var( --color-gray-10 );
+			background: var( --studio-white );
 		}
 	}
 
 	.button.is-primary {
 		color: var( --studio-white );
 		background: var( --color-primary-40 );
-		border: none;
 
 		&:hover,
 		&:focus {
 			background: var( --color-primary-30 );
-			border: none;
+			border-color: var( --color-primary-30 );
 		}
 
 		&:active {
 			background: var( --color-primary-50 );
+			border-color: var( --color-primary-50 );
 		}
 
 		&[disabled],
 		&:disabled {
 			background: var( --studio-gray-10 );
+			border-color: var( --studio-gray-10 );
+		}
+	}
+
+	.button.is-scary {
+		color: var( --color-scary-60 );
+		border-color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			background: var( --color-scary-0 );
+		}
+
+		&:active {
+			background: var( --color-scary-5 );
+			border-color: var( --color-scary-40 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --studio-gray-10 );
+			background: none;
+			border-color: var( --color-gray-10 );
+		}
+	}
+
+	.button.is-primary.is-scary {
+		color: var( --studio-white );
+		background: var( --color-scary-50 );
+		border-color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			background: var( --color-scary-40 );
+			border-color: var( --color-scary-40 );
+		}
+
+		&:active {
+			background: var( --color-scary-60 );
+			border-color: var( --color-scary-60 );
+		}
+
+		&[disabled],
+		&:disabled {
+			background: var( --studio-gray-10 );
+			border-color: var( --studio-gray-10 );
 		}
 	}
 
@@ -86,5 +150,30 @@
 		&:disabled {
 			color: var( --studio-gray-10 );
 		}
+	}
+
+	.button.is-borderless.is-primary.is-scary {
+		color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-scary-40 );
+		}
+
+		&:active {
+			color: var( --color-scary-60 );
+		}
+	}
+}
+
+.theme-jetpack-cloud .ReactModalPortal {
+	.dialog.card {
+		box-shadow: 0 0 0 1px var( --color-border-subtle ),
+					0 4px 12px var( --color-neutral-10 );
+		border-radius: 3px;
+	}
+
+	.dialog__action-buttons {
+		border-radius: 0 0 3px 3px;
 	}
 }

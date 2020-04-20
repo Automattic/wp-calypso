@@ -115,7 +115,7 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-0' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
@@ -128,7 +128,7 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-1' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }

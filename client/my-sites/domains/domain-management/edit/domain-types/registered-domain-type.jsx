@@ -39,11 +39,20 @@ import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
+import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
 
 class RegisteredDomainType extends React.Component {
 	resolveStatus() {
 		const { domain, translate, purchase, moment } = this.props;
 		const { registrationDate, expiry } = domain;
+
+		if ( domain.pendingTransfer ) {
+			return {
+				statusText: translate( 'Outbound transfer initiated' ),
+				statusClass: 'status-error',
+				icon: 'cached',
+			};
+		}
 
 		if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
 			return {
@@ -110,7 +119,7 @@ class RegisteredDomainType extends React.Component {
 		const { domain, purchase, translate, moment } = this.props;
 		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
-		if ( ! domain.expired ) {
+		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
 		}
 
@@ -203,7 +212,7 @@ class RegisteredDomainType extends React.Component {
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
-		if ( ! recentlyRegistered ) {
+		if ( ! recentlyRegistered || domain.pendingTransfer ) {
 			return null;
 		}
 
@@ -223,6 +232,11 @@ class RegisteredDomainType extends React.Component {
 				) }
 			</div>
 		);
+	}
+
+	renderOutboundTransferInProgress() {
+		const { domain, selectedSite } = this.props;
+		return <OutboundTransferConfirmation domain={ domain } siteId={ selectedSite.ID } />;
 	}
 
 	renderDefaultRenewButton() {
@@ -304,7 +318,6 @@ class RegisteredDomainType extends React.Component {
 				selectedSite={ this.props.selectedSite }
 				ruleWhiteList={ [
 					'pendingGSuiteTosAcceptanceDomains',
-					'pendingTransfer',
 					'newTransfersWrongNS',
 					'pendingConsent',
 				] }
@@ -354,6 +367,7 @@ class RegisteredDomainType extends React.Component {
 					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
+					{ this.renderOutboundTransferInProgress() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>

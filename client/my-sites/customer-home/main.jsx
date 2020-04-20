@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import Notices from 'my-sites/customer-home/locations/notices';
 import Upsells from 'my-sites/customer-home/locations/upsells';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
+import Tertiary from 'my-sites/customer-home/locations/tertiary';
 
 /**
  * Style dependencies
@@ -92,14 +94,26 @@ const Home = ( {
 						checklistMode={ checklistMode }
 						displayChecklist={ displayChecklist }
 					/>
-					<Upsells cards={ layout.upsells } />
+					{ config.isEnabled( 'home/experimental-layout' ) ? (
+						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+					) : (
+						<Upsells cards={ layout.upsells } />
+					) }
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">
-								<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+								{ config.isEnabled( 'home/experimental-layout' ) ? (
+									<Secondary cards={ layout.secondary } />
+								) : (
+									<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+								) }
 							</div>
 							<div className="customer-home__layout-col customer-home__layout-col-right">
-								<Secondary cards={ layout.secondary } />
+								{ config.isEnabled( 'home/experimental-layout' ) ? (
+									<Tertiary cards={ layout.tertiary } />
+								) : (
+									<Secondary cards={ layout.secondary } />
+								) }
 							</div>
 						</div>
 					) }

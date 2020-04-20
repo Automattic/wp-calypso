@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { get } from 'lodash';
 
 /**
@@ -16,6 +15,7 @@ import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils
 import {
 	/*backupDetailPath,*/ backupDownloadPath,
 	backupRestorePath,
+	backupMainPath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
@@ -25,19 +25,9 @@ import { Card } from '@automattic/components';
  */
 import './style.scss';
 
+const INDEX_FORMAT = 'YYYYMMDD';
+
 class DailyBackupStatus extends Component {
-	triggerRestore = () => {
-		page.redirect( backupRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
-	};
-
-	triggerDownload = () => {
-		page.redirect( backupDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
-	};
-
-	goToDetailsPage() {
-		//page.redirect( backupDetailPath( this.props.siteSlug, this.props.backup.rewindId ) );
-	}
-
 	getDisplayDate = ( date, withLatest = true ) => {
 		const { translate, moment, timezone, gmtOffset } = this.props;
 
@@ -76,7 +66,7 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, translate } = this.props;
+		const { allowRestore, siteSlug, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 
@@ -91,8 +81,8 @@ class DailyBackupStatus extends Component {
 				<div className="daily-backup-status__date">{ displayDate }</div>
 				<div className="daily-backup-status__meta">{ meta }</div>
 				<ActionButtons
-					onDownloadClick={ this.triggerDownload }
-					onRestoreClick={ this.triggerRestore }
+					rewindId={ backup.rewindId }
+					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
 				/>
 			</>
@@ -186,7 +176,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderNoBackupOnDate() {
-		const { translate, selectedDate, onDateChange } = this.props;
+		const { translate, selectedDate, siteSlug } = this.props;
 
 		const displayDate = selectedDate.format( 'll' );
 		const nextDate = selectedDate.clone().add( 1, 'days' );
@@ -210,14 +200,11 @@ class DailyBackupStatus extends Component {
 							{
 								args: { displayNextDate },
 								components: {
-									//todo: href need implementation and add the correct query
 									link: (
 										<a
-											href="?date="
-											onClick={ event => {
-												event.preventDefault();
-												onDateChange( nextDate );
-											} }
+											href={ backupMainPath( siteSlug, {
+												date: nextDate.format( INDEX_FORMAT ),
+											} ) }
 										/>
 									),
 								},
@@ -240,7 +227,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderNoBackupToday( lastBackupDate ) {
-		const { translate, timezone, gmtOffset, moment, onDateChange } = this.props;
+		const { translate, timezone, gmtOffset, moment, siteSlug } = this.props;
 
 		const today = applySiteOffset( moment(), {
 			timezone: timezone,
@@ -274,14 +261,11 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
 						args: { lastBackupDay, lastBackupTime },
 						components: {
-							//todo: href need implementation and add the correct query
 							link: (
 								<a
-									href="?date="
-									onClick={ event => {
-										event.preventDefault();
-										onDateChange( lastBackupDate );
-									} }
+									href={ backupMainPath( siteSlug, {
+										date: lastBackupDate.format( INDEX_FORMAT ),
+									} ) }
 								/>
 							),
 						},
@@ -329,28 +313,29 @@ class DailyBackupStatus extends Component {
 	}
 }
 
-const ActionButtons = ( {
-	disabledDownload,
-	disabledRestore,
-	onDownloadClick,
-	onRestoreClick,
-} ) => {
+const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
 		<>
 			<Button
 				className="daily-backup-status__download-button"
-				onClick={ onDownloadClick }
+				href={ backupDownloadPath( siteSlug, rewindId ) }
 				disabled={ disabledDownload }
 				isPrimary={ false }
+				onClick={ event => {
+					disabledDownload && event.preventDefault();
+				} }
 			>
 				{ translate( 'Download backup' ) }
 			</Button>
 			<Button
 				className="daily-backup-status__restore-button"
+				href={ backupRestorePath( siteSlug, rewindId ) }
 				disabled={ disabledRestore }
-				onClick={ onRestoreClick }
+				onClick={ event => {
+					disabledRestore && event.preventDefault();
+				} }
 			>
 				{ translate( 'Restore to this point' ) }
 			</Button>

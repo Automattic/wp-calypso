@@ -56,6 +56,7 @@
 			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
+	"postUpdateOptions": [ "yarnDedupeHighest" ],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],

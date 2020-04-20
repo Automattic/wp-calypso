@@ -21,6 +21,8 @@ import {
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 } from 'state/action-types';
 
+import 'state/login/init';
+
 export const showMagicLoginCheckYourEmailPage = () => {
 	return {
 		type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
@@ -52,7 +54,7 @@ export const hideMagicLoginRequestNotice = () => {
 };
 
 async function postMagicLoginRequest( url, bodyObj ) {
-	const response = await fetch( url, {
+	const response = await globalThis.fetch( url, {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
