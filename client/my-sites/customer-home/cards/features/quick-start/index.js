@@ -79,13 +79,13 @@ const QuickStart = ( {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 		nextSession: getConciergeNextAppointment( state ),
 	} ),
-	dispatch => ( {
-		bookASession: siteSlug =>
+	( dispatch ) => ( {
+		bookASession: ( siteSlug ) =>
 			dispatch(
 				withAnalytics(
 					composeAnalytics(
@@ -96,7 +96,7 @@ export default connect(
 					)
 				)
 			),
-		viewDetails: siteSlug =>
+		viewDetails: ( siteSlug ) =>
 			dispatch(
 				withAnalytics(
 					composeAnalytics(
