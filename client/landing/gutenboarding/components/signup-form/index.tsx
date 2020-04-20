@@ -17,7 +17,7 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { trackEventWithFlow } from '../../utils/analytics';
+import { trackEventWithFlow } from '../../analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
