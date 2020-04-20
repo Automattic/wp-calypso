@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
 import debugModule from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,11 +71,11 @@ class InviteAcceptLoggedOut extends React.Component {
 
 		const enhancedUserData = { ...userData };
 
-		if ( invite.site.is_wpforteams_site ) {
+		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
 			enhancedUserData.signup_flow_name = 'wp-for-teams';
 		}
 
-		this.props.createAccount( enhancedUserData, this.props.invite, createAccountCallback );
+		this.props.createAccount( enhancedUserData, invite, createAccountCallback );
 	};
 
 	renderFormHeader = () => {
