@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -166,6 +166,7 @@ class ActivityCardList extends Component {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const siteCapabilities = getRewindCapabilities( state, siteId );
@@ -177,6 +178,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		siteId,
+		siteSlug,
 		filter,
 		rewind,
 		allowRestore,
