@@ -53,18 +53,27 @@ $progress-widget-height: 300px;
 		}
 
 		.create-site__progress-bar {
+			position: relative;
 			height: 6px;
-			background: var( --mainColor );
-			transform: scaleX( 0 );
-			transform-origin: 0% 0%;
 			margin-top: 1em;
+			background: var( --studio-gray-10 );
 
-			animation: create-site__progress-bar-progress-move #{$progress-duration + 1} ease-out forwards;
-
-			@keyframes create-site__progress-bar-progress-move {
-				@for $i from 1 through 3 {
-					#{$i / 3 * 100%} {
-						transform: scaleX( #{$i / 3} );
+			&::before {
+				background: var( --mainColor );
+				transform: scaleX( 0 );
+				transform-origin: 0% 0%;
+				position: absolute;
+				content: '';
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				animation: create-site__progress-bar-progress-move #{$progress-duration + 1} ease-out forwards;
+				@keyframes create-site__progress-bar-progress-move {
+					@for $i from 1 through 3 {
+						#{$i / 3 * 100%} {
+							transform: scaleX( #{$i / 3} );
+						}
 					}
 				}
 			}
