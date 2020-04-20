@@ -1,12 +1,8 @@
-.theme-jetpack-cloud .main {
-	margin-left: 0;
-}
 .theme-jetpack-cloud .main.sites {
 	margin-left: auto;
 }
 
 .scan__main {
-	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -24,7 +20,7 @@
 }
 
 .scan__content {
-	padding: 40px 16px 0;
+	padding-top: 40px;
 	flex: 1 0 auto;
 
 	.security-icon {
@@ -46,6 +42,11 @@
 		background-color: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
 	}
+}
+
+.scan__is-loading {
+	height: 300px;
+	@include placeholder( --color-neutral-10 );
 }
 
 .scan__header {

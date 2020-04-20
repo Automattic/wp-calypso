@@ -31,8 +31,12 @@ class ListItem extends React.PureComponent {
 		onSelect: PropTypes.func.isRequired,
 		selectionIndex: PropTypes.number,
 		isSelected: PropTypes.bool,
-		shouldUpgradeToMakePrimary: PropTypes.bool.isRequired,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		onUpgradeClick: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		shouldUpgradeToMakePrimary: false,
 	};
 
 	renderContent() {

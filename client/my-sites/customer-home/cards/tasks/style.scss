@@ -1,0 +1,30 @@
+.tasks.action-panel {
+	.tasks__timing {
+		display: flex;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+	}
+
+	.action-panel__title {
+		font-family: 'Recoleta', serif;
+		font-size: 36px;
+	}
+
+	.action-panel__figure {
+		max-width: 280px;
+	}
+
+	.tasks__description {
+		font-size: 16px;
+	}
+
+	.action-panel__cta {
+		display: flex;
+
+		.tasks__action-skip {
+			margin: auto 16px;
+		}
+	}
+}

@@ -2,11 +2,12 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+
 /**
  * Internal dependencies
  */
-import wpcomBlockPickerSearchTerm from './wpcom-block-picker-search-term-handler';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
+import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -17,7 +18,7 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  *
  * @type {Array}
  */
-const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomBlockPickerSearchTerm() ];
+const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomInserterInlineSearchTerm() ];
 
 /**
  * Checks the event for a selector which matches
@@ -25,10 +26,14 @@ const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomBlockPickerSearchTer
  * bubbling.
  *
  * @param  {DOMEvent} event          the DOM event
- * @param  {string} targetSelector the CSS selector for the target element
+ * @param  {string|Function} targetSelector the CSS selector for the target element
  * @returns {Node}                the target element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
+	if ( typeof targetSelector === 'function' ) {
+		return targetSelector( event );
+	}
+
 	return event.target.matches( targetSelector )
 		? event.target
 		: event.target.closest( targetSelector );

@@ -20,7 +20,6 @@ import {
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
-import CloseButton from '../close-button';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
@@ -32,6 +31,10 @@ import './style.scss';
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
+	showDomainConnectButton?: boolean;
+
+	showDomainCategories?: boolean;
+
 	/**
 	 * Callback that will be invoked when a domain is selected.
 	 *
@@ -40,7 +43,7 @@ export interface Props {
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
-	 * Callback that will be invoked when a close button is clicked
+	 * Callback that will be invoked when close button is clicked
 	 */
 	onClose: () => void;
 
@@ -69,7 +72,13 @@ const SearchIcon = () => (
 	/>
 );
 
-const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
+const DomainPicker: FunctionComponent< Props > = ( {
+	showDomainConnectButton,
+	showDomainCategories,
+	onDomainSelect,
+	onClose,
+	currentDomain,
+} ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
@@ -83,6 +92,21 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 		PAID_DOMAINS_TO_SHOW
 	);
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
+
+	const ConfirmButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
+		return (
+			<Button
+				className="domain-picker__confirm-button"
+				isPrimary
+				disabled={ ! hasSuggestions }
+				onClick={ onClose }
+				{ ...props }
+			>
+				{ __( 'Confirm' ) }
+			</Button>
+		);
+	};
 
 	return (
 		<Panel className="domain-picker">
@@ -91,15 +115,13 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 					<div className="domain-picker__header">
 						<div className="domain-picker__header-group">
 							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
-							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
+							{ showDomainConnectButton ? (
+								<p>TODO: Show domain connect text.</p>
+							) : (
+								<p>{ __( 'Free for the first year with any paid plan or connect a domain.' ) }</p>
+							) }
 						</div>
-						<CloseButton
-							onClose={ onClose }
-							// removing from tab flow as discussed in p1586489720342200-slack-gutenboarding
-							// @wordpress/popover finds and focuses on the first found focusable element which will be TextControl
-							// footer-button serve the same purpose and also ESC key in closing the popover
-							tabIndex={ -1 }
-						/>
+						<ConfirmButton />
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
@@ -111,6 +133,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							value={ domainSearch }
 						/>
 					</div>
+					{ showDomainCategories && <div>TODO: Show domain categories.</div> }
 					<div className="domain-picker__suggestion-item-group">
 						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
 						{ freeSuggestions &&
@@ -143,15 +166,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 				</PanelRow>
 				<PanelRow className="domain-picker__panel-row-footer">
 					<div className="domain-picker__footer">
-						<div className="domain-picker__footer-options"></div>
-						<Button
-							className="domain-picker__footer-button"
-							disabled={ ! freeSuggestions?.length && ! paidSuggestions?.length }
-							isPrimary
-							onClick={ onClose }
-						>
-							{ __( 'Confirm' ) }
-						</Button>
+						<ConfirmButton />
 					</div>
 				</PanelRow>
 			</PanelBody>

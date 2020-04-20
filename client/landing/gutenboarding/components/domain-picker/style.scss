@@ -89,31 +89,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__footer {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.domain-picker__footer-options.components-button {
-	@include onboarding-medium-text;
-	color: var( --color-neutral-100 );
-}
-
-.domain-picker__footer-button.components-button {
-	@include onboarding-medium-text;
-	padding: 0 24px;
-	height: 38px;
-}
-
-.domain-picker__connect-domain {
-	text-align: center;
-	margin-top: 14px;
-	color: var( --color-neutral-40 );
-}
-
-.domain-picker__connect-button {
-	&.components-button.is-link {
-		color: var( --color-neutral-40 );
-	}
+	justify-content: flex-end;
 }
 
 .domain-picker__suggestion-item-group {
@@ -211,14 +187,6 @@ $domain-picker__suggestion-item-height: 24px;
 	// be placed on the badge because if the badge falls
 	// on a newline, it will have whitespace on the left.
 	margin-right: 10px;
-}
-
-.domain-picker__has-domain {
-	align-items: center;
-
-	.components-button {
-		color: var( --studio-blue-30 );
-	}
 }
 
 .domain-picker__badge {

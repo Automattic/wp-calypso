@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
@@ -13,8 +12,8 @@ import {
 	startPollAppPushAuth,
 	stopPollAppPushAuth,
 	receivedTwoFactorPushNotificationApproved,
-	updateNonce,
-} from 'state/login/actions';
+} from 'state/login/actions/push/impl'; // Import implementations directly, to avoid cyclical refs.
+import { updateNonce } from 'state/login/actions/update-nonce';
 import {
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,

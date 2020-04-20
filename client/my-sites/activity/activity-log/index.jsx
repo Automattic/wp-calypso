@@ -418,7 +418,7 @@ class ActivityLog extends Component {
 			  );
 
 		return (
-			<div>
+			<>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
@@ -515,7 +515,7 @@ class ActivityLog extends Component {
 						/>
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 

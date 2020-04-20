@@ -1,15 +1,8 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins.scss';
 
 .onboarding-block {
-	margin: 0 20px;
-
-	@include break-small {
-		margin: 0 44px;
-	}
-
-	@include break-medium {
-		margin: 0 88px;
-	}
+	@include onboarding-block-margin;
 }
 
 .gutenboarding-page {
@@ -22,6 +15,7 @@
 		opacity: 0;
 		transform: translateY( 10px );
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY( 0 );

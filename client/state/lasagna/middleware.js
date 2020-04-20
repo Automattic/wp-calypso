@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 import { socket, socketConnect, socketDisconnect } from './socket';
 import privatePostChannelMiddleware from './private-post-channel/actions-to-events';
 import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
@@ -29,30 +28,24 @@ const combineMiddleware = ( ...m ) => {
  * @param store middleware store
  */
 const connectMiddleware = store => next => action => {
-	// bail unless this is a section set with the section definition
-	if ( action.type !== 'SECTION_SET' || ! action.section ) {
+	// bail unless this is a route set
+	if ( action.type !== 'ROUTE_SET' ) {
 		return next( action );
 	}
 
-	// connect if we are going to the reader without a socket
-	if ( ! socket && ! socketConnecting && action.section.name === 'reader' ) {
-		socketConnecting = true;
-		const user = getCurrentUser( store.getState() );
+	// we match the ROUTE_SET path because SECTION_SET can fire all over
+	// the place on hard loads of full post views and conversations
+	const readerPathRegex = new RegExp( '^/read$|^/read/' );
 
-		wpcom
-			.request( {
-				method: 'POST',
-				path: '/jwt/sign',
-				body: { payload: JSON.stringify( { user } ) },
-			} )
-			.then( ( { jwt } ) => {
-				socketConnect( store, jwt, user.ID );
-				socketConnecting = false;
-			} );
+	// connect if we are going to the reader without a socket
+	if ( ! socket && ! socketConnecting && readerPathRegex.test( action.path ) ) {
+		socketConnecting = true;
+		socketConnect( store, getCurrentUserLasagnaJwt( store.getState() ) );
+		socketConnecting = false;
 	}
 
 	// disconnect if we are leaving the reader with a socket
-	else if ( socket && action.section.name !== 'reader' ) {
+	else if ( socket && ! readerPathRegex.test( action.path ) ) {
 		socketDisconnect( store );
 	}
 

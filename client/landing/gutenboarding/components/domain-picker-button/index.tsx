@@ -2,18 +2,16 @@
  * External dependencies
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
-import { Button, Popover, Dashicon } from '@wordpress/components';
-import classnames from 'classnames';
+import { Button, Dashicon } from '@wordpress/components';
 
-// Core package needs to add this to the type definitions.
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
+import { Props as DomainPickerProps } from '../domain-picker';
+import DomainPickerPopover from '../domain-picker-popover';
+import DomainPickerModal from '../domain-picker-modal';
 
 /**
  * Style dependencies
@@ -37,16 +35,23 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
 
-	// Popover expands at medium viewport width
-	const isMobile = useViewportMatch( 'medium', '<' );
-
-	const handleClose = ( e?: React.FocusEvent ) => {
+	const handlePopoverClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
 			return;
 		}
 		setDomainPopoverVisibility( false );
+	};
+
+	const handleModalClose = () => {
+		setDomainModalVisibility( false );
+	};
+
+	const handleMoreOptions = () => {
+		setDomainPopoverVisibility( false );
+		setDomainModalVisibility( true );
 	};
 
 	return (
@@ -58,6 +63,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				aria-pressed={ isDomainPopoverVisible }
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
+					'is-modal-open': isDomainModalVisible,
 				} ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 				ref={ buttonRef }
@@ -65,25 +71,23 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<span className="domain-picker-button__label">{ children }</span>
 				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
-			{ isDomainPopoverVisible && (
-				<div className="domain-picker-button__popover-container">
-					<Popover
-						className="domain-picker-button__popover"
-						focusOnMount={ isMobile ? 'container' : 'firstElement' }
-						noArrow
-						onClose={ handleClose }
-						onFocusOutside={ handleClose }
-						position={ 'bottom center' }
-						expandOnMobile={ true }
-					>
-						<DomainPicker
-							currentDomain={ currentDomain }
-							onClose={ handleClose }
-							onDomainSelect={ onDomainSelect }
-						/>
-					</Popover>
-				</div>
-			) }
+			<DomainPickerPopover
+				isOpen={ isDomainPopoverVisible }
+				showDomainConnectButton={ false }
+				showDomainCategories={ false }
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onMoreOptions={ handleMoreOptions }
+				onClose={ handlePopoverClose }
+			/>
+			<DomainPickerModal
+				isOpen={ isDomainModalVisible }
+				showDomainConnectButton
+				showDomainCategories
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onClose={ handleModalClose }
+			/>
 		</>
 	);
 };

@@ -127,6 +127,12 @@ export function countrySpecificFieldRules( country ) {
 					description: i18n.translate( 'PAN - Permanent account number' ),
 					rules: [ 'validIndiaPan' ],
 				},
+				gstin: {
+					description: i18n.translate( 'GSTIN - GST identification number', {
+						comment: 'GSTIN: India specific tax id number',
+					} ),
+					rules: [ 'validIndiaGstin' ],
+				},
 				'postal-code': {
 					description: i18n.translate( 'Postal Code' ),
 					rules: [ 'required' ],

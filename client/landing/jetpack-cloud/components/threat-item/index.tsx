@@ -37,7 +37,6 @@ class ThreatItem extends Component< Props > {
 		const { onFixThreat, isFixing } = this.props;
 		return (
 			<Button
-				primary
 				compact
 				className={ classnames( 'threat-item__fix-button', className ) }
 				onClick={ onFixThreat }
@@ -72,6 +71,7 @@ class ThreatItem extends Component< Props > {
 				<div className="threat-item__buttons">
 					{ this.renderFixThreatButton( 'is-details' ) }
 					<Button
+						scary
 						compact
 						className="threat-item__ignore-button"
 						onClick={ onIgnoreThreat }

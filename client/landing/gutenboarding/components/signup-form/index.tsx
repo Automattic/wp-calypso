@@ -6,7 +6,6 @@ import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/com
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
+import { trackEventWithFlow } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
@@ -43,8 +43,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	};
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
-			flow: 'gutenboarding',
+		trackEventWithFlow( 'calypso_signup_step_enter', {
+			step: 'account_creation',
 		} );
 	}, [] );
 
@@ -68,6 +68,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		if ( success ) {
 			closeModal();
+			trackEventWithFlow( 'calypso_signup_step_leave', {
+				step: 'account_creation',
+			} );
 		}
 	};
 

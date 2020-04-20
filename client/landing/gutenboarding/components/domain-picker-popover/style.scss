@@ -1,0 +1,64 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
+
+.domain-picker-popover {
+
+	// This prevents popover's position from jumping
+	// caused by the width of the domain picker button changing
+	// when the currently selected domain has changed.
+	@include break-small {
+		position: fixed;
+		left: 72px;
+		top: 54px;
+	}
+
+	.components-popover__content {
+		border: 1px solid var( --studio-gray-5 );
+		box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
+		border-radius: 4px;
+
+		// Increase specificity
+		> div.domain-picker-popover__addons {
+			height: 0;
+			overflow: visible;
+		}
+	}
+
+	// Popover component adds a .is-expanded class under mobile view.
+	.components-popover.is-expanded {
+
+		// Hide popover header which is rendered under mobile view.
+		.components-popover__header {
+			display: none;
+		}
+
+		.components-popover__content {
+			height: 100%;
+		}
+	}
+
+	// Do not display confirm button on header
+	// when domain picker is displayed in a popover.
+	.domain-picker__header {
+		.domain-picker__confirm-button {
+			display: none;
+		}
+	}
+
+	.domain-picker-popover__close-button {
+		position: absolute;
+		top: 36px;
+		right: 36px;
+	}
+
+	.domain-picker-popover__more-button {
+		position: relative;
+		left: 36px;
+		top: -60px; // 24px padding - 36px button height 
+
+		&.components-button {
+			@include onboarding-medium-text;
+			color: var( --color-neutral-100 );
+		}
+	}
+}

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +17,8 @@ import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
-	getDomainRegistrations,
 	hasDomainRegistration,
+	hasTransferProduct,
 	hasPlan,
 	planItem,
 } from 'lib/cart-values/cart-items';
@@ -30,6 +31,8 @@ import { getPlan } from 'lib/plans';
 import { getPlanPrice } from 'state/products-list/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getAllCartItems } from '../../../lib/cart-values/cart-items';
+import { isDomainRegistration, isDomainTransfer } from '../../../lib/products-values';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
@@ -38,7 +41,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 		hasPaidPlan: PropTypes.bool,
 		hasPlanInCart: PropTypes.bool,
 		isPlansListFetching: PropTypes.bool,
-		isRegisteringDomain: PropTypes.bool,
+		isRegisteringOrTransferringDomain: PropTypes.bool,
 		isSitePlansListFetching: PropTypes.bool,
 		personalPlan: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		planPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -54,9 +57,13 @@ class CartFreeUserPlanUpsell extends React.Component {
 		return isLoadingCart || isLoadingPlans || isLoadingSitePlans;
 	}
 
+	isRegistrationOrTransfer = item => {
+		return isDomainRegistration( item ) || isDomainTransfer( item );
+	};
+
 	getUpgradeText() {
 		const { cart, planPrice, translate } = this.props;
-		const firstDomain = getDomainRegistrations( cart )[ 0 ];
+		const firstDomain = find( getAllCartItems( cart ), this.isRegistrationOrTransfer );
 
 		if ( planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
@@ -107,13 +114,17 @@ class CartFreeUserPlanUpsell extends React.Component {
 		const {
 			hasPaidPlan,
 			hasPlanInCart,
-			isRegisteringDomain,
+			isRegisteringOrTransferringDomain,
 			selectedSite,
 			showPlanUpsell,
 		} = this.props;
 
 		return (
-			isRegisteringDomain && showPlanUpsell && selectedSite && ! hasPaidPlan && ! hasPlanInCart
+			isRegisteringOrTransferringDomain &&
+			showPlanUpsell &&
+			selectedSite &&
+			! hasPaidPlan &&
+			! hasPlanInCart
 		);
 	}
 
@@ -153,7 +164,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
 		hasPlanInCart: hasPlan( cart ),
 		isPlansListFetching: isPlansListFetching,
-		isRegisteringDomain: hasDomainRegistration( cart ),
+		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasTransferProduct( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
 		personalPlan: personalPlan,
 		planPrice:

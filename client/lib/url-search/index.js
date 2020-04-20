@@ -79,7 +79,7 @@ const UrlSearch = Component =>
 		};
 
 		getSearchOpen = () => {
-			return this.state.searchOpen !== false || this.props.search;
+			return this.state.searchOpen !== false || !! this.props.search;
 		};
 
 		render() {
