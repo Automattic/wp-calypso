@@ -28,7 +28,7 @@ import {
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
-import { recordOnboardingComplete } from '../../analytics';
+import { recordOnboardingComplete } from '../../lib/analytics';
 
 const wpcom = wp.undocumented();
 

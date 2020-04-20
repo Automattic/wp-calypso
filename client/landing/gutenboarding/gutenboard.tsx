@@ -23,7 +23,7 @@ import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import GUTENARDING_BASE_NAME from './basename.json';
-import { recordOnboardingStart } from './analytics';
+import { recordOnboardingStart } from './lib/analytics';
 
 registerBlockType( name, settings );
 
