@@ -51,9 +51,11 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	submitForm = ( form, userData ) => {
+		const { invite } = this.props;
+
 		this.setState( { submitting: true } );
-		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
-		store.set( 'invite_accepted', this.props.invite );
+		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
+		store.set( 'invite_accepted', invite );
 		const createAccountCallback = ( error, bearerToken ) => {
 			debug( 'Create account error: ' + JSON.stringify( error ) );
 			debug( 'Create account bearerToken: ' + bearerToken );
@@ -66,7 +68,13 @@ class InviteAcceptLoggedOut extends React.Component {
 			}
 		};
 
-		this.props.createAccount( userData, this.props.invite, createAccountCallback );
+		const enhancedUserData = { ...userData };
+
+		if ( invite.site.is_wpforteams_site ) {
+			enhancedUserData.signup_flow_name = 'wp-for-teams';
+		}
+
+		this.props.createAccount( enhancedUserData, this.props.invite, createAccountCallback );
 	};
 
 	renderFormHeader = () => {
