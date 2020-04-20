@@ -96,7 +96,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		dispatch(
 			recordTracksEvent( `calypso_scan_all_threats_fix`, {
 				site_id: site.ID,
-				numberOfThreats: threats.length,
+				threats_number: threats.length,
 			} )
 		);
 		threats.forEach( ( threat ) => {
