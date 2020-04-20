@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
