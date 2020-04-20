@@ -11,7 +11,7 @@ import { FLOW_ID } from '../constants';
 /**
  * Make tracks call with embedded flow.
  *
- * @param {string} eventId The name/id of the tracks event. Should be like `calypso_something_snake_case`
+ * @param {string} eventId The name/id of the tracks event. Must be in snake_case and prefixed with "calypso" e.g. `calypso_something_snake_case`
  * @param {object} params A set of params to pass to analytics
  * @param {string} flow (Optional) The id of the flow, e.g., 'gutenboarding'
  */
