@@ -93,7 +93,8 @@ export default connect(
 							siteSlug: siteSlug,
 						} ),
 						bumpStat( 'calypso_customer_home', 'book_quick_start_session' )
-					)
+					),
+					navigate( `/me/concierge/${ siteSlug }/book` )
 				)
 			),
 		viewDetails: ( siteSlug ) =>
