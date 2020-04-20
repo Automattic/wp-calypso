@@ -25,13 +25,34 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the functions [createStripeMethod](#createstripemethod), [createApplePayMethod](#createapplepaymethod), [createPayPalMethod](#createpaypalmethod), [createFullCreditsMethod](#createFullCreditsMethod), and [createExistingCardMethod](#createExistingCardMethod).
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
+ - [createApplePayMethod](#createapplepaymethod)
+ - [createExistingCardMethod](#createExistingCardMethod)
+ - [createFullCreditsMethod](#createFullCreditsMethod)
+ - [createPayPalMethod](#createpaypalmethod)
+ - [createStripeMethod](#createstripemethod)
 
-Any component which is a child of `CheckoutProvider` gets access to the custom hooks [useAllPaymentMethods](#useAllPaymentMethods), [useEvents](#useEvents), [useFormStatus](#useFormStatus), [useMessages](#useMessages), [useDispatch](#useDispatch), [useLineItems](#useLineItems), [usePaymentMethod](#usePaymentMethodId), [usePaymentMethodId](#usePaymentMethodId), [useRegisterStore](#useRegisterStore), [useRegistry](#useRegistry), [useSelect](#useSelect), and [useTotal](#useTotal).
+Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
+ - [useAllPaymentMethods](#useAllPaymentMethods)
+ - [useEvents](#useEvents)
+ - [useFormStatus](#useFormStatus)
+ - [useMessages](#useMessages)
+ - [useDispatch](#useDispatch)
+ - [useLineItems](#useLineItems)
+ - [useLineItemsOfType](#useLineItemsOfType)
+ - [usePaymentMethod](#usePaymentMethodId)
+ - [usePaymentMethodId](#usePaymentMethodId)
+ - [useRegisterStore](#useRegisterStore)
+ - [useRegistry](#useRegistry)
+ - [useSelect](#useSelect)
+ - [useTotal](#useTotal)
 
-The [Checkout](#checkout) component creates the form itself. Within the component's children, you can render elements to create the checkout experience. Any child is allowed but the [CheckoutStepBody](#CheckoutStepBody) component can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form. If you would like to have a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed, you can instead use the [CheckoutSteps](#CheckoutSteps) component with [CheckoutStep](#CheckoutStep) children that will take care of the logic for you.
+The [Checkout](#checkout) component creates the form itself. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
+ - [CheckoutSummary](#CheckoutSummary) can be used to render a summary that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutStepBody](#CheckoutStepBody) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
+ - [CheckoutSteps](#CheckoutSteps) with [CheckoutStep](#CheckoutStep) children can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
 
-Each `CheckoutStep` has a `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
+Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
 Any component within a `CheckoutStep` gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
@@ -95,6 +116,12 @@ While the `Checkout` component takes care of most everything, there are many sit
 ### Checkout
 
 The main wrapper component for the checkout form. It has the following props.
+
+- `className?: string`. The className for the component.
+
+### CheckoutSummary
+
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
 
@@ -165,7 +192,7 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 ## CheckoutSteps
 
-A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
+A wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
 
 ### CheckoutReviewOrder
 
@@ -314,6 +341,10 @@ A React Hook that will return true if the current step is complete as defined by
 ### useLineItems
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useLineItemsOfType
+
+A React Hook that will return an array of line items matching a specific 'type' (i.e. 'tax'). Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useMessages
 
