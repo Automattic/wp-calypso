@@ -33,16 +33,16 @@ class ActivityCardList extends Component {
 		pageSize: PropTypes.number.isRequired,
 		showDateSeparators: PropTypes.bool,
 		showFilter: PropTypes.bool,
-		showPagination: PropTypes.bool
+		showPagination: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showDateSeparators: true,
 		showFilter: true,
-		showPagination: true
+		showPagination: true,
 	};
 
-	changePage = pageNumber => {
+	changePage = ( pageNumber ) => {
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -78,7 +78,7 @@ class ActivityCardList extends Component {
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
-						{ dateLogs.map( activity => (
+						{ dateLogs.map( ( activity ) => (
 							<ActivityCard
 								{ ...{
 									key: activity.activityId,
@@ -89,7 +89,7 @@ class ActivityCardList extends Component {
 									className:
 										activity.activityType === 'Backup'
 											? 'activity-card-list__primary-card'
-											: 'activity-card-list__secondary-card'
+											: 'activity-card-list__secondary-card',
 								} }
 							/>
 						) ) }
@@ -116,7 +116,7 @@ class ActivityCardList extends Component {
 							siteId,
 							filter,
 							isLoading: false,
-							isVisible: true
+							isVisible: true,
 						} }
 					/>
 				) }
@@ -164,7 +164,7 @@ class ActivityCardList extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const rewind = getRewindState( state, siteId );
@@ -179,12 +179,12 @@ const mapStateToProps = state => {
 		siteId,
 		filter,
 		rewind,
-		allowRestore
+		allowRestore,
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) )
+const mapDispatchToProps = ( dispatch ) => ( {
+	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 
 export default connect(
