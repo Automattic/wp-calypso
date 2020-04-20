@@ -355,7 +355,7 @@ export class ProductSelector extends Component {
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
-				intro={ this.getIntervalDiscount( selectedProductSlug ) }
+				intro={ this.props.selectedSiteSlug && this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
 						productName: this.getActionButtonName( product, productObject.product_slug ),
