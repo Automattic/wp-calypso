@@ -225,7 +225,7 @@ describe( 'utils', () => {
 
 		test( 'step names should match steps of a particular flow given progress with mixed flows', () => {
 			const completedSteps = getCompletedSteps( 'onboarding-blog', mixedFlowsSignupProgress );
-			const stepNames = completedSteps.map( step => step.stepName );
+			const stepNames = completedSteps.map( ( step ) => step.stepName );
 
 			expect( stepNames ).toStrictEqual( flows.getFlow( 'onboarding-blog' ).steps );
 		} );
@@ -235,9 +235,9 @@ describe( 'utils', () => {
 				shouldMatchFlowName: true,
 			} );
 			const filteredOnboardingBlogSteps = mixedFlowsSignupProgress.filter(
-				step => step.lastKnownFlow === 'onboarding-blog'
+				( step ) => step.lastKnownFlow === 'onboarding-blog'
 			);
-			const stepNames = completedSteps.map( step => step.stepName );
+			const stepNames = completedSteps.map( ( step ) => step.stepName );
 
 			expect( stepNames ).not.toStrictEqual( flows.getFlow( 'onboarding-blog' ).steps );
 			expect( completedSteps ).toStrictEqual( filteredOnboardingBlogSteps );
@@ -247,7 +247,7 @@ describe( 'utils', () => {
 			const completedSteps = getCompletedSteps( 'onboarding', singleFlowSignupProgress, {
 				shouldMatchFlowName: true,
 			} );
-			const stepNames = completedSteps.map( step => step.stepName );
+			const stepNames = completedSteps.map( ( step ) => step.stepName );
 
 			expect( stepNames ).toStrictEqual( flows.getFlow( 'onboarding' ).steps );
 			expect( completedSteps ).toStrictEqual( singleFlowSignupProgress );

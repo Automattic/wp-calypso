@@ -1,3 +1,1 @@
-export function UpSellCoupon({ onClick }: {
-    onClick: any;
-}): JSX.Element;
+export function UpSellCoupon( { onClick }: { onClick: any } ): JSX.Element;

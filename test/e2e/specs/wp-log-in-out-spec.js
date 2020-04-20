@@ -34,70 +34,70 @@ const host = dataHelper.getJetpackHost();
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function() {
+describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Loading the log-in screen', function() {
-		before( async function() {
+	describe( 'Loading the log-in screen', function () {
+		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can see the log in screen', async function() {
+		step( 'Can see the log in screen', async function () {
 			await LoginPage.Visit( driver, LoginPage.getLoginURL() );
 		} );
 	} );
 } );
 
-describe( `[${ host }] Authentication: (${ screenSize })`, function() {
+describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Logging In and Out: @jetpack', function() {
-		before( async function() {
+	describe( 'Logging In and Out: @jetpack', function () {
+		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		describe( 'Can Log In', function() {
-			step( 'Can log in', async function() {
+		describe( 'Can Log In', function () {
+			step( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( driver );
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
-			step( 'Can see Reader Page after logging in', async function() {
+			step( 'Can see Reader Page after logging in', async function () {
 				return await ReaderPage.Expect( driver );
 			} );
 		} );
 
 		// Test Jetpack SSO
 		if ( host !== 'WPCOM' ) {
-			describe( 'Can Log via Jetpack SSO', function() {
-				step( 'Can log into site via Jetpack SSO', async function() {
+			describe( 'Can Log via Jetpack SSO', function () {
+				step( 'Can log into site via Jetpack SSO', async function () {
 					const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 					return await loginPage.logonSSO();
 				} );
 
-				step( 'Can return to Reader', async function() {
+				step( 'Can return to Reader', async function () {
 					return await ReaderPage.Visit( driver );
 				} );
 			} );
 		}
 
-		describe( 'Can Log Out', function() {
-			step( 'Can view profile to log out', async function() {
+		describe( 'Can Log Out', function () {
+			step( 'Can view profile to log out', async function () {
 				const navbarComponent = await NavBarComponent.Expect( driver );
 				await navbarComponent.clickProfileLink();
 			} );
 
-			step( 'Can logout from profile page', async function() {
+			step( 'Can logout from profile page', async function () {
 				const profilePage = await ProfilePage.Expect( driver );
 				await profilePage.clickSignOut();
 			} );
 
-			step( 'Can see wordpress.com home when after logging out', async function() {
+			step( 'Can see wordpress.com home when after logging out', async function () {
 				return await LoggedOutMasterbarComponent.Expect( driver );
 			} );
 		} );
@@ -107,14 +107,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+2fa-sms -passwordless' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on a 2fa account @secure-auth', function() {
+		describe( 'Can Log in on a 2fa account @secure-auth', function () {
 			let loginFlow, twoFALoginPage, twoFACode;
 
-			before( async function() {
+			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
-			before( async function() {
+			before( async function () {
 				loginFlow = new LoginFlow( driver, [ '+2fa-sms', '-passwordless' ] );
 				// make sure we listen for SMS before we trigger any
 				const xmppClient = listenForSMS( loginFlow.account );
@@ -125,7 +125,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						twoFALoginPage = new LoginPage( driver );
 						twoFALoginPage.use2FAMethod( 'sms' );
 					} );
-					xmppClient.on( 'e2e:sms', function( sms ) {
+					xmppClient.on( 'e2e:sms', function ( sms ) {
 						const twoFACodeMatches = sms.body.match( /\d+/g );
 						twoFACode = twoFACodeMatches[ 0 ];
 						if ( twoFACode ) {
@@ -137,7 +137,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				} );
 			} );
 
-			step( 'Should be on the /log-in/sms page', async function() {
+			step( 'Should be on the /log-in/sms page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 
@@ -147,7 +147,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				);
 			} );
 
-			step( "Enter the 2fa code and we're logged in", async function() {
+			step( "Enter the 2fa code and we're logged in", async function () {
 				return await twoFALoginPage.enter2FACode( twoFACode );
 			} );
 		} );
@@ -157,17 +157,17 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+2fa-push -passwordless' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on with 2fa push account @secure-auth', function() {
+		describe( 'Can Log in on with 2fa push account @secure-auth', function () {
 			let loginFlow, twoFALoginPage;
 
-			before( async function() {
+			before( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
 				loginFlow = new LoginFlow( driver, [ '+2fa-push', '-passwordless' ] );
 				await loginFlow.login( { useFreshLogin: true } );
 				twoFALoginPage = new LoginPage( driver );
 			} );
 
-			step( 'Should be on the /log-in/push page', async function() {
+			step( 'Should be on the /log-in/push page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
@@ -176,8 +176,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				);
 			} );
 
-			step( "Approve push 2fa token and we're logged in", async function() {
-				await subscribeToPush( loginFlow.account.pushConfig, async pushToken => {
+			step( "Approve push 2fa token and we're logged in", async function () {
+				await subscribeToPush( loginFlow.account.pushConfig, async ( pushToken ) => {
 					await approvePushToken( pushToken, loginFlow.account.bearerToken );
 					const readerPage = new ReaderPage( driver );
 					const displayed = await readerPage.displayed();
@@ -191,10 +191,10 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+2fa-otp -passwordless' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on a 2fa account @secure-auth', function() {
+		describe( 'Can Log in on a 2fa account @secure-auth', function () {
 			let loginFlow, twoFALoginPage;
 
-			before( async function() {
+			before( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
 				loginFlow = new LoginFlow( driver, [ '+2fa-otp', '-passwordless' ] );
 				await loginFlow.login( { useFreshLogin: true } );
@@ -202,7 +202,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				return twoFALoginPage.use2FAMethod( 'otp' );
 			} );
 
-			step( 'Should be on the /log-in/authenticator page', async function() {
+			step( 'Should be on the /log-in/authenticator page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
@@ -211,7 +211,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 				);
 			} );
 
-			step( "Enter the 2fa code and we're logged in", async function() {
+			step( "Enter the 2fa code and we're logged in", async function () {
 				const twoFACode = speakeasy.totp( {
 					secret: loginFlow.account[ '2faOTPsecret' ],
 					encoding: 'base32',
@@ -225,22 +225,24 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+passwordless -2fa' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on a passwordless account @secure-auth', function() {
-			before( async function() {
+		describe( 'Can Log in on a passwordless account @secure-auth', function () {
+			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
-			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function() {
+			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
 				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
-				before( async function() {
+				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '-2fa' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true, useFreshLogin: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function() {
+				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(
@@ -249,9 +251,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 					);
 				} );
 
-				describe( 'Can use the magic link to log in', function() {
+				describe( 'Can use the magic link to log in', function () {
 					let magicLoginPage;
-					step( "Visit the magic link and we're logged in", async function() {
+					step( "Visit the magic link and we're logged in", async function () {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						await magicLoginPage.finishLogin();
@@ -261,14 +263,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function() {
+					after( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function() {
+				after( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -281,22 +283,24 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+passwordless +2fa-sms' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on a passwordless account with 2fa using sms @secure-auth', function() {
-			before( async function() {
+		describe( 'Can Log in on a passwordless account with 2fa using sms @secure-auth', function () {
+			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
-			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function() {
+			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
 				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
-				before( async function() {
+				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function() {
+				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(
@@ -305,9 +309,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 					);
 				} );
 
-				describe( 'Can use the magic link and the code received via sms to log in', function() {
+				describe( 'Can use the magic link and the code received via sms to log in', function () {
 					let magicLoginPage, twoFALoginPage, twoFACode;
-					before( async function() {
+					before( async function () {
 						await driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						// make sure we listen for SMS before we trigger any
@@ -319,7 +323,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 								twoFALoginPage = new LoginPage( driver );
 								twoFALoginPage.use2FAMethod( 'sms' );
 							} );
-							xmppClient.on( 'e2e:sms', function( sms ) {
+							xmppClient.on( 'e2e:sms', function ( sms ) {
 								const twoFACodeMatches = sms.body.match( /\d+/g );
 								twoFACode = twoFACodeMatches[ 0 ];
 								if ( twoFACode ) {
@@ -327,13 +331,13 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 									resolve();
 								}
 							} );
-							xmppClient.on( 'error', function() {
+							xmppClient.on( 'error', function () {
 								reject();
 							} );
 						} );
 					} );
 
-					step( 'Should be on the /log-in/sms page', async function() {
+					step( 'Should be on the /log-in/sms page', async function () {
 						await twoFALoginPage.displayed();
 						const urlDisplayed = await driver.getCurrentUrl();
 
@@ -343,19 +347,19 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						);
 					} );
 
-					step( "Enter the 2fa code and we're logged in", async function() {
+					step( "Enter the 2fa code and we're logged in", async function () {
 						return await twoFALoginPage.enter2FACode( twoFACode );
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function() {
+					after( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function() {
+				after( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -368,22 +372,24 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 		dataHelper.hasAccountWithFeatures( '+passwordless +2fa-otp' ) &&
 		! dataHelper.isRunningOnLiveBranch()
 	) {
-		describe( 'Can Log in on a passwordless account with 2fa using authenticator @secure-auth', function() {
-			before( async function() {
+		describe( 'Can Log in on a passwordless account with 2fa using authenticator @secure-auth', function () {
+			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
-			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function() {
+			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
 				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
-				before( async function() {
+				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function() {
+				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(
@@ -392,9 +398,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 					);
 				} );
 
-				describe( 'Can use the magic link and the code received via sms to log in', function() {
+				describe( 'Can use the magic link and the code received via sms to log in', function () {
 					let magicLoginPage, twoFALoginPage;
-					before( async function() {
+					before( async function () {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						await magicLoginPage.finishLogin();
@@ -402,7 +408,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						return await twoFALoginPage.use2FAMethod( 'otp' );
 					} );
 
-					step( 'Should be on the /log-in/authenticator page', async function() {
+					step( 'Should be on the /log-in/authenticator page', async function () {
 						await twoFALoginPage.displayed();
 						const urlDisplayed = await driver.getCurrentUrl();
 						assert(
@@ -411,7 +417,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 						);
 					} );
 
-					step( "Enter the 2fa code and we're logged in", async function() {
+					step( "Enter the 2fa code and we're logged in", async function () {
 						const twoFACode = speakeasy.totp( {
 							secret: loginFlow.account[ '2faOTPsecret' ],
 							encoding: 'base32',
@@ -420,14 +426,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function() {
+					after( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function() {
+				after( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -437,14 +443,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function() {
 	}
 } );
 
-describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function() {
+describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.ensureNotLoggedIn( driver );
 	} );
 
-	step( 'Can see the correct user agent set', async function() {
+	step( 'Can see the correct user agent set', async function () {
 		await WPHomePage.Visit( driver );
 		const userAgent = await driver.executeScript( 'return navigator.userAgent;' );
 		assert(

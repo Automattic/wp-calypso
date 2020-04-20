@@ -92,7 +92,7 @@ class PostSchedule extends Component {
 
 	getLocaleUtils() {
 		return {
-			formatMonthTitle: function() {
+			formatMonthTitle: function () {
 				return;
 			},
 		};
@@ -103,7 +103,7 @@ class PostSchedule extends Component {
 	}
 
 	getEventsFromPosts( postsList = [] ) {
-		return postsList.map( post => {
+		return postsList.map( ( post ) => {
 			const localDate = this.getDateToUserLocation( post.date );
 
 			return {
@@ -122,13 +122,13 @@ class PostSchedule extends Component {
 		);
 	}
 
-	setCurrentMonth = date => {
+	setCurrentMonth = ( date ) => {
 		date = moment( date );
 		this.props.onMonthChange( date );
 		this.setState( { calendarViewDate: date } );
 	};
 
-	setViewDate = date => {
+	setViewDate = ( date ) => {
 		this.setState( { calendarViewDate: moment( date ) } );
 	};
 
@@ -136,7 +136,7 @@ class PostSchedule extends Component {
 		return moment( this.state.localizedDate || this.getDateToUserLocation() );
 	}
 
-	updateDate = date => {
+	updateDate = ( date ) => {
 		const convertedDate = convertDateToGivenOffset(
 			date,
 			this.props.timezone,
@@ -237,8 +237,10 @@ class PostSchedule extends Component {
 
 		return (
 			<div className={ className }>
-				{ // Used by Clock for now, likely others in the future.
-				this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } /> }
+				{
+					// Used by Clock for now, likely others in the future.
+					this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } />
+				}
 				<Header
 					date={ this.state.calendarViewDate }
 					onDateChange={ this.setViewDate }
@@ -276,6 +278,6 @@ class PostSchedule extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	userLocale: getCurrentUserLocale( state ),
 } ) )( PostSchedule );

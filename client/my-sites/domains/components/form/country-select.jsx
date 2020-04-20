@@ -75,7 +75,7 @@ class CountrySelect extends React.Component {
 						onClick={ this.recordCountrySelectClick }
 						isError={ this.props.isError }
 					>
-						{ options.map( option => (
+						{ options.map( ( option ) => (
 							<option key={ option.key } value={ option.value } disabled={ option.disabled }>
 								{ option.label }
 							</option>

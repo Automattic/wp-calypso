@@ -21,7 +21,7 @@ class SegmentedControlItem extends React.Component {
 		selected: false,
 	};
 
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
 		switch ( event.keyCode ) {
 			case 13: // enter
 			case 32: // space

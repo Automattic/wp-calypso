@@ -65,7 +65,7 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
  */
 export const getContextualHelpResults = flow(
 	getLastRouteAction,
-	x => x.path,
+	( x ) => x.path,
 	pathToSection,
 	getContextResults,
 	( x = [] ) => x

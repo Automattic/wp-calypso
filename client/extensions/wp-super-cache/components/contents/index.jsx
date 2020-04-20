@@ -101,10 +101,10 @@ class ContentsTab extends Component {
 									} ) }
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( wpcache && wpcache.cached ) || 0 } Cached Pages` }
+									{ `${ ( wpcache && wpcache.cached ) || 0} Cached Pages` }
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( wpcache && wpcache.expired ) || 0 } Expired Pages` }
+									{ `${ ( wpcache && wpcache.expired ) || 0} Expired Pages` }
 								</span>
 							</div>
 						) }
@@ -117,10 +117,10 @@ class ContentsTab extends Component {
 									} ) }
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( supercache && supercache.cached ) || 0 } Cached Pages` }
+									{ `${ ( supercache && supercache.cached ) || 0} Cached Pages` }
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( supercache && supercache.expired ) || 0 } Expired Pages` }
+									{ `${ ( supercache && supercache.expired ) || 0} Expired Pages` }
 								</span>
 							</div>
 						) }
@@ -222,7 +222,7 @@ class ContentsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
@@ -239,7 +239,7 @@ const connectComponent = connect(
 	{ generateStats }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 

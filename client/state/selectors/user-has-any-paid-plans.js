@@ -17,6 +17,6 @@ import { isPlan } from 'lib/products-values';
  * @returns {object}       Site object
  */
 export default createSelector(
-	state => some( getSitesItems( state ), site => isPlan( site.plan ) ),
-	state => [ getSitesItems( state ) ]
+	( state ) => some( getSitesItems( state ), ( site ) => isPlan( site.plan ) ),
+	( state ) => [ getSitesItems( state ) ]
 );

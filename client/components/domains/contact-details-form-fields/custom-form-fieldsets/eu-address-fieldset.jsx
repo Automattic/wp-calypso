@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Input } from 'my-sites/domains/components/form';
 
-const EuAddressFieldset = props => {
+const EuAddressFieldset = ( props ) => {
 	const { getFieldProps, translate, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields eu-address-fieldset">

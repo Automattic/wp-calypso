@@ -23,11 +23,11 @@ interface Props {
 
 const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	const { __ } = useI18n();
-	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
-	const errors = useSelect( select => select( AUTH_STORE ).getErrors() );
+	const loginFlowState = useSelect( ( select ) => select( AUTH_STORE ).getLoginFlowState() );
+	const errors = useSelect( ( select ) => select( AUTH_STORE ).getErrors() );
 	const { reset } = useDispatch( AUTH_STORE );
 
-	const usernameOrEmail = useSelect( select => select( AUTH_STORE ).getUsernameOrEmail() );
+	const usernameOrEmail = useSelect( ( select ) => select( AUTH_STORE ).getUsernameOrEmail() );
 
 	const openSignup = ( e: React.MouseEvent< HTMLElement > ) => {
 		reset();

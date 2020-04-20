@@ -30,7 +30,7 @@ import { getEventsInDailyBackup } from '../utils';
 const PAGE_SIZE = 10;
 
 class BackupDetailPage extends Component {
-	changePage = pageNumber => {
+	changePage = ( pageNumber ) => {
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -39,13 +39,13 @@ class BackupDetailPage extends Component {
 		const { backupId, filter, logs, moment, siteId, translate } = this.props;
 		const { page: requestedPage } = filter;
 
-		const backups = logs.filter( event => event.rewindId === backupId );
+		const backups = logs.filter( ( event ) => event.rewindId === backupId );
 		const thisBackup = backups[ 0 ];
 		const meta = get( thisBackup, 'activityDescription[2].children[0]', '' );
 
 		const metaList =
 			meta &&
-			meta.split( ', ' ).map( item => {
+			meta.split( ', ' ).map( ( item ) => {
 				return <li key={ item }>{ item }</li>;
 			} );
 
@@ -58,7 +58,7 @@ class BackupDetailPage extends Component {
 		);
 		const theseLogs = actualLogs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
-		const cards = theseLogs.map( activity => (
+		const cards = theseLogs.map( ( activity ) => (
 			<ActivityCard
 				{ ...{
 					key: activity.activityId,
@@ -131,7 +131,7 @@ class BackupDetailPage extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
 	const filter = getActivityLogFilter( state, siteId );
@@ -143,7 +143,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 

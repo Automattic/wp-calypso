@@ -22,7 +22,7 @@ import { AddContentButton } from 'layout/guided-tours/button-labels';
 import { getSectionName, hasSidebar } from 'state/ui/selectors';
 import { targetForSlug } from 'layout/guided-tours/positioning';
 
-const sectionHasSidebar = state =>
+const sectionHasSidebar = ( state ) =>
 	hasSidebar( state ) && ! includes( [ 'customize' ], getSectionName( state ) );
 
 // When moving from stats to the editor, the menu disappears, the first step
@@ -60,7 +60,7 @@ class DelegatingQuit extends Quit {
 		}
 	};
 
-	onParentClick = event => {
+	onParentClick = ( event ) => {
 		let eventTarget = event.target;
 		// Event delegation
 		while ( !! eventTarget && eventTarget !== event.currentTarget ) {

@@ -14,7 +14,7 @@ describe( 'request', () => {
 		const siteId = '123';
 		const getResponse = { name: 'placeholder get response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true } )
@@ -24,7 +24,7 @@ describe( 'request', () => {
 		test( 'should fetch data via promise', () => {
 			return request( siteId )
 				.get( 'placeholder_endpoint' )
-				.then( data => {
+				.then( ( data ) => {
 					expect( data ).to.eql( getResponse );
 				} );
 		} );
@@ -32,7 +32,7 @@ describe( 'request', () => {
 		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.get( 'bad_placeholder_endpoint' )
-				.catch( error => {
+				.catch( ( error ) => {
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -43,7 +43,7 @@ describe( 'request', () => {
 		const body = { name: 'placeholder post request', placeholder: true };
 		const postResponse = { name: 'placeholder post response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=post',
@@ -56,7 +56,7 @@ describe( 'request', () => {
 		test( 'should post data', () => {
 			return request( siteId )
 				.post( 'placeholder_endpoint', body )
-				.then( data => {
+				.then( ( data ) => {
 					expect( data ).to.eql( postResponse );
 				} );
 		} );
@@ -64,7 +64,7 @@ describe( 'request', () => {
 		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.post( 'bad_placeholder_endpoint' )
-				.catch( error => {
+				.catch( ( error ) => {
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -75,7 +75,7 @@ describe( 'request', () => {
 		const body = { name: 'placeholder put request', placeholder: true };
 		const putResponse = { name: 'placeholder put response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=put',
@@ -88,7 +88,7 @@ describe( 'request', () => {
 		test( 'should put data', () => {
 			return request( siteId )
 				.put( 'placeholder_endpoint', body )
-				.then( data => {
+				.then( ( data ) => {
 					expect( data ).to.eql( putResponse );
 				} );
 		} );
@@ -96,7 +96,7 @@ describe( 'request', () => {
 		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.put( 'bad_placeholder_endpoint' )
-				.catch( error => {
+				.catch( ( error ) => {
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -106,7 +106,7 @@ describe( 'request', () => {
 		const siteId = '123';
 		const deleteResponse = { name: 'placeholder delete response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=delete',
@@ -118,7 +118,7 @@ describe( 'request', () => {
 		test( 'should delete', () => {
 			return request( siteId )
 				.del( 'placeholder_endpoint' )
-				.then( data => {
+				.then( ( data ) => {
 					expect( data ).to.eql( deleteResponse );
 				} );
 		} );
@@ -126,7 +126,7 @@ describe( 'request', () => {
 		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.del( 'bad_placeholder_endpoint' )
-				.catch( error => {
+				.catch( ( error ) => {
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );

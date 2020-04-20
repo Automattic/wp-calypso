@@ -103,7 +103,7 @@ export function recordViewCheckoutInCriteo( cart ) {
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 export function cartToCriteoItems( cart ) {
-	return cart.products.map( product => {
+	return cart.products.map( ( product ) => {
 		return {
 			id: product.product_id,
 			price: product.cost,

@@ -155,7 +155,7 @@ class Plans extends Component {
 		this.redirectToCalypso();
 	}
 
-	selectPlan = cartItem => {
+	selectPlan = ( cartItem ) => {
 		clearPlan();
 		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
@@ -189,7 +189,7 @@ class Plans extends Component {
 		);
 	}
 
-	handleInfoButtonClick = info => () => {
+	handleInfoButtonClick = ( info ) => () => {
 		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
 			help_type: info,
 		} );
@@ -240,7 +240,7 @@ class Plans extends Component {
 export { Plans as PlansTestComponent };
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';

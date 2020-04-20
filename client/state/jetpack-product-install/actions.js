@@ -31,7 +31,7 @@ export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) 
  * @param {number} siteId The ID of the site.
  * @returns {object}       Action object.
  */
-export const requestJetpackProductInstallStatus = siteId => ( {
+export const requestJetpackProductInstallStatus = ( siteId ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
 	siteId,
 } );

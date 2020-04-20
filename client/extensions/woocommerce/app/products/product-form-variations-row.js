@@ -49,23 +49,23 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
-	setPrice = e => {
+	setPrice = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		editProductVariation( siteId, product, variation, { regular_price: e.target.value } );
 	};
 
-	setWeight = e => {
+	setWeight = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		editProductVariation( siteId, product, variation, { weight: e.target.value } );
 	};
 
-	setDimension = e => {
+	setDimension = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
 		editProductVariation( siteId, product, variation, { dimensions } );
 	};
 
-	setStockQuantity = e => {
+	setStockQuantity = ( e ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
 		const manage_stock = stock_quantity !== '';
@@ -77,7 +77,7 @@ class ProductFormVariationsRow extends Component {
 		onShowDialog( variation.id );
 	};
 
-	onSelect = files => {
+	onSelect = ( files ) => {
 		const file = head( files );
 		this.setState( {
 			placeholder: file.preview,
@@ -87,7 +87,7 @@ class ProductFormVariationsRow extends Component {
 		this.props.onUploadStart();
 	};
 
-	onUpload = file => {
+	onUpload = ( file ) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const image = {
 			src: file.URL,

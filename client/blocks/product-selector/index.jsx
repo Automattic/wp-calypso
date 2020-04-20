@@ -135,7 +135,7 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			purchase =>
+			( purchase ) =>
 				purchase.active &&
 				( includes( productSlugs, purchase.productSlug ) ||
 					includes( productSlugs, this.getRelatedYearlyProductSlug( purchase.productSlug ) ) ||
@@ -152,7 +152,7 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			purchase => purchase.active && purchase.productSlug === currentPlanSlug
+			( purchase ) => purchase.active && purchase.productSlug === currentPlanSlug
 		);
 	}
 
@@ -160,7 +160,7 @@ export class ProductSelector extends Component {
 		const { currentPlanSlug, productSlugs } = this.props;
 		return ! currentPlanSlug
 			? null
-			: filter( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+			: filter( productSlugs, ( productSlug ) => planHasFeature( currentPlanSlug, productSlug ) );
 	}
 
 	currentPlanIncludesProduct( product ) {
@@ -168,13 +168,13 @@ export class ProductSelector extends Component {
 		const productSlugs = this.getProductSlugsForCurrentPlan();
 		return ! currentPlanSlug || ! productSlugs
 			? false
-			: productSlugs.some( slug => product.slugs.includes( slug ) );
+			: productSlugs.some( ( slug ) => product.slugs.includes( slug ) );
 	}
 
 	getProductSlugByCurrentPlan( product ) {
 		return ! this.props.currentPlanSlug
 			? null
-			: find( product.slugs, slug => planHasFeature( this.props.currentPlanSlug, slug ) );
+			: find( product.slugs, ( slug ) => planHasFeature( this.props.currentPlanSlug, slug ) );
 	}
 
 	getSubtitleByProduct( product ) {
@@ -287,7 +287,7 @@ export class ProductSelector extends Component {
 		const { intervalType, storeProducts } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
-		return productSlugs.map( productSlug => {
+		return productSlugs.map( ( productSlug ) => {
 			const productObject = storeProducts[ productSlug ];
 
 			return {
@@ -301,7 +301,7 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	handleCheckoutForProduct = productObject => {
+	handleCheckoutForProduct = ( productObject ) => {
 		const { currentPlanSlug, intervalType, selectedSiteSlug, onUpgradeClick } = this.props;
 
 		return () => {
@@ -318,7 +318,7 @@ export class ProductSelector extends Component {
 		};
 	};
 
-	handleManagePurchase = productSlug => {
+	handleManagePurchase = ( productSlug ) => {
 		return () => {
 			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
 				slug: productSlug,
@@ -423,7 +423,7 @@ export class ProductSelector extends Component {
 
 		return findKey(
 			productPriceMatrix,
-			relatedMonthlyProduct => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
+			( relatedMonthlyProduct ) => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
 		);
 	}
 
@@ -512,7 +512,7 @@ export class ProductSelector extends Component {
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
-			return map( products, product => {
+			return map( products, ( product ) => {
 				return (
 					<ProductCard
 						key={ product.id }
@@ -526,7 +526,7 @@ export class ProductSelector extends Component {
 
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
-		return map( products, product => {
+		return map( products, ( product ) => {
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const selectedSlug = this.state[ stateKey ];
 			const productObject = storeProducts[ selectedSlug ];
@@ -600,7 +600,7 @@ export class ProductSelector extends Component {
 								optionsLabel={ optionsLabel }
 								options={ this.getProductOptions( product ) }
 								selectedSlug={ selectedSlug }
-								handleSelect={ productSlug =>
+								handleSelect={ ( productSlug ) =>
 									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
 								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }

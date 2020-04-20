@@ -15,7 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
-import getWpAdminClassicEditorRedirectionUrl from "../../state/selectors/get-wp-admin-classic-editor-redirection-url";
+import getWpAdminClassicEditorRedirectionUrl from '../../state/selectors/get-wp-admin-classic-editor-redirection-url';
 
 /**
  * We don't support classic editor in Calypso for private atomic sites. This components makes sure
@@ -27,21 +27,23 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 	const [ hasGutenbergBlocks, setHasGutenbergBlocks ] = useState< boolean | null >( null );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const isAtomic = useSelector( state => isSiteAutomatedTransfer( state, siteId ) );
-	const isPrivate = useSelector( state => isPrivateSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isPrivateAtomic = isAtomic && isPrivate;
 
 	const postContent = useSelector( getEditorRawContent );
 	const isLoading = useSelector( isEditorLoading );
 	const isPostContentLoaded = ! isLoading && postContent !== null;
 
-	const optInEnabled = useSelector( state => isGutenbergOptInEnabled( state, siteId ) );
-	const wpAdminRedirectionUrl = useSelector( state => getWpAdminClassicEditorRedirectionUrl( state, siteId ) );
+	const optInEnabled = useSelector( ( state ) => isGutenbergOptInEnabled( state, siteId ) );
+	const wpAdminRedirectionUrl = useSelector( ( state ) =>
+		getWpAdminClassicEditorRedirectionUrl( state, siteId )
+	);
 
 	const dispatch = useDispatch();
 
 	useEffect(
-		function() {
+		function () {
 			if ( hasGutenbergBlocks !== null || ! isPostContentLoaded || ! isPrivateAtomic ) {
 				return;
 			}
@@ -64,7 +66,14 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 		// Disabling eslint check because hasGutenbergContent is only set inside this effect
 		// and we don't want to rerun it once it's updated
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent, optInEnabled, wpAdminRedirectionUrl ]
+		[
+			dispatch,
+			isPrivateAtomic,
+			isPostContentLoaded,
+			postContent,
+			optInEnabled,
+			wpAdminRedirectionUrl,
+		]
 	);
 
 	return (

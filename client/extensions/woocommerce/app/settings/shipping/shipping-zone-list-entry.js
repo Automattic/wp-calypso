@@ -55,7 +55,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 		);
 	};
 
-	const renderMethod = methodKey => {
+	const renderMethod = ( methodKey ) => {
 		const method = methods[ methodKey ];
 		let summary = getMethodSummary( method, currency );
 		if ( ! method.enabled ) {
@@ -69,7 +69,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 
 	const icon = 0 === id ? 'globe' : 'location';
 
-	const onEditClick = event => {
+	const onEditClick = ( event ) => {
 		if ( ! isValid ) {
 			event.preventDefault();
 		}

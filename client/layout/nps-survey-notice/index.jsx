@@ -68,14 +68,14 @@ class NpsSurveyNotice extends Component {
 		this.props.setNpsSurveyDialogShowing( false );
 	};
 
-	handleSurveyClose = afterClose => {
+	handleSurveyClose = ( afterClose ) => {
 		this.props.setNpsSurveyDialogShowing( false );
 
 		// slightly delay the showing of the thank you notice
 		setTimeout( afterClose, 500 );
 	};
 
-	handleSurveyFormChange = currentForm => {
+	handleSurveyFormChange = ( currentForm ) => {
 		this.setState( { currentForm } );
 	};
 
@@ -125,7 +125,7 @@ function isOwnBusinessSite( site ) {
 	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isSupportSession: isSupportSession( state ),
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),

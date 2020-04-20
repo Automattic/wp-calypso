@@ -5,9 +5,9 @@
 import { memoize, omitBy, reduce, some, trim } from 'lodash';
 import validator from 'is-my-json-valid';
 
-const memoizedValidator = memoize( schema => validator( schema, { greedy: true } ) );
+const memoizedValidator = memoize( ( schema ) => validator( schema, { greedy: true } ) );
 
-const processErrors = errors => {
+const processErrors = ( errors ) => {
 	return reduce(
 		errors,
 		( result, value ) => {
@@ -22,17 +22,17 @@ const processErrors = errors => {
 	);
 };
 
-const checkNullOrWhitespace = value => {
+const checkNullOrWhitespace = ( value ) => {
 	return value && '' !== trim( value ) ? value : null;
 };
 
 const checkDuplicateName = ( name, boxNames ) => {
 	name = checkNullOrWhitespace( name );
-	return some( boxNames, boxName => boxName === name ) ? null : name;
+	return some( boxNames, ( boxName ) => boxName === name ) ? null : name;
 };
 
 const numberRegex = /^\d+(\.\d+)?$/;
-const checkAndConvertNumber = value => {
+const checkAndConvertNumber = ( value ) => {
 	if ( ! numberRegex.test( value ) ) {
 		return null;
 	}
@@ -57,7 +57,7 @@ const preProcessPackageData = ( data, boxNames ) => {
 		max_weight: maxWeight,
 	};
 
-	return omitBy( result, value => null === value );
+	return omitBy( result, ( value ) => null === value );
 };
 
 export default ( packageData, boxNames, schema ) => {

@@ -23,13 +23,13 @@ describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
 		const countriesShareDialCode = pickBy(
 			groupBy( Object.values( countries ), 'dialCode' ),
-			val => val.length > 1
+			( val ) => val.length > 1
 		);
 
 		describe( 'countries sharing dial code should have priority data', () => {
 			forIn( countriesShareDialCode, ( countriesWithDialCode, dialCode ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
-					countriesWithDialCode.forEach( country =>
+					countriesWithDialCode.forEach( ( country ) =>
 						test( country.isoCode, () =>
 							ok( country.priority, `"${ country.isoCode }" has no priority` )
 						)

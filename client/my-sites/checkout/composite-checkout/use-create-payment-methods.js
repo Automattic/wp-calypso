@@ -105,10 +105,10 @@ function useCreateStripe( {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
 				getDomainDetails: () => getDomainDetails( select ),
-				submitTransaction: submitData => {
+				submitTransaction: ( submitData ) => {
 					const pending = sendStripeTransaction( submitData, wpcomTransaction );
 					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
+					pending.then( ( result ) => {
 						debug( 'saving transaction response', result );
 						dispatch( 'wpcom' ).setTransactionResponse( result );
 					} );
@@ -144,7 +144,7 @@ function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 		}
 		return createFullCreditsMethod( {
 			registerStore,
-			submitTransaction: submitData => {
+			submitTransaction: ( submitData ) => {
 				const pending = submitCreditsTransaction(
 					{
 						...submitData,
@@ -157,7 +157,7 @@ function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 					wpcomTransaction
 				);
 				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
+				pending.then( ( result ) => {
 					debug( 'saving transaction response', result );
 					dispatch( 'wpcom' ).setTransactionResponse( result );
 				} );
@@ -182,7 +182,7 @@ function useCreateFree( { onlyLoadPaymentMethods } ) {
 		}
 		return createFreePaymentMethod( {
 			registerStore,
-			submitTransaction: submitData => {
+			submitTransaction: ( submitData ) => {
 				const pending = submitFreePurchaseTransaction(
 					{
 						...submitData,
@@ -195,7 +195,7 @@ function useCreateFree( { onlyLoadPaymentMethods } ) {
 					wpcomTransaction
 				);
 				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
+				pending.then( ( result ) => {
 					debug( 'saving transaction response', result );
 					dispatch( 'wpcom' ).setTransactionResponse( result );
 				} );
@@ -238,7 +238,7 @@ function useCreateApplePay( {
 			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			registerStore,
-			submitTransaction: submitData => {
+			submitTransaction: ( submitData ) => {
 				const pending = submitApplePayPayment(
 					{
 						...submitData,
@@ -248,7 +248,7 @@ function useCreateApplePay( {
 					wpcomTransaction
 				);
 				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
+				pending.then( ( result ) => {
 					debug( 'saving transaction response', result );
 					dispatch( 'wpcom' ).setTransactionResponse( result );
 				} );
@@ -277,7 +277,7 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 		if ( ! shouldLoadExistingCardsMethods ) {
 			return [];
 		}
-		return storedCards.map( storedDetails =>
+		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
 				id: `existingCard-${ storedDetails.stored_details_id }`,
 				cardholderName: storedDetails.name,
@@ -285,7 +285,7 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 				brand: storedDetails.card_type,
 				last4: storedDetails.card,
 				stripeConfiguration,
-				submitTransaction: submitData => {
+				submitTransaction: ( submitData ) => {
 					const pending = submitExistingCardPayment(
 						{
 							...submitData,
@@ -298,7 +298,7 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 						wpcomTransaction
 					);
 					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
+					pending.then( ( result ) => {
 						debug( 'saving transaction response', result );
 						dispatch( 'wpcom' ).setTransactionResponse( result );
 					} );

@@ -129,7 +129,7 @@ class PluginSiteNetwork extends React.Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
-	renderSecondarySite = site => {
+	renderSecondarySite = ( site ) => {
 		return (
 			<CompactCard
 				className="plugin-site-network__secondary-site"
@@ -141,7 +141,7 @@ class PluginSiteNetwork extends React.Component {
 		);
 	};
 
-	renderSecondarySiteActions = site => {
+	renderSecondarySiteActions = ( site ) => {
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
 				<PluginActivateToggle site={ site } plugin={ site.plugin } />

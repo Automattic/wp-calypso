@@ -39,11 +39,11 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
-const InlineHelpPopover = props => (
+const InlineHelpPopover = ( props ) => (
 	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
 );
 
-const InlineHelpDialog = props => (
+const InlineHelpDialog = ( props ) => (
 	<AsyncLoad { ...props } require="blocks/inline-help/dialog" placeholder={ null } />
 );
 
@@ -112,7 +112,7 @@ class InlineHelp extends Component {
 		this.toggleInlineHelp();
 	};
 
-	inlineHelpToggleRef = node => {
+	inlineHelpToggleRef = ( node ) => {
 		this.inlineHelpToggle = node;
 	};
 
@@ -174,7 +174,7 @@ class InlineHelp extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),

@@ -33,7 +33,7 @@ class ListStream extends React.Component {
 		super( props );
 		this.title = props.translate( 'Loading list' );
 	}
-	toggleFollowing = isFollowRequested => {
+	toggleFollowing = ( isFollowRequested ) => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -133,7 +133,7 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				followList,

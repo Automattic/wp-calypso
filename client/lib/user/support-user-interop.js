@@ -29,12 +29,12 @@ const STORAGE_KEY = 'boot_support_user';
 const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;
-const reduxStoreReady = new Promise( resolve => {
+const reduxStoreReady = new Promise( ( resolve ) => {
 	if ( ! isEnabled() ) {
 		return;
 	}
 
-	_setReduxStore = reduxStore => resolve( reduxStore );
+	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
 } );
 export const setSupportSessionReduxStore = _setReduxStore;
 
@@ -102,7 +102,7 @@ export const rebootNormally = () => {
 };
 
 // Called when an API call fails due to a token error
-const onTokenError = error => {
+const onTokenError = ( error ) => {
 	debug( 'Deactivating support user and rebooting due to token error', error.message );
 	rebootNormally();
 };

@@ -58,7 +58,7 @@ export class FormCountrySelect extends Component {
 				onChange={ this.props.onChange }
 				disabled={ this.props.disabled }
 			>
-				{ options.map( function( option ) {
+				{ options.map( function ( option ) {
 					return (
 						<option key={ option.key } value={ option.code } disabled={ option.disabled }>
 							{ option.label }

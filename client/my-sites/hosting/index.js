@@ -10,7 +10,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { handleHostingPanelRedirect, layout, activationLayout } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page( '/hosting-config', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/hosting-config/:site_id',

@@ -33,9 +33,7 @@ class DatePicker extends Component {
 
 		if ( showTodayYesterday ) {
 			const isToday = today.isSame( date, 'day' );
-			const isYesterday = moment( today )
-				.add( -1, 'day' )
-				.isSame( date, 'day' );
+			const isYesterday = moment( today ).add( -1, 'day' ).isSame( date, 'day' );
 
 			if ( isToday ) {
 				return translate( 'Today' );

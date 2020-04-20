@@ -41,7 +41,7 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 
 	return request( siteId )
 		.get( 'shipping/zones/' + zoneId + '/locations' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
 				siteId,
@@ -49,7 +49,7 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

@@ -37,7 +37,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
  * @returns {Function}                                      Action thunk
  */
 export function requestDomainsSuggestions( queryObject ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAINS_SUGGESTIONS_REQUEST,
 			queryObject,
@@ -45,14 +45,14 @@ export function requestDomainsSuggestions( queryObject ) {
 		return wpcom
 			.domains()
 			.suggestions( queryObject )
-			.then( suggestions => {
+			.then( ( suggestions ) => {
 				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject,

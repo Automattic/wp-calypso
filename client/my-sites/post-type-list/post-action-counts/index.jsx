@@ -30,7 +30,7 @@ class PostActionCounts extends PureComponent {
 		globalId: PropTypes.string,
 	};
 
-	onActionClick = action => () => {
+	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
 		record( 'calypso_post_list_action_click', {
@@ -40,7 +40,7 @@ class PostActionCounts extends PureComponent {
 		} );
 	};
 
-	onLikesClick = event => {
+	onLikesClick = ( event ) => {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
@@ -51,7 +51,7 @@ class PostActionCounts extends PureComponent {
 		this.props.hideActiveLikesPopover();
 	};
 
-	setLikesPopoverContext = element => {
+	setLikesPopoverContext = ( element ) => {
 		this.setState( { likesPopoverContext: element } );
 	};
 
@@ -75,11 +75,13 @@ class PostActionCounts extends PureComponent {
 					href={ `/comments/all/${ siteSlug }/${ postId }` }
 					onClick={ this.onActionClick( 'comments' ) }
 				>
-					{ // translators: count is the number of comments, eg 5 Comments
-					translate( '%(count)s Comment', '%(count)s Comments', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of comments, eg 5 Comments
+						translate( '%(count)s Comment', '%(count)s Comments', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 			</li>
 		);
@@ -148,11 +150,13 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li ref={ this.setLikesPopoverContext }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
-					{ // translators: count is the number of likes
-					translate( '%(count)s Like', '%(count)s Likes', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of likes
+						translate( '%(count)s Like', '%(count)s Likes', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 				{ isCurrentLikesPopoverOpen && (
 					<PostLikesPopover

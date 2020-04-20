@@ -17,7 +17,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import Posts from 'my-sites/posts/main';
 
 export default {
-	posts: function( context, next ) {
+	posts: function ( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const author = context.params.author === 'my' ? getCurrentUserId( state ) : null;

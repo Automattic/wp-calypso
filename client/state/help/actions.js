@@ -9,17 +9,17 @@ import {
 
 import 'state/data-layer/wpcom/help/search';
 
-export const selectSiteId = siteId => ( {
+export const selectSiteId = ( siteId ) => ( {
 	type: HELP_CONTACT_FORM_SITE_SELECT,
 	siteId,
 } );
 
-export const requestHelpLinks = query => ( {
+export const requestHelpLinks = ( query ) => ( {
 	type: HELP_LINKS_REQUEST,
 	query,
 } );
 
-export const receiveHelpLinks = helpLinks => ( {
+export const receiveHelpLinks = ( helpLinks ) => ( {
 	type: HELP_LINKS_RECEIVE,
 	helpLinks,
 } );

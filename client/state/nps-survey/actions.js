@@ -41,18 +41,18 @@ export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSess
 }
 
 export function setupNpsSurveyEligibility() {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Checking NPS eligibility...' );
 
 		return wpcom
 			.undocumented()
 			.checkNPSSurveyEligibility()
-			.then( data => {
+			.then( ( data ) => {
 				debug( '...Eligibility returned from endpoint.', data );
 				dispatch( setNpsSurveyEligibility( data.display_survey ) );
 				dispatch( setNpsConciergeSessionAvailaibility( data.has_available_concierge_sessions ) );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error querying NPS survey eligibility.', err );
 				dispatch( setNpsSurveyEligibility( false ) );
 				dispatch( setNpsConciergeSessionAvailaibility( false ) );
@@ -67,7 +67,7 @@ export function markNpsSurveyShownThisSession() {
 }
 
 export function submitNpsSurvey( surveyName, score ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Submitting NPS survey...' );
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
 
@@ -81,7 +81,7 @@ export function submitNpsSurvey( surveyName, score ) {
 				debug( '...Successfully submitted NPS survey.' );
 				dispatch( submitNpsSurveyRequestSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error submitting NPS survey.', err );
 				dispatch( submitNpsSurveyRequestFailure( err ) );
 			} );
@@ -89,7 +89,7 @@ export function submitNpsSurvey( surveyName, score ) {
 }
 
 export function submitNpsSurveyWithNoScore( surveyName ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
@@ -103,7 +103,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 				debug( '...Successfully submitted NPS survey with no score.' );
 				dispatch( submitNpsSurveyWithNoScoreRequestSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error submitting NPS survey with no score.', err );
 				dispatch( submitNpsSurveyWithNoScoreRequestFailure( err ) );
 			} );
@@ -111,7 +111,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 }
 
 export function sendNpsSurveyFeedback( surveyName, feedback ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Sending NPS survey feedback...' );
 		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
 
@@ -125,7 +125,7 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 				debug( '...Successfully sent NPS survey feedback.' );
 				dispatch( sendNpsSurveyFeedbackSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error sending NPS survey feedback.' );
 				dispatch( sendNpsSurveyFeedbackFailure( err ) );
 			} );

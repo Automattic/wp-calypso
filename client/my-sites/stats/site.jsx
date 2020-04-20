@@ -76,7 +76,7 @@ const CHARTS = [
 	},
 ];
 
-const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
 class StatsSite extends Component {
 	static defaultProps = {
@@ -108,15 +108,15 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
-	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	switchChart = tab => {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
@@ -313,7 +313,7 @@ const enableJetpackStatsModule = ( siteId, path ) =>
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const showEnableStatsModule =

@@ -256,14 +256,14 @@ function addTracksContext( context, next ) {
 	next();
 }
 
-export default async function( _, addReducer ) {
+export default async function ( _, addReducer ) {
 	await addReducer( [ 'extensions', 'woocommerce' ], reducer );
 	installActionHandlers();
 
 	page( '/store', siteSelection, sites, makeLayout, clientRender );
 
 	// Add pages that use the store navigation
-	getStorePages().forEach( function( storePage ) {
+	getStorePages().forEach( function ( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
 			addStorePage( storePage, ( context, next ) =>
 				createStoreNavigation( context, next, storePage )

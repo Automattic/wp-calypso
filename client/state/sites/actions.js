@@ -77,7 +77,7 @@ export function receiveSites( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITES_REQUEST,
 		} );
@@ -93,13 +93,13 @@ export function requestSites() {
 				options: SITE_REQUEST_OPTIONS,
 				filters: config( 'site_filter' ).join( ',' ),
 			} )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( receiveSites( response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITES_REQUEST_FAILURE,
 					error,
@@ -116,7 +116,7 @@ export function requestSites() {
  * @returns {Function}              Action thunk
  */
 export function requestSite( siteFragment ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
 			siteId: siteFragment,
@@ -127,7 +127,7 @@ export function requestSite( siteFragment ) {
 			.get( {
 				apiVersion: '1.2',
 			} )
-			.then( site => {
+			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
 				if ( ! ( site && site.capabilities ) ) {
 					return dispatch( {
@@ -144,7 +144,7 @@ export function requestSite( siteFragment ) {
 					siteId: siteFragment,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: siteFragment,
@@ -162,7 +162,7 @@ export function requestSite( siteFragment ) {
  * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_DELETE,
 			siteId,
@@ -177,7 +177,7 @@ export function deleteSite( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_DELETE_FAILURE,
 					siteId,
@@ -187,7 +187,7 @@ export function deleteSite( siteId ) {
 	};
 }
 
-export const sitePluginUpdated = siteId => ( {
+export const sitePluginUpdated = ( siteId ) => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
 } );

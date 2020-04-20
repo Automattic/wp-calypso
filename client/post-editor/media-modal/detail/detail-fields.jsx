@@ -92,7 +92,7 @@ class EditorMediaModalDetailFields extends Component {
 		}
 	}
 
-	scrollToShowVisibleDropdown = event => {
+	scrollToShowVisibleDropdown = ( event ) => {
 		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
 			return;
 		}

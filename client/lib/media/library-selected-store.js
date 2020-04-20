@@ -56,7 +56,7 @@ function receiveSingle( siteId, item, itemId ) {
 }
 
 function receiveMany( siteId, items ) {
-	items.forEach( function( item ) {
+	items.forEach( function ( item ) {
 		receiveSingle( siteId, item );
 	} );
 }
@@ -76,22 +76,22 @@ function removeSingle( siteId, item ) {
 
 emitter( MediaLibrarySelectedStore );
 
-MediaLibrarySelectedStore.get = function( siteId, itemId ) {
+MediaLibrarySelectedStore.get = function ( siteId, itemId ) {
 	return MediaStore.get( siteId, itemId );
 };
 
-MediaLibrarySelectedStore.getAll = function( siteId ) {
+MediaLibrarySelectedStore.getAll = function ( siteId ) {
 	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return [];
 	}
 
 	// Avoid keeping invalid items in the selected list.
 	return MediaLibrarySelectedStore._media[ siteId ]
-		.map( itemId => MediaStore.get( siteId, itemId ) )
-		.filter( item => item && ( item.guid || item.transient ) );
+		.map( ( itemId ) => MediaStore.get( siteId, itemId ) )
+		.filter( ( item ) => item && ( item.guid || item.transient ) );
 };
 
-MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
+MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );

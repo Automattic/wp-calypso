@@ -29,7 +29,9 @@ export const counts = withSchemaValidation(
 
 					const newState = action.data.reduce(
 						( nextState, recordFromApi ) => {
-							const index = nextState.findIndex( entry => entry.period === recordFromApi.period );
+							const index = nextState.findIndex(
+								( entry ) => entry.period === recordFromApi.period
+							);
 							if ( index >= 0 ) {
 								const newRecord = { ...nextState[ index ], ...recordFromApi };
 								if ( ! isEqual( nextState[ index ], newRecord ) ) {

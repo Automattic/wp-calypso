@@ -35,7 +35,7 @@ describe( 'recordTrack', () => {
 		};
 
 		const tracksStore = {
-			isTestSite: function() {
+			isTestSite: function () {
 				return false;
 			},
 		};
@@ -58,7 +58,7 @@ describe( 'recordTrack', () => {
 		const eventProps = { a: 1 };
 
 		const tracksStore = {
-			isTestSite: function() {
+			isTestSite: function () {
 				return false;
 			},
 		};
@@ -96,7 +96,7 @@ describe( 'recordTrack', () => {
 		const debugSpy = spy();
 
 		const tracksStore = {
-			isTestSite: function() {
+			isTestSite: function () {
 				return true;
 			},
 		};

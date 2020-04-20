@@ -132,7 +132,9 @@ export class List extends React.Component {
 	}
 
 	filterOutWpcomDomains( domains ) {
-		return domains.filter( domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+		return domains.filter(
+			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+		);
 	}
 
 	render() {
@@ -367,7 +369,7 @@ export class List extends React.Component {
 					{ duration: 10000, isPersistent: true }
 				);
 			},
-			error => {
+			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
@@ -397,7 +399,7 @@ export class List extends React.Component {
 
 	listItems() {
 		if ( this.isLoading() ) {
-			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
 		const domains =
@@ -426,7 +428,7 @@ export class List extends React.Component {
 		} );
 	}
 
-	goToEditDomainRoot = domain => {
+	goToEditDomainRoot = ( domain ) => {
 		if ( domain.type !== type.TRANSFER ) {
 			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 		} else {
@@ -464,7 +466,7 @@ const disablePrimaryDomainMode = () =>
 const upsellUpgradeClick = () =>
 	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
-const changePrimary = domain =>
+const changePrimary = ( domain ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -495,7 +497,7 @@ export default connect(
 			userCanManageOptions,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
@@ -507,7 +509,7 @@ export default connect(
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-			changePrimary: domain => dispatch( changePrimary( domain ) ),
+			changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),

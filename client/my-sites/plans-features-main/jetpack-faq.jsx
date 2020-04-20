@@ -80,6 +80,6 @@ const JetpackFAQ = ( { isChatAvailable, translate } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 } ) )( localize( JetpackFAQ ) );

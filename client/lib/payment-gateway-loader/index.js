@@ -32,14 +32,14 @@ function PaymentGatewayLoader() {
  * @param {string} gatewayNamespace - the global namespace of the script
  * @returns {Promise} promise
  */
-PaymentGatewayLoader.prototype.ready = function( gatewayUrl, gatewayNamespace ) {
+PaymentGatewayLoader.prototype.ready = function ( gatewayUrl, gatewayNamespace ) {
 	return new Promise( ( resolve, reject ) => {
 		if ( window[ gatewayNamespace ] ) {
 			resolve( window[ gatewayNamespace ] );
 			return;
 		}
 
-		loadScript( gatewayUrl, function( error ) {
+		loadScript( gatewayUrl, function ( error ) {
 			if ( error ) {
 				reject( error );
 				return;

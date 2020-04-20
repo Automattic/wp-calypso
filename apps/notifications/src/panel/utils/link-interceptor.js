@@ -11,7 +11,7 @@ const openComment = ( { siteId, postId, href, commentId } ) => ( {
 	commentId,
 } );
 
-export const interceptLinks = event => {
+export const interceptLinks = ( event ) => {
 	const { target } = event;
 
 	if ( 'A' !== target.tagName && 'A' !== target.parentNode.tagName ) {

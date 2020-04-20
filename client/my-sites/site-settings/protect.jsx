@@ -74,7 +74,7 @@ class Protect extends Component {
 
 		return (
 			includes( whitelist, ipAddress ) ||
-			some( whitelist, entry => {
+			some( whitelist, ( entry ) => {
 				if ( entry.indexOf( '-' ) < 0 ) {
 					return false;
 				}
@@ -174,7 +174,7 @@ class Protect extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

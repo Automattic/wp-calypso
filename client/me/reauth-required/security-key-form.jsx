@@ -32,14 +32,14 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { isAuthenticating: true, showError: false } );
 		this.props
 			.loginUserWithSecurityKey()
-			.then( response => this.onComplete( null, response ) )
-			.catch( error => {
+			.then( ( response ) => this.onComplete( null, response ) )
+			.catch( ( error ) => {
 				this.setState( { isAuthenticating: false, showError: true } );
 				this.onComplete( error, null );
 			} );

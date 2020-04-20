@@ -47,10 +47,10 @@ class ProductFormVariationsModal extends React.Component {
 	 * make sure the correct event handler runs, and that we don't share the
 	 * same TinyMCE instance for different descriptions.
 	 */
-	editorComponent = variationId => {
+	editorComponent = ( variationId ) => {
 		const { siteId, product, variations, editProductVariation } = this.props;
-		const variation = find( variations, v => variationId === v.id );
-		const setDescription = debounce( description => {
+		const variation = find( variations, ( v ) => variationId === v.id );
+		const setDescription = debounce( ( description ) => {
 			editProductVariation( siteId, product, variation, { description } );
 		}, 200 );
 		return (
@@ -64,10 +64,10 @@ class ProductFormVariationsModal extends React.Component {
 	selectedVariation() {
 		const { selectedVariation } = this.state;
 		const { variations } = this.props;
-		return find( variations, v => selectedVariation === v.id );
+		return find( variations, ( v ) => selectedVariation === v.id );
 	}
 
-	setSku = sku => {
+	setSku = ( sku ) => {
 		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
 		editProductVariation( siteId, product, variation, { sku } );

@@ -2,7 +2,7 @@ let wpcomInstance;
 
 export const wpcom = () => wpcomInstance;
 
-export const init = provider => ( wpcomInstance = provider );
+export const init = ( provider ) => ( wpcomInstance = provider );
 
 export const fetchNote = ( noteId, query, callback ) =>
 	wpcom().req.get(
@@ -48,7 +48,7 @@ export const markReadStatus = ( noteId, isRead, callback ) =>
 		callback
 	);
 
-export const sendLastSeenTime = time =>
+export const sendLastSeenTime = ( time ) =>
 	wpcom().req.post(
 		{
 			path: '/notifications/seen',
@@ -57,5 +57,5 @@ export const sendLastSeenTime = time =>
 		{ time }
 	);
 
-export const subscribeToNoteStream = callback =>
+export const subscribeToNoteStream = ( callback ) =>
 	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );

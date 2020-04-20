@@ -43,12 +43,12 @@ class TagStream extends React.Component {
 		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
-		asyncRequire( 'emoji-text', function( emojiText ) {
+		asyncRequire( 'emoji-text', function ( emojiText ) {
 			if ( self._isMounted ) {
 				self.setState( { emojiText } );
 			}
 		} );
-		asyncRequire( 'twemoji', function( twemoji ) {
+		asyncRequire( 'twemoji', function ( twemoji ) {
 			if ( self._isMounted ) {
 				const title = self.props.decodedTagSlug;
 				self.setState( {
@@ -158,7 +158,7 @@ class TagStream extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		followedTags: getReaderFollowedTags( state ),
 		tags: getReaderTags( state ),
 	} ),

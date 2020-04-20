@@ -93,14 +93,14 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 			};
 		}
 		case SERIALIZE: {
-			return mapValues( state, taxonomies => {
+			return mapValues( state, ( taxonomies ) => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return { data, options };
 				} );
 			} );
 		}
 		case DESERIALIZE: {
-			return mapValues( state, taxonomies => {
+			return mapValues( state, ( taxonomies ) => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return new TermQueryManager( data, options );
 				} );

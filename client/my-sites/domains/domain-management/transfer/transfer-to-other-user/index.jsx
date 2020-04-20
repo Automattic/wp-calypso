@@ -63,7 +63,7 @@ class TransferOtherUser extends React.Component {
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
 
-	getWpcomUserId = user => {
+	getWpcomUserId = ( user ) => {
 		if ( this.props.isAtomic ) {
 			return get( user, 'linked_user_ID', '' );
 		}
@@ -120,7 +120,7 @@ class TransferOtherUser extends React.Component {
 						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
 					);
 				},
-				err => {
+				( err ) => {
 					this.setState( { disableDialogButtons: false } );
 					this.props.errorNotice( err.message || defaultErrorMessage );
 					closeDialog();
@@ -137,7 +137,7 @@ class TransferOtherUser extends React.Component {
 	getSelectedUserDisplayName() {
 		const selectedUser = find(
 			this.props.users,
-			user => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
+			( user ) => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
 
 		if ( ! selectedUser ) {
@@ -246,7 +246,7 @@ class TransferOtherUser extends React.Component {
 							value={ this.state.selectedUserId }
 						>
 							{ availableUsers.length ? (
-								availableUsers.map( user => {
+								availableUsers.map( ( user ) => {
 									const userId = this.getWpcomUserId( user );
 
 									return (
@@ -278,7 +278,7 @@ class TransferOtherUser extends React.Component {
 
 	filterAvailableUsers( users ) {
 		return users.filter(
-			user =>
+			( user ) =>
 				includes( user.roles, 'administrator' ) &&
 				this.getWpcomUserId( user ) !== this.props.currentUser.ID
 		);

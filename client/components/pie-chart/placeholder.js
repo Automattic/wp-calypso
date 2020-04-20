@@ -25,7 +25,7 @@ class PieChartPlaceholder extends Component {
 					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					preserveAspectRatio={ 'xMidYMid meet' }
 				>
-					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
+					<g transform={ `translate(${ SVG_SIZE / 2}, ${ SVG_SIZE / 2})` }>
 						<circle
 							cx={ 0 }
 							cy={ 0 }

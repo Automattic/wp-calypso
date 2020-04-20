@@ -60,7 +60,7 @@ class WPCOMNotifications extends React.Component {
 		this.props.fetchSettings();
 	}
 
-	toggleSetting = setting => {
+	toggleSetting = ( setting ) => {
 		this.props.toggleWPcomEmailSetting( setting );
 	};
 
@@ -203,7 +203,7 @@ class WPCOMNotifications extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		settings: getNotificationSettings( state, 'wpcom' ),
 		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'wpcom' ),
 		hasJetpackSites: hasJetpackSites( state ),

@@ -40,8 +40,8 @@ import './style.scss';
  *
  * @returns {boolean}  True if one or more plugins or themes are updating.
  */
-const isItemUpdating = updatables =>
-	updatables.some( item => 'inProgress' === get( item, 'updateStatus.status' ) );
+const isItemUpdating = ( updatables ) =>
+	updatables.some( ( item ) => 'inProgress' === get( item, 'updateStatus.status' ) );
 
 /**
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
@@ -103,7 +103,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} item Plugin or theme to dismiss.
 	 */
-	dismiss = item => {
+	dismiss = ( item ) => {
 		// ToDo: this should update some record in the tasklist API
 		const {
 			pluginWithUpdate,
@@ -119,11 +119,11 @@ class ActivityLogTasklist extends Component {
 			trackDismiss( item );
 		} else {
 			items = union(
-				pluginWithUpdate.map( plugin => plugin.slug ),
-				themeWithUpdate.map( theme => theme.slug ),
+				pluginWithUpdate.map( ( plugin ) => plugin.slug ),
+				themeWithUpdate.map( ( theme ) => theme.slug ),
 				// Although core doesn't have a slug, we call it 'wordpress'
 				// to work with it like plugins or themes.
-				coreWithUpdate.map( core => core.slug )
+				coreWithUpdate.map( ( core ) => core.slug )
 			);
 			trackDismissAll();
 		}
@@ -216,7 +216,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} event Synthetic event
 	 */
-	showAllUpdates = event => {
+	showAllUpdates = ( event ) => {
 		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
 		this.setState( { expandedView: true } );
 		event.preventDefault();
@@ -231,7 +231,7 @@ class ActivityLogTasklist extends Component {
 	 * 		{string} name Plugin or theme name, like "Hello Dolly". Name for core updates is "WordPress".
 	 * }
 	 */
-	updateItem = item => {
+	updateItem = ( item ) => {
 		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
 
 		trackUpdate( item );
@@ -276,7 +276,7 @@ class ActivityLogTasklist extends Component {
 
 		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
 
-		each( itemsWithUpdate, item => {
+		each( itemsWithUpdate, ( item ) => {
 			const { slug, updateStatus, type, name } = item;
 			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );
@@ -327,7 +327,7 @@ class ActivityLogTasklist extends Component {
 	showAllItemsToUpdate( itemsToUpdate ) {
 		// Show if plugin update didn't start, is still running or errored,
 		// but hide plugin if it was updated successfully.
-		return itemsToUpdate.map( item => {
+		return itemsToUpdate.map( ( item ) => {
 			return (
 				<ActivityLogTaskUpdate
 					key={ item.slug }
@@ -370,7 +370,7 @@ class ActivityLogTasklist extends Component {
 			this.props.coreWithUpdate,
 			this.props.pluginWithUpdate,
 			this.props.themeWithUpdate
-		).filter( item => ! includes( this.state.dismissed, item.slug ) );
+		).filter( ( item ) => ! includes( this.state.dismissed, item.slug ) );
 
 		if ( isEmpty( itemsToUpdate ) ) {
 			return null;
@@ -384,17 +384,19 @@ class ActivityLogTasklist extends Component {
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
 				<div className="activity-log-tasklist__heading">
-					{ // Not using count method since we want a "one" string.
-					1 < numberOfUpdates
-						? translate(
-								'You have %(updates)s update available',
-								'You have %(updates)s updates available',
-								{
-									count: numberOfUpdates,
-									args: { updates: numberOfUpdates },
-								}
-						  )
-						: translate( 'You have one update available' ) }
+					{
+						// Not using count method since we want a "one" string.
+						1 < numberOfUpdates
+							? translate(
+									'You have %(updates)s update available',
+									'You have %(updates)s updates available',
+									{
+										count: numberOfUpdates,
+										args: { updates: numberOfUpdates },
+									}
+							  )
+							: translate( 'You have one update available' )
+					}
 					{ 1 < numberOfUpdates && (
 						<SplitButton
 							compact
@@ -507,7 +509,7 @@ const getStatusForCore = ( siteId, coreVersion ) => {
  * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
-	itemList.map( item => ( {
+	itemList.map( ( item ) => ( {
 		...item,
 		updateStatus:
 			'plugin' === item.type
@@ -544,7 +546,7 @@ const updateTheme = ( siteId, themeId ) =>
  *
  * @returns {*} Stored data container for request.
  */
-const updateCore = siteId =>
+const updateCore = ( siteId ) =>
 	requestHttpData(
 		`core-update-${ siteId }`,
 		http( {
@@ -580,7 +582,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	updateSingle: item => {
+	updateSingle: ( item ) => {
 		if ( 'core' === item.type ) {
 			return updateCore( siteId );
 		}
@@ -600,7 +602,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: siteSlug =>
+	goManagePlugins: ( siteSlug ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ),

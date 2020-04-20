@@ -55,7 +55,7 @@ export class CommentActions extends Component {
 		updateLastUndo: noop,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
 
 	delete = () => {
 		if (
@@ -66,11 +66,11 @@ export class CommentActions extends Component {
 		}
 	};
 
-	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
+	hasAction = ( action ) => includes( commentActions[ this.props.commentStatus ], action );
 
 	setSpam = () => this.setStatus( 'spam' );
 
-	setStatus = status => {
+	setStatus = ( status ) => {
 		const { changeStatus, commentIsLiked, commentStatus, unlike, updateLastUndo } = this.props;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
@@ -91,7 +91,7 @@ export class CommentActions extends Component {
 
 	setTrash = () => this.setStatus( 'trash' );
 
-	showNotice = status => {
+	showNotice = ( status ) => {
 		const { minimumComment, translate } = this.props;
 
 		this.props.removeNotice( 'comment-notice' );
@@ -323,7 +323,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 				likeComment( siteId, postId, commentId )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: () =>
 		dispatch(

@@ -73,7 +73,7 @@ class StatModuleChartTabs extends Component {
 		}
 	}
 
-	onLegendClick = chartItem => {
+	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
 		const chartIndex = activeLegend.indexOf( chartItem );
 		let gaEventAction;

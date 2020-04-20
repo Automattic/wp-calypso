@@ -31,7 +31,7 @@ export function confirmDelete( themeId, siteId ) {
 				args: { themeName, siteTitle },
 				comment: 'Themes: theme delete confirmation dialog',
 			} ),
-			accepted => {
+			( accepted ) => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
 			},
 			i18n.translate( 'Delete %(themeName)s', {

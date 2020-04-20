@@ -5,12 +5,12 @@ import { login } from '../';
 
 jest.mock( 'config', () => ( {
 	__esModule: true,
-	default: jest.fn( key => {
+	default: jest.fn( ( key ) => {
 		if ( 'login_url' === key ) {
 			return 'https://wordpress.com/wp-login.php';
 		}
 	} ),
-	isEnabled: jest.fn( key => {
+	isEnabled: jest.fn( ( key ) => {
 		if ( 'login/wp-login' === key ) {
 			return true;
 		}

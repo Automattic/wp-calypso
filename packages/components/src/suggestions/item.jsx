@@ -52,7 +52,7 @@ class Item extends PureComponent {
 		} );
 	}
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		this.props.onMouseDown();

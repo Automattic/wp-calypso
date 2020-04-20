@@ -196,7 +196,7 @@ class Security2faBackupCodesList extends React.Component {
 		return html;
 	}
 
-	doPopup = codes => {
+	doPopup = ( codes ) => {
 		this.popup.document.open( 'text/html' );
 		this.popup.document.write( this.getBackupCodeHTML( codes ) );
 		this.popup.document.close();
@@ -210,7 +210,7 @@ class Security2faBackupCodesList extends React.Component {
 		}, 100 );
 	};
 
-	onNextStep = event => {
+	onNextStep = ( event ) => {
 		event.preventDefault();
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
 		this.props.onNextStep();
@@ -227,7 +227,7 @@ class Security2faBackupCodesList extends React.Component {
 		return placeholders;
 	}
 
-	onUserAgreesChange = event => {
+	onUserAgreesChange = ( event ) => {
 		this.setState( { userAgrees: event.target.checked } );
 	};
 
@@ -376,7 +376,7 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect( state => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
+	connect( ( state ) => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );

@@ -24,7 +24,7 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  * @param {string} blockId Block identifier.
  * @returns {string|null} Block name if it exists. Otherwise, `null`.
  */
-const getTypeForBlockId = blockId => {
+const getTypeForBlockId = ( blockId ) => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
 	return block ? block.name : null;
 };
@@ -36,7 +36,7 @@ const getTypeForBlockId = blockId => {
  * @param {string|object} block Block object or string identifier.
  * @returns {object} block object or an empty object if not found.
  */
-const ensureBlockObject = block => {
+const ensureBlockObject = ( block ) => {
 	if ( typeof block === 'object' ) {
 		return block;
 	}
@@ -68,7 +68,7 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		return;
 	}
 
-	castBlocks.forEach( block => {
+	castBlocks.forEach( ( block ) => {
 		// Make this compatible with actions that pass only block id, not objects.
 		block = ensureBlockObject( block );
 
@@ -103,9 +103,9 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * @param {string} eventName event name
  * @returns {Function} track handler
  */
-const getBlocksTracker = eventName => blockIds => {
+const getBlocksTracker = ( eventName ) => ( blockIds ) => {
 	// track separately for each block
-	castArray( blockIds ).forEach( blockId => {
+	castArray( blockIds ).forEach( ( blockId ) => {
 		tracksRecordEvent( eventName, { block_name: getTypeForBlockId( blockId ) } );
 	} );
 };
@@ -116,7 +116,7 @@ const getBlocksTracker = eventName => blockIds => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockInsertion = blocks => {
+const trackBlockInsertion = ( blocks ) => {
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
@@ -129,7 +129,7 @@ const trackBlockInsertion = blocks => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockRemoval = blocks => {
+const trackBlockRemoval = ( blocks ) => {
 	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
 		block_name: name,
 	} ) );
@@ -172,7 +172,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
  * @param {string} eventName Name of the track event.
  * @returns {Function} tracker
  */
-const trackGlobalStyles = eventName => options => {
+const trackGlobalStyles = ( eventName ) => ( options ) => {
 	tracksRecordEvent( eventName, {
 		...options,
 	} );
@@ -243,13 +243,13 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
-	use( registry => ( {
-		dispatch: namespace => {
+	use( ( registry ) => ( {
+		dispatch: ( namespace ) => {
 			const actions = { ...registry.dispatch( namespace ) };
 			const trackers = REDUX_TRACKING[ namespace ];
 
 			if ( trackers ) {
-				Object.keys( trackers ).forEach( actionName => {
+				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
 					actions[ actionName ] = ( ...args ) => {
@@ -272,7 +272,7 @@ if (
 	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( eventType =>
+			EVENT_TYPES.forEach( ( eventType ) =>
 				document.addEventListener( eventType, delegateEventTracking )
 			);
 			return null;

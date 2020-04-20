@@ -24,11 +24,11 @@ import SignupForm from '../../components/signup-form';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { selectedDesign } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const hasSelectedDesign = !! selectedDesign;
 

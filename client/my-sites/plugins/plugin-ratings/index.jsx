@@ -118,7 +118,7 @@ const PluginRatings = createReactClass( {
 			return null;
 		}
 
-		const tierViews = this.ratingTiers.map( tierLevel => this.renderRatingTier( tierLevel ) );
+		const tierViews = this.ratingTiers.map( ( tierLevel ) => this.renderRatingTier( tierLevel ) );
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">

@@ -16,20 +16,17 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function restorePost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_RESTORE,
 			siteId,
 			postId,
 		} );
 
-		const restoreResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.restore();
+		const restoreResult = wpcom.site( siteId ).post( postId ).restore();
 
 		restoreResult.then(
-			restoredPost => {
+			( restoredPost ) => {
 				dispatch( {
 					type: POST_RESTORE_SUCCESS,
 					siteId,
@@ -37,7 +34,7 @@ export function restorePost( siteId, postId ) {
 				} );
 				dispatch( receivePost( restoredPost ) );
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: POST_RESTORE_FAILURE,
 					siteId,

@@ -35,7 +35,7 @@ const postStrings = ( () => {
 	try {
 		window.postMessage(
 			{
-				toString: function() {
+				toString: function () {
 					r = true;
 				},
 			},
@@ -132,7 +132,7 @@ const makeRequest = ( originalParams, fn ) => {
 	if ( 'function' === typeof fn ) {
 		// a callback function was provided
 		let called = false;
-		const xhrOnLoad = e => {
+		const xhrOnLoad = ( e ) => {
 			if ( called ) {
 				return;
 			}
@@ -143,7 +143,7 @@ const makeRequest = ( originalParams, fn ) => {
 			debug( 'headers: ', e.headers );
 			fn( null, body, e.headers );
 		};
-		const xhrOnError = e => {
+		const xhrOnError = ( e ) => {
 			if ( called ) {
 				return;
 			}

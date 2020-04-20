@@ -51,7 +51,7 @@ function preloadEditor() {
 }
 
 function sleep( ms ) {
-	return new Promise( r => setTimeout( r, ms ) );
+	return new Promise( ( r ) => setTimeout( r, ms ) );
 }
 
 const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
@@ -251,7 +251,7 @@ class Page extends Component {
 		];
 	}
 
-	setPostsPage = pageId => () =>
+	setPostsPage = ( pageId ) => () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
 			show_on_front: 'page',
 			page_for_posts: pageId,
@@ -722,7 +722,7 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
-	handleMenuToggle = isVisible => {
+	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();

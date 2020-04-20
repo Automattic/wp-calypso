@@ -9,7 +9,7 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED } from 'woocommerce/state/action-types';
 
-export default withoutPersistence( function( state = {}, action ) {
+export default withoutPersistence( function ( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST:
 			return {

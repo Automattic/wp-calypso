@@ -78,7 +78,7 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
@@ -86,7 +86,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	skipTask: siteId =>
+	skipTask: ( siteId ) =>
 		savePreference( `dismissible-card-home-task-connect-accounts-${ siteId }`, true ),
 };
 

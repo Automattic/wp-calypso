@@ -66,7 +66,7 @@ class ZoneLock extends PureComponent {
 		}, props.expires - new Date().getTime() - 1000 );
 	}
 
-	shouldRefresh = props =>
+	shouldRefresh = ( props ) =>
 		! this._refresh &&
 		props.expires &&
 		new Date().getTime() < props.expires &&

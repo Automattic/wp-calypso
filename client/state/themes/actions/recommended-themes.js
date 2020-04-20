@@ -17,7 +17,7 @@ import 'state/themes/init';
  * @returns {Function} Action thunk
  */
 export function receiveRecommendedThemes( themes ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes } );
 	};
 }
@@ -29,7 +29,7 @@ export function receiveRecommendedThemes( themes ) {
  * @returns {Function} Action thunk
  */
 export function getRecommendedThemes() {
-	return async dispatch => {
+	return async ( dispatch ) => {
 		dispatch( { type: RECOMMENDED_THEMES_FETCH } );
 		const query = {
 			search: '',

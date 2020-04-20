@@ -96,7 +96,7 @@ function removeUserStepFromFlow( flow ) {
 	}
 
 	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
+		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
 	} );
 }
 
@@ -172,7 +172,7 @@ const Flows = {
 		}
 
 		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
 		} );
 	},
 

@@ -35,7 +35,7 @@ class CartEmpty extends React.Component {
 		return startsWith( this.props.path, '/domains' );
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		page(

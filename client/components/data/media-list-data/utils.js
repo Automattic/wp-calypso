@@ -7,7 +7,7 @@ export default {
 	 * @param {string} filter - The filter to get a mime from
 	 * @returns {string} Mime type
 	 */
-	getMimeBaseTypeFromFilter: function( filter ) {
+	getMimeBaseTypeFromFilter: function ( filter ) {
 		let mime;
 
 		switch ( filter ) {
@@ -42,7 +42,7 @@ export default {
 	 * @param {object} props Media library request props
 	 * @returns {object} Modified query for Google Photos
 	 */
-	getGoogleQuery: function( query, props ) {
+	getGoogleQuery: function ( query, props ) {
 		const { categoryFilter, filter } = props;
 		const googleFilter = [];
 

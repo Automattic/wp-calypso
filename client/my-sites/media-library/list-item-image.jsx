@@ -50,7 +50,7 @@ export default class MediaLibraryListItemImage extends React.Component {
 		};
 	};
 
-	setUnknownImageDimensions = event => {
+	setUnknownImageDimensions = ( event ) => {
 		let newState = null;
 
 		if ( ! this.props.media.width ) {

@@ -222,7 +222,7 @@ function requestDpa() {
 		}
 	);
 }
-const dpaRequestState = request => {
+const dpaRequestState = ( request ) => {
 	switch ( request.state ) {
 		case 'pending':
 			return { status: 'pending' };
@@ -242,10 +242,10 @@ export default compose(
 		() => ( {
 			dpaRequest: dpaRequestState( getHttpData( dpaRequestId ) ),
 		} ),
-		dispatch => ( {
+		( dispatch ) => ( {
 			requestDpa,
-			successNotice: message => dispatch( successNotice( message ) ),
-			errorNotice: message => dispatch( errorNotice( message ) ),
+			successNotice: ( message ) => dispatch( successNotice( message ) ),
+			errorNotice: ( message ) => dispatch( errorNotice( message ) ),
 		} )
 	)
 )( Privacy );

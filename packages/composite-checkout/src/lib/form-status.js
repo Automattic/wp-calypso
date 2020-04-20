@@ -31,7 +31,7 @@ export function useFormStatusManager( isLoading ) {
 		formStatusReducer,
 		isLoading ? 'loading' : 'ready'
 	);
-	const setFormStatus = useCallback( payload => {
+	const setFormStatus = useCallback( ( payload ) => {
 		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
 	}, [] );
 	useEffect( () => {

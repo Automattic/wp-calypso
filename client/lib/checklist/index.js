@@ -13,7 +13,7 @@ class WpcomTaskList {
 	}
 
 	get( taskId ) {
-		return this.tasks.find( task => task.id === taskId );
+		return this.tasks.find( ( task ) => task.id === taskId );
 	}
 
 	getIds() {
@@ -34,22 +34,22 @@ class WpcomTaskList {
 		if ( ! found ) {
 			return null;
 		}
-		this.tasks = this.tasks.filter( task => task.id !== taskId );
+		this.tasks = this.tasks.filter( ( task ) => task.id !== taskId );
 		return found;
 	}
 
 	removeTasksWithoutUrls( taskUrls ) {
-		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
+		const hasUrl = ( task ) => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
 
 		this.tasks = this.tasks.filter( hasUrl );
 	}
 
 	getFirstIncompleteTask() {
-		return this.tasks.find( task => ! task.isCompleted );
+		return this.tasks.find( ( task ) => ! task.isCompleted );
 	}
 
 	getCompletionStatus() {
-		const completed = this.tasks.filter( task => task.isCompleted ).length;
+		const completed = this.tasks.filter( ( task ) => task.isCompleted ).length;
 		const total = this.tasks.length;
 
 		return {
@@ -61,8 +61,8 @@ class WpcomTaskList {
 }
 
 export const getTaskList = memoize(
-	params => new WpcomTaskList( params?.taskStatuses ),
-	params => {
+	( params ) => new WpcomTaskList( params?.taskStatuses ),
+	( params ) => {
 		const key = pick( params, [
 			'taskStatuses',
 			'designType',

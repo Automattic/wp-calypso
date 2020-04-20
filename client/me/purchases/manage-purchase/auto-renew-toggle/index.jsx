@@ -134,7 +134,7 @@ class AutoRenewToggle extends Component {
 			isRequesting: true,
 		} );
 
-		updateAutoRenew( purchaseId, success => {
+		updateAutoRenew( purchaseId, ( success ) => {
 			this.setState( {
 				isRequesting: false,
 			} );

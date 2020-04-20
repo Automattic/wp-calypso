@@ -120,13 +120,10 @@ export class SiteNotice extends React.Component {
 
 		const eligibleDomains = reject(
 			this.props.domains,
-			domain =>
+			( domain ) =>
 				domain.isWPCOMDomain ||
 				domain.name.endsWith( '.wpcomstaging.com' ) ||
-				( domain.registrationDate &&
-					moment( domain.registrationDate )
-						.add( 7, 'days' )
-						.isAfter() )
+				( domain.registrationDate && moment( domain.registrationDate ).add( 7, 'days' ).isAfter() )
 		);
 
 		if ( eligibleDomains.length !== 1 ) {
@@ -137,7 +134,7 @@ export class SiteNotice extends React.Component {
 
 		const priceAndSaleInfo = transform(
 			productsList,
-			function( result, value, key ) {
+			function ( result, value, key ) {
 				if ( value.is_domain_registration && value.available ) {
 					const regularPrice = getUnformattedDomainPrice( key, productsList );
 					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
@@ -307,7 +304,7 @@ export default connect(
 			messagePath,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(

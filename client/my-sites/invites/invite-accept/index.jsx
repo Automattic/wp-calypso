@@ -242,7 +242,7 @@ class InviteAccept extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		user: getCurrentUser( state ),
 	} ),
 	{ successNotice, infoNotice }

@@ -15,7 +15,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should return null for empty url', () => {
-		const returnUndefined = function() {
+		const returnUndefined = function () {
 			return;
 		};
 

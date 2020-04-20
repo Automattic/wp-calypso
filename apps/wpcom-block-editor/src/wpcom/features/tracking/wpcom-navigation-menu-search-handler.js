@@ -22,9 +22,9 @@ import tracksRecordEvent from './track-record-event';
 // let's remove this line once the core version updates.
 const debug = debugFactory( 'wpcom-block-editor:tracking:inserter-menu' );
 
-const InserterMenuTrackingEvent = function() {
+const InserterMenuTrackingEvent = function () {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const { selectedBlock } = useSelect( select => ( {
+	const { selectedBlock } = useSelect( ( select ) => ( {
 		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
 	} ) );
 

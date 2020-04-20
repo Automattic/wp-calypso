@@ -201,11 +201,11 @@ class MapDomainStep extends React.Component {
 		);
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
@@ -258,7 +258,7 @@ class MapDomainStep extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		selectedSite: getSelectedSite( state ),
 	} ),

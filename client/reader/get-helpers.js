@@ -83,12 +83,11 @@ export const getSiteDescription = ( { site, feed } ) => {
 	return description;
 };
 
-export const getSiteAuthorName = site => {
+export const getSiteAuthorName = ( site ) => {
 	const siteAuthor = site && site.owner;
 	const authorFullName =
 		siteAuthor &&
-		( siteAuthor.name ||
-			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+		( siteAuthor.name || trim( `${ siteAuthor.first_name || ''} ${ siteAuthor.last_name || ''}` ) );
 
 	return decodeEntities( authorFullName );
 };

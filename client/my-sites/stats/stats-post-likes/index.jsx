@@ -26,7 +26,7 @@ import PostLikes from 'blocks/post-likes';
  */
 import './style.scss';
 
-export const StatsPostLikes = props => {
+export const StatsPostLikes = ( props ) => {
 	const { countLikes, opened, postId, postType, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = countLikes === null;

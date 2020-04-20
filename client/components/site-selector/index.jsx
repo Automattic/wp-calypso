@@ -82,7 +82,7 @@ class SiteSelector extends Component {
 		isKeyboardEngaged: false,
 	};
 
-	onSearch = terms => {
+	onSearch = ( terms ) => {
 		this.props.searchSites( terms );
 
 		this.setState( {
@@ -148,7 +148,7 @@ class SiteSelector extends Component {
 		return { highlightedSiteId, highlightedIndex };
 	}
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -214,7 +214,7 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = event => {
+	onAllSitesSelect = ( event ) => {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -237,7 +237,7 @@ class SiteSelector extends Component {
 		this.lastMouseHover = null;
 	};
 
-	onMouseMove = event => {
+	onMouseMove = ( event ) => {
 		// we need to test here if cursor position was actually moved, because
 		// mouseMove event can also be triggered by scrolling the parent element
 		// and we scroll that element via keyboard access
@@ -272,7 +272,7 @@ class SiteSelector extends Component {
 		return this.props.groups;
 	}
 
-	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
+	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
 		let sites;
@@ -288,7 +288,7 @@ class SiteSelector extends Component {
 		}
 
 		if ( this.props.hideSelected && this.props.selected ) {
-			sites = sites.filter( site => site.slug !== this.props.selected );
+			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
 
 		return sites;
@@ -520,7 +520,7 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 	}
 };
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 

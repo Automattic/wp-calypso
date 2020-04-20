@@ -111,7 +111,7 @@ export class Banner extends Component {
 		return href;
 	}
 
-	handleClick = e => {
+	handleClick = ( e ) => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
 		if ( event && tracksClickName ) {
@@ -126,7 +126,7 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
-	handleDismiss = e => {
+	handleDismiss = ( e ) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
 		if ( event && tracksDismissName ) {

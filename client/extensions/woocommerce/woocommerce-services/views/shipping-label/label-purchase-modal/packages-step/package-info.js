@@ -35,11 +35,11 @@ import { getPackageGroupsForLabelPurchase } from 'woocommerce/woocommerce-servic
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
 	return [ dimensions.length, dimensions.width, dimensions.height ]
-		.map( dimension => `${ dimension } ${ dimensionUnit }` )
+		.map( ( dimension ) => `${ dimension } ${ dimensionUnit }` )
 		.join( ' x ' );
 };
 
-const PackageInfo = props => {
+const PackageInfo = ( props ) => {
 	const {
 		siteId,
 		orderId,
@@ -75,7 +75,7 @@ const PackageInfo = props => {
 		);
 	};
 
-	const renderPackageOption = box => {
+	const renderPackageOption = ( box ) => {
 		const dimensions = getBoxDimensions( box );
 		const boxId = box.id || box.name;
 		return (
@@ -99,7 +99,7 @@ const PackageInfo = props => {
 		);
 	};
 
-	const packageOptionChange = e => {
+	const packageOptionChange = ( e ) => {
 		props.setPackageType( orderId, siteId, packageId, e.target.value );
 	};
 
@@ -178,11 +178,11 @@ const PackageInfo = props => {
 		);
 	};
 
-	const onWeightChange = event => {
+	const onWeightChange = ( event ) => {
 		props.updatePackageWeight( orderId, siteId, packageId, event.target.value );
 	};
 
-	const onSignatureChange = event => {
+	const onSignatureChange = ( event ) => {
 		props.setPackageSignature( orderId, siteId, packageId, event.target.value );
 	};
 
@@ -266,7 +266,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators(
 		{
 			updatePackageWeight,

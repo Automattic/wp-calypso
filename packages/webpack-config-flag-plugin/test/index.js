@@ -19,7 +19,7 @@ describe( 'webpack-config-flag-plugin', () => {
 		rimraf.sync( buildDirectory );
 	} );
 
-	test( 'should produce expected output', done => {
+	test( 'should produce expected output', ( done ) => {
 		const config = {
 			context: fixturesDirectory,
 			entry: path.join( fixturesDirectory, 'main.js' ),
@@ -42,7 +42,7 @@ describe( 'webpack-config-flag-plugin', () => {
 			plugins: [ new ConfigFlagPlugin( { flags: { foo: true } } ) ],
 		};
 
-		webpack( config, err => {
+		webpack( config, ( err ) => {
 			expect( err ).toBeNull();
 
 			const outputFile = path.join( buildDirectory, 'main.js' );

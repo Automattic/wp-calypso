@@ -17,14 +17,14 @@ import {
 
 import 'state/posts/init';
 
-export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
+export const startEditingPostCopy = ( siteId, postToCopyId ) => ( dispatch ) => {
 	dispatch( startEditingPost( siteId, null ) );
 
 	wpcom
 		.site( siteId )
 		.post( postToCopyId )
 		.get( { context: 'edit' } )
-		.then( postToCopy => {
+		.then( ( postToCopy ) => {
 			const postAttributes = pick( postToCopy, [
 				'canonical_image',
 				'content',
@@ -68,7 +68,7 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 
 			dispatch( startEditingNewPost( siteId, postAttributes ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( editorSetLoadingError( error ) );
 		} );
 };

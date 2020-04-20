@@ -2,7 +2,7 @@
  * Returns last block in list of blocks with 'actions' property
  */
 function getActionBlock( blocks ) {
-	return blocks.filter( block => block.hasOwnProperty( 'actions' ) ).slice( -1 )[ 0 ] || {};
+	return blocks.filter( ( block ) => block.hasOwnProperty( 'actions' ) ).slice( -1 )[ 0 ] || {};
 }
 
 /**

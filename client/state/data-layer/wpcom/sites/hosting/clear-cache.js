@@ -11,7 +11,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 
 const updateNoticeId = 'hosting-clear-wordpress-cache';
 
-const clearWordPressCache = action =>
+const clearWordPressCache = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -24,7 +24,7 @@ const clearWordPressCache = action =>
 		action
 	);
 
-export const hostingClearWordPressCacheTracking = result =>
+export const hostingClearWordPressCacheTracking = ( result ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Hosting Configuration',

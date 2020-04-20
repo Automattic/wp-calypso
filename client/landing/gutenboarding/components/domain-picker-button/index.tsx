@@ -65,7 +65,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 					'is-open': isDomainPopoverVisible,
 					'is-modal-open': isDomainModalVisible,
 				} ) }
-				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
+				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
 				ref={ buttonRef }
 			>
 				<span className="domain-picker-button__label">{ children }</span>

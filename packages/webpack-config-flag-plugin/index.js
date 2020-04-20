@@ -39,7 +39,7 @@ class ConfigFlagPlugin {
 	}
 
 	apply( compiler ) {
-		const handleParser = parser => {
+		const handleParser = ( parser ) => {
 			// Hook into imports.
 			parser.hooks.import.tap( 'ConfigFlagPlugin', ( statement, source ) => {
 				const currentModule = parser.state.current.resource;
@@ -70,7 +70,7 @@ class ConfigFlagPlugin {
 			} );
 
 			// Hook into every call expression.
-			parser.hooks.evaluate.for( 'CallExpression' ).tap( 'ConfigFlagPlugin', expr => {
+			parser.hooks.evaluate.for( 'CallExpression' ).tap( 'ConfigFlagPlugin', ( expr ) => {
 				const currentModule = parser.state.current.resource;
 
 				// Check to see if this is a call to `config.isEnabled('flag')` or `isEnabled('flag')`, and
@@ -89,7 +89,7 @@ class ConfigFlagPlugin {
 
 		// inspect all JS modules
 		const handleCompilation = ( compilation, { normalModuleFactory } ) => {
-			moduleTypes.forEach( moduleType => {
+			moduleTypes.forEach( ( moduleType ) => {
 				normalModuleFactory.hooks.parser.for( moduleType ).tap( 'ConfigFlagPlugin', handleParser );
 			} );
 		};

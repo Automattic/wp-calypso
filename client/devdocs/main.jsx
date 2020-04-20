@@ -69,7 +69,7 @@ export default class Devdocs extends React.Component {
 
 		DocService.list(
 			DEFAULT_FILES,
-			function( err, results ) {
+			function ( err, results ) {
 				if ( ! err ) {
 					this.setState( {
 						defaultResults: results,
@@ -104,7 +104,7 @@ export default class Devdocs extends React.Component {
 		);
 	};
 
-	onSearchChange = term => {
+	onSearchChange = ( term ) => {
 		this.setState( {
 			inputValue: term,
 			term: term,
@@ -112,13 +112,13 @@ export default class Devdocs extends React.Component {
 		} );
 	};
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		if ( ! term ) {
 			return;
 		}
 		DocService.search(
 			term,
-			function( err, results ) {
+			function ( err, results ) {
 				if ( err ) {
 					log( 'search error: %o', err );
 				}
@@ -137,7 +137,7 @@ export default class Devdocs extends React.Component {
 		}
 
 		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
-		return searchResults.map( function( result ) {
+		return searchResults.map( function ( result ) {
 			let url = '/devdocs/' + result.path;
 
 			if ( this.state.term ) {
@@ -160,13 +160,13 @@ export default class Devdocs extends React.Component {
 		}, this );
 	};
 
-	snippet = result => {
+	snippet = ( result ) => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
 		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
-				{ parts.map( function( part, i ) {
+				{ parts.map( function ( part, i ) {
 					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
 						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;

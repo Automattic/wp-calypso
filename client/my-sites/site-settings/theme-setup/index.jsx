@@ -62,7 +62,7 @@ class ThemeSetup extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteSlug = getSelectedSiteSlug( state ) || '';

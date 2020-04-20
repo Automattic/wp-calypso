@@ -323,7 +323,7 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 				href={ backupDownloadPath( siteSlug, rewindId ) }
 				disabled={ disabledDownload }
 				isPrimary={ false }
-				onClick={ event => {
+				onClick={ ( event ) => {
 					disabledDownload && event.preventDefault();
 				} }
 			>
@@ -333,7 +333,7 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 				className="daily-backup-status__restore-button"
 				href={ backupRestorePath( siteSlug, rewindId ) }
 				disabled={ disabledRestore }
-				onClick={ event => {
+				onClick={ ( event ) => {
 					disabledRestore && event.preventDefault();
 				} }
 			>

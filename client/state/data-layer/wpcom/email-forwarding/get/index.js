@@ -19,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const getEmailForwards = action => {
+export const getEmailForwards = ( action ) => {
 	return http(
 		{
 			method: 'GET',

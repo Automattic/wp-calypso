@@ -37,7 +37,7 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 		rememberDismiss: true,
 	};
 
-	setRenderContext = renderContext => {
+	setRenderContext = ( renderContext ) => {
 		if ( ! renderContext ) {
 			return;
 		}
@@ -129,16 +129,16 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		sectionName: getSectionName( state ),
 		isMediaModalGalleryInstructionsDismissed:
 			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
 			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
-				onDismiss: options => {
+				onDismiss: ( options ) => {
 					if ( options.remember ) {
 						return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
 					}

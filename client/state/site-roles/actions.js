@@ -11,7 +11,7 @@ import {
 } from 'state/action-types';
 
 export function requestSiteRoles( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_ROLES_REQUEST,
 			siteId,

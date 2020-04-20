@@ -17,8 +17,8 @@ import {
 import { filterStateToQuery } from 'state/activity-log/utils';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
-export const navigationMiddleware = store => {
-	return next => action => {
+export const navigationMiddleware = ( store ) => {
+	return ( next ) => ( action ) => {
 		switch ( action.type ) {
 			case ACTIVITY_LOG_FILTER_SET:
 			case ACTIVITY_LOG_FILTER_UPDATE:

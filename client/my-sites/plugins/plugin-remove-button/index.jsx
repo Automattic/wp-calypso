@@ -52,7 +52,7 @@ class PluginRemoveButton extends React.Component {
 		);
 	};
 
-	processRemovalConfirmation = accepted => {
+	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
 			PluginsActions.removePluginsNotices( 'completed', 'error' );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );

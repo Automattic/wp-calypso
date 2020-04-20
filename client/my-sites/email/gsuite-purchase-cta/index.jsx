@@ -42,7 +42,7 @@ export const GSuitePurchaseCta = ( {
 		} );
 	}, [ domainName ] );
 
-	const goToAddGSuiteUsers = planType => {
+	const goToAddGSuiteUsers = ( planType ) => {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
 			domain_name: domainName,
 			plan_type: planType,
@@ -129,7 +129,7 @@ GSuitePurchaseCta.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		product: getProductBySlug( state, GSUITE_BASIC_SLUG ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),

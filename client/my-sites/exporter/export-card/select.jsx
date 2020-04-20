@@ -93,7 +93,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { siteId, postType, fieldName } = ownProps;
 
 	return {
-		setValue: value => dispatch( setPostTypeFieldValue( siteId, postType, fieldName, value ) ),
+		setValue: ( value ) => dispatch( setPostTypeFieldValue( siteId, postType, fieldName, value ) ),
 	};
 };
 

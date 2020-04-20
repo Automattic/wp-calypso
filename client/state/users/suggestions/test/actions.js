@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestUserSuggestions', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/users/suggest?site_id=' + siteId )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 						siteId,
 					} );
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );

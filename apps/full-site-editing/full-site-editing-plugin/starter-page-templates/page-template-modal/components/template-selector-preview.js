@@ -14,7 +14,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	const noBlocks = ! blocks.length;
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ `template-selector-preview ${ noBlocks ? 'not-selected' : '' }` }>
+		<div className={ `template-selector-preview ${ noBlocks ? 'not-selected' : ''}` }>
 			{ noBlocks && (
 				<div className="editor-styles-wrapper">
 					<div className="template-selector-preview__empty-state">

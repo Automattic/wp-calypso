@@ -20,7 +20,7 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
 		siteId,
 		postId,
 		post: {
-			metadata: map( metaKeys, key => ( { key, operation: 'delete' } ) ),
+			metadata: map( metaKeys, ( key ) => ( { key, operation: 'delete' } ) ),
 		},
 	};
 }

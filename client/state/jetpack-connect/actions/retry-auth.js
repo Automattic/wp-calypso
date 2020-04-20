@@ -22,7 +22,7 @@ const calypsoEnv = config( 'env_id' );
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
 			type: JETPACK_CONNECT_RETRY_AUTH,

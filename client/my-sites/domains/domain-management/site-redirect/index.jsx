@@ -70,7 +70,7 @@ class SiteRedirect extends React.Component {
 		this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const redirectUrl = withoutHttp( event.target.value );
 
 		this.setState( { redirectUrl } );
@@ -79,7 +79,7 @@ class SiteRedirect extends React.Component {
 	handleClick = () => {
 		this.props
 			.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
-			.then( success => {
+			.then( ( success ) => {
 				this.props.recordUpdateSiteRedirectClick(
 					this.props.selectedDomainName,
 					this.state.redirectUrl,
@@ -176,7 +176,7 @@ class SiteRedirect extends React.Component {
 	};
 }
 
-const recordCancelClick = domainName =>
+const recordCancelClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -189,7 +189,7 @@ const recordCancelClick = domainName =>
 		} )
 	);
 
-const recordLocationFocus = domainName =>
+const recordLocationFocus = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -218,7 +218,7 @@ const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const location = getSiteRedirectLocation( state, selectedSite.domain );
 		return { selectedSite, location };

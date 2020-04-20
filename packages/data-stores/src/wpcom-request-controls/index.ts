@@ -56,5 +56,5 @@ export const controls = {
 	},
 	REQUEST_ALL_BLOGS_ACCESS: () => triggerRequestAllBlogsAccess(),
 	WAIT: ( { ms }: ReturnType< typeof wait > ) =>
-		new Promise( resolve => setTimeout( resolve, ms ) ),
+		new Promise( ( resolve ) => setTimeout( resolve, ms ) ),
 } as const;

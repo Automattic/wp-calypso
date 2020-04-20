@@ -12,7 +12,7 @@ const initialState = {
 	cost: 5,
 };
 
-export default withoutPersistence( function( state = initialState, action ) {
+export default withoutPersistence( function ( state = initialState, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE:
 			return {

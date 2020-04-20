@@ -53,11 +53,11 @@ import { useSiteOptions } from './use-site-options';
  * ] )( Component );
  *
  */
-export const withSiteOptions = options =>
+export const withSiteOptions = ( options ) =>
 	createHigherOrderComponent(
-		WrappedComponent =>
-			pure( ownProps => {
-				const shouldUpdateSiteOption = useSelect( select => {
+		( WrappedComponent ) =>
+			pure( ( ownProps ) => {
+				const shouldUpdateSiteOption = useSelect( ( select ) => {
 					const {
 						isSavingPost,
 						isPublishingPost,
@@ -71,7 +71,7 @@ export const withSiteOptions = options =>
 				} );
 
 				const createErrorNotice = useDispatch(
-					dispatch => dispatch( 'core/notices' ).createErrorNotice
+					( dispatch ) => dispatch( 'core/notices' ).createErrorNotice
 				);
 
 				const { isSelected, setAttributes } = ownProps;

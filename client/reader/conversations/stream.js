@@ -17,7 +17,7 @@ import ConversationsEmptyContent from 'blocks/conversations/empty';
  */
 import './stream.scss';
 
-export default function( props ) {
+export default function ( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
 	const intro = <ConversationsIntro isInternal={ isInternal } />;

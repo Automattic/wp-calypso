@@ -134,7 +134,7 @@ function getMomentSiteZone( state, siteId ) {
 }
 
 export default {
-	redirectToDefaultSitePage: function( context ) {
+	redirectToDefaultSitePage: function ( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
 		// if we are redirecting we need to retain our intended layout-focus
@@ -144,7 +144,7 @@ export default {
 		page.redirect( getStatsDefaultSitePage( siteFragment ) );
 	},
 
-	redirectToDefaultWordAdsPeriod: function( context ) {
+	redirectToDefaultWordAdsPeriod: function ( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
 		// if we are redirecting we need to retain our intended layout-focus
@@ -158,17 +158,17 @@ export default {
 		}
 	},
 
-	redirectToDefaultModulePage: function( context ) {
+	redirectToDefaultModulePage: function ( context ) {
 		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site }` );
 	},
 
-	insights: function( context, next ) {
+	insights: function ( context, next ) {
 		context.primary = <StatsInsights followList={ new FollowList() } />;
 		next();
 	},
 
-	overview: function( context, next ) {
-		const filters = function() {
+	overview: function ( context, next ) {
+		const filters = function () {
 			return [
 				{
 					title: i18n.translate( 'Days' ),
@@ -190,7 +190,7 @@ export default {
 
 		window.scrollTo( 0, 0 );
 
-		const activeFilter = find( filters(), filter => {
+		const activeFilter = find( filters(), ( filter ) => {
 			return (
 				context.params.period === filter.period ||
 				context.pathname === filter.path ||
@@ -209,7 +209,7 @@ export default {
 		next();
 	},
 
-	site: function( context, next ) {
+	site: function ( context, next ) {
 		const {
 			params: { site: givenSiteId },
 			query: queryOptions,
@@ -236,7 +236,7 @@ export default {
 
 		const activeFilter = find(
 			filters,
-			filter =>
+			( filter ) =>
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 		);
@@ -277,7 +277,7 @@ export default {
 		next();
 	},
 
-	summary: function( context, next ) {
+	summary: function ( context, next ) {
 		let siteId = context.params.site;
 		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
@@ -311,7 +311,7 @@ export default {
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
-		const activeFilter = find( filters, filter => {
+		const activeFilter = find( filters, ( filter ) => {
 			return (
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
@@ -362,7 +362,7 @@ export default {
 		next();
 	},
 
-	post: function( context, next ) {
+	post: function ( context, next ) {
 		let siteId = context.params.site;
 		const postId = parseInt( context.params.post_id, 10 );
 		const site = getSite( context.store.getState(), siteId );
@@ -380,7 +380,7 @@ export default {
 		next();
 	},
 
-	follows: function( context, next ) {
+	follows: function ( context, next ) {
 		let siteId = context.params.site;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
@@ -417,14 +417,14 @@ export default {
 		next();
 	},
 
-	wordAds: function( context, next ) {
+	wordAds: function ( context, next ) {
 		const { query: queryOptions, store } = context;
 
 		const state = store.getState();
 		const siteId = getSelectedSiteId( state );
 		const filters = getSiteFilters( siteId, context );
 
-		const activeFilter = find( filters, filter => context.params.period === filter.period );
+		const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
 		if ( ! activeFilter ) {
 			return next();

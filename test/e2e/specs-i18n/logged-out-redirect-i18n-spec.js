@@ -20,14 +20,14 @@ const locale = driverManager.currentLocale();
 
 let driver;
 
-before( function() {
+before( function () {
 	this.timeout( startBrowserTimeoutMS );
 } );
 
-describe( `Logged out homepage redirect test @i18n (${ locale })`, function() {
+describe( `Logged out homepage redirect test @i18n (${ locale })`, function () {
 	this.timeout( mochaTimeOut );
 
-	step( `should redirect to the correct url for wordpress.com (${ locale })`, async function() {
+	step( `should redirect to the correct url for wordpress.com (${ locale })`, async function () {
 		driver = await driverManager.startBrowser();
 
 		// No culture here implies 'en'

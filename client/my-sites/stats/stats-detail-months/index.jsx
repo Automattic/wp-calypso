@@ -20,7 +20,7 @@ import QueryPosts from 'components/data/query-posts';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 import toggleInfo from '../toggle-info';
 
-const StatsPostDetailMonths = props => {
+const StatsPostDetailMonths = ( props ) => {
 	const {
 		dataKey,
 		isRequesting,
@@ -70,7 +70,7 @@ const StatsPostDetailMonths = props => {
 
 		highest = 'years' === dataKey ? stats.highest_month : stats.highest_day_average;
 
-		const tableRows = Object.keys( stats[ dataKey ] ).map( i => {
+		const tableRows = Object.keys( stats[ dataKey ] ).map( ( i ) => {
 			const year = stats[ dataKey ][ i ];
 			const cells = [];
 

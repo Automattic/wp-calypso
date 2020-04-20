@@ -34,7 +34,7 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 
 import './style.scss';
 
-const DomainManagementNavigationItemContents = function( props ) {
+const DomainManagementNavigationItemContents = function ( props ) {
 	const { materialIcon, text, description } = props;
 	return (
 		<React.Fragment>
@@ -47,7 +47,7 @@ const DomainManagementNavigationItemContents = function( props ) {
 	);
 };
 
-const DomainManagementNavigationItem = function( props ) {
+const DomainManagementNavigationItem = function ( props ) {
 	const { path, onClick, external, materialIcon, text, description } = props;
 
 	return (

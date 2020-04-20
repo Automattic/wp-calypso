@@ -181,7 +181,7 @@ class SignupForm extends Component {
 			return null;
 		}
 
-		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+		const userExistsError = find( step.errors, ( error ) => error.error === 'user_exists' );
 
 		return userExistsError;
 	}
@@ -308,7 +308,7 @@ class SignupForm extends Component {
 		} );
 	};
 
-	setFormState = state => {
+	setFormState = ( state ) => {
 		this.setState( { form: state } );
 	};
 
@@ -318,7 +318,7 @@ class SignupForm extends Component {
 		}
 	}
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		const name = event.target.name,
 			value = event.target.value;
 
@@ -330,7 +330,7 @@ class SignupForm extends Component {
 		} );
 	};
 
-	handleBlur = event => {
+	handleBlur = ( event ) => {
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
 		if ( fieldId === 'password' ) {
@@ -362,7 +362,7 @@ class SignupForm extends Component {
 		this.props.save && this.props.save( this.state.form );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		if ( this.state.submitting ) {
@@ -379,7 +379,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		this.formStateController.handleSubmit( hasErrors => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
@@ -625,12 +625,12 @@ class SignupForm extends Component {
 		this.props.handleSocialResponse( args );
 	};
 
-	handleWooCommerceSubmit = event => {
+	handleWooCommerceSubmit = ( event ) => {
 		event.preventDefault();
 		document.activeElement.blur();
 		this.recordWooCommerceSignupTracks( 'email' );
 
-		this.formStateController.handleSubmit( hasErrors => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
@@ -652,7 +652,7 @@ class SignupForm extends Component {
 					type="email"
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					onBlur={ this.handleBlur }
-					onChange={ value => {
+					onChange={ ( value ) => {
 						this.setState( { notice: null } );
 						this.formStateController.handleFieldChange( {
 							name: 'email',
@@ -675,7 +675,7 @@ class SignupForm extends Component {
 							name="username"
 							value={ formState.getFieldValue( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
-							onChange={ value => {
+							onChange={ ( value ) => {
 								this.setState( { notice: null } );
 								this.formStateController.handleFieldChange( {
 									name: 'username',
@@ -698,7 +698,7 @@ class SignupForm extends Component {
 					type="password"
 					value={ formState.getFieldValue( this.state.form, 'password' ) }
 					onBlur={ this.handleBlur }
-					onChange={ value => {
+					onChange={ ( value ) => {
 						this.formStateController.handleFieldChange( {
 							name: 'password',
 							value,
@@ -1036,7 +1036,7 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:

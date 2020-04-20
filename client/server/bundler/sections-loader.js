@@ -18,7 +18,7 @@ const config = require( '../config' );
  * functions to each section object.
  */
 function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) {
-	sections.forEach( section => {
+	sections.forEach( ( section ) => {
 		if ( onlyIsomorphic && ! section.isomorphic ) {
 			return;
 		}
@@ -64,7 +64,7 @@ function filterSectionsInDevelopment( sections ) {
 	const activeSections = config( 'sections' );
 	const byDefaultEnableSection = config( 'enable_all_sections' );
 
-	return sections.filter( section => {
+	return sections.filter( ( section ) => {
 		if ( activeSections && typeof activeSections[ section.name ] !== 'undefined' ) {
 			return activeSections[ section.name ];
 		}
@@ -72,7 +72,7 @@ function filterSectionsInDevelopment( sections ) {
 	} );
 }
 
-const loader = function() {
+const loader = function () {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
@@ -85,7 +85,7 @@ const loader = function() {
 		}
 		console.log( `[sections-loader] Limiting build to ${ include.join( ', ' ) } sections` );
 		const allSections = sections;
-		sections = allSections.filter( section => include.includes( section.name ) );
+		sections = allSections.filter( ( section ) => include.includes( section.name ) );
 		if ( ! sections.length ) {
 			// nothing matched. warn.
 			console.warn( `[sections-loader] No sections matched ${ include.join( ',' ) }` );

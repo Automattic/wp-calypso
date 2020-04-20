@@ -38,10 +38,12 @@ class PurchaseReconnectNotice extends Component {
 
 		return (
 			<Notice showDismiss={ false } status="is-error" text={ text }>
-				{ /* Disconnected Jetpack sites can remove purchases. No need to contact support */
-				! isJetpack && (
-					<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
-				) }
+				{
+					/* Disconnected Jetpack sites can remove purchases. No need to contact support */
+					! isJetpack && (
+						<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
+					)
+				}
 			</Notice>
 		);
 	}

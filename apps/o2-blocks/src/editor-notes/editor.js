@@ -26,7 +26,7 @@ const edit = ( { attributes: { notes }, className, isSelected, setAttributes } )
 			tagName="p"
 			className={ className }
 			value={ notes }
-			onChange={ newNotes => setAttributes( { notes: newNotes } ) }
+			onChange={ ( newNotes ) => setAttributes( { notes: newNotes } ) }
 		/>
 	</div>
 );

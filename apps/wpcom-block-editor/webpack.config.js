@@ -58,7 +58,7 @@ function getWebpackConfig(
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
 		plugins: [
 			...webpackConfig.plugins.filter(
-				plugin => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
 			new DependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {

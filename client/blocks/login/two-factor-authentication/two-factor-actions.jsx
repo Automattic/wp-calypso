@@ -36,7 +36,7 @@ class TwoFactorActions extends Component {
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
-	sendSmsCode = event => {
+	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
@@ -53,7 +53,7 @@ class TwoFactorActions extends Component {
 		this.props.sendSmsCode();
 	};
 
-	recordAuthenticatorLinkClick = event => {
+	recordAuthenticatorLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
@@ -67,7 +67,7 @@ class TwoFactorActions extends Component {
 			} )
 		);
 	};
-	recordSecurityKey = event => {
+	recordSecurityKey = ( event ) => {
 		event.preventDefault();
 		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
 	};
@@ -115,7 +115,7 @@ class TwoFactorActions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),

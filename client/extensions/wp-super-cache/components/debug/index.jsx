@@ -139,9 +139,7 @@ class DebugTab extends Component {
 												'<!-- super cache -->',
 											{
 												args: {
-													date: moment()
-														.utc()
-														.format( 'YYYY-MM-DD HH:mm:ss' ),
+													date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ),
 												},
 											}
 										) }
@@ -232,7 +230,7 @@ class DebugTab extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_path',
 		'cache_path_url',

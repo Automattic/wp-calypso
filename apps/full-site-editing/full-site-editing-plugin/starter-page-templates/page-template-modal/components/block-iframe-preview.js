@@ -47,13 +47,13 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
-	each( Object.keys( targetDOMFragment ), domReference => {
+	each( Object.keys( targetDOMFragment ), ( domReference ) => {
 		return each(
 			filter( srcDocument[ domReference ].children, ( { localName } ) =>
 				// Only return specific style-related Nodes
 				styleNodes.includes( localName )
 			),
-			targetNode => {
+			( targetNode ) => {
 				// Clone the original node and append to the appropriate Fragement
 				const deep = true;
 				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
@@ -97,7 +97,10 @@ const BlockFramePreview = ( {
 
 	// Rendering blocks list.
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer(
+		( state ) => state + 1,
+		0
+	);
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
 	/**
@@ -235,7 +238,7 @@ const BlockFramePreview = ( {
 
 export default compose(
 	withSafeTimeout,
-	withSelect( select => {
+	withSelect( ( select ) => {
 		const blockEditorStore = select( 'core/block-editor' );
 		return {
 			settings: blockEditorStore ? blockEditorStore.getSettings() : {},

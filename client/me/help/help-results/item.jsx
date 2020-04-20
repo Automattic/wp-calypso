@@ -15,7 +15,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';
 
-	onClick = event => {
+	onClick = ( event ) => {
 		if ( this.props.helpLink.disabled ) {
 			return event.preventDefault();
 		}

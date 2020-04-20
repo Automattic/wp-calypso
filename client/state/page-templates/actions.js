@@ -34,7 +34,7 @@ export function receivePageTemplates( siteId, templates ) {
  * @returns {Function}        Action thunk
  */
 export function requestPageTemplates( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PAGE_TEMPLATES_REQUEST,
 			siteId,
@@ -50,7 +50,7 @@ export function requestPageTemplates( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: PAGE_TEMPLATES_REQUEST_FAILURE,
 					siteId,

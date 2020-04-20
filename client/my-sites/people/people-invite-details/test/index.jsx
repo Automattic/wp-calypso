@@ -15,7 +15,7 @@ jest.mock( 'page', () => ( { back: mockGoBack } ) );
 describe( 'PeopleInviteDetails', () => {
 	let PeopleInviteDetails;
 
-	const mockTranslate = msg => msg;
+	const mockTranslate = ( msg ) => msg;
 	const siteObject = { ID: 1337, slug: 'foo.wordpress.com' };
 
 	const pendingInviteObject = {

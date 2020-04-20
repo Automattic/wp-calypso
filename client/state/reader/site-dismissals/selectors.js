@@ -16,6 +16,6 @@ import 'state/reader/init';
  * @returns {Array}        Dimissed site IDs
  */
 export const getDismissedSites = createSelector(
-	state => map( Object.keys( pickBy( state.reader.siteDismissals.items ) ), Number ),
-	state => [ state.reader.siteDismissals.items ]
+	( state ) => map( Object.keys( pickBy( state.reader.siteDismissals.items ) ), Number ),
+	( state ) => [ state.reader.siteDismissals.items ]
 );

@@ -47,14 +47,14 @@ const AdvancedTab = ( {
 	);
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const status = getStatus( state, siteId );
 
 	return { status };
 } );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'is_cache_enabled', 'is_super_cache_enabled' ] );
 };
 

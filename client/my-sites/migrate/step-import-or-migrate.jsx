@@ -36,11 +36,11 @@ class StepImportOrMigrate extends Component {
 		chosenImportType: null,
 	};
 
-	chooseImportType = type => {
+	chooseImportType = ( type ) => {
 		this.setState( { chosenImportType: type } );
 	};
 
-	onJetpackSelect = event => {
+	onJetpackSelect = ( event ) => {
 		const { isTargetSiteAtomic } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {

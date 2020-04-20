@@ -26,7 +26,7 @@ import 'state/login/init';
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
+export const connectSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -39,13 +39,13 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		.me()
 		.socialConnect( { ...socialInfo, redirect_to: redirectTo } )
 		.then(
-			wpcomResponse => {
+			( wpcomResponse ) => {
 				dispatch( {
 					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 					redirect_to: wpcomResponse.redirect_to,
 				} );
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {

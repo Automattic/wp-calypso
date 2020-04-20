@@ -63,7 +63,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/test-helper' ) ) {
 		const testHelperEl = document.querySelector( '.environment.is-tests' );
 		if ( testHelperEl ) {
-			asyncRequire( 'lib/abtest/test-helper', testHelper => {
+			asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
 				testHelper( testHelperEl );
 			} );
 		}
@@ -72,7 +72,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
 		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
 		if ( prefHelperEl ) {
-			asyncRequire( 'lib/preferences-helper', prefHelper => {
+			asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
 				prefHelper( prefHelperEl, reduxStore );
 			} );
 		}
@@ -93,13 +93,13 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection =>
+		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
 };
 
-const setRouteMiddleware = reduxStore => {
+const setRouteMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
 

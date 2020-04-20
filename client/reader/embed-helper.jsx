@@ -4,7 +4,7 @@
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
-const isPercentage = val => percentageRegex.test( val );
+const isPercentage = ( val ) => percentageRegex.test( val );
 
 const embedsConfig = {
 	default: {
@@ -27,8 +27,8 @@ const embedsConfig = {
 				height = width * ( parseInt( height, 10 ) / 100 );
 			}
 			return {
-				width: `${ width | 0 }px`,
-				height: `${ height | 0 }px`,
+				width: `${ width | 0}px`,
+				height: `${ height | 0}px`,
 				paddingRight: '1px', // this exists to solve a bug in safari that we found here: https://github.com/Automattic/wp-calypso/issues/8987
 			};
 		},

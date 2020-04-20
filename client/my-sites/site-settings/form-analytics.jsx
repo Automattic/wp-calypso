@@ -33,7 +33,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
+const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasPlanWithAnalytics = overSome(
 	isPremium,
 	isBusiness,
@@ -54,7 +54,7 @@ export class GoogleAnalyticsForm extends Component {
 		updateFields( { wga: updatedWgaFields } );
 	};
 
-	handleCodeChange = event => {
+	handleCodeChange = ( event ) => {
 		const code = event.target.value.trim();
 
 		this.setState( {
@@ -63,7 +63,7 @@ export class GoogleAnalyticsForm extends Component {
 		this.handleFieldChange( 'code', code );
 	};
 
-	handleToggleChange = key => {
+	handleToggleChange = ( key ) => {
 		const { fields, path } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
 
@@ -282,7 +282,7 @@ export class GoogleAnalyticsForm extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );

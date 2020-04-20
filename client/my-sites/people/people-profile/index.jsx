@@ -41,7 +41,7 @@ class PeopleProfile extends Component {
 		return;
 	};
 
-	getRoleBadgeText = role => {
+	getRoleBadgeText = ( role ) => {
 		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
@@ -86,12 +86,12 @@ class PeopleProfile extends Component {
 		return text;
 	};
 
-	getRoleBadgeClass = role => {
+	getRoleBadgeClass = ( role ) => {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	};
 
-	handleLinkToReaderSiteStream = event => {
+	handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
 			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 

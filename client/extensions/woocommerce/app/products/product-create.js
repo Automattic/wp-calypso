@@ -98,13 +98,13 @@ class ProductCreate extends React.Component {
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: [ ...prevState.isUploading, [ true ] ],
 		} ) );
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: prevState.isUploading.slice( 1 ),
 		} ) );
 	};
@@ -112,7 +112,7 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
 
-		const getSuccessNotice = newProduct => {
+		const getSuccessNotice = ( newProduct ) => {
 			if ( ! finishedInitialSetup ) {
 				return successNotice(
 					translate( '%(product)s successfully created. {{productLink}}View{{/productLink}}', {
@@ -149,13 +149,13 @@ class ProductCreate extends React.Component {
 			);
 		};
 
-		const successAction = products => {
+		const successAction = ( products ) => {
 			const newProduct = head( products );
 			page.redirect( getLink( '/store/products/:site', site ) );
 			return getSuccessNotice( newProduct );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			const errorSlug = ( error && error.error ) || undefined;
 
 			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {

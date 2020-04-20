@@ -24,7 +24,7 @@ class PaginationPage extends Component {
 		totalPages: PropTypes.number.isRequired,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		event.stopPropagation();
 		const { currentPage, pageClick, pageNumber, totalPages } = this.props;
 

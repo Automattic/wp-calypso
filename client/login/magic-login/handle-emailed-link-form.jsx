@@ -80,7 +80,7 @@ class HandleEmailedLinkForm extends React.Component {
 		}
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {
@@ -211,7 +211,7 @@ class HandleEmailedLinkForm extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	return {
 		redirectToOriginal: getRedirectToOriginal( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),

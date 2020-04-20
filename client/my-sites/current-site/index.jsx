@@ -36,7 +36,7 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 	};
 
-	switchSites = event => {
+	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -102,7 +102,7 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),

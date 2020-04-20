@@ -41,7 +41,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			const message = getSMSMessageFromResponse( response );
 
 			dispatch( {
@@ -53,7 +53,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
 			dispatch( {

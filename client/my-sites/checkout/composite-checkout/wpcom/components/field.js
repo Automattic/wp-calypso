@@ -28,7 +28,7 @@ export default function Field( {
 	autoComplete,
 	disabled,
 } ) {
-	const fieldOnChange = event => {
+	const fieldOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
 		}
@@ -94,13 +94,13 @@ Field.propTypes = {
 
 const Label = styled.label`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${( props ) => props.theme.colors.textColor};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
 	}
 `;
 
@@ -110,11 +110,12 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-	padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px;
+		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+	padding: 13px ${( props ) => ( props.icon ? '60px' : '10px') } 12px 10px;
 
 	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+		outline: ${( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline}
 			solid 2px !important;
 	}
 
@@ -130,11 +131,11 @@ const Input = styled.input`
 	}
 
 	::placeholder {
-		color: ${props => props.theme.colors.placeHolderTextColor};
+		color: ${( props ) => props.theme.colors.placeHolderTextColor};
 	}
 
 	:disabled {
-		background: ${props => props.theme.colors.disabledField};
+		background: ${( props ) => props.theme.colors.disabledField};
 	}
 `;
 
@@ -171,7 +172,7 @@ const ButtonIconUI = styled.div`
 
 const Description = styled.p`
 	margin: 8px 0 0 0;
-	color: ${props =>
+	color: ${( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
 	font-size: 14px;

@@ -404,7 +404,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	// We are temporarily disabling the premium bump offer, so skipping this test for now. Check pNEWy-cIg-p2.
 	it.skip( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -422,7 +422,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -440,7 +440,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, premium is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -458,7 +458,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page (with concierge display mode) if concierge is in the cart', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -476,7 +476,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -494,7 +494,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but the previous route is the nudge', () => {
-		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{

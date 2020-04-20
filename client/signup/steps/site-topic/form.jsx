@@ -40,7 +40,7 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
+	onSiteTopicChange = ( verticalData ) => {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
@@ -52,7 +52,7 @@ class SiteTopicForm extends Component {
 		} );
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		const {
 			isUserInput,
 			siteSlug,
@@ -116,7 +116,7 @@ class SiteTopicForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteType = getSiteType( state );
 		const siteTopic = getSiteVerticalName( state );
 		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );

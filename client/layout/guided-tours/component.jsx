@@ -69,7 +69,7 @@ class GuidedToursComponent extends Component {
 			} );
 		}
 
-		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
+		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit'}`, {
 			step,
 			tour,
 			tour_version,
@@ -107,9 +107,9 @@ class GuidedToursComponent extends Component {
 	}
 }
 
-const getTourWhenState = state => when => !! when( state );
+const getTourWhenState = ( state ) => ( when ) => !! when( state );
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const tourState = getGuidedTourState( state );
 	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
 	return {

@@ -264,7 +264,7 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),

@@ -47,7 +47,7 @@ jest.mock( 'state/ui/selectors', () => {
 
 jest.mock( 'config', () => {
 	const fn = () => {};
-	fn.isEnabled = feature_key =>
+	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;
 	return fn;
 } );

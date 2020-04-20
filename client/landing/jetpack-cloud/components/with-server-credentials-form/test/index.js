@@ -91,13 +91,13 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 
 				<div data-testid="error-messages">
 					{ Object.values( formErrors )
-						.filter( v => v )
+						.filter( ( v ) => v )
 						.join( ' ' ) }
 				</div>
 
 				<div data-testid="form-content">
 					{ Object.values( form )
-						.filter( v => v )
+						.filter( ( v ) => v )
 						.join( ' ' ) }
 				</div>
 
@@ -149,7 +149,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		const { utils } = setup();
 		const submitButton = utils.getByText( 'Submit' );
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
-		[ 'user', 'pass', 'host' ].forEach( inputName => {
+		[ 'user', 'pass', 'host' ].forEach( ( inputName ) => {
 			const input = utils.getByTestId( inputName );
 			fireEvent.change( input, { target: { value: inputName } } );
 			expect( input.value ).toBe( inputName );

@@ -18,12 +18,14 @@ import FormLegend from 'components/forms/form-legend';
 import './style.scss';
 
 const shuffleAnswers = memoize(
-	answers => {
+	( answers ) => {
 		const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
-		return answers.map( answer => ( answer.doNotShuffle ? answer : shuffles.pop() ) );
+		return answers.map( ( answer ) => ( answer.doNotShuffle ? answer : shuffles.pop())  );
 	},
-	answers =>
-		answers.map( answer => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) ).join( '-' )
+	( answers ) =>
+		answers
+			.map( ( answer ) => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) )
+			.join( '-' )
 );
 
 const MultipleChoiceQuestion = ( {
@@ -40,7 +42,7 @@ const MultipleChoiceQuestion = ( {
 	return (
 		<FormFieldset className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
-			{ shuffledAnswers.map( answer => (
+			{ shuffledAnswers.map( ( answer ) => (
 				<MultipleChoiceAnswer
 					key={ answer.id }
 					answer={ answer }

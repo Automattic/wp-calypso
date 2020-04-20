@@ -155,7 +155,7 @@ export class UserStep extends Component {
 			'g-recaptcha',
 			'calypso/signup/pageLoad',
 			config( 'google_recaptcha_site_key' )
-		).then( result => {
+		).then( ( result ) => {
 			if ( ! result ) {
 				return;
 			}
@@ -169,14 +169,14 @@ export class UserStep extends Component {
 		} );
 	}
 
-	save = form => {
+	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			form,
 		} );
 	};
 
-	submit = data => {
+	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
@@ -412,7 +412,7 @@ export class UserStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

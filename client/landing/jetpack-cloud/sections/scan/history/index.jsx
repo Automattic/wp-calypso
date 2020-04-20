@@ -119,7 +119,7 @@ class ScanHistoryPage extends Component {
 		return filterOptions[ 0 ];
 	};
 
-	handleOnFilterChange = filter => {
+	handleOnFilterChange = ( filter ) => {
 		const { siteSlug } = this.props;
 		let filterValue = filter.value;
 		if ( 'all' === filterValue ) {
@@ -134,7 +134,7 @@ class ScanHistoryPage extends Component {
 		if ( filter === 'all' ) {
 			return logEntries;
 		}
-		return logEntries.filter( entry => entry.action === filter );
+		return logEntries.filter( ( entry ) => entry.action === filter );
 	}
 
 	render() {
@@ -160,7 +160,7 @@ class ScanHistoryPage extends Component {
 					/>
 				</div>
 				<div className="history__entries">
-					{ logEntries.map( entry => (
+					{ logEntries.map( ( entry ) => (
 						<ScanHistoryItem entry={ entry } key={ entry.id } />
 					) ) }
 				</div>
@@ -169,7 +169,7 @@ class ScanHistoryPage extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	// TODO: Get state from actual API.

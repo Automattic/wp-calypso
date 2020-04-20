@@ -347,7 +347,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

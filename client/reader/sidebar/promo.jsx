@@ -57,7 +57,7 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const newProps = {
 		currentUserLocale: getCurrentUserLocale( state ),
 		isDesktopAppUser: getUserSetting( state, 'is_desktop_app_user' ),

@@ -32,6 +32,6 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 	</Main>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SiteSettingsDiscussion ) );

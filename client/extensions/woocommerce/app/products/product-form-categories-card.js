@@ -27,11 +27,11 @@ const ProductFormCategoriesCard = ( {
 	editProductCategory,
 	translate,
 } ) => {
-	const handleChange = categoryNames => {
+	const handleChange = ( categoryNames ) => {
 		const newCategories = compact(
-			categoryNames.map( label => {
+			categoryNames.map( ( label ) => {
 				const escapedCategoryName = escape( label );
-				const category = find( productCategories, cat => {
+				const category = find( productCategories, ( cat ) => {
 					return escape( cat.label ) === escapedCategoryName;
 				} );
 
@@ -57,12 +57,12 @@ const ProductFormCategoriesCard = ( {
 
 	const selectedCategories = product.categories || [];
 	const selectedCategoryNames = compact(
-		selectedCategories.map( c => {
+		selectedCategories.map( ( c ) => {
 			const category = find( productCategories, { id: c.id } );
 			return ( category && unescape( category.label ) ) || undefined;
 		} )
 	);
-	const productCategoryNames = productCategories.map( c => unescape( c.label ) );
+	const productCategoryNames = productCategories.map( ( c ) => unescape( c.label ) );
 
 	return (
 		<Card className="products__categories-card">

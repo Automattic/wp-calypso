@@ -57,7 +57,7 @@ export default class Select extends PureComponent {
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
 				>
-					{ this.props.options.map( option => (
+					{ this.props.options.map( ( option ) => (
 						<option key={ option.value } value={ option.value } disabled={ option.disabled }>
 							{ option.label }
 						</option>

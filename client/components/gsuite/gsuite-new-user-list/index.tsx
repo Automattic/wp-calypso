@@ -59,7 +59,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			{ users.map( ( user, index ) => (
 				<Fragment key={ index }>
 					<GSuiteNewUser
-						domains={ domains ? domains.map( domain => domain.name ) : [ selectedDomainName ] }
+						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }

@@ -20,7 +20,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'settings' ) ) {
 		throw new Error( 'Missing settings field in response' );
 	}
@@ -37,7 +37,7 @@ const receiveWordadsSettings = ( { siteId }, settings ) =>
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestWordadsSettings = action => {
+export const requestWordadsSettings = ( action ) => {
 	const { siteId } = action;
 
 	return http(
@@ -56,7 +56,7 @@ export const requestWordadsSettings = action => {
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveWordadsSettings = action => ( dispatch, getState ) => {
+export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getWordadsSettings( getState(), siteId );
 

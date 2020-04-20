@@ -183,7 +183,7 @@ async function getLocaleData( locale: string ) {
 
 function waitForCurrentUser(): Promise< User | undefined > {
 	let unsubscribe: () => void = () => undefined;
-	return new Promise< User | undefined >( resolve => {
+	return new Promise< User | undefined >( ( resolve ) => {
 		unsubscribe = subscribe( () => {
 			const currentUser = select( USER_STORE ).getCurrentUser();
 			if ( currentUser ) {
@@ -215,7 +215,7 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( translations => {
+		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
 			setLocaleData( translations );
 			loadedTranslationChunks[ chunkId ] = true;
 		} );
@@ -224,7 +224,7 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
 	);
 
-	installedChunks.forEach( chunkId => {
+	installedChunks.forEach( ( chunkId ) => {
 		loadTranslationForChunkIfNeeded( chunkId );
 	} );
 

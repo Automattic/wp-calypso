@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getMyPostCount } from 'state/posts/counts/selectors';
 
-const MasterbarDraftsPopover = props => (
+const MasterbarDraftsPopover = ( props ) => (
 	<AsyncLoad { ...props } require="layout/masterbar/drafts-popover" placeholder={ null } />
 );
 
@@ -43,7 +43,7 @@ class MasterbarDrafts extends Component {
 	};
 
 	toggleDrafts = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			showDrafts: ! state.showDrafts,
 		} ) );
 	};
@@ -67,7 +67,7 @@ class MasterbarDrafts extends Component {
 		this.closeDrafts();
 	};
 
-	setDraftsRef = el => {
+	setDraftsRef = ( el ) => {
 		this.draftsRef = el;
 	};
 
@@ -126,7 +126,7 @@ class MasterbarDrafts extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
 

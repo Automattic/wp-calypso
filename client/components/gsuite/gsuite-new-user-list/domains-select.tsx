@@ -21,7 +21,7 @@ const GSuiteDomainsSelect = ( { domains, onChange, value }: Props ) => {
 			onChange={ onChange }
 			value={ value }
 		>
-			{ domains.map( domain => {
+			{ domains.map( ( domain ) => {
 				return (
 					<option value={ domain } key={ domain }>
 						@{ domain }

@@ -19,7 +19,7 @@ import WapiDomainInfoStore from './store';
 export function requestTransferCode( options, onComplete ) {
 	const { siteId, domainName, unlock, disablePrivacy } = options;
 
-	wpcom.undocumented().requestTransferCode( options, error => {
+	wpcom.undocumented().requestTransferCode( options, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -38,7 +38,7 @@ export function requestTransferCode( options, onComplete ) {
 }
 
 export function cancelTransferRequest( options, onComplete ) {
-	wpcom.undocumented().cancelTransferRequest( options, error => {
+	wpcom.undocumented().cancelTransferRequest( options, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -63,7 +63,7 @@ export function cancelTransferRequest( options, onComplete ) {
 }
 
 export function acceptTransfer( domainName, onComplete ) {
-	wpcom.undocumented().acceptTransfer( domainName, error => {
+	wpcom.undocumented().acceptTransfer( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -79,7 +79,7 @@ export function acceptTransfer( domainName, onComplete ) {
 }
 
 export function declineTransfer( domainName, onComplete ) {
-	wpcom.undocumented().declineTransfer( domainName, error => {
+	wpcom.undocumented().declineTransfer( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -95,7 +95,7 @@ export function declineTransfer( domainName, onComplete ) {
 }
 
 export function enablePrivacyProtection( domainName, onComplete ) {
-	wpcom.undocumented().enablePrivacyProtection( domainName, error => {
+	wpcom.undocumented().enablePrivacyProtection( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -111,7 +111,7 @@ export function enablePrivacyProtection( domainName, onComplete ) {
 }
 
 export function disablePrivacyProtection( domainName, onComplete ) {
-	wpcom.undocumented().disablePrivacyProtection( domainName, error => {
+	wpcom.undocumented().disablePrivacyProtection( domainName, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;

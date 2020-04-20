@@ -43,7 +43,7 @@ export const LaunchSite = ( { isPrimary, launchSiteAndTrack, siteId } ) => {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
@@ -53,8 +53,8 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => ( {
-		trackAction: siteId =>
+	( dispatch ) => ( {
+		trackAction: ( siteId ) =>
 			dispatch(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_customer_home_launch_my_site_click', {
@@ -63,12 +63,12 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'launch_my_site' )
 				)
 			),
-		launchSite: siteId => dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
+		launchSite: ( siteId ) => dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,
 		...stateProps,
-		launchSiteAndTrack: siteId => {
+		launchSiteAndTrack: ( siteId ) => {
 			dispatchProps.launchSite( siteId );
 			dispatchProps.trackAction( siteId );
 		},

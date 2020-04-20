@@ -99,8 +99,10 @@ class GoogleLoginButton extends Component {
 		const { translate } = this.props;
 
 		this.initialized = this.loadDependency()
-			.then( gapi => new Promise( resolve => gapi.load( 'auth2', resolve ) ).then( () => gapi ) )
-			.then( gapi =>
+			.then( ( gapi ) =>
+				new Promise( ( resolve ) => gapi.load( 'auth2', resolve ) ).then( () => gapi )
+			)
+			.then( ( gapi ) =>
 				this.initializeAuth2( gapi ).then( () => {
 					this.setState( { isDisabled: false } );
 
@@ -115,7 +117,7 @@ class GoogleLoginButton extends Component {
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
 				} )
 			)
-			.catch( error => {
+			.catch( ( error ) => {
 				this.initialized = null;
 
 				if ( 'idpiframe_initialization_failed' === error.error ) {
@@ -158,7 +160,7 @@ class GoogleLoginButton extends Component {
 		window.gapi.auth2
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
-			.then( responseHandler, error => {
+			.then( responseHandler, ( error ) => {
 				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
 					social_account_type: 'google',
 					error_code: error.error,
@@ -242,7 +244,7 @@ class GoogleLoginButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 	} ),
 	{

@@ -35,12 +35,12 @@ const Secondary = ( { cards } ) => {
 		'home-education-gutenberg',
 		'home-education-free-photo-library',
 	];
-	const educationalCards = cards.filter( card => allPossibleEducationalCards.includes( card ) );
+	const educationalCards = cards.filter( ( card ) => allPossibleEducationalCards.includes( card ) );
 	let skipEducationalCard = false;
 
 	return (
 		<>
-			{ cards.map( card => {
+			{ cards.map( ( card ) => {
 				if ( ! cardComponents[ card ] ) {
 					return null;
 				}
@@ -52,7 +52,7 @@ const Secondary = ( { cards } ) => {
 					skipEducationalCard = true;
 					return (
 						<DotPager key={ card }>
-							{ educationalCards.map( educationalCard =>
+							{ educationalCards.map( ( educationalCard ) =>
 								React.createElement( cardComponents[ educationalCard ], {
 									key: educationalCard,
 								} )

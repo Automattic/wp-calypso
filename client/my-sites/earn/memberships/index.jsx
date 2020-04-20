@@ -129,7 +129,7 @@ class MembershipsSection extends Component {
 		}
 	}
 
-	onCloseDisconnectStripeAccount = reason => {
+	onCloseDisconnectStripeAccount = ( reason ) => {
 		if ( reason === 'disconnect' ) {
 			this.props.requestDisconnectStripeAccount(
 				this.props.siteId,
@@ -141,7 +141,7 @@ class MembershipsSection extends Component {
 		this.setState( { disconnectedConnectedAccountId: null } );
 	};
 
-	onCloseCancelSubscription = reason => {
+	onCloseCancelSubscription = ( reason ) => {
 		if ( reason === 'cancel' ) {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
@@ -175,11 +175,11 @@ class MembershipsSection extends Component {
 				'renew_interval',
 				'All time total',
 			]
-				.map( field => '"' + field + '"' )
+				.map( ( field ) => '"' + field + '"' )
 				.join( ',' ),
 		]
 			.concat(
-				Object.values( this.props.subscribers ).map( row =>
+				Object.values( this.props.subscribers ).map( ( row ) =>
 					[
 						row.id,
 						row.status,
@@ -194,7 +194,7 @@ class MembershipsSection extends Component {
 						row.renew_interval,
 						row.all_time_total,
 					]
-						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.map( ( field ) => ( field ? '"' + field + '"' : '""')  )
 						.join( ',' )
 				)
 			)
@@ -237,10 +237,10 @@ class MembershipsSection extends Component {
 									Object.values( this.props.subscribers ),
 									[ 'id' ],
 									[ 'desc' ]
-								).map( sub => this.renderSubscriber( sub ) ) }
+								).map( ( sub ) => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
-								nextPageMethod={ triggeredByInteraction =>
+								nextPageMethod={ ( triggeredByInteraction ) =>
 									this.fetchNextSubscriberPage( triggeredByInteraction, false )
 								}
 							/>
@@ -299,7 +299,7 @@ class MembershipsSection extends Component {
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
 						{ this.props.products
-							.map( product => formatCurrency( product.price, product.currency ) )
+							.map( ( product ) => formatCurrency( product.price, product.currency ) )
 							.join( ', ' ) }
 					</div>
 				</CompactCard>
@@ -574,7 +574,7 @@ class MembershipsSection extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 

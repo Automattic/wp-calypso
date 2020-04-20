@@ -37,21 +37,21 @@ export function sendMessage( message ) {
  *
  * @returns {Promise} Promise that resolves when the editor has been initialized.
  */
-export const isEditorReadyWithBlocks = async () => new Promise( resolve => {
-	const unsubscribe = subscribe( () => {
-		const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
+export const isEditorReadyWithBlocks = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
 
-		if ( isCleanNewPost ) {
-			unsubscribe();
-			resolve( false );
-		}
+			if ( isCleanNewPost ) {
+				unsubscribe();
+				resolve( false );
+			}
 
-		const blocks = select( 'core/editor' ).getBlocks();
+			const blocks = select( 'core/editor' ).getBlocks();
 
-		if ( blocks.length > 0 ) {
-			unsubscribe();
-			resolve( true );
-		}
+			if ( blocks.length > 0 ) {
+				unsubscribe();
+				resolve( true );
+			}
+		} );
 	} );
-} );
-

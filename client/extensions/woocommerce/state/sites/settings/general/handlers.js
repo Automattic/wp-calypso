@@ -31,7 +31,7 @@ export const handleSettingsGeneralError = ( action, error ) => {
 	};
 };
 
-export const handleSettingsGeneral = action => ( dispatch, getState ) => {
+export const handleSettingsGeneral = ( action ) => ( dispatch, getState ) => {
 	const { siteId } = action;
 
 	if ( areSettingsGeneralLoaded( getState(), siteId ) ) {

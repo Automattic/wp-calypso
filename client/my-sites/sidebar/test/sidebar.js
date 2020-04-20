@@ -37,7 +37,7 @@ describe( 'MySitesSidebar', () => {
 		const defaultProps = {
 			site: {},
 			siteSuffix: '/mysite.com',
-			translate: x => x,
+			translate: ( x ) => x,
 		};
 
 		beforeEach( () => {
@@ -47,7 +47,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if woocommerce/extension-dashboard is disabled', () => {
 			config.isEnabled.mockImplementation(
-				feature => feature !== 'woocommerce/extension-dashboard'
+				( feature ) => feature !== 'woocommerce/extension-dashboard'
 			);
 			const Sidebar = new MySitesSidebar( {
 				isSiteAutomatedTransfer: false,
@@ -98,7 +98,7 @@ describe( 'MySitesSidebar', () => {
 		} );
 
 		test( 'Should return null item if user can not use store on this site (nudge-a-palooza disabled)', () => {
-			config.isEnabled.mockImplementation( feature => feature !== 'upsell/nudge-a-palooza' );
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'upsell/nudge-a-palooza' );
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: false,
 				...defaultProps,

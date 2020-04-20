@@ -199,7 +199,7 @@ validators.required = {
 		return ! isEmpty( value );
 	},
 
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( 'Missing required %(description)s field', {
 			args: { description: description },
 		} );
@@ -227,7 +227,7 @@ validators.validCvvNumber = {
 };
 
 validators.validExpirationDate = {
-	isValid: function( value ) {
+	isValid: function ( value ) {
 		if ( ! value ) {
 			return false;
 		}
@@ -249,7 +249,7 @@ validators.validBrazilTaxId = {
 		}
 		return isValidCPF( value ) || isValidCNPJ( value );
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate(
 			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 			{
@@ -268,7 +268,7 @@ validators.validIndiaPan = {
 		}
 		return panRegex.test( value );
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid', {
 			args: { description },
 		} );
@@ -280,7 +280,7 @@ validators.validIndonesiaNik = {
 		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
 		return digitsOnly.length === 16;
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid', {
 			args: { description: capitalize( description ) },
 		} );
@@ -296,7 +296,7 @@ validators.validIndiaGstin = {
 		}
 		return gstinRegex.test( value );
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid', {
 			args: { description },
 		} );
@@ -304,8 +304,8 @@ validators.validIndiaGstin = {
 };
 
 validators.validPostalCodeUS = {
-	isValid: value => isValidPostalCode( value, 'US' ),
-	error: function( description ) {
+	isValid: ( value ) => isValidPostalCode( value, 'US' ),
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },
 		} );
@@ -335,7 +335,7 @@ validators.validStreetNumber = {
  */
 export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};
-	const errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
+	const errors = Object.keys( rules ).reduce( function ( allErrors, fieldName ) {
 		const field = rules[ fieldName ];
 		const newErrors = getErrors( field, paymentDetails[ fieldName ], paymentDetails );
 
@@ -390,7 +390,7 @@ export function getCreditCardType( number ) {
  */
 function getErrors( field, value, paymentDetails ) {
 	return compact(
-		field.rules.map( function( rule ) {
+		field.rules.map( function ( rule ) {
 			const validator = getValidator( rule );
 
 			if ( ! validator.isValid( value, paymentDetails ) ) {

@@ -21,7 +21,7 @@ import './style.scss';
  * @param {string} text the string to mark
  * @returns {Element} React <mark> Element
  */
-const mark = text => (
+const mark = ( text ) => (
 	<mark key={ text } className="marked-lines__mark">
 		{ text }
 	</mark>

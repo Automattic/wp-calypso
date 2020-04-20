@@ -236,7 +236,7 @@ function useStripeJs( stripeConfiguration ) {
 			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
 
-		loadAndInitStripe().catch( error => {
+		loadAndInitStripe().catch( ( error ) => {
 			debug( 'error while loading stripeJs', error );
 			isSubscribed && setStripeLoading( false );
 			isSubscribed && setStripeLoadingError( error );
@@ -276,7 +276,7 @@ function useStripeConfiguration( requestArgs, fetchStripeConfiguration ) {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
 		getConfig( requestArgs || {} ).then(
-			configuration => isSubscribed && setStripeConfiguration( configuration )
+			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
 		);
 		return () => ( isSubscribed = false );
 	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
@@ -354,7 +354,7 @@ export function useStripe() {
  * @returns {object} WrappedComponent
  */
 export function withStripeProps( WrappedComponent ) {
-	return props => {
+	return ( props ) => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;

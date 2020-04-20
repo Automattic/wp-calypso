@@ -50,7 +50,7 @@ export class CommentsManagement extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	setOrder = order => () => this.setState( { order } );
+	setOrder = ( order ) => () => this.setState( { order } );
 
 	render() {
 		const {

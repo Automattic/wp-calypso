@@ -15,7 +15,7 @@ import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-produ
 import { getSite } from 'state/sites/selectors';
 import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-const ItemInfo = props => {
+const ItemInfo = ( props ) => {
 	const { orderId, siteId, site, item, itemIndex, translate } = props;
 	const onMoveClick = () => props.openItemMove( orderId, siteId, itemIndex );
 
@@ -58,7 +58,7 @@ export default connect(
 	( state, { siteId } ) => ( {
 		site: getSite( state, siteId ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				openItemMove,

@@ -92,7 +92,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	// Orders domains with the primary domain in first position, if any
 	const supportedDomains = sortBy(
 		getGSuiteSupportedDomains( domains ),
-		domain => ! domain.isPrimary
+		( domain ) => ! domain.isPrimary
 	);
 
 	return get( supportedDomains, '[0].name', '' );
@@ -105,7 +105,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
  * @returns {Array} - the list of domains that are eligible for G Suite
  */
 function getGSuiteSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
+	return domains.filter( function ( domain ) {
 		if ( hasGSuiteWithAnotherProvider( domain ) ) {
 			return false;
 		}

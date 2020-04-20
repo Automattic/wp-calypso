@@ -67,7 +67,7 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = suggestion => {
+	handleAddRemoveDomain = ( suggestion ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion );
 		} else {
@@ -75,12 +75,12 @@ class DomainSearch extends Component {
 		}
 	};
 
-	handleAddMapping = domain => {
+	handleAddMapping = ( domain ) => {
 		addItem( domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	handleAddTransfer = domain => {
+	handleAddTransfer = ( domain ) => {
 		addItem( domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
@@ -213,7 +213,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

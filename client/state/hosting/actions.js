@@ -17,12 +17,12 @@ import 'state/data-layer/wpcom/sites/hosting/sftp-user';
 import 'state/data-layer/wpcom/sites/hosting/php-version';
 import 'state/data-layer/wpcom/sites/hosting/clear-cache';
 
-export const restoreDatabasePassword = siteId => ( {
+export const restoreDatabasePassword = ( siteId ) => ( {
 	type: HOSTING_RESTORE_DATABASE_PASSWORD,
 	siteId,
 } );
 
-export const requestAtomicSftpUsers = siteId => ( {
+export const requestAtomicSftpUsers = ( siteId ) => ( {
 	type: HOSTING_SFTP_USERS_REQUEST,
 	siteId,
 } );
@@ -75,7 +75,7 @@ export const clearWordPressCache = ( siteId, reason ) => ( {
 	},
 } );
 
-export const getAtomicPhpVersion = siteId => ( {
+export const getAtomicPhpVersion = ( siteId ) => ( {
 	type: HOSTING_PHP_VERSION_REQUEST,
 	siteId,
 } );

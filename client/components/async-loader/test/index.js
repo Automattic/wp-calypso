@@ -13,8 +13,8 @@ import { mount } from 'enzyme';
  */
 import { asyncLoader } from '../';
 
-const runAfterEvents = f =>
-	new Promise( r =>
+const runAfterEvents = ( f ) =>
+	new Promise( ( r ) =>
 		setTimeout( () => {
 			f();
 			r();
@@ -39,7 +39,7 @@ test( 'creates wrapped components only on state change', async () => {
 
 	let resolver;
 	const Loader = asyncLoader( {
-		promises: { yes: new Promise( r => ( resolver = r ) ) },
+		promises: { yes: new Promise( ( r ) => ( resolver = r ) ) },
 		loading: () => null,
 		success: () => <Success />,
 		failure: () => null,

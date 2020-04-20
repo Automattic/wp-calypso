@@ -7,7 +7,7 @@ import { currentFlowNameSchema } from './schema';
 
 export const currentFlowName = withSchemaValidation(
 	currentFlowNameSchema,
-	( state = '', { flowName, type } ) => ( type === SIGNUP_CURRENT_FLOW_NAME_SET ? flowName : state )
+	( state = '', { flowName, type } ) => ( type === SIGNUP_CURRENT_FLOW_NAME_SET ? flowName : state)
 );
 
 export default combineReducers( {

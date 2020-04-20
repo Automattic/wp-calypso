@@ -19,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.application_password;
+export const apiTransformer = ( data ) => data.application_password;
 
 /**
  * Dispatches a request to add an application password for the current user
@@ -27,7 +27,7 @@ export const apiTransformer = data => data.application_password;
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addApplicationPassword = action =>
+export const addApplicationPassword = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

@@ -30,7 +30,7 @@ export function useStoredCards( getStoredCards ) {
 		}
 
 		// TODO: handle errors
-		fetchStoredCards().then( cards => {
+		fetchStoredCards().then( ( cards ) => {
 			debug( 'stored cards fetched', cards );
 			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
 		} );
@@ -254,7 +254,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 			},
 		};
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			debug( 'applePay canMakePayment returned', result );
 			if ( ! isSubscribed ) {
 				debug( 'useIsApplePayAvailable not subscribed; not updating' );
@@ -283,14 +283,14 @@ export function filterAppropriatePaymentMethods( {
 	debug( 'is purchase free?', isPurchaseFree );
 
 	return paymentMethodObjects
-		.filter( methodObject => {
+		.filter( ( methodObject ) => {
 			// If the purchase is free, only display the free-purchase method
 			if ( methodObject.id === 'free-purchase' ) {
 				return isPurchaseFree ? true : false;
 			}
 			return isPurchaseFree ? false : true;
 		} )
-		.filter( methodObject => {
+		.filter( ( methodObject ) => {
 			if ( methodObject.id === 'full-credits' ) {
 				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
 			}

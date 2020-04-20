@@ -11,4 +11,4 @@ const services = new Set( [
 	'google_my_business',
 	'mailchimp',
 ] );
-export const hasOwnProperty = name => services.has( name );
+export const hasOwnProperty = ( name ) => services.has( name );

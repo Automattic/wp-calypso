@@ -126,7 +126,7 @@ export class SecurePaymentForm extends Component {
 			// is called.
 			// Note: If this defer() is ever able to be removed, the corresponding
 			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
-			defer( function() {
+			defer( function () {
 				setPayment( newPayment );
 			} );
 		}
@@ -154,7 +154,7 @@ export class SecurePaymentForm extends Component {
 		return null;
 	}
 
-	handlePaymentBoxSubmit = event => {
+	handlePaymentBoxSubmit = ( event ) => {
 		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		this.submitTransaction( event );
@@ -164,7 +164,7 @@ export class SecurePaymentForm extends Component {
 		return this.props.cards[ 0 ];
 	}
 
-	selectPaymentBox = paymentBox => {
+	selectPaymentBox = ( paymentBox ) => {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 		} );
@@ -197,7 +197,7 @@ export class SecurePaymentForm extends Component {
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
 			// like the `TransactionStepsMixin` are called with every step.
-			step => defer( () => setTransactionStep( step ) )
+			( step ) => defer( () => setTransactionStep( step ) )
 		);
 	}
 
@@ -469,7 +469,7 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderPaymentBox = visiblePaymentBox => {
+	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
@@ -567,7 +567,7 @@ export class SecurePaymentForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {

@@ -173,7 +173,7 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleContactDetailsChange = newContactDetailsValues => {
+	handleContactDetailsChange = ( newContactDetailsValues ) => {
 		this.props.updateContactDetailsCache( newContactDetailsValues );
 	};
 
@@ -217,7 +217,7 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleSubmitButtonClick = event => {
+	handleSubmitButtonClick = ( event ) => {
 		if ( event && event.preventDefault ) {
 			event.preventDefault();
 		}
@@ -322,7 +322,7 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+export default connect( ( state ) => ( { contactDetails: getContactDetailsCache( state ) } ), {
 	recordTracksEvent,
 	updateContactDetailsCache,
 } )( localize( DomainDetailsFormContainer ) );

@@ -18,5 +18,5 @@ export function itemLinkMatches( paths, currentPath ) {
 		paths = [ paths ];
 	}
 
-	return some( paths, path => pathStartsWith( currentPath, path ) );
+	return some( paths, ( path ) => pathStartsWith( currentPath, path ) );
 }

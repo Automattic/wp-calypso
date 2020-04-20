@@ -25,10 +25,10 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 	}
 
 	return metadata
-		.filter( function( meta ) {
+		.filter( function ( meta ) {
 			return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
 		} )
-		.map( function( meta ) {
+		.map( function ( meta ) {
 			return parseInt( meta.key.match( pattern )[ 1 ], 10 );
 		} );
 }
@@ -41,7 +41,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Publicize custom message
 	 */
-	publicizeMessage: function( post ) {
+	publicizeMessage: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -57,7 +57,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeDone: function( post ) {
+	publicizeDone: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -73,7 +73,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeSkipped: function( post ) {
+	publicizeSkipped: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -88,7 +88,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string|undefined} ThemeId on success.
 	 */
-	homepageTemplate: function( post ) {
+	homepageTemplate: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -104,7 +104,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Human-readable geographic address label
 	 */
-	geoLabel: function( post ) {
+	geoLabel: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -119,7 +119,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Custom post meta description
 	 */
-	metaDescription: function( post ) {
+	metaDescription: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -135,7 +135,7 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Array of geographic float coordinates
 	 */
-	geoCoordinates: function( post ) {
+	geoCoordinates: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -155,7 +155,7 @@ const PostMetadata = {
 	 * @param {object} post Post object
 	 * @returns {boolean|null} Whether the geo-location data is shared publicly.
 	 */
-	geoIsSharedPublicly: function( post ) {
+	geoIsSharedPublicly: function ( post ) {
 		if ( ! post ) {
 			return null;
 		}

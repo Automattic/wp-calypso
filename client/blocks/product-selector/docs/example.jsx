@@ -64,7 +64,7 @@ class ProductSelectorExample extends Component {
 
 				<div style={ { maxWidth: 520, margin: '0 auto' } }>
 					<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
-						<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
+						<SitesDropdown onSiteSelect={ ( siteId ) => this.setState( { siteId } ) } />
 					</div>
 
 					{ this.state.siteId ? (

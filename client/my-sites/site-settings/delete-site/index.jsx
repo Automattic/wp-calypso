@@ -73,7 +73,7 @@ class DeleteSite extends Component {
 		);
 	}
 
-	handleDeleteSiteClick = event => {
+	handleDeleteSiteClick = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -117,14 +117,14 @@ class DeleteSite extends Component {
 		this.props.deleteSite( siteId );
 	};
 
-	_checkSiteLoaded = event => {
+	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
 			event.preventDefault();
 		}
 	};
 
-	onConfirmDomainChange = event => {
+	onConfirmDomainChange = ( event ) => {
 		this.setState( {
 			confirmDomain: event.target.value,
 		} );
@@ -372,7 +372,7 @@ class DeleteSite extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );

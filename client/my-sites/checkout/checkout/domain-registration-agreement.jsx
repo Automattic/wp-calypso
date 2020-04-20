@@ -43,7 +43,7 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 	};
 
-	renderMultipleAgreements = agreementsList => {
+	renderMultipleAgreements = ( agreementsList ) => {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration agreements:'
 		);
@@ -99,7 +99,7 @@ class DomainRegistrationAgreement extends React.Component {
 		domainItems.push( ...getDomainTransfers( cart ) );
 		const agreementUrls = [
 			...new Set(
-				map( domainItems, registration =>
+				map( domainItems, ( registration ) =>
 					get( registration, 'extra.domain_registration_agreement_url' )
 				)
 			),

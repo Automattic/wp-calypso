@@ -69,8 +69,8 @@ export class PluginSiteList extends Component {
 // TODO: make this memoized after sites-list is removed and `sites` comes from Redux
 function getSitesWithSecondarySites( state, sites ) {
 	return sites
-		.filter( site => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
-		.map( site => ( {
+		.filter( ( site ) => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
+		.map( ( site ) => ( {
 			site,
 			secondarySites: getNetworkSites( state, site.ID ),
 		} ) );

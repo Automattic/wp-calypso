@@ -48,7 +48,7 @@ class Viewers extends React.PureComponent {
 		ViewersActions.fetch( this.props.siteId, page );
 	};
 
-	removeViewer = viewer => {
+	removeViewer = ( viewer ) => {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept(
 			<div>
@@ -59,7 +59,7 @@ class Viewers extends React.PureComponent {
 				</p>
 				<p>{ this.props.translate( 'Would you still like to remove this viewer?' ) }</p>
 			</div>,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.recordGoogleEvent(
 						'People',
@@ -77,7 +77,7 @@ class Viewers extends React.PureComponent {
 		);
 	};
 
-	renderViewer = viewer => {
+	renderViewer = ( viewer ) => {
 		const removeThisViewer = () => {
 			this.removeViewer( viewer );
 		};
@@ -94,7 +94,7 @@ class Viewers extends React.PureComponent {
 		);
 	};
 
-	getViewerRef = viewer => 'viewer-' + viewer.ID;
+	getViewerRef = ( viewer ) => 'viewer-' + viewer.ID;
 
 	isLastPage = () => this.props.totalViewers <= this.props.viewers.length;
 

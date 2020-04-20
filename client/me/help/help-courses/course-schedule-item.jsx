@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
 import { Card, Button } from '@automattic/components';
 import analytics from 'lib/analytics';
 
-export default localize( props => {
+export default localize( ( props ) => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;
 
 	const trackRegistrationClick = () => {

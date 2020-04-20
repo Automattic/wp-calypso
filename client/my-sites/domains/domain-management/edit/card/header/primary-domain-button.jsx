@@ -36,7 +36,7 @@ class PrimaryDomainButton extends React.Component {
 	}
 }
 
-const recordMakePrimaryClick = domain =>
+const recordMakePrimaryClick = ( domain ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

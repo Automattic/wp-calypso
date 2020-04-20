@@ -39,7 +39,7 @@ function queryFilterToStats( filter ) {
 	];
 
 	const groupStats = {};
-	possibleGroups.forEach( groupSlug => {
+	possibleGroups.forEach( ( groupSlug ) => {
 		groupStats[ 'filter_group_' + groupSlug ] = !! (
 			filter.group && filter.group.indexOf( groupSlug ) >= 0
 		);

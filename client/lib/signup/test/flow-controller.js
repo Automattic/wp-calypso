@@ -87,12 +87,12 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a simple flow', () => {
-		test( 'should run the onComplete callback with the flow destination when the flow is completed', done => {
+		test( 'should run the onComplete callback with the flow destination when the flow is completed', ( done ) => {
 			const store = createSignupStore();
 
 			signupFlowController = new SignupFlowController( {
 				flowName: 'simple_flow',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/' );
 					done();
 				},
@@ -114,12 +114,12 @@ describe( 'flow-controller', () => {
 			} );
 		} );
 
-		test( 'should call apiRequestFunction on steps with that property', done => {
+		test( 'should call apiRequestFunction on steps with that property', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 		} );
 
-		test( 'should not call apiRequestFunction multiple times', done => {
+		test( 'should not call apiRequestFunction multiple times', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 
@@ -130,11 +130,11 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow w/ dependencies', () => {
-		test( 'should call the apiRequestFunction callback with its dependencies', done => {
+		test( 'should call the apiRequestFunction callback with its dependencies', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_dependencies',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/checkout/testsite.wordpress.com' );
 					done();
 				},
@@ -144,7 +144,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'siteCreation',
-					stepCallback: function( dependencies ) {
+					stepCallback: function ( dependencies ) {
 						expect( dependencies ).toEqual( { bearer_token: 'TOKEN' } );
 					},
 				} )
@@ -157,7 +157,7 @@ describe( 'flow-controller', () => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
-				onComplete: function() {},
+				onComplete: function () {},
 				reduxStore: store,
 			} );
 
@@ -169,7 +169,7 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow w/ a delayed step', () => {
-		test( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', done => {
+		test( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithDelay',
@@ -180,7 +180,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
 						expect( size( progress ) ).toBe( 2 );
 					},
@@ -190,7 +190,7 @@ describe( 'flow-controller', () => {
 			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
 		} );
 
-		test( 'should not submit delayed steps if some steps are in-progress', done => {
+		test( 'should not submit delayed steps if some steps are in-progress', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithDelay',
@@ -201,7 +201,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
 						const step = progress.stepA;
 						expect( step.status ).toBe( 'completed' );
@@ -227,7 +227,7 @@ describe( 'flow-controller', () => {
 			} ).toThrow();
 		} );
 
-		test( 'should run `onComplete` once all steps are submitted without an error', done => {
+		test( 'should run `onComplete` once all steps are submitted without an error', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithProvidedDependencies',
@@ -241,7 +241,7 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow with optional dependencies', () => {
-		test( 'should run `onComplete` once all steps are submitted, including optional dependency', done => {
+		test( 'should run `onComplete` once all steps are submitted, including optional dependency', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithSiteTopicWithOptionalTheme',
@@ -264,7 +264,7 @@ describe( 'flow-controller', () => {
 			);
 		} );
 
-		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', done => {
+		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithSiteTopicWithOptionalTheme',

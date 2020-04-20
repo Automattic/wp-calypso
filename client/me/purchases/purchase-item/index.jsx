@@ -44,7 +44,7 @@ import { getPlanClass, getPlanTermLabel } from 'lib/plans';
  */
 import './style.scss';
 
-const eventProperties = warning => ( { warning, position: 'purchase-list' } );
+const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {

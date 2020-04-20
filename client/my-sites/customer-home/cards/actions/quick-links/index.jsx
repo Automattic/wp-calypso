@@ -210,7 +210,7 @@ const manageCommentsAction = ( siteSlug, isStaticHomePage ) =>
 		navigate( `/comments/${ siteSlug }` )
 	);
 
-const trackEditMenusAction = isStaticHomePage =>
+const trackEditMenusAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_edit_menus_click', {
 			is_static_home_page: isStaticHomePage,
@@ -218,7 +218,7 @@ const trackEditMenusAction = isStaticHomePage =>
 		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
 	);
 
-const trackCustomizeThemeAction = isStaticHomePage =>
+const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_customize_theme_click', {
 			is_static_home_page: isStaticHomePage,
@@ -237,7 +237,7 @@ const changeThemeAction = ( siteSlug, isStaticHomePage ) =>
 		navigate( `/themes/${ siteSlug }` )
 	);
 
-const trackDesignLogoAction = isStaticHomePage =>
+const trackDesignLogoAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_design_logo_click', {
 			is_static_home_page: isStaticHomePage,
@@ -267,7 +267,7 @@ const addDomainAction = ( siteSlug, isStaticHomePage ) =>
 		navigate( `/domains/add/${ siteSlug }` )
 	);
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const domains = getDomainsBySiteId( state, siteId );

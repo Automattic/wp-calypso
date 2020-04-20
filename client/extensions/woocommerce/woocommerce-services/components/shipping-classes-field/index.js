@@ -48,33 +48,33 @@ export default class ShippingClassesField extends React.Component {
 		);
 	}
 
-	prepareValueForTokenField = value => {
+	prepareValueForTokenField = ( value ) => {
 		return filter( map( value, this.getNameFromId ) );
 	};
 
-	getNameFromId = id => {
+	getNameFromId = ( id ) => {
 		const found = find( this.props.options, { id } );
 
 		return found ? found.name : null;
 	};
 
-	getIdFromName = name => {
+	getIdFromName = ( name ) => {
 		const lowerCaseName = name.toLowerCase();
 
-		const found = find( this.props.options, option => {
+		const found = find( this.props.options, ( option ) => {
 			return option.name.toLowerCase() === lowerCaseName;
 		} );
 
 		return found ? found.id : null;
 	};
 
-	transformForDisplay = token => {
+	transformForDisplay = ( token ) => {
 		const option = find( this.props.options, { slug: token } );
 
 		return option ? option.name : token;
 	};
 
-	onChange = strings => {
+	onChange = ( strings ) => {
 		const { updateValue } = this.props;
 
 		const updatedValue = uniq( filter( map( strings, this.getIdFromName ) ) );

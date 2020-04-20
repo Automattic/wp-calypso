@@ -55,7 +55,7 @@ export class OrgCredentialsForm extends Component {
 		isSubmitting: false,
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
@@ -127,7 +127,7 @@ export class OrgCredentialsForm extends Component {
 		return form;
 	}
 
-	getChangeHandler = field => event => {
+	getChangeHandler = ( field ) => ( event ) => {
 		this.setState( { [ field ]: event.target.value } );
 	};
 
@@ -376,7 +376,7 @@ export class OrgCredentialsForm extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		const siteToConnect = siteData.urlAfterRedirects || jetpackConnectSite.url;

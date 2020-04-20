@@ -92,7 +92,7 @@ class StatsMostPopular extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
 	const mostPopularData = getSiteStatsNormalizedData( state, siteId, statType, {} );

@@ -45,7 +45,7 @@ export function receiveLists( lists ) {
  * @returns {Function}        Action thunk
  */
 export function requestSubscribedLists() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_REQUEST,
 		} );
@@ -55,14 +55,14 @@ export function requestSubscribedLists() {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( receiveLists( data.lists ) );
 				dispatch( {
 					type: READER_LISTS_REQUEST_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_REQUEST_FAILURE,
 					error,
@@ -79,7 +79,7 @@ export function requestSubscribedLists() {
  * @returns {Function}        Action thunk
  */
 export function requestList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_REQUEST,
 		} );
@@ -100,13 +100,13 @@ export function requestList( owner, slug ) {
 				}
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LIST_REQUEST_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( errorInfo => {
+			.catch( ( errorInfo ) => {
 				dispatch( {
 					type: READER_LIST_REQUEST_FAILURE,
 					error: errorInfo.error,
@@ -125,7 +125,7 @@ export function requestList( owner, slug ) {
  * @returns {Function} Action promise
  */
 export function followList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_FOLLOW,
 			owner,
@@ -139,13 +139,13 @@ export function followList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LISTS_FOLLOW_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_FOLLOW_FAILURE,
 					error,
@@ -162,7 +162,7 @@ export function followList( owner, slug ) {
  * @returns {Function} Action promise
  */
 export function unfollowList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_UNFOLLOW,
 			owner,
@@ -176,13 +176,13 @@ export function unfollowList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LISTS_UNFOLLOW_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_UNFOLLOW_FAILURE,
 					error,
@@ -206,7 +206,7 @@ export function updateListDetails( list ) {
 	const preparedSlug = decodeURIComponent( list.slug );
 	const preparedList = Object.assign( {}, list, { owner: preparedOwner, slug: preparedSlug } );
 
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE,
 			list,
@@ -241,7 +241,7 @@ export function updateListDetails( list ) {
  * @returns {Function} Action thunk
  */
 export function dismissListNotice( listId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_DISMISS_NOTICE,
 			listId,
@@ -257,7 +257,7 @@ export function dismissListNotice( listId ) {
  * @returns {Function} Action thunk
  */
 export function updateTitle( listId, newTitle ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE_TITLE,
 			listId,
@@ -274,7 +274,7 @@ export function updateTitle( listId, newTitle ) {
  * @returns {Function} Action thunk
  */
 export function updateDescription( listId, newDescription ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE_DESCRIPTION,
 			listId,

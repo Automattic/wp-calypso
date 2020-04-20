@@ -94,7 +94,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
 			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
-				k => ! this.state.restoreArgs[ k ]
+				( k ) => ! this.state.restoreArgs[ k ]
 			),
 		} );
 	};
@@ -103,7 +103,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
-				k => ! this.state.downloadArgs[ k ]
+				( k ) => ! this.state.downloadArgs[ k ]
 			),
 		} );
 	};
@@ -485,7 +485,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	trackHelp: activityName =>
+	trackHelp: ( activityName ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),

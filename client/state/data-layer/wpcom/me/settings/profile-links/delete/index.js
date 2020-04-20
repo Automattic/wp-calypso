@@ -17,7 +17,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const deleteUserProfileLink = action =>
+export const deleteUserProfileLink = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

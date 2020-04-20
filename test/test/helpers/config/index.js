@@ -10,7 +10,7 @@ export const setFeatureFlag = ( feature, val ) => {
 	beforeAll( () => {
 		spy = jest
 			.spyOn( config, 'isEnabled' )
-			.mockImplementation( feat => ( feat === feature ? val : c.isEnabled( feat ) ) );
+			.mockImplementation( ( feat ) => ( feat === feature ? val : c.isEnabled( feat ))  );
 	} );
 
 	afterAll( () => {

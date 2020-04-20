@@ -25,7 +25,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
-export const fromApi = response => {
+export const fromApi = ( response ) => {
 	if ( ! response.data ) {
 		throw new Error( 'missing settings' );
 	}
@@ -33,7 +33,7 @@ export const fromApi = response => {
 	return normalizeSettings( response.data );
 };
 
-const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
+const toApi = ( settings ) => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
 const receiveJetpackSettings = ( { siteId }, settings ) =>
 	updateJetpackSettings( siteId, settings );
@@ -43,7 +43,7 @@ const receiveJetpackSettings = ( { siteId }, settings ) =>
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestJetpackSettings = action => {
+export const requestJetpackSettings = ( action ) => {
 	const { siteId, query } = action;
 
 	return http(
@@ -82,7 +82,7 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveJetpackSettings = action => ( dispatch, getState ) => {
+export const saveJetpackSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getJetpackSettings( getState(), siteId );
 

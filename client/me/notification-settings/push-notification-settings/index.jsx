@@ -806,7 +806,7 @@ class PushNotificationSettings extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			apiReady: isApiReady( state ),
 			isEnabled: isEnabled( state ),

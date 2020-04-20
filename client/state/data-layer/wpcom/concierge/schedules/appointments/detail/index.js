@@ -16,7 +16,7 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchAppointmentDetails = action => {
+export const fetchAppointmentDetails = ( action ) => {
 	const { appointmentId, scheduleId } = action;
 
 	return http(

@@ -25,7 +25,7 @@ class TransactionsHeader extends React.Component {
 		searchValue: '',
 	};
 
-	preventEnterKeySubmission = event => {
+	preventEnterKeySubmission = ( event ) => {
 		event.preventDefault();
 	};
 
@@ -37,7 +37,7 @@ class TransactionsHeader extends React.Component {
 		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -68,7 +68,7 @@ class TransactionsHeader extends React.Component {
 		this.togglePopover( 'apps' );
 	};
 
-	closePopoverIfClickedOutside = event => {
+	closePopoverIfClickedOutside = ( event ) => {
 		if ( closest( event.target, 'thead' ) ) {
 			return;
 		}
@@ -189,7 +189,7 @@ class TransactionsHeader extends React.Component {
 			>
 				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
 				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
-				{ appFilters.map( function( { title, value, count } ) {
+				{ appFilters.map( function ( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
 				}, this ) }
 			</SelectDropdown>

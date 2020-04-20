@@ -45,7 +45,7 @@ class TermSelectorAddTerm extends Component {
 		};
 	}
 
-	openDialog = event => {
+	openDialog = ( event ) => {
 		event.preventDefault();
 		this.setState( { showDialog: true } );
 	};

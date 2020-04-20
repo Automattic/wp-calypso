@@ -173,7 +173,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function( site ) {
+		redirectToPlugins = ! some( selectedSites, function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

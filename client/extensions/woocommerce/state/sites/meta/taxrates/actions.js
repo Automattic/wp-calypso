@@ -28,14 +28,14 @@ export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispa
 
 	return wp.req
 		.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

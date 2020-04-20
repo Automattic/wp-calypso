@@ -15,7 +15,7 @@ import { getMimePrefix } from 'lib/media/utils';
  */
 const VALID_SHORTCODE_TYPES = [ 'closed', 'self-closing', 'single' ];
 
-export default function( node ) {
+export default function ( node ) {
 	if ( 'string' === typeof node ) {
 		return Formats.STRING;
 	}

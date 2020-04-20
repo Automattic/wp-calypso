@@ -56,7 +56,7 @@ export default class AsyncLoad extends Component {
 	require() {
 		const requireFunction = this.props.require;
 
-		requireFunction( component => {
+		requireFunction( ( component ) => {
 			if ( this.mounted && this.props.require === requireFunction ) {
 				this.setState( { component } );
 			}

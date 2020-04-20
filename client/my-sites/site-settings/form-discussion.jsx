@@ -265,7 +265,7 @@ class SiteSettingsFormDiscussion extends Component {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onClick={ eventTracker( 'Selected Comment Nesting Level' ) }
 			>
-				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( level => (
+				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( ( level ) => (
 					<option value={ level } key={ 'comment-depth-' + level }>
 						{ level }
 					</option>
@@ -631,7 +631,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
@@ -646,7 +646,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',

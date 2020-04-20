@@ -18,7 +18,7 @@ export default class WPHomePage extends AsyncBaseContainer {
 	}
 
 	async setSandboxModeForPayments( sandboxCookieValue ) {
-		const setCookieCode = function( sandboxValue ) {
+		const setCookieCode = function ( sandboxValue ) {
 			window.document.cookie = 'store_sandbox=' + sandboxValue + ';domain=.wordpress.com';
 		};
 		await this.driver.executeScript( setCookieCode, sandboxCookieValue );
@@ -26,7 +26,7 @@ export default class WPHomePage extends AsyncBaseContainer {
 	}
 
 	async setCurrencyForPayments( currency ) {
-		const setCookieCode = function( currencyValue ) {
+		const setCookieCode = function ( currencyValue ) {
 			window.document.cookie = 'landingpage_currency=' + currencyValue + ';domain=.wordpress.com';
 		};
 		return await this.driver.executeScript( setCookieCode, currency );

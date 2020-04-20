@@ -62,7 +62,7 @@ class JetpackCloudSidebar extends Component {
 	expandScanSection = () => this.props.expandSection( SIDEBAR_SECTION_SCAN );
 	expandBackupSection = () => this.props.expandSection( SIDEBAR_SECTION_BACKUP );
 
-	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
 
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
@@ -205,7 +205,7 @@ class JetpackCloudSidebar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );

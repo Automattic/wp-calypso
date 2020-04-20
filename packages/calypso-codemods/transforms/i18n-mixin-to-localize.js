@@ -52,7 +52,7 @@ export default function transformer( file, api ) {
 			declaration: classIdentifier,
 		} );
 		if ( exportDefaultDeclarations.size() ) {
-			return exportDefaultDeclarations.map( d => d.get( 'declaration' ) );
+			return exportDefaultDeclarations.map( ( d ) => d.get( 'declaration' ) );
 		}
 
 		// Is the variable later exported with 'export default connect()'?
@@ -60,7 +60,7 @@ export default function transformer( file, api ) {
 			declaration: connectedClassIdentifier,
 		} );
 		if ( exportDefaultConnectDeclarations.size() ) {
-			return exportDefaultConnectDeclarations.map( d =>
+			return exportDefaultConnectDeclarations.map( ( d ) =>
 				d.get( 'declaration' ).get( 'arguments', 0 )
 			);
 		}
@@ -71,7 +71,7 @@ export default function transformer( file, api ) {
 			right: classIdentifier,
 		} );
 		if ( moduleExportsDeclarations.size() ) {
-			return moduleExportsDeclarations.map( d => d.get( 'right' ) );
+			return moduleExportsDeclarations.map( ( d ) => d.get( 'right' ) );
 		}
 
 		// Is the variable later exported with 'module.exports = connect()'?
@@ -80,16 +80,18 @@ export default function transformer( file, api ) {
 			right: connectedClassIdentifier,
 		} );
 		if ( moduleExportsConnectDeclarations.size() ) {
-			return moduleExportsConnectDeclarations.map( d => d.get( 'right' ).get( 'arguments', 0 ) );
+			return moduleExportsConnectDeclarations.map( ( d ) =>
+				d.get( 'right' ).get( 'arguments', 0 )
+			);
 		}
 
 		return j( createClassInstance );
 	}
 
-	createClassesInstances.forEach( createClassInstance => {
+	createClassesInstances.forEach( ( createClassInstance ) => {
 		const propertiesToModify = [ 'translate', 'moment', 'numberFormat' ];
 
-		propertiesToModify.forEach( property => {
+		propertiesToModify.forEach( ( property ) => {
 			const propertyInstances = j( createClassInstance ).find( j.MemberExpression, {
 				object: { type: 'ThisExpression' },
 				property: {
@@ -112,7 +114,7 @@ export default function transformer( file, api ) {
 
 		if ( foundMixinUsage ) {
 			const declarationsToWrap = findDeclarationsToWrap( createClassInstance );
-			declarationsToWrap.replaceWith( decl => {
+			declarationsToWrap.replaceWith( ( decl ) => {
 				return j.callExpression( j.identifier( 'localize' ), [ decl.value ] );
 			} );
 		}

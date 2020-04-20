@@ -40,13 +40,13 @@ export class GSuiteNudge extends React.Component {
 		this.props.handleCheckoutCompleteRedirect();
 	};
 
-	handleAddEmailClick = cartItems => {
+	handleAddEmailClick = ( cartItems ) => {
 		const { siteSlug, receiptId } = this.props;
 		this.removePlanFromCart();
 
 		addItems(
 			// add `receipt_for_domain` to cartItem extras
-			cartItems.map( item => ( {
+			cartItems.map( ( item ) => ( {
 				...item,
 				extra: { ...item.extra, receipt_for_domain: receiptId },
 			} ) )
@@ -57,7 +57,7 @@ export class GSuiteNudge extends React.Component {
 
 	removePlanFromCart() {
 		const items = getAllCartItems( this.props.cart );
-		items.filter( isDotComPlan ).forEach( item => removeItem( item, false ) );
+		items.filter( isDotComPlan ).forEach( ( item ) => removeItem( item, false ) );
 	}
 
 	render() {

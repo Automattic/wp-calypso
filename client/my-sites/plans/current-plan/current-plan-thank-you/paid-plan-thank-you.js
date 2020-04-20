@@ -165,7 +165,7 @@ export class PaidPlanThankYou extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 

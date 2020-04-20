@@ -51,13 +51,13 @@ function createMediaQueryList( { min, max } = {} ) {
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
 			? { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max }
-			: window.matchMedia( `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)` );
+			: window.matchMedia( `(min-width: ${ min + 1}px) and (max-width: ${ max }px)` );
 	}
 
 	if ( min !== undefined ) {
 		return isServer
 			? { matches: SERVER_WIDTH > min }
-			: window.matchMedia( `(min-width: ${ min + 1 }px)` );
+			: window.matchMedia( `(min-width: ${ min + 1}px)` );
 	}
 
 	if ( max !== undefined ) {
@@ -129,7 +129,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
 	if ( mediaQueryList && ! isServer ) {
-		const wrappedListener = evt => listener( evt.matches );
+		const wrappedListener = ( evt ) => listener( evt.matches );
 		mediaQueryList.addListener( wrappedListener );
 		// Return unsubscribe function.
 		return () => mediaQueryList.removeListener( wrappedListener );

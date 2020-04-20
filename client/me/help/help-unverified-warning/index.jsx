@@ -37,7 +37,7 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { resendState } = this.state;
 
-		const resendStateToMessage = val => {
+		const resendStateToMessage = ( val ) => {
 			switch ( val ) {
 				case RESEND_IDLE:
 					return this.props.translate(

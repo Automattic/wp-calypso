@@ -30,7 +30,7 @@ const MailchimpSettings = ( {
 	isJetpackConnectionBroken,
 	translate,
 } ) => {
-	const chooseMailchimpList = event => {
+	const chooseMailchimpList = ( event ) => {
 		if ( event.target.value === '0' ) {
 			// This means we want to turn off sharing for this site.
 			requestSettingsUpdateAction(
@@ -43,7 +43,7 @@ const MailchimpSettings = ( {
 			);
 			return;
 		}
-		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		const list = mailchimpLists.filter( ( mcList ) => mcList.id === event.target.value )[ 0 ];
 		requestSettingsUpdateAction(
 			siteId,
 			{
@@ -120,7 +120,7 @@ const MailchimpSettings = ( {
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
 				{ mailchimpLists &&
-					mailchimpLists.map( list => (
+					mailchimpLists.map( ( list ) => (
 						<option key={ list.id } value={ list.id }>
 							{ list.name }
 						</option>
@@ -149,7 +149,7 @@ export const renderMailchimpLogo = () => (
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 

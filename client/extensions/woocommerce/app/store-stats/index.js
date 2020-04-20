@@ -86,9 +86,7 @@ class StoreStats extends Component {
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
 							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' )
-										.subtract( 1, 'days' )
-										.format( 'YYYY-MM-DD' )
+								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 								: selectedDate
 						}
 						query={ orderQuery }
@@ -150,7 +148,7 @@ class StoreStats extends Component {
 							</Module>
 						</div>
 					) ) }
-					{ topWidgets.map( widget => {
+					{ topWidgets.map( ( widget ) => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
@@ -187,7 +185,7 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
 } ) )( StoreStats );

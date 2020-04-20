@@ -77,11 +77,11 @@ export class AppBanner extends Component {
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
 
-	stopBubblingEvents = event => {
+	stopBubblingEvents = ( event ) => {
 		event.stopPropagation();
 	};
 
-	preventNotificationsClose = appBanner => {
+	preventNotificationsClose = ( appBanner ) => {
 		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
@@ -122,7 +122,7 @@ export class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = event => {
+	dismiss = ( event ) => {
 		event.preventDefault();
 		const { currentSection, dismissedUntil } = this.props;
 
@@ -262,7 +262,7 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	return encodeURIComponent( getFragment() );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 	const currentRoute = getCurrentRoute( state );
@@ -278,7 +278,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	recordAppBannerOpen: sectionName =>
+	recordAppBannerOpen: ( sectionName ) =>
 		composeAnalytics(
 			recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
 			bumpStat( 'calypso_mobile_app_banner', 'banner_open' )

@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 const debug = debugFactory( 'woocommerce:analytics' );
 
 export const tracksStore = {
-	isTestSite: function() {
+	isTestSite: function () {
 		const state = tracksStore.reduxStore.getState();
 		const siteId = getSelectedSiteId( state );
 		return isTestSite( state, siteId ) || false;

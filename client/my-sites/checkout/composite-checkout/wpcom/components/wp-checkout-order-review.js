@@ -66,5 +66,5 @@ WPCheckoutOrderReview.propTypes = {
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
-	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 `;

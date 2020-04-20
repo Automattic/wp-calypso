@@ -63,7 +63,7 @@ class SharingLikeOptions extends React.Component {
 		);
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			[ event.target.name ]: event.target.checked,
 		} );
@@ -124,7 +124,7 @@ function isShowingLikeButton( site, post, isNew ) {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const site = getSite( state, siteId );
 		const postId = getEditorPostId( state );

@@ -117,7 +117,7 @@ class RegisteredDomainType extends React.Component {
 
 	renderExpired() {
 		const { domain, purchase, translate, moment } = this.props;
-		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
 		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;

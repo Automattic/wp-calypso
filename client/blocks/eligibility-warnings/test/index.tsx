@@ -23,7 +23,7 @@ jest.mock( 'page', () => ( {
 import EligibilityWarnings from '..';
 
 function renderWithStore( element: ReactChild, initialState: object ) {
-	const store = createStore( state => state, initialState );
+	const store = createStore( ( state ) => state, initialState );
 	return {
 		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,

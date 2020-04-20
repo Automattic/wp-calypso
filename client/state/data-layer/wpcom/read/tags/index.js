@@ -36,14 +36,14 @@ export function requestTags( action ) {
  * If the payload does not have a slug, then we assume it was a request for the set of
  *   user's followed tags
  */
-const isFollowedTagsRequest = action => ! get( action, 'payload.slug' );
+const isFollowedTagsRequest = ( action ) => ! get( action, 'payload.slug' );
 
 export function receiveTagsSuccess( action, tags ) {
 	const isFollowedTags = isFollowedTagsRequest( action );
 	const resetFollowingData = isFollowedTags;
 
 	if ( isFollowedTags ) {
-		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
+		tags = map( tags, ( tag ) => ( { ...tag, isFollowing: true } ) );
 	}
 
 	return receiveTags( { payload: tags, resetFollowingData } );

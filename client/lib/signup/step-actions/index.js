@@ -75,7 +75,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		SignupCart.createCart( cartKey, domainChoiceCart, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, ( error ) =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -87,7 +87,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
-			error => {
+			( error ) => {
 				callback( error, providedDependencies );
 			}
 		);
@@ -222,7 +222,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.options.in_page_builder = true;
 	}
 
-	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
+	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
 		if ( error ) {
 			callback( error );
 
@@ -242,7 +242,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		};
 
 		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
-			item => item
+			( item ) => item
 		);
 
 		processItemCart(
@@ -266,7 +266,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 
 	wpcom
 		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
+		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
 			callback( isEmpty( errors ) ? undefined : [ errors ] );
 		} );
 }
@@ -283,7 +283,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 
 	const providedDependencies = { cartItem };
 
-	const newCartItems = [ cartItem ].filter( item => item );
+	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -293,7 +293,7 @@ export function addDomainToCart( callback, dependencies, stepProvidedItems, redu
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = { domainItem };
 
-	const newCartItems = [ domainItem, googleAppsCartItem ].filter( item => item );
+	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -308,12 +308,12 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		const newCartItemsToAdd = newCartItems.map( item =>
+		const newCartItemsToAdd = newCartItems.map( ( item ) =>
 			addPrivacyProtectionIfSupported( item, reduxStore )
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function( cartError ) {
+			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
@@ -349,7 +349,7 @@ function addPrivacyProtectionIfSupported( item, reduxStore ) {
 export function launchSiteApi( callback, dependencies ) {
 	const { siteSlug } = dependencies;
 
-	wpcom.undocumented().launchSite( siteSlug, function( error ) {
+	wpcom.undocumented().launchSite( siteSlug, function ( error ) {
 		if ( error ) {
 			callback( error );
 
@@ -542,7 +542,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
-	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
@@ -579,7 +579,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 		validate: false,
 	};
 
-	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
@@ -629,7 +629,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		submitSignupStep( { stepName, domainItem }, { domainItem } );
 		recordExcludeStepEvent(
 			stepName,
-			siteDomains.map( siteDomain => siteDomain.domain ).join( ', ' )
+			siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' )
 		);
 
 		fulfilledDependencies = [ 'domainItem' ];

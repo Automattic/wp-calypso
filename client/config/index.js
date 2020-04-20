@@ -34,7 +34,7 @@ export function isCalypsoLive() {
 
 function applyFlags( flagsString, modificationMethod ) {
 	const flags = flagsString.split( ',' );
-	flags.forEach( flagRaw => {
+	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
 		const enabled = ! /^-/.test( flagRaw );
 		configData.features[ flag ] = enabled;

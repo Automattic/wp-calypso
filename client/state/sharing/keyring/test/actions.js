@@ -25,11 +25,11 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( 'requestKeyringConnections()', () => {
 		describe( 'successful requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/keyring-connections' )
@@ -65,7 +65,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failing requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/keyring-connections' )
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteStoredKeyringConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/me/keyring-connections/2/delete' )
 				.reply( 200, {

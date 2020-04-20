@@ -111,13 +111,13 @@ class ProductUpdate extends React.Component {
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: [ ...prevState.isUploading, [ true ] ],
 		} ) );
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: prevState.isUploading.slice( 1 ),
 		} ) );
 	};
@@ -129,7 +129,7 @@ class ProductUpdate extends React.Component {
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: product.name },
 		} );
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, function ( accepted ) {
 			if ( ! accepted ) {
 				return;
 			}
@@ -172,7 +172,7 @@ class ProductUpdate extends React.Component {
 			);
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			const errorSlug = ( error && error.error ) || undefined;
 
 			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {

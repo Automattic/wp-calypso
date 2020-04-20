@@ -109,7 +109,7 @@ describe( '#receiveSuccess', () => {
 	test( 'should fetch another page if it receives a full page of users (default per page)', () => {
 		const nbUsers = DEFAULT_PER_PAGE + 1;
 		const ids = times( nbUsers );
-		const users = times( nbUsers, id => ( { id } ) );
+		const users = times( nbUsers, ( id ) => ( { id } ) );
 		const usersChunks = chunk( users, DEFAULT_PER_PAGE );
 
 		const requestAction = requestPostRevisionAuthors( 12345678, ids );
@@ -162,7 +162,7 @@ describe( '#receiveSuccess', () => {
 		const perPage = 4;
 		const nbUsers = perPage + 1;
 		const ids = times( nbUsers );
-		const users = times( nbUsers, id => ( { id } ) );
+		const users = times( nbUsers, ( id ) => ( { id } ) );
 		const usersChunks = chunk( users, perPage );
 
 		const requestAction = { ...requestPostRevisionAuthors( 12345678, ids ), perPage };

@@ -12,7 +12,7 @@ import { cloneBlock } from '@wordpress/blocks';
  * @param {Function} modifier a callback function used to modify the blocks
  */
 function mapBlocksRecursively( blocks, modifier = identity ) {
-	return blocks.map( block => {
+	return blocks.map( ( block ) => {
 		// `blocks` is an object. Therefore any changes made here will
 		// be reflected across all references to the blocks object. To ensure we
 		// only modify the blocks when needed, we return a new object reference

@@ -28,7 +28,7 @@ class PreferenceList extends Component {
 				</a>
 				<Card className="preferences-helper__current-preferences">
 					{ ! isEmpty( preferences ) ? (
-						Object.keys( preferences ).map( preferenceName => (
+						Object.keys( preferences ).map( ( preferenceName ) => (
 							<Preference
 								key={ preferenceName }
 								name={ preferenceName }
@@ -47,7 +47,7 @@ class PreferenceList extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		preferences: getAllRemotePreferences( state ),
 	} ),
 	null

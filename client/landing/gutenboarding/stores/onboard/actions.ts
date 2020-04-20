@@ -100,7 +100,7 @@ export function* createSite(
 				title: siteTitle,
 			},
 			site_creation_flow: 'gutenboarding',
-			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
+			theme: `pub/${ selectedDesign?.theme || 'twentytwenty'}`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

@@ -127,7 +127,7 @@ class PopoverInner extends Component {
 		}
 	}
 
-	onKeydown = event => {
+	onKeydown = ( event ) => {
 		if ( event.keyCode === 27 ) {
 			const domContext = ReactDom.findDOMNode( this.props.context );
 			if ( domContext ) {
@@ -153,7 +153,7 @@ class PopoverInner extends Component {
 		document.removeEventListener( 'click', this.onClickout, true );
 	}
 
-	onClickout = event => {
+	onClickout = ( event ) => {
 		const popoverContext = this.popoverInnerNodeRef.current;
 		let shouldClose = popoverContext && ! popoverContext.contains( event.target );
 

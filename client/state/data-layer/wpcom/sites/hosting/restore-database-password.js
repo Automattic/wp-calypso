@@ -12,7 +12,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOSTING_RESTORE_DATABASE_PASSWORD } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
-const requestRestoreDatabasePassword = action =>
+const requestRestoreDatabasePassword = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/hosting/restore-database-password`,

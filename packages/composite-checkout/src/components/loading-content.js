@@ -38,7 +38,7 @@ export default function LoadingContent() {
 
 const LoadingCard = styled.div`
 	padding: 24px;
-	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
+	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 
 	:first-of-type {
 		border-top: 0;
@@ -62,9 +62,9 @@ const pulse = keyframes`
 const LoadingTitle = styled.h1`
 	font-size: 14px;
 	content: '';
-	font-weight: ${props => props.theme.weights.normal};
-	background: ${props => props.theme.colors.borderColorLight};
-	color: ${props => props.theme.colors.borderColorLight};
+	font-weight: ${( props ) => props.theme.weights.normal};
+	background: ${( props ) => props.theme.colors.borderColorLight};
+	color: ${( props ) => props.theme.colors.borderColorLight};
 	width: 40%;
 	margin: 3px 0 0 35px;
 	padding: 0;
@@ -80,7 +80,7 @@ const LoadingTitle = styled.h1`
 		top: -3px;
 		width: 27px;
 		height: 27px;
-		background: ${props => props.theme.colors.borderColorLight};
+		background: ${( props ) => props.theme.colors.borderColorLight};
 		border-radius: 100%;
 	}
 `;
@@ -88,23 +88,23 @@ const LoadingCopy = styled.p`
 	font-size: 14px;
 	height: 16px;
 	content: '';
-	background: ${props => props.theme.colors.borderColorLight};
-	color: ${props => props.theme.colors.borderColorLight};
+	background: ${( props ) => props.theme.colors.borderColorLight};
+	color: ${( props ) => props.theme.colors.borderColorLight};
 	margin: 8px 0 0 35px;
 	padding: 0;
 	animation: ${pulse} 2s ease-in-out infinite;
 `;
 
 const LoadingFooter = styled.div`
-	background: ${props => props.theme.colors.background};
+	background: ${( props ) => props.theme.colors.background};
 	content: '';
-	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
+	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	padding: 24px;
 
 	:before {
 		content: '';
 		display: block;
-		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		border-radius: 3px;
 		font-size: 14px;
 		width: 100%;

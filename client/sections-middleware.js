@@ -70,7 +70,7 @@ function createPageDefinition( path, sectionDefinition ) {
 		page( pathRegex, controller.redirectLoggedOut );
 	}
 
-	page( pathRegex, async function( context, next ) {
+	page( pathRegex, async function ( context, next ) {
 		try {
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {

@@ -107,7 +107,7 @@ class Sitemaps extends Component {
 				{ this.isSitePublic() ? (
 					<div>
 						{ this.renderSitemapExplanation() }
-						{ sitemapTypes.map( sitemapType => {
+						{ sitemapTypes.map( ( sitemapType ) => {
 							const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
 							return this.renderSitemapLink( sitemapUrl );
 						} ) }
@@ -153,7 +153,7 @@ class Sitemaps extends Component {
 
 						{ sitemapsModule &&
 							sitemapTypes.map(
-								sitemapType =>
+								( sitemapType ) =>
 									sitemapsModule.extra[ sitemapType ] &&
 									this.renderSitemapLink( sitemapsModule.extra[ sitemapType ] )
 							) }
@@ -199,7 +199,7 @@ class Sitemaps extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

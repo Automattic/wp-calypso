@@ -89,7 +89,7 @@ export class PluginInstallButton extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
 	};
 
-	togglePopover = event => {
+	togglePopover = ( event ) => {
 		this.refs.infoPopover._onClick( event );
 	};
 

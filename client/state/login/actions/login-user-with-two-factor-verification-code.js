@@ -42,12 +42,12 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
 			if ( twoStepNonce ) {

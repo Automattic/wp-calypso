@@ -8,6 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/jetpack-connect/init';
 
-export const getAuthorizationData = state => {
+export const getAuthorizationData = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
 };

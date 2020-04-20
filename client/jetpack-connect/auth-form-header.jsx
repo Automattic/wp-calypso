@@ -170,7 +170,7 @@ export class AuthFormHeader extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),

@@ -36,7 +36,7 @@ const viewportHeight = 800; // Browser height for capturing the screenshot
 const viewportScaleFactor = 2; // Browser pixel density for capturing the screenshot
 const viewportWidth = 1280; // Browser width for capturing the screenshot
 
-const getDesignUrl = design => {
+const getDesignUrl = ( design ) => {
 	return wpUrl.addQueryArgs( design.src, {
 		font_base: design.fonts.base,
 		font_headings: design.fonts.headings,
@@ -46,7 +46,7 @@ const getDesignUrl = design => {
 
 async function run() {
 	await Promise.all(
-		designs.featured.map( async design => {
+		designs.featured.map( async ( design ) => {
 			const url = getDesignUrl( design );
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
 
@@ -69,7 +69,7 @@ async function run() {
 
 			console.log( `Resizing and saving to ${ file }` );
 			const image = await sharp( screenshot );
-			return await image.metadata().then( metadata => {
+			return await image.metadata().then( ( metadata ) => {
 				return image
 					.extract( {
 						// Ensure we're not extracting taller area than screenshot actaully is

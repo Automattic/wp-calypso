@@ -17,7 +17,7 @@ import 'state/themes/init';
 export function prependThemeFilterKeys( state, terms = '' ) {
 	const result = terms
 		.split( /[+\s]/ )
-		.map( term => getThemeFilterStringFromTerm( state, term ) )
+		.map( ( term ) => getThemeFilterStringFromTerm( state, term ) )
 		.join( ' ' )
 		.trim();
 
