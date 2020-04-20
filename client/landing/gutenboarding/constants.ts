@@ -4,6 +4,12 @@
 import { ValuesType } from 'utility-types';
 
 /**
+ * An ID that identifies the onboarding flow to analytics and other services.
+ *
+ */
+export const FLOW_ID = 'gutenboarding';
+
+/**
  * Debounce our input + HTTP dependent select changes
  *
  * Rapidly changing input generates excessive HTTP requests.
