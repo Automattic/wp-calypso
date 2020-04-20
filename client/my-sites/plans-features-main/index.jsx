@@ -464,7 +464,7 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 		if ( this.isDisplayingPlansNeededForFeature() ) {
-			headerText = translate( 'Upgrade plans to access this feature and more' );
+			headerText = translate( 'Upgrade your plan to access this feature and more' );
 			subHeaderText = (
 				<Button
 					className="plans-features-main__view-all-plans is-link"
