@@ -332,16 +332,16 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSimilarDomains() {
-		const { selectedSite, translate } = this.props;
+		const { domain, selectedSite, translate } = this.props;
+		const searchTerm = domain.name.split( '.' )[ 0 ];
 
-		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
-				path={ domainAddNew( selectedSite.slug ) }
+				path={ domainAddNew( selectedSite.slug, searchTerm ) }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Find similar domains' ) }
-				description={ 'Placeholder text' }
+				description={ translate( 'Matches available' ) }
 			/>
 		);
 	}
