@@ -18,7 +18,7 @@ import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
 	hasDomainRegistration,
-	hasDomainTransfer,
+	hasTransferProduct,
 	hasPlan,
 	planItem,
 } from 'lib/cart-values/cart-items';
@@ -164,7 +164,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
 		hasPlanInCart: hasPlan( cart ),
 		isPlansListFetching: isPlansListFetching,
-		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasDomainTransfer( cart ),
+		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasTransferProduct( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
 		personalPlan: personalPlan,
 		planPrice:
