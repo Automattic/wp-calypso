@@ -6,6 +6,7 @@ import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
+import { v4 as uuid } from 'uuid';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
@@ -46,6 +47,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const fetchAlgo = `/domains/search/${ DOMAIN_SUGGESTION_VENDOR }/${ FLOW_ID }`;
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
+
+	const labelId = uuid();
 
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
@@ -94,13 +97,14 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	return (
 		<label className="domain-picker__suggestion-item">
 			<input
+				aria-labelledby={ labelId }
 				className="domain-picker__suggestion-radio-button"
 				type="radio"
 				name="domain-picker-suggestion-option"
 				onChange={ onDomainSelect }
 				checked={ isSelected }
 			/>
-			<div className="domain-picker__suggestion-item-name">
+			<div className="domain-picker__suggestion-item-name" id={ labelId }>
 				<span className="domain-picker__domain-name">{ domainName }</span>
 				<span className="domain-picker__domain-tld">{ domainTld }</span>
 				{ isRecommended && (
