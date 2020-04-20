@@ -29,6 +29,7 @@ import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
  * Style dependencies
  */
 import './style.scss';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -142,7 +143,7 @@ class DailyBackupStatus extends Component {
 					</p>
 					<Button
 						className="daily-backup-status__support-button"
-						href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+						href={ contactSupportUrl( siteUrl ) }
 						target="_blank"
 						rel="noopener noreferrer"
 						isPrimary={ false }
@@ -173,7 +174,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
@@ -224,7 +225,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }

@@ -21,6 +21,7 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import Spinner from 'components/spinner';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 interface Props {
 	backupDisplayDate: string;
@@ -178,7 +179,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?url=${ siteUrl }&scan-state=error` }
+				href={ contactSupportUrl( siteUrl, 'error' ) }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"

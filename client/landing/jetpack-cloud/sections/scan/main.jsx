@@ -22,6 +22,7 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 /**
  * Style dependencies
@@ -84,7 +85,7 @@ class ScanPage extends Component {
 					primary
 					target="_blank"
 					rel="noopener noreferrer"
-					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }&scan-state=error` }
+					href={ contactSupportUrl( siteUrl, 'error' ) }
 					className="scan__button"
 				>
 					{ translate( 'Contact Support {{externalIcon/}}', {

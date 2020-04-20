@@ -20,6 +20,7 @@ import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 interface Props {
 	backupDisplayDate: string;
@@ -170,7 +171,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?url=${ siteUrl }&scan-state=error` }
+				href={ contactSupportUrl( siteUrl, 'error' ) }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"
