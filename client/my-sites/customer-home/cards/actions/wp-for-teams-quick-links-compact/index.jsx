@@ -51,8 +51,7 @@ export const QuickLinks = ( {
 	const translate = useTranslate();
 
 	const quickLinks = (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="quick-links-compact__boxes">
+		<div className="wp-for-teams-quick-links__boxes quick-links-compact__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }
@@ -111,7 +110,10 @@ export const QuickLinks = ( {
 		</div>
 	);
 	return (
-		<FoldableCard className="quick-links-compact" header={ translate( 'Quick Links' ) }>
+		<FoldableCard
+			className="wp-for-teams-quick-links-compact quick-links-compact"
+			header={ translate( 'Quick Links' ) }
+		>
 			{ quickLinks }
 		</FoldableCard>
 	);
