@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -71,22 +71,30 @@ class ActivityCardList extends Component {
 
 		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
 			return (
-				<Fragment key={ `activity-card-list__date-group-${ index }` }>
+				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
-						<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
+						<div className="activity-card-list__date-group-date">
+							{ date && date.format( 'MMM Do' ) }
+						</div>
 					) }
-					{ dateLogs.map( ( activity ) => (
-						<ActivityCard
-							{ ...{
-								key: activity.activityId,
-								moment,
-								activity,
-								allowRestore,
-								siteSlug,
-							} }
-						/>
-					) ) }
-				</Fragment>
+					<div className="activity-card-list__date-group-content">
+						{ dateLogs.map( ( activity ) => (
+							<ActivityCard
+								{ ...{
+									key: activity.activityId,
+									moment,
+									activity,
+									allowRestore,
+									siteSlug,
+									className:
+										activity.activityType === 'Backup'
+											? 'activity-card-list__primary-card'
+											: 'activity-card-list__secondary-card',
+								} }
+							/>
+						) ) }
+					</div>
+				</div>
 			);
 		} );
 	}

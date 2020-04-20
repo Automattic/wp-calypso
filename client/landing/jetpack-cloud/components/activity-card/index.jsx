@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,7 +27,6 @@ import {
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
-import cloudIcon from './cloud-icon.svg';
 
 class ActivityCard extends Component {
 	constructor() {
@@ -49,7 +49,7 @@ class ActivityCard extends Component {
 		page.redirect( backupDetailPath( this.props.siteSlug, this.props.activity.rewindId ) );
 
 	render() {
-		const { activity, allowRestore, gmtOffset, timezone, translate } = this.props;
+		const { activity, allowRestore, className, gmtOffset, timezone, translate } = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -57,9 +57,9 @@ class ActivityCard extends Component {
 		} ).format( 'LT' );
 
 		return (
-			<div className="activity-card">
+			<div className={ classnames( className, 'activity-card' ) }>
 				<div className="activity-card__time">
-					<img src={ cloudIcon } className="activity-card__time-icon" role="presentation" alt="" />
+					<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
 					<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 				</div>
 				<Card>

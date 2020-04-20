@@ -70,6 +70,7 @@ export function processItem( item ) {
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },
 		object && object.target_ts && { activityTargetTs: object.target_ts },
+		object && object.type && { activityType: object.type },
 		item.is_aggregate && { isAggregate: item.is_aggregate },
 		item.streams && { streams: item.streams.map( processItem ) },
 		item.stream_count && { streamCount: item.stream_count },
