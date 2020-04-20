@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { stringify } from 'qs';
-import React from 'react';
 import page from 'page';
+import React from 'react';
+import store from 'store';
 
 /**
  * Internal dependencies
@@ -11,11 +12,10 @@ import page from 'page';
 import config from 'config';
 import Connect from './connect';
 import GetToken from './get-token';
-import store from 'store';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 
-import { authTokenRedirectPath } from './paths';
+import { authTokenRedirectPath, authConnectPath } from './paths';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 
@@ -36,6 +36,8 @@ export const connect: PageJS.Callback = ( context, next ) => {
 		};
 
 		context.primary = <Connect authUrl={ `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }` } />;
+	} else {
+		context.primary = <p>{ 'Oauth un-enabled!' }</p>;
 	}
 	// TODO: jetpack cloud needs oauth, give up otherwise
 
@@ -64,4 +66,12 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 		} );
 
 	next();
+};
+
+export const logoutRedirect: PageJS.Callback = () => {
+	store.remove( 'wpcom_token' );
+	store.remove( 'wpcom_token_expires_in' );
+
+	// todo: remove token from wpcom undocumented
+	page.redirect( authConnectPath() );
 };
