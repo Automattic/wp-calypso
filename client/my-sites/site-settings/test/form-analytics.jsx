@@ -7,7 +7,7 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'components/banner', () => 'UpsellNudge' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
