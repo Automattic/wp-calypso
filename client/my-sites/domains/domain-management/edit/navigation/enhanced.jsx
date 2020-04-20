@@ -27,6 +27,8 @@ import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
+import { getUnmappedUrl } from 'lib/site/utils';
+import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 
@@ -139,13 +141,33 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
+		const { pointsToWpcom, isPrimary } = domain;
+
+		let description;
+
+		if ( pointsToWpcom && isPrimary ) {
+			description = translate( 'Destination: primary domain for %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
+			} );
+		} else if ( pointsToWpcom && ! isPrimary ) {
+			description = translate( 'Destination: %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
+			} );
+		} else {
+			description = translate( 'Destination: external to WordPress.com' );
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
-				description={ 'Destination: somewhere' }
+				description={ description }
 			/>
 		);
 	}
