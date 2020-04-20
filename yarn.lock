@@ -4803,7 +4803,7 @@
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-"@wordpress/i18n@*", "@wordpress/i18n@^3.10.0", "@wordpress/i18n@^3.12.0", "@wordpress/i18n@^3.7.0", "@wordpress/i18n@^3.9.0":
+"@wordpress/i18n@*", "@wordpress/i18n@^3.10.0", "@wordpress/i18n@^3.11.0", "@wordpress/i18n@^3.12.0", "@wordpress/i18n@^3.7.0", "@wordpress/i18n@^3.9.0":
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@wordpress/i18n/-/i18n-3.12.0.tgz#aae82607facbe2bc6972499d8aec98229e0f35d3"
   integrity sha512-QkdHd2Z2yTFItBnnzzjMW4IXJlofWMivct4BkgwRivrG7kLxE7nd2xMG3+hFkkdYGdzE67u8vmin0gmQ+14yPA==
