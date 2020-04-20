@@ -69,7 +69,7 @@ class EditorMediaModal extends Component {
 		this.props.onClose();
 	}
 
-	onClose = value => {
+	onClose = ( value ) => {
 		if ( value ) {
 			// `isGutenberg` means that the Media Modal has been opened by a Gutenberg media block,
 			// as opposed to the Classic editor or the Classic block in Gutenberg.
@@ -92,7 +92,7 @@ class EditorMediaModal extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSite( state ),
 	} ),
 	{

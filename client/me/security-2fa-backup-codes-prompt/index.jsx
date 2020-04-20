@@ -46,7 +46,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	}
 
-	onVerify = event => {
+	onVerify = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true } );
 		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
@@ -73,7 +73,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 		this.props.onSuccess();
 	};
 
-	onPrintAgain = event => {
+	onPrintAgain = ( event ) => {
 		event.preventDefault();
 		this.props.onPrintAgain();
 	};
@@ -82,7 +82,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 		this.setState( { lastError: false } );
 	};
 
-	onClickPrintButton = event => {
+	onClickPrintButton = ( event ) => {
 		gaRecordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
 		this.onPrintAgain( event );
 	};
@@ -131,7 +131,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 						disabled={ this.state.submittingCode }
 						name="backupCodeEntry"
 						method="backup"
-						onFocus={ function() {
+						onFocus={ function () {
 							gaRecordEvent(
 								'Me',
 								'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
@@ -149,7 +149,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 				<FormButton
 					className="security-2fa-backup-codes-prompt__verify"
 					disabled={ this.state.submittingCode }
-					onClick={ function() {
+					onClick={ function () {
 						gaRecordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>
@@ -161,7 +161,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

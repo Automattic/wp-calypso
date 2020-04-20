@@ -59,7 +59,7 @@ const FreePhotoLibrary = ( { openSupportArticleDialogAndTrack } ) => {
 	);
 };
 
-const openSupportArticleDialogAndTrack = clickSource =>
+const openSupportArticleDialogAndTrack = ( clickSource ) =>
 	withAnalytics(
 		composeAnalytics(
 			clickSource === 'prompt'

@@ -78,7 +78,7 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const state = jetpackSSO( undefined, action );
 			expect( state ).toHaveProperty( 'isValidating', false );
 		} );
@@ -87,7 +87,7 @@ describe( '#jetpackSSO()', () => {
 	test( 'should store boolean nonceValid after validation', () => {
 		const actions = [ successfulSSOValidation, falseSSOValidation ];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const originalAction = deepFreeze( action );
 			const state = jetpackSSO( undefined, originalAction );
 			expect( state ).toHaveProperty( 'nonceValid', originalAction.success );
@@ -121,7 +121,7 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const state = jetpackSSO( undefined, action );
 			expect( state ).toHaveProperty( 'isAuthorizing', false );
 		} );

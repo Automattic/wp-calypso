@@ -76,7 +76,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 
-	redirectIfDataIsInvalid = props => {
+	redirectIfDataIsInvalid = ( props ) => {
 		if ( isDataLoading( props ) || this.state.submitting ) {
 			return null;
 		}
@@ -98,7 +98,7 @@ class ConfirmCancelDomain extends React.Component {
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { purchase } = this.props;
@@ -115,7 +115,7 @@ class ConfirmCancelDomain extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, error => {
+		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -155,7 +155,7 @@ class ConfirmCancelDomain extends React.Component {
 		} );
 	};
 
-	onReasonChange = event => {
+	onReasonChange = ( event ) => {
 		const select = event.currentTarget;
 		this.setState( {
 			selectedReason: find( cancellationReasons, { value: select[ select.selectedIndex ].value } ),
@@ -166,7 +166,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.setState( { confirmed: ! this.state.confirmed } );
 	};
 
-	onMessageChange = event => {
+	onMessageChange = ( event ) => {
 		this.setState( {
 			message: event.target.value,
 		} );

@@ -86,8 +86,10 @@ class PurchasesListing extends Component {
 
 	getProductPurchases() {
 		return (
-			filter( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
-			null
+			filter(
+				this.props.purchases,
+				( purchase ) => purchase.active && isJetpackProduct( purchase )
+			) ?? null
 		);
 	}
 
@@ -239,7 +241,7 @@ class PurchasesListing extends Component {
 				<Card compact>
 					<strong>{ translate( 'My Solutions' ) }</strong>
 				</Card>
-				{ productPurchases.map( purchase => (
+				{ productPurchases.map( ( purchase ) => (
 					<MyPlanCard
 						key={ purchase.id }
 						action={ this.getActionButton( purchase ) }
@@ -271,7 +273,7 @@ class PurchasesListing extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

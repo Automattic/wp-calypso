@@ -7,7 +7,7 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
-export const launchSite = siteId => ( {
+export const launchSite = ( siteId ) => ( {
 	type: SITE_LAUNCH,
 	siteId,
 	meta: {
@@ -18,7 +18,7 @@ export const launchSite = siteId => ( {
 	},
 } );
 
-export const launchSiteOrRedirectToLaunchSignupFlow = siteId => ( dispatch, getState ) => {
+export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, getState ) => {
 	if ( ! isUnlaunchedSite( getState(), siteId ) ) {
 		return;
 	}

@@ -51,7 +51,7 @@ function couponDeleted( state, action ) {
 	const { couponId } = action;
 	const { coupons } = state;
 
-	const newCoupons = coupons.filter( coupon => couponId !== coupon.id );
+	const newCoupons = coupons.filter( ( coupon ) => couponId !== coupon.id );
 
 	if ( newCoupons.length !== coupons.length ) {
 		const promotions = calculatePromotions( newCoupons, state.products, state.productVariations );
@@ -164,13 +164,13 @@ function productsRequestSuccess( state, action ) {
 function calculatePromotions( coupons, products, productVariations ) {
 	// Only calculate if coupons and products are all loaded.
 	if ( coupons && products && -1 === coupons.indexOf( null ) && -1 === products.indexOf( null ) ) {
-		const saleProducts = products.filter( product => '' !== product.sale_price );
+		const saleProducts = products.filter( ( product ) => '' !== product.sale_price );
 		const saleVariations = ( productVariations || [] ).filter(
-			variation => '' !== variation.sale_price
+			( variation ) => '' !== variation.sale_price
 		);
 
 		const productPromotions = saleProducts.map( createPromotionFromProduct );
-		const variationPromotions = saleVariations.map( variation => {
+		const variationPromotions = saleVariations.map( ( variation ) => {
 			const product = find( products, { id: variation.productId } );
 			return createPromotionFromProduct( { ...variation, name: product.name } );
 		} );

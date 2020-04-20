@@ -44,7 +44,7 @@ const initialState = Object.freeze( {
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
 
-const ImporterStore = createReducerStore( function( state, payload ) {
+const ImporterStore = createReducerStore( function ( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
@@ -145,7 +145,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 						...importerItem,
 						customData: {
 							...importerItem.customData,
-							sourceAuthors: map( get( importerItem, 'customData.sourceAuthors' ), author =>
+							sourceAuthors: map( get( importerItem, 'customData.sourceAuthors' ), ( author ) =>
 								sourceAuthor.id === author.id
 									? {
 											...author,
@@ -179,7 +179,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					// ...and the importer being received.
 					[ importerId ]: action.importerStatus,
 				},
-				importer =>
+				( importer ) =>
 					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
 			);
 

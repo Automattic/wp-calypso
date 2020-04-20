@@ -62,7 +62,7 @@ export function getIframeSource(
 	scrolling = true
 ) {
 	const source = `
-		<html lang="${ langSlug }" dir="${ isRtl ? 'rtl' : 'ltr' }">
+		<html lang="${ langSlug }" dir="${ isRtl ? 'rtl' : 'ltr'}">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -167,7 +167,7 @@ export function getIframeSource(
 						<main id="main" class="site-main">
 							<article class="page type-page status-publish hentry entry">
 								<div class="entry-content">
-									${ content.body }
+									${ content.body}
 								</div>
 							</article>
 						</div>

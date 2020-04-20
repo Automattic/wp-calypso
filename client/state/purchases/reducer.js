@@ -42,7 +42,7 @@ const initialState = {
 function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
 
-	existingPurchases.forEach( purchase => {
+	existingPurchases.forEach( ( purchase ) => {
 		if ( ! find( purchases, { ID: purchase.ID } ) ) {
 			purchases = purchases.concat( purchase );
 		}
@@ -61,7 +61,7 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
 	return existingPurchases.filter(
-		purchase => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+		( purchase ) => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
 	);
 }
 

@@ -135,7 +135,7 @@ export function filterPlansBySiteAndProps(
 	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
-	return plans.filter( function( plan ) {
+	return plans.filter( function ( plan ) {
 		if ( site && site.jetpack ) {
 			if ( 'monthly' === intervalType ) {
 				if ( showJetpackFreePlan ) {
@@ -329,7 +329,7 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
  */
 export function findPlansKeys( query = {} ) {
 	const plans = getPlans();
-	return Object.keys( plans ).filter( k => planMatches( plans[ k ], query ) );
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
 }
 
 /**
@@ -360,7 +360,7 @@ export function planMatches( planKey, query = {} ) {
 
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getPlan( planKey ) || {};
-	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
@@ -477,8 +477,8 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
+		.map( ( planKey ) => getPlan( planKey ) )
+		.map( ( plan ) => plan.getStoreSlug() );
 
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';

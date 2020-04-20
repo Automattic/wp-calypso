@@ -88,7 +88,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		const payload = {
 			extra: {
 				uk: { [ camelCase( event.target.id ) ]: event.target.value },
@@ -200,7 +200,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
 		] );
 		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
-			errorKey => ! relevantExtraFields.includes( errorKey )
+			( errorKey ) => ! relevantExtraFields.includes( errorKey )
 		);
 
 		return (
@@ -242,7 +242,7 @@ export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

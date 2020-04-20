@@ -26,7 +26,7 @@ export default function saveCouponQueryArgument() {
 	coupons[ couponCode ] = now;
 
 	// Delete coupons if they're older than 30 days.
-	Object.keys( coupons ).forEach( key => {
+	Object.keys( coupons ).forEach( ( key ) => {
 		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
 			delete coupons[ key ];
 		}

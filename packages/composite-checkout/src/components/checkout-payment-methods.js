@@ -28,7 +28,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
-	const onClickPaymentMethod = newMethod => {
+	const onClickPaymentMethod = ( newMethod ) => {
 		debug( 'setting payment method to', newMethod );
 		setPaymentMethod( newMethod );
 	};
@@ -66,7 +66,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			<RadioButtons>
-				{ paymentMethods.map( method => (
+				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
 						key={ method.id }
 						errorMessage={

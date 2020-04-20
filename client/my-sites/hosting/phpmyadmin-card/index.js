@@ -31,9 +31,9 @@ import { localizeUrl } from 'lib/i18n-utils';
  */
 import './style.scss';
 
-const requestId = siteId => `pma-link-request-${ siteId }`;
+const requestId = ( siteId ) => `pma-link-request-${ siteId }`;
 
-export const requestPmaLink = siteId =>
+export const requestPmaLink = ( siteId ) =>
 	requestHttpData(
 		requestId( siteId ),
 		http(
@@ -152,7 +152,7 @@ const PhpMyAdminCard = ( {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		const pmaTokenRequest = getHttpData( requestId( siteId ) );

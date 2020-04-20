@@ -83,10 +83,10 @@ export class EditorMediaModalGalleryFields extends React.Component {
 
 	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return fromPairs( times( max, n => [ n + 1, ( n + 1 ).toString() ] ) );
+		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	};
 
-	updateRandomOrder = event => {
+	updateRandomOrder = ( event ) => {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	};
 
@@ -100,7 +100,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		return (
 			<EditorMediaModalFieldset legend={ legend } className={ 'for-setting-' + settingName }>
 				<SelectDropdown selectedText={ options[ settings[ settingName ] ] }>
-					{ Object.keys( options ).map( value => {
+					{ Object.keys( options ).map( ( value ) => {
 						const label = options[ value ];
 
 						return (

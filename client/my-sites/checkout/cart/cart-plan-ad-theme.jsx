@@ -25,7 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const eventName = 'cart_theme_to_plan_upsell';
 
 class CartPlanAdTheme extends Component {
-	addToCartAndRedirect = event => {
+	addToCartAndRedirect = ( event ) => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 			cta_name: eventName,
@@ -84,7 +84,7 @@ CartPlanAdTheme.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

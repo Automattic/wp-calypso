@@ -42,7 +42,7 @@ class CreditCards extends Component {
 			);
 		}
 
-		return this.props.cards.map( card => {
+		return this.props.cards.map( ( card ) => {
 			return (
 				<CreditCard key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
@@ -84,7 +84,7 @@ class CreditCards extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	cards: getStoredCards( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 	isFetching: isFetchingStoredCards( state ),

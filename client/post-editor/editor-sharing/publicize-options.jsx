@@ -95,7 +95,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
 			targeted = this.hasConnections()
 				? this.props.connections.filter(
-						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
+						( connection ) => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
 				  )
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
@@ -117,7 +117,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		);
 	};
 
-	onMessageChange = message => {
+	onMessageChange = ( message ) => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, '_wpas_mess', message );
 	};
 
@@ -176,7 +176,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );

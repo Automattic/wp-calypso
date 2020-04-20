@@ -47,7 +47,7 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * @returns {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_STATS_REQUEST,
 			statType,
@@ -71,8 +71,8 @@ export function requestSiteStats( siteId, statType, query ) {
 		const site = isUndocumented ? wpcom.undocumented().site( siteId ) : wpcom.site( siteId );
 
 		return site[ statType ]( options )
-			.then( data => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
-			.catch( error => {
+			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_STATS_REQUEST_FAILURE,
 					statType,

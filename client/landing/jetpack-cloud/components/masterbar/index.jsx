@@ -20,10 +20,10 @@ import { getDocumentHeadTitle } from 'state/document-head/selectors';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const translate = useTranslate();
-	const user = useSelector( state => getCurrentUser( state ) );
-	const headerTitle = useSelector( state => getDocumentHeadTitle( state ) );
+	const user = useSelector( ( state ) => getCurrentUser( state ) );
+	const headerTitle = useSelector( ( state ) => getDocumentHeadTitle( state ) );
 	return (
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace

@@ -17,7 +17,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
-const setTargetState = value => ( state, { target } ) => ( {
+const setTargetState = ( value ) => ( state, { target } ) => ( {
 	...state,
 	[ target ]: value,
 } );
@@ -59,7 +59,7 @@ const hasSentValidation = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-const convertPhoneResponse = phoneResponse => {
+const convertPhoneResponse = ( phoneResponse ) => {
 	if ( ! phoneResponse ) {
 		return null;
 	}

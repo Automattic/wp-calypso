@@ -53,7 +53,7 @@ class SurveyStep extends React.Component {
 		);
 	}
 
-	renderVertical = vertical => {
+	renderVertical = ( vertical ) => {
 		return (
 			<Button
 				className="survey__vertical"
@@ -136,7 +136,7 @@ class SurveyStep extends React.Component {
 		);
 	}
 
-	handleVerticalButton = e => {
+	handleVerticalButton = ( e ) => {
 		const { value, label } = e.target.dataset;
 		this.submitStep( label, value );
 	};
@@ -145,14 +145,14 @@ class SurveyStep extends React.Component {
 		page( getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	};
 
-	handleVerticalOther = otherTextValue => {
+	handleVerticalOther = ( otherTextValue ) => {
 		const otherText = otherTextValue.replace( /^\W+|\W+$/g, '' );
 		const otherWriteIn = otherText.length !== 0 ? otherText : undefined;
 
 		this.submitStep( 'Uncategorized', 'a8c.24', otherWriteIn );
 	};
 
-	handleOtherWriteIn = value => {
+	handleOtherWriteIn = ( value ) => {
 		this.setState( {
 			otherWriteIn: value.replace( /^\W+|\W+$/g, '' ),
 		} );
@@ -187,7 +187,7 @@ class SurveyStep extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ setSurvey, submitSignupStep }

@@ -58,7 +58,7 @@ export class LanguagePicker extends PureComponent {
 	findLanguage( valueKey, value ) {
 		const { translate } = this.props;
 		//check if the language provided is supported by Calypso
-		const language = find( this.props.languages, lang => {
+		const language = find( this.props.languages, ( lang ) => {
 			// The value passed is sometimes string instead of number - need to use ==
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );
@@ -73,7 +73,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	selectLanguage = languageSlug => {
+	selectLanguage = ( languageSlug ) => {
 		// Find the language by the slug
 		const language = this.findLanguage( 'langSlug', languageSlug );
 		if ( ! language ) {
@@ -93,7 +93,7 @@ export class LanguagePicker extends PureComponent {
 		this.setState( { open: ! this.state.open } );
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( ! this.props.disabled ) {
 			this.props.onClick( event );
 			this.toggleOpen();

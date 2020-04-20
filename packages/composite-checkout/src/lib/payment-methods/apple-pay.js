@@ -100,7 +100,7 @@ export function createApplePayMethod( {
 			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		inactiveContent: <ApplePaySummary />,
-		getAriaLabel: localize => localize( 'Apple Pay' ),
+		getAriaLabel: ( localize ) => localize( 'Apple Pay' ),
 	};
 }
 
@@ -123,8 +123,8 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 	const [ items, total ] = useLineItems();
 	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
 	const { showErrorMessage } = useMessages();
-	const transactionStatus = useSelect( select => select( 'apple-pay' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'apple-pay' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) => select( 'apple-pay' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'apple-pay' ).getTransactionError() );
 	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
 	const onEvent = useEvents();
 	const onSubmit = useCallback(
@@ -280,7 +280,7 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 
 	// We have to memoize this to prevent re-creating the paymentRequest
 	const callback = useCallback(
-		paymentMethodResponse => {
+		( paymentMethodResponse ) => {
 			completePaymentMethodTransaction( {
 				onSubmit,
 				...paymentMethodResponse,
@@ -295,7 +295,7 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 			return;
 		}
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			debug( 'canMakePayment updating to', result );
 			isSubscribed && setCanMakePayment( !! result?.applePay );
 		} );

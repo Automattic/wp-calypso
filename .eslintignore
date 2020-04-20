@@ -4,6 +4,7 @@
 /build/
 /docs/
 /public/
+/vendor/
 node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js

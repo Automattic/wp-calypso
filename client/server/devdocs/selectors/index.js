@@ -36,7 +36,7 @@ function parseSelectorFile( file ) {
 				name: camelCase( path.basename( file, '.js' ) ),
 			};
 
-			forEach( contents.match( REGEXP_DOCBLOCKS ), docblock => {
+			forEach( contents.match( REGEXP_DOCBLOCKS ), ( docblock ) => {
 				const doc = doctrine.parse( docblock, { unwrap: true } );
 				if ( doc.tags.length > 0 ) {
 					Object.assign( selector, doc );
@@ -54,16 +54,16 @@ function prime() {
 		return;
 	}
 
-	prepareFuse = new Promise( resolve => {
+	prepareFuse = new Promise( ( resolve ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
 			}
 
 			// Omit index, system files, and subdirectories
-			files = files.filter( file => 'index.js' !== file && /\.js$/.test( file ) );
+			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
 
-			Promise.all( files.map( parseSelectorFile ) ).then( selectors => {
+			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
 				// Sort selectors by name alphabetically
 				selectors.sort( ( a, b ) => a.name > b.name );
 
@@ -85,7 +85,7 @@ function prime() {
 				);
 			} );
 		} );
-	} ).then( fuse => {
+	} ).then( ( fuse ) => {
 		prepareFuse = Promise.resolve( fuse );
 		return fuse;
 	} );
@@ -93,7 +93,7 @@ function prime() {
 
 router.get( '/', ( request, response ) => {
 	prepareFuse
-		.then( fuse => {
+		.then( ( fuse ) => {
 			let results;
 			if ( request.query.search ) {
 				results = fuse.search( request.query.search );
@@ -103,7 +103,7 @@ router.get( '/', ( request, response ) => {
 
 			response.json( results );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			response.status( 500 ).json( error );
 		} );
 } );

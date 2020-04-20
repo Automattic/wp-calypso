@@ -61,7 +61,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	setSelected = text => () => {
+	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );

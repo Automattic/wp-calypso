@@ -58,13 +58,13 @@ export class ContactDetailsFormFields extends Component {
 		contactDetails: PropTypes.shape(
 			Object.assign(
 				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
 			)
 		).isRequired,
 		contactDetailsErrors: PropTypes.shape(
 			Object.assign(
 				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
 			)
 		),
 		countriesList: PropTypes.array.isRequired,
@@ -89,7 +89,7 @@ export class ContactDetailsFormFields extends Component {
 		eventFormName: 'Domain contact details form',
 		contactDetails: Object.assign(
 			{},
-			...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: '' } ) )
+			...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: '' } ) )
 		),
 		needsFax: false,
 		getIsFieldDisabled: noop,
@@ -153,7 +153,7 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	}
 
-	loadFormState = loadFieldValuesIntoState =>
+	loadFormState = ( loadFieldValuesIntoState ) =>
 		loadFieldValuesIntoState(
 			null,
 			pick( this.props.contactDetails, CONTACT_DETAILS_FORM_FIELDS )
@@ -192,17 +192,17 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
-	setFormState = form =>
+	setFormState = ( form ) =>
 		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
 
-	handleFormControllerError = error => {
+	handleFormControllerError = ( error ) => {
 		throw error;
 	};
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 
-		CONTACT_DETAILS_FORM_FIELDS.forEach( fieldName => {
+		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
 				// TODO: Deep
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
@@ -233,7 +233,7 @@ export class ContactDetailsFormFields extends Component {
 
 	getRefCallback( name ) {
 		if ( ! this.inputRefCallbacks[ name ] ) {
-			this.inputRefCallbacks[ name ] = el => ( this.inputRefs[ name ] = el );
+			this.inputRefCallbacks[ name ] = ( el ) => ( this.inputRefs[ name ] = el );
 		}
 		return this.inputRefCallbacks[ name ];
 	}
@@ -280,9 +280,9 @@ export class ContactDetailsFormFields extends Component {
 		}
 	}
 
-	handleSubmitButtonClick = event => {
+	handleSubmitButtonClick = ( event ) => {
 		event.preventDefault();
-		this.formStateController.handleSubmit( hasErrors => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 			if ( hasErrors ) {
 				this.focusFirstError();
@@ -292,7 +292,7 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		const { name, value } = event.target;
 		const { phone = {} } = this.state.form;
 

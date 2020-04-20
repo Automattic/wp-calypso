@@ -50,7 +50,7 @@ class FixConfig extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isRestoring = isRestoringSettings( state, siteId );
 

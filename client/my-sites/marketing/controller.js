@@ -19,15 +19,15 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { isJetpackSite, isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
-export const redirectConnections = context => {
+export const redirectConnections = ( context ) => {
 	page.redirect( '/marketing/connections/' + context.params.domain );
 };
 
-export const redirectMarketingTools = context => {
+export const redirectMarketingTools = ( context ) => {
 	page.redirect( '/marketing/tools/' + context.params.domain );
 };
 
-export const redirectSharingButtons = context => {
+export const redirectSharingButtons = ( context ) => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 };
 

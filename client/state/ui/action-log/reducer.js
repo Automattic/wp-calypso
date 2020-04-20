@@ -33,23 +33,23 @@ const relevantTypes = {
 	SITE_SETTINGS_RECEIVE,
 };
 
-const hasRelevantAnalytics = action =>
-	get( action, 'meta.analytics', [] ).some( record =>
+const hasRelevantAnalytics = ( action ) =>
+	get( action, 'meta.analytics', [] ).some( ( record ) =>
 		includes( relevantAnalyticsEvents, record.payload.name )
 	);
 
-const isRelevantActionType = action =>
+const isRelevantActionType = ( action ) =>
 	has( relevantTypes, action.type ) &&
 	( ! isFunction( relevantTypes[ action.type ] ) || relevantTypes[ action.type ]( action ) );
 
 const isRelevantAction = overSome( [ isRelevantActionType, hasRelevantAnalytics ] );
 
-const newAction = action => ( {
+const newAction = ( action ) => ( {
 	...action,
 	timestamp: Date.now(),
 } );
 
-const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state );
+const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state) ;
 
 export default ( state = [], action ) =>
 	isRelevantAction( action ) ? maybeAdd( state, newAction( action ) ) : state;

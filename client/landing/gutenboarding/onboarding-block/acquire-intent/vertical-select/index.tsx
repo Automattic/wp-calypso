@@ -50,17 +50,17 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	 */
 	const suggestionRef = React.createRef< any >();
 
-	const verticals = useSelect( select =>
+	const verticals = useSelect( ( select ) =>
 		select( VERTICALS_STORE )
 			.getVerticals()
-			.map( x => ( {
+			.map( ( x ) => ( {
 				label: x.vertical_name,
 				id: x.vertical_id,
 				slug: x.vertical_slug,
 			} ) )
 	);
 
-	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteVertical, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -104,7 +104,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		const normalizedInputValue = inputValue.toLowerCase();
 
 		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
-		const newSuggestions = verticals.filter( vertical =>
+		const newSuggestions = verticals.filter( ( vertical ) =>
 			vertical.label.toLowerCase().includes( normalizedInputValue )
 		);
 
@@ -112,7 +112,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		// If yes, we store it in firstSuggestion (for later use), and remove it from newSuggestions...
 		const firstSuggestion = remove(
 			newSuggestions,
-			suggestion => suggestion.label.toLowerCase() === normalizedInputValue
+			( suggestion ) => suggestion.label.toLowerCase() === normalizedInputValue
 		)[ 0 ] ?? {
 			// ...otherwise, we set firstSuggestion to the user-supplied vertical...
 			label: inputValue.trim(),

@@ -58,7 +58,7 @@ export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 		const pageOnFront = 'page' === getSiteOption( state, siteId, 'show_on_front' );
@@ -67,7 +67,7 @@ export default connect(
 			isStaticHomePage: ! isClassicEditor && pageOnFront,
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		trackAction: ( section, action, isStaticHomePage ) =>
 			dispatch(
 				composeAnalytics(

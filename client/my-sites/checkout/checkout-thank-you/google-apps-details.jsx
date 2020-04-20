@@ -16,7 +16,7 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const GoogleAppsDetails = props => {
+const GoogleAppsDetails = ( props ) => {
 	props.dismissNudge();
 
 	return (

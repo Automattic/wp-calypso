@@ -59,7 +59,7 @@ class Course extends Component {
 		);
 	}
 }
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		primarySiteSlug: getSiteSlug( state, getPrimarySiteId( state ) ),
 	};

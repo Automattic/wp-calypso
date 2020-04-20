@@ -61,18 +61,18 @@ class SuggestionSearch extends Component {
 		}
 	}
 
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
+	setSuggestionsRef = ( ref ) => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
 
-	updateInputValue = inputValue => this.setState( { inputValue } );
+	updateInputValue = ( inputValue ) => this.setState( { inputValue } );
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
 		this.props.onChange( value );
 	};
 
-	handleSuggestionKeyDown = event => {
+	handleSuggestionKeyDown = ( event ) => {
 		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
 			event.preventDefault();
 		}

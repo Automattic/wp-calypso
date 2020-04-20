@@ -49,7 +49,7 @@ export default class extends React.Component {
 				title: i18n.translate( 'Account Recovery' ),
 				path: '/me/security/account-recovery',
 			},
-		].filter( tab => tab !== null );
+		].filter( ( tab ) => tab !== null );
 
 		return tabs;
 	};
@@ -79,7 +79,7 @@ export default class extends React.Component {
 		return (
 			<SectionNav selectedText={ this.getSelectedText() }>
 				<NavTabs>
-					{ this.getNavtabs().map( function( tab ) {
+					{ this.getNavtabs().map( function ( tab ) {
 						return (
 							<NavItem
 								key={ tab.path }

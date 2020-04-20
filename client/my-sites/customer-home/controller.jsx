@@ -13,7 +13,7 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 import isRecentlyMigratedSite from 'state/selectors/is-site-recently-migrated';
 
-export default function( context, next ) {
+export default function ( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	// Scroll to the top

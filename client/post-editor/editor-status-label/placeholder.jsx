@@ -54,7 +54,7 @@ EditorStatusLabelPlaceholder.propTypes = {
 	className: PropTypes.string,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const props = { siteId };
 

@@ -19,7 +19,7 @@ import ExternalLink from 'components/external-link';
  */
 import './style.scss';
 
-const LegalUpdateBanner = props => {
+const LegalUpdateBanner = ( props ) => {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -63,7 +63,7 @@ const LegalUpdateBanner = props => {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		needsAcceptTos: shouldDisplayTosUpdateBanner( state ),
 	} ),
 	{

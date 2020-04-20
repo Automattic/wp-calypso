@@ -60,7 +60,7 @@ class InlineHelpRichResult extends Component {
 		showDialog: false,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;
 

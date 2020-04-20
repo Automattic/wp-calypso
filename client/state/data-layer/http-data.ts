@@ -108,7 +108,7 @@ export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
 export const update = ( id: DataId, state: DataState, data?: unknown ) => {
 	const updated = updateData( id, state, data );
 
-	listeners.forEach( f => f() );
+	listeners.forEach( ( f ) => f() );
 
 	return updated;
 };
@@ -192,7 +192,7 @@ export default {
 export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
 	state = 0,
 	{ type }
-) => ( HTTP_DATA_TICK === type ? state + 1 : state );
+) => ( HTTP_DATA_TICK === type ? state + 1 : state) ;
 
 interface HttpDataAction extends Action< typeof HTTP_DATA_REQUEST > {
 	id: DataId;

@@ -37,7 +37,7 @@ function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
 export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	Promise.all( [
 		promisify( fetchSitesUntilSiteAppears )( siteSlug, reduxStore ),
-		new Promise( resolve => {
+		new Promise( ( resolve ) => {
 			user.once( 'change', resolve );
 			user.fetch();
 		} ),

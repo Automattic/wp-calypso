@@ -38,7 +38,7 @@ class StatsViews extends Component {
 		chartOption: 'total',
 	};
 
-	toggleViews = option => {
+	toggleViews = ( option ) => {
 		this.setState( {
 			chartOption: option.value,
 		} );
@@ -90,7 +90,7 @@ class StatsViews extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const query = { quantity: -1, stat_fields: 'views' };
 	const statType = 'statsVisits';
 	const siteId = getSelectedSiteId( state );

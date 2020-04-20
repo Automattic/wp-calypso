@@ -97,7 +97,7 @@ class DomainSuggestion extends React.Component {
 	}
 }
 
-DomainSuggestion.Placeholder = function() {
+DomainSuggestion.Placeholder = function () {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">

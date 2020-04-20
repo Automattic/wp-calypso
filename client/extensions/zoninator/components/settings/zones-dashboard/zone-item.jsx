@@ -35,7 +35,7 @@ ZoneItem.defaultProps = {
 	siteSlug: '',
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) );
 

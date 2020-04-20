@@ -20,49 +20,49 @@ function parseExpressionStatement( code ) {
 	return node;
 }
 
-describe( '#getStringFromNode', function() {
-	it( 'should return simple strings', function() {
+describe( '#getStringFromNode', function () {
+	it( 'should return simple strings', function () {
 		assert.equal(
 			'a simple string',
 			getTextContentFromNode( parseExpressionStatement( "'a simple string'" ) )
 		);
 	} );
 
-	it( 'should return concatentated strings', function() {
+	it( 'should return concatentated strings', function () {
 		assert.equal(
 			'A string in two parts',
 			getTextContentFromNode( parseExpressionStatement( '"A string" + " in two parts"' ) )
 		);
 	} );
 
-	it( 'should return more concatentated strings', function() {
+	it( 'should return more concatentated strings', function () {
 		assert.equal(
 			'A string in three parts',
 			getTextContentFromNode( parseExpressionStatement( '"A string" + " in " + "three parts"' ) )
 		);
 	} );
 
-	it( 'should return strings from template literals', function() {
+	it( 'should return strings from template literals', function () {
 		assert.equal(
 			'A template literal string',
 			getTextContentFromNode( parseExpressionStatement( '`A template literal string`' ) )
 		);
 	} );
 
-	it( 'should handle different literal types', function() {
+	it( 'should handle different literal types', function () {
 		assert.equal(
 			'A template and a string',
 			getTextContentFromNode( parseExpressionStatement( '`A template` + " and a string"' ) )
 		);
 	} );
 
-	it( 'should return false for functions', function() {
+	it( 'should return false for functions', function () {
 		const functionNode = parseExpressionStatement( 'foo()' );
 
 		assert.strictEqual( false, getTextContentFromNode( functionNode ) );
 	} );
 
-	it( 'should return false for variable assignments', function() {
+	it( 'should return false for variable assignments', function () {
 		const variableDeclarationNode = parseCode( "var aVariable = 'a string to assign';" );
 		const variableDeclarator = variableDeclarationNode.declarations[ 0 ];
 
@@ -70,7 +70,7 @@ describe( '#getStringFromNode', function() {
 		assert.strictEqual( false, getTextContentFromNode( variableDeclarator ) );
 	} );
 
-	it( 'should return false for a binary structure including invalid node types', function() {
+	it( 'should return false for a binary structure including invalid node types', function () {
 		assert.strictEqual(
 			false,
 			getTextContentFromNode( parseExpressionStatement( "'a string plus a function' + foo()" ) )

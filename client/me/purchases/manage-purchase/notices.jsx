@@ -35,7 +35,7 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const eventProperties = warning => ( { warning, position: 'individual-purchase' } );
+const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 
 class PurchaseNotice extends Component {
 	static propTypes = {

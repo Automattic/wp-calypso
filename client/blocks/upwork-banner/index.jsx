@@ -45,7 +45,7 @@ class UpworkBanner extends PureComponent {
 		}
 	}
 
-	onDismissClick = event => {
+	onDismissClick = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.recordEvent( 'calypso_upwork_banner_dismiss_icon_click' );
@@ -56,7 +56,7 @@ class UpworkBanner extends PureComponent {
 		this.recordEvent( 'calypso_upwork_banner_start_now_button_click' );
 	};
 
-	recordEvent = eventName => {
+	recordEvent = ( eventName ) => {
 		const { currentPlan, location } = this.props;
 		const plan = currentPlan ? currentPlan.productSlug : '';
 		this.props.recordTracksEvent( eventName, { location, ...( plan && { plan } ) } );

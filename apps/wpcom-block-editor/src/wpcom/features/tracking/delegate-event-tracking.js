@@ -47,7 +47,7 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * @param  {object} event DOM event for the click event.
  * @returns {void}
  */
-export default event => {
+export default ( event ) => {
 	const matchingEvents = EVENTS_MAPPING.reduce( ( acc, mapping ) => {
 		const target = getMatchingEventTarget( event, mapping.selector );
 
@@ -64,7 +64,7 @@ export default event => {
 		return;
 	}
 
-	matchingEvents.forEach( match => {
+	matchingEvents.forEach( ( match ) => {
 		debug( 'triggering "%s". target: "%s"', match.event, match.target );
 		match.mapping.handler( match.event, match.target );
 	} );

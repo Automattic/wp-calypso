@@ -70,13 +70,13 @@ class GSuiteCancelPurchaseDialog extends Component {
 		this.setState( { step: prevStep } );
 	};
 
-	cancelButtonClick = closeDialog => {
+	cancelButtonClick = ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
 		closeDialog();
 		this.resetState();
 	};
 
-	removeButtonClick = async closeDialog => {
+	removeButtonClick = async ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 
 		this.setState( {

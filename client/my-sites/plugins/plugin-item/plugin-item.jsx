@@ -101,7 +101,7 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function( uniqLog ) {
+		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
 			return uniqLog.site.ID;
 		} );
 		const translationArgs = {
@@ -175,7 +175,7 @@ class PluginItem extends Component {
 
 	renderUpdateFlag() {
 		const { sites, translate } = this.props;
-		const recentlyUpdated = sites.some( function( site ) {
+		const recentlyUpdated = sites.some( function ( site ) {
 			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
 		} );
 
@@ -192,13 +192,13 @@ class PluginItem extends Component {
 		}
 
 		const updated_versions = this.props.plugin.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( site.plugin.update && site.plugin.update.new_version ) {
 					return site.plugin.update.new_version;
 				}
 				return false;
 			} )
-			.filter( version => version );
+			.filter( ( version ) => version );
 
 		return (
 			<Notice
@@ -303,7 +303,7 @@ class PluginItem extends Component {
 		);
 	}
 
-	onItemClick = event => {
+	onItemClick = ( event ) => {
 		if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );

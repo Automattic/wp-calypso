@@ -14,18 +14,13 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
-import MappedDomain from './mapped-domain';
 import { domainManagementList } from 'my-sites/domains/paths';
-import RegisteredDomain from './registered-domain';
 import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
-import Transfer from './transfer';
-import WpcomDomain from './wpcom-domain';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
 import TransferInDomainType from './domain-types/transfer-in-domain-type';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -59,24 +54,22 @@ class Edit extends React.Component {
 		);
 	}
 
-	getDetailsForType = type => {
-		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
-
+	getDetailsForType = ( type ) => {
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return newStatusDesign ? MappedDomainType : MappedDomain;
+				return MappedDomainType;
 
 			case domainTypes.REGISTERED:
-				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
+				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
 
 			case domainTypes.TRANSFER:
-				return newStatusDesign ? TransferInDomainType : Transfer;
+				return TransferInDomainType;
 
 			case domainTypes.WPCOM:
-				return newStatusDesign ? WpcomDomainType : WpcomDomain;
+				return WpcomDomainType;
 
 			default:
 				return null;

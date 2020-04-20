@@ -54,7 +54,7 @@ import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choi
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
 import { recordTrack } from 'woocommerce/lib/analytics';
 
-const createShippingZoneSuccess = actionList => (
+const createShippingZoneSuccess = ( actionList ) => (
 	dispatch,
 	getState,
 	{ sentData, receivedData }
@@ -76,7 +76,7 @@ const getZoneId = ( zoneId, { zoneIdMapping } ) => {
 	return 'number' === typeof zoneId ? zoneId : zoneIdMapping[ zoneId.index ];
 };
 
-const createShippingZoneMethodSuccess = actionList => (
+const createShippingZoneMethodSuccess = ( actionList ) => (
 	dispatch,
 	getState,
 	{ sentData, receivedData }
@@ -144,12 +144,12 @@ const getUpdateShippingZoneLocationsSteps = ( siteId, zoneId, locations, serverL
 	if ( ! isEmpty( locations.state ) ) {
 		locations = {
 			...locations,
-			state: locations.state.map( st => locations.country[ 0 ] + ':' + st ),
+			state: locations.state.map( ( st ) => locations.country[ 0 ] + ':' + st ),
 			country: [],
 		};
 	}
 	const areLocationsDifferent = some(
-		Object.keys( locations ).map( key => {
+		Object.keys( locations ).map( ( key ) => {
 			return ! isEmpty( xor( locations[ key ], serverLocations[ key ] ) );
 		} )
 	);
@@ -351,7 +351,7 @@ const getLastZoneMethodOrder = ( state, siteId ) => {
 	const zoneId = getShippingZonesEdits( state, siteId ).currentlyEditingId;
 	const serverZone = find( serverZones, { id: zoneId } );
 	const serverMethodIds = serverZone ? serverZone.methodIds : [];
-	const serverMethods = serverMethodIds.map( id => getShippingZoneMethod( state, id, siteId ) );
+	const serverMethods = serverMethodIds.map( ( id ) => getShippingZoneMethod( state, id, siteId ) );
 	const lastMethodOrder = Math.max( ...map( serverMethods, 'order' ) );
 	return Math.max( lastMethodOrder, 0 );
 };
@@ -382,7 +382,7 @@ const shouldSaveGeneratedName = ( serverZone, newZoneProperties, previousGenerat
 	return true;
 };
 
-export const getSaveZoneActionListSteps = state => {
+export const getSaveZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const serverZones = getAPIShippingZones( state );
 	const zoneEdits = getShippingZonesEdits( state, siteId );
@@ -426,20 +426,24 @@ export const getSaveZoneActionListSteps = state => {
 		...getAutoOrderZonesSteps( siteId, zoneId, serverZones, allServerLocations ),
 		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations, serverLocations ),
 		...flatten(
-			methodEdits.deletes.map( method => getZoneMethodDeleteSteps( siteId, zoneId, method, state ) )
+			methodEdits.deletes.map( ( method ) =>
+				getZoneMethodDeleteSteps( siteId, zoneId, method, state )
+			)
 		),
 		...flatten(
-			methodEdits.updates.map( method => getZoneMethodUpdateSteps( siteId, zoneId, method, state ) )
+			methodEdits.updates.map( ( method ) =>
+				getZoneMethodUpdateSteps( siteId, zoneId, method, state )
+			)
 		),
 		...flatten(
-			methodEdits.creates.map( method =>
+			methodEdits.creates.map( ( method ) =>
 				getZoneMethodCreateSteps( siteId, zoneId, method, lastMethodOrder, state )
 			)
 		),
 	];
 };
 
-const getDeleteZoneActionListSteps = state => {
+const getDeleteZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const zoneEdits = getShippingZonesEdits( state, siteId );
 	const zoneId = zoneEdits.currentlyEditingId;
@@ -471,7 +475,7 @@ const getDeleteZoneActionListSteps = state => {
  * @param {object} state The whole Redux state tree
  * @returns {Array} List of steps
  */
-export const getCreateDefaultZoneActionListSteps = state => {
+export const getCreateDefaultZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const serverZones = getAPIShippingZones( state );
 	if ( isDefaultShippingZoneCreated( state ) ) {
@@ -504,7 +508,7 @@ export const getCreateDefaultZoneActionListSteps = state => {
 				true
 			)( dispatch )
 				.then( () => dispatch( actionListStepSuccess( actionList ) ) )
-				.catch( err => dispatch( actionListStepFailure( actionList, err ) ) );
+				.catch( ( err ) => dispatch( actionListStepFailure( actionList, err ) ) );
 		},
 	} );
 	return steps;
@@ -537,11 +541,11 @@ export default {
 		( store, action ) => {
 			const { successAction, failureAction } = action;
 
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
@@ -563,11 +567,11 @@ export default {
 				return;
 			}
 
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
@@ -580,11 +584,11 @@ export default {
 	],
 
 	[ WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE ]: [
-		store => {
+		( store ) => {
 			if ( getActionList( store.getState() ) ) {
 				return;
 			}
-			const onComplete = dispatch => {
+			const onComplete = ( dispatch ) => {
 				dispatch( actionListClear() );
 			};
 			store.dispatch(

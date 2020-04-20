@@ -103,7 +103,7 @@ export async function initGoogleRecaptcha( elementId, action, siteKey ) {
 		return null;
 	}
 
-	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
+	await new Promise( ( resolve ) => window.grecaptcha.ready( resolve ) );
 
 	try {
 		const clientId = await renderRecaptchaClient( elementId, siteKey );

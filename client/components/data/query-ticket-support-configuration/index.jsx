@@ -25,7 +25,7 @@ class QueryTicketSupportConfiguration extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isRequesting: isRequestingTicketSupportConfiguration( state ),
 	} ),
 	{ ticketSupportConfigurationRequest }

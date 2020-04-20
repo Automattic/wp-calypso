@@ -24,7 +24,7 @@ class Sites extends Component {
 		siteBasePath: PropTypes.string.isRequired,
 	};
 
-	filterSites = site => {
+	filterSites = ( site ) => {
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.

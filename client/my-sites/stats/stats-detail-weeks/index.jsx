@@ -22,7 +22,7 @@ import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors
 import { getSitePost } from 'state/posts/selectors';
 import toggleInfo from '../toggle-info';
 
-const StatsPostDetailWeeks = props => {
+const StatsPostDetailWeeks = ( props ) => {
 	const {
 		isRequesting,
 		opened,

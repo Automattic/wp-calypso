@@ -50,7 +50,7 @@ export default connect(
 			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestSite,

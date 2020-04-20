@@ -24,7 +24,7 @@ import ThemeShowcase from './theme-showcase';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 
-const ConnectedSingleSiteWpcom = connectOptions( props => {
+const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,

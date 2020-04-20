@@ -19,7 +19,7 @@ import { getLanguageRouteParam } from 'lib/i18n-utils';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
@@ -100,7 +100,7 @@ export default function() {
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
 		( { params } ) =>
-			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
+			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : ''}` )
 	);
 
 	if ( isLoggedOut ) {

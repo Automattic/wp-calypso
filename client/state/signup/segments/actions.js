@@ -21,7 +21,7 @@ export const requestSegments = () => ( {
  *
  * @returns {object} The action object.
  */
-export const setSegments = segments => ( {
+export const setSegments = ( segments ) => ( {
 	type: SIGNUP_SEGMENTS_SET,
 	segments,
 } );

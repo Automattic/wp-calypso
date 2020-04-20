@@ -8,7 +8,7 @@ import {
 	COUNTRIES_SMS_UPDATED,
 } from 'state/action-types';
 
-const createListReducer = updatedActionType => ( state = [], action ) => {
+const createListReducer = ( updatedActionType ) => ( state = [], action ) => {
 	switch ( action.type ) {
 		case updatedActionType:
 			return action.countries;

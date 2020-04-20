@@ -26,9 +26,11 @@ class BackupDelta extends Component {
 	renderRealtime() {
 		const { allowRestore, timezone, gmtOffset, moment, siteSlug, translate } = this.props;
 
-		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
+		const realtimeEvents = this.props.realtimeEvents.filter(
+			( event ) => event.activityIsRewindable
+		);
 
-		const cards = realtimeEvents.map( activity => (
+		const cards = realtimeEvents.map( ( activity ) => (
 			<ActivityCard
 				key={ activity.activityId }
 				{ ...{
@@ -67,7 +69,7 @@ class BackupDelta extends Component {
 		const { metaDiff } = this.props;
 		const metas = [];
 
-		metaDiff.forEach( meta => {
+		metaDiff.forEach( ( meta ) => {
 			if ( meta.num > 0 || meta.num < 0 ) {
 				const operator = meta.num < 0 ? '' : '+';
 				const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
@@ -83,7 +85,7 @@ class BackupDelta extends Component {
 		const { backupAttempts, deltas, metaDiff, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 
-		const mediaCreated = deltas.mediaCreated.map( item => (
+		const mediaCreated = deltas.mediaCreated.map( ( item ) => (
 			<div key={ item.activityId } className="backup-delta__media-image">
 				<img
 					alt=""
@@ -120,7 +122,7 @@ class BackupDelta extends Component {
 		const postsOperator = postsCount >= 0 ? '+' : '';
 		const postCountDisplay = `${ postsOperator }${ postsCount }`;
 
-		const posts = deltas.posts.map( item => {
+		const posts = deltas.posts.map( ( item ) => {
 			if ( 'post__published' === item.activityName ) {
 				return (
 					<div key={ item.activityId } className="backup-delta__post-block">
@@ -143,7 +145,7 @@ class BackupDelta extends Component {
 			}
 		} );
 
-		const plugins = deltas.plugins.map( item => {
+		const plugins = deltas.plugins.map( ( item ) => {
 			const className =
 				'plugin__installed' === item.activityName
 					? 'backup-delta__extension-block-installed'
@@ -156,7 +158,7 @@ class BackupDelta extends Component {
 			);
 		} );
 
-		const themes = deltas.themes.map( item => {
+		const themes = deltas.themes.map( ( item ) => {
 			const className =
 				'theme__installed' === item.activityName
 					? 'backup-delta__extension-block-installed'
@@ -184,7 +186,7 @@ class BackupDelta extends Component {
 			deltas.posts.length ||
 			deltas.plugins.length ||
 			deltas.themes.length ||
-			!! metaDiff.filter( diff => 0 !== diff.num ).length
+			!! metaDiff.filter( ( diff ) => 0 !== diff.num ).length
 		);
 
 		return (

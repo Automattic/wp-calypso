@@ -1,1 +1,1 @@
-export default function joinClasses(classNames: any): any;
+export default function joinClasses( classNames: any ): any;

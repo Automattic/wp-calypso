@@ -10,7 +10,7 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-const createRequestingReducer = requesting => ( state, { siteId } ) => ( {
+const createRequestingReducer = ( requesting ) => ( state, { siteId } ) => ( {
 	...state,
 	[ siteId ]: requesting,
 } );

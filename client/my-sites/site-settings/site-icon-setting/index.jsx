@@ -73,7 +73,7 @@ class SiteIconSetting extends Component {
 		isEditingSiteIcon: false,
 	};
 
-	toggleModal = isModalVisible => {
+	toggleModal = ( isModalVisible ) => {
 		const { isEditingSiteIcon } = this.state;
 
 		this.setState( {
@@ -87,7 +87,7 @@ class SiteIconSetting extends Component {
 
 	showModal = () => this.toggleModal( true );
 
-	editSelectedMedia = value => {
+	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingSiteIcon: true } );
 			this.props.onEditSelectedMedia();
@@ -208,7 +208,7 @@ class SiteIconSetting extends Component {
 
 		recordEvent( 'Clicked Remove Site Icon' );
 
-		accept( message, accepted => {
+		accept( message, ( accepted ) => {
 			if ( accepted ) {
 				removeSiteIcon( siteId );
 				recordEvent( 'Confirmed Remove Site Icon' );
@@ -227,7 +227,7 @@ class SiteIconSetting extends Component {
 	}
 
 	isParentReady( selectedMedia ) {
-		return ! selectedMedia.some( item => item.external );
+		return ! selectedMedia.some( ( item ) => item.external );
 	}
 
 	render() {
@@ -343,7 +343,7 @@ class SiteIconSetting extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -363,7 +363,7 @@ export default connect(
 		};
 	},
 	{
-		recordEvent: action => recordGoogleEvent( 'Site Settings', action ),
+		recordEvent: ( action ) => recordGoogleEvent( 'Site Settings', action ),
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,

@@ -142,7 +142,7 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function wait( times, interval, callback ) {
-		setTimeout( function() {
+		setTimeout( function () {
 			resize( {} );
 
 			if ( times-- ) {
@@ -163,7 +163,7 @@ function wcpomAutoResize( editor ) {
 	settings.autoresize_max_height = parseInt( editor.getParam( 'autoresize_max_height', 0 ), 10 );
 
 	// Add padding at the bottom for better UX
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		const overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
 		const bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
 
@@ -185,11 +185,11 @@ function wcpomAutoResize( editor ) {
 	editor.on( 'nodechange setcontent keyup FullscreenStateChanged', resize );
 
 	if ( editor.getParam( 'autoresize_on_init', true ) ) {
-		editor.on( 'init', function() {
+		editor.on( 'init', function () {
 			editor.dom.addClass( editor.getBody(), 'wp-autoresize' );
 
 			// Hit it 20 times in 100 ms intervals
-			wait( 20, 100, function() {
+			wait( 20, 100, function () {
 				// Hit it 5 times in 1 sec intervals
 				wait( 5, 1000 );
 			} );
@@ -200,6 +200,6 @@ function wcpomAutoResize( editor ) {
 	editor.addCommand( 'wpcomAutoResize', resize );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/autoresize', wcpomAutoResize );
 }

@@ -25,7 +25,7 @@ export const EditorSharingPublicizeServices = ( { connections, newConnectionPopu
 		{ map( groupBy( connections, 'label' ), ( groupedConnections, label ) => (
 			<li key={ label } className="editor-sharing__publicize-service">
 				<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
-				{ groupedConnections.map( connection => (
+				{ groupedConnections.map( ( connection ) => (
 					<EditorSharingPublicizeConnection
 						key={ connection.ID }
 						connection={ connection }
@@ -43,7 +43,7 @@ EditorSharingPublicizeServices.propTypes = {
 	newConnectionPopup: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
 

@@ -71,7 +71,7 @@ class MomentProvider extends React.Component {
 	}
 }
 
-const ConnectedMomentProvider = connect( state => ( {
+const ConnectedMomentProvider = connect( ( state ) => ( {
 	currentLocale: getCurrentLocaleSlug( state ),
 } ) )( MomentProvider );
 

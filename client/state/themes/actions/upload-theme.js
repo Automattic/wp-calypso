@@ -21,14 +21,14 @@ import 'state/themes/init';
  * @returns {Function} the action function
  */
 export function uploadTheme( siteId, file ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_UPLOAD_START,
 			siteId,
 		} );
 		return wpcom
 			.undocumented()
-			.uploadTheme( siteId, file, event => {
+			.uploadTheme( siteId, file, ( event ) => {
 				dispatch( {
 					type: THEME_UPLOAD_PROGRESS,
 					siteId,
@@ -36,7 +36,7 @@ export function uploadTheme( siteId, file ) {
 					total: event.total,
 				} );
 			} )
-			.then( theme => {
+			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_UPLOAD_SUCCESS,
@@ -44,7 +44,7 @@ export function uploadTheme( siteId, file ) {
 					themeId: theme.id,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_UPLOAD_FAILURE,
 					siteId,

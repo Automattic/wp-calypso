@@ -15,7 +15,9 @@ interface Props {
 }
 
 const QueryJetpackScan = ( { siteId }: Props ) => {
-	const requestingJetpackScan = useSelector( state => isRequestingJetpackScan( state, siteId ) );
+	const requestingJetpackScan = useSelector( ( state ) =>
+		isRequestingJetpackScan( state, siteId )
+	);
 	const dispatch = useDispatch();
 
 	React.useEffect( () => {

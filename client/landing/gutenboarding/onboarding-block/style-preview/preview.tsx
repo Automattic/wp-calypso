@@ -24,7 +24,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Font > >( new Set() );
 
-	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( select =>
+	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
 

@@ -243,7 +243,7 @@ export class EditorNotice extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const post = getEditedPost( state, siteId, getEditorPostId( state ) );
 		if ( ! post ) {

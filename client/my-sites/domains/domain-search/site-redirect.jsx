@@ -89,7 +89,7 @@ class SiteRedirect extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),

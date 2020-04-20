@@ -50,7 +50,7 @@ const categoryTaxonomyName = 'category';
 
 describe( 'actions', () => {
 	describe( 'addTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
@@ -187,7 +187,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteTerms()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms` )
@@ -264,7 +264,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:rib` )
@@ -413,7 +413,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wp/v2/sites/${ siteId }/taxonomies/${ taxonomyName }/` )

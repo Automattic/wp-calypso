@@ -118,7 +118,7 @@ class SiteMenu extends PureComponent {
 		];
 	}
 
-	onNavigate = postType => () => {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			bumpStat( 'calypso_publish_menu_click', postType );
 		}

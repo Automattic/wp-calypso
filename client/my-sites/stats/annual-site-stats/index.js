@@ -108,7 +108,7 @@ class AnnualSiteStats extends Component {
 					<table cellPadding="0" cellSpacing="0">
 						<thead>
 							<tr>
-								{ keys.map( key => (
+								{ keys.map( ( key ) => (
 									<th scope="col" key={ key }>
 										{ strings[ key ] }
 									</th>
@@ -159,8 +159,9 @@ class AnnualSiteStats extends Component {
 		if ( now.month() === 0 ) {
 			previousYear = now.subtract( 1, 'months' ).format( 'YYYY' );
 		}
-		const currentYearData = years && find( years, y => y.year === currentYear );
-		const previousYearData = previousYear && years && find( years, y => y.year === previousYear );
+		const currentYearData = years && find( years, ( y ) => y.year === currentYear );
+		const previousYearData =
+			previousYear && years && find( years, ( y ) => y.year === previousYear );
 		const isLoading = ! years;
 		const isError = ! isLoading && years.errors;
 		const hasData = isWidget ? currentYearData || previousYearData : years;
@@ -201,7 +202,7 @@ class AnnualSiteStats extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );

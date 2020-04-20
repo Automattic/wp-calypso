@@ -121,7 +121,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR ] = ( state, { err
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW ] = ( state ) => {
 	return {
 		...state,
 		showPurchaseDialog: true,
@@ -494,7 +494,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE ] = ( state ) => {
 	return {
 		...state,
 		movedItemIndex: -1,
@@ -512,7 +512,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_TARGET_PACKAGE ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM ] = ( state ) => {
 	return {
 		...state,
 		showAddItemDialog: true,
@@ -520,7 +520,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM ] = state => {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM ] = ( state ) => {
 	return {
 		...state,
 		showAddItemDialog: false,
@@ -552,7 +552,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPac
 	each( state.addedItems, ( itemIndices, originPackageId ) => {
 		// Move items in reverse order of index, to maintain validity as items are removed.
 		// e.g. when index 0 is removed from the package, index 1 would become index 0
-		sortBy( itemIndices, i => -i ).forEach( movedItemIndex => {
+		sortBy( itemIndices, ( i ) => -i ).forEach( ( movedItemIndex ) => {
 			state = reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ]( state, {
 				originPackageId,
 				movedItemIndex,
@@ -563,7 +563,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPac
 	return { ...state, showAddItemDialog: false };
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const packageKeys = Object.keys( newPackages );
 
@@ -687,7 +687,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = ( state ) => {
 	return {
 		...state,
 		form: {
@@ -947,14 +947,14 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY ] 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = ( state ) => {
 	return {
 		...state,
 		form: {
 			...state.form,
 			customs: {
 				...state.form.customs,
-				items: mapValues( state.form.customs.items, item => ( {
+				items: mapValues( state.form.customs.items, ( item ) => ( {
 					...item,
 					tariffNumber: item.tariffNumber || '',
 				} ) ),
@@ -1002,7 +1002,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER ] = ( state, { v
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST ] = ( state ) => {
 	return {
 		...state,
 		form: {
@@ -1029,7 +1029,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE ] = (
 	return {
 		...state,
 		labels: [
-			...response.map( label => ( {
+			...response.map( ( label ) => ( {
 				...label,
 				statusUpdated: true,
 			} ) ),
@@ -1079,12 +1079,12 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates, re
 		form: {
 			...state.form,
 			rates: {
-				values: mapValues( rates, rate => {
+				values: mapValues( rates, ( rate ) => {
 					const packageRates = get( rate, 'rates', [] );
 					const selected =
 						packageRates.length === 1
 							? packageRates[ 0 ]
-							: find( packageRates, r => r.is_selected );
+							: find( packageRates, ( r ) => r.is_selected );
 
 					if ( selected ) {
 						return selected.service_id;
@@ -1118,7 +1118,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES ] = ( state ) => {
 	return {
 		...state,
 		form: {
@@ -1141,7 +1141,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG ] = ( state, { 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG ] = ( state ) => {
 	if ( state.refundDialog.isSubmitting ) {
 		return state;
 	}
@@ -1175,7 +1175,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE ] = (
 	return newState;
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST ] = ( state ) => {
 	return {
 		...state,
 		refundDialog: {
@@ -1255,14 +1255,14 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR ] = ( state, 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG ] = ( state ) => {
 	return {
 		...state,
 		reprintDialog: null,
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT ] = ( state ) => {
 	return {
 		...state,
 		reprintDialog: {
@@ -1281,7 +1281,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG ] = ( state, {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = ( state ) => {
 	return {
 		...state,
 		detailsDialog: null,

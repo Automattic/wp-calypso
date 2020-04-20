@@ -27,7 +27,7 @@ type HandledActions = Action< 'EXPERIMENT_FETCH' > | ExperimentAssign;
 
 const appStartedAt = Date.now();
 
-const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
+const resetState: ( anonId: string | null ) => ExperimentState = ( anonId ) => ( {
 	anonId,
 	isLoading: true,
 	nextRefresh: appStartedAt,

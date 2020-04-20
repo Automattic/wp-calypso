@@ -27,14 +27,14 @@ const SPACE_CHARACTERS = {
  * @param {string} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
-const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
+const isSpaceCharacter = ( character ) => !! SPACE_CHARACTERS[ character ];
 
 /**
  * Get index of the first character that is not within a tag
  * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
-const getTaglessIndex = text => {
+const getTaglessIndex = ( text ) => {
 	let isTagOpen = false;
 
 	for ( let i = 0; i < text.length; i++ ) {
@@ -60,7 +60,7 @@ const getTaglessIndex = text => {
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
-const getContent = reactElement => {
+const getContent = ( reactElement ) => {
 	if ( ! reactElement ) {
 		return null;
 	}
@@ -172,7 +172,7 @@ const setChildDirection = ( child, isRtl ) => {
 
 	if ( child && child.props.children ) {
 		let innerChildDirection = null;
-		const children = React.Children.map( child.props.children, innerChild => {
+		const children = React.Children.map( child.props.children, ( innerChild ) => {
 			if ( ! innerChild ) {
 				return innerChild;
 			}
@@ -184,7 +184,7 @@ const setChildDirection = ( child, isRtl ) => {
 				return innerChild;
 			}
 
-			if ( inlineComponents.some( inlineComponent => innerChild.type === inlineComponent ) ) {
+			if ( inlineComponents.some( ( inlineComponent ) => innerChild.type === inlineComponent ) ) {
 				innerChildDirection = getChildDirection( innerChild, isRtl );
 				return innerChild;
 			}

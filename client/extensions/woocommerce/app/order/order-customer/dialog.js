@@ -155,15 +155,15 @@ class CustomerAddressDialog extends Component {
 		this.props.closeDialog();
 	};
 
-	onPhoneChange = phone => {
-		this.setState( prevState => {
+	onPhoneChange = ( phone ) => {
+		this.setState( ( prevState ) => {
 			const { address } = prevState;
 			const newState = { ...address, phone: phone.value };
 			return { address: newState, phoneCountry: phone.countryCode };
 		} );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const value = event.target.value;
 		let name = event.target.name;
 		if ( 'street' === name ) {
@@ -171,7 +171,7 @@ class CustomerAddressDialog extends Component {
 		} else if ( 'street2' === name ) {
 			name = 'address_2';
 		}
-		this.setState( prevState => {
+		this.setState( ( prevState ) => {
 			const { address } = prevState;
 			const newState = { address: { ...address, [ name ]: value } };
 
@@ -190,7 +190,7 @@ class CustomerAddressDialog extends Component {
 		} );
 	};
 
-	validateEmail = event => {
+	validateEmail = ( event ) => {
 		const { translate } = this.props;
 		if ( ! emailValidator.validate( event.target.value ) ) {
 			this.setState( {
@@ -204,7 +204,7 @@ class CustomerAddressDialog extends Component {
 	};
 
 	toggleShipping = () => {
-		this.setState( prevState => {
+		this.setState( ( prevState ) => {
 			const { address } = prevState;
 			const newState = { ...address, copyToShipping: ! prevState.address.copyToShipping };
 			return { address: newState };
@@ -312,7 +312,7 @@ class CustomerAddressDialog extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const address = getStoreLocation( state );
 		const locationsLoaded = areLocationsLoaded( state );
 		const areSettingsLoaded = areSettingsGeneralLoaded( state );
@@ -327,5 +327,5 @@ export default connect(
 			defaultState: address.state,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( CustomerAddressDialog ) );

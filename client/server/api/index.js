@@ -11,10 +11,10 @@ const config = require( 'config' );
 const oauth = require( './oauth' );
 const signInWithApple = require( './sign-in-with-apple' );
 
-module.exports = function() {
+module.exports = function () {
 	const app = express();
 
-	app.get( '/version', function( request, response ) {
+	app.get( '/version', function ( request, response ) {
 		response.json( { version } );
 	} );
 

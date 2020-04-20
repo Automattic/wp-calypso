@@ -18,7 +18,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const getAuthAccountType = action =>
+export const getAuthAccountType = ( action ) =>
 	http(
 		{
 			path: `/users/${ encodeURIComponent( action.usernameOrEmail ) }/auth-options`,

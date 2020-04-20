@@ -144,7 +144,7 @@ export class LoginForm extends Component {
 		}
 	}
 
-	onChangeField = event => {
+	onChangeField = ( event ) => {
 		this.props.formUpdate();
 
 		this.setState( {
@@ -170,7 +170,7 @@ export class LoginForm extends Component {
 		return ! socialAccountIsLinking && ! hasAccountTypeLoaded;
 	}
 
-	resetView = event => {
+	resetView = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_change_username_or_email' );
@@ -190,7 +190,7 @@ export class LoginForm extends Component {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 					error_code: error.code,
 					error_message: error.message,
@@ -198,7 +198,7 @@ export class LoginForm extends Component {
 			} );
 	}
 
-	onSubmitForm = event => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
@@ -235,11 +235,11 @@ export class LoginForm extends Component {
 		return ! oauth2Client && isPopup;
 	}
 
-	savePasswordRef = input => {
+	savePasswordRef = ( input ) => {
 		this.password = input;
 	};
 
-	saveUsernameOrEmailRef = input => {
+	saveUsernameOrEmailRef = ( input ) => {
 		this.usernameOrEmail = input;
 	};
 
@@ -279,7 +279,7 @@ export class LoginForm extends Component {
 		}
 	}
 
-	handleWooCommerceSubmit = event => {
+	handleWooCommerceSubmit = ( event ) => {
 		event.preventDefault();
 		document.activeElement.blur();
 		if ( ! this.props.hasAccountTypeLoaded ) {
@@ -340,7 +340,7 @@ export class LoginForm extends Component {
 							id="usernameOrEmail"
 							name="usernameOrEmail"
 							value={ this.state.usernameOrEmail }
-							onChange={ value => {
+							onChange={ ( value ) => {
 								this.props.formUpdate();
 								this.setState( {
 									usernameOrEmail: value,
@@ -364,7 +364,7 @@ export class LoginForm extends Component {
 								name="password"
 								type="password"
 								value={ this.state.password }
-								onChange={ value => {
+								onChange={ ( value ) => {
 									this.props.formUpdate();
 									this.setState( {
 										password: value,
@@ -656,7 +656,7 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const accountType = getAuthAccountTypeSelector( state );
 
 		return {

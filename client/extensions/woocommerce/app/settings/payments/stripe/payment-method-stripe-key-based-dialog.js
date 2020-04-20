@@ -190,7 +190,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		);
 	};
 
-	onDone = e => {
+	onDone = ( e ) => {
 		if ( hasStripeKeyPairForMode( this.props.method ) ) {
 			this.props.onDone( e );
 		} else {

@@ -104,7 +104,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				dailyPostButton.instance().renderSitesPopover = resolve;
 				dailyPostButton.simulate( 'click', { preventDefault: noop } );
 			} );

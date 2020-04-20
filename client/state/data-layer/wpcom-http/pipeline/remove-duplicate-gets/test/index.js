@@ -48,7 +48,7 @@ const postLike = {
  * @param {object} o object to shallow-clone
  * @returns {object} cloned object
  */
-const cp = o => ( { ...o } );
+const cp = ( o ) => ( { ...o } );
 
 describe( '#buildKey', () => {
 	test( 'should collapse "duplicate" requests', () => {

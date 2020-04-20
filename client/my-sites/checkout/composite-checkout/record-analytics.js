@@ -64,7 +64,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			case 'CART_INIT_COMPLETE':
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_loaded', {
-						products: action.payload.products.map( product => product.product_slug ).join( ',' ),
+						products: action.payload.products
+							.map( ( product ) => product.product_slug )
+							.join( ',' ),
 					} )
 				);
 

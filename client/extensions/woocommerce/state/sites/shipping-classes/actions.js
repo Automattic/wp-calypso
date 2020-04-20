@@ -26,7 +26,7 @@ export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 	const { siteId } = action;
 	const noticeId = 'query-shipping-classes-retry';
 
-	const onRetryClick = e => {
+	const onRetryClick = ( e ) => {
 		e.preventDefault();
 
 		dispatch( {
@@ -44,7 +44,7 @@ export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 	} );
 };
 
-export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
+export const fetchShippingClasses = ( siteId ) => ( dispatch, getState ) => {
 	if (
 		areShippingClassesLoaded( getState(), siteId ) ||
 		areShippingClassesLoading( getState(), siteId )

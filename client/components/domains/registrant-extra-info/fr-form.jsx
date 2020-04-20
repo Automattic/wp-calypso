@@ -102,11 +102,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	handleChangeContactEvent = event => {
+	handleChangeContactEvent = ( event ) => {
 		this.updateContactDetails( event.target.id, event.target.value );
 	};
 
-	handleChangeContactExtraEvent = event => {
+	handleChangeContactExtraEvent = ( event ) => {
 		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
 	};
 
@@ -185,7 +185,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			pattern: this.props.translate( 'An EU Trademark number uses only digits.' ),
 		};
 
-		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, error =>
+		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, ( error ) =>
 			renderValidationError( trademarkNumberStrings[ error ] )
 		);
 
@@ -198,8 +198,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			$ref: translate( 'Organization field is required' ),
 		};
 
-		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
-			renderValidationError( organizationValidationStrings[ error ] )
+		const organizationValidationMessage = map(
+			contactDetailsValidationErrors.organization,
+			( error ) => renderValidationError( organizationValidationStrings[ error ] )
 		);
 
 		return (
@@ -291,7 +292,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

@@ -60,7 +60,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	onAcceptTransferClick = () => {
 		const { domain, translate } = this.props;
 		this.setState( { isAccepting: true } );
-		acceptTransfer( domain.name, error => {
+		acceptTransfer( domain.name, ( error ) => {
 			this.setStateIfMounted( { isAccepting: false } );
 			if ( error ) {
 				notices.error( this.getErrorMessage( error ) );
@@ -84,7 +84,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				siteId: siteId,
 				declineTransfer: true,
 			},
-			error => {
+			( error ) => {
 				this.setStateIfMounted( { isCanceling: false } );
 				if ( error ) {
 					notices.error( this.getErrorMessage( error ) );

@@ -228,7 +228,7 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			currentUser: getCurrentUser( state ),
 		} ),
 		{

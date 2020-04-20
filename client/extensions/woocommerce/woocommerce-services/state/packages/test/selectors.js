@@ -48,7 +48,7 @@ const getState = ( packagesState = initialPackagesState ) => {
 	};
 };
 
-const setOrderAsInternational = state => {
+const setOrderAsInternational = ( state ) => {
 	const newState = Object.assign( {}, state );
 	set(
 		newState,

@@ -253,10 +253,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// Only check items with an ID (the subscription ID) because those are what
 			// we show on the manage listing. Items without an ID are either inflight follows
 			// or follows that we picked up from a feed, site, or post object.
-			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
+			return omitBy( state, ( follow ) => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
 		}
 		case SERIALIZE:
-			return pickBy( state, item => item.ID && item.is_following );
+			return pickBy( state, ( item ) => item.ID && item.is_following );
 	}
 
 	return state;

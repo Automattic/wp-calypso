@@ -54,9 +54,9 @@ const GSuiteNewUserListExample = () => {
 		<Card>
 			<GSuiteNewUserList
 				domains={ domains }
-				extraValidation={ useExtraValidation ? extraValidation : user => user }
+				extraValidation={ useExtraValidation ? extraValidation : ( user ) => user }
 				selectedDomainName={ domainOne.name }
-				onUsersChange={ changedUsers => setUsers( changedUsers ) }
+				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 				onReturnKeyPress={ () => void 0 }
 			>

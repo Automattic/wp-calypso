@@ -60,10 +60,10 @@ const importerComponents = {
 };
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
+	return filter( imports, ( importItem ) => importItem.site.ID === siteID );
 };
 
-const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
+const getImporterTypeForEngine = memoize( ( engine ) => `importer-type-${ engine }` );
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -96,7 +96,7 @@ class SectionImport extends Component {
 		const { site } = this.props;
 		const { importers: imports } = this.state;
 
-		filterImportsForSite( site.ID, imports ).map( importItem => {
+		filterImportsForSite( site.ID, imports ).map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
 			this.trackImporterStateChange( importerState, importerId );
 		} );
@@ -159,10 +159,10 @@ class SectionImport extends Component {
 		 * Filter out all importers except the WordPress ones for Atomic sites.
 		 */
 		const importerElementsFiltered = isAtomic
-			? importerElementsAll.filter( importer => importer.engine === 'wordpress' )
+			? importerElementsAll.filter( ( importer ) => importer.engine === 'wordpress' )
 			: importerElementsAll;
 
-		const importerElements = importerElementsFiltered.map( importer => {
+		const importerElements = importerElementsFiltered.map( ( importer ) => {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
@@ -284,7 +284,7 @@ class SectionImport extends Component {
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+			.map( ( item ) => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
@@ -362,7 +362,7 @@ class SectionImport extends Component {
 
 export default flow(
 	connect(
-		state => {
+		( state ) => {
 			const siteID = getSelectedSiteId( state );
 			return {
 				engine: getSelectedImportEngine( state ),

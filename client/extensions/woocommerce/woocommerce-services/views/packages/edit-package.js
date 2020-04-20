@@ -22,7 +22,7 @@ import inputFilters from './input-filters';
 
 const renderDimensionsInput = ( dimensionsName, dimensionsStr, dimensionsUnit, updateField ) => {
 	const { length, width, height } = inputFilters.parseDimensions( dimensionsStr );
-	const onChange = event => {
+	const onChange = ( event ) => {
 		const name = event.target.name;
 		const value = event.target.value;
 		const allDimensions = [
@@ -43,7 +43,7 @@ const renderDimensionsInput = ( dimensionsName, dimensionsStr, dimensionsUnit, u
 };
 
 const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.preventDefault();
 		toggleOuterDimensions( siteId );
 	};
@@ -55,7 +55,7 @@ const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) =
 	);
 };
 
-const EditPackage = props => {
+const EditPackage = ( props ) => {
 	const {
 		siteId,
 		form,
@@ -83,7 +83,7 @@ const EditPackage = props => {
 		updatePackagesField( siteId, { [ key ]: value } );
 	};
 
-	const updateTextField = event => {
+	const updateTextField = ( event ) => {
 		const key = event.target.name;
 		const value = event.target.value;
 		updateField( key, value );
@@ -96,7 +96,7 @@ const EditPackage = props => {
 		return modalErrors[ field ] ? <FieldError text={ text } /> : null;
 	};
 
-	const onPackageTypeSelect = event => {
+	const onPackageTypeSelect = ( event ) => {
 		updatePackagesField( siteId, { is_letter: 'envelope' === event.target.value } );
 	};
 	const renderTypeSelection = () => {

@@ -26,5 +26,5 @@ export default function getSiteTimezoneName( state, siteId ) {
 		return null;
 	}
 
-	return `UTC${ /\-/.test( gmt_offset ) ? '' : '+' }${ gmt_offset }`;
+	return `UTC${ /\-/.test( gmt_offset ) ? '' : '+'}${ gmt_offset }`;
 }

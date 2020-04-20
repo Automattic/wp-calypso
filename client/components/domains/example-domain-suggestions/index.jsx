@@ -55,7 +55,7 @@ class DomainSuggestionsExample extends React.Component {
 const recordClick = () => recordTracksEvent( 'calypso_example_domain_suggestions_link_click' );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteDesignType: getDesignType( state ),
 	} ),
 	{

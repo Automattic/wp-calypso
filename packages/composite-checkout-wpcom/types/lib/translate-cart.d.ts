@@ -9,4 +9,4 @@ import { ResponseCart, WPCOMCart } from '../types';
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export declare function translateWpcomCartToCheckoutCart(serverCart: ResponseCart): WPCOMCart;
+export declare function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WPCOMCart;

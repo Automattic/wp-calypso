@@ -19,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestResendEmailVerification = action => {
+export const requestResendEmailVerification = ( action ) => {
 	const { domainName, mailbox } = action;
 
 	return http(

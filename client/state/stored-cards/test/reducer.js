@@ -23,7 +23,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'items', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

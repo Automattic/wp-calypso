@@ -13,7 +13,7 @@ import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
  * @param {object}   state Global state tree
  * @returns {boolean} If the current user is a business plan user.
  */
-export default state => {
+export default ( state ) => {
 	const userId = getCurrentUserId( state );
 
 	if ( ! userId ) {
@@ -26,7 +26,7 @@ export default state => {
 		return false;
 	}
 
-	return purchases.some( purchase =>
+	return purchases.some( ( purchase ) =>
 		planMatches( purchase.productSlug, { group: GROUP_WPCOM, type: TYPE_BUSINESS } )
 	);
 };

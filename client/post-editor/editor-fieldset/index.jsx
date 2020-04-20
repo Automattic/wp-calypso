@@ -19,7 +19,7 @@ export default class extends React.Component {
 	};
 
 	renderChildren = () => {
-		return React.Children.map( this.props.children, function( child ) {
+		return React.Children.map( this.props.children, function ( child ) {
 			return <div className="editor-fieldset__option">{ child }</div>;
 		} );
 	};

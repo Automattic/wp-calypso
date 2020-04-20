@@ -164,7 +164,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
 } ) )( localize( MasterbarLoggedOut ) );

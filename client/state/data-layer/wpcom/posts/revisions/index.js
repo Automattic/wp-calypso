@@ -32,7 +32,7 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
  * @param {object} action Redux action
  * @returns {object} Redux action
  */
-export const fetchPostRevisionsDiffs = action => {
+export const fetchPostRevisionsDiffs = ( action ) => {
 	const { siteId, postId, postType, comparisons } = action;
 	return http(
 		{

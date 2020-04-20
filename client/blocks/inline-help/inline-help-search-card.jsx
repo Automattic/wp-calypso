@@ -41,7 +41,7 @@ class InlineHelpSearchCard extends Component {
 		query: '',
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
 		if ( event.getModifierState( 'Shift' ) ) {
 			return;
@@ -68,7 +68,7 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		debug( 'search query received: ', searchQuery );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
 		this.props.requestInlineHelpSearchResults( searchQuery );

@@ -158,9 +158,9 @@ export class HelpContactForm extends React.PureComponent {
 		}
 
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
-			const existingIDs = existingQuestions.map( question => question.id );
+			const existingIDs = existingQuestions.map( ( question ) => question.id );
 			existingIDs.sort();
-			const newIDs = newQuestions.map( question => question.id );
+			const newIDs = newQuestions.map( ( question ) => question.id );
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
@@ -170,7 +170,7 @@ export class HelpContactForm extends React.PureComponent {
 
 		wpcom
 			.getQandA( query, site )
-			.then( qanda =>
+			.then( ( qanda ) =>
 				this.setState( {
 					qanda: isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
@@ -201,7 +201,7 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
-		const options = selectionOptions.map( option => ( {
+		const options = selectionOptions.map( ( option ) => ( {
 			label: option.label,
 			subtext: option.subtext ? (
 				<span className="help-contact-form__selection-subtext">{ option.subtext }</span>
@@ -222,7 +222,7 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<div className="help-contact-form__selection">
 				<SegmentedControl primary>
-					{ options.map( option => (
+					{ options.map( ( option ) => (
 						<SegmentedControl.Item { ...option.props }>
 							{ option.label }
 							{ option.subtext }
@@ -232,7 +232,7 @@ export class HelpContactForm extends React.PureComponent {
 				<SelectDropdown
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
 				>
-					{ options.map( option => (
+					{ options.map( ( option ) => (
 						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
 					) ) }
 				</SelectDropdown>
@@ -464,13 +464,13 @@ export class HelpContactForm extends React.PureComponent {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),

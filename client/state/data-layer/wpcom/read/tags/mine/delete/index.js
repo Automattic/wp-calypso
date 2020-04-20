@@ -30,7 +30,7 @@ export function requestUnfollow( action ) {
  * @param  {RemovedTag} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */
-export const fromApi = apiResponse => {
+export const fromApi = ( apiResponse ) => {
 	if ( apiResponse.subscribed ) {
 		throw new Error(
 			`failed to unsubscribe to tag with response: ${ JSON.stringify( apiResponse ) }`

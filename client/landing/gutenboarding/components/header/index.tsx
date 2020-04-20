@@ -68,11 +68,11 @@ const Header: FunctionComponent = () => {
 
 	const currentStep = useCurrentStep();
 
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 
-	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
+	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
-	const { domain, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const makePath = usePath();
 
@@ -217,19 +217,21 @@ const Header: FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">
-					{ // We display the DomainPickerButton as soon as we have a domain suggestion,
-					//   unless we're still at the IntentGathering step. In that case, we only
-					//   show it comes from a site title (but hide it if it comes from a vertical).
-					currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
-						<DomainPickerButton
-							className="gutenboarding__header-domain-picker-button"
-							disabled={ ! currentDomain }
-							currentDomain={ currentDomain }
-							onDomainSelect={ setDomain }
-						>
-							{ domainElement }
-						</DomainPickerButton>
-					) }
+					{
+						// We display the DomainPickerButton as soon as we have a domain suggestion,
+						//   unless we're still at the IntentGathering step. In that case, we only
+						//   show it comes from a site title (but hide it if it comes from a vertical).
+						currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
+							<DomainPickerButton
+								className="gutenboarding__header-domain-picker-button"
+								disabled={ ! currentDomain }
+								currentDomain={ currentDomain }
+								onDomainSelect={ setDomain }
+							>
+								{ domainElement }
+							</DomainPickerButton>
+						)
+					}
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }

@@ -55,7 +55,7 @@ export class ThankYouCard extends Component {
 			return null;
 		}
 
-		const recordThankYouClick = value => {
+		const recordThankYouClick = ( value ) => {
 			this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
 				product_name: 'search',
 				value,
@@ -137,7 +137,7 @@ export class ThankYouCard extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const currentUser = getCurrentUser( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );

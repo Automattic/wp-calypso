@@ -23,7 +23,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const RefundDialog = props => {
+const RefundDialog = ( props ) => {
 	const {
 		orderId,
 		siteId,
@@ -100,7 +100,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
 };
 

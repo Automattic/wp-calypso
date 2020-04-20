@@ -22,7 +22,7 @@ import {
 } from 'lib/checkout/constants';
 import { decodeURIComponentIfValid, isExternal } from 'lib/url';
 
-const isValidValue = url => typeof url === 'string' && url;
+const isValidValue = ( url ) => typeof url === 'string' && url;
 
 export function isValidUpgradeIntent( upgradeIntent ) {
 	switch ( upgradeIntent ) {
@@ -43,7 +43,7 @@ export function parseRedirectToChain( rawUrl, includeOriginalUrl = true ) {
 		redirectChain.push( url );
 	}
 
-	const parseUrlAndPushToChain = currentUrl => {
+	const parseUrlAndPushToChain = ( currentUrl ) => {
 		const {
 			query: { redirect_to },
 		} = parse( currentUrl, true );

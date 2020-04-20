@@ -25,12 +25,10 @@ export default createSelector(
 			return [];
 		}
 
-		const result = times( 6, n => {
+		const result = times( 6, ( n ) => {
 			const month = moment().subtract( n, 'months' );
 			return {
-				dateString: moment( month )
-					.startOf( 'month' )
-					.format( 'YYYY-MM-DD' ),
+				dateString: moment( month ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
 				value: { month: month.format( 'YYYY-MM' ), operator: 'equal' },
 				count: 0,
 			};
@@ -42,13 +40,13 @@ export default createSelector(
 			count: 0,
 		} );
 
-		transactions.forEach( transaction => {
+		transactions.forEach( ( transaction ) => {
 			const transactionDateString = moment( transaction.date )
 				.startOf( 'month' )
 				.format( 'YYYY-MM-DD' );
 			const found =
 				result &&
-				result.find( item => item.dateString && item.dateString === transactionDateString );
+				result.find( ( item ) => item.dateString && item.dateString === transactionDateString );
 			if ( found ) {
 				found.count++;
 			} else {

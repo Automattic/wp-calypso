@@ -24,7 +24,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'reducer', () => {
 	const testSiteId = 100658273;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

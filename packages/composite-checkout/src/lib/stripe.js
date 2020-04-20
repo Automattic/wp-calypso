@@ -178,8 +178,9 @@ function stripeJsReducer( state, action ) {
 function useStripeJs( stripeConfiguration ) {
 	const [ state, dispatch ] = useReducer( stripeJsReducer, initialStripeJsState );
 	const { stripeJs, isStripeLoading, stripeLoadingError } = state;
-	const setStripeLoadingError = payload => dispatch( { type: 'STRIPE_LOADING_ERROR', payload } );
-	const setStripeJs = payload => dispatch( { type: 'STRIPE_JS_SET', payload } );
+	const setStripeLoadingError = ( payload ) =>
+		dispatch( { type: 'STRIPE_LOADING_ERROR', payload } );
+	const setStripeJs = ( payload ) => dispatch( { type: 'STRIPE_JS_SET', payload } );
 
 	useEffect( () => {
 		let isSubscribed = true;
@@ -199,7 +200,7 @@ function useStripeJs( stripeConfiguration ) {
 
 		debug( 'useStripeJs loading' );
 		if ( stripeConfiguration ) {
-			loadAndInitStripe().catch( error => {
+			loadAndInitStripe().catch( ( error ) => {
 				debug( 'loadAndInitStripe error', error );
 				isSubscribed && setStripeLoadingError( error );
 			} );
@@ -240,11 +241,11 @@ function useStripeConfiguration( fetchStripeConfiguration ) {
 		if ( ! stripeConfiguration ) {
 			debug( 'loading stripe configuration' );
 			fetchStripeConfiguration()
-				.then( configuration => {
+				.then( ( configuration ) => {
 					debug( 'stripe configuration retrieved' );
 					isSubscribed && setStripeConfiguration( configuration );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					debug( 'stripe configuration fetch error', error );
 				} );
 		}

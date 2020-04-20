@@ -21,7 +21,7 @@ import Spinner from 'components/spinner';
 class SitesBlock extends Component {
 	state = {};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.props.onSubmit( event );
@@ -78,7 +78,7 @@ class SitesBlock extends Component {
 		return <Site site={ site } indicator={ false } />;
 	};
 
-	convertSourceSiteInfoToSourceSite = sourceSiteInfo => {
+	convertSourceSiteInfoToSourceSite = ( sourceSiteInfo ) => {
 		const { hostname } = getUrlParts( sourceSiteInfo.site_url );
 		return {
 			icon: { img: sourceSiteInfo.site_favicon },

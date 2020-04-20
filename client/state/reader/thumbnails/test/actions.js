@@ -49,7 +49,7 @@ describe( 'actions', () => {
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://vimeo.com' )
 				.get( '/api/v2/video/6999927.json' )
 				.reply( 200, deepFreeze( sampleVimeoResponse ) );
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 
 					expect( dispatchSpy ).to.have.been.calledThrice;
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );
@@ -117,7 +117,7 @@ describe( 'actions', () => {
 
 					expect( dispatchSpy ).to.have.been.calledTwice;
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );

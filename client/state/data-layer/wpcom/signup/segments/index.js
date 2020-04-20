@@ -15,7 +15,7 @@ import { errorNotice } from 'state/notices/actions';
 import { setSegments } from 'state/signup/segments/actions';
 import { SIGNUP_SEGMENTS_REQUEST } from 'state/action-types';
 
-export const requestSegments = action =>
+export const requestSegments = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',

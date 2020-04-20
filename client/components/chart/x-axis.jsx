@@ -37,7 +37,7 @@ const ModuleChartXAxis = ( { data, isRtl, labelWidth } ) => {
 		};
 	}, [ dataCount, labelWidth ] );
 
-	const labels = data.map( function( item, index ) {
+	const labels = data.map( function ( item, index ) {
 		const x = index * spacing + ( spacing - labelWidth ) / 2,
 			rightIndex = data.length - index - 1;
 		let label;

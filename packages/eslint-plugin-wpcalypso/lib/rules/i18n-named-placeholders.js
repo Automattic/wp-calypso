@@ -25,7 +25,7 @@ function hasUnqualifiedPlaceholders( string ) {
 		return false;
 	}
 
-	return placeholders.some( function( placeholder ) {
+	return placeholders.some( function ( placeholder ) {
 		return '%%' !== placeholder && ! placeholder.match( /[0-9()]/ );
 	} );
 }
@@ -34,9 +34,9 @@ function hasUnqualifiedPlaceholders( string ) {
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			// Done if no args are passed
 			if ( node.arguments.length === 0 ) {
 				return;

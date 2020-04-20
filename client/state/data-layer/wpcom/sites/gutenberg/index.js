@@ -18,7 +18,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
 
-const fetchGutenbergOptInData = action =>
+const fetchGutenbergOptInData = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -31,7 +31,7 @@ const fetchGutenbergOptInData = action =>
 const setGutenbergOptInData = (
 	{ siteId },
 	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 };
@@ -42,7 +42,7 @@ const dispatchFetchGutenbergOptInData = dispatchRequest( {
 	onError: noop,
 } );
 
-const updateSelectedEditor = action =>
+const updateSelectedEditor = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
@@ -60,7 +60,7 @@ const updateSelectedEditor = action =>
 const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
 	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 

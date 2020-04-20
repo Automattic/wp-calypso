@@ -66,7 +66,7 @@ export default connect(
 		error: isError( state, orderId ),
 		refreshedLabelStatus: hasRefreshedLabelStatus( state, orderId ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				fetchLabelsData,

@@ -1,4 +1,4 @@
-export const createSiteProductObject = product => {
+export const createSiteProductObject = ( product ) => {
 	if ( ! product ) {
 		return {};
 	}

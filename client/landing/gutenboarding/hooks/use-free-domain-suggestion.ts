@@ -12,12 +12,12 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { selectorDebounce } from '../constants';
 
 export function useFreeDomainSuggestion() {
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
 
 	return useSelect(
-		select => {
+		( select ) => {
 			if ( ! domainSearch ) {
 				return;
 			}

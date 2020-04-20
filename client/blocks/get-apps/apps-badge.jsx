@@ -28,7 +28,7 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getLocaleSlug: function() {
+		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
 			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
 			return localeSlugPrefix === 'en' ? 'en-us' : `${ localeSlugPrefix }-${ localeSlugPrefix }`;

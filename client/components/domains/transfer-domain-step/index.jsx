@@ -144,7 +144,7 @@ class TransferDomainStep extends React.Component {
 		return buildMapDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
@@ -468,11 +468,11 @@ class TransferDomainStep extends React.Component {
 		this.props.recordInputFocusInTransferDomain( this.state.searchQuery );
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { analyticsSection, searchQuery } = this.state;
@@ -490,7 +490,7 @@ class TransferDomainStep extends React.Component {
 		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				const { isTransferable, submittingAvailability, submittingWhois, suggestion } = prevState;
 
 				return {
@@ -518,7 +518,7 @@ class TransferDomainStep extends React.Component {
 	getAvailability = () => {
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 				( error, result ) => {
@@ -621,7 +621,7 @@ class TransferDomainStep extends React.Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkInboundTransferStatus(
 				getFixedDomainSearch( this.state.searchQuery ),
 				( error, result ) => {
@@ -655,7 +655,7 @@ class TransferDomainStep extends React.Component {
 	getAuthCodeStatus = ( domain, authCode ) => {
 		this.setState( { submittingAuthCodeCheck: true } );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkAuthCode( domain, authCode, ( error, result ) => {
 				this.setState( { submittingAuthCodeCheck: false } );
 
@@ -683,23 +683,23 @@ const recordAddDomainButtonClickInTransferDomain = ( domain_name, section ) =>
 		section,
 	} );
 
-const recordFormSubmitInTransferDomain = domain_name =>
+const recordFormSubmitInTransferDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_transfer_domain_form_submit', { domain_name } );
 
-const recordInputFocusInTransferDomain = domain_name =>
+const recordInputFocusInTransferDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_transfer_domain_input_focus', { domain_name } );
 
 const recordGoButtonClickInTransferDomain = ( domain_name, section ) =>
 	recordTracksEvent( 'calypso_transfer_domain_go_click', { domain_name, section } );
 
-const recordMapDomainButtonClick = section =>
+const recordMapDomainButtonClick = ( section ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Transfer Domain', 'Clicked "Map it" Button' ),
 		recordTracksEvent( 'calypso_transfer_domain_mapping_button_click', { section } )
 	);
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),

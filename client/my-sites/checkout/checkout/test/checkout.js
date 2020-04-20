@@ -126,8 +126,8 @@ describe( 'Checkout', () => {
 	} );
 
 	test( 'checkout blocked on pending payment', () => {
-		isEnabled.mockImplementation( flag => flag === 'async-payments' );
-		hasPendingPayment.mockImplementation( cart => cart && cart.has_pending_payment );
+		isEnabled.mockImplementation( ( flag ) => flag === 'async-payments' );
+		hasPendingPayment.mockImplementation( ( cart ) => cart && cart.has_pending_payment );
 
 		const wrapper = shallow( <Checkout { ...defaultProps } /> );
 

@@ -25,7 +25,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'ticket-support/configuration actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
@@ -53,10 +53,8 @@ describe( 'ticket-support/configuration actions', () => {
 	const endpoint = '/rest/v1.1/help/tickets/kayako/mine';
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( 200, dummyConfiguration );
+		useNock( ( nock ) => {
+			nock( apiUrl ).get( endpoint ).reply( 200, dummyConfiguration );
 		} );
 
 		test( 'should be successful.', () => {
@@ -76,10 +74,8 @@ describe( 'ticket-support/configuration actions', () => {
 	} );
 
 	describe( '#ticketSupportConfigurationRequest failed', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( dummyError.status, dummyError );
+		useNock( ( nock ) => {
+			nock( apiUrl ).get( endpoint ).reply( dummyError.status, dummyError );
 		} );
 
 		test( 'should be failed.', () => {

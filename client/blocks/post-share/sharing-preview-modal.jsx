@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
 import { Dialog } from '@automattic/components';
 import SharingPreviewPane from 'blocks/sharing-preview-pane';
 
-const SharingPreviewModal = props => {
+const SharingPreviewModal = ( props ) => {
 	const { isVisible, onClose, ...previewProps } = props;
 
 	return (

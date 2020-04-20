@@ -74,16 +74,17 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
-				{ // Use <script nomodule> to redirect browsers with no ES module
-				// support to the fallback build. ES module support is a convenient
-				// test to determine that a browser is modern enough to handle
-				// the evergreen bundle.
-				addEvergreenCheck && (
-					<script
-						nonce={ inlineScriptNonce }
-						noModule
-						dangerouslySetInnerHTML={ {
-							__html: `
+				{
+					// Use <script nomodule> to redirect browsers with no ES module
+					// support to the fallback build. ES module support is a convenient
+					// test to determine that a browser is modern enough to handle
+					// the evergreen bundle.
+					addEvergreenCheck && (
+						<script
+							nonce={ inlineScriptNonce }
+							noModule
+							dangerouslySetInnerHTML={ {
+								__html: `
 						(function() {
 							var url = window.location.href;
 
@@ -94,9 +95,10 @@ function DomainsLanding( {
 							}
 						})();
 						`,
-						} }
-					/>
-				) }
+							} }
+						/>
+					)
+				}
 				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.
@@ -112,7 +114,7 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
-				{ entrypoint.js.map( asset => (
+				{ entrypoint.js.map( ( asset ) => (
 					<script key={ asset } src={ asset } />
 				) ) }
 				<script

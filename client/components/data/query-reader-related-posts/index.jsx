@@ -59,7 +59,7 @@ export default connect(
 			shouldFetch: shouldFetchRelated( state, siteId, postId, scope ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestRelatedPosts,

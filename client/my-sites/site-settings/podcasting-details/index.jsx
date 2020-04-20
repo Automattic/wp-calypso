@@ -161,7 +161,7 @@ class PodcastingDetails extends Component {
 						<option key={ topicKey } value={ topicKey }>
 							{ topic }
 						</option>,
-						...map( subtopics, subtopic => {
+						...map( subtopics, ( subtopic ) => {
 							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
 							return (
 								<option key={ subtopicKey } value={ subtopicKey }>
@@ -400,7 +400,7 @@ class PodcastingDetails extends Component {
 		return null;
 	}
 
-	onCategorySelected = category => {
+	onCategorySelected = ( category ) => {
 		const { settings, fields, isPodcastingEnabled } = this.props;
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
@@ -444,14 +444,14 @@ class PodcastingDetails extends Component {
 		} );
 	};
 
-	onCoverImageUploadStateChanged = isUploading => {
+	onCoverImageUploadStateChanged = ( isUploading ) => {
 		this.setState( {
 			isCoverImageUploading: isUploading,
 		} );
 	};
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
 		'podcasting_title',

@@ -158,14 +158,14 @@ class ThemeSheet extends React.Component {
 		return validSections;
 	};
 
-	validateSection = section => {
+	validateSection = ( section ) => {
 		if ( this.getValidSections().indexOf( section ) === -1 ) {
 			return this.getValidSections()[ 0 ];
 		}
 		return section;
 	};
 
-	trackButtonClick = context => {
+	trackButtonClick = ( context ) => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
 			theme_name: this.props.id,
 			button_context: context,
@@ -208,7 +208,7 @@ class ThemeSheet extends React.Component {
 		return null;
 	}
 
-	previewAction = event => {
+	previewAction = ( event ) => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -284,7 +284,7 @@ class ThemeSheet extends React.Component {
 		return <div className="theme__sheet-screenshot">{ img }</div>;
 	}
 
-	renderSectionNav = currentSection => {
+	renderSectionNav = ( currentSection ) => {
 		const filterStrings = {
 			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
 			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
@@ -296,10 +296,10 @@ class ThemeSheet extends React.Component {
 
 		const nav = (
 			<NavTabs label="Details">
-				{ this.getValidSections().map( section => (
+				{ this.getValidSections().map( ( section ) => (
 					<NavItem
 						key={ section }
-						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
+						path={ `/theme/${ id }${ section ? '/' + section : ''}${ sitePart }` }
 						selected={ section === currentSection }
 					>
 						{ filterStrings[ section ] }
@@ -329,7 +329,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSectionContent = section => {
+	renderSectionContent = ( section ) => {
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -396,7 +396,7 @@ class ThemeSheet extends React.Component {
 		/* eslint-enable react/no-danger */
 	};
 
-	renderSupportContactUsCard = buttonCount => {
+	renderSupportContactUsCard = ( buttonCount ) => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -415,7 +415,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSupportThemeForumCard = buttonCount => {
+	renderSupportThemeForumCard = ( buttonCount ) => {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -442,7 +442,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSupportCssCard = buttonCount => {
+	renderSupportCssCard = ( buttonCount ) => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -617,12 +617,12 @@ class ThemeSheet extends React.Component {
 			previousRoute,
 		} = this.props;
 
-		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : ''}${
 			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
-		}${ siteId ? ' > Site' : '' }`;
+		}${ siteId ? ' > Site' : ''}`;
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
@@ -687,9 +687,11 @@ class ThemeSheet extends React.Component {
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				{ siteId && (
-					<QuerySitePurchases siteId={ siteId } />
-				) /* TODO: Make QuerySitePurchases handle falsey siteId */ }
+				{
+					siteId && (
+						<QuerySitePurchases siteId={ siteId } />
+					) /* TODO: Make QuerySitePurchases handle falsey siteId */
+				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
@@ -725,7 +727,7 @@ class ThemeSheet extends React.Component {
 	}
 }
 
-const ConnectedThemeSheet = connectOptions( props => {
+const ConnectedThemeSheet = connectOptions( ( props ) => {
 	if ( ! props.isLoggedIn || props.siteId ) {
 		return <ThemeSheet { ...props } />;
 	}
@@ -737,7 +739,7 @@ const ConnectedThemeSheet = connectOptions( props => {
 	);
 } );
 
-const ThemeSheetWithOptions = props => {
+const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
 
 	let defaultOption;

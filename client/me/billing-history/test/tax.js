@@ -11,7 +11,7 @@ import { mount } from 'enzyme';
  */
 import { renderTransactionAmount, transactionIncludesTax } from '../utils';
 
-const translate = x => x;
+const translate = ( x ) => x;
 
 describe( 'transactionIncludesTax', () => {
 	test( 'returns true for a transaction with tax', () => {

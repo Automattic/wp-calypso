@@ -47,7 +47,7 @@ class ReaderFeaturedVideo extends React.Component {
 		className: '',
 	};
 
-	setVideoSizingStrategy = videoEmbed => {
+	setVideoSizingStrategy = ( videoEmbed ) => {
 		let sizingFunction = constant( {} );
 		if ( videoEmbed ) {
 			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
@@ -69,14 +69,14 @@ class ReaderFeaturedVideo extends React.Component {
 
 	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 );
 
-	handleThumbnailClick = e => {
+	handleThumbnailClick = ( e ) => {
 		if ( this.props.allowPlaying ) {
 			e.preventDefault();
 			this.props.onThumbnailClick();
 		}
 	};
 
-	setVideoEmbedRef = c => {
+	setVideoEmbedRef = ( c ) => {
 		this.videoEmbedRef = c;
 		this.setVideoSizingStrategy( this.props.videoEmbed );
 	};

@@ -15,7 +15,7 @@ interface Props {
 }
 
 const QueryJetpackScanHistory = ( { siteId }: Props ) => {
-	const requestingJetpackScanHistory = useSelector( state =>
+	const requestingJetpackScanHistory = useSelector( ( state ) =>
 		isRequestingJetpackScanHistory( state, siteId )
 	);
 	const dispatch = useDispatch();

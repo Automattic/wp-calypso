@@ -33,7 +33,7 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * @param  {object} action Redux action
  * @returns {object}        Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = ( action ) => {
 	const { restoreId, siteId } = action;
 	const key = `${ siteId }-${ restoreId }`;
 

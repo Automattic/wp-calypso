@@ -479,7 +479,7 @@ class ImageEditorCrop extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const bounds = getImageEditorCropBounds( state );
 		const crop = getImageEditorCrop( state );
 		const aspectRatio = getImageEditorAspectRatio( state );

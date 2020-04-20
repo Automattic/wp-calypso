@@ -26,5 +26,5 @@ export const getSitePost = createSelector(
 
 		return manager.getItem( postId );
 	},
-	state => state.posts.queries
+	( state ) => state.posts.queries
 );

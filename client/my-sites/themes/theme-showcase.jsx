@@ -157,20 +157,17 @@ class ThemeShowcase extends React.Component {
 		this.props.trackMoreThemesClick();
 	};
 
-	doSearch = searchBoxContent => {
+	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
-		const validFilters = filters.map( filter => filterToTermTable[ filter ] );
+		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 
 		const url = this.constructUrl( {
 			filter: compact( validFilters ).join( '+' ),
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent
-				.replace( filterRegex, '' )
-				.replace( /\s+/g, ' ' )
-				.trim(),
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		page( url );
 		this.scrollToSearchInput();
@@ -188,7 +185,7 @@ class ThemeShowcase extends React.Component {
 	 *
 	 * @returns {string} Theme showcase url
 	 */
-	constructUrl = sections => {
+	constructUrl = ( sections ) => {
 		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
@@ -262,7 +259,7 @@ class ThemeShowcase extends React.Component {
 		].concat(
 			Object.keys( this.props.subjects )
 				.map(
-					subject =>
+					( subject ) =>
 						subjectsMeta[ subject ] && {
 							label: subject,
 							uri: this.constructUrl( { vertical: subject } ),
@@ -270,7 +267,7 @@ class ThemeShowcase extends React.Component {
 							order: subjectsMeta[ subject ].order,
 						}
 				)
-				.filter( icon => !! icon )
+				.filter( ( icon ) => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
@@ -318,25 +315,25 @@ class ThemeShowcase extends React.Component {
 								defaultOption={ this.props.defaultOption }
 								secondaryOption={ this.props.secondaryOption }
 								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function( theme ) {
+								getScreenshotUrl={ function ( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
 									return getScreenshotOption( theme ).getUrl( theme );
 								} }
-								onScreenshotClick={ function( themeId ) {
+								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
 										return;
 									}
 									getScreenshotOption( themeId ).action( themeId );
 								} }
-								getActionLabel={ function( theme ) {
+								getActionLabel={ function ( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								getOptions={ function( theme ) {
+								getOptions={ function ( theme ) {
 									return pickBy(
 										addTracking( options ),
-										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 									);
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
@@ -404,25 +401,25 @@ class ThemeShowcase extends React.Component {
 							defaultOption={ this.props.defaultOption }
 							secondaryOption={ this.props.secondaryOption }
 							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function( theme ) {
+							getScreenshotUrl={ function ( theme ) {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
 								return getScreenshotOption( theme ).getUrl( theme );
 							} }
-							onScreenshotClick={ function( themeId ) {
+							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
 									return;
 								}
 								getScreenshotOption( themeId ).action( themeId );
 							} }
-							getActionLabel={ function( theme ) {
+							getActionLabel={ function ( theme ) {
 								return getScreenshotOption( theme ).label;
 							} }
-							getOptions={ function( theme ) {
+							getOptions={ function ( theme ) {
 								return pickBy(
 									addTracking( options ),
-									option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 								);
 							} }
 							trackScrollPage={ this.props.trackScrollPage }

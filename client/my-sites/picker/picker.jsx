@@ -70,7 +70,7 @@ class SitePicker extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	closePicker = selectedSiteId => {
+	closePicker = ( selectedSiteId ) => {
 		if ( this.props.currentLayoutFocus === 'sites' ) {
 			this.props.setLayoutFocus( 'sidebar' );
 			if ( selectedSiteId ) {

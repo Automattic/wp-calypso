@@ -30,7 +30,7 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 	};
 };
 
-const RoleSelect = props => {
+const RoleSelect = ( props ) => {
 	let { siteRoles } = props;
 	const { site, includeFollower, siteId, id, explanation, translate, value } = props;
 	const omitProps = [
@@ -58,7 +58,7 @@ const RoleSelect = props => {
 			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
 			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
 			{ siteRoles &&
-				map( siteRoles, role => {
+				map( siteRoles, ( role ) => {
 					return (
 						<FormLabel key={ role.name }>
 							<FormRadio

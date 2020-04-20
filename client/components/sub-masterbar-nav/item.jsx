@@ -12,7 +12,7 @@ import { noop } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 
-export const Item = props => {
+export const Item = ( props ) => {
 	const { isSelected, onClick, label, icon, href } = props;
 
 	const classes = classNames( 'sub-masterbar-nav__item', { 'is-selected': isSelected } );

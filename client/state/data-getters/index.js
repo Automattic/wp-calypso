@@ -26,9 +26,9 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * @param {string} url location from which to GET data
  * @returns {object} HTTP data wrapped value
  */
-export const requestFromUrl = url =>
+export const requestFromUrl = ( url ) =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
-		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
+		fromApi: () => ( data ) => [ [ `get-at-url-${ url }`, data ] ],
 	} );
 
 export const requestActivityActionTypeCounts = (
@@ -54,7 +54,7 @@ export const requestActivityActionTypeCounts = (
 		),
 		{
 			freshness,
-			fromApi: () => data => {
+			fromApi: () => ( data ) => {
 				return [ [ id, fromActivityTypeApi( data ) ] ];
 			},
 		}
@@ -87,16 +87,16 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		),
 		{
 			freshness,
-			fromApi: () => data => {
+			fromApi: () => ( data ) => {
 				return [ [ id, fromActivityLogApi( data ) ] ];
 			},
 		}
 	);
 };
 
-const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+const requestExternalContributorsId = ( siteId ) => `site-external-contributors-${ siteId }`;
 
-export const requestExternalContributors = siteId =>
+export const requestExternalContributors = ( siteId ) =>
 	requestHttpData(
 		requestExternalContributorsId( siteId ),
 		http( {
@@ -105,7 +105,7 @@ export const requestExternalContributors = siteId =>
 			apiNamespace: 'wpcom/v2',
 		} ),
 		{
-			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+			fromApi: () => ( data ) => [ [ requestExternalContributorsId( siteId ), data ] ],
 		}
 	);
 
@@ -121,7 +121,7 @@ export const requestExternalContributorsAddition = ( siteId, userId ) => {
 			body: { user_id: userId },
 		} ),
 		{
-			fromApi: () => data => [ [ requestId, data ] ],
+			fromApi: () => ( data ) => [ [ requestId, data ] ],
 		}
 	);
 };
@@ -138,7 +138,7 @@ export const requestExternalContributorsRemoval = ( siteId, userId ) => {
 			body: { user_id: userId },
 		} ),
 		{
-			fromApi: () => data => [ [ requestId, data ] ],
+			fromApi: () => ( data ) => [ [ requestId, data ] ],
 		}
 	);
 };
@@ -153,7 +153,7 @@ export const requestGeoLocation = () =>
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
 
-export const requestFeedDiscovery = feedId => {
+export const requestFeedDiscovery = ( feedId ) => {
 	const requestId = `feed-discovery-${ feedId }`;
 
 	return requestHttpData(
@@ -175,7 +175,7 @@ export const requestFeedDiscovery = feedId => {
 	);
 };
 
-export const requestSiteAlerts = siteId => {
+export const requestSiteAlerts = ( siteId ) => {
 	const id = `site-alerts-${ siteId }`;
 
 	return requestHttpData(
@@ -195,7 +195,7 @@ export const requestSiteAlerts = siteId => {
 					id,
 					{
 						suggestions,
-						threats: threats.map( threat => ( {
+						threats: threats.map( ( threat ) => ( {
 							id: threat.id,
 							signature: threat.signature,
 							description: threat.description,
@@ -215,13 +215,13 @@ export const requestSiteAlerts = siteId => {
 						} ) ),
 						warnings,
 						updates: {
-							themes: updates.themes.map( theme => ( {
+							themes: updates.themes.map( ( theme ) => ( {
 								name: theme.name,
 								slug: theme.slug,
 								type: theme.type,
 								version: theme.version,
 							} ) ),
-							core: updates.core.map( theme => ( {
+							core: updates.core.map( ( theme ) => ( {
 								name: theme.name,
 								slug: theme.slug,
 								type: theme.type,

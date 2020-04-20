@@ -173,7 +173,7 @@ export class UpsellNudge extends React.Component {
 		handleCheckoutCompleteRedirect();
 	};
 
-	handleClickAccept = buttonAction => {
+	handleClickAccept = ( buttonAction ) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
@@ -186,7 +186,7 @@ export class UpsellNudge extends React.Component {
 	};
 }
 
-const trackUpsellButtonClick = eventName => {
+const trackUpsellButtonClick = ( eventName ) => {
 	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };

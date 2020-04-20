@@ -14,7 +14,7 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fetchFilters = action =>
+const fetchFilters = ( action ) =>
 	http(
 		{
 			method: 'GET',

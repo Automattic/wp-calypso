@@ -37,7 +37,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 
 	focusInput = noop;
 
-	refInput = formInputComponent => {
+	refInput = ( formInputComponent ) => {
 		this.focusInput = () => formInputComponent.focus();
 	};
 
@@ -49,7 +49,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		this.focusInput();
 	}
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() ) {
 			this.props.onSubmit();
 		}

@@ -50,7 +50,7 @@ class DomainConnectRecord extends React.Component {
 					duration: 5000,
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The Domain Connect record could not be disabled.' )
 				);
@@ -75,7 +75,7 @@ class DomainConnectRecord extends React.Component {
 					duration: 5000,
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The Domain Connect record could not be enabled.' )
 				);

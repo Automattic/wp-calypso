@@ -54,7 +54,7 @@ function handleLogin( response ) {
 	goToLogin();
 }
 
-const AuthStore = createReducerStore( function( state, payload ) {
+const AuthStore = createReducerStore( function ( state, payload ) {
 	let stateChanges;
 	const { action } = payload;
 

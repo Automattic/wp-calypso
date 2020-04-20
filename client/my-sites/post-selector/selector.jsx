@@ -136,7 +136,7 @@ class PostSelectorPosts extends React.Component {
 		}
 	};
 
-	setListRef = ref => {
+	setListRef = ( ref ) => {
 		// Ref callback can be called with null reference, which is desirable
 		// since we'll want to know elsewhere if we can call recompute height
 		this.list = ref;
@@ -171,7 +171,7 @@ class PostSelectorPosts extends React.Component {
 		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
-	getItem = index => {
+	getItem = ( index ) => {
 		if ( this.props.posts ) {
 			return this.props.posts[ index ];
 		}
@@ -199,7 +199,7 @@ class PostSelectorPosts extends React.Component {
 		return includes( requestedPages, lastPage ) && ! loading;
 	};
 
-	getPostChildren = postId => {
+	getPostChildren = ( postId ) => {
 		const { posts } = this.props;
 		return filter( posts, ( { parent } ) => parent && parent.ID === postId );
 	};
@@ -236,7 +236,7 @@ class PostSelectorPosts extends React.Component {
 		}, 0 );
 	};
 
-	getPageForIndex = index => {
+	getPageForIndex = ( index ) => {
 		const { queryWithVersion, lastPage } = this.props;
 		const perPage = queryWithVersion.number || DEFAULT_POSTS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
@@ -277,7 +277,7 @@ class PostSelectorPosts extends React.Component {
 		} );
 	};
 
-	onSearch = event => {
+	onSearch = ( event ) => {
 		const searchTerm = event.target.value;
 		if ( this.state.searchTerm && ! searchTerm ) {
 			this.props.onSearch( '' );
@@ -337,7 +337,7 @@ class PostSelectorPosts extends React.Component {
 				</label>
 				{ children.length > 0 && (
 					<div className="post-selector__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -414,7 +414,7 @@ class PostSelectorPosts extends React.Component {
 			'is-type-labels-visible': isTypeLabelsVisible,
 		} );
 
-		const pagesToRequest = filter( requestedPages, page => {
+		const pagesToRequest = filter( requestedPages, ( page ) => {
 			if ( page !== 1 || ! suppressFirstPageLoad ) {
 				return true;
 			}
@@ -423,7 +423,7 @@ class PostSelectorPosts extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ pagesToRequest.map( page => (
+				{ pagesToRequest.map( ( page ) => (
 					<QueryPosts
 						key={ `page-${ page }` }
 						siteId={ siteId }

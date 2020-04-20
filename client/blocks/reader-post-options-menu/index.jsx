@@ -105,7 +105,7 @@ class ReaderPostOptionsMenu extends React.Component {
 			: this.props.post.feed_URL || this.props.post.site_URL;
 	};
 
-	onMenuToggle = isMenuVisible => {
+	onMenuToggle = ( isMenuVisible ) => {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
@@ -126,7 +126,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 
-		setTimeout( function() {
+		setTimeout( function () {
 			// give the analytics a chance to escape
 			if ( editUrl.indexOf( '//' ) === 0 ) {
 				window.location.href = editUrl;

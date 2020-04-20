@@ -33,7 +33,7 @@ const CreditCard: FunctionComponent< Props > = ( {
 	children,
 } ) => {
 	const handleKeyPress: React.KeyboardEventHandler< HTMLDivElement > = useCallback(
-		event => {
+		( event ) => {
 			if ( event.key === 'Enter' || event.key === ' ' ) {
 				( onSelect as SelectHandler )( event );
 			}

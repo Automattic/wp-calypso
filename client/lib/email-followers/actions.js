@@ -30,7 +30,7 @@ const EmailFollowersActions = {
 		wpcom
 			.undocumented()
 			.site( fetchOptions.siteId )
-			.fetchFollowers( fetchOptions, function( error, data ) {
+			.fetchFollowers( fetchOptions, function ( error, data ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_EMAIL_FOLLOWERS',
 					fetchOptions: fetchOptions,
@@ -49,7 +49,7 @@ const EmailFollowersActions = {
 		wpcom
 			.undocumented()
 			.site( siteId )
-			.removeEmailFollower( follower.ID, function( error, data ) {
+			.removeEmailFollower( follower.ID, function ( error, data ) {
 				if ( error ) {
 					Dispatcher.handleServerAction( {
 						type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_ERROR',

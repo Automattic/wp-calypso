@@ -15,7 +15,7 @@ import { isArray, mergeWith } from 'lodash';
  * prefer to concatenate lists instead of
  * overwriting them.
  */
-const concatHandlers = ( left, right ) => ( isArray( left ) ? left.concat( right ) : undefined );
+const concatHandlers = ( left, right ) => ( isArray( left ) ? left.concat( right ) : undefined) ;
 
 export const mergeHandlers = ( ...handlers ) =>
 	handlers.length > 1

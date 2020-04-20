@@ -39,7 +39,7 @@ const CheckoutSummaryTitle = styled.span`
 `;
 
 const CheckoutSummaryTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${( props ) => props.theme.weights.bold};
 `;
 
 const DomainURL = styled.div`

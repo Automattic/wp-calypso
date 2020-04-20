@@ -90,7 +90,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isNotificationsOpen = function( state = false, { type } ) {
+export const isNotificationsOpen = function ( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
 		return ! state;
 	}

@@ -55,30 +55,30 @@ class ProfileLinksAddOther extends React.Component {
 		return false;
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	getFocusHandler = action => {
+	getFocusHandler = ( action ) => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	};
 
-	handleCancelButtonClick = event => {
+	handleCancelButtonClick = ( event ) => {
 		event.preventDefault();
 		this.recordClickEvent( 'Cancel Other Site Button' );
 		this.props.onCancel();
 	};
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not

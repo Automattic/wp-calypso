@@ -48,7 +48,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
-			messagingDisabledChatStatuses.forEach( status => {
+			messagingDisabledChatStatuses.forEach( ( status ) => {
 				const state = deepFreeze( {
 					happychat: {
 						connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if Happychat is connected and the chat status allows messaging', () => {
-			messagingEnabledChatStatuses.forEach( status => {
+			messagingEnabledChatStatuses.forEach( ( status ) => {
 				const state = deepFreeze( {
 					happychat: {
 						connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },

@@ -23,7 +23,7 @@ import {
 const debug = debugModule( 'calypso:state:jetpack-sync:actions' );
 
 export function getSyncStatus( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Getting sync status for: ' + siteId );
 		dispatch( {
 			type: JETPACK_SYNC_STATUS_REQUEST,
@@ -33,14 +33,14 @@ export function getSyncStatus( siteId ) {
 		return wpcom
 			.undocumented()
 			.getJetpackSyncStatus( siteId )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_STATUS_SUCCESS,
 					siteId,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_SYNC_STATUS_ERROR,
 					siteId,
@@ -51,7 +51,7 @@ export function getSyncStatus( siteId ) {
 }
 
 export function scheduleJetpackFullysync( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Requesting full sync for: ' + siteId );
 		dispatch( {
 			type: JETPACK_SYNC_START_REQUEST,
@@ -61,14 +61,14 @@ export function scheduleJetpackFullysync( siteId ) {
 		return wpcom
 			.undocumented()
 			.scheduleJetpackFullysync( siteId )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_START_SUCCESS,
 					siteId,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_SYNC_START_ERROR,
 					siteId,

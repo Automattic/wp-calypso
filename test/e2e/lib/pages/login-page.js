@@ -79,11 +79,13 @@ export default class LoginPage extends AsyncBaseContainer {
 		}
 
 		if ( actionSelector ) {
-			return driverHelper.isElementPresent( this.driver, actionSelector ).then( actionAvailable => {
-				if ( actionAvailable ) {
-					return driverHelper.clickWhenClickable( this.driver, actionSelector );
-				}
-			} );
+			return driverHelper
+				.isElementPresent( this.driver, actionSelector )
+				.then( ( actionAvailable ) => {
+					if ( actionAvailable ) {
+						return driverHelper.clickWhenClickable( this.driver, actionSelector );
+					}
+				} );
 		}
 	}
 

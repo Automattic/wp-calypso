@@ -143,7 +143,7 @@ class PostTypeList extends Component {
 	}
 
 	postIdsFromPosts( posts ) {
-		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
+		return ! isEmpty( posts ) ? posts.map( ( post ) => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -274,7 +274,7 @@ class PostTypeList extends Component {
 			<div className={ classes }>
 				{ this.renderSectionHeader() }
 				{ query &&
-					range( 1, maxRequestedPage + 1 ).map( page => (
+					range( 1, maxRequestedPage + 1 ).map( ( page ) => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
 				{ /* Disable Querying recent views in all-sites mode as it doesn't work without sideId. */ }

@@ -95,7 +95,7 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	if ( urlType === URL_TYPE.SCHEME_RELATIVE ) {
 		return pickUrlParts(
 			parsed,
-			URL_PART_KEYS.filter( item => item !== 'protocol' && item !== 'origin' )
+			URL_PART_KEYS.filter( ( item ) => item !== 'protocol' && item !== 'origin' )
 		);
 	}
 

@@ -75,7 +75,7 @@ class ImageEditorButtons extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const { src } = getImageEditorFileInfo( state ),
 		hasChanges = imageEditorHasChanges( state );
 

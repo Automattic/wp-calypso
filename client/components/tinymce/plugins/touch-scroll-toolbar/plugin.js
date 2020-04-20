@@ -15,7 +15,7 @@ function touchScrollToolbar( editor ) {
 	 */
 	function disableToolbarTouchEvents() {
 		editor.$( '.mce-toolbar:not(.mce-menubar)', document.body ).each( ( i, toolbar ) => {
-			toolbar.addEventListener( 'touchstart', event => {
+			toolbar.addEventListener( 'touchstart', ( event ) => {
 				event.stopImmediatePropagation();
 			} );
 		} );
@@ -74,7 +74,7 @@ function touchScrollToolbar( editor ) {
 		// Since some toolbars are hidden by default and report inaccurate
 		// dimensions when forced to be shown, we instead bind to the event
 		// when it's expected that they'll be visible
-		editor.on( 'wptoolbar', event => {
+		editor.on( 'wptoolbar', ( event ) => {
 			// Since an event handler is expected to set the toolbar property,
 			// set a timeout to wait until the toolbar has been assigned
 			setTimeout( () => {
@@ -91,13 +91,13 @@ function touchScrollToolbar( editor ) {
 		} );
 	}
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		disableToolbarTouchEvents();
 		hideToolbarFadeOnFullScroll();
 		toggleToolbarsScrollableOnResize();
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/touchscrolltoolbar', touchScrollToolbar );
 }

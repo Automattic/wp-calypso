@@ -26,7 +26,7 @@ export function requestKeyringServices() {
 		return wpcom
 			.undocumented()
 			.sitesExternalServices( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: KEYRING_SERVICES_RECEIVE,
 					services: response.services,
@@ -35,7 +35,7 @@ export function requestKeyringServices() {
 					type: KEYRING_SERVICES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: KEYRING_SERVICES_REQUEST_FAILURE,
 					error,

@@ -73,6 +73,6 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( StartOver ) );

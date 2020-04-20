@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} WordPress.com API HTTP Request action object
  */
-export const fetchLocaleSuggestions = action =>
+export const fetchLocaleSuggestions = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

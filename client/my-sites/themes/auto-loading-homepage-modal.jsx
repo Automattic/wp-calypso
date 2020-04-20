@@ -129,7 +129,7 @@ class AutoLoadingHomepageModal extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const installingThemeId = getPreActivateThemeId( state );
 

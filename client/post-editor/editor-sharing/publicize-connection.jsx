@@ -72,7 +72,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		);
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { connection } = this.props;
 		if ( ! connection ) {
 			return;

@@ -35,7 +35,7 @@ import './style.scss';
 // External media sources that do not need a user to connect them should be listed here.
 const noConnectionNeeded = [ 'pexels' ];
 
-const sourceNeedsKeyring = source => source !== '' && ! includes( noConnectionNeeded, source );
+const sourceNeedsKeyring = ( source ) => source !== '' && ! includes( noConnectionNeeded, source );
 
 const isConnected = ( state, source ) =>
 	! sourceNeedsKeyring( source ) ||
@@ -93,7 +93,7 @@ class MediaLibrary extends Component {
 		}
 	}
 
-	doSearch = keywords => {
+	doSearch = ( keywords ) => {
 		searchUrl( keywords, this.props.search, this.props.onSearch );
 	};
 

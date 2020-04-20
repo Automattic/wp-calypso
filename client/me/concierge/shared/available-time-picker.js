@@ -15,11 +15,8 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};
 
 	// Go through all available times and bundle them into each date object
-	availableTimes.forEach( beginTimestamp => {
-		const startOfDay = moment( beginTimestamp )
-			.tz( timezone )
-			.startOf( 'day' )
-			.valueOf();
+	availableTimes.forEach( ( beginTimestamp ) => {
+		const startOfDay = moment( beginTimestamp ).tz( timezone ).startOf( 'day' ).valueOf();
 		if ( dates.hasOwnProperty( startOfDay ) ) {
 			dates[ startOfDay ].times.push( beginTimestamp );
 		} else {
@@ -30,7 +27,7 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	// Convert the dates object into an array sorted by date and return it
 	return Object.keys( dates )
 		.sort()
-		.map( date => dates[ date ] );
+		.map( ( date ) => dates[ date ] );
 };
 
 class AvailableTimePicker extends Component {

@@ -23,7 +23,7 @@ function getDataFromFile( file ) {
 	return fileData;
 }
 
-module.exports = function( configPath, defaultOpts ) {
+module.exports = function ( configPath, defaultOpts ) {
 	const opts = assign(
 			{
 				env: 'development',
@@ -42,16 +42,16 @@ module.exports = function( configPath, defaultOpts ) {
 		enabledFeatures = opts.enabledFeatures ? opts.enabledFeatures.split( ',' ) : [],
 		disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
 
-	configFiles.forEach( function( file ) {
+	configFiles.forEach( function ( file ) {
 		assign( data, getDataFromFile( file ) );
 	} );
 
 	if ( data.hasOwnProperty( 'features' ) ) {
-		enabledFeatures.forEach( function( feature ) {
+		enabledFeatures.forEach( function ( feature ) {
 			data.features[ feature ] = true;
 			debug( 'overriding feature %s to true', feature );
 		} );
-		disabledFeatures.forEach( function( feature ) {
+		disabledFeatures.forEach( function ( feature ) {
 			data.features[ feature ] = false;
 			debug( 'overriding feature %s to false', feature );
 		} );

@@ -17,7 +17,7 @@ const debug = debugFactory( 'calypso:stats:action-page' );
 class StatsActionPage extends React.Component {
 	static displayName = 'StatsActionPage';
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		debug( 'handling page click', this.props );

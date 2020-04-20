@@ -21,7 +21,7 @@ class SimplePaymentsDialogNavigation extends Component {
 		paymentButtons: PropTypes.array,
 	};
 
-	onChangeTabs = tab => () => this.props.onChangeTabs( tab );
+	onChangeTabs = ( tab ) => () => this.props.onChangeTabs( tab );
 
 	render() {
 		const { paymentButtons, activeTab, translate } = this.props;

@@ -139,7 +139,7 @@ function shoppingCartHookReducer(
 				cacheStatus: 'invalid',
 				variantRequestStatus: 'pending',
 				variantSelectOverride: [
-					...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+					...state.variantSelectOverride.filter( ( item ) => item.uuid !== action.uuidToReplace ),
 					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
 				],
 			};
@@ -407,7 +407,7 @@ export function useShoppingCart(
 	onEvent?: ( ReactStandardAction ) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
-	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
+	const setServerCart = useCallback( ( cartParam ) => setCart( cartKey, cartParam ), [
 		cartKey,
 		setCart,
 	] );
@@ -453,11 +453,11 @@ export function useShoppingCart(
 		hookDispatch
 	);
 
-	const addItem: ( ResponseCartProduct ) => void = useCallback( responseCartProductToAdd => {
+	const addItem: ( ResponseCartProduct ) => void = useCallback( ( responseCartProductToAdd ) => {
 		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
 	}, [] );
 
-	const removeItem: ( string ) => void = useCallback( uuidToRemove => {
+	const removeItem: ( string ) => void = useCallback( ( uuidToRemove ) => {
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
@@ -469,11 +469,11 @@ export function useShoppingCart(
 		hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
 	}, [] );
 
-	const updateLocation: ( CartLocation ) => void = useCallback( location => {
+	const updateLocation: ( CartLocation ) => void = useCallback( ( location ) => {
 		hookDispatch( { type: 'SET_LOCATION', location } );
 	}, [] );
 
-	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
+	const submitCoupon: ( string ) => void = useCallback( ( newCoupon ) => {
 		hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 	}, [] );
 
@@ -534,7 +534,7 @@ function useInitializeCartFromServer(
 		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
 
 		getServerCart()
-			.then( response => {
+			.then( ( response ) => {
 				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
 						'initialized cart is',
@@ -558,7 +558,7 @@ function useInitializeCartFromServer(
 				}
 				return response;
 			} )
-			.then( response => {
+			.then( ( response ) => {
 				debug( 'initialized cart is', response );
 				const initialResponseCart = processRawResponse( response );
 				hookDispatch( {
@@ -570,7 +570,7 @@ function useInitializeCartFromServer(
 					payload: initialResponseCart,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
@@ -608,7 +608,7 @@ function useCartUpdateAndRevalidate(
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
 		setServerCart( prepareRequestCart( responseCart, { is_update: true } ) )
-			.then( response => {
+			.then( ( response ) => {
 				debug( 'updated cart is', response );
 				hookDispatch( {
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
@@ -616,7 +616,7 @@ function useCartUpdateAndRevalidate(
 				} );
 				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				// TODO: figure out what to do here
 				debug( 'error while fetching cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );

@@ -41,7 +41,7 @@ registerBlockType( 'jetpack/event-countdown', {
 		},
 	},
 
-	edit: props => {
+	edit: ( props ) => {
 		if ( props.isSelected ) {
 			return edit( props );
 		}

@@ -35,10 +35,11 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  * @param {object} EnhancedComponent - react component to wrap and give the prop width/height to
  * @returns {object} the enhanced component
  */
-export default EnhancedComponent =>
+export default ( EnhancedComponent ) =>
 	class WithWidth extends React.Component {
-		static displayName = `WithDimensions( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+		static displayName = `WithDimensions( ${
+			EnhancedComponent.displayName || EnhancedComponent.name
+		} )`;
 		static propTypes = { domTarget: PropTypes.object };
 
 		state = {
@@ -79,12 +80,12 @@ export default EnhancedComponent =>
 			window.removeEventListener( 'resize', this.resizeEventListener );
 		}
 
-		handleMount = ref => {
+		handleMount = ( ref ) => {
 			this.divRef = ref;
 			this.handleResize();
 		};
 
-		setWithDimensionsRef = ref => {
+		setWithDimensionsRef = ( ref ) => {
 			this.setRef = ref;
 			this.handleResize();
 		};

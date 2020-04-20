@@ -30,7 +30,7 @@ class Locked extends React.Component {
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, error => {
+		requestTransferCode( options, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			}

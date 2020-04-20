@@ -19,7 +19,7 @@
  * } );
  */
 
-module.exports = function( file, api ) {
+module.exports = function ( file, api ) {
 	// alias the jscodeshift API
 	const j = api.jscodeshift;
 	// parse JS code into an AST
@@ -34,10 +34,10 @@ module.exports = function( file, api ) {
 				value: 'state/utils',
 			},
 		} )
-		.filter( importDeclaration => {
+		.filter( ( importDeclaration ) => {
 			if ( importDeclaration.value.specifiers.length > 0 ) {
 				return (
-					importDeclaration.value.specifiers.filter( specifier => {
+					importDeclaration.value.specifiers.filter( ( specifier ) => {
 						const importedName = specifier.imported.name;
 						const localName = specifier.local.name;
 						const shouldRename = importedName === 'combineReducersWithPersistence';
@@ -69,8 +69,8 @@ module.exports = function( file, api ) {
 
 	//save the comment if possible
 	const comments = combineReducerImport.at( 0 ).get().node.comments;
-	const addImport = imports => {
-		const names = imports.map( name => {
+	const addImport = ( imports ) => {
+		const names = imports.map( ( name ) => {
 			if ( name.local === name.imported ) {
 				return j.importSpecifier( j.identifier( name.local ) );
 			}
@@ -86,13 +86,13 @@ module.exports = function( file, api ) {
 	combineReducerImport.replaceWith( addImport( importNames ) );
 
 	//update combineReducers call
-	const renameIdentifier = newName => imported => {
+	const renameIdentifier = ( newName ) => ( imported ) => {
 		j( imported ).replaceWith( () => j.identifier( newName ) );
 	};
 	const combineReducerIdentifier = root
 		.find( j.CallExpression )
 		.find( j.Identifier )
-		.filter( identifier => identifier.value.name === 'combineReducersWithPersistence' );
+		.filter( ( identifier ) => identifier.value.name === 'combineReducersWithPersistence' );
 
 	combineReducerIdentifier.forEach( renameIdentifier( 'combineReducers' ) );
 

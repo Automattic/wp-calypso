@@ -35,12 +35,12 @@ import {
 import { SeoForm } from '../form';
 
 const props = {
-	refreshSiteData: x => x,
+	refreshSiteData: ( x ) => x,
 	site: {
 		plan: PLAN_FREE,
 	},
 	selectedSite: {},
-	translate: x => x,
+	translate: ( x ) => x,
 };
 
 describe( 'SeoForm basic tests', () => {
@@ -164,7 +164,7 @@ describe( 'SeoForm basic tests', () => {
 } );
 
 describe( 'Upsell Banner should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
@@ -174,18 +174,24 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		} );
 	} );
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
-		test( `Business 2 year for (${ product_slug })`, () => {
-			const comp = shallow(
-				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
-			);
-			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
-		} );
-	} );
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
+		( product_slug ) => {
+			test( `Business 2 year for (${ product_slug })`, () => {
+				const comp = shallow(
+					<SeoForm
+						{ ...props }
+						siteIsJetpack={ false }
+						selectedSite={ { plan: { product_slug } } }
+					/>
+				);
+				expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
+				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
+			} );
+		}
+	);
 
 	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
-		product_slug => {
+		( product_slug ) => {
 			test( `Jetpack Premium for (${ product_slug })`, () => {
 				const comp = shallow(
 					<SeoForm

@@ -33,7 +33,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 	static defaultProps = { expanded: false };
 
-	updatePlugin = ev => {
+	updatePlugin = ( ev ) => {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
@@ -52,7 +52,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 	getOngoingUpdates = () => {
 		return this.props.notices.inProgress.filter(
-			log => log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN'
+			( log ) => log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN'
 		);
 	};
 

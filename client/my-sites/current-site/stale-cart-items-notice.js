@@ -65,7 +65,7 @@ class StaleCartItemsNotice extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, staleCartItemNoticeId ),
 		sectionName: getSectionName( state ),

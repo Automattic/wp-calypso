@@ -85,7 +85,7 @@ export default function WPCheckout( {
 	const isDomainFieldsVisible = !! firstDomainItem;
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
-	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
+	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
 		'wpcom'
 	);
@@ -226,7 +226,7 @@ function setActiveStepNumber( stepNumber ) {
 
 function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	const [ items, total ] = useLineItems();
-	const taxes = items.filter( item => item.type === 'tax' );
+	const taxes = items.filter( ( item ) => item.type === 'tax' );
 	return (
 		<React.Fragment>
 			{ paymentMethodStep.activeStepContent }
@@ -237,7 +237,7 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 
 			<WPOrderReviewSection>
 				{ subtotal && <LineItemUI subtotal item={ subtotal } /> }
-				{ taxes.map( tax => (
+				{ taxes.map( ( tax ) => (
 					<LineItemUI tax key={ tax.id } item={ tax } />
 				) ) }
 				<WPOrderReviewTotal total={ total } />
@@ -251,7 +251,7 @@ function InactiveOrderReview() {
 	return (
 		<SummaryContent>
 			<ProductList>
-				{ items.filter( shouldItemBeInSummary ).map( product => {
+				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
 					return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 				} ) }
 			</ProductList>
@@ -303,7 +303,7 @@ const CheckoutTermsUI = styled.div`
 const SummaryContent = styled.div`
 	margin-top: 12px;
 
-	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-end;

@@ -193,7 +193,7 @@ describe( 'streams', () => {
 						},
 					},
 				},
-			].forEach( testCase => {
+			].forEach( ( testCase ) => {
 				it( testCase.stream + ' should pass the expected params', () => {
 					const pageAction = requestPageAction( { streamKey: testCase.stream } );
 					const expected = {

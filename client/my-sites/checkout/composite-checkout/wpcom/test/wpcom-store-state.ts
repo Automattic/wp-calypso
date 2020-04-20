@@ -12,26 +12,26 @@ import {
  */
 import { get } from 'lodash';
 
-describe( 'updateManagedContactDetailsShape', function() {
-	const testPropertyWithAccessor = ( merge, construct, update, data ) => accessor => {
+describe( 'updateManagedContactDetailsShape', function () {
+	const testPropertyWithAccessor = ( merge, construct, update, data ) => ( accessor ) => {
 		const value = get(
 			updateManagedContactDetailsShape( merge, construct, update, data ),
 			accessor
 		);
 		if ( get( update, accessor ) !== undefined && get( data, accessor ) !== undefined ) {
-			it( 'update.A and data.A are both defined at ' + accessor, function() {
+			it( 'update.A and data.A are both defined at ' + accessor, function () {
 				expect( value ).toEqual( merge( get( update, accessor ), get( data, accessor ) ) );
 			} );
 		} else if ( get( update, accessor ) !== undefined && get( data, accessor ) === undefined ) {
-			it( 'update.A is defined, data.A is undefined at ' + accessor, function() {
+			it( 'update.A is defined, data.A is undefined at ' + accessor, function () {
 				expect( value ).toEqual( construct( get( update, accessor ) ) );
 			} );
 		} else if ( get( update, accessor ) === undefined && get( data, accessor ) !== undefined ) {
-			it( 'data.A is defined, update.A is undefined at ' + accessor, function() {
+			it( 'data.A is defined, update.A is undefined at ' + accessor, function () {
 				expect( value ).toEqual( get( data, accessor ) );
 			} );
 		} else if ( get( update, accessor ) === undefined && get( data, accessor ) === undefined ) {
-			it( 'data.A and update.A are both undefined at ' + accessor, function() {
+			it( 'data.A and update.A are both undefined at ' + accessor, function () {
 				expect( value ).toBeUndefined();
 			} );
 		} else {
@@ -69,7 +69,9 @@ describe( 'updateManagedContactDetailsShape', function() {
 
 	const testProperty = ( merge, construct, update, data ) => {
 		expect(
-			accessors.map( testPropertyWithAccessor( merge, construct, update, data ) ).every( x => x )
+			accessors
+				.map( testPropertyWithAccessor( merge, construct, update, data ) )
+				.every( ( x ) => x )
 		).toBeTruthy();
 	};
 
@@ -82,7 +84,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 	}
 
 	// The property should be satisfied for _all_ data, so we check it for arbitrary data.
-	const arbitraryData: ( gen: () => T ) => ManagedContactDetailsShape< T > = gen => {
+	const arbitraryData: ( gen: () => T ) => ManagedContactDetailsShape< T > = ( gen ) => {
 		const data = {
 			firstName: gen(),
 			lastName: gen(),
@@ -127,7 +129,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		return data;
 	};
 
-	describe( 'with update:boolean and data:number', function() {
+	describe( 'with update:boolean and data:number', function () {
 		// arbitrarily chosen function
 		const m = getRandomInt( -10, 10 );
 		const b = getRandomInt( -10, 10 );
@@ -137,7 +139,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		// arbitrarily chosen function
 		const t = getRandomInt( -10, 10 );
 		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean ) => number = arg0 => {
+		const construct: ( arg0: boolean ) => number = ( arg0 ) => {
 			return arg0 ? t : f;
 		};
 		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () => getRandomBoolean() );
@@ -145,7 +147,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		testProperty( merge, construct, update, data );
 	} );
 
-	describe( 'with update:(boolean | undefined) and data:number', function() {
+	describe( 'with update:(boolean | undefined) and data:number', function () {
 		// arbitrarily chosen function
 		const m = getRandomInt( -10, 10 );
 		const b = getRandomInt( -10, 10 );
@@ -155,7 +157,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		// arbitrarily chosen function
 		const t = getRandomInt( -10, 10 );
 		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean | undefined ) => number = arg0 => {
+		const construct: ( arg0: boolean | undefined ) => number = ( arg0 ) => {
 			return arg0 ? t : f;
 		};
 		const update: ManagedContactDetailsShape< boolean | undefined > = arbitraryData( () =>
@@ -165,7 +167,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		testProperty( merge, construct, update, data );
 	} );
 
-	describe( 'with update:boolean and data:(number | undefined)', function() {
+	describe( 'with update:boolean and data:(number | undefined)', function () {
 		// arbitrarily chosen function
 		const m = getRandomInt( -10, 10 );
 		const b = getRandomInt( -10, 10 );
@@ -175,7 +177,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		// arbitrarily chosen function
 		const t = getRandomInt( -10, 10 );
 		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean ) => number = arg0 => {
+		const construct: ( arg0: boolean ) => number = ( arg0 ) => {
 			return arg0 ? t : f;
 		};
 		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () => getRandomBoolean() );
@@ -185,7 +187,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		testProperty( merge, construct, update, data );
 	} );
 
-	describe( 'with update:(boolean | undefined) and data:(number | undefined)', function() {
+	describe( 'with update:(boolean | undefined) and data:(number | undefined)', function () {
 		// arbitrarily chosen function
 		const m = getRandomInt( -10, 10 );
 		const b = getRandomInt( -10, 10 );
@@ -198,7 +200,7 @@ describe( 'updateManagedContactDetailsShape', function() {
 		// arbitrarily chosen function
 		const t = getRandomInt( -10, 10 );
 		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean | undefined ) => number = arg0 => {
+		const construct: ( arg0: boolean | undefined ) => number = ( arg0 ) => {
 			return arg0 ? t : f;
 		};
 		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () =>
@@ -211,10 +213,10 @@ describe( 'updateManagedContactDetailsShape', function() {
 	} );
 } );
 
-describe( 'flattenManagedContactDetailsShape', function() {
+describe( 'flattenManagedContactDetailsShape', function () {
 	it( 'with no extra fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -237,7 +239,7 @@ describe( 'flattenManagedContactDetailsShape', function() {
 
 	it( 'with ca fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -266,7 +268,7 @@ describe( 'flattenManagedContactDetailsShape', function() {
 
 	it( 'with uk fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -295,7 +297,7 @@ describe( 'flattenManagedContactDetailsShape', function() {
 
 	it( 'with fr fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -324,7 +326,7 @@ describe( 'flattenManagedContactDetailsShape', function() {
 
 	it( 'with all fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',

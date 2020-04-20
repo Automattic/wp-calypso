@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { groupDomainProducts } from '../utils';
 
-const ident = x => x;
+const ident = ( x ) => x;
 
 describe( 'utils', () => {
 	describe( '#groupDomainProducts()', () => {

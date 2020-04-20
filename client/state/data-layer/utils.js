@@ -25,7 +25,7 @@ const doBypassDataLayer = {
 	},
 };
 
-export const bypassDataLayer = action => extendAction( action, doBypassDataLayer );
+export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataLayer );
 
 /**
  * Deeply converts keys of an object using provided function.
@@ -36,7 +36,7 @@ export const bypassDataLayer = action => extendAction( action, doBypassDataLayer
  */
 export function convertKeysBy( obj, fn ) {
 	if ( isArray( obj ) ) {
-		return map( obj, v => convertKeysBy( v, fn ) );
+		return map( obj, ( v ) => convertKeysBy( v, fn ) );
 	}
 
 	if ( isPlainObject( obj ) ) {
@@ -60,7 +60,7 @@ export function convertKeysBy( obj, fn ) {
  * @param {object} obj object to convert
  * @returns {object} a new object with all keys converted
  */
-export const convertToCamelCase = obj => convertKeysBy( obj, camelCase );
+export const convertToCamelCase = ( obj ) => convertKeysBy( obj, camelCase );
 
 /**
  * Deeply convert keys of an object to snake_case.
@@ -68,4 +68,4 @@ export const convertToCamelCase = obj => convertKeysBy( obj, camelCase );
  * @param {object} obj Object to convert
  * @returns {object} a new object with snake_cased keys
  */
-export const convertToSnakeCase = obj => convertKeysBy( obj, snakeCase );
+export const convertToSnakeCase = ( obj ) => convertKeysBy( obj, snakeCase );

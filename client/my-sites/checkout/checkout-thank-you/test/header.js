@@ -41,7 +41,7 @@ jest.mock( 'lib/rebrand-cities', () => ( {
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
 
-const translate = x => x;
+const translate = ( x ) => x;
 
 describe( 'CheckoutThankYouHeader', () => {
 	const defaultProps = {

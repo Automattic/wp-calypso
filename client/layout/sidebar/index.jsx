@@ -11,7 +11,7 @@ import SidebarRegion from './region';
 import './style.scss';
 
 export default function Sidebar( { children, onClick, className } ) {
-	const hasRegions = React.Children.toArray( children ).some( el => el.type === SidebarRegion );
+	const hasRegions = React.Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
 	return (

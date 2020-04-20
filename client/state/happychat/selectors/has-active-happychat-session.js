@@ -23,7 +23,7 @@ import createSelector from 'lib/create-selector';
  * @returns {boolean} Whether there's an active Happychat session happening
  */
 export default createSelector(
-	state =>
+	( state ) =>
 		! includes(
 			[
 				HAPPYCHAT_CHAT_STATUS_BLOCKED,
@@ -33,5 +33,5 @@ export default createSelector(
 			],
 			state.happychat.chat.status
 		),
-	state => state.happychat.chat.status
+	( state ) => state.happychat.chat.status
 );

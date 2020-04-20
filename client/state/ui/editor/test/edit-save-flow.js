@@ -50,13 +50,13 @@ function createEditorStore() {
 function responseTrigger( response ) {
 	let trigger;
 
-	const triggerPromise = new Promise( resolve => {
+	const triggerPromise = new Promise( ( resolve ) => {
 		trigger = resolve;
 	} );
 
 	return {
 		trigger,
-		get: cb => triggerPromise.then( () => cb( null, response ) ),
+		get: ( cb ) => triggerPromise.then( () => cb( null, response ) ),
 	};
 }
 

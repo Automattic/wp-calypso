@@ -45,7 +45,9 @@ import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
-const newWindowLink = linkUrl => <a href={ linkUrl } target="_blank" rel="noopener noreferrer" />;
+const newWindowLink = ( linkUrl ) => (
+	<a href={ linkUrl } target="_blank" rel="noopener noreferrer" />
+);
 const domainsLink = newWindowLink( DOMAINS );
 const pNode = <p />;
 
@@ -123,7 +125,7 @@ export class DomainWarnings extends React.PureComponent {
 			this.newTransfersWrongNS,
 			this.pendingConsent,
 		];
-		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
+		const validRules = this.props.ruleWhiteList.map( ( ruleName ) => this[ ruleName ] );
 		return intersection( allRules, validRules );
 	}
 
@@ -158,7 +160,7 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const wrongMappedDomains = this.getDomains().filter(
-			domain => domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom
+			( domain ) => domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom
 		);
 
 		debug( 'NS error domains:', wrongMappedDomains );
@@ -196,7 +198,7 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			offendingList = (
 				<ul>
-					{ wrongMappedDomains.map( domain => (
+					{ wrongMappedDomains.map( ( domain ) => (
 						<li key={ domain.name }>{ domain.name }</li>
 					) ) }
 				</ul>
@@ -249,7 +251,7 @@ export class DomainWarnings extends React.PureComponent {
 	expiredDomainsCanManage = () => {
 		debug( 'Rendering expiredDomainsCanManage' );
 		const expiredDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.expired && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage
 		);
 
@@ -291,7 +293,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	expiredDomainsCannotManage = () => {
 		const expiredDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.expired && domain.type === domainTypes.REGISTERED && ! domain.currentUserCanManage
 		);
 
@@ -343,7 +345,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	expiringDomainsCanManage = () => {
 		const expiringDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.expirySoon && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage
 		);
 
@@ -386,7 +388,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	expiringDomainsCannotManage = () => {
 		const expiringDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.expirySoon && domain.type === domainTypes.REGISTERED && ! domain.currentUserCanManage
 		);
 
@@ -439,11 +441,9 @@ export class DomainWarnings extends React.PureComponent {
 	newTransfersWrongNS = () => {
 		const { translate, isCompact, moment } = this.props;
 		const newTransfers = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.registrationDate &&
-				moment( domain.registrationDate )
-					.add( 3, 'days' )
-					.isAfter( moment() ) &&
+				moment( domain.registrationDate ).add( 3, 'days' ).isAfter( moment() ) &&
 				domain.transferStatus === transferStatus.COMPLETED &&
 				! domain.hasWpcomNameservers
 		);
@@ -525,11 +525,9 @@ export class DomainWarnings extends React.PureComponent {
 		const { translate, moment } = this.props;
 
 		const newDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.registrationDate &&
-				moment( domain.registrationDate )
-					.add( 30, 'minutes' )
-					.isAfter( moment() ) &&
+				moment( domain.registrationDate ).add( 30, 'minutes' ).isAfter( moment() ) &&
 				domain.type === domainTypes.REGISTERED
 		);
 
@@ -538,7 +536,7 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const hasNewPrimaryDomain = newDomains.some(
-			domain => this.props.selectedSite.domain === domain.name
+			( domain ) => this.props.selectedSite.domain === domain.name
 		);
 		let text;
 		if ( newDomains.length > 1 ) {
@@ -616,7 +614,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	unverifiedDomainsCanManage = () => {
 		const domains = this.getDomains().filter(
-			domain => domain.isPendingIcannVerification && domain.currentUserCanManage
+			( domain ) => domain.isPendingIcannVerification && domain.currentUserCanManage
 		);
 
 		if ( domains.length === 0 ) {
@@ -627,10 +625,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		const isWithinTwoDays = domains.some(
 			( { registrationDate } ) =>
-				registrationDate &&
-				moment( registrationDate )
-					.add( 2, 'days' )
-					.isAfter()
+				registrationDate && moment( registrationDate ).add( 2, 'days' ).isAfter()
 		);
 		if ( this.props.isSiteEligibleForFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
 			// Customer Home nudges this on unlaunched sites.
@@ -688,7 +683,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		let fullContent, compactContent, compactNoticeText;
 
-		const editLink = name => domainManagementEdit( this.props.selectedSite.slug, name );
+		const editLink = ( name ) => domainManagementEdit( this.props.selectedSite.slug, name );
 		if ( severity === 'is-error' ) {
 			fullContent = (
 				<span>
@@ -747,7 +742,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	unverifiedDomainsCannotManage = () => {
 		const domains = this.getDomains().filter(
-			domain => domain.isPendingIcannVerification && ! domain.currentUserCanManage
+			( domain ) => domain.isPendingIcannVerification && ! domain.currentUserCanManage
 		);
 
 		if ( domains.length === 0 ) {
@@ -797,7 +792,7 @@ export class DomainWarnings extends React.PureComponent {
 							'verified their contact information.'
 					) }
 					<ul>
-						{ domains.map( domain => {
+						{ domains.map( ( domain ) => {
 							return <li key={ domain.name }>{ domain.name }</li>;
 						} ) }
 					</ul>
@@ -870,7 +865,7 @@ export class DomainWarnings extends React.PureComponent {
 	transferStatus = () => {
 		const domainInTransfer = find(
 			this.getDomains(),
-			domain => domain.type === domainTypes.TRANSFER
+			( domain ) => domain.type === domainTypes.TRANSFER
 		);
 
 		if ( ! domainInTransfer ) {
@@ -1020,7 +1015,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	pendingConsent = () => {
 		const pendingConsentDomains = this.getDomains().filter(
-			domain =>
+			( domain ) =>
 				domain.type === domainTypes.REGISTERED &&
 				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
 		);
@@ -1092,8 +1087,8 @@ export class DomainWarnings extends React.PureComponent {
 	render() {
 		debug( 'Domains:', this.getDomains() );
 		const notices = this.getPipe()
-			.map( renderer => renderer() )
-			.filter( notice => notice );
+			.map( ( renderer ) => renderer() )
+			.filter( ( notice ) => notice );
 		return notices.length ? <div>{ notices }</div> : null;
 	}
 }

@@ -18,68 +18,68 @@
  * Request schema for the shopping cart endpoint
  */
 export interface RequestCart {
-    products: RequestCartProduct[];
-    tax: null | {
-        location: {
-            country_code: string;
-            postal_code: string;
-            subdivision_code: string;
-        };
-    };
-    coupon: string;
-    currency: string;
-    locale: string;
-    is_coupon_applied: boolean;
-    temporary: false;
-    extra: string;
+	products: RequestCartProduct[];
+	tax: null | {
+		location: {
+			country_code: string;
+			postal_code: string;
+			subdivision_code: string;
+		};
+	};
+	coupon: string;
+	currency: string;
+	locale: string;
+	is_coupon_applied: boolean;
+	temporary: false;
+	extra: string;
 }
 /**
  * Product item schema for the shopping cart endpoint (request)
  */
 export interface RequestCartProduct {
-    product_slug: string;
-    product_id: number;
-    meta: string;
+	product_slug: string;
+	product_id: number;
+	meta: string;
 }
 /**
  * Response schema for the shopping cart endpoint
  */
 export interface ResponseCart {
-    products: ResponseCartProduct[];
-    total_tax_integer: number;
-    total_tax_display: string;
-    total_cost_integer: number;
-    total_cost_display: string;
-    currency: string;
-    credits_integer: number;
-    credits_display: string;
-    allowed_payment_methods: string[];
-    coupon: string;
-    is_coupon_applied: boolean;
-    locale: string;
-    messages?: {
-        errors: ResponseCartError[];
-    };
+	products: ResponseCartProduct[];
+	total_tax_integer: number;
+	total_tax_display: string;
+	total_cost_integer: number;
+	total_cost_display: string;
+	currency: string;
+	credits_integer: number;
+	credits_display: string;
+	allowed_payment_methods: string[];
+	coupon: string;
+	is_coupon_applied: boolean;
+	locale: string;
+	messages?: {
+		errors: ResponseCartError[];
+	};
 }
 export interface ResponseCartError {
-    code: string;
-    message: string;
+	code: string;
+	message: string;
 }
 export declare const emptyResponseCart: ResponseCart;
 /**
  * Product item schema for the shopping cart endpoint (response)
  */
 export interface ResponseCartProduct {
-    product_name: string;
-    product_slug: string;
-    product_id: number;
-    currency: string;
-    item_subtotal_integer: number;
-    item_subtotal_display: string;
-    is_domain_registration: boolean;
-    meta: string;
-    volume: number;
-    extra: object;
+	product_name: string;
+	product_slug: string;
+	product_id: number;
+	currency: string;
+	item_subtotal_integer: number;
+	item_subtotal_display: string;
+	is_domain_registration: boolean;
+	meta: string;
+	volume: number;
+	extra: object;
 }
-export declare const prepareRequestCartProduct: (ResponseCartProduct: any) => RequestCartProduct;
-export declare const prepareRequestCart: (ResponseCart: any) => RequestCart;
+export declare const prepareRequestCartProduct: ( ResponseCartProduct: any ) => RequestCartProduct;
+export declare const prepareRequestCart: ( ResponseCart: any ) => RequestCart;

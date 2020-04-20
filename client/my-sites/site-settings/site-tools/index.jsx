@@ -28,7 +28,7 @@ import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purc
  */
 import './style.scss';
 
-const trackDeleteSiteOption = option => {
+const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
 		option: option,
 	} );
@@ -155,7 +155,7 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'start-over' );
 	}
 
-	checkForSubscriptions = event => {
+	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
@@ -172,7 +172,7 @@ class SiteTools extends Component {
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );

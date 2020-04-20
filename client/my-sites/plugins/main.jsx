@@ -78,7 +78,7 @@ export class PluginsMain extends Component {
 		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
 			plugins = PluginsStore.getPlugins(
-				sites.filter( site => site.visible ),
+				sites.filter( ( site ) => site.visible ),
 				props.filter
 			);
 		} else {
@@ -98,7 +98,7 @@ export class PluginsMain extends Component {
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
-		return plugins.map( plugin => {
+		return plugins.map( ( plugin ) => {
 			const pluginData = getPlugin( this.props.wporgPlugins, plugin.slug );
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
@@ -117,14 +117,15 @@ export class PluginsMain extends Component {
 		};
 	}
 
-	refreshPlugins = nextProps => {
+	refreshPlugins = ( nextProps ) => {
 		this.setState( this.getPluginsState( nextProps ) );
 	};
 
 	matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
 		return [ 'name', 'description', 'author' ].some(
-			attribute => plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
+			( attribute ) =>
+				plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
 		);
 	}
 
@@ -161,7 +162,7 @@ export class PluginsMain extends Component {
 	}
 
 	getSelectedText() {
-		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
+		const found = find( this.getFilters(), ( filterItem ) => this.props.filter === filterItem.id );
 		if ( 'undefined' !== typeof found ) {
 			return found.title;
 		}
@@ -267,7 +268,7 @@ export class PluginsMain extends Component {
 
 		return some(
 			this.props.sites,
-			site =>
+			( site ) =>
 				site &&
 				this.props.isJetpackSite( site.ID ) &&
 				this.props.canJetpackSiteUpdateFiles( site.ID )
@@ -415,7 +416,7 @@ export class PluginsMain extends Component {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
-		const navItems = this.getFilters().map( filterItem => {
+		const navItems = this.getFilters().map( ( filterItem ) => {
 			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 				return null;
 			}
@@ -467,7 +468,7 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		state => {
+		( state ) => {
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
 
@@ -482,8 +483,8 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				/* eslint-disable wpcalypso/redux-no-bound-selectors */
 				// @TODO: follow up with fixing these functions
-				canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
-				isJetpackSite: siteId => isJetpackSite( state, siteId ),
+				canJetpackSiteUpdateFiles: ( siteId ) => canJetpackSiteUpdateFiles( state, siteId ),
+				isJetpackSite: ( siteId ) => isJetpackSite( state, siteId ),
 				/* eslint-enable wpcalypso/redux-no-bound-selectors */
 				wporgPlugins: state.plugins.wporg.items,
 				isRequestingSites: isRequestingSites( state ),

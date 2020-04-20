@@ -15,7 +15,7 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const unlikeComment = action =>
+export const unlikeComment = ( action ) =>
 	http(
 		{
 			method: 'POST',

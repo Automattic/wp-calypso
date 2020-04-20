@@ -51,6 +51,6 @@ SiteSettingsComponent.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( SiteSettingsComponent ) );

@@ -15,7 +15,7 @@ jest.mock( 'lib/user', () => () => {} );
 const TEST_CART_KEY = 91234567890;
 
 const poller = {
-	add: function() {},
+	add: function () {},
 };
 
 describe( 'cart-synchronizer', () => {

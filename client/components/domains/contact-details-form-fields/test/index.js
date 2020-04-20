@@ -17,8 +17,8 @@ import { ContactDetailsFormFields } from '../';
 import FormButton from '../../../../components/forms/form-button';
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -149,10 +149,7 @@ describe( 'ContactDetailsFormFields', () => {
 			);
 
 			expect(
-				wrapper
-					.find( '.contact-details-form-fields__submit-button' )
-					.render()
-					.text()
+				wrapper.find( '.contact-details-form-fields__submit-button' ).render().text()
 			).toEqual( 'Click it yo!' );
 		} );
 

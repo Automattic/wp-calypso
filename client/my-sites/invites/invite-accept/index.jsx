@@ -122,6 +122,7 @@ class InviteAccept extends React.Component {
 
 	renderForm = () => {
 		const { invite } = this.state;
+
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
@@ -129,8 +130,8 @@ class InviteAccept extends React.Component {
 		debug( 'Rendering invite' );
 
 		const props = {
-			invite: this.state.invite,
-			redirectTo: getRedirectAfterAccept( this.state.invite ),
+			invite,
+			redirectTo: getRedirectAfterAccept( invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
 			forceMatchingEmail: this.isMatchEmailError(),
@@ -242,7 +243,7 @@ class InviteAccept extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		user: getCurrentUser( state ),
 	} ),
 	{ successNotice, infoNotice }

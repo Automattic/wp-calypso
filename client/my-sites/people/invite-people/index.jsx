@@ -114,9 +114,9 @@ class InvitePeople extends React.Component {
 		}
 	};
 
-	onTokensChange = tokens => {
+	onTokensChange = ( tokens ) => {
 		const { role, errorToDisplay, usernamesOrEmails, errors, success } = this.state;
-		const filteredTokens = tokens.map( value => {
+		const filteredTokens = tokens.map( ( value ) => {
 			if ( 'object' === typeof value ) {
 				return value.value;
 			}
@@ -127,7 +127,7 @@ class InvitePeople extends React.Component {
 			return includes( filteredTokens, key );
 		} );
 
-		const filteredSuccess = filter( success, successfulValidation => {
+		const filteredSuccess = filter( success, ( successfulValidation ) => {
 			return includes( filteredTokens, successfulValidation );
 		} );
 
@@ -146,15 +146,15 @@ class InvitePeople extends React.Component {
 		}
 	};
 
-	onMessageChange = event => this.setState( { message: event.target.value } );
+	onMessageChange = ( event ) => this.setState( { message: event.target.value } );
 
-	onRoleChange = event => {
+	onRoleChange = ( event ) => {
 		const role = event.target.value;
 		this.setState( { role } );
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
-	onExternalChange = event => {
+	onExternalChange = ( event ) => {
 		const isExternal = event.target.checked;
 		this.setState( { isExternal } );
 	};
@@ -177,7 +177,7 @@ class InvitePeople extends React.Component {
 		}
 	};
 
-	getTooltip = value => {
+	getTooltip = ( value ) => {
 		const { errors, errorToDisplay } = this.state;
 		if ( errorToDisplay && value !== errorToDisplay ) {
 			return null;
@@ -188,7 +188,7 @@ class InvitePeople extends React.Component {
 	getTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
-		const tokens = this.state.usernamesOrEmails.map( value => {
+		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
 			if ( errors && errors[ value ] ) {
 				return {
 					status: 'error',
@@ -210,7 +210,7 @@ class InvitePeople extends React.Component {
 		return tokens;
 	};
 
-	submitForm = event => {
+	submitForm = ( event ) => {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
@@ -231,7 +231,7 @@ class InvitePeople extends React.Component {
 			isExternal
 		);
 
-		const groupedInvitees = groupBy( usernamesOrEmails, invitee => {
+		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
 			return includes( invitee, '@' ) ? 'email' : 'username';
 		} );
 
@@ -264,7 +264,7 @@ class InvitePeople extends React.Component {
 
 		// If there are invitees, and there are no errors, let's check
 		// if there are any pending validations.
-		return some( usernamesOrEmails, value => {
+		return some( usernamesOrEmails, ( value ) => {
 			return ! includes( success, value );
 		} );
 	};
@@ -300,7 +300,7 @@ class InvitePeople extends React.Component {
 
 	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
-	isExternalRole = role => {
+	isExternalRole = ( role ) => {
 		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
 		return includes( roles, role );
 	};
@@ -467,7 +467,7 @@ class InvitePeople extends React.Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
 		const active = isJetpackModuleActive( state, siteId, 'sso' );
@@ -480,7 +480,7 @@ const connectComponent = connect(
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		...bindActionCreators(
 			{
 				sendInvites,

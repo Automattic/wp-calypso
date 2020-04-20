@@ -42,7 +42,7 @@ export function queries( state = {}, action ) {
 				[ serializedQuery ]: {
 					ids: union(
 						ids,
-						action.data.subscribers.map( follower => follower.ID )
+						action.data.subscribers.map( ( follower ) => follower.ID )
 					),
 					total: action.data.total,
 					lastPage: action.data.pages,
@@ -51,7 +51,7 @@ export function queries( state = {}, action ) {
 		case FOLLOWER_REMOVE_SUCCESS:
 			return Object.assign(
 				{},
-				mapValues( state, query => {
+				mapValues( state, ( query ) => {
 					if ( query.ids.indexOf( action.follower.ID ) >= 0 ) {
 						const total = query.total - 1;
 						const lastPage = Math.ceil( total / FOLLOWERS_PER_PAGE );

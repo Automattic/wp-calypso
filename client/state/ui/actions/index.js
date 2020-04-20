@@ -69,7 +69,7 @@ export const toggleNotificationsPanel = () => {
  * @param  {string} path Navigation path
  * @returns {object}      Action object
  */
-export const navigate = path => ( { type: NAVIGATE, path } );
+export const navigate = ( path ) => ( { type: NAVIGATE, path } );
 
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory

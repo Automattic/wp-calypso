@@ -25,7 +25,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
@@ -99,7 +99,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePreference()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/me/preferences', {

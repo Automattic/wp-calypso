@@ -55,7 +55,7 @@ function configureGlobals() {
 	// This snippet is pasted from Directly's setup code.
 	window.DirectlyRTM =
 		window.DirectlyRTM ||
-		function() {
+		function () {
 			( window.DirectlyRTM.cq = window.DirectlyRTM.cq || [] ).push( arguments );
 		};
 	// Since we can only configure once per pageload, this library only provides a
@@ -100,7 +100,7 @@ function execute( ...args ) {
  */
 function loadDirectlyScript() {
 	return new Promise( ( resolve, reject ) => {
-		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
+		loadScript( DIRECTLY_RTM_SCRIPT_URL, function ( error ) {
 			if ( error ) {
 				return reject( new Error( `Failed to load script "${ error.src }".` ) );
 			}

@@ -28,5 +28,5 @@ export const getPostEdits = createSelector(
 
 		return normalizePostForEditing( mergePostEdits( ...postEditsLog ) );
 	},
-	state => [ state.posts.edits ]
+	( state ) => [ state.posts.edits ]
 );

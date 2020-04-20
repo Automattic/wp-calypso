@@ -25,10 +25,10 @@ const getJetpackModulesRequiringConnection = createSelector(
 		}
 
 		return Object.keys( modules ).filter(
-			module_slug => modules[ module_slug ].requires_connection
+			( module_slug ) => modules[ module_slug ].requires_connection
 		);
 	},
-	state => [ state.jetpack.modules.items ]
+	( state ) => [ state.jetpack.modules.items ]
 );
 
 export default getJetpackModulesRequiringConnection;

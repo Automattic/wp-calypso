@@ -15,30 +15,30 @@ import userFactory from 'lib/user';
 const user = userFactory();
 
 export default {
-	componentDidMount: function() {
+	componentDidMount: function () {
 		this.props.userSettings.getSettings();
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount: function () {
 		// Silently clean up unsavedSettings before unmounting
 		this.props.userSettings.unsavedSettings = {};
 	},
 
-	getDisabledState: function() {
+	getDisabledState: function () {
 		return this.state.submittingForm;
 	},
 
-	UNSAFE_componentWillReceiveProps: function( nextProp ) {
+	UNSAFE_componentWillReceiveProps: function ( nextProp ) {
 		if ( nextProp.showNoticeInitially ) {
 			this.setState( { showNotice: nextProp.showNoticeInitially } );
 		}
 	},
 
-	UNSAFE_componentWillUpdate: function() {
+	UNSAFE_componentWillUpdate: function () {
 		this.showNotice();
 	},
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			redirect: false,
 			submittingForm: false,
@@ -48,7 +48,7 @@ export default {
 		};
 	},
 
-	showNotice: function() {
+	showNotice: function () {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
 			notices.success( this.props.translate( 'Settings saved successfully!' ) );
@@ -56,27 +56,27 @@ export default {
 		}
 	},
 
-	getSetting: function( settingName ) {
+	getSetting: function ( settingName ) {
 		return this.props.userSettings.getSetting( settingName ) || '';
 	},
 
-	toggleSetting: function( event ) {
+	toggleSetting: function ( event ) {
 		const { name } = event.currentTarget;
 		this.props.userSettings.updateSetting( name, ! this.getSetting( name ) );
 	},
 
-	updateSetting: function( event ) {
+	updateSetting: function ( event ) {
 		const { name, value } = event.currentTarget;
 		this.props.userSettings.updateSetting( name, value );
 	},
 
-	submitForm: function( event ) {
+	submitForm: function ( event ) {
 		event.preventDefault();
 		debug( 'Submitting form' );
 
 		this.setState( { submittingForm: true } );
 		this.props.userSettings.saveSettings(
-			function( error, response ) {
+			function ( error, response ) {
 				if ( error ) {
 					debug( 'Error saving settings: ' + JSON.stringify( error ) );
 

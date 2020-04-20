@@ -67,7 +67,7 @@ function updateProductEdits( edits, productId, doUpdate ) {
 	const prevEdits = edits || [];
 	let found = false;
 
-	const newEdits = prevEdits.map( productEdits => {
+	const newEdits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			return doUpdate( productEdits );
@@ -89,7 +89,7 @@ function editProductAction( edits, action ) {
 		// Ensure there are no variation edits for this product,
 		// and that any existing ones have deletes.
 		return updateProductEdits( edits, product.id, () => {
-			const deletes = productVariations ? productVariations.map( v => v.id ) : undefined;
+			const deletes = productVariations ? productVariations.map( ( v ) => v.id ) : undefined;
 			return { deletes };
 		} );
 	}
@@ -109,7 +109,7 @@ function editProductVariationAction( edits, action ) {
 	let found = false;
 
 	// Look for an existing product edits first.
-	const _edits = prevEdits.map( productEdits => {
+	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			const variationId = ( variation && variation.id ) || {
@@ -152,7 +152,7 @@ function editProductVariation( array, variation, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const _array = prevArray.map( v => {
+	const _array = prevArray.map( ( v ) => {
 		if ( isEqual( variation.id, v.id ) ) {
 			found = true;
 			return { ...v, ...data };
@@ -174,7 +174,7 @@ function editProductAttributeAction( edits, action ) {
 	const attributes = editProductAttribute( product.attributes, attribute, data );
 	const calculatedVariations = generateVariations( { ...product, attributes }, productVariations );
 
-	return updateProductEdits( edits, product.id, productEdits => {
+	return updateProductEdits( edits, product.id, ( productEdits ) => {
 		const creates = productEdits ? productEdits.creates : [];
 		const updates = productEdits ? productEdits.updates : [];
 		const newCreates = updateVariationCreates( creates, calculatedVariations, productVariations );
@@ -193,7 +193,7 @@ function editProductAttributeAction( edits, action ) {
 
 function updateVariationCreates( creates, calculatedVariations, productVariations ) {
 	const newCreates = compact(
-		calculatedVariations.map( calculatedVariation => {
+		calculatedVariations.map( ( calculatedVariation ) => {
 			const foundCreate = find( creates, { attributes: calculatedVariation.attributes } );
 
 			if ( foundCreate ) {
@@ -217,7 +217,7 @@ function updateVariationCreates( creates, calculatedVariations, productVariation
 
 function updateVariationUpdates( updates, calculatedVariations, productVariations ) {
 	const newUpdates = compact(
-		calculatedVariations.map( calculatedVariation => {
+		calculatedVariations.map( ( calculatedVariation ) => {
 			const productVariation = find( productVariations, {
 				attributes: calculatedVariation.attributes,
 			} );
@@ -235,7 +235,7 @@ function updateVariationUpdates( updates, calculatedVariations, productVariation
 function updateVariationDeletes( calculatedVariations, productVariations ) {
 	if ( productVariations ) {
 		const newDeletes = compact(
-			productVariations.map( productVariation => {
+			productVariations.map( ( productVariation ) => {
 				const foundInCalculated = find( calculatedVariations, {
 					attributes: productVariation.attributes,
 				} );
@@ -264,7 +264,7 @@ export function productUpdatedAction( edits, action ) {
 		const prevProductId = originatingAction.product.id;
 		const newProductId = data.id;
 
-		const newEdits = prevEdits.map( productEdits => {
+		const newEdits = prevEdits.map( ( productEdits ) => {
 			if ( isEqual( prevProductId, productEdits.productId ) ) {
 				return { ...productEdits, productId: newProductId };
 			}
@@ -298,7 +298,7 @@ function removeVariationEdit( edits, bucket, productId, variationId ) {
 	const prevEdits = edits || [];
 
 	const newEdits = compact(
-		prevEdits.map( editsForProduct => {
+		prevEdits.map( ( editsForProduct ) => {
 			if ( isEqual( productId, editsForProduct.productId ) ) {
 				return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
 			}
@@ -313,7 +313,7 @@ function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variat
 	const prevBucketEdits = editsForProduct[ bucket ] || [];
 
 	const newBucketEdits = compact(
-		prevBucketEdits.map( variationEdit => {
+		prevBucketEdits.map( ( variationEdit ) => {
 			if ( isEqual( variationId, variationEdit.id ) ) {
 				return undefined;
 			}

@@ -62,7 +62,7 @@ class Unlocked extends React.Component {
 				enablePrivacy,
 				lockDomain,
 			},
-			error => {
+			( error ) => {
 				this.setStateIfMounted( { submitting: false } );
 
 				if ( error ) {
@@ -187,7 +187,7 @@ class Unlocked extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		requestTransferCode( options, error => {
+		requestTransferCode( options, ( error ) => {
 			this.setState( { submitting: false } );
 			if ( ! error ) {
 				this.setState( { sent: true } );

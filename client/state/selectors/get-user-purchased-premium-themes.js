@@ -16,7 +16,7 @@ export const getUserPurchasedPremiumThemes = ( state, userId ) => {
 	}
 
 	return getUserPurchases( state, userId ).filter(
-		purchase => purchase.productSlug === 'premium_theme'
+		( purchase ) => purchase.productSlug === 'premium_theme'
 	);
 };
 

@@ -54,7 +54,7 @@ describe( '#announceSuccess()', () => {
 		} ) );
 		global.FileReader = jest.fn( () => ( {
 			readAsDataURL: noop,
-			addEventListener: function( event, callback ) {
+			addEventListener: function ( event, callback ) {
 				this.result = tempImageSrc;
 				callback();
 			},

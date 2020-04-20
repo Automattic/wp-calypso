@@ -32,7 +32,7 @@ export const submitSiteVertical = (
 	siteVerticalData,
 	stepName = 'site-topic',
 	suggestedTheme = undefined
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( setSiteVertical( siteVerticalData ) );
 	dispatch(
 		submitSignupStep(

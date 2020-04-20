@@ -19,7 +19,7 @@ class EditorMediaModalGalleryPreviewIndividual extends React.Component {
 	};
 
 	render() {
-		const items = this.props.items.map( item => {
+		const items = this.props.items.map( ( item ) => {
 			const caption = markup.caption( this.props.site, item );
 
 			if ( null === caption ) {
@@ -42,7 +42,7 @@ class EditorMediaModalGalleryPreviewIndividual extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		site: getSelectedSite( state ),
 	};
