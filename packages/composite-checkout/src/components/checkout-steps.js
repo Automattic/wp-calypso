@@ -135,9 +135,9 @@ export function CheckoutSteps( { children, className } ) {
 
 	let stepNumber = 0;
 	let nextStepNumber = 1;
-	const componentChildren = React.Children.toArray( children ).filter( child => child );
-	const nonSteps = componentChildren.filter( child => child.type?.name !== 'CheckoutStep' );
-	const steps = componentChildren.filter( child => child.type?.name === 'CheckoutStep' );
+	const componentChildren = React.Children.toArray( children ).filter( ( child ) => child );
+	const nonSteps = componentChildren.filter( ( child ) => child.type?.name !== 'CheckoutStep' );
+	const steps = componentChildren.filter( ( child ) => child.type?.name === 'CheckoutStep' );
 	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
@@ -163,7 +163,7 @@ export function CheckoutSteps( { children, className } ) {
 			isLastStepActive={ ! isThereAnotherNumberedStep }
 		>
 			{ nonSteps }
-			{ steps.map( child => {
+			{ steps.map( ( child ) => {
 				stepNumber = nextStepNumber;
 				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
 				const isStepActive = activeStepNumber === stepNumber;
@@ -390,11 +390,11 @@ const MainContentUI = styled.div`
 	flex-direction: column;
 	width: 100%;
 
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
 		margin: 32px auto;
 	}
 
-	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		align-items: flex-start;
 		flex-direction: row;
 		justify-content: center;
@@ -403,19 +403,19 @@ const MainContentUI = styled.div`
 `;
 
 const CheckoutSummaryUI = styled.div`
-	background: ${props => props.theme.colors.surface};
-	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+	background: ${( props ) => props.theme.colors.surface};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
 	width: 100%;
 
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${props => props.theme.colors.borderColorLight};
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		border-bottom: none 0;
 		max-width: 556px;
 	}
 
-	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
-		border: 1px solid ${props => props.theme.colors.borderColorLight};
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		box-sizing: border-box;
 		margin-left: 16px;
 		margin-right: 0;
@@ -425,17 +425,17 @@ const CheckoutSummaryUI = styled.div`
 `;
 
 const CheckoutStepsWrapperUI = styled.div`
-	background: ${props => props.theme.colors.surface};
+	background: ${( props ) => props.theme.colors.surface};
 	box-sizing: border-box;
-	margin-bottom: ${props => ( props.isLastStepActive ? '100px' : 0 )};
+	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
 	width: 100%;
 
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${props => props.theme.colors.borderColorLight};
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		max-width: 556px;
 	}
 
-	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		width: 556px;
 		order: 1;
 	}

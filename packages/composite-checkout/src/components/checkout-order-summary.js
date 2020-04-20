@@ -58,7 +58,7 @@ const CheckoutSummaryStepTitle = styled.span`
 `;
 
 const CheckoutSummaryStepTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${( props ) => props.theme.weights.bold};
 `;
 
 export function CheckoutOrderSummary() {
@@ -70,7 +70,7 @@ export function CheckoutOrderSummary() {
 		<>
 			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
-				{ taxes.map( tax => (
+				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
 						<span>{ tax.label }</span>
 						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
@@ -86,13 +86,13 @@ export function CheckoutOrderSummary() {
 }
 
 const CheckoutSummaryTitle = styled.div`
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${( props ) => props.theme.colors.textColor};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	padding: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
+	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	padding: 16px;
 `;
 
@@ -102,5 +102,5 @@ const CheckoutSummaryLineItem = styled.div`
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${( props ) => props.theme.weights.bold};
 `;

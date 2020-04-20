@@ -31,5 +31,5 @@ export function useLineItemsOfType( itemType = null ) {
 		throw new Error( 'missing itemType for useLineItemsOfType' );
 	}
 	const [ items ] = useLineItems();
-	return items.filter( item => item.type === itemType );
+	return items.filter( ( item ) => item.type === itemType );
 }
