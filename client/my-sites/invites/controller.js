@@ -55,10 +55,7 @@ export function acceptInvite( context, next ) {
 				debug( 'Accepted invite for VIP sites' );
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
-				const redirect = getRedirectAfterAccept(
-					acceptedInvite,
-					get( acceptedInvite, 'site.is_wpforteams_site', false )
-				);
+				const redirect = getRedirectAfterAccept( acceptedInvite );
 
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
