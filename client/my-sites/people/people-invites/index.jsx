@@ -240,7 +240,7 @@ class PeopleInvites extends React.PureComponent {
 		);
 	}
 
-	renderInvite = invite => {
+	renderInvite = ( invite ) => {
 		const user = invite.user;
 
 		const { site } = this.props;
@@ -259,7 +259,7 @@ class PeopleInvites extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = site && site.ID;
 

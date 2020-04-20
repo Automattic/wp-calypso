@@ -23,7 +23,7 @@ class ConversationFollowButton extends React.Component {
 		tagName: 'button',
 	};
 
-	toggleFollow = event => {
+	toggleFollow = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
 		}

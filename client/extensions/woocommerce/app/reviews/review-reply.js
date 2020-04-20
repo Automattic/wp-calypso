@@ -51,7 +51,7 @@ class ReviewReply extends Component {
 		this.props.clearReviewReplyEdits( siteId );
 	};
 
-	onTextChange = event => {
+	onTextChange = ( event ) => {
 		const { value } = event.target;
 		const { siteId, reviewId, replyId } = this.props;
 		this.props.editReviewReply( siteId, reviewId, { id: replyId, content: value } );
@@ -60,7 +60,7 @@ class ReviewReply extends Component {
 	onDelete = () => {
 		const { siteId, reviewId, replyId, translate } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this reply?' );
-		accept( areYouSure, accepted => {
+		accept( areYouSure, ( accepted ) => {
 			if ( ! accepted ) {
 				return;
 			}

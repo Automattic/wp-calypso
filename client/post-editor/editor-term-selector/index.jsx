@@ -33,7 +33,7 @@ class EditorTermSelector extends Component {
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
 	}
 
-	onAddTerm = term => {
+	onAddTerm = ( term ) => {
 		const { postId, taxonomyName, siteId } = this.props;
 		this.props.addTermForPost( siteId, taxonomyName, term, postId );
 	};
@@ -84,7 +84,7 @@ class EditorTermSelector extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 

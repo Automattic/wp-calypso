@@ -18,7 +18,7 @@ import SocialLogo from 'components/social-logo';
  */
 import './style.scss';
 
-const services = translate => ( {
+const services = ( translate ) => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
 	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
@@ -28,7 +28,7 @@ const services = translate => ( {
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 } );
 
-export const SocialItem = props => {
+export const SocialItem = ( props ) => {
 	const { isSelected, onClick, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );

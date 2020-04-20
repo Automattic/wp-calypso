@@ -32,7 +32,7 @@ class CreditCardSelector extends React.Component {
 	}
 
 	storedCards = () => {
-		return this.props.cards.map( card => {
+		return this.props.cards.map( ( card ) => {
 			const onSelect = () => this.handleClickedSection( card.stored_details_id );
 			return (
 				<CreditCard
@@ -85,7 +85,7 @@ class CreditCardSelector extends React.Component {
 		);
 	};
 
-	handleClickedSection = section => {
+	handleClickedSection = ( section ) => {
 		if ( section === this.state.section ) {
 			return;
 		}
@@ -96,7 +96,7 @@ class CreditCardSelector extends React.Component {
 		this.setState( { section: section } );
 	};
 
-	savePayment = section => {
+	savePayment = ( section ) => {
 		if ( 'new-card' === section ) {
 			if ( this.props.stripe ) {
 				return setPayment( newStripeCardPayment( this.props.transaction.newCardRawDetails ) );
@@ -107,7 +107,7 @@ class CreditCardSelector extends React.Component {
 		setPayment( storedCardPayment( this.getStoredCardDetails( section ) ) );
 	};
 
-	getStoredCardDetails = section => {
+	getStoredCardDetails = ( section ) => {
 		return find( this.props.cards, { stored_details_id: section } );
 	};
 }

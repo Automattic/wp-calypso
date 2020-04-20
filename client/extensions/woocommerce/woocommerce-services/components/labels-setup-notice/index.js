@@ -55,7 +55,7 @@ const LabelsSetupNotice = ( {
 	return null;
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	return {
 		wcsEnabled: isWcsEnabled( state, site.ID ),

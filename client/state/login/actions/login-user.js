@@ -31,7 +31,7 @@ import 'state/login/init';
  * @param  {string}   domain          A domain to reverse login to
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => ( dispatch ) => {
 	dispatch( {
 		type: LOGIN_REQUEST,
 	} );
@@ -45,7 +45,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 		client_secret: config( 'wpcom_signup_key' ),
 		domain: domain,
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -72,7 +72,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 				data: response.body && response.body.data,
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
 			dispatch( {

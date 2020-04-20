@@ -17,12 +17,14 @@ import designs from '../../available-designs';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { selectedDesign, selectedFonts } = useSelect( select => select( STORE_KEY ).getState() );
+	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const { setFonts } = useDispatch( STORE_KEY );
 
 	// TODO: Add font loading for unknown fonts
 	const selectedDesignDefaultFonts = designs.featured.find(
-		design => design.slug === selectedDesign?.slug
+		( design ) => design.slug === selectedDesign?.slug
 	)?.fonts;
 
 	const defaultFontOption = selectedDesignDefaultFonts ? (
@@ -58,7 +60,7 @@ const FontSelect: React.FunctionComponent = () => {
 			>
 				<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 			</Button>
-			{ fontPairings.filter( fontPairingsFilter ).map( fontPair => {
+			{ fontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
 				// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
 				// (E.g. if `selectedFonts` is coming from persisted state)
 				const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );

@@ -70,7 +70,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
@@ -89,7 +89,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		this.setState( { taxesEnabled: ! this.state.taxesEnabled, pristine: false } );
 	};
 
-	onCheckboxChange = event => {
+	onCheckboxChange = ( event ) => {
 		const option = event.target.name;
 		const value = event.target.checked;
 		this.setState( { [ option ]: value, pristine: false } );
@@ -132,7 +132,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		);
 	};
 
-	onAddressChange = address => {
+	onAddressChange = ( address ) => {
 		const { siteId } = this.props;
 		this.props.fetchTaxRates( siteId, address, true );
 	};

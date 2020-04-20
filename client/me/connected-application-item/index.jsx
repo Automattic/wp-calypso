@@ -35,11 +35,11 @@ class ConnectedApplicationItem extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	disconnect = event => {
+	disconnect = ( event ) => {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}

@@ -61,7 +61,7 @@ import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
-	const createStateWithItems = items =>
+	const createStateWithItems = ( items ) =>
 		deepFreeze( {
 			sites: { items },
 		} );

@@ -24,7 +24,7 @@ import 'state/login/init';
  * @param  {string}   usernameOrEmail Identifier of the user
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const getAuthAccountType = usernameOrEmail => dispatch => {
+export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
 	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
 
 	dispatch( {

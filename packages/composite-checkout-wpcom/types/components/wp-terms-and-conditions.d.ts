@@ -1,3 +1,1 @@
-export default function WPTermsAndConditions({ domainName }: {
-    domainName: any;
-}): JSX.Element;
+export default function WPTermsAndConditions( { domainName }: { domainName: any } ): JSX.Element;

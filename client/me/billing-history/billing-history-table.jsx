@@ -15,7 +15,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
 
 class BillingHistoryTable extends React.Component {
-	recordClickEvent = eventAction => {
+	recordClickEvent = ( eventAction ) => {
 		this.props.recordGoogleEvent( 'Me', eventAction );
 	};
 
@@ -23,17 +23,17 @@ class BillingHistoryTable extends React.Component {
 		return this.recordClickEvent( 'View Receipt in Billing History' );
 	};
 
-	getEmailReceiptLinkClickHandler = receiptId => {
+	getEmailReceiptLinkClickHandler = ( receiptId ) => {
 		const { sendBillingReceiptEmail } = this.props;
 
-		return event => {
+		return ( event ) => {
 			event.preventDefault();
 			this.recordClickEvent( 'Email Receipt in Billing History' );
 			sendBillingReceiptEmail( receiptId );
 		};
 	};
 
-	renderEmailAction = receiptId => {
+	renderEmailAction = ( receiptId ) => {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
@@ -47,7 +47,7 @@ class BillingHistoryTable extends React.Component {
 		);
 	};
 
-	renderTransaction = transaction => {
+	renderTransaction = ( transaction ) => {
 		const { translate } = this.props;
 
 		return (
@@ -88,8 +88,8 @@ class BillingHistoryTable extends React.Component {
 }
 
 export default connect(
-	state => {
-		const sendingBillingReceiptEmail = receiptId => {
+	( state ) => {
+		const sendingBillingReceiptEmail = ( receiptId ) => {
 			return isSendingBillingReceiptEmail( state, receiptId );
 		};
 

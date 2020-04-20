@@ -17,7 +17,7 @@ const state = {
 	watchPredicate: null,
 };
 
-export const queryToPredicate = query => {
+export const queryToPredicate = ( query ) => {
 	if ( query instanceof RegExp ) {
 		return ( { type } ) => query.test( type );
 	}
@@ -33,12 +33,12 @@ export const queryToPredicate = query => {
 
 const actionLog = {
 	clear: () => void ( state.actionHistory = [] ),
-	filter: query => state.actionHistory.filter( queryToPredicate( query ) ),
-	setSize: size => void ( state.historySize = size ),
+	filter: ( query ) => state.actionHistory.filter( queryToPredicate( query ) ),
+	setSize: ( size ) => void ( state.historySize = size ),
 	start: () => void ( state.shouldRecordActions = true ),
 	stop: () => void ( state.shouldRecordActions = false ),
 	unwatch: () => void ( state.watchPredicate = null ),
-	watch: query => void ( state.watchPredicate = query ? queryToPredicate( query ) : null ),
+	watch: ( query ) => void ( state.watchPredicate = query ? queryToPredicate( query ) : null ),
 };
 
 Object.defineProperty( actionLog, 'history', {
@@ -46,7 +46,7 @@ Object.defineProperty( actionLog, 'history', {
 	get: () => state.actionHistory,
 } );
 
-const recordAction = action => {
+const recordAction = ( action ) => {
 	const { actionHistory, historySize } = state;
 
 	const thunkDescription = 'function' === typeof action ? { type: 'thunk (hidden)' } : {};
@@ -67,14 +67,14 @@ const recordAction = action => {
 	}
 };
 
-export const actionLogger = next => ( ...args ) => {
+export const actionLogger = ( next ) => ( ...args ) => {
 	const store = next( ...args );
 
 	if ( 'undefined' === typeof window ) {
 		return store;
 	}
 
-	const dispatch = action => {
+	const dispatch = ( action ) => {
 		if ( state.shouldRecordActions ) {
 			recordAction( action );
 		}

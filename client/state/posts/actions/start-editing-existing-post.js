@@ -34,13 +34,13 @@ export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getSta
 		.site( siteId )
 		.post( postId )
 		.get( { context: 'edit', meta: 'autosave' } )
-		.then( post => {
+		.then( ( post ) => {
 			post = normalizePostForActions( post );
 			dispatch( receivePost( post ) );
 			dispatch( editorReset() );
 			return post;
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( editorSetLoadingError( error ) );
 			return null;
 		} );

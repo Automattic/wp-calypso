@@ -121,15 +121,15 @@ export function handleProductCategoryDeleteSuccess( { dispatch }, action, catego
 	} );
 }
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId, query } = action;
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
-	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
+	const queryString = stringify( omitBy( requestQuery, ( val ) => '' === val ) );
 
 	return request( siteId, action ).getWithHeaders( `products/categories?${ queryString }` );
 };
 
-export const onFetchSuccess = ( action, { data } ) => dispatch => {
+export const onFetchSuccess = ( action, { data } ) => ( dispatch ) => {
 	const { siteId, query } = action;
 	const { headers, body } = data;
 
@@ -154,7 +154,7 @@ export const onFetchSuccess = ( action, { data } ) => dispatch => {
 	}
 };
 
-export const onFetchError = ( action, error ) => dispatch => {
+export const onFetchError = ( action, error ) => ( dispatch ) => {
 	const { siteId, query } = action;
 
 	dispatch( {

@@ -19,14 +19,14 @@ import { ResponseCart, WPCOMCartItem, CheckoutCartItem, CheckoutCartTotal } from
  *     * removeItem: callback for removing an item from the cart
  */
 export interface ShoppingCartManager {
-    isLoading: boolean;
-    allowedPaymentMethods: string[];
-    items: WPCOMCartItem[];
-    tax: CheckoutCartItem;
-    total: CheckoutCartTotal;
-    credits: CheckoutCartItem;
-    addItem: (WPCOMCartItem: any) => void;
-    removeItem: (WPCOMCartItem: any) => void;
+	isLoading: boolean;
+	allowedPaymentMethods: string[];
+	items: WPCOMCartItem[];
+	tax: CheckoutCartItem;
+	total: CheckoutCartTotal;
+	credits: CheckoutCartItem;
+	addItem: ( WPCOMCartItem: any ) => void;
+	removeItem: ( WPCOMCartItem: any ) => void;
 }
 /**
  * Custom hook for managing state in the WPCOM checkout component.
@@ -61,4 +61,8 @@ export interface ShoppingCartManager {
  *     @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
  * @returns ShoppingCartManager
  */
-export declare function useShoppingCart(cartKey: string | null, setCart: (string: any, RequestCart: any) => Promise<ResponseCart>, getCart: (string: any) => Promise<ResponseCart>): ShoppingCartManager;
+export declare function useShoppingCart(
+	cartKey: string | null,
+	setCart: ( string: any, RequestCart: any ) => Promise< ResponseCart >,
+	getCart: ( string: any ) => Promise< ResponseCart >
+): ShoppingCartManager;

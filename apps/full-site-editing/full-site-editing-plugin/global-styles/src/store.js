@@ -77,7 +77,7 @@ export default ( storeName, optionsPath ) => {
 				return state ? state[ key ] : undefined;
 			},
 			hasLocalChanges( state ) {
-				return !! state && Object.keys( cache ).some( key => cache[ key ] !== state[ key ] );
+				return !! state && Object.keys( cache ).some( ( key ) => cache[ key ] !== state[ key ] );
 			},
 		},
 

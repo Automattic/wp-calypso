@@ -7,7 +7,11 @@ import { endsWith } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE } from 'state/themes/action-types';
+import {
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
+} from 'state/themes/action-types';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { getWpcomParentThemeId } from 'state/themes/selectors';
 
@@ -33,7 +37,7 @@ export function installTheme( themeId, siteId ) {
 		return wpcom
 			.undocumented()
 			.installThemeOnJetpack( siteId, themeId )
-			.then( theme => {
+			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
@@ -52,7 +56,7 @@ export function installTheme( themeId, siteId ) {
 					}
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
 					siteId,

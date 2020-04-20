@@ -25,10 +25,10 @@ import MediaQueryManager from 'lib/query-manager/media';
 import { validateMediaItem } from 'lib/media/utils';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 
-const isExternalMediaError = message =>
+const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
 
-const isMediaError = action =>
+const isMediaError = ( action ) =>
 	action.error && ( action.siteId || isExternalMediaError( action.error ) );
 
 /**
@@ -50,7 +50,7 @@ export const errors = ( state = {}, action ) => {
 			const items = Array.isArray( action.transientMedia )
 				? action.transientMedia
 				: [ action.transientMedia ];
-			const mediaErrors = items.reduce( function( memo, item ) {
+			const mediaErrors = items.reduce( function ( memo, item ) {
 				const itemErrors = validateMediaItem( action.site, item );
 				if ( itemErrors.length ) {
 					memo[ item.ID ] = itemErrors;
@@ -79,7 +79,7 @@ export const errors = ( state = {}, action ) => {
 				? action.error.errors
 				: [ action.error ];
 
-			const sanitizedErrors = mediaErrors.map( error => {
+			const sanitizedErrors = mediaErrors.map( ( error ) => {
 				switch ( error.error ) {
 					case 'http_404':
 						return MediaValidationErrors.UPLOAD_VIA_URL_404;
@@ -117,10 +117,10 @@ export const errors = ( state = {}, action ) => {
 			return {
 				...state,
 				[ action.siteId ]: pickBy(
-					mapValues( state[ action.siteId ], mediaErrors =>
+					mapValues( state[ action.siteId ], ( mediaErrors ) =>
 						without( mediaErrors, action.errorType )
 					),
-					mediaErrors => ! isEmpty( mediaErrors )
+					( mediaErrors ) => ! isEmpty( mediaErrors )
 				),
 			};
 

@@ -20,7 +20,7 @@ import SectionNav from 'components/section-nav';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
-	doSearch = search => {
+	doSearch = ( search ) => {
 		this.props.updateCurrentOrdersQuery( this.props.site.ID, { search } );
 	};
 
@@ -81,9 +81,9 @@ class OrdersFilterNav extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSiteWithFallback( state ),
 		search: getOrdersCurrentSearch( state ),
 	} ),
-	dispatch => bindActionCreators( { updateCurrentOrdersQuery }, dispatch )
+	( dispatch ) => bindActionCreators( { updateCurrentOrdersQuery }, dispatch )
 )( localize( OrdersFilterNav ) );

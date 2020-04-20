@@ -10,7 +10,7 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export default props => (
+export default ( props ) => (
 	<div
 		className={ classNames( {
 			ribbon: true,

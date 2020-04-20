@@ -1,4 +1,4 @@
-const mockFiles = filesToMock => {
+const mockFiles = ( filesToMock ) => {
 	Object.entries( filesToMock ).forEach( ( [ file, content ] ) => {
 		jest.mock( file, () => content, { virtual: true } );
 	} );

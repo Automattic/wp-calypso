@@ -77,7 +77,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
-].forEach( initializePlugin => initializePlugin() );
+].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
  * Internal Dependencies
@@ -232,7 +232,7 @@ export default class TinyMCE extends React.Component {
 		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
-		const setup = editor => {
+		const setup = ( editor ) => {
 			this._editor = editor;
 
 			if ( ! this.mounted ) {
@@ -241,7 +241,7 @@ export default class TinyMCE extends React.Component {
 			}
 
 			this.bindEditorEvents();
-			editor.on( 'SetTextAreaContent', event => this.setTextAreaContent( event.content ) );
+			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 			editor.once(
 				'PostRender',
 				this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } )
@@ -371,7 +371,7 @@ export default class TinyMCE extends React.Component {
 	destroyEditor = () => {
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( this.props[ eventHandler ] ) {
 					this._editor.off( eventName, this.props[ eventHandler ] );
 				}
@@ -387,12 +387,12 @@ export default class TinyMCE extends React.Component {
 		autosize.update( this.textInput.current );
 	};
 
-	bindEditorEvents = prevProps => {
+	bindEditorEvents = ( prevProps ) => {
 		prevProps = prevProps || {};
 
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
 					if ( this.props[ eventHandler ] ) {
 						this._editor.on( eventName, this.props[ eventHandler ] );
@@ -444,7 +444,7 @@ export default class TinyMCE extends React.Component {
 		}
 	};
 
-	getContent = args => {
+	getContent = ( args ) => {
 		if ( this.props.mode === 'html' ) {
 			return this.state.content;
 		}
@@ -472,7 +472,7 @@ export default class TinyMCE extends React.Component {
 		return false;
 	};
 
-	setTextAreaContent = content => {
+	setTextAreaContent = ( content ) => {
 		this.setState(
 			{
 				content: decodeEntities( content ),
@@ -494,13 +494,13 @@ export default class TinyMCE extends React.Component {
 		this.setTextAreaContent( content );
 	};
 
-	setSelection = selection => {
+	setSelection = ( selection ) => {
 		this.setState( {
 			selection,
 		} );
 	};
 
-	selectTextInTextArea = selection => {
+	selectTextInTextArea = ( selection ) => {
 		// only valid in the text area mode and if we have selection
 		if ( ! selection ) {
 			return;
@@ -517,7 +517,7 @@ export default class TinyMCE extends React.Component {
 		this.setState( { selection: null } );
 	};
 
-	onTextAreaChange = event => {
+	onTextAreaChange = ( event ) => {
 		const content = event.target.value;
 
 		if ( this.props.onTextEditorChange ) {
@@ -527,7 +527,7 @@ export default class TinyMCE extends React.Component {
 		this.setState( { content: content }, this.doAutosizeUpdate );
 	};
 
-	onToolbarChangeContent = content => {
+	onToolbarChangeContent = ( content ) => {
 		if ( this.props.onTextEditorChange ) {
 			this.props.onTextEditorChange( content );
 		}

@@ -33,9 +33,9 @@ import { getStatsPathForTab } from 'lib/route';
  */
 import './style.scss';
 
-export const requestId = userId => `pending-payments:${ userId }`;
+export const requestId = ( userId ) => `pending-payments:${ userId }`;
 
-const requestPendingPayments = userId => {
+const requestPendingPayments = ( userId ) => {
 	return requestHttpData(
 		requestId( userId ),
 		http( {
@@ -44,7 +44,7 @@ const requestPendingPayments = userId => {
 			method: 'GET',
 		} ),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
+			fromApi: () => ( pending ) => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
 			freshness: -Infinity,
 		}
 	);
@@ -102,7 +102,7 @@ export class PendingPayments extends Component {
 						title={ translate( 'Thank you! Your payment is being processed.' ) }
 					/>
 					<div>
-						{ pendingPayments.map( purchase => (
+						{ pendingPayments.map( ( purchase ) => (
 							<PendingListItem key={ purchase.orderId } { ...purchase } />
 						) ) }
 					</div>
@@ -129,7 +129,7 @@ PendingPayments.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		const response = getHttpData( requestId( userId ) );
 		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
@@ -141,7 +141,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		showErrorNotice: ( error, options ) =>
 			dispatch(
 				errorNotice( error, Object.assign( {}, options, { id: 'pending-payments-tab' } ) )

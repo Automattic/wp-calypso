@@ -73,7 +73,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 			: [ translate( 'No referral activity on this date' ) ];
 	}
 
-	paginate = data => {
+	paginate = ( data ) => {
 		const { paginate, limit } = this.props;
 		if ( ! paginate ) {
 			return data.slice( 0, limit || data.length );
@@ -84,7 +84,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 		return data.slice( start, end );
 	};
 
-	onPageClick = pageNumber => {
+	onPageClick = ( pageNumber ) => {
 		this.setState( {
 			page: pageNumber,
 		} );
@@ -135,7 +135,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 		return (
 			<Card className={ className }>
 				<Table className={ `${ className }__table` } header={ header } compact>
-					{ paginatedData.map( d => {
+					{ paginatedData.map( ( d ) => {
 						const widgetPath = getWidgetPath(
 							unit,
 							slug,

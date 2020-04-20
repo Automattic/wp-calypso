@@ -268,12 +268,12 @@ export function useGetThankYouUrl( {
 	product,
 	siteId,
 } ) {
-	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
+	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( state =>
+	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
-	const previousRoute = useSelector( state => getPreviousPath( state ) );
+	const previousRoute = useSelector( ( state ) => getPreviousPath( state ) );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();

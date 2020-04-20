@@ -53,7 +53,7 @@ class ListAll extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),

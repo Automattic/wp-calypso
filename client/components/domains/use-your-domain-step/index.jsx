@@ -107,7 +107,7 @@ class UseYourDomainStep extends React.Component {
 		return buildMapDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordMappingButtonClickInUseYourDomain( this.props.analyticsSection );
@@ -140,7 +140,7 @@ class UseYourDomainStep extends React.Component {
 		return buildTransferDomainUrl;
 	}
 
-	goToTransferDomainStep = event => {
+	goToTransferDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTransferButtonClickInUseYourDomain( this.props.analyticsSection );
@@ -272,7 +272,7 @@ class UseYourDomainStep extends React.Component {
 		return mappingProductPrice;
 	};
 
-	renderIllustration = image => {
+	renderIllustration = ( image ) => {
 		return (
 			<div className="use-your-domain-step__option-illustration">
 				<img src={ image } alt="" />
@@ -280,11 +280,11 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionTitle = optionTitle => {
+	renderOptionTitle = ( optionTitle ) => {
 		return <h3 className="use-your-domain-step__option-title">{ optionTitle }</h3>;
 	};
 
-	renderOptionReasons = optionReasons => {
+	renderOptionReasons = ( optionReasons ) => {
 		return (
 			<div className="use-your-domain-step__option-reasons">
 				{ optionReasons.map( ( phrase, index ) => {
@@ -303,7 +303,7 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionContent = content => {
+	renderOptionContent = ( content ) => {
 		const { image, title, reasons, onClick, buttonText, isPrimary, learnMore } = content;
 		return (
 			<Card className="use-your-domain-step__option" compact>
@@ -322,7 +322,7 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionButton = buttonOptions => {
+	renderOptionButton = ( buttonOptions ) => {
 		const { buttonText, onClick, isPrimary } = buttonOptions;
 		const { submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
@@ -429,14 +429,14 @@ class UseYourDomainStep extends React.Component {
 	}
 }
 
-const recordTransferButtonClickInUseYourDomain = domain_name =>
+const recordTransferButtonClickInUseYourDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_use_your_domain_transfer_click', { domain_name } );
 
-const recordMappingButtonClickInUseYourDomain = domain_name =>
+const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_use_your_domain_mapping_click', { domain_name } );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),

@@ -314,7 +314,7 @@ function setErrors( errors: string[] | undefined, oldData: ManagedValue ): Manag
 }
 
 function getManagedValuesList( details: ManagedContactDetails ): ManagedValue[] {
-	return flattenManagedContactDetailsShape( x => x, details );
+	return flattenManagedContactDetailsShape( ( x ) => x, details );
 }
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
@@ -324,13 +324,13 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 
 export function isTouched( details: ManagedContactDetails ): boolean {
 	const values = getManagedValuesList( details );
-	return values.length > 0 && values.every( value => value.isTouched );
+	return values.length > 0 && values.every( ( value ) => value.isTouched );
 }
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
 	const values = getManagedValuesList( details );
 	return (
-		values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired )
+		values.length > 0 && values.every( ( value ) => value.value?.length > 0 || ! value.isRequired )
 	);
 }
 
@@ -340,7 +340,7 @@ function setManagedContactDetailsErrors(
 ): ManagedContactDetails {
 	return updateManagedContactDetailsShape(
 		( error, detail ) => setErrors( error, detail ),
-		error => getInitialManagedValue( { errors: error } ),
+		( error ) => getInitialManagedValue( { errors: error } ),
 		errors,
 		details
 	);
@@ -684,7 +684,7 @@ export function applyContactDetailsRequiredMask(
 		( isRequired, managedValue ) => {
 			return { ...managedValue, isRequired };
 		},
-		isRequired => getInitialManagedValue( { isRequired } ),
+		( isRequired ) => getInitialManagedValue( { isRequired } ),
 		requiredMask,
 		details
 	);

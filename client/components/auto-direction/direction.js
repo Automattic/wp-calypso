@@ -790,10 +790,10 @@ const LEFT_TO_RIGHT = [
 	[ 0x10fffd, 0x10fffd ],
 ];
 
-const createLookUpMap = charactersRangeArray => {
+const createLookUpMap = ( charactersRangeArray ) => {
 	const set = new Set();
 
-	charactersRangeArray.forEach( range => {
+	charactersRangeArray.forEach( ( range ) => {
 		for ( let i = range[ 0 ]; i <= range[ 1 ]; i++ ) {
 			set.add( i );
 		}
@@ -805,5 +805,5 @@ const createLookUpMap = charactersRangeArray => {
 const RTL_SET = createLookUpMap( RIGHT_TO_LEFT );
 const LTR_SET = createLookUpMap( LEFT_TO_RIGHT );
 
-export const isRTLCharacter = character => RTL_SET.has( character.charCodeAt( 0 ) );
-export const isLTRCharacter = character => LTR_SET.has( character.charCodeAt( 0 ) );
+export const isRTLCharacter = ( character ) => RTL_SET.has( character.charCodeAt( 0 ) );
+export const isLTRCharacter = ( character ) => LTR_SET.has( character.charCodeAt( 0 ) );

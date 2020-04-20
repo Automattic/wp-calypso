@@ -38,7 +38,7 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
@@ -256,7 +256,7 @@ PlansStep.propTypes = {
  * @param {object} domainItem domainItem object stored in the "choose domain" step
  * @returns {boolean} is .blog domain registration
  */
-export const isDotBlogDomainRegistration = domainItem => {
+export const isDotBlogDomainRegistration = ( domainItem ) => {
 	if ( ! domainItem ) {
 		return false;
 	}

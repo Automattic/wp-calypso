@@ -25,7 +25,7 @@ import charactersImage from 'assets/images/reader/reader-conversations-character
  */
 import './intro.scss';
 
-const getPreferenceName = isInternal =>
+const getPreferenceName = ( isInternal ) =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 
 class ConversationsIntro extends React.Component {
@@ -128,7 +128,7 @@ export default connect(
 		};
 	},
 	{
-		dismiss: isInternal => {
+		dismiss: ( isInternal ) => {
 			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
 			const preferenceName = getPreferenceName( isInternal );
 			return savePreference( preferenceName, true );

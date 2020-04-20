@@ -50,7 +50,7 @@ class StatsComments extends Component {
 		activeFilter: 'top-authors',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		if ( filter === this.state.activeFilter ) {
 			return;
@@ -183,7 +183,7 @@ class StatsComments extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 

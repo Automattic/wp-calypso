@@ -56,9 +56,9 @@ export class CommentNavigation extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate = ( prevProps ) => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
 		if ( commentsListQuery && ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
 			refreshPage( commentsListQuery );
@@ -75,7 +75,7 @@ export class CommentNavigation extends Component {
 		}
 	};
 
-	changeFilter = status => () => this.props.recordChangeFilter( status );
+	changeFilter = ( status ) => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate, counts } = this.props;
@@ -105,7 +105,7 @@ export class CommentNavigation extends Component {
 		return navItems;
 	};
 
-	getStatusPath = status => {
+	getStatusPath = ( status ) => {
 		const { postId } = this.props;
 
 		const appendPostId = postId ? `/${ postId }` : '';
@@ -115,7 +115,7 @@ export class CommentNavigation extends Component {
 			: `/comments/pending/${ this.props.siteFragment }${ appendPostId }`;
 	};
 
-	setBulkStatus = newStatus => () => {
+	setBulkStatus = ( newStatus ) => () => {
 		const {
 			changeStatus,
 			deletePermanently,
@@ -149,7 +149,7 @@ export class CommentNavigation extends Component {
 		toggleBulkMode();
 	};
 
-	showBulkNotice = newStatus => {
+	showBulkNotice = ( newStatus ) => {
 		const { translate } = this.props;
 
 		const message = get(
@@ -175,7 +175,7 @@ export class CommentNavigation extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
+	statusHasAction = ( action ) => includes( bulkActions[ this.props.status ], action );
 
 	toggleSelectAll = () => {
 		if ( this.props.isSelectedAll ) {
@@ -330,7 +330,7 @@ export class CommentNavigation extends Component {
 
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const visibleComments = map( commentsPage, commentId => {
+	const visibleComments = map( commentsPage, ( commentId ) => {
 		const comment = getSiteComment( state, siteId, commentId );
 		if ( comment ) {
 			return {
@@ -392,15 +392,15 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
 		),
-	recordChangeFilter: status =>
+	recordChangeFilter: ( status ) =>
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
 				bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	refreshPage: query => dispatch( requestCommentsList( query ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
+	refreshPage: ( query ) => dispatch( requestCommentsList( query ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: ( postId, commentId ) =>
 		dispatch(

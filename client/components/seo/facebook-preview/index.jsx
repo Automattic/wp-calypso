@@ -15,7 +15,7 @@ import './style.scss';
 const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 200;
 
-const baseDomain = url =>
+const baseDomain = ( url ) =>
 	url &&
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol

@@ -28,8 +28,8 @@ export default createSelector(
 
 		return filter(
 			getSitesItems( state ),
-			site => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
-		).map( site => getSite( state, site.ID ) );
+			( site ) => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
+		).map( ( site ) => getSite( state, site.ID ) );
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

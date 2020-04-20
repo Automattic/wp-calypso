@@ -50,15 +50,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
-	const siteUrl = useSelector( state => getSiteUrl( state, siteId ) );
-	const rewindState = useSelector( state => getRewindState( state, siteId ) ) as RewindState;
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
+	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 
 	const loading = rewindState.state === 'uninitialized';
 
-	const inProgressRewindStatus = useSelector( state =>
+	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const inProgressRewindPercentComplete = useSelector( state =>
+	const inProgressRewindPercentComplete = useSelector( ( state ) =>
 		getInProgressRewindPercentComplete( state, siteId, rewindId )
 	);
 
@@ -102,7 +102,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ onConfirm }
-				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
+				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
 			>
 				{ translate( 'Confirm restore' ) }
 			</Button>

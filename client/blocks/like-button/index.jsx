@@ -31,7 +31,7 @@ class LikeButtonContainer extends Component {
 		onLikeToggle: noop,
 	};
 
-	handleLikeToggle = liked => {
+	handleLikeToggle = ( liked ) => {
 		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 

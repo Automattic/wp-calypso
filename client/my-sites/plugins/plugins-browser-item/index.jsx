@@ -142,7 +142,7 @@ class PluginsBrowserListElement extends Component {
 }
 
 export default compose(
-	connect( state => {
+	connect( ( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {

@@ -91,7 +91,7 @@ export class Filterbar extends Component {
 		}
 	};
 
-	isEmptyFilter = filter => {
+	isEmptyFilter = ( filter ) => {
 		if ( ! filter ) {
 			return true;
 		}
@@ -151,12 +151,12 @@ export class Filterbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	previousRoute: getPreviousRoute( state ),
 } );
 
-const mapDispatchToProps = dispatch => ( {
-	resetFilters: siteId =>
+const mapDispatchToProps = ( dispatch ) => ( {
+	resetFilters: ( siteId ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),

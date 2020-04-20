@@ -95,7 +95,7 @@ class BlogsSettings extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	sites: getSites( state ),
 	requestingSites: isRequestingSites( state ),
 } );

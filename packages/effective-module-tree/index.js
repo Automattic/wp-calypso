@@ -13,7 +13,7 @@ const treeify = require( 'object-treeify' );
  *
  * @param {string} packagePath Package path used as seed for the traversal
  */
-const candidates = function*( packagePath ) {
+const candidates = function* ( packagePath ) {
 	const parts = packagePath.split( path.sep );
 	for ( let i = parts.length; i >= 0; i-- ) {
 		// This avoids generating .../node_modules/node_modules/...
@@ -109,21 +109,21 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
  *
  * @param {string} root Path to package.json
  */
-const generateEffectiveTree = root => {
+const generateEffectiveTree = ( root ) => {
 	const packagePath = path.resolve( root );
 	const packageJson = require( path.join( packagePath ) );
 	const { tree } = findTree( packageJson, path.dirname( packagePath ), [], new Map() );
 	return tree;
 };
 
-const getEffectiveTreeAsTree = root => {
+const getEffectiveTreeAsTree = ( root ) => {
 	const tree = generateEffectiveTree( root );
 	return treeify( tree, {
 		sortFn: ( a, b ) => a.localeCompare( b ),
 	} );
 };
 
-const getEffectiveTreeAsList = root => {
+const getEffectiveTreeAsList = ( root ) => {
 	const tree = generateEffectiveTree( root );
 
 	function print( branch, prefix = [] ) {
@@ -144,7 +144,7 @@ const getEffectiveTreeAsList = root => {
 	}
 
 	return print( tree )
-		.map( line => line.join( ' ' ) )
+		.map( ( line ) => line.join( ' ' ) )
 		.join( '\n' );
 };
 

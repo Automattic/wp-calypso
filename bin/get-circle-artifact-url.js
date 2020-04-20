@@ -24,19 +24,19 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 		} );
 
 		const buildNumbersWithArtifacts = builds
-			.filter( build => build.has_artifacts )
-			.map( build => build.build_num );
+			.filter( ( build ) => build.has_artifacts )
+			.map( ( build ) => build.build_num );
 
 		for ( const buildNumber of buildNumbersWithArtifacts ) {
 			const artifacts = await httpsGetJsonPromise( {
 				...baseOptions,
 				path: `${ basePath }/${ buildNumber }/artifacts`,
 			} );
-			const filteredArtifacts = artifacts.filter( artifact =>
+			const filteredArtifacts = artifacts.filter( ( artifact ) =>
 				artifact.path.match( pathMatchRegex )
 			);
 			if ( filteredArtifacts.length ) {
-				filteredArtifacts.forEach( artifact => console.log( artifact.url ) );
+				filteredArtifacts.forEach( ( artifact ) => console.log( artifact.url ) );
 				process.exit( 0 );
 			}
 		}
@@ -54,9 +54,9 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 
 function httpsGetJsonPromise( options ) {
 	return new Promise( ( resolve, reject ) => {
-		https.get( options, response => {
+		https.get( options, ( response ) => {
 			let body = '';
-			response.on( 'data', data => {
+			response.on( 'data', ( data ) => {
 				body += data;
 			} );
 			response.on( 'end', () => resolve( JSON.parse( body ) ) );

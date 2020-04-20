@@ -19,13 +19,13 @@ class DomainConnectDnsRecord extends Component {
 		dnsRecord: PropTypes.object,
 	};
 
-	getName = record => {
+	getName = ( record ) => {
 		const { name, service, protocol, type } = record;
 		const { domain } = this.props;
 		const isRoot = name === `${ domain }.`;
 
 		if ( 'SRV' === type ) {
-			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
+			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.'}${ domain }`;
 		}
 
 		if ( endsWith( name, '.' ) ) {
@@ -39,7 +39,7 @@ class DomainConnectDnsRecord extends Component {
 		return typeof str === 'string' ? str.replace( /\.$/, '' ) : str;
 	}
 
-	handledBy = record => {
+	handledBy = ( record ) => {
 		const { translate } = this.props;
 		const { type, aux, port, service, weight, protocol } = record;
 		const data = this.trimDot( record.data );

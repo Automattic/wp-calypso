@@ -40,11 +40,11 @@ function handleSearch( query ) {
 
 const lastDayForVoteBanner = new Date( '2018-11-07T00:00:00' );
 
-const FollowingStream = props => {
+const FollowingStream = ( props ) => {
 	const suggestionList =
 		props.suggestions &&
 		initial(
-			flatMap( props.suggestions, query => [
+			flatMap( props.suggestions, ( query ) => [
 				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
 				', ',
 			] )
@@ -89,6 +89,6 @@ const FollowingStream = props => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	userInUSA: getCurrentUserCountryCode( state ) === 'US',
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

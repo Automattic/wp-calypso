@@ -31,7 +31,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
 
-const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) => {
+const requestTwoFactorPushNotificationStatus = ( action ) => ( dispatch, getState ) => {
 	const state = getState();
 	const auth_type = 'push';
 	const user_id = getTwoFactorUserId( state );

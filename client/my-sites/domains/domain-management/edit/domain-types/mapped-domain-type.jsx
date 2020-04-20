@@ -87,7 +87,7 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		const learnMoreLink = linksTo => (
+		const learnMoreLink = ( linksTo ) => (
 			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
 		);
 		let primaryMessage;
@@ -133,7 +133,7 @@ class MappedDomainType extends React.Component {
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
 						<ul className="mapped-domain-type__name-server-list">
-							{ WPCOM_DEFAULTS.map( nameServer => {
+							{ WPCOM_DEFAULTS.map( ( nameServer ) => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
 						</ul>

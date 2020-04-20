@@ -3,7 +3,7 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 jest.mock( 'react-redux', () => ( {
-	connect: () => component => component,
+	connect: () => ( component ) => component,
 } ) );
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
@@ -22,9 +22,9 @@ jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Component => props => <Component { ...props } translate={ x => x } />,
-	numberFormat: x => x,
-	translate: x => x,
+	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( x ) => x } />,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -65,7 +65,7 @@ import {
 
 const props = {
 	selectedPlan: PLAN_FREE,
-	translate: x => x,
+	translate: ( x ) => x,
 };
 
 describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
@@ -230,7 +230,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	const myProps = {
 		selectedPlan: PLAN_FREE,
-		translate: x => x,
+		translate: ( x ) => x,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
 	};

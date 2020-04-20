@@ -39,7 +39,7 @@ const Upsells = ( { cards, primary, siteId, slug } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );

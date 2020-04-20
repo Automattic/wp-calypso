@@ -52,15 +52,15 @@ class UpdateNotice extends React.PureComponent {
 		);
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 		this.props.onClick();
 	};
 }
 
 const countNewComments = ( state, postKeys ) => {
-	const newComments = flatMap( postKeys, postKey => {
-		return filter( postKey.comments, commentId => {
+	const newComments = flatMap( postKeys, ( postKey ) => {
+		return filter( postKey.comments, ( commentId ) => {
 			return ! getCommentById( {
 				state,
 				siteId: postKey.blogId,

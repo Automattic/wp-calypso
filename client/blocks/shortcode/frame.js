@@ -48,13 +48,13 @@ export default class extends React.Component {
 		return nextState.html !== this.state.html;
 	}
 
-	updateHtmlState = props => {
+	updateHtmlState = ( props ) => {
 		this.setState( {
 			html: generateEmbedFrameMarkup( props ),
 		} );
 	};
 
-	onFrameLoad = event => {
+	onFrameLoad = ( event ) => {
 		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage(
 			JSON.stringify( {

@@ -19,7 +19,7 @@ import { Provider } from 'react-redux';
 
 const WIDTH = 450;
 
-const styleUrl = url => `url(${ url })`;
+const styleUrl = ( url ) => `url(${ url })`;
 
 const initialReduxState = {
 	siteSettings: {},
@@ -40,7 +40,7 @@ const initialReduxState = {
 };
 
 function renderWithRedux( ui ) {
-	const store = createStore( state => state, initialReduxState );
+	const store = createStore( ( state ) => state, initialReduxState );
 	return render( <Provider store={ store }>{ ui }</Provider> );
 }
 
@@ -55,7 +55,7 @@ describe( 'MediaLibraryListItem video', () => {
 
 	const expectedBackground = () =>
 		styleUrl( photon( fixtures.media[ 1 ].thumbnails.fmt_hd, { width: WIDTH } ) );
-	const getItem = type => (
+	const getItem = ( type ) => (
 		<ListItemVideo
 			media={ fixtures.media[ 1 ] }
 			scale={ 1 }

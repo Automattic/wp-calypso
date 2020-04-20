@@ -14,5 +14,5 @@ export default function getGoogleMyBusinessStatsNudgeDismissCount( state, siteId
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
 
-	return sitePreference.filter( event => 'dismiss' === event.type ).length;
+	return sitePreference.filter( ( event ) => 'dismiss' === event.type ).length;
 }

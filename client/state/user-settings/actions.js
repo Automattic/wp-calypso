@@ -37,7 +37,7 @@ export const fetchUserSettings = () => ( {
  * @param {object} settingsOverride - default settings object
  * @returns {object} Action object
  */
-export const saveUserSettings = settingsOverride => ( {
+export const saveUserSettings = ( settingsOverride ) => ( {
 	type: USER_SETTINGS_SAVE,
 	settingsOverride,
 } );
@@ -48,7 +48,7 @@ export const saveUserSettings = settingsOverride => ( {
  * @param  {object} settingValues Setting values (the subset of keys to be updated)
  * @returns {object}               Action object
  */
-export const updateUserSettings = settingValues => ( {
+export const updateUserSettings = ( settingValues ) => ( {
 	type: USER_SETTINGS_UPDATE,
 	settingValues,
 } );
@@ -69,7 +69,7 @@ export const setUnsavedUserSetting = ( settingName, value ) => ( {
 	value,
 } );
 
-export const removeUnsavedUserSetting = settingName => ( {
+export const removeUnsavedUserSetting = ( settingName ) => ( {
 	type: USER_SETTINGS_UNSAVED_REMOVE,
 	settingName,
 } );

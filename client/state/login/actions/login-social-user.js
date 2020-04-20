@@ -33,7 +33,7 @@ import 'state/login/init';
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
+export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return postLoginRequest( 'social-login-endpoint', {
@@ -42,7 +42,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -61,7 +61,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 				} );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 			error.email = get( httpError, 'response.body.data.email' );
 

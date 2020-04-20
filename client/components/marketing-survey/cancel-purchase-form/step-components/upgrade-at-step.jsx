@@ -62,7 +62,7 @@ export class UpgradeATStep extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 } );
 const mapDispatchToProps = { recordTracksEvent };

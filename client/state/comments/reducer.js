@@ -49,12 +49,12 @@ import {
 import trees from './trees/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
-const isCommentManagementEdit = newProperties =>
+const isCommentManagementEdit = ( newProperties ) =>
 	has( newProperties, 'commentContent' ) &&
 	has( newProperties, 'authorDisplayName' ) &&
 	has( newProperties, 'authorUrl' );
 
-const updateComment = ( commentId, newProperties ) => comment => {
+const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
@@ -118,7 +118,7 @@ export function items( state = {}, action ) {
 		}
 		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
-			const comments = map( action.comments, _comment => ( {
+			const comments = map( action.comments, ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -189,7 +189,7 @@ export function pendingItems( state = {}, action ) {
 
 	switch ( type ) {
 		case COMMENTS_UPDATES_RECEIVE: {
-			const comments = map( action.comments, _comment => ( {
+			const comments = map( action.comments, ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -207,7 +207,7 @@ export function pendingItems( state = {}, action ) {
 				...state,
 				[ stateKey ]: filter(
 					state[ stateKey ],
-					_comment => ! includes( receivedCommentIds, _comment.ID )
+					( _comment ) => ! includes( receivedCommentIds, _comment.ID )
 				),
 			};
 		}
@@ -223,7 +223,7 @@ export const fetchStatusInitialState = {
 	hasReceivedAfter: false,
 };
 
-const isValidExpansionsAction = action => {
+const isValidExpansionsAction = ( action ) => {
 	const { siteId, postId, commentIds, displayType } = action.payload;
 	return (
 		siteId &&
@@ -233,7 +233,7 @@ const isValidExpansionsAction = action => {
 	);
 };
 
-const expansionValue = type => {
+const expansionValue = ( type ) => {
 	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
 	switch ( type ) {
 		case full:
@@ -257,7 +257,7 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
 			const stateKey = getStateKey( siteId, postId );
 			const currentExpansions = state[ stateKey ] || {};
 
-			const newDisplayTypes = map( commentIds, id => {
+			const newDisplayTypes = map( commentIds, ( id ) => {
 				if (
 					! has( currentExpansions, id ) ||
 					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )

@@ -67,7 +67,7 @@ export class NpsSurvey extends PureComponent {
 		}
 	}
 
-	handleRecommendationSelectChange = score => {
+	handleRecommendationSelectChange = ( score ) => {
 		this.setState( { score } );
 	};
 
@@ -83,7 +83,7 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleTextBoxChange = event => {
+	handleTextBoxChange = ( event ) => {
 		this.setState( { feedback: trim( event.target.value ) } );
 	};
 
@@ -108,7 +108,7 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleLinkClick = event => {
+	handleLinkClick = ( event ) => {
 		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
 			type: event.target.dataset.type,
@@ -122,7 +122,7 @@ export class NpsSurvey extends PureComponent {
 		} );
 	};
 
-	onClose = afterClose => {
+	onClose = ( afterClose ) => {
 		// ensure that state is updated before onClose handler is called
 		setTimeout( () => {
 			this.props.onClose( afterClose );
@@ -319,7 +319,7 @@ export class NpsSurvey extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAvailableConciergeSession: isAvailableForConciergeSession( state ),

@@ -122,7 +122,7 @@ class Subscription extends React.Component {
 
 const getSubscription = ( state, subscriptionId ) =>
 	get( state, 'memberships.subscriptions.items', [] )
-		.filter( sub => sub.ID === subscriptionId )
+		.filter( ( sub ) => sub.ID === subscriptionId )
 		.pop();
 
 export default connect(

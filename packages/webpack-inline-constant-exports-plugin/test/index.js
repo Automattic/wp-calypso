@@ -19,7 +19,7 @@ describe( 'webpack-inline-constant-exports-plugin', () => {
 		rimraf.sync( buildDirectory );
 	} );
 
-	test( 'should produce expected output', done => {
+	test( 'should produce expected output', ( done ) => {
 		const inputDirectory = path.join( fixturesDirectory, 'basic' );
 		const outputDirectory = path.join( buildDirectory, 'basic' );
 		const config = {
@@ -40,7 +40,7 @@ describe( 'webpack-inline-constant-exports-plugin', () => {
 			],
 		};
 
-		webpack( config, err => {
+		webpack( config, ( err ) => {
 			expect( err ).toBeNull();
 
 			const outputFile = path.join( outputDirectory, 'main.js' );

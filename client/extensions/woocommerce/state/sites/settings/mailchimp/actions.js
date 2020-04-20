@@ -44,7 +44,7 @@ import {
  * redux action objects. Used to make actions functions more concise.
  */
 
-const mailchimpSettingsRequest = siteId => ( {
+const mailchimpSettingsRequest = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 	siteId,
 } );
@@ -61,7 +61,7 @@ const mailchimpSettingsRequestFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpApiKeySubmit = siteId => ( {
+const mailchimpApiKeySubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	siteId,
 } );
@@ -78,7 +78,7 @@ const mailchimpApiKeySubmitFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpStoreInfoSubmit = siteId => ( {
+const mailchimpStoreInfoSubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	siteId,
 } );
@@ -95,7 +95,7 @@ const mailchimpStoreInfoSubmitFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpCampaignDefaultsSubmit = siteId => ( {
+const mailchimpCampaignDefaultsSubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 	siteId,
 } );
@@ -112,7 +112,7 @@ const mailchimpCampaignDefaultsSubmitFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpListsRequest = siteId => ( {
+const mailchimpListsRequest = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
 	siteId,
 } );
@@ -129,7 +129,7 @@ const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpSyncStatusRequest = siteId => ( {
+const mailchimpSyncStatusRequest = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 	siteId,
 } );
@@ -146,7 +146,7 @@ const mailchimpSyncStatusRequestFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpResyncRequest = siteId => ( {
+const mailchimpResyncRequest = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
 	siteId,
 } );
@@ -163,7 +163,7 @@ const mailchimpResyncRequestFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-const mailchimpNewsletterSettingsSubmit = siteId => ( {
+const mailchimpNewsletterSettingsSubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
 	siteId,
 } );
@@ -186,7 +186,7 @@ const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestSettings = siteId => ( dispatch, getState ) => {
+export const requestSettings = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -196,10 +196,10 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'mailchimp' )
-		.then( settings => {
+		.then( ( settings ) => {
 			dispatch( mailchimpSettingsRequestSuccess( siteId, settings ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpSettingsRequestFailure( siteId, error ) );
 		} );
 };
@@ -211,7 +211,7 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
  * @param  {string}        apiKey        MailChimp api key
  * @returns {Function}                    Action thunk
  */
-export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
+export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch ) => {
 	if ( null == siteId || null == apiKey ) {
 		return;
 	}
@@ -220,10 +220,10 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
 
 	return request( siteId )
 		.put( 'mailchimp/api_key', { mailchimp_api_key: apiKey } )
-		.then( settings => {
+		.then( ( settings ) => {
 			dispatch( mailchimpApiKeySubmitSuccess( siteId, settings ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpApiKeySubmitFailure( siteId, error ) );
 		} );
 };
@@ -235,7 +235,7 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
  * @param  {object}        storeInfo     MailChimp store info settings object
  * @returns {Function}                    Action thunk
  */
-export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
+export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) => {
 	if ( null == siteId || null == storeInfo ) {
 		return;
 	}
@@ -244,10 +244,10 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
 
 	return request( siteId )
 		.put( 'mailchimp/store_info', storeInfo )
-		.then( settings => {
+		.then( ( settings ) => {
 			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpStoreInfoSubmitFailure( siteId, error ) );
 		} );
 };
@@ -260,7 +260,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
  * @param  {object}        campaignDefaults MailChimp campaign defaults settings object
  * @returns {Function}                       Action thunk
  */
-export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => dispatch => {
+export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch ) => {
 	if ( null == siteId || null == campaignDefaults ) {
 		return;
 	}
@@ -269,10 +269,10 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
 
 	return request( siteId )
 		.put( 'mailchimp/campaign_defaults', campaignDefaults )
-		.then( settings => {
+		.then( ( settings ) => {
 			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, settings ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpCampaignDefaultsSubmitFailure( siteId, error ) );
 		} );
 };
@@ -284,7 +284,7 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestLists = siteId => ( dispatch, getState ) => {
+export const requestLists = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -294,10 +294,10 @@ export const requestLists = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'mailchimp/newsletter_setting' )
-		.then( lists => {
+		.then( ( lists ) => {
 			dispatch( mailchimpListsRequestSuccess( siteId, lists ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpListsRequestFailure( siteId, error ) );
 		} );
 };
@@ -308,7 +308,7 @@ export const requestLists = siteId => ( dispatch, getState ) => {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestSyncStatus = siteId => ( dispatch, getState ) => {
+export const requestSyncStatus = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -317,10 +317,10 @@ export const requestSyncStatus = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'mailchimp/sync' )
-		.then( sync_status => {
+		.then( ( sync_status ) => {
 			dispatch( mailchimpSyncStatusRequestSuccess( siteId, sync_status ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpSyncStatusRequestFailure( siteId, error ) );
 		} );
 };
@@ -331,7 +331,7 @@ export const requestSyncStatus = siteId => ( dispatch, getState ) => {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestResync = siteId => ( dispatch, getState ) => {
+export const requestResync = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -340,10 +340,10 @@ export const requestResync = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.put( 'mailchimp/sync' )
-		.then( sync_status => {
+		.then( ( sync_status ) => {
 			dispatch( mailchimpResyncRequestSuccess( siteId, sync_status ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpResyncRequestFailure( siteId, error ) );
 		} );
 };
@@ -356,7 +356,7 @@ export const requestResync = siteId => ( dispatch, getState ) => {
  * @param  {object}        newsLetter  MailChimp newsletter settings object
  * @returns {Function}                  Action thunk
  */
-export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispatch => {
+export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch ) => {
 	if ( null == siteId || null == newsLetter ) {
 		return;
 	}
@@ -365,10 +365,10 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
 
 	return request( siteId )
 		.put( 'mailchimp/newsletter_setting', newsLetter )
-		.then( settings => {
+		.then( ( settings ) => {
 			dispatch( mailchimpNewsletterSettingsSubmitSuccess( siteId, settings ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( mailchimpNewsletterSettingsSubmitFailure( siteId, error ) );
 		} );
 };
@@ -381,7 +381,7 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
  * @param  {number|string} siteId      Jetpack site ID
  * @returns {Function}                  Action thunk
  */
-export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {
+export const mailChimpSaveSettings = ( siteId ) => ( dispatch, getState ) => {
 	if ( null == siteId ) {
 		return;
 	}

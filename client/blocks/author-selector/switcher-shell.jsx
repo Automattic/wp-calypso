@@ -138,7 +138,7 @@ class AuthorSwitcherShell extends React.Component {
 		return this.props.totalUsers <= usersLength;
 	}
 
-	setListContext = infiniteListInstance => {
+	setListContext = ( infiniteListInstance ) => {
 		this.setState( {
 			listContext: ReactDom.findDOMNode( infiniteListInstance ),
 		} );
@@ -165,7 +165,7 @@ class AuthorSwitcherShell extends React.Component {
 		} );
 	};
 
-	onClose = event => {
+	onClose = ( event ) => {
 		const toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
 
 		if ( event && toggleElement.contains( event.target ) ) {
@@ -178,7 +178,7 @@ class AuthorSwitcherShell extends React.Component {
 		this.props.updateSearch( false );
 	};
 
-	renderAuthor = rawAuthor => {
+	renderAuthor = ( rawAuthor ) => {
 		const { transformAuthor } = this.props;
 		const author = transformAuthor ? transformAuthor( rawAuthor ) : rawAuthor;
 		const authorGUID = this.getAuthorItemGUID( author );
@@ -204,7 +204,7 @@ class AuthorSwitcherShell extends React.Component {
 		);
 	}
 
-	selectAuthor = author => {
+	selectAuthor = ( author ) => {
 		debug( 'assign author:', author );
 		if ( this.props.onSelect ) {
 			this.props.onSelect( author );
@@ -223,7 +223,7 @@ class AuthorSwitcherShell extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	getAuthorItemGUID = author => {
+	getAuthorItemGUID = ( author ) => {
 		return 'author-item-' + author.ID;
 	};
 
@@ -235,7 +235,7 @@ class AuthorSwitcherShell extends React.Component {
 		);
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		this.props.updateSearch( searchTerm );
 	};
 }

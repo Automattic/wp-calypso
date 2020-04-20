@@ -101,7 +101,7 @@ function mockContext() {
 			props: {},
 			update: 'callback',
 		};
-	propNames.forEach( function( name ) {
+	propNames.forEach( function ( name ) {
 		context.props[ name ] = mockEventEmitter( context, name );
 	} );
 	return context;
@@ -109,12 +109,12 @@ function mockContext() {
 
 function mockEventEmitter( context, name ) {
 	return {
-		on: function( event, callback ) {
+		on: function ( event, callback ) {
 			context.onCalls.push( name );
 			assert.deepEqual( 'change', event );
 			assert.deepEqual( 'callback', callback );
 		},
-		off: function( event, callback ) {
+		off: function ( event, callback ) {
 			context.offCalls.push( name );
 			assert.deepEqual( 'change', event );
 			assert.deepEqual( 'callback', callback );

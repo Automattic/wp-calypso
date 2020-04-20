@@ -62,7 +62,7 @@ JetpackConnectHappychatButton.propTypes = {
 	label: PropTypes.string,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	isChatActive: hasActiveHappychatSession( state ),
 	isLoggedIn: Boolean( getCurrentUserId( state ) ),

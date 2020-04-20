@@ -324,7 +324,7 @@ export const queries = ( () => {
 export const allSitesQueries = ( () => {
 	function findItemKey( state, siteId, postId ) {
 		return (
-			findKey( state.data.items, post => {
+			findKey( state.data.items, ( post ) => {
 				return post.site_ID === siteId && post.ID === postId;
 			} ) || null
 		);

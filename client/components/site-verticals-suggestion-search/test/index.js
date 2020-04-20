@@ -40,7 +40,7 @@ const defaultProps = {
 	},
 	siteType: 'blog',
 	searchValue: '',
-	translate: str => str,
+	translate: ( str ) => str,
 };
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {

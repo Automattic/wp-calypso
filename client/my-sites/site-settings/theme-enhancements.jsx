@@ -184,10 +184,7 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset
-				className={ classnames(
-					'minileven',
-					`${ minilevenModuleActive ? `active` : `inactive` }`
-				) }
+				className={ classnames( 'minileven', `${ minilevenModuleActive ? `active` : `inactive`}` ) }
 			>
 				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
 				<Notice
@@ -311,7 +308,7 @@ class ThemeEnhancements extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
 

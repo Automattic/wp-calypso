@@ -55,7 +55,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				typeof propValue !== 'string'
 			) {
 				propValue = toPairs( propValue )
-					.map( pair => pair.join( ':' ) )
+					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
 			}
 

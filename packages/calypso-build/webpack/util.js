@@ -30,7 +30,7 @@ function IncrementalProgressPlugin() {
 			const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
 			const percentageString = `${ Math.floor( percentage * 100 ) }%`;
 			const detailsString = details
-				.map( detail => {
+				.map( ( detail ) => {
 					if ( ! detail ) {
 						return '';
 					}
@@ -115,7 +115,9 @@ function shouldTranspileDependency( filepath ) {
 
 	const checkFrom = lastIndex + marker.length;
 
-	return nodeModulesToTranspile.some( modulePart => filepath.startsWith( modulePart, checkFrom ) );
+	return nodeModulesToTranspile.some( ( modulePart ) =>
+		filepath.startsWith( modulePart, checkFrom )
+	);
 }
 
 module.exports = { cssNameFromFilename, IncrementalProgressPlugin, shouldTranspileDependency };

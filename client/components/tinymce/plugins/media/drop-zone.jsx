@@ -53,7 +53,7 @@ class TinyMCEDropZone extends React.Component {
 		}
 	}
 
-	redirectEditorDragEvent = event => {
+	redirectEditorDragEvent = ( event ) => {
 		// When an item is dragged over the iframe container, we need to copy
 		// and dispatch the event to the parent window. We use the CustomEvent
 		// constructor rather than MouseEvent because MouseEvent may lose some
@@ -66,7 +66,7 @@ class TinyMCEDropZone extends React.Component {
 		} );
 	};
 
-	fakeDragEnterIfNecessary = event => {
+	fakeDragEnterIfNecessary = ( event ) => {
 		// It was found that Chrome only triggered the `dragenter` event on
 		// every odd drag over the iframe element. The logic here ensures that
 		// if the more frequent `dragover` event occurs while not aware of a
@@ -137,7 +137,7 @@ class TinyMCEDropZone extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 
 		return {

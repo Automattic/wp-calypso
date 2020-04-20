@@ -77,14 +77,14 @@ class SharingButtonsOptions extends Component {
 		}
 	};
 
-	handleTwitterViaChange = event => {
+	handleTwitterViaChange = ( event ) => {
 		this.props.onChange(
 			event.target.name,
 			this.getSanitizedTwitterUsername( event.target.value )
 		);
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { path } = this.props;
 
 		let value;
@@ -142,7 +142,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getDisplayOptions() {
-		return [ { name: 'index' } ].concat( this.props.postTypes ).map( postType => ( {
+		return [ { name: 'index' } ].concat( this.props.postTypes ).map( ( postType ) => ( {
 			value: postType.name,
 			label: this.getPostTypeLabel( postType ),
 		} ) );
@@ -273,7 +273,7 @@ class SharingButtonsOptions extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const path = getCurrentRouteParameterized( state, siteId );
 

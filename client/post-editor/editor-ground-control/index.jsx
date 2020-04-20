@@ -94,7 +94,7 @@ export class EditorGroundControl extends React.Component {
 		);
 	}
 
-	onPreviewButtonClick = event => {
+	onPreviewButtonClick = ( event ) => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
 		}

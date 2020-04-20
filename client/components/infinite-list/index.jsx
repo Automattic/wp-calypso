@@ -314,7 +314,7 @@ export default class InfiniteList extends React.Component {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	}
 
-	boundsForRef = ref => {
+	boundsForRef = ( ref ) => {
 		if ( ref in this.refs ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
@@ -454,7 +454,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
 	}
 
-	_resetScroll = event => {
+	_resetScroll = ( event ) => {
 		const position = this.state.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;

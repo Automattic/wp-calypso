@@ -147,12 +147,12 @@ const findAssetsInBlock = ( session, block ) => {
  * @param {Assets} assets Assets that were detected from blocks.
  * @returns {Promise} Promise that resoves into an object with URLs as keys and fetch results as values.
  */
-const fetchAssets = async assets => {
+const fetchAssets = async ( assets ) => {
 	return await apiFetch( {
 		method: 'POST',
 		path: '/fse/v1/sideload/image/batch',
 		data: { resources: map( assets ) },
-	} ).then( response =>
+	} ).then( ( response ) =>
 		reduce(
 			assets,
 			( fetched, asset ) => {
@@ -176,12 +176,12 @@ const fetchAssets = async assets => {
  * @returns {Array<GutenbergBlock>} A promise resolving into an array of blocks.
  */
 const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
-	forEach( session.assets, asset => {
+	forEach( session.assets, ( asset ) => {
 		const newAsset = fetchedAssets[ asset.url ];
 		if ( ! newAsset ) {
 			return;
 		}
-		forEach( asset.usages, usage => {
+		forEach( asset.usages, ( usage ) => {
 			set( session.blocksByClientId, usage.path, newAsset[ usage.prop ] );
 		} );
 	} );
@@ -196,7 +196,7 @@ const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
  * @param {Array<GutenbergBlock>} blocks Blocks, as returned by `wp.block.parse`
  * @returns {Promise} A promise that resolves into an array of {@link GutenbergBlock} with updated assets
  */
-const ensureAssetsInBlocks = async blocks => {
+const ensureAssetsInBlocks = async ( blocks ) => {
 	// Create a FetchSession object by reducing blocks.
 	const session = reduce( blocks, findAssetsInBlock, {
 		assets: {},
@@ -211,7 +211,7 @@ const ensureAssetsInBlocks = async blocks => {
 
 	// Ensure assets are available on the site and replace originals
 	// with local copies before inserting the template.
-	return fetchAssets( session.assets ).then( fetchedAssets => {
+	return fetchAssets( session.assets ).then( ( fetchedAssets ) => {
 		return getBlocksWithAppliedAssets( session, fetchedAssets );
 	} );
 };

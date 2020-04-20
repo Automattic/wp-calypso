@@ -9,4 +9,4 @@ import { get } from 'lodash';
  * @param  {object}  state Global state tree
  * @returns {?string}       New application password
  */
-export default state => get( state, [ 'applicationPasswords', 'newPassword' ], null );
+export default ( state ) => get( state, [ 'applicationPasswords', 'newPassword' ], null );

@@ -130,7 +130,7 @@ class Team extends React.Component {
 		);
 	}
 
-	renderPerson = user => {
+	renderPerson = ( user ) => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -155,7 +155,7 @@ class Team extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	getPersonRef = user => 'user-' + user.ID;
+	getPersonRef = ( user ) => 'user-' + user.ID;
 
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }

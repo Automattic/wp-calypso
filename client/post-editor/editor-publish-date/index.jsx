@@ -46,7 +46,7 @@ export class EditorPublishDate extends React.Component {
 		}
 	}
 
-	handleOutsideClick = event => {
+	handleOutsideClick = ( event ) => {
 		// The `className` of a `svg` element is a `SVGAnimatedString`, which
 		// does not have a `split` method.  Since an `svg` element will not
 		// have any of the classes we're interested in, don't bother trying to
@@ -194,7 +194,7 @@ export class EditorPublishDate extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		site: getSelectedSite( state ),
 	};

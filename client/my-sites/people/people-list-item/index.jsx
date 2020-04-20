@@ -73,7 +73,7 @@ class PeopleListItem extends React.PureComponent {
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
-	onResend = event => {
+	onResend = ( event ) => {
 		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
 
 		// Prevents navigation to invite-details screen and onClick event.

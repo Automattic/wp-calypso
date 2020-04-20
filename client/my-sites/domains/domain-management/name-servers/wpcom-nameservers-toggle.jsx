@@ -102,7 +102,7 @@ const wpcomNameServersToggleButtonClick = ( domainName, enabled ) => {
 	);
 };
 
-const wpcomNameServersLearnMoreClick = domainName =>
+const wpcomNameServersLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

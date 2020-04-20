@@ -1,4 +1,4 @@
-export const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
+export const addReducerEnhancer = ( nextCreator ) => ( reducer, initialState ) => {
 	const nextStore = nextCreator( reducer, initialState );
 
 	let currentReducer = reducer;

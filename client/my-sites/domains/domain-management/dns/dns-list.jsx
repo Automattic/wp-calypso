@@ -45,7 +45,7 @@ class DnsList extends React.Component {
 		} );
 	}
 
-	handleDialogClose = result => {
+	handleDialogClose = ( result ) => {
 		this.state.dialog.onClose( result );
 		this.setState( { dialog: this.noDialog() } );
 	};
@@ -55,7 +55,7 @@ class DnsList extends React.Component {
 		const { records } = this.props.dns;
 
 		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
-			this.openDialog( 'deleteEmailForwards', result => {
+			this.openDialog( 'deleteEmailForwards', ( result ) => {
 				if ( result.shouldDeleteEmailForwards ) {
 					this.deleteDns( record, true );
 				}
@@ -78,7 +78,7 @@ class DnsList extends React.Component {
 					},
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The DNS record has not been deleted.' )
 				);
@@ -95,7 +95,7 @@ class DnsList extends React.Component {
 					duration: 5000,
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The DNS record could not be restored.' )
 				);

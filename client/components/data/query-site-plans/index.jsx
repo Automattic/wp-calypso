@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSitePlans( getState(), siteId ) ) {
 		dispatch( fetchSitePlans( siteId ) );
 	}

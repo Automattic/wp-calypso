@@ -72,7 +72,7 @@ export class EditorDiscussion extends React.Component {
 		return {};
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
 		const newStatus = booleanToStatus( event.target.checked );
 		const discussionType = event.target.name;
@@ -174,7 +174,7 @@ export class EditorDiscussion extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const isNew = isEditorNewPost( state );

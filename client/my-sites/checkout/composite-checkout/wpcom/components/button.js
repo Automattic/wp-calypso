@@ -38,10 +38,10 @@ Button.propTypes = {
 
 const CallToAction = styled.button`
 	display: block;
-	width: ${ props => ( props.fullWidth ? '100%' : 'auto' ) };
+	width: ${ ( props ) => ( props.fullWidth ? '100%' : 'auto')  };
 	font-size: 16px;
-	border-radius: ${ props => ( props.buttonType === 'paypal' ? '50px' : '3px' ) };
-	padding: ${ props => props.padding };
+	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '3px')  };
+	padding: ${ ( props ) => props.padding };
 	background: ${ getBackgroundColor };
 	border-width: ${ getBorderWeight };
 	border-style: solid;
@@ -83,7 +83,7 @@ const CallToAction = styled.button`
 `;
 
 function getImageFilter( { buttonType, buttonState } ) {
-	return `grayscale( ${ buttonState === 'disabled' ? 100 : 0 } ) invert( ${
+	return `grayscale( ${ buttonState === 'disabled' ? 100 : 0} ) invert( ${
 		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : 0
 	} );`;
 }

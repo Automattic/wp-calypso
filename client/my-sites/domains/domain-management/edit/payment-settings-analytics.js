@@ -4,7 +4,7 @@
 import { getDomainTypeText } from 'lib/domains';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-export const recordPaymentSettingsClick = domain => {
+export const recordPaymentSettingsClick = ( domain ) => {
 	const domainType = getDomainTypeText( domain );
 
 	return composeAnalytics(

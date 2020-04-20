@@ -70,5 +70,5 @@ export const isEditedPostDirty = createSelector(
 		const rawContentDirty = initial !== current;
 		return editsDirty || rawContentDirty;
 	},
-	state => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
+	( state ) => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
 );

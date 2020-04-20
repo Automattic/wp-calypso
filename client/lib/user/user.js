@@ -50,7 +50,7 @@ Emitter( User.prototype );
 /**
  * Initialize the user data depending on the configuration
  **/
-User.prototype.initialize = async function() {
+User.prototype.initialize = async function () {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.data = false;
@@ -91,7 +91,7 @@ User.prototype.initialize = async function() {
  *
  * @param {number} userId The new user ID.
  **/
-User.prototype.clearStoreIfChanged = function( userId ) {
+User.prototype.clearStoreIfChanged = function ( userId ) {
 	const storedUserId = store.get( 'wpcom_user_id' );
 
 	if ( storedUserId != null && storedUserId !== userId ) {
@@ -105,7 +105,7 @@ User.prototype.clearStoreIfChanged = function( userId ) {
  *
  * @returns {object} The user data.
  */
-User.prototype.get = function() {
+User.prototype.get = function () {
 	return this.data;
 };
 
@@ -115,7 +115,7 @@ User.prototype.get = function() {
  *
  * @returns {Promise<void>} Promise that resolves (with no value) when fetching is finished
  */
-User.prototype.fetch = function() {
+User.prototype.fetch = function () {
 	if ( this.fetching ) {
 		// if already fetching, return the in-flight promise
 		return this.fetching;
@@ -129,12 +129,12 @@ User.prototype.fetch = function() {
 			meta: 'flags',
 			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 		} )
-		.then( data => {
+		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			debug( 'Failed to retrieve user from api:', error );
 			this.handleFetchFailure( error );
 		} )
@@ -151,7 +151,7 @@ User.prototype.fetch = function() {
  *
  * @param {Error} error network response error
  */
-User.prototype.handleFetchFailure = function( error ) {
+User.prototype.handleFetchFailure = function ( error ) {
 	if ( error.error === 'authorization_required' ) {
 		debug( 'The user is not logged in.' );
 		this.data = false;
@@ -169,7 +169,7 @@ User.prototype.handleFetchFailure = function( error ) {
  *
  * @param {object} userData an object containing the user's information.
  */
-User.prototype.handleFetchSuccess = function( userData ) {
+User.prototype.handleFetchSuccess = function ( userData ) {
 	this.clearStoreIfChanged( userData.ID );
 
 	// Store user ID in local storage so that we can detect a change and clear the storage
@@ -194,7 +194,7 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	this.emit( 'change' );
 };
 
-User.prototype.getLanguage = function() {
+User.prototype.getLanguage = function () {
 	return getLanguage( this.data.localeSlug );
 };
 
@@ -207,7 +207,7 @@ User.prototype.getLanguage = function() {
  *
  * @returns {string} The user's avatar URL based on the options parameter.
  */
-User.prototype.getAvatarUrl = function( options ) {
+User.prototype.getAvatarUrl = function ( options ) {
 	const default_options = {
 		s: 80,
 		d: 'mm',
@@ -225,7 +225,7 @@ User.prototype.getAvatarUrl = function( options ) {
 /**
  * Clear any user data.
  */
-User.prototype.clear = async function() {
+User.prototype.clear = async function () {
 	/**
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
@@ -246,14 +246,11 @@ User.prototype.clear = async function() {
  * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
  *                             If no callback is provided, this is a Promise.
  */
-User.prototype.sendVerificationEmail = function( fn ) {
-	return wpcom
-		.undocumented()
-		.me()
-		.sendVerificationEmail( fn );
+User.prototype.sendVerificationEmail = function ( fn ) {
+	return wpcom.undocumented().me().sendVerificationEmail( fn );
 };
 
-User.prototype.set = function( attributes ) {
+User.prototype.set = function ( attributes ) {
 	let changed = false;
 
 	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
@@ -271,7 +268,7 @@ User.prototype.set = function( attributes ) {
 	return changed;
 };
 
-User.prototype.decrementSiteCount = function() {
+User.prototype.decrementSiteCount = function () {
 	const user = this.get();
 	if ( user ) {
 		this.set( {
@@ -282,7 +279,7 @@ User.prototype.decrementSiteCount = function() {
 	this.fetch();
 };
 
-User.prototype.incrementSiteCount = function() {
+User.prototype.incrementSiteCount = function () {
 	const user = this.get();
 	if ( user ) {
 		return this.set( {
@@ -303,7 +300,7 @@ User.prototype.incrementSiteCount = function() {
  * @private
  */
 
-User.prototype.verificationPollerCallback = function( signal ) {
+User.prototype.verificationPollerCallback = function ( signal ) {
 	// skip server poll if page is hidden or there are no listeners
 	// and this was not triggered by a localStorage signal
 	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && ! signal ) {
@@ -334,7 +331,7 @@ User.prototype.verificationPollerCallback = function( signal ) {
  * @private
  */
 
-User.prototype.checkVerification = function() {
+User.prototype.checkVerification = function () {
 	if ( ! this.get() ) {
 		// not loaded, do nothing
 		return;
@@ -356,7 +353,7 @@ User.prototype.checkVerification = function() {
 	);
 
 	// wait for localStorage event (from other windows)
-	window.addEventListener( 'storage', e => {
+	window.addEventListener( 'storage', ( e ) => {
 		if ( e.key === '__email_verified_signal__' && e.newValue ) {
 			debug( 'Verification: RECEIVED SIGNAL' );
 			window.localStorage.removeItem( '__email_verified_signal__' );
@@ -373,7 +370,7 @@ User.prototype.checkVerification = function() {
  * message, so that all the windows update instantaneously
  */
 
-User.prototype.signalVerification = function() {
+User.prototype.signalVerification = function () {
 	if ( window.localStorage ) {
 		// use localStorage to signal to other browser windows that the user's email was verified
 		window.localStorage.setItem( '__email_verified_signal__', 1 );

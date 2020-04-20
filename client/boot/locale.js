@@ -16,18 +16,18 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
-const setupTranslationChunks = async localeSlug => {
+const setupTranslationChunks = async ( localeSlug ) => {
 	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
 
 	i18n.setLocale( locale );
 
 	const loadedTranslationChunks = {};
-	const loadTranslationForChunkIfNeeded = chunkId => {
+	const loadTranslationForChunkIfNeeded = ( chunkId ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( translations => {
+		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
 			i18n.addTranslations( translations );
 			loadedTranslationChunks[ chunkId ] = true;
 		} );
@@ -36,7 +36,7 @@ const setupTranslationChunks = async localeSlug => {
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
 	);
 
-	installedChunks.forEach( chunkId => {
+	installedChunks.forEach( ( chunkId ) => {
 		loadTranslationForChunkIfNeeded( chunkId );
 	} );
 

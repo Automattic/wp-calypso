@@ -27,7 +27,7 @@ const DEFAULT_MEDIA = {
 	exif: {},
 };
 
-const makeComparator = query => ( a, b ) => MediaQueryManager.compare( query, a, b );
+const makeComparator = ( query ) => ( a, b ) => MediaQueryManager.compare( query, a, b );
 
 describe( 'MediaQueryManager', () => {
 	describe( '#matches()', () => {

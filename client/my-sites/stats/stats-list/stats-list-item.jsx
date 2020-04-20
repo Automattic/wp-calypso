@@ -64,7 +64,7 @@ class StatsListItem extends React.Component {
 		} );
 	};
 
-	actionMenuClick = event => {
+	actionMenuClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -78,11 +78,11 @@ class StatsListItem extends React.Component {
 		}
 	};
 
-	preventDefaultOnClick = event => {
+	preventDefaultOnClick = ( event ) => {
 		event.preventDefault();
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		let gaEvent;
 		const moduleName = titlecase( this.props.moduleName );
 
@@ -125,7 +125,7 @@ class StatsListItem extends React.Component {
 		}
 	};
 
-	spamHandler = isSpammed => {
+	spamHandler = ( isSpammed ) => {
 		this.setState( {
 			disabled: isSpammed,
 		} );
@@ -144,7 +144,7 @@ class StatsListItem extends React.Component {
 		if ( data.actions ) {
 			const actionItems = [];
 
-			data.actions.forEach( function( action ) {
+			data.actions.forEach( function ( action ) {
 				let actionItem;
 
 				switch ( action.type ) {
@@ -203,7 +203,7 @@ class StatsListItem extends React.Component {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
 
-		const label = labelData.map( function( labelItem, i ) {
+		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
 			let icon, gridiconSpan, itemLabel;
 
@@ -241,7 +241,7 @@ class StatsListItem extends React.Component {
 				let onClickHandler = this.preventDefaultOnClick;
 				const siteId = this.getSiteIdForFollow();
 				if ( this.isFollowersModule && siteId ) {
-					onClickHandler = event => {
+					onClickHandler = ( event ) => {
 						const modifierPressed =
 							event.button > 0 ||
 							event.metaKey ||

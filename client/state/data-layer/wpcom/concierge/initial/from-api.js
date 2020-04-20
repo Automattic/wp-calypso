@@ -5,9 +5,9 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 import { transform as appointmentTransformer } from 'state/data-layer/wpcom/concierge/schedules/appointments/detail/from-api';
 
-export const convertToMilliseconds = timestampInSeconds => timestampInSeconds * 1000;
+export const convertToMilliseconds = ( timestampInSeconds ) => timestampInSeconds * 1000;
 
-export const transform = response => {
+export const transform = ( response ) => {
 	const nextAppointment =
 		response.next_appointment === null ? null : appointmentTransformer( response.next_appointment );
 

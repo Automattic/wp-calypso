@@ -19,7 +19,7 @@ export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
 	);
 };
 
-export const toWpcomUser = author =>
+export const toWpcomUser = ( author ) =>
 	pickBy(
 		{
 			ID: author.ID,
@@ -30,7 +30,7 @@ export const toWpcomUser = author =>
 			primary_blog_url: author.URL,
 			username: author.login,
 		},
-		a => !! a
+		( a ) => !! a
 	);
 
 export const validStatusValues = {

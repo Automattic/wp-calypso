@@ -56,7 +56,7 @@ describe( 'actions', () => {
 		},
 	} );
 
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( '/rest/v1.1/sites/100658273/exports/settings' )
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 				post_type: 'post',
 			} )
 			.reply( 200, true )
-			.post( '/rest/v1.1/sites/2916284/exports/start', body => ! body )
+			.post( '/rest/v1.1/sites/2916284/exports/start', ( body ) => ! body )
 			.reply( 200, true )
 			.get( '/rest/v1.1/sites/100658273/exports/0' )
 			.reply( 200, SAMPLE_EXPORT_COMPLETE_RESPONSE )
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch receive action when request completes', done => {
+		test( 'should dispatch receive action when request completes', ( done ) => {
 			advancedSettingsFetch( 100658273 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
@@ -103,7 +103,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		test( 'should dispatch fail action when request fails', done => {
+		test( 'should dispatch fail action when request fails', ( done ) => {
 			advancedSettingsFetch( 0 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
@@ -153,7 +153,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch custom export action when thunk triggered', done => {
+		test( 'should dispatch custom export action when thunk triggered', ( done ) => {
 			startExport( 2916284, false )( spy, getStateCustomSettings )
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -166,7 +166,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		test( 'should dispatch export started action when request completes', done => {
+		test( 'should dispatch export started action when request completes', ( done ) => {
 			startExport( 2916284 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledTwice;
@@ -180,7 +180,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		test( 'should dispatch export failed action when request fails', done => {
+		test( 'should dispatch export failed action when request fails', ( done ) => {
 			startExport( 77203074 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledTwice;

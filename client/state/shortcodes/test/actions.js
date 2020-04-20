@@ -18,14 +18,14 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#fetchShortcode()', () => {
 		const siteId = 12345678;
 		const shortcode = '[gallery ids="1,2,3"]';
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com' )
 					.persist()
 					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
@@ -80,7 +80,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com' )
 					.persist()
 					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )

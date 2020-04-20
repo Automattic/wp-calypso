@@ -20,7 +20,7 @@ export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUS
  * @param {Array<string>} tokenLinks token links array
  * @returns {Function} a thunk
  */
-export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {
+export const receivedTwoFactorPushNotificationApproved = ( tokenLinks ) => ( dispatch ) => {
 	if ( ! Array.isArray( tokenLinks ) ) {
 		return dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 	}

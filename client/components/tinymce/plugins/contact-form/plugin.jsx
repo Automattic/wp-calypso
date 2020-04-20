@@ -38,7 +38,7 @@ function wpcomContactForm( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'wpcomContactForm', content => {
+	editor.addCommand( 'wpcomContactForm', ( content ) => {
 		let isEdit = false;
 		if ( content ) {
 			store.dispatch( formLoad( deserialize( content ) ) );

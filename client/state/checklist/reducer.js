@@ -12,7 +12,7 @@ import { items as itemSchemas } from './schema';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
-	tasks: state.tasks?.map( task =>
+	tasks: state.tasks?.map( ( task ) =>
 		task.id === taskId ? { ...task, isCompleted: completed } : task
 	),
 } );

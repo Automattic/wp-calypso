@@ -191,7 +191,7 @@ export class PostTypeFilter extends Component {
 						selectedText={ selectedItem.children }
 						selectedCount={ selectedItem.count }
 					>
-						{ navItems.map( props => (
+						{ navItems.map( ( props ) => (
 							<NavItem { ...props } />
 						) ) }
 					</NavTabs>

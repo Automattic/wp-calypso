@@ -37,9 +37,6 @@ SidebarNavigation.propTypes = {
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
-	}
-)( SidebarNavigation );
+export default connect( null, {
+	toggleSidebar: () => setLayoutFocus( 'sidebar' ),
+} )( SidebarNavigation );

@@ -25,7 +25,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 		return (
 			<div className="reader-post-options-menu__blog-stickers">
 				<QueryBlogStickers blogId={ blogId } />
-				{ map( blogStickersOffered, blogStickerName => (
+				{ map( blogStickersOffered, ( blogStickerName ) => (
 					<ReaderPostOptionsMenuBlogStickerMenuItem
 						key={ blogStickerName }
 						blogId={ blogId }

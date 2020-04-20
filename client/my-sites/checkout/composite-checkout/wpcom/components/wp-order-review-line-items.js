@@ -175,15 +175,15 @@ export const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor )};
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
+	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
+	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor) };
+	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
 	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
 		isSummaryVisible || total || subtotal || tax ? '10px 0' : '24px 0'};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
-	margin-right: ${( { total, tax, subtotal } ) => ( subtotal || total || tax ? '0' : '30px' )};
+	margin-right: ${( { total, tax, subtotal } ) => ( subtotal || total || tax ? '0' : '30px') };
 `;
 
 const LineItemTitleUI = styled.div`
@@ -196,7 +196,7 @@ const LineItemPriceUI = styled.span`
 `;
 
 const BundledDomainFreeUI = styled.div`
-	color: ${props => props.theme.colors.success};
+	color: ${( props ) => props.theme.colors.success};
 `;
 
 const ProductTitleUI = styled.div`
@@ -210,7 +210,7 @@ const DeleteButton = styled( Button )`
 	top: 10px;
 
 	:hover rect {
-		fill: ${props => props.theme.colors.error};
+		fill: ${( props ) => props.theme.colors.error};
 	}
 `;
 
@@ -274,7 +274,7 @@ export function WPOrderReviewLineItems( {
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
+			{ items.map( ( item ) => (
 				<WPOrderReviewListItems key={ item.id }>
 					<LineItemUI
 						isSummaryVisible={ isSummaryVisible }

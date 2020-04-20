@@ -10,4 +10,4 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param   {object} state   Global state tree
  * @returns {object}         Site embeds
  */
-export default state => getSiteEmbeds( state, getSelectedSiteId( state ) );
+export default ( state ) => getSiteEmbeds( state, getSelectedSiteId( state ) );

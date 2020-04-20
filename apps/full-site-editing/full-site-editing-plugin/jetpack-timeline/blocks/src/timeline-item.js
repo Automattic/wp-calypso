@@ -35,7 +35,7 @@ export function registerTimelineItemBlock() {
 							colorSettings={ [
 								{
 									value: attributes.background,
-									onChange: background => setAttributes( { background } ),
+									onChange: ( background ) => setAttributes( { background } ),
 									label: __( 'Background Color', 'full-site-editing' ),
 								},
 							] }

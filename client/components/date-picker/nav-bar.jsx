@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
-const handleMonthClick = ( onClick = noop ) => event => {
+const handleMonthClick = ( onClick = noop ) => ( event ) => {
 	event.preventDefault();
 	onClick();
 };

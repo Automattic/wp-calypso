@@ -12,7 +12,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, siteSelection, sites } from 'my-sites/controller';
 import { exportSite, guidedTransfer } from 'my-sites/exporter/controller';
 
-export default function() {
+export default function () {
 	page( '/export', siteSelection, navigation, sites, makeLayout, clientRender );
 
 	page(
@@ -38,7 +38,7 @@ export default function() {
 	}
 
 	// Redirect any other child routes to parent `/export`.
-	page( '/export/*/:site_id', context => {
+	page( '/export/*/:site_id', ( context ) => {
 		const site_id = get( context, 'params.site_id' );
 		return page.redirect( `/export/${ site_id }` );
 	} );

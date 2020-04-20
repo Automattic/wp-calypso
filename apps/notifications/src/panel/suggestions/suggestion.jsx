@@ -1,6 +1,6 @@
 import React from 'react';
 
-var getRegExpFor = function( type, textToHighlight ) {
+var getRegExpFor = function ( type, textToHighlight ) {
 	var expressions = {};
 	expressions[ 'username' ] = '(^' + textToHighlight + ')(\\w*)\\s*';
 	expressions[ 'fullname' ] = '(^.*?)(\\b' + textToHighlight + ')(.*)';

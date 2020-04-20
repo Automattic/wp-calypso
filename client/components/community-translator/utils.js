@@ -88,12 +88,12 @@ export function getSingleTranslationData(
 	const glotPressUrl = `${ apiBaseUrl }/translations/-query-by-originals`;
 	const postFormData = [
 		`project=${ project }`,
-		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
-		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
+		`&locale_slug=${ locale.parentLangSlug || locale.langSlug}`,
+		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default'}`,
 		`&original_strings=${ encodeURIComponent( JSON.stringify( [ originalStringData ] ) ) }`,
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressDataEntries =>
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressDataEntries ) =>
 		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
 	);
 }
@@ -120,16 +120,16 @@ export function submitTranslation(
 	const glotPressUrl = `${ apiBaseUrl }/translations/-new`;
 	const postFormData = [
 		`project=${ project }`,
-		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
-		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
+		`&locale_slug=${ locale.parentLangSlug || locale.langSlug}`,
+		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default'}`,
 		...Object.keys( translationObject ).map(
-			key =>
+			( key ) =>
 				translationObject[ key ] &&
 				`&translation[${ originalId }][]=${ encodeURIComponent( translationObject[ key ] ) }`
 		),
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressData =>
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressData ) =>
 		normalizeDetailsFromTranslationData( glotPressData )
 	);
 }

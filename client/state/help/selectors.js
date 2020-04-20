@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
 import { getSite } from 'state/sites/selectors';
 
-export const getHelpSiteId = state => state.help.selectedSiteId;
+export const getHelpSiteId = ( state ) => state.help.selectedSiteId;
 
 /*
  * Returns the site the customer wishes to request help for. Returns in order of preference:
@@ -20,7 +20,7 @@ export const getHelpSiteId = state => state.help.selectedSiteId;
  * @param state - global state
  * @returns {?object} the help site or null
  */
-export const getHelpSelectedSite = state => {
+export const getHelpSelectedSite = ( state ) => {
 	const siteId = getHelpSiteId( state ) || getSelectedOrPrimarySiteId( state );
 	const helpSite = getSite( state, siteId );
 	if ( helpSite ) {
@@ -40,7 +40,7 @@ export const getHelpSelectedSite = state => {
  * @param state - global state
  * @returns {?object} the help site or null
  */
-export const getHelpSelectedSiteId = state => {
+export const getHelpSelectedSiteId = ( state ) => {
 	const site = getHelpSelectedSite( state );
 	return get( site, 'ID', null );
 };

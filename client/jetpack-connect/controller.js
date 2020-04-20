@@ -66,7 +66,7 @@ const analyticsPageTitleByType = {
 	scan: 'Jetpack Scan',
 };
 
-const removeSidebar = context => context.store.dispatch( hideSidebar() );
+const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -115,7 +115,9 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
+			some( MOBILE_APP_REDIRECT_URL_WHITELIST, ( pattern ) =>
+				pattern.test( query.mobile_redirect )
+			)
 		) {
 			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
 			persistMobileRedirect( query.mobile_redirect );

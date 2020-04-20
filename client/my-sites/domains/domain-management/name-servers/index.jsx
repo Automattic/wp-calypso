@@ -203,7 +203,7 @@ class NameServers extends React.Component {
 
 		this.setState( { formSubmitting: true } );
 
-		updateNameservers( selectedDomainName, nameservers, error => {
+		updateNameservers( selectedDomainName, nameservers, ( error ) => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
@@ -277,7 +277,7 @@ class NameServers extends React.Component {
 		return getSelectedDomain( this.props ).isPendingIcannVerification;
 	}
 
-	handleChange = nameservers => {
+	handleChange = ( nameservers ) => {
 		this.setState( { nameservers } );
 	};
 
@@ -305,7 +305,7 @@ class NameServers extends React.Component {
 	}
 }
 
-const customNameServersLearnMoreClick = domainName =>
+const customNameServersLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

@@ -6,7 +6,7 @@ import Dispatcher from 'dispatcher';
 let reduxStore = null;
 
 let resolveReduxStorePromise;
-const reduxStorePromise = new Promise( resolve => {
+const reduxStorePromise = new Promise( ( resolve ) => {
 	resolveReduxStorePromise = resolve;
 } );
 

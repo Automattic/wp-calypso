@@ -108,7 +108,7 @@ class StatsAllTime extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {};
 	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};

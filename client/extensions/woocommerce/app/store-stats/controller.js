@@ -25,7 +25,7 @@ function isValidParameters( context ) {
 	if ( config.isEnabled( 'woocommerce/extension-referrers' ) ) {
 		validParameters.type.push( 'referrers' );
 	}
-	return Object.keys( validParameters ).every( param =>
+	return Object.keys( validParameters ).every( ( param ) =>
 		includes( validParameters[ param ], context.params[ param ] )
 	);
 }

@@ -16,17 +16,14 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function deletePost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_DELETE,
 			siteId,
 			postId,
 		} );
 
-		const deleteResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
+		const deleteResult = wpcom.site( siteId ).post( postId ).delete();
 
 		deleteResult.then(
 			() => {
@@ -36,7 +33,7 @@ export function deletePost( siteId, postId ) {
 					postId,
 				} );
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: POST_DELETE_FAILURE,
 					siteId,

@@ -6,7 +6,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_CAPABILITIES_REQUEST, REWIND_CAPABILITIES_UPDATE } from 'state/action-types';
 
-const fetchCapabilities = action =>
+const fetchCapabilities = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',

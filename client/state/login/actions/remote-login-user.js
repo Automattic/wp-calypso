@@ -4,7 +4,7 @@
  * @param {number} ms amount of milliseconds till reject the promise
  * @returns {Promise} a promise that will be rejected after ms milliseconds
  */
-const createTimingOutPromise = ms =>
+const createTimingOutPromise = ( ms ) =>
 	new Promise( ( _, reject ) => {
 		setTimeout( () => reject( new Error( `timeout of ${ ms } reached` ) ), ms );
 	} );
@@ -18,7 +18,7 @@ const createTimingOutPromise = ms =>
  */
 const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
 	let iframe;
-	const iframeLoadPromise = new Promise( resolve => {
+	const iframeLoadPromise = new Promise( ( resolve ) => {
 		iframe = document.createElement( 'iframe' );
 		iframe.style.display = 'none';
 		iframe.setAttribute( 'scrolling', 'no' );
@@ -43,11 +43,11 @@ const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
  * @param  {Array}   loginLinks     Array of urls
  * @returns {Promise}                A promise that always resolve
  */
-export const remoteLoginUser = loginLinks => {
+export const remoteLoginUser = ( loginLinks ) => {
 	return Promise.all(
 		loginLinks
-			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+			.map( ( loginLink ) => makeRemoteLoginRequest( loginLink ) )
 			// make sure we continue even when a remote login fails
-			.map( promise => promise.catch( () => {} ) )
+			.map( ( promise ) => promise.catch( () => {} ) )
 	);
 };

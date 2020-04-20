@@ -62,7 +62,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = unary(
-	partialRight( map, p =>
+	partialRight( map, ( p ) =>
 		Object.assign(
 			{},
 			{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
@@ -95,7 +95,7 @@ export const nativeToRaw = unary(
 			},
 			[]
 		),
-		partialRight( map, p => ( {
+		partialRight( map, ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: get( p, 'value', snakeCase( p.type ) ),
 		} ) )

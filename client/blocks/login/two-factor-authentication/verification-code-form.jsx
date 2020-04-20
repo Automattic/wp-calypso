@@ -68,14 +68,14 @@ class VerificationCodeForm extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
 		// Resets the verification code input field when switching pages
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.setState( { twoStepCode: '' } );
 		}
 	};
 
-	onChangeField = event => {
+	onChangeField = ( event ) => {
 		const { name, value = '' } = event.target;
 
 		this.props.formUpdate();
@@ -83,7 +83,7 @@ class VerificationCodeForm extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
-	onSubmitForm = event => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		const { onSuccess, twoFactorAuthType } = this.props;
@@ -100,7 +100,7 @@ class VerificationCodeForm extends Component {
 
 				onSuccess();
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.setState( { isDisabled: false } );
 
 				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
@@ -110,7 +110,7 @@ class VerificationCodeForm extends Component {
 			} );
 	};
 
-	saveRef = input => {
+	saveRef = ( input ) => {
 		this.input = input;
 	};
 
@@ -188,7 +188,7 @@ class VerificationCodeForm extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 	} ),
 	{

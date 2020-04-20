@@ -26,7 +26,7 @@ const EXCLUDE_PLACEHOLDER_CLASSES = [
 	'stats-page-placeholder__content',
 ];
 
-const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map( clazz => `[class*='${ clazz }']` ).join(
+const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map( ( clazz ) => `[class*='${ clazz }']` ).join(
 	', '
 );
 
@@ -56,7 +56,10 @@ function processMutations( mutations ) {
 	// check each node for:
 	// a. whether it's still in the DOM at all, and if so:
 	// b. whether it still has a placeholder class
-	remove( activePlaceholders, node => ! OBSERVE_ROOT.contains( node ) || ! isPlaceholder( node ) );
+	remove(
+		activePlaceholders,
+		( node ) => ! OBSERVE_ROOT.contains( node ) || ! isPlaceholder( node )
+	);
 
 	checkActivePlaceholders();
 }
@@ -132,8 +135,8 @@ function isPlaceholder( node ) {
 	return (
 		className &&
 		className.indexOf &&
-		PLACEHOLDER_CLASSES.some( clazz => className.indexOf( clazz ) >= 0 ) &&
-		! EXCLUDE_PLACEHOLDER_CLASSES.some( clazz => className.indexOf( clazz ) >= 0 )
+		PLACEHOLDER_CLASSES.some( ( clazz ) => className.indexOf( clazz ) >= 0 ) &&
+		! EXCLUDE_PLACEHOLDER_CLASSES.some( ( clazz ) => className.indexOf( clazz ) >= 0 )
 	);
 }
 
@@ -149,7 +152,7 @@ function recordPlaceholders( mutation ) {
 		return;
 	}
 
-	each( nodes, function( node ) {
+	each( nodes, function ( node ) {
 		if ( isPlaceholder( node ) ) {
 			recordPlaceholderNode( node );
 		}
@@ -188,14 +191,14 @@ export function installPerfmonPageHandlers() {
 		return;
 	}
 
-	page( function( context, next ) {
+	page( function ( context, next ) {
 		navigationCount++;
 		navigationStartTime = window.performance.now();
 		debug( 'entering page navigation', context.path );
 		next();
 	} );
 
-	page.exit( function( context, next ) {
+	page.exit( function ( context, next ) {
 		debug( 'exiting page navigation', context.path );
 		stopMutationObserver();
 		next();

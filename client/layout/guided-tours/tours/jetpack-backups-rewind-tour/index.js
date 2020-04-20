@@ -28,7 +28,7 @@ function whenWeCanAutoconfigure( state ) {
 	const siteId = getSelectedSiteId( state );
 	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
 
-	return canAutoconfigure || credentials.some( c => c.type === 'auto' );
+	return canAutoconfigure || credentials.some( ( c ) => c.type === 'auto' );
 }
 
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
@@ -49,7 +49,7 @@ const ContinueToLastStep = ( { siteHasCredentials } ) => (
 		hidden
 	/>
 );
-const ConnectedContinueToLastStep = connect( state => ( {
+const ConnectedContinueToLastStep = connect( ( state ) => ( {
 	siteHasCredentials:
 		getJetpackCredentialsUpdateStatus( state, getSelectedSiteId( state ) ) === 'success',
 } ) )( ContinueToLastStep );

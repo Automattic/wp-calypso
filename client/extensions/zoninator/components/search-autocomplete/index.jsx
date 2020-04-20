@@ -29,7 +29,7 @@ class SearchAutocomplete extends Component {
 		searchIsOpen: false,
 	};
 
-	handleSearch = term => {
+	handleSearch = ( term ) => {
 		if ( this.state.search === term ) {
 			return;
 		}
@@ -47,7 +47,7 @@ class SearchAutocomplete extends Component {
 
 	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 		}
@@ -55,7 +55,7 @@ class SearchAutocomplete extends Component {
 		this.suggestionsRef.current && this.suggestionsRef.current.handleKeyEvent( event );
 	};
 
-	handleSelect = item => {
+	handleSelect = ( item ) => {
 		this.searchRef.current.clear();
 		this.props.onSelect( item );
 	};

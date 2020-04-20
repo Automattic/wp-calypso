@@ -70,7 +70,7 @@ class MasterbarItemNotifications extends Component {
 		}
 	};
 
-	toggleNotesFrame = event => {
+	toggleNotesFrame = ( event ) => {
 		if ( event ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
@@ -87,7 +87,7 @@ class MasterbarItemNotifications extends Component {
 	 *
 	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = currentUnseenCount => {
+	setNotesIndicator = ( currentUnseenCount ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -145,7 +145,7 @@ class MasterbarItemNotifications extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),

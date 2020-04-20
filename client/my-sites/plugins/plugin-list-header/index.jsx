@@ -105,11 +105,13 @@ export class PluginsListHeader extends PureComponent {
 	};
 
 	isJetpackSelected() {
-		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+		return this.props.selected.some( ( plugin ) => 'jetpack' === plugin.slug );
 	}
 
 	canUpdatePlugins() {
-		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+		return this.props.selected.some( ( plugin ) =>
+			plugin.sites.some( ( site ) => site.canUpdateFiles )
+		);
 	}
 
 	needsRemoveButton() {

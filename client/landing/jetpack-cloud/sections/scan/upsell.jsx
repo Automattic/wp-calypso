@@ -50,7 +50,7 @@ function ScanUpsellPage( props ) {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

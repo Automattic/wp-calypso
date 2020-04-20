@@ -23,7 +23,7 @@ export default function createContactValidationCallback( {
 		domainNames,
 		applyDomainContactValidationResults
 	) {
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			const { contact_information, domain_names } = prepareDomainContactValidationRequest(
 				domainNames,
 				contactDetails

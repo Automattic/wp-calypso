@@ -9,7 +9,7 @@ import { filter } from 'lodash';
  */
 
 function imageHasMinWidthAndHeight( width, height ) {
-	return function( image ) {
+	return function ( image ) {
 		return image.width >= width && image.height >= height;
 	};
 }

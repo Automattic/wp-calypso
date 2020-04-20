@@ -67,7 +67,7 @@ class QueryInlineHelpSupportTypes extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		shouldStartHappychatConnection:
 			! isRequestingSites( state ) && !! getHelpSelectedSiteId( state ),
 		ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),

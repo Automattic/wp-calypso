@@ -46,10 +46,10 @@ export class SiteStyleStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	handleStyleOptionChange = event =>
+	handleStyleOptionChange = ( event ) =>
 		this.props.setSiteStyle( this.getSelectedStyleDataById( event.currentTarget.value ).id );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
 		this.submitSiteStyle( selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label );
@@ -143,7 +143,7 @@ export class SiteStyleStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteStyle: getSiteStyle( state ),
 		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
 	} ),

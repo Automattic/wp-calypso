@@ -28,7 +28,7 @@ export class HelpSearch extends React.PureComponent {
 		searchQuery: '',
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		this.setState( {
 			searchQuery,
 		} );
@@ -134,7 +134,7 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		helpLinks: getHelpLinks( state ),
 	} ),
 	{

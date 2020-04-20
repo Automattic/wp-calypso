@@ -24,7 +24,7 @@ class SectionHeaderExample extends PureComponent {
 					<Button compact>{ translate( 'Manage' ) }</Button>
 					<Button
 						compact
-						onClick={ function() {
+						onClick={ function () {
 							alert( translate( 'Clicked add button' ) );
 						} }
 					>

@@ -119,12 +119,12 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 			switch ( c ) {
 				case 'z':
 					// "DDD" is 1 based but "z" is 0 based
-					return `[${ momentDate.format( 'DDD' ) - 1 }]`;
+					return `[${ momentDate.format( 'DDD' ) - 1}]`;
 				case 't':
 					return `[${ momentDate.daysInMonth() }]`;
 				case 'L':
 					// 1 or 0
-					return `[${ momentDate.isLeapYear() | 0 }]`;
+					return `[${ momentDate.isLeapYear() | 0}]`;
 				case 'B':
 					const utcDate = momentDate.clone().utc();
 					const swatchTime =
@@ -132,7 +132,7 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 					return Math.floor( ( swatchTime * 1000 ) / 24 );
 				case 'I':
 					// 1 or 0
-					return `[${ momentDate.isDST() | 0 }]`;
+					return `[${ momentDate.isDST() | 0}]`;
 				case 'Z':
 					// Timezone offset in seconds
 					// E.g. "+0100" -> "3600"

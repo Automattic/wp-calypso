@@ -89,13 +89,13 @@ class ProductImageUploader extends Component {
 		);
 	}
 
-	buildFilesToUpload = images => {
+	buildFilesToUpload = ( images ) => {
 		const { site, errorNotice, translate } = this.props;
 		const maxUploadSize = ( site.options && site.options.max_upload_size ) || null;
 		const displayableFileSize = this.displayableFileSize( maxUploadSize );
 		const filesToUpload = [];
 
-		images.forEach( function( image ) {
+		images.forEach( function ( image ) {
 			if ( maxUploadSize && image.size > maxUploadSize ) {
 				errorNotice(
 					translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
@@ -118,7 +118,7 @@ class ProductImageUploader extends Component {
 		return filesToUpload;
 	};
 
-	onPick = files => {
+	onPick = ( files ) => {
 		const { site, multiple } = this.props;
 		const { onSelect, onUpload, onFinish } = this.props;
 
@@ -139,7 +139,7 @@ class ProductImageUploader extends Component {
 
 		onSelect( filesToUpload );
 
-		const transientIds = filesToUpload.map( file => {
+		const transientIds = filesToUpload.map( ( file ) => {
 			return file.ID;
 		} );
 
@@ -158,7 +158,7 @@ class ProductImageUploader extends Component {
 				}
 
 				if ( media ) {
-					const file = find( filesToUpload, f => f.ID === transientId );
+					const file = find( filesToUpload, ( f ) => f.ID === transientId );
 					if ( media.URL ) {
 						onUpload( {
 							ID: media.ID,
@@ -218,7 +218,7 @@ class ProductImageUploader extends Component {
 	}
 
 	renderChildren() {
-		return React.Children.map( this.props.children, function( child ) {
+		return React.Children.map( this.props.children, function ( child ) {
 			return <div>{ child }</div>;
 		} );
 	}

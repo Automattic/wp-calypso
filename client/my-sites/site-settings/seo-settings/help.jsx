@@ -73,7 +73,7 @@ const SeoSettingsHelpCard = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const hasAdvancedSEOFeature = hasFeature( state, siteId, FEATURE_ADVANCED_SEO );

@@ -86,7 +86,7 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 		label: <FreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <FreePurchaseSummary />,
-		getAriaLabel: localize => localize( 'Free' ),
+		getAriaLabel: ( localize ) => localize( 'Free' ),
 	};
 }
 
@@ -104,8 +104,12 @@ function FreePurchaseSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { beginFreeTransaction } = useDispatch( 'free-purchase' );
 	const [ items, total ] = useLineItems();
-	const transactionStatus = useSelect( select => select( 'free-purchase' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'free-purchase' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) =>
+		select( 'free-purchase' ).getTransactionStatus()
+	);
+	const transactionError = useSelect( ( select ) =>
+		select( 'free-purchase' ).getTransactionError()
+	);
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();

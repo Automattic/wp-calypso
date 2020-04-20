@@ -19,7 +19,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'ImageEditorToolbar', () => {
 	let defaultProps, wrapper;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		defaultProps = {
 			onShowNotice: sandbox.spy(),
 		};
@@ -30,12 +30,8 @@ describe( 'ImageEditorToolbar', () => {
 	} );
 
 	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {
-		expect(
-			wrapper
-				.find( '.image-editor__toolbar-button' )
-				.at( 1 )
-				.hasClass( 'is-disabled' )
-		).to.be.false;
+		expect( wrapper.find( '.image-editor__toolbar-button' ).at( 1 ).hasClass( 'is-disabled' ) ).to
+			.be.false;
 	} );
 
 	test(
@@ -43,12 +39,8 @@ describe( 'ImageEditorToolbar', () => {
 			'when image is smaller than minimum dimensions',
 		() => {
 			wrapper.setProps( { isAspectRatioDisabled: true } );
-			expect(
-				wrapper
-					.find( '.image-editor__toolbar-button' )
-					.at( 1 )
-					.hasClass( 'is-disabled' )
-			).to.be.true;
+			expect( wrapper.find( '.image-editor__toolbar-button' ).at( 1 ).hasClass( 'is-disabled' ) ).to
+				.be.true;
 		}
 	);
 

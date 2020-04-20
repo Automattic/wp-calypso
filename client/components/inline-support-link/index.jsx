@@ -97,7 +97,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 		supportLink,
 	} = ownProps;
 	return {
-		openDialog: event => {
+		openDialog: ( event ) => {
 			if ( ! supportPostId ) {
 				return;
 			}

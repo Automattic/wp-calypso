@@ -15,7 +15,7 @@ import { newPost } from 'lib/paths';
  * open new editor window with contents
  * @param  {string} postURL Editor URL for selected site
  */
-const pressThis = function( postURL ) {
+const pressThis = function ( postURL ) {
 	const doc = document;
 	const win = window;
 	const winGetSel = win.getSelection;
@@ -42,7 +42,7 @@ const pressThis = function( postURL ) {
 		encodeURIComponent( sel ) +
 		'&v=5';
 
-	const redirect = function() {
+	const redirect = function () {
 		if (
 			! win.open( url, 't', 'toolbar=0,resizable=1,scrollbars=1,status=1,width=660,height=570' )
 		) {

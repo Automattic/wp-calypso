@@ -24,7 +24,7 @@ let isShowing = true;
 let isVisible = document.visibilityState === 'visible';
 
 let store = { dispatch: () => {}, getState: () => {} };
-const customEnhancer = next => ( reducer, initialState ) =>
+const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
 const customMiddleware = {

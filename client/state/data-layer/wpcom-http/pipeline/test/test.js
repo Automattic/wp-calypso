@@ -20,14 +20,14 @@ const getSites = {
 };
 
 describe( '#processInboundChain', () => {
-	const aborter = inboundData => ( {
+	const aborter = ( inboundData ) => ( {
 		...inboundData,
 		failures: [],
 		shouldAbort: true,
 		successes: [],
 	} );
 
-	const responderDoubler = inboundData => ( {
+	const responderDoubler = ( inboundData ) => ( {
 		...inboundData,
 		failures: [ ...inboundData.failures, ...inboundData.failures ],
 		successes: [ ...inboundData.successes, ...inboundData.successes ],
@@ -88,12 +88,12 @@ describe( '#processInboundChain', () => {
 } );
 
 describe( '#processOutboundChain', () => {
-	const aborter = outboundData => ( {
+	const aborter = ( outboundData ) => ( {
 		...outboundData,
 		nextRequest: null,
 	} );
 
-	const pathDoubler = outboundData => {
+	const pathDoubler = ( outboundData ) => {
 		const { nextRequest } = outboundData;
 		const { path } = nextRequest;
 

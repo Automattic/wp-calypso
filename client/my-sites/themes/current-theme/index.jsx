@@ -43,7 +43,7 @@ class CurrentTheme extends Component {
 		currentTheme: PropTypes.object,
 	};
 
-	trackClick = event => trackClick( 'current theme', event );
+	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
 		const { currentTheme, currentThemeId, siteId, translate } = this.props,
@@ -52,7 +52,7 @@ class CurrentTheme extends Component {
 
 		const options = pickBy(
 			this.props.options,
-			option =>
+			( option ) =>
 				option.icon && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 

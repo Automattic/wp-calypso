@@ -170,7 +170,7 @@ const handler = ( dispatch, action, getState ) => {
 	}
 };
 
-export const libraryMiddleware = ( { dispatch, getState } ) => next => action => {
+export const libraryMiddleware = ( { dispatch, getState } ) => ( next ) => ( action ) => {
 	handler( dispatch, action, getState );
 
 	return next( action );

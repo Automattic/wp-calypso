@@ -64,7 +64,7 @@ export function WebPaymentBox( {
 	useEffect( () => {
 		setTaxPostalCode( debouncedPostalCode );
 	}, [ debouncedPostalCode ] );
-	const updatePostalCode = event => {
+	const updatePostalCode = ( event ) => {
 		const value = event.target.value;
 		if ( disablePostalCodeDebounce ) {
 			setTaxPostalCode( value );
@@ -287,7 +287,7 @@ function useStripePaymentRequest( {
 
 	// We have to memoize this to prevent re-creating the paymentRequest
 	const callback = useMemo(
-		() => paymentMethodResponse => {
+		() => ( paymentMethodResponse ) => {
 			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
 				is_renewal: isRenewal,
 			} );
@@ -309,7 +309,7 @@ function useStripePaymentRequest( {
 		debug( 'creating paymentRequest', paymentRequestOptions );
 		setCanMakePayment( false );
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			isSubscribed && setCanMakePayment( !! result );
 		} );
 		request.on( 'paymentmethod', callback );

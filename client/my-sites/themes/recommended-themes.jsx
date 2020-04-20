@@ -47,7 +47,7 @@ class RecommendedThemes extends React.Component {
 }
 
 const ConnectedRecommendedThemes = connect(
-	state => {
+	( state ) => {
 		return {
 			recommendedThemes: getRecommendedThemesSelector( state ),
 			isLoading: areRecommendedThemesLoading( state ),

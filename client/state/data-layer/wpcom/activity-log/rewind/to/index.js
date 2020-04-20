@@ -18,7 +18,7 @@ import { SchemaError } from 'lib/make-json-schema-parser';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	const restoreId = parseInt( data.restore_id, 10 );
 
 	if ( Number.isNaN( restoreId ) ) {
@@ -41,8 +41,8 @@ const requestRewind = ( action, payload ) =>
 		action
 	);
 
-const requestRestore = action => requestRewind( action, { types: action.args } );
-const requestClone = action => requestRewind( action, action.payload );
+const requestRestore = ( action ) => requestRewind( action, { types: action.args } );
+const requestClone = ( action ) => requestRewind( action, action.payload );
 
 export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	getRewindRestoreProgress( siteId, restoreId ),

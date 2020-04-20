@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} response API response
  * @returns {Array}           Array of embeds.
  */
-const fromApi = response => response.embeds || [];
+const fromApi = ( response ) => response.embeds || [];
 
 /**
  * Dispatches a request to fetch all embeds for a given site.
@@ -28,7 +28,7 @@ const fromApi = response => response.embeds || [];
  * @param   {object} action Redux action
  * @returns {object}        Dispatched http action
  */
-const requestEmbeds = action =>
+const requestEmbeds = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

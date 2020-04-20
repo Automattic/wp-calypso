@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {
 		dispatch( fetchSiteDomains( siteId ) );
 	}

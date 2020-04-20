@@ -5,7 +5,7 @@ import { cloneDeep, concat, find, isString, mergeWith, reduce, reject } from 'lo
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`
-	const newEdits = reject( edits, edit => find( nextEdits, { key: edit.key } ) );
+	const newEdits = reject( edits, ( edit ) => find( nextEdits, { key: edit.key } ) );
 	// append the new edits at the end
 	return concat( newEdits, nextEdits );
 }

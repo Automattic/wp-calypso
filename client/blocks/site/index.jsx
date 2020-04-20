@@ -62,19 +62,19 @@ class Site extends React.Component {
 		compact: PropTypes.bool,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event, this.props.site.ID );
 	};
 
-	onMouseEnter = event => {
+	onMouseEnter = ( event ) => {
 		this.props.onMouseEnter( event, this.props.site.ID );
 	};
 
-	onMouseLeave = event => {
+	onMouseLeave = ( event ) => {
 		this.props.onMouseLeave( event, this.props.site.ID );
 	};
 
-	onViewSiteClick = event => {
+	onViewSiteClick = ( event ) => {
 		const { isPreviewable, siteSlug } = this.props;
 
 		if ( ! isPreviewable ) {

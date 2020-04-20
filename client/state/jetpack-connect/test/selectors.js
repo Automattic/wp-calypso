@@ -461,7 +461,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getUserAlreadyConnected()', () => {
-		const makeUserAlreadyConnectedState = result => ( {
+		const makeUserAlreadyConnectedState = ( result ) => ( {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					userAlreadyConnected: result,

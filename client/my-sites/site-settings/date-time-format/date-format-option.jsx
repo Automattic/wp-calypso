@@ -27,7 +27,7 @@ export const DateFormatOption = ( {
 } ) => (
 	<FormFieldset>
 		<FormLabel>{ translate( 'Date Format' ) }</FormLabel>
-		{ defaultDateFormats.map( format => (
+		{ defaultDateFormats.map( ( format ) => (
 			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === dateFormat }

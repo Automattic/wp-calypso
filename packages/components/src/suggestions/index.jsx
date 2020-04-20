@@ -56,7 +56,7 @@ class Suggestions extends Component {
 
 	getSuggestionsCount = () => this.props.suggestions.length;
 
-	getOriginalIndexFromPosition = index =>
+	getOriginalIndexFromPosition = ( index ) =>
 		this.getCategories().reduce( ( foundIndex, category ) => {
 			if ( foundIndex !== -1 ) return foundIndex;
 
@@ -64,7 +64,7 @@ class Suggestions extends Component {
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
-	suggest = originalIndex =>
+	suggest = ( originalIndex ) =>
 		this.props.suggest( this.props.suggestions[ originalIndex ], originalIndex );
 
 	moveSelectionDown = () => {
@@ -87,12 +87,12 @@ class Suggestions extends Component {
 		this.changePosition( position );
 	};
 
-	changePosition = position =>
+	changePosition = ( position ) =>
 		this.setState( {
 			suggestionPosition: position,
 		} );
 
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
 		if ( this.getSuggestionsCount() === 0 ) {
 			return;
 		}
@@ -115,11 +115,11 @@ class Suggestions extends Component {
 		}
 	};
 
-	handleMouseDown = originalIndex => {
+	handleMouseDown = ( originalIndex ) => {
 		this.suggest( originalIndex );
 	};
 
-	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
+	handleMouseOver = ( suggestionPosition ) => this.setState( { suggestionPosition } );
 
 	getCategories() {
 		// We need to remember the original index of the suggestion according to the
@@ -131,7 +131,7 @@ class Suggestions extends Component {
 
 		const [ withCategory, withoutCategory ] = partition(
 			withOriginalIndex,
-			suggestion => !! suggestion.category
+			( suggestion ) => !! suggestion.category
 		);
 
 		// For all intents and purposes `groupBy` keeps the order stable
@@ -194,7 +194,7 @@ class Suggestions extends Component {
 								onMouseDown={ () => this.handleMouseDown( originalIndex ) }
 								onMouseOver={ () => this.handleMouseOver( index ) }
 								label={ label }
-								ref={ suggestion => {
+								ref={ ( suggestion ) => {
 									this.refsCollection[ 'suggestion_' + index ] = suggestion;
 								} }
 							/>

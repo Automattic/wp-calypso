@@ -22,7 +22,7 @@ import {
 
 describe( 'HappinessSupport', () => {
 	let wrapper;
-	const translate = content => `Translated: ${ content }`;
+	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
@@ -61,12 +61,7 @@ describe( 'HappinessSupport', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
-		expect(
-			wrapper
-				.find( 'Button' )
-				.last()
-				.prop( 'href' )
-		).to.equal( JETPACK_SUPPORT );
+		expect( wrapper.find( 'Button' ).last().prop( 'href' ) ).to.equal( JETPACK_SUPPORT );
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {

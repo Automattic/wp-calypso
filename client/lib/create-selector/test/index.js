@@ -14,7 +14,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'index', () => {
 	let selector, getSitePosts;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 		selector = sandbox.spy( ( state, siteId ) => {
 			return filter( state.posts, { site_ID: siteId } );
@@ -22,7 +22,7 @@ describe( 'index', () => {
 	} );
 
 	beforeAll( () => {
-		getSitePosts = createSelector( selector, state => state.posts );
+		getSitePosts = createSelector( selector, ( state ) => state.posts );
 	} );
 
 	beforeEach( () => {
@@ -165,7 +165,9 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept an array of dependent state values', () => {
-		const getSitePostsWithArrayDependants = createSelector( selector, state => [ state.posts ] );
+		const getSitePostsWithArrayDependants = createSelector( selector, ( state ) => [
+			state.posts,
+		] );
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -184,7 +186,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept an array of dependent selectors', () => {
-		const getPosts = state => state.posts;
+		const getPosts = ( state ) => state.posts;
 		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
 		const state = {
 			posts: {
@@ -266,7 +268,7 @@ describe( 'index', () => {
 	test( 'should accept an optional custom cache key generating function', () => {
 		const getSitePostsWithCustomGetCacheKey = createSelector(
 			selector,
-			state => state.posts,
+			( state ) => state.posts,
 			( state, siteId ) => `CUSTOM${ siteId }`
 		);
 

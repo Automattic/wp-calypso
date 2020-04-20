@@ -66,7 +66,7 @@ class CalendarCard extends Component {
 			let closestTimeOffset = Math.abs( closestTimestamp - targetTimestamp );
 
 			// Then look through all timestamps to find which one is the closest to the target
-			times.forEach( time => {
+			times.forEach( ( time ) => {
 				const offset = Math.abs( time - targetTimestamp );
 				if ( offset < closestTimeOffset ) {
 					closestTimestamp = time;
@@ -168,7 +168,7 @@ class CalendarCard extends Component {
 						onChange={ this.onChange }
 						value={ this.state.selectedTime }
 					>
-						{ times.map( time => (
+						{ times.map( ( time ) => (
 							<option value={ time } key={ time }>
 								{ this.withTimezone( time ).format( 'LT z' ) }
 							</option>

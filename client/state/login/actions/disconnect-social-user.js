@@ -22,7 +22,7 @@ import 'state/login/init';
  * @param  {string}   socialService The social service name
  * @returns {Function}               A thunk that can be dispatched
  */
-export const disconnectSocialUser = socialService => dispatch => {
+export const disconnectSocialUser = ( socialService ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -40,7 +40,7 @@ export const disconnectSocialUser = socialService => dispatch => {
 					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 				} );
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {

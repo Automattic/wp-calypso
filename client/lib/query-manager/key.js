@@ -65,7 +65,7 @@ export default class QueryKey {
 		// key ordering in the original object, to ensure that:
 		//
 		// QueryKey.stringify( { a: 1, b: 2 } ) === QueryKey.stringify( { b: 2, a: 1 } )
-		const stableQuery = sortBy( toPairs( prunedQuery ), pair => pair[ 0 ] );
+		const stableQuery = sortBy( toPairs( prunedQuery ), ( pair ) => pair[ 0 ] );
 
 		return JSON.stringify( stableQuery );
 	}

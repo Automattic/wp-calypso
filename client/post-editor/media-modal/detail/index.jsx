@@ -48,7 +48,7 @@ class EditorMediaModalDetailBase extends React.Component {
 	}
 
 	preloadImages = () => {
-		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function ( image ) {
 			const src = url( image, {
 				photon: this.props.site && ! this.props.site.is_private,
 			} );
@@ -57,7 +57,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		}, this );
 	};
 
-	incrementIndex = increment => {
+	incrementIndex = ( increment ) => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	};
 

@@ -63,12 +63,12 @@ export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 			const productEdits = getAllProductEdits( rootState, siteId );
 
 			productEdits.creates &&
-				productEdits.creates.forEach( product => {
+				productEdits.creates.forEach( ( product ) => {
 					dispatch( editProductRemoveCategory( siteId, product, category.id ) );
 				} );
 
 			productEdits.updates &&
-				productEdits.updates.forEach( product => {
+				productEdits.updates.forEach( ( product ) => {
 					dispatch( editProductRemoveCategory( siteId, product, category.id ) );
 				} );
 		}
@@ -80,7 +80,7 @@ export function handleProductActionListCreate( store, action ) {
 	const rootState = store.getState();
 	const siteId = getSelectedSiteId( rootState );
 	const onSuccess = ( dispatch, { updatedProductIds } ) => {
-		const products = Object.values( updatedProductIds ).map( productId =>
+		const products = Object.values( updatedProductIds ).map( ( productId ) =>
 			getProduct( store.getState(), productId )
 		);
 		if ( isFunction( successAction ) ) {
@@ -144,7 +144,7 @@ export function makeProductActionList(
 	};
 }
 
-const categoryCreated = actionList => ( dispatch, getState, { sentData, receivedData } ) => {
+const categoryCreated = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const categoryIdMapping = {
 		...actionList.categoryIdMapping,
 		[ sentData.id.placeholder ]: receivedData.id,
@@ -171,7 +171,7 @@ export function makeProductCategorySteps( rootState, siteId, productEdits ) {
 	const newCategoryIds = getNewCategoryIdsForEdits( [ ...creates, ...updates ] );
 
 	// Construct a step for each new category to be created.
-	const createSteps = newCategoryIds.map( categoryId => {
+	const createSteps = newCategoryIds.map( ( categoryId ) => {
 		const category = find( categoryEdits.creates, { id: categoryId } );
 
 		return {
@@ -194,7 +194,7 @@ export function makeProductCategorySteps( rootState, siteId, productEdits ) {
 
 function getNewCategoryIdsForEdits( edits ) {
 	return edits.reduce( ( categoryIds, product ) => {
-		return getCategoryIdsForProduct( product ).filter( id => {
+		return getCategoryIdsForProduct( product ).filter( ( id ) => {
 			return isObject( id ) && categoryIds.indexOf( id ) === -1;
 		} );
 	}, [] );
@@ -203,12 +203,12 @@ function getNewCategoryIdsForEdits( edits ) {
 function getCategoryIdsForProduct( product ) {
 	const categories = product.categories || [];
 
-	return categories.map( category => {
+	return categories.map( ( category ) => {
 		return category.id;
 	} );
 }
 
-const variationSuccess = ( actionList, productId ) => dispatch => {
+const variationSuccess = ( actionList, productId ) => ( dispatch ) => {
 	const productIds = ( actionList.updatedProductIds && [ ...actionList.updatedProductIds ] ) || [];
 	productIds.push( productId );
 
@@ -244,7 +244,7 @@ const productSuccess = ( actionList, type ) => (
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
-const productFailure = actionList => ( dispatch, getState, { error } ) => {
+const productFailure = ( actionList ) => ( dispatch, getState, { error } ) => {
 	const newActionList = {
 		...actionList,
 		productError: error,
@@ -263,7 +263,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 
 	if ( productEdits.creates ) {
 		// TODO: Consider making these parallel actions.
-		createSteps = productEdits.creates.map( product => {
+		createSteps = productEdits.creates.map( ( product ) => {
 			return {
 				description: translate( 'Creating product' ),
 				onStep: ( dispatch, actionList ) => {
@@ -284,7 +284,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 
 	if ( productEdits.updates ) {
 		updateSteps = compact(
-			productEdits.updates.map( product => {
+			productEdits.updates.map( ( product ) => {
 				// TODO: When we no longer have to edit a product just to set
 				// the currently editing id, remove this.
 				if ( isEqual( { id: product.id }, product ) ) {
@@ -317,7 +317,7 @@ function getCorrectedProduct( product, categoryIdMapping ) {
 	const { categories } = product;
 
 	if ( categories ) {
-		const newCategories = categories.map( category =>
+		const newCategories = categories.map( ( category ) =>
 			getCorrectedCategory( category, categoryIdMapping )
 		);
 
@@ -352,13 +352,13 @@ export function makeProductVariationSteps( rootState, siteId, productEdits, vari
 	let variationDeletes = [];
 
 	variationEdits.map( ( { productId, creates, updates, deletes } ) => {
-		variationCreates = ( creates || [] ).map( variation => {
+		variationCreates = ( creates || [] ).map( ( variation ) => {
 			return variationCreateStep( siteId, productId, variation );
 		} );
-		variationUpdates = ( updates || [] ).map( variation => {
+		variationUpdates = ( updates || [] ).map( ( variation ) => {
 			return variationUpdateStep( siteId, productId, variation );
 		} );
-		variationDeletes = ( deletes || [] ).map( variationId => {
+		variationDeletes = ( deletes || [] ).map( ( variationId ) => {
 			return variationDeleteStep( siteId, productId, variationId );
 		} );
 	} );

@@ -20,7 +20,7 @@ import './style.scss';
 function GSuiteUserItem( props ) {
 	const translate = useTranslate();
 	const [ dialogVisible, setDialogVisible ] = useState( false );
-	const onFixClickHandler = e => {
+	const onFixClickHandler = ( e ) => {
 		e.preventDefault();
 		setDialogVisible( true );
 	};

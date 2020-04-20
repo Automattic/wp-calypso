@@ -82,7 +82,7 @@ const Followers = localize(
 						) }
 					</p>
 				</div>,
-				accepted => {
+				( accepted ) => {
 					if ( accepted ) {
 						gaRecordEvent(
 							'People',
@@ -103,7 +103,7 @@ const Followers = localize(
 			);
 		}
 
-		renderFollower = follower => {
+		renderFollower = ( follower ) => {
 			const removeFollower = () => {
 				this.removeFollower( follower );
 			};
@@ -120,7 +120,7 @@ const Followers = localize(
 			);
 		};
 
-		getFollowerRef = follower => {
+		getFollowerRef = ( follower ) => {
 			return 'follower-' + follower.ID;
 		};
 
@@ -280,7 +280,7 @@ const Followers = localize(
 	}
 );
 
-const FollowersList = props => {
+const FollowersList = ( props ) => {
 	let DataComponent;
 	const fetchOptions = {
 		max: 100,

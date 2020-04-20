@@ -14,7 +14,7 @@ function isWpcomDefaults( nameservers ) {
 		return false;
 	}
 
-	return every( nameservers, nameserver => {
+	return every( nameservers, ( nameserver ) => {
 		return /^ns[1-4]\.wordpress\.com$/i.test( nameserver );
 	} );
 }

@@ -71,7 +71,7 @@ export function registerTimelineBlock() {
 				},
 			],
 		},
-		edit: props => {
+		edit: ( props ) => {
 			const { clientId } = props;
 
 			const addItem = () => {

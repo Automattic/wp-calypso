@@ -21,7 +21,7 @@ const getCallee = require( '../util/get-callee' );
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	function isAcceptableLiteralNode( node ) {
 		if ( 'BinaryExpression' === node.type ) {
 			return (
@@ -41,7 +41,7 @@ const rule = ( module.exports = function( context ) {
 	}
 
 	function validateOptions( options ) {
-		return options.properties.every( function( property ) {
+		return options.properties.every( function ( property ) {
 			const key = property.key.name;
 
 			// `options.original` can be a string value to be validated in this
@@ -64,12 +64,12 @@ const rule = ( module.exports = function( context ) {
 	}
 
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg, i ) {
+			node.arguments.forEach( function ( arg, i ) {
 				const isLastArgument = i === node.arguments.length - 1;
 
 				// Ignore last argument in multi-argument translate call, which

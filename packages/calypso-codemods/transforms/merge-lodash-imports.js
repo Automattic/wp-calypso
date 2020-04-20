@@ -34,11 +34,11 @@ export default function transformer( file, api ) {
 		return file.source;
 	}
 
-	sourceDecs.forEach( dec => {
+	sourceDecs.forEach( ( dec ) => {
 		decs.push( dec );
 		j( dec )
 			.find( j.ImportSpecifier )
-			.forEach( spec => {
+			.forEach( ( spec ) => {
 				const local = spec.value.local.name;
 				const name = spec.value.imported.name;
 
@@ -52,7 +52,7 @@ export default function transformer( file, api ) {
 
 	// Insert new statement above first existing lodash import
 	if ( decs.length ) {
-		const newSpecs = Array.from( lodash ).map( name =>
+		const newSpecs = Array.from( lodash ).map( ( name ) =>
 			j.importSpecifier( j.identifier( name ), j.identifier( name ) )
 		);
 
@@ -71,7 +71,7 @@ export default function transformer( file, api ) {
 			}
 
 			// add remaining renames underneath
-			locals.forEach( local => {
+			locals.forEach( ( local ) => {
 				const rename = j.variableDeclaration( 'const', [
 					j.variableDeclarator( j.identifier( local ), j.identifier( topName ) ),
 				] );
@@ -87,7 +87,7 @@ export default function transformer( file, api ) {
 	}
 
 	// remove old declarations
-	decs.forEach( dec => j( dec ).remove() );
+	decs.forEach( ( dec ) => j( dec ).remove() );
 
 	return source.toSource();
 }

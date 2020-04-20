@@ -27,7 +27,7 @@ describe( 'makeJsonSchemaParser', () => {
 	} );
 
 	test( 'should return the result of transformation', () => {
-		const transformer = a => a + 1;
+		const transformer = ( a ) => a + 1;
 		const parser = makeJsonSchemaParser( { type: 'integer' }, transformer );
 		expect( parser( 0 ) ).toBe( 1 );
 	} );

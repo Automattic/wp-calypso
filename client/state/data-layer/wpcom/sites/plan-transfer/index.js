@@ -14,7 +14,7 @@ import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const noticeOptions = siteId => ( {
+const noticeOptions = ( siteId ) => ( {
 	duration: 8000,
 	id: `sites-plan-transfer-notice-${ siteId }`,
 } );
@@ -25,7 +25,7 @@ const noticeOptions = siteId => ( {
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestPlanOwnershipTransfer = action =>
+export const requestPlanOwnershipTransfer = ( action ) =>
 	http(
 		{
 			apiVersion: '1',

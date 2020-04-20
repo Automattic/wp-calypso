@@ -9,7 +9,7 @@ import { parsePatch } from 'diff';
  */
 import './style.scss';
 
-const decompose = path => {
+const decompose = ( path ) => {
 	const lastSlash = path.lastIndexOf( '/' );
 
 	return lastSlash > -1 ? [ path.slice( 0, lastSlash ), path.slice( lastSlash ) ] : [ '', path ];

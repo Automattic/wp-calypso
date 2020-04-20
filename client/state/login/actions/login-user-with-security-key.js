@@ -34,7 +34,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 		...loginParams,
 		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			const parameters = get( response, 'body.data', [] );
 			const twoStepNonce = get( parameters, 'two_step_nonce' );
 
@@ -43,7 +43,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			}
 			return webauthn_auth( { publicKey: parameters } );
 		} )
-		.then( assertion => {
+		.then( ( assertion ) => {
 			const response = assertion.response;
 			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
 				delete response.userHandle;
@@ -55,12 +55,12 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				remember_me: true,
 			} );
 		} )
-		.then( response => {
+		.then( ( response ) => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
 			if ( twoStepNonce ) {

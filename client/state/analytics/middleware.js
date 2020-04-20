@@ -34,7 +34,7 @@ const pageViewServices = {
 	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
-const loadTrackingTool = trackingTool => {
+const loadTrackingTool = ( trackingTool ) => {
 	if ( trackingTool === 'HotJar' ) {
 		addHotJarScript();
 	}
@@ -42,7 +42,7 @@ const loadTrackingTool = trackingTool => {
 
 const statBump = ( { group, name } ) => bumpStat( group, name );
 
-const dispatcher = action => {
+const dispatcher = ( action ) => {
 	const analyticsMeta = action.meta.analytics;
 	analyticsMeta.forEach( ( { type, payload } ) => {
 		const { service = 'default', ...params } = payload;
@@ -60,7 +60,7 @@ const dispatcher = action => {
 	} );
 };
 
-export const analyticsMiddleware = () => next => action => {
+export const analyticsMiddleware = () => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case ANALYTICS_TRACKING_ON:
 			loadTrackingTool( action.trackingTool );

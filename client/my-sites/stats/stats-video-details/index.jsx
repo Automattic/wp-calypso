@@ -22,7 +22,7 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
-const StatModuleVideoDetails = props => {
+const StatModuleVideoDetails = ( props ) => {
 	const { data, query, requesting, siteId, translate } = props;
 	const isLoading = requesting && ! data;
 

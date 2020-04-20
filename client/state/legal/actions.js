@@ -8,7 +8,7 @@ export const requestLegalData = () => ( {
 	type: LEGAL_REQUEST,
 } );
 
-export const setLegalData = legalData => ( {
+export const setLegalData = ( legalData ) => ( {
 	type: LEGAL_SET,
 	legalData,
 } );

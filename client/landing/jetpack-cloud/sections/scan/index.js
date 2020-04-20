@@ -16,7 +16,7 @@ import {
 	scanHistory,
 } from 'landing/jetpack-cloud/sections/scan/controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
 		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
 		page(

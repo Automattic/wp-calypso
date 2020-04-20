@@ -43,7 +43,7 @@ export class PlanPrice extends Component {
 			return null;
 		}
 
-		const priceRange = rawPriceRange.map( item => {
+		const priceRange = rawPriceRange.map( ( item ) => {
 			return {
 				price: getCurrencyObject( item, currencyCode ),
 				raw: item,
@@ -59,7 +59,7 @@ export class PlanPrice extends Component {
 			'plan-price__currency-symbol-plan-step-test': isEligibleForPlanStepTest,
 		} );
 
-		const renderPrice = priceObj => {
+		const renderPrice = ( priceObj ) => {
 			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
 			if ( fraction ) {
 				return `${ priceObj.price.integer }${ fraction }`;
@@ -84,7 +84,7 @@ export class PlanPrice extends Component {
 			);
 		}
 
-		const renderPriceHtml = priceObj => {
+		const renderPriceHtml = ( priceObj ) => {
 			return (
 				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>

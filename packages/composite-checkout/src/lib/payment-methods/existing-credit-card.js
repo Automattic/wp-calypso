@@ -209,16 +209,16 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
-	const transactionStatus = useSelect( select =>
+	const transactionStatus = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
-	const transactionError = useSelect( select =>
+	const transactionError = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionError()
 	);
-	const transactionAuthData = useSelect( select =>
+	const transactionAuthData = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionAuthData()
 	);
-	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
+	const redirectUrl = useSelect( ( select ) => select( `existing-card-${ id }` ).getRedirectUrl() );
 	const { beginCardTransaction, setTransactionComplete, resetTransaction } = useDispatch(
 		`existing-card-${ id }`
 	);
@@ -264,11 +264,11 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} )
-				.then( authenticationResponse => {
+				.then( ( authenticationResponse ) => {
 					debug( 'auth is complete', authenticationResponse );
 					isSubscribed && setTransactionComplete( authenticationResponse );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					debug( 'showing error for auth', error );
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )

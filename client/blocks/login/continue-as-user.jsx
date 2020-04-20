@@ -91,7 +91,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
 } ) )( ContinueAsUser );

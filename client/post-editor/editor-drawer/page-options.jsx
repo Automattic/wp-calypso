@@ -36,7 +36,7 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	);
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );

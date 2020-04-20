@@ -33,9 +33,7 @@ class PostTrendsWeek extends Component {
 		const { month, startDate, streakData, max, moment, userLocale } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
-			const dayDate = moment( startDate )
-				.locale( 'en' )
-				.add( i, 'day' );
+			const dayDate = moment( startDate ).locale( 'en' ).add( i, 'day' );
 			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
 			const classNames = [];
 			let level = Math.ceil( ( postCount / max ) * 4 );
@@ -73,6 +71,6 @@ class PostTrendsWeek extends Component {
 	}
 }
 
-export default connect( state => ( { userLocale: getCurrentUserLocale( state ) } ) )(
+export default connect( ( state ) => ( { userLocale: getCurrentUserLocale( state ) } ) )(
 	localize( withLocalizedMoment( PostTrendsWeek ) )
 );

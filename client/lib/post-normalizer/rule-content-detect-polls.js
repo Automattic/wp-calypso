@@ -28,7 +28,7 @@ export default function detectPolls( post, dom ) {
 	// which contains the information we need, and replace it with a paragraph.
 	const noscripts = dom.querySelectorAll( 'noscript' );
 
-	forEach( noscripts, noscript => {
+	forEach( noscripts, ( noscript ) => {
 		if ( ! noscript.firstChild ) {
 			return;
 		}

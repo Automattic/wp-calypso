@@ -111,14 +111,14 @@ class PluginsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const plugins = getPlugins( state, siteId );
 		const isRequesting = isRequestingPlugins( state, siteId );
 
 		return {
 			isRequesting,
-			plugins: mapValues( plugins, plugin => ( {
+			plugins: mapValues( plugins, ( plugin ) => ( {
 				...plugin,
 				toggling: isTogglingPlugin( state, siteId, plugin.key ),
 			} ) ),
@@ -127,7 +127,7 @@ const connectComponent = connect(
 	{ togglePlugin }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'plugin_list' ] );
 };
 

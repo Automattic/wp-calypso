@@ -110,7 +110,7 @@ class MasterbarLoggedIn extends React.Component {
 		preload( 'me' );
 	};
 
-	isActive = section => {
+	isActive = ( section ) => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
@@ -228,7 +228,7 @@ class MasterbarLoggedIn extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );

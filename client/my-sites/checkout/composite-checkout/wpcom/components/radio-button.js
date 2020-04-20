@@ -81,13 +81,13 @@ const RadioButtonWrapper = styled.div`
 	}
 
 	:hover:before {
-		border: 3px solid ${props => props.theme.colors.highlight};
+		border: 3px solid ${( props ) => props.theme.colors.highlight};
 	}
 
 	.payment-logos {
 		display: none;
 
-		@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 			display: block;
 		}
 	}
@@ -129,13 +129,13 @@ const Label = styled.label`
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: 1px solid ${props => props.theme.colors.borderColor};
+		border: 1px solid ${( props ) => props.theme.colors.borderColor};
 		border-radius: 100%;
 		top: 50%;
 		transform: translateY( -50% );
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.surface};
+		background: ${( props ) => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
@@ -159,7 +159,7 @@ const Label = styled.label`
 `;
 
 const RadioButtonChildren = styled.div`
-	display: ${props => ( props.checked ? 'block' : 'none' )};
+	display: ${( props ) => ( props.checked ? 'block' : 'none') };
 `;
 
 function getBorderColor( { checked, theme } ) {

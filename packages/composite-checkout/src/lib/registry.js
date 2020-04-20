@@ -31,7 +31,7 @@ export function useRegisterPrimaryStore( store ) {
 }
 
 export function usePrimarySelect( callback ) {
-	return useSelect( select => callback( select.bind( null, primaryStoreId ) ) );
+	return useSelect( ( select ) => callback( select.bind( null, primaryStoreId ) ) );
 }
 
 export function usePrimaryDispatch() {

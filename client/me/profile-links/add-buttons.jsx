@@ -25,7 +25,7 @@ class AddProfileLinksButtons extends React.Component {
 
 	popoverContext = React.createRef();
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 

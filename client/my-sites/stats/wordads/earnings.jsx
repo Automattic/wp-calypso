@@ -39,14 +39,14 @@ class WordAdsEarnings extends Component {
 		}
 	}
 
-	handleEarningsNoticeToggle = event => {
+	handleEarningsNoticeToggle = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			showEarningsNotice: ! this.state.showEarningsNotice,
 		} );
 	};
 
-	handleInfoToggle = type => event => {
+	handleInfoToggle = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -356,7 +356,7 @@ class WordAdsEarnings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

@@ -38,10 +38,10 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#fetchConnections()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/publicize-connections' )
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/publicize-connections/2' )
@@ -157,7 +157,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'createSiteConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/new', {
 					external_user_ID: 1,
@@ -211,7 +211,7 @@ describe( 'actions', () => {
 	describe( 'updateSiteConnection()', () => {
 		const attributes = { shared: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/2', {
 					shared: true,
@@ -257,7 +257,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSiteConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/2/delete' )
 				.reply( 200, {

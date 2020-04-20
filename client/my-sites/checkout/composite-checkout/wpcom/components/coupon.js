@@ -39,7 +39,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 	return (
 		<CouponWrapper
 			className={ joinClasses( [ className, 'coupon' ] ) }
-			onSubmit={ event => {
+			onSubmit={ ( event ) => {
 				event.preventDefault();
 				setIsFreshOrEdited( false );
 				handleCouponSubmit();
@@ -52,7 +52,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 				placeholder={ translate( 'Enter your coupon code' ) }
 				isError={ hasCouponError && ! isFreshOrEdited }
 				errorMessage={ errorMessage }
-				onChange={ input => {
+				onChange={ ( input ) => {
 					setIsFreshOrEdited( true );
 					setCouponFieldValue( input );
 				} }
@@ -86,7 +86,7 @@ const animateIn = keyframes`
 `;
 
 const CouponWrapper = styled.form`
-	margin: ${props => props.marginTop} 0 0 0;
+	margin: ${( props ) => props.marginTop} 0 0 0;
 	padding-top: 0;
 	position: relative;
 `;

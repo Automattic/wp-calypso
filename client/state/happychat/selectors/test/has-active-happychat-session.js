@@ -36,14 +36,14 @@ describe( '#hasActiveHappychatSession', () => {
 	];
 
 	test( 'should be false when chat.status indicates the user has no active session', () => {
-		inactiveChatStatuses.forEach( status => {
+		inactiveChatStatuses.forEach( ( status ) => {
 			const state = deepFreeze( { happychat: { chat: { status } } } );
 			expect( hasActiveHappychatSession( state ) ).to.be.false;
 		} );
 	} );
 
 	test( 'should be true when chat.status indicates the user has an active session', () => {
-		activeChatStatuses.forEach( status => {
+		activeChatStatuses.forEach( ( status ) => {
 			const state = deepFreeze( { happychat: { chat: { status } } } );
 			expect( hasActiveHappychatSession( state ) ).to.be.true;
 		} );

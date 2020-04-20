@@ -16,7 +16,7 @@ function wpemoji( editor ) {
 	const env = tinymce.Env,
 		ua = window.navigator.userAgent,
 		isWin = ua.indexOf( 'Windows' ) > -1,
-		isWin8 = ( function() {
+		isWin8 = ( function () {
 			const match = ua.match( /Windows NT 6\.(\d)/ );
 
 			if ( match && match[ 1 ] > 1 ) {
@@ -78,7 +78,7 @@ function wpemoji( editor ) {
 		// Windows 8+ emoji can be "typed" with the onscreen keyboard.
 		// That triggers the normal keyboard events, but not the 'input' event.
 		// Thankfully it sets keyCode 231 when the onscreen keyboard inserts any emoji.
-		editor.on( 'keyup', function( event ) {
+		editor.on( 'keyup', function ( event ) {
 			if ( event.keyCode === 231 ) {
 				parseNode( editor.selection.getNode() );
 			}
@@ -87,11 +87,11 @@ function wpemoji( editor ) {
 		// In MacOS inserting emoji doesn't trigger the standard keyboard events.
 		// Thankfully it triggers the 'input' event.
 		// This works in Android and iOS as well.
-		editor.on( 'keydown keyup', function( event ) {
+		editor.on( 'keydown keyup', function ( event ) {
 			typing = event.type === 'keydown';
 		} );
 
-		editor.on( 'input', function() {
+		editor.on( 'input', function () {
 			if ( typing ) {
 				return;
 			}
@@ -100,22 +100,22 @@ function wpemoji( editor ) {
 		} );
 	}
 
-	editor.on( 'setcontent', function() {
+	editor.on( 'setcontent', function () {
 		parseNode( editor.selection.getNode() );
 	} );
 
 	// Convert Twemoji compatible pasted emoji replacement images into our format.
-	editor.on( 'PastePostProcess', function( event ) {
-		tinymce.each( editor.dom.$( 'img.emoji', event.node ), function( image ) {
+	editor.on( 'PastePostProcess', function ( event ) {
+		tinymce.each( editor.dom.$( 'img.emoji', event.node ), function ( image ) {
 			if ( image.alt && twemoji.test( image.alt ) ) {
 				setImgAttr( image );
 			}
 		} );
 	} );
 
-	editor.on( 'postprocess', function( event ) {
+	editor.on( 'postprocess', function ( event ) {
 		if ( event.content ) {
-			event.content = event.content.replace( /<img[^>]+data-wp-emoji="[^>]+>/g, function( img ) {
+			event.content = event.content.replace( /<img[^>]+data-wp-emoji="[^>]+>/g, function ( img ) {
 				const alt = img.match( /alt="([^"]+)"/ );
 
 				if ( alt && alt[ 1 ] ) {
@@ -127,7 +127,7 @@ function wpemoji( editor ) {
 		}
 	} );
 
-	editor.on( 'resolvename', function( event ) {
+	editor.on( 'resolvename', function ( event ) {
 		if (
 			event.target.nodeName === 'IMG' &&
 			editor.dom.getAttrib( event.target, 'data-wp-emoji' )
@@ -137,6 +137,6 @@ function wpemoji( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpemoji', wpemoji );
 }

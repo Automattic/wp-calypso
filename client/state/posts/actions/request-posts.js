@@ -15,7 +15,7 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function requestPosts( siteId, query = {} ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POSTS_REQUEST,
 			siteId,
@@ -36,7 +36,7 @@ export function requestPosts( siteId, query = {} ) {
 					posts,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POSTS_REQUEST_FAILURE,
 					siteId,

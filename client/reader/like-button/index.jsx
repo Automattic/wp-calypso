@@ -34,7 +34,7 @@ class ReaderLikeButton extends React.Component {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
-	recordLikeToggle = liked => {
+	recordLikeToggle = ( liked ) => {
 		const post =
 			this.props.post ||
 			getPostByKey( reduxGetState(), {

@@ -106,7 +106,7 @@ class ProductCategories extends Component {
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="product-categories__list-nested">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>

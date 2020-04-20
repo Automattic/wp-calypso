@@ -13,11 +13,11 @@ import wpcom from 'lib/wp';
 
 export default {
 	deleteSubscriber( category, emailAddress, hmac, context ) {
-		return new Promise( function( resolve, reject ) {
+		return new Promise( function ( resolve, reject ) {
 			wpcom
 				.undocumented()
 				.mailingList( category )
-				.unsubscribe( emailAddress, hmac, context, function( err, result ) {
+				.unsubscribe( emailAddress, hmac, context, function ( err, result ) {
 					if ( err ) {
 						debug( err );
 						reject( err );
@@ -30,11 +30,11 @@ export default {
 	},
 
 	addSubscriber( category, emailAddress, hmac, context ) {
-		return new Promise( function( resolve, reject ) {
+		return new Promise( function ( resolve, reject ) {
 			wpcom
 				.undocumented()
 				.mailingList( category )
-				.subscribe( emailAddress, hmac, context, function( err, result ) {
+				.subscribe( emailAddress, hmac, context, function ( err, result ) {
 					if ( err ) {
 						debug( err );
 						reject( err );

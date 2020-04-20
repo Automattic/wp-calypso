@@ -42,7 +42,7 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRatesAndLocations = props => {
+	maybeFetchRatesAndLocations = ( props ) => {
 		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
 
 		if ( ! loadedLocations ) {

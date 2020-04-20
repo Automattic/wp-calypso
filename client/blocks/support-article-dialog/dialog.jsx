@@ -72,7 +72,7 @@ export const SupportArticleDialog = ( {
 						href={ actionUrl }
 						target={ actionIsExternal ? '_blank' : undefined }
 						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
+						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog())  }
 					>
 						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 					</Button>
@@ -113,7 +113,7 @@ SupportArticleDialog.propTypes = {
 	postId: PropTypes.number,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const postId = getInlineSupportArticlePostId( state );
 	const actionUrl = getInlineSupportArticleActionUrl( state );
 	const actionLabel = getInlineSupportArticleActionLabel( state );

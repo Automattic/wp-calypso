@@ -26,7 +26,7 @@ import 'state/login/init';
  * @param  {string}   flowName       The name of the current signup flow
  * @returns {Function}                A thunk that can be dispatched
  */
-export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
+export const createSocialUser = ( socialInfo, flowName ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
 		notice: {
@@ -38,7 +38,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 		.undocumented()
 		.usersSocialNew( { ...socialInfo, signup_flow_name: flowName } )
 		.then(
-			wpcomResponse => {
+			( wpcomResponse ) => {
 				const data = {
 					username: wpcomResponse.username,
 					bearerToken: wpcomResponse.bearer_token,
@@ -46,7 +46,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 				dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
 				return data;
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {

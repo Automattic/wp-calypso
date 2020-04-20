@@ -1,6 +1,6 @@
 // Event Countdown Block
 // JavaScript that loads on front-end to update the block
-( function() {
+( function () {
 	// loop through all event countdown blocks on page
 	const intervalIds = [];
 	const cals = document.getElementsByClassName( 'wp-block-jetpack-event-countdown' );

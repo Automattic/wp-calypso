@@ -73,7 +73,7 @@ export class PluginsBrowser extends Component {
 	state = this.getPluginsLists( this.props.search );
 
 	reinitializeSearch() {
-		this.WrappedSearch = props => <Search { ...props } />;
+		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
 	UNSAFE_componentWillMount() {
@@ -113,7 +113,7 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
-	refreshLists = search => {
+	refreshLists = ( search ) => {
 		this.setState( this.getPluginsLists( search || this.props.search ) );
 	};
 
@@ -144,7 +144,7 @@ export class PluginsBrowser extends Component {
 		const shortLists = {};
 		const fullLists = {};
 
-		this.getVisibleCategories().forEach( category => {
+		this.getVisibleCategories().forEach( ( category ) => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
@@ -309,20 +309,20 @@ export class PluginsBrowser extends Component {
 		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
 		// Then return the whole group as search results.
 		// Otherwise, search plugin names and descriptions for the search term.
-		const matchingGroup = find( plugins, group => group.category === searchTerm );
+		const matchingGroup = find( plugins, ( group ) => group.category === searchTerm );
 		if ( matchingGroup ) {
 			matchingPlugins = matchingGroup.plugins;
 		} else {
 			// Flatten plugins from all groups into one long list and the filter it
-			const allPlugins = flatMap( plugins, group => group.plugins );
-			const includesSearchTerm = s => includes( s.toLocaleLowerCase(), searchTerm );
+			const allPlugins = flatMap( plugins, ( group ) => group.plugins );
+			const includesSearchTerm = ( s ) => includes( s.toLocaleLowerCase(), searchTerm );
 			matchingPlugins = allPlugins.filter(
-				plugin => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
+				( plugin ) => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
 			);
 		}
 
 		// Convert the list members into shapes expected by PluginsBrowserItem
-		return matchingPlugins.map( plugin => ( {
+		return matchingPlugins.map( ( plugin ) => ( {
 			name: translate( '%(feature)s by Jetpack', {
 				args: { feature: plugin.name },
 				context: 'Presenting WordPress.com feature as a Jetpack pseudo-plugin',
@@ -401,7 +401,7 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
-	handleSuggestedSearch = term => () => {
+	handleSuggestedSearch = ( term ) => () => {
 		this.reinitializeSearch();
 		this.props.doSearch( term );
 	};
@@ -421,7 +421,7 @@ export class PluginsBrowser extends Component {
 				} ) }
 			>
 				<NavTabs label="Suggested Searches">
-					{ suggestedSearches.map( term => (
+					{ suggestedSearches.map( ( term ) => (
 						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
 							{ term }
 						</NavItem>
@@ -585,7 +585,7 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		state => {
+		( state ) => {
 			const selectedSiteId = getSelectedSiteId( state );
 			const sitePlan = getSitePlan( state, selectedSiteId );
 

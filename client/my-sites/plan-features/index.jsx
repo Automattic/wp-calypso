@@ -91,7 +91,7 @@ export class PlanFeatures extends Component {
 		this.setState( defaultState );
 	};
 
-	onLaunchDialogClose = async action => {
+	onLaunchDialogClose = async ( action ) => {
 		const { currentSitePlanSlug, siteId } = this.props;
 		const { checkoutUrl, choosingPlanSlug } = this.state;
 
@@ -384,7 +384,7 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
-		const reorderedPlans = planProperties.filter( properties => {
+		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
 				return false;
@@ -396,7 +396,7 @@ export class PlanFeatures extends Component {
 			reorderedPlans.push( freePlanProperties );
 		}
 
-		return map( reorderedPlans, properties => {
+		return map( reorderedPlans, ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -483,7 +483,7 @@ export class PlanFeatures extends Component {
 			withScroll,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -571,7 +571,7 @@ export class PlanFeatures extends Component {
 	renderPlanDescriptions() {
 		const { planProperties, withScroll, isEligibleForPlanStepTest } = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
 			const classes = classNames( 'plan-features__table-item', {
@@ -653,7 +653,7 @@ export class PlanFeatures extends Component {
 			translate,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -754,7 +754,7 @@ export class PlanFeatures extends Component {
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const { features, planName } = properties;
 
 			const featureKeys = Object.keys( features ),
@@ -790,7 +790,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -901,8 +901,8 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 		} )
 		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
 
-const hasPlaceholders = planProperties =>
-	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
+const hasPlaceholders = ( planProperties ) =>
+	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
@@ -933,7 +933,7 @@ export default connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
 		let planProperties = compact(
-			map( plans, plan => {
+			map( plans, ( plan ) => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
@@ -1045,7 +1045,7 @@ export default connect(
 		const planCredits = calculatePlanCredits( state, siteId, planProperties );
 
 		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
+			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
 
 		const isJetpackNotAtomic = isJetpack && ! isSiteAT;

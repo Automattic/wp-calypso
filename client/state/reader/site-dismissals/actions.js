@@ -14,7 +14,7 @@ export const dismissPost = ( { streamKey, postKey } ) => {
 	};
 };
 
-export const dismissSite = siteId => {
+export const dismissSite = ( siteId ) => {
 	return {
 		type: READER_DISMISS_SITE,
 		payload: { siteId },

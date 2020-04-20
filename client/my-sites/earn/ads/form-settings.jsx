@@ -50,7 +50,7 @@ class AdsFormSettings extends Component {
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
@@ -59,7 +59,7 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleToggle = event => {
+	handleToggle = ( event ) => {
 		const name = event.currentTarget.name;
 
 		this.setState( {
@@ -67,8 +67,8 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleDisplayToggle = name => () => {
-		this.setState( prevState => ( {
+	handleDisplayToggle = ( name ) => () => {
+		this.setState( ( prevState ) => ( {
 			display_options: {
 				...prevState.display_options,
 				[ name ]: ! this.state.display_options[ name ],
@@ -85,7 +85,7 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const { site } = this.props;
 		event.preventDefault();
 
@@ -502,7 +502,7 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const isSavingSettings = isSavingWordadsSettings( state, siteId );
 			const wordadsSettings = getWordadsSettings( state, siteId );

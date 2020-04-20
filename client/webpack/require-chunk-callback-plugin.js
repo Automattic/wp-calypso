@@ -14,10 +14,10 @@ const PLUGIN_NAME = 'RequireChunkCallback';
 
 class RequireChunkCallbackPlugin {
 	apply( compiler ) {
-		compiler.hooks.thisCompilation.tap( PLUGIN_NAME, compilation => {
+		compiler.hooks.thisCompilation.tap( PLUGIN_NAME, ( compilation ) => {
 			const { mainTemplate } = compilation;
 
-			mainTemplate.hooks.localVars.tap( PLUGIN_NAME, source => {
+			mainTemplate.hooks.localVars.tap( PLUGIN_NAME, ( source ) => {
 				return Template.asString( [
 					source,
 					'',
@@ -67,7 +67,7 @@ class RequireChunkCallbackPlugin {
 				] );
 			} );
 
-			mainTemplate.hooks.requireEnsure.tap( PLUGIN_NAME, source => {
+			mainTemplate.hooks.requireEnsure.tap( PLUGIN_NAME, ( source ) => {
 				return Template.asString( [
 					source,
 					'',

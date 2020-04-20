@@ -140,7 +140,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 };
 
 export default connect< ConnectedProps, {}, {} >(
-	state => {
+	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		return {
@@ -149,7 +149,7 @@ export default connect< ConnectedProps, {}, {} >(
 			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		trackCtaButton: ( feature: string ) =>
 			dispatch(
 				composeAnalytics(

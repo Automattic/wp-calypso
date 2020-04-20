@@ -37,7 +37,8 @@ import './style.scss';
  * @param {string} url - the url to format
  * @returns {string} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
-const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
+const formatUrlForDisplay = ( url ) =>
+	untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderSubscriptionListItem( {
 	moment,

@@ -56,7 +56,7 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 		! isParentReady( mediaItems ) ||
 		some(
 			mediaItems,
-			item =>
+			( item ) =>
 				MediaUtils.isItemBeingUploaded( item ) &&
 				// Transients can't be handled by the editor if they are being
 				// uploaded via an external URL
@@ -214,7 +214,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		if ( mediaLibrarySelectedItems.length && this.state.source !== '' ) {
-			const itemsWithTransientId = mediaLibrarySelectedItems.map( item =>
+			const itemsWithTransientId = mediaLibrarySelectedItems.map( ( item ) =>
 				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
 			);
 			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
@@ -231,10 +231,10 @@ export class EditorMediaModal extends Component {
 	};
 
 	isTransientSelected = () => {
-		return this.props.mediaLibrarySelectedItems.some( item => item.transient );
+		return this.props.mediaLibrarySelectedItems.some( ( item ) => item.transient );
 	};
 
-	setDetailSelectedIndex = index => {
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( {
 			detailSelectedIndex: index,
 		} );
@@ -253,7 +253,7 @@ export class EditorMediaModal extends Component {
 		}
 	}
 
-	confirmDeleteMedia = accepted => {
+	confirmDeleteMedia = ( accepted ) => {
 		const { site, mediaLibrarySelectedItems } = this.props;
 
 		if ( ! site || ! accepted ) {
@@ -382,7 +382,7 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
 
 		this.handleCancel();
@@ -398,7 +398,7 @@ export class EditorMediaModal extends Component {
 		return detailSelectedIndex;
 	}
 
-	onFilterChange = filter => {
+	onFilterChange = ( filter ) => {
 		if ( filter !== this.state.filter ) {
 			mcBumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
 		}
@@ -413,7 +413,7 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
-	onSearch = search => {
+	onSearch = ( search ) => {
 		this.setState( {
 			search: search || undefined,
 		} );
@@ -424,7 +424,7 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
-	onSourceChange = source => {
+	onSourceChange = ( source ) => {
 		MediaActions.sourceChanged( this.props.site.ID );
 		this.setState( {
 			source,
@@ -437,7 +437,7 @@ export class EditorMediaModal extends Component {
 		this.props.onClose();
 	};
 
-	editItem = item => {
+	editItem = ( item ) => {
 		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
@@ -445,7 +445,7 @@ export class EditorMediaModal extends Component {
 
 		// Append item to set of selected items if not already selected.
 		let items = mediaLibrarySelectedItems;
-		if ( ! items.some( selected => selected.ID === item.ID ) ) {
+		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
 			if ( single ) {
 				items = [ item ];
 			} else {
@@ -500,7 +500,7 @@ export class EditorMediaModal extends Component {
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
 			galleryViewEnabled &&
-			! some( selectedItems, item => MediaUtils.getMimePrefix( item ) !== 'image' )
+			! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
 				action: 'confirm',
@@ -526,7 +526,7 @@ export class EditorMediaModal extends Component {
 		return ! includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view );
 	}
 
-	updateSettings = gallerySettings => {
+	updateSettings = ( gallerySettings ) => {
 		this.setState( { gallerySettings } );
 	};
 

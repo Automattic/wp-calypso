@@ -19,7 +19,7 @@ import { DESERIALIZE, SERIALIZE, SITE_REQUEST_FAILURE } from 'state/action-types
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

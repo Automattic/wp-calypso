@@ -33,7 +33,7 @@ function forceTeamA8C( context, next ) {
 	next();
 }
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',

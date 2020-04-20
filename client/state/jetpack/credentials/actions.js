@@ -17,7 +17,7 @@ export const updateCredentials = ( siteId, credentials ) => ( {
 	credentials,
 } );
 
-export const autoConfigCredentials = siteId => ( {
+export const autoConfigCredentials = ( siteId ) => ( {
 	type: JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	siteId,
 } );

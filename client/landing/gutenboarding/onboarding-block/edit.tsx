@@ -23,8 +23,10 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
-	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
+	const { siteVertical, selectedDesign } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
+	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();
@@ -48,15 +50,17 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{ // Disable reason: Leave me alone, my nested ternaries are amazing ✨
-					// eslint-disable-next-line no-nested-ternary
-					! selectedDesign ? (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) : isEnabled( 'gutenboarding/style-preview' ) ? (
-						<StylePreview />
-					) : (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) }
+					{
+						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
+						// eslint-disable-next-line no-nested-ternary
+						! selectedDesign ? (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						) : isEnabled( 'gutenboarding/style-preview' ) ? (
+							<StylePreview />
+						) : (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						)
+					}
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

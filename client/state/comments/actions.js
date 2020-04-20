@@ -125,7 +125,7 @@ export function requestPostComments( {
  * @param {number} query.siteId Site identifier
  * @returns {object} Action that requests a comment list
  */
-export const requestCommentsList = query => ( {
+export const requestCommentsList = ( query ) => ( {
 	type: COMMENTS_LIST_REQUEST,
 	query,
 } );
@@ -138,7 +138,7 @@ export const requestCommentsList = query => ( {
  * @param {string} query.status Status filter
  * @returns {object} Action that requests a comment tree
  */
-export const requestCommentsTreeForSite = query => ( {
+export const requestCommentsTreeForSite = ( query ) => ( {
 	type: COMMENTS_TREE_SITE_REQUEST,
 	query,
 } );

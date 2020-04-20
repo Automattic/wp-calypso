@@ -161,7 +161,7 @@ class JetpackAds extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );

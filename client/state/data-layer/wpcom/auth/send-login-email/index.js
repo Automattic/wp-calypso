@@ -20,7 +20,7 @@ import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/noti
 import { recordTracksEventWithClientId } from 'state/analytics/actions';
 import config from 'config';
 
-export const sendLoginEmail = action => {
+export const sendLoginEmail = ( action ) => {
 	const {
 		email,
 		lang_id,

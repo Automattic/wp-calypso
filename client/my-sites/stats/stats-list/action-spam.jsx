@@ -23,7 +23,7 @@ class StatsActionSpam extends React.Component {
 		spammed: false,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
 		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();
@@ -38,7 +38,7 @@ class StatsActionSpam extends React.Component {
 		}
 
 		const wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
 		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 

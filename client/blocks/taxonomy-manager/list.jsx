@@ -115,7 +115,7 @@ export class TaxonomyManagerList extends Component {
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -135,7 +135,7 @@ export class TaxonomyManagerList extends Component {
 		);
 	};
 
-	requestPages = pages => {
+	requestPages = ( pages ) => {
 		this.setState( {
 			requestedPages: union( this.state.requestedPages, pages ),
 		} );
@@ -150,7 +150,7 @@ export class TaxonomyManagerList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ this.state.requestedPages.map( page => (
+				{ this.state.requestedPages.map( ( page ) => (
 					<QueryTerms
 						key={ `query-${ page }` }
 						siteId={ siteId }

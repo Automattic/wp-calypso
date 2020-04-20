@@ -67,7 +67,7 @@ class FileImporter extends React.PureComponent {
 		} ),
 	};
 
-	handleClick = shouldStartImport => {
+	handleClick = ( shouldStartImport ) => {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },

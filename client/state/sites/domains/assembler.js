@@ -17,7 +17,7 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
 }
 
-export const createSiteDomainObject = domain => {
+export const createSiteDomainObject = ( domain ) => {
 	let transferEndDate = null;
 	if ( domain.transfer_start_date ) {
 		transferEndDate = new Date( domain.transfer_start_date );

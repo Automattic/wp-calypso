@@ -75,7 +75,7 @@ class EditorDeletePost extends React.Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.sendToTrash();
 				}
@@ -113,7 +113,7 @@ class EditorDeletePost extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

@@ -71,7 +71,7 @@ const NonPrimaryDomainPlanUpsell = ( {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 	const sitePlans = selectedSite && getPlansBySite( state, selectedSite );

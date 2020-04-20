@@ -24,7 +24,7 @@ import { localize } from 'i18n-calypso';
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 
-const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
+const Chip = ( onClick ) => ( props ) => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
@@ -43,7 +43,7 @@ export class TitleFormatEditor extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.storeEditorReference = r => ( this.editor = r );
+		this.storeEditorReference = ( r ) => ( this.editor = r );
 		this.focusEditor = () => this.editor.focus();
 
 		this.updateEditor = this.updateEditor.bind( this );
@@ -209,7 +209,7 @@ export class TitleFormatEditor extends Component {
 	}
 
 	renderTokens( contentBlock, callback, contentState ) {
-		contentBlock.findEntityRanges( character => {
+		contentBlock.findEntityRanges( ( character ) => {
 			const entity = character.getEntity();
 
 			if ( null === entity ) {
@@ -272,9 +272,7 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( get( site, 'lang', '' ) )
-		.format( 'MMMM YYYY' );
+	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return {

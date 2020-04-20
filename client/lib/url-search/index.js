@@ -41,9 +41,9 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	return url.format( parsedUrl ).replace( /%20/g, '+' );
 };
 
-const UrlSearch = Component =>
+const UrlSearch = ( Component ) =>
 	class extends React.Component {
-		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
+		static displayName = `UrlSearch(${ Component.displayName || Component.name || ''})`;
 		static defaultProps = {
 			search: '',
 			queryKey: 's',
@@ -57,7 +57,7 @@ const UrlSearch = Component =>
 			return ! search && this.setState( { searchOpen: false } );
 		}
 
-		doSearch = query => {
+		doSearch = ( query ) => {
 			this.setState( {
 				searchOpen: false !== query,
 			} );

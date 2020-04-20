@@ -32,7 +32,7 @@ const ProductCardOptions = ( {
 				<h4 className="product-card__options-label">{ optionsLabel }</h4>
 			) }
 			<div className="product-card__options">
-				{ options.map( option => (
+				{ options.map( ( option ) => (
 					<FormLabel
 						key={ `product-option-${ option.slug }` }
 						className={ classnames( 'product-card__option', {

@@ -144,7 +144,7 @@ class ActivityLog extends Component {
 	 *
 	 * @param {string} type Type of dialog to close.
 	 */
-	handleCloseDialog = type => {
+	handleCloseDialog = ( type ) => {
 		const { siteId } = this.props;
 		switch ( type ) {
 			case 'restore':
@@ -163,12 +163,12 @@ class ActivityLog extends Component {
 	 * @param   {object} date Moment to adjust.
 	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
 	 */
-	applySiteOffset = date => {
+	applySiteOffset = ( date ) => {
 		const { timezone, gmtOffset } = this.props;
 		return applySiteOffset( date, { timezone, gmtOffset } );
 	};
 
-	changePage = pageNumber => {
+	changePage = ( pageNumber ) => {
 		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
@@ -233,7 +233,7 @@ class ActivityLog extends Component {
 		} = actionProgress;
 		return (
 			<ProgressBanner
-				key={ `progress-${ restoreId || downloadId }` }
+				key={ `progress-${ restoreId || downloadId}` }
 				applySiteOffset={ this.applySiteOffset }
 				percent={ percent || progress }
 				restoreId={ restoreId }
@@ -270,10 +270,10 @@ class ActivityLog extends Component {
 		} = progress;
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
-			<div key={ `end-banner-${ restoreId || downloadId }` }>
+			<div key={ `end-banner-${ restoreId || downloadId}` }>
 				{ errorCode || backupError ? (
 					<ErrorBanner
-						key={ `error-${ restoreId || downloadId }` }
+						key={ `error-${ restoreId || downloadId}` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
 						requestedRestoreId={ requestedRestoreId }
@@ -288,7 +288,7 @@ class ActivityLog extends Component {
 					/>
 				) : (
 					<SuccessBanner
-						key={ `success-${ restoreId || downloadId }` }
+						key={ `success-${ restoreId || downloadId}` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ rewindId }
@@ -345,7 +345,7 @@ class ActivityLog extends Component {
 				<div className="activity-log__time-period is-loading">
 					<span />
 				</div>
-				{ [ 1, 2, 3 ].map( i => (
+				{ [ 1, 2, 3 ].map( ( i ) => (
 					<div key={ i } className="activity-log-item is-loading">
 						<div className="activity-log-item__type">
 							<div className="activity-log-item__activity-icon" />
@@ -474,7 +474,7 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteHasNoLog && <div className="activity-log__fader" /> }
-							{ theseLogs.map( log =>
+							{ theseLogs.map( ( log ) =>
 								log.isAggregate ? (
 									<Fragment key={ log.activityId }>
 										{ timePeriod( log ) }
@@ -579,7 +579,7 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
@@ -633,13 +633,13 @@ export default connect(
 				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
 				rewindBackup( siteId, actionId )
 			),
-		dismissBackup: siteId =>
+		dismissBackup: ( siteId ) =>
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
 				rewindBackupDismiss( siteId )
 			),
 		getRewindRestoreProgress,
-		rewindRequestDismiss: siteId =>
+		rewindRequestDismiss: ( siteId ) =>
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
 				rewindRequestDismiss( siteId )

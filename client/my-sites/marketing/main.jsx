@@ -133,7 +133,7 @@ Sharing.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );

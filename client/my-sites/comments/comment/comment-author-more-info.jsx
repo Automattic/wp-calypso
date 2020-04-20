@@ -41,7 +41,7 @@ export class CommentAuthorMoreInfo extends Component {
 		showPopover: false,
 	};
 
-	storePopoverButtonRef = button => ( this.popoverButton = button );
+	storePopoverButtonRef = ( button ) => ( this.popoverButton = button );
 
 	closePopover = () => this.setState( { showPopover: false } );
 
@@ -74,7 +74,7 @@ export class CommentAuthorMoreInfo extends Component {
 		if ( isAuthorBlacklisted ) {
 			const newBlacklist = siteBlacklist
 				.split( '\n' )
-				.filter( item => item !== authorEmail )
+				.filter( ( item ) => item !== authorEmail )
 				.join( '\n' );
 
 			updateBlacklist( siteId, newBlacklist, analytics );
@@ -224,7 +224,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	showNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	updateBlacklist: ( siteId, blacklist_keys, analytics ) =>
 		dispatch(

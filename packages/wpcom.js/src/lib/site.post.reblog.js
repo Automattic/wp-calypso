@@ -31,8 +31,7 @@ export default function Reblog( pid, sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Reblog.prototype.mine =
-Reblog.prototype.state = function( query, fn ) {
+Reblog.prototype.mine = Reblog.prototype.state = function ( query, fn ) {
 	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
@@ -45,7 +44,7 @@ Reblog.prototype.state = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Reblog.prototype.add = function( query, body, fn ) {
+Reblog.prototype.add = function ( query, body, fn ) {
 	if ( 'function' === typeof body ) {
 		fn = body;
 		body = query;
@@ -69,7 +68,7 @@ Reblog.prototype.add = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Reblog.prototype.to = function( dest, note, fn ) {
+Reblog.prototype.to = function ( dest, note, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === note ) {
 			note = null;

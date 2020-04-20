@@ -17,7 +17,7 @@ import moment from 'moment-timezone';
  * @param  {string}  timeFormat Time format.
  * @returns {boolean}            Whether it's a 12-hour time format.
  */
-export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat );
+export const is12hr = ( timeFormat ) => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
 /**
  * Check whether is a valid gmtOffset value.
@@ -26,7 +26,7 @@ export const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat 
  * @param  {*}  gmtOffset - gmt offset
  * @returns {boolean} is it a valid gtm offset?
  */
-export const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
+export const isValidGMTOffset = ( gmtOffset ) => 'number' === typeof gmtOffset;
 
 /**
  * Return localized date depending of given timezone or gmtOffset
@@ -49,7 +49,7 @@ export const getLocalizedDate = ( date, tz, gmt ) => {
 	return date;
 };
 
-export const getDateInLocalUTC = date => moment( date.format ? date.format() : date );
+export const getDateInLocalUTC = ( date ) => moment( date.format ? date.format() : date );
 
 export const getTimeOffset = ( date, tz, gmt ) => {
 	const userLocalDate = getDateInLocalUTC( date );
@@ -84,7 +84,7 @@ export const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * @param  {number} minutes - a number of minutes
  * @returns {string} `hh:mm` format
  */
-export const convertMinutesToHHMM = minutes => {
+export const convertMinutesToHHMM = ( minutes ) => {
 	const hours = Math.trunc( minutes / 60 );
 	const sign = minutes > 0 ? '+' : '';
 
@@ -98,7 +98,7 @@ export const convertMinutesToHHMM = minutes => {
 	return `${ sign }${ hours }:${ mm }`;
 };
 
-export const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
+export const convertHoursToHHMM = ( hours ) => convertMinutesToHHMM( hours * 60 );
 
 /**
  * Check if the given value is useful to be assigned like hours or minutes.
@@ -108,7 +108,7 @@ export const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
  * @param {string} value - time value to check
  * @returns {number|boolean} valid number or `false`
  */
-export const parseAndValidateNumber = value => {
+export const parseAndValidateNumber = ( value ) => {
 	value = String( value );
 	if ( value !== '0' && value !== '00' && ( value[ 0 ] === '0' || Number( value ) > 99 ) ) {
 		value = Number( value.substr( 1 ) );

@@ -27,10 +27,12 @@ interface Props {
 
 const SiteOffsetProvider: FunctionComponent< Props > = ( { children, site } ) => {
 	// hackery here to get around
-	const siteId = useSelector( state => getSiteId( state, site ) ) as number | null;
+	const siteId = useSelector( ( state ) => getSiteId( state, site ) ) as number | null;
 
-	const gmtOffset = useSelector( state => ( siteId ? getSiteGmtOffset( state, siteId ) : null ) );
-	const timezone = useSelector( state =>
+	const gmtOffset = useSelector( ( state ) =>
+		siteId ? getSiteGmtOffset( state, siteId ) : null
+	);
+	const timezone = useSelector( ( state ) =>
 		siteId ? getSiteTimezoneValue( state, siteId ) : null
 	);
 

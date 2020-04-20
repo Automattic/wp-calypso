@@ -17,7 +17,7 @@ export default class extends React.PureComponent {
 		rangeValue: 24,
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			rangeValue: event.target.value,
 		} );

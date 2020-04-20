@@ -253,11 +253,11 @@ export function getImporters( params = {} ) {
 }
 
 export function getFileImporters( params = {} ) {
-	return filter( getImporters( params ), importer => importer.type === 'file' );
+	return filter( getImporters( params ), ( importer ) => importer.type === 'file' );
 }
 
 export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), importer => importer.key === key ) );
+	return head( filter( getImporters( params ), ( importer ) => importer.key === key ) );
 }
 
 export default getConfig;

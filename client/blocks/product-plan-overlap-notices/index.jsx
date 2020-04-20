@@ -61,7 +61,7 @@ class ProductPlanOverlapNotices extends Component {
 
 		// Does the current plan include the current product as a feature, or have a superior version of it?
 		return currentProductSlugs.filter(
-			productSlug =>
+			( productSlug ) =>
 				planHasFeature( currentPlanSlug, productSlug ) ||
 				planHasSuperiorFeature( currentPlanSlug, productSlug )
 		);
@@ -70,10 +70,10 @@ class ProductPlanOverlapNotices extends Component {
 	getCurrentProductSlugs() {
 		const { products, purchases } = this.props;
 
-		const currentProducts = purchases.filter( purchase =>
+		const currentProducts = purchases.filter( ( purchase ) =>
 			products.includes( purchase.productSlug )
 		);
-		return currentProducts.map( product => product.productSlug );
+		return currentProducts.map( ( product ) => product.productSlug );
 	}
 
 	getProductName( currentProductSlug ) {
@@ -96,7 +96,7 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
-	clickPurchaseHandler = productSlug => {
+	clickPurchaseHandler = ( productSlug ) => {
 		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
 			purchase_slug: productSlug,
 		} );
@@ -104,7 +104,7 @@ class ProductPlanOverlapNotices extends Component {
 
 	getProductItem( productSlug ) {
 		const { purchases } = this.props;
-		const productPurchase = purchases.find( purchase => purchase.productSlug === productSlug );
+		const productPurchase = purchases.find( ( purchase ) => purchase.productSlug === productSlug );
 
 		if ( ! productPurchase ) {
 			return false;
@@ -160,7 +160,7 @@ class ProductPlanOverlapNotices extends Component {
 								components: {
 									list: (
 										<ul className="product-plan-overlap-notices__product-list">
-											{ overlappingProductSlugs.map( productSlug =>
+											{ overlappingProductSlugs.map( ( productSlug ) =>
 												this.getProductItem( productSlug )
 											) }
 										</ul>

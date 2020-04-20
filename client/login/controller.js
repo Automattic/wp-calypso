@@ -18,7 +18,7 @@ import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
-const enhanceContextWithLogin = context => {
+const enhanceContextWithLogin = ( context ) => {
 	const {
 		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,

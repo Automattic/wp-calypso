@@ -65,7 +65,7 @@ describe( 'password login flow', () => {
 		expect( getLoginFlowState() ).toBe( 'ENTER_PASSWORD' );
 
 		nock( 'https://wordpress.com' )
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -130,7 +130,7 @@ describe( 'password login flow', () => {
 		expect( getLoginFlowState() ).toBe( 'ENTER_PASSWORD' );
 
 		nock( 'https://wordpress.com' )
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -185,7 +185,7 @@ describe( 'password login flow', () => {
 
 		nock( 'https://wordpress.com' )
 			.persist()
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -205,7 +205,7 @@ describe( 'password login flow', () => {
 					push_web_token: two_step_push_token,
 				},
 			} )
-			.post( '/wp-login.php?action=two-step-authentication-endpoint', body => {
+			.post( '/wp-login.php?action=two-step-authentication-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						user_id: user_id.toString( 10 ),

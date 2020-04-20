@@ -18,7 +18,7 @@ import { getShortcode } from 'state/shortcodes/selectors';
  */
 import ShortcodeFrame from './frame';
 
-const Shortcode = props => {
+const Shortcode = ( props ) => {
 	const { siteId, className, children, filterRenderResult, shortcode } = props;
 	const classes = classNames( 'shortcode', className );
 	let filteredShortcode = {};

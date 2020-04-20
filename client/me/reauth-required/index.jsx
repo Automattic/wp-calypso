@@ -42,7 +42,7 @@ const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
 	mixins: [ observe( 'twoStepAuthorization' ) ],
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			remember2fa: false, // Should the 2fa be remembered for 30 days?
 			code: '', // User's generated 2fa code
@@ -63,7 +63,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	getCheckboxHandler( checkboxName ) {
-		return event => {
+		return ( event ) => {
 			const action = 'Clicked ' + checkboxName + ' checkbox';
 			const value = event.target.checked ? 1 : 0;
 
@@ -75,7 +75,7 @@ const ReauthRequired = createReactClass( {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
-	getCodeMessage: function() {
+	getCodeMessage: function () {
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			return this.props.translate(
 				'Press the button below to request an SMS verification code. ' +
@@ -102,7 +102,7 @@ const ReauthRequired = createReactClass( {
 		);
 	},
 
-	submitForm: function( event ) {
+	submitForm: function ( event ) {
 		event.preventDefault();
 		this.setState( { validatingCode: true } );
 
@@ -111,7 +111,7 @@ const ReauthRequired = createReactClass( {
 				code: this.state.code,
 				remember2fa: this.state.remember2fa,
 			},
-			function( error, data ) {
+			function ( error, data ) {
 				this.setState( { validatingCode: false } );
 				if ( error ) {
 					debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
@@ -124,15 +124,15 @@ const ReauthRequired = createReactClass( {
 
 	codeRequestTimer: false,
 
-	allowSMSRequests: function() {
+	allowSMSRequests: function () {
 		this.setState( { smsRequestsAllowed: true } );
 	},
 
-	sendSMSCode: function() {
+	sendSMSCode: function () {
 		this.setState( { smsRequestsAllowed: false, smsCodeSent: true } );
 		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
 
-		this.props.twoStepAuthorization.sendSMSCode( function( error, data ) {
+		this.props.twoStepAuthorization.sendSMSCode( function ( error, data ) {
 			if ( ! error && data.sent ) {
 				debug( 'SMS code successfully sent' );
 			} else {
@@ -141,17 +141,17 @@ const ReauthRequired = createReactClass( {
 		} );
 	},
 
-	preValidateAuthCode: function() {
+	preValidateAuthCode: function () {
 		return this.state.code.length && this.state.code.length > 5;
 	},
 
-	loginUserWithSecurityKey: function() {
+	loginUserWithSecurityKey: function () {
 		return this.props.twoStepAuthorization.loginUserWithSecurityKey( {
 			user_id: this.props.currentUserId,
 		} );
 	},
 
-	renderFailedValidationMsg: function() {
+	renderFailedValidationMsg: function () {
 		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
 			return null;
 		}
@@ -164,7 +164,7 @@ const ReauthRequired = createReactClass( {
 		);
 	},
 
-	renderSMSResendThrottled: function() {
+	renderSMSResendThrottled: function () {
 		if ( ! this.props.twoStepAuthorization.isSMSResendThrottled() ) {
 			return null;
 		}
@@ -240,7 +240,7 @@ const ReauthRequired = createReactClass( {
 		);
 	},
 
-	render: function() {
+	render: function () {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
@@ -279,7 +279,7 @@ const ReauthRequired = createReactClass( {
 
 	refreshNonceOnFailure( error ) {
 		const errors = [].slice.call( error?.data?.errors ?? [] );
-		if ( errors.some( e => e.code === 'invalid_two_step_nonce' ) ) {
+		if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
 			this.props.twoStepAuthorization.fetch();
 		}
 	},
@@ -309,7 +309,7 @@ ReauthRequired.propTypes = {
 /* eslint-enable jsx-a11y/no-autofocus, react/prefer-es6-class, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
 	} ),
 	{ recordGoogleEvent }

@@ -32,7 +32,7 @@ function update( category, page, list ) {
 }
 
 const PluginsListsStore = {
-	getShortList: function( category ) {
+	getShortList: function ( category ) {
 		if ( ! _shortLists[ category ] && ! _fetching[ category ] ) {
 			PluginsDataActions.fetchPluginsList( category, _DEFAULT_FIRST_PAGE );
 		}
@@ -42,7 +42,7 @@ const PluginsListsStore = {
 		};
 	},
 
-	getFullList: function( category ) {
+	getFullList: function ( category ) {
 		if ( ! _fullLists[ category ] ) {
 			PluginsDataActions.fetchPluginsList( category, _DEFAULT_FIRST_PAGE );
 		}
@@ -52,7 +52,7 @@ const PluginsListsStore = {
 		};
 	},
 
-	getSearchList: function( searchTerm ) {
+	getSearchList: function ( searchTerm ) {
 		let isSearching = _fetching.search !== false;
 		if ( ! searchTerm ) {
 			return;
@@ -71,12 +71,12 @@ const PluginsListsStore = {
 		};
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
 
-PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {
+PluginsListsStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 	switch ( action.type ) {
 		case 'RECEIVE_WPORG_PLUGINS_LIST':

@@ -285,7 +285,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are not set', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = null;
 				return item;
 			} );
@@ -294,7 +294,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are equal', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;
 			} );
@@ -303,7 +303,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should parse dates in string format', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = item.date.toString();
 				return item;
 			} );

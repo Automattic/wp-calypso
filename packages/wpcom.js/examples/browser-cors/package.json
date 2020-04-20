@@ -1,15 +1,14 @@
-
 {
-  "name": "wpcom-cors-example-app",
-  "description": "A simple  application to test CORS in client-side",
-  "version": "0.0.1",
-  "private": true,
-  "author": {
-    "name": "Damian Suarez",
-    "email": "rdsuarez@gmail.com"
-  },
-  "main": "index.js",
-  "dependencies": {
-    "express": "3.5.0"
-  }
+	"name": "wpcom-cors-example-app",
+	"description": "A simple  application to test CORS in client-side",
+	"version": "0.0.1",
+	"private": true,
+	"author": {
+		"name": "Damian Suarez",
+		"email": "rdsuarez@gmail.com"
+	},
+	"main": "index.js",
+	"dependencies": {
+		"express": "3.5.0"
+	}
 }

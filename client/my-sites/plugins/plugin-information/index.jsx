@@ -182,7 +182,7 @@ class PluginInformation extends React.Component {
 		return {};
 	};
 
-	getActionLinks = plugin => {
+	getActionLinks = ( plugin ) => {
 		if ( this.props.calypsoify ) {
 			return null;
 		}

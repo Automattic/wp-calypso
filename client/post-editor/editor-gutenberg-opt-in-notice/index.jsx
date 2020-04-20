@@ -73,7 +73,7 @@ class EditorGutenbergOptInNotice extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
 	sidebarOpen: 'open' === getPreference( state, 'editor-sidebar' ),

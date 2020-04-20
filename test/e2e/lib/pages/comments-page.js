@@ -19,10 +19,10 @@ export default class CommentsPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.comment .is-placeholder' );
 		return await driver.wait(
-			function() {
+			function () {
 				return driverHelper
 					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},

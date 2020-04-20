@@ -28,7 +28,7 @@ export default function Me( wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.get = function( query, fn ) {
+Me.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/me', query, fn );
 };
 
@@ -39,7 +39,7 @@ Me.prototype.get = function( query, fn ) {
  * @param {Function} [fn] - callback function
  * @returns {Function} request handler
  */
-Me.prototype.billingHistory = function( query, fn ) {
+Me.prototype.billingHistory = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/billing-history', query, fn );
 };
 
@@ -58,7 +58,7 @@ Me.prototype.billingHistory = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.postsList = function( query, fn ) {
+Me.prototype.postsList = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/posts', query, fn );
 };
 
@@ -69,7 +69,7 @@ Me.prototype.postsList = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.sites = function( query, fn ) {
+Me.prototype.sites = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/sites', query, fn );
 };
 
@@ -80,7 +80,7 @@ Me.prototype.sites = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.likes = function( query, fn ) {
+Me.prototype.likes = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/likes', query, fn );
 };
 
@@ -91,9 +91,9 @@ Me.prototype.likes = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.connectedApps = function( query, fn ) {
+Me.prototype.connectedApps = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/connected-applications', query, fn );
-}
+};
 
 /**
  * Get a list of all the keyring connections
@@ -103,7 +103,7 @@ Me.prototype.connectedApps = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.keyringConnections = function( query, fn ) {
+Me.prototype.keyringConnections = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/keyring-connections', query, fn );
 };
 
@@ -115,7 +115,7 @@ Me.prototype.keyringConnections = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Me.prototype.publicizeConnections = function( query, fn ) {
+Me.prototype.publicizeConnections = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/publicize-connections', query, fn );
 };
 
@@ -124,7 +124,7 @@ Me.prototype.publicizeConnections = function( query, fn ) {
  *
  * @returns {MeSettings} MeSettings instance
  */
-Me.prototype.settings = function() {
+Me.prototype.settings = function () {
 	return new MeSettings( this.wpcom );
 };
 
@@ -134,9 +134,9 @@ Me.prototype.settings = function() {
  * @param {string} id - app id
  * @returns {ConnectedApp} Me ConnectedApp instance
  */
-Me.prototype.connectedApp = function( id ) {
+Me.prototype.connectedApp = function ( id ) {
 	return new MeConnectedApp( id, this.wpcom );
-}
+};
 
 /**
  * Return a `MePublicizeConnection` instance.
@@ -144,7 +144,7 @@ Me.prototype.connectedApp = function( id ) {
  * @param {string} id - connection id
  * @returns {MePublicizeConnection} MeSettings instance
  */
-Me.prototype.publicizeConnection = function( id ) {
+Me.prototype.publicizeConnection = function ( id ) {
 	return new MePublicizeConnection( id, this.wpcom );
 };
 
@@ -153,7 +153,7 @@ Me.prototype.publicizeConnection = function( id ) {
  *
  * @returns {MeTwoStep} MeTwoStep instance
  */
-Me.prototype.twoStep = function() {
+Me.prototype.twoStep = function () {
 	return new MeTwoStep( this.wpcom );
 };
 
@@ -163,6 +163,6 @@ Me.prototype.twoStep = function() {
  * @param {string} id - connection id
  * @returns {MeKeyringConnection} MeKeyringConnection instance
  */
-Me.prototype.keyringConnection = function( id ) {
+Me.prototype.keyringConnection = function ( id ) {
 	return new MeKeyringConnection( id, this.wpcom );
 };

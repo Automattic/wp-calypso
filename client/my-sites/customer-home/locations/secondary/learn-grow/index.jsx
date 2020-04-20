@@ -38,7 +38,7 @@ const LearnGrow = ( { cards } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const layout = getHomeLayout( state, siteId );
 

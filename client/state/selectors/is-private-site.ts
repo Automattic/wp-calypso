@@ -4,7 +4,7 @@
 
 import getRawSite from 'state/selectors/get-raw-site';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { AppState } from "types";
+import { AppState } from 'types';
 
 /**
  * Returns true if the site is private
@@ -13,7 +13,7 @@ import { AppState } from "types";
  * @param {object} siteId Site ID
  * @returns {boolean} True if site is private
  */
-export default function isPrivateSite( state : AppState, siteId : number ) : boolean | null {
+export default function isPrivateSite( state: AppState, siteId: number ): boolean | null {
 	const site = getRawSite( state, siteId );
 
 	if ( site ) {

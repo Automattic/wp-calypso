@@ -185,7 +185,7 @@ const CdnTab = ( {
 		</div>
 	);
 };
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'ossdl_cname',
 		'ossdl_https',

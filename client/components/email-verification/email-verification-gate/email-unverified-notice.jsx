@@ -37,7 +37,7 @@ class EmailUnverifiedNotice extends React.Component {
 		this.setState( { error: null, emailSent: false } );
 	};
 
-	handleSendVerificationEmail = e => {
+	handleSendVerificationEmail = ( e ) => {
 		e.preventDefault();
 
 		if ( this.state.pendingRequest ) {

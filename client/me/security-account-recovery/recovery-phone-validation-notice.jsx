@@ -27,13 +27,13 @@ class RecoveryPhoneValidationNotice extends Component {
 		event.preventDefault();
 	}
 
-	onValidate = event => {
+	onValidate = ( event ) => {
 		event.preventDefault();
 
 		this.props.onValidate( this.state.candidateCode );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {

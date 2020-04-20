@@ -9,7 +9,7 @@ import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/vid
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fetch = action => {
+const fetch = ( action ) => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return;
 	}
