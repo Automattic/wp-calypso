@@ -129,7 +129,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'draft' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'draft, last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a draft post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -137,7 +137,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'publish' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'published, last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -145,7 +145,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'private' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'private modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'private, last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a private post or page was last modified',
 				args: {
 					displayScheduleTime,
