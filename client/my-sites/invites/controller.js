@@ -57,7 +57,7 @@ export function acceptInvite( context, next ) {
 			} else {
 				const redirect = getRedirectAfterAccept(
 					acceptedInvite,
-					acceptedInvite.site.is_wpforteams_site
+					get( acceptedInvite, 'site.is_wpforteams_site', false )
 				);
 
 				debug( 'Accepted invite and redirecting to:  ' + redirect );

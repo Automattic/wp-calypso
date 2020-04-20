@@ -8,6 +8,7 @@ import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -130,8 +131,8 @@ class InviteAccept extends React.Component {
 		debug( 'Rendering invite' );
 
 		const props = {
-			redirectTo: getRedirectAfterAccept( invite, invite.site.is_wpforteams_site ),
-			invite: invite,
+			invite,
+			redirectTo: getRedirectAfterAccept( invite, get( invite, 'site.is_wpforteams_site', false ) ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
 			forceMatchingEmail: this.isMatchEmailError(),
