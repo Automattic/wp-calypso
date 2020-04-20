@@ -64,7 +64,7 @@
 	font-size: 0.75rem;
 
 	@include breakpoint( '>660px' ) {
-		font-size: 0.9rem;
+		font-size: 1rem;
 	}
 }
 
@@ -74,20 +74,13 @@
 	font-weight: 400;
 
 	@include breakpoint( '>660px' ) {
-		font-size: 0.9rem;
+		font-size: 1rem;
 	}
 }
 
-.button.activity-card__restore-button.is-primary {
+.activity-card__restore-button {
 	margin: 0.8rem;
 	margin-bottom: 0;
-	border: none;
-	border-radius: 3px;
-	background-color: var( --color-primary-40 );
-}
-
-.button.activity-card__restore-button.is-primary:hover {
-	background-color: var( --color-primary-30 );
 }
 
 .activity-card__download-button.is-borderless {
@@ -99,7 +92,6 @@
 	display: flex;
 	justify-content: left;
 	font-size: 0.9rem;
-	color: var( --studio-gray-70 );
 }
 
 .activity-card__download-icon {

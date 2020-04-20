@@ -19,6 +19,7 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
+import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -72,7 +73,9 @@ class ActivityCard extends Component {
 							className="activity-card__detail-link"
 							href={ backupDetailPath( siteSlug, activity.rewindId ) }
 						>
-							{ translate( 'Backup details' ) }
+							{ isSuccessfulBackup( activity )
+								? translate( 'Changes in this backup' )
+								: translate( 'See content' ) }
 						</a>
 						<Button
 							compact
