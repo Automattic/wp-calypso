@@ -22,7 +22,7 @@ import {
 } from '../../utils/domain-suggestions';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { getNewRailcarId } from '../../utils/analytics';
+import { getNewRailcarId, RecordTrainTracksEventProps } from '../../utils/analytics';
 
 /**
  * Style dependencies
@@ -48,10 +48,7 @@ export interface Props {
 	 */
 	onClose: () => void;
 
-	/**
-	 * String denoting where the UI is displayed, e.g. `/gutenboarding/domain-popover`
-	 */
-	recordAnalytics?: ( type: string, payload: object ) => void;
+	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.

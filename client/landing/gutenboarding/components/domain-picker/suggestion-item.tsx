@@ -14,6 +14,7 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { DOMAIN_SUGGESTION_VENDOR, FLOW_ID } from '../../constants';
+import { RecordTrainTracksEventProps } from '../../utils/analytics';
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -21,7 +22,7 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	recordAnalytics?: ( type: string, payload: object ) => void;
+	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 	uiPosition: number;
 }
 
@@ -55,7 +56,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 			railcarId &&
 			recordAnalytics
 		) {
-			recordAnalytics( 'render', {
+			recordAnalytics( {
+				trainTracksType: 'render',
 				fetchAlgo,
 				query: domainSearch,
 				railcarId,
@@ -80,7 +82,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const onDomainSelect = () => {
 		// Use previousRailcarId to make sure the select action matches the last rendered railcarId.
 		if ( previousRailcarId && recordAnalytics ) {
-			recordAnalytics( 'interact', { action: 'domain_selected', railcarId: previousRailcarId } );
+			recordAnalytics( {
+				trainTracksType: 'interact',
+				action: 'domain_selected',
+				railcarId: previousRailcarId,
+			} );
 		}
 		onSelect( suggestion );
 	};

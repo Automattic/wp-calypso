@@ -4,7 +4,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
 
-export interface TrainTracksRenderProps {
+interface TrainTracksRenderProps {
+	trainTracksType: 'render';
 	railcarId: string;
 	uiAlgo: string;
 	uiPosition: number;
@@ -13,7 +14,8 @@ export interface TrainTracksRenderProps {
 	query: string;
 }
 
-export interface TrainTracksInteractProps {
+interface TrainTracksInteractProps {
+	trainTracksType: 'interact';
 	railcarId: string;
 	action: string;
 }
@@ -43,12 +45,16 @@ export function recordTrainTracksInteract( { railcarId, action }: TrainTracksInt
 	} );
 }
 
-export function recordTrainTracksEvent( type: string, uiAlgo: string, payload: any ) {
-	if ( type === 'render' ) {
-		recordTrainTracksRender( { ...payload, uiAlgo } );
+export type RecordTrainTracksEventProps =
+	| Omit< TrainTracksRenderProps, 'uiAlgo' >
+	| TrainTracksInteractProps;
+
+export function recordTrainTracksEvent( uiAlgo: string, event: RecordTrainTracksEventProps ) {
+	if ( event.trainTracksType === 'render' ) {
+		recordTrainTracksRender( { ...event, uiAlgo } );
 	}
-	if ( type === 'interact' ) {
-		recordTrainTracksInteract( { ...payload, uiAlgo } );
+	if ( event.trainTracksType === 'interact' ) {
+		recordTrainTracksInteract( event );
 	}
 }
 
