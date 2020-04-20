@@ -2,22 +2,31 @@
 	display: flex;
 
 	.educational-content__wrapper {
-		flex: 60%;
+		flex: 70%;
 	}
 
 	.educational-content__illustration {
-		flex: 40%;
-		margin-left: 16px;
+		flex: 30%;
+		margin-left: 1rem;
 		text-align: center;
 	}
 
 	h3 {
 		font-weight: 700;
-		margin-bottom: 16px;
+		margin-bottom: 1rem;
 	}
 
-	.inline-support-link {
-		display: block;
-		margin-bottom: 2px;
+	.educational-content__link {
+		margin-bottom: 0.5rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		.gridicon {
+			vertical-align: text-bottom;
+			margin-right: 0.5rem;
+			fill: var( --color-neutral );
+		}
 	}
 }
