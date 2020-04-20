@@ -48,10 +48,10 @@ add_action(
 			array(
 				'editor_script'   => 'jetpack-event-countdown',
 				'editor_style'    => 'jetpack-event-countdown-style',
-				'render_callback' => function( $attribs ) {
+				'render_callback' => function( $attribs, $content ) {
 					wp_enqueue_style( 'jetpack-event-countdown-style' );
 					wp_enqueue_script( 'jetpack-event-countdown-js' );
-					return $attribs->inner_html;
+					return $content;
 
 				},
 			)
