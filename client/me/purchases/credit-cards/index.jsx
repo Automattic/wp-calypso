@@ -18,7 +18,7 @@ import {
 	getStoredCards,
 	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
-	isFetchingStoredCards
+	isFetchingStoredCards,
 } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import { addCreditCard } from 'me/purchases/paths';
@@ -43,7 +43,7 @@ class CreditCards extends Component {
 			);
 		}
 
-		return cards.map( card => {
+		return cards.map( ( card ) => {
 			return (
 				<CreditCard key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
@@ -92,9 +92,9 @@ class CreditCards extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	cards: getStoredCards( state ),
 	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
-	isFetching: isFetchingStoredCards( state )
+	isFetching: isFetchingStoredCards( state ),
 } ) )( localize( CreditCards ) );

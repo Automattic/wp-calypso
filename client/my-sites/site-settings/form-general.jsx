@@ -502,7 +502,7 @@ export class SiteSettingsFormGeneral extends Component {
 			return null;
 		}
 
-		return(
+		return (
 			<>
 				<SettingsSectionHeader title={ translate( 'Earth Day Live 2020' ) } />
 				<Card>

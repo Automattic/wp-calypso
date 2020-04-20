@@ -16,12 +16,12 @@ import { isPaymentAgreement, isCreditCard } from 'lib/checkout/payment-methods';
  * @returns {Array} Stored Cards
  */
 
-export const getStoredCards = state =>
+export const getStoredCards = ( state ) =>
 	state.storedCards.items
-		.filter( method => isCreditCard( method ) )
-		.map( card => ( {
+		.filter( ( method ) => isCreditCard( method ) )
+		.map( ( card ) => ( {
 			...card,
-			allStoredDetailsIds: [ card.stored_details_id ]
+			allStoredDetailsIds: [ card.stored_details_id ],
 		} ) );
 
 /**
@@ -31,12 +31,12 @@ export const getStoredCards = state =>
  * @param {object} state - current state object
  * @returns {Array} Stored Payment Agreements
  */
-export const getStoredPaymentAgreements = state =>
+export const getStoredPaymentAgreements = ( state ) =>
 	state.storedCards.items
-		.filter( stored => isPaymentAgreement( stored ) )
-		.map( method => ( {
+		.filter( ( stored ) => isPaymentAgreement( stored ) )
+		.map( ( method ) => ( {
 			...method,
-			allStoredDetailsIds: [ method.stored_details_id ]
+			allStoredDetailsIds: [ method.stored_details_id ],
 		} ) );
 
 /**
@@ -46,14 +46,14 @@ export const getStoredPaymentAgreements = state =>
  * @param {object} state - current state object
  * @returns {Array} Stored Payment Methods excluding cards
  */
-export const getUniquePaymentAgreements = state => {
+export const getUniquePaymentAgreements = ( state ) => {
 	const paymentMethods = getStoredPaymentAgreements( state );
 	const groups = groupBy( paymentMethods, 'email' );
 	const paymentMethodsGroups = Object.values( groups );
 
-	const uniquePaymentAgreements = paymentMethodsGroups.map( group => ( {
+	const uniquePaymentAgreements = paymentMethodsGroups.map( ( group ) => ( {
 		...group[ 0 ],
-		allStoredDetailsIds: group.map( method => method.stored_details_id )
+		allStoredDetailsIds: group.map( ( method ) => method.stored_details_id ),
 	} ) );
 
 	return uniquePaymentAgreements;
@@ -68,11 +68,11 @@ export const getUniquePaymentAgreements = state => {
  */
 export const getStoredCardById = ( state, cardId ) =>
 	getStoredCards( state )
-		.filter( card => card.stored_details_id === cardId )
+		.filter( ( card ) => card.stored_details_id === cardId )
 		.shift();
 
-export const hasLoadedStoredCardsFromServer = state => state.storedCards.hasLoadedFromServer;
+export const hasLoadedStoredCardsFromServer = ( state ) => state.storedCards.hasLoadedFromServer;
 
 export const isDeletingStoredCard = ( state, cardId ) =>
 	Boolean( state.storedCards.isDeleting[ cardId ] );
-export const isFetchingStoredCards = state => state.storedCards.isFetching;
+export const isFetchingStoredCards = ( state ) => state.storedCards.isFetching;

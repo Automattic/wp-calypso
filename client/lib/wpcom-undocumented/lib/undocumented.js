@@ -864,7 +864,7 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
  *
  * @returns {Promise} Returns a promise when the `callback` is not provided.
  */
-Undocumented.prototype.getPaymentMethods = function( query, fn ) {
+Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
 };

@@ -9,7 +9,7 @@ import {
 	STORED_CARDS_FETCH_FAILED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED
+	STORED_CARDS_DELETE_FAILED,
 } from 'state/action-types';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { storedCardsSchema } from './schema';
@@ -34,7 +34,9 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 		}
 		case STORED_CARDS_DELETE_COMPLETED: {
 			const { card } = action;
-			return state.filter( item => ! card.allStoredDetailsIds.includes( item.stored_details_id ) );
+			return state.filter(
+				( item ) => ! card.allStoredDetailsIds.includes( item.stored_details_id )
+			);
 		}
 	}
 
@@ -91,7 +93,7 @@ export const isDeleting = ( state = {}, action ) => {
 		case STORED_CARDS_DELETE:
 			return {
 				...state,
-				[ action.card.stored_details_id ]: true
+				[ action.card.stored_details_id ]: true,
 			};
 
 		case STORED_CARDS_DELETE_FAILED:
@@ -108,5 +110,5 @@ export default combineReducers( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,
-	items
+	items,
 } );

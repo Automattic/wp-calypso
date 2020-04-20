@@ -33,7 +33,9 @@ interface Props {
 
 const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
-	const isDeleting = useSelector( state => isDeletingStoredCard( state, card.stored_details_id ) );
+	const isDeleting = useSelector( ( state ) =>
+		isDeletingStoredCard( state, card.stored_details_id )
+	);
 	const reduxDispatch = useDispatch< ReduxDispatch >();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
