@@ -4,6 +4,11 @@
 import { get, isEmpty } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/login/init';
+
+/**
  * Retrieve the user ID for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *

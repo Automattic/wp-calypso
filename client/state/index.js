@@ -16,6 +16,7 @@ import initialReducer from './reducer';
 import actionLogger from './action-log';
 import consoleDispatcher from './console-dispatch';
 import { enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
+import { addReducerEnhancer } from 'state/utils/add-reducer-enhancer';
 
 /**
  * Redux middleware
@@ -23,22 +24,6 @@ import { enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
-
-const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
-	const nextStore = nextCreator( reducer, initialState );
-
-	let currentReducer = reducer;
-	function addReducer( keys, subReducer ) {
-		currentReducer = currentReducer.addReducer( keys, subReducer );
-		this.replaceReducer( currentReducer );
-	}
-
-	function getCurrentReducer() {
-		return currentReducer;
-	}
-
-	return Object.assign( {}, nextStore, { addReducer, getCurrentReducer } );
-};
 
 /**
  * @typedef {object} ReduxStore
