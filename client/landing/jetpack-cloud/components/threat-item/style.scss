@@ -14,13 +14,13 @@
 	}
 
 	&__buttons {
-
+		display: flex;
 		justify-content: space-evenly;
 		order: -1;
 		padding: 20px 0;
 
 		@include breakpoint( '>800px' ) {
-			justify-content: flex-end;
+			display: block;
 			padding: 0 48px 0 20px;
 			order: initial;
 		}
