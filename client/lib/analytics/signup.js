@@ -26,14 +26,16 @@ export function recordSignupStart( flow, ref ) {
 }
 
 export function recordSignupComplete(
-	{ flow, isNewUser, isNewSite, hasCartItems, isNew7DUserSite },
+	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
 	now
 ) {
+	const isNewSite = !! siteId;
+
 	if ( ! now ) {
 		// Delay using the analytics localStorage queue.
 		return analytics.queue.add(
 			'recordSignupComplete',
-			{ flow, isNewUser, isNewSite, hasCartItems, isNew7DUserSite },
+			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
 			true
 		);
 	}
@@ -41,6 +43,7 @@ export function recordSignupComplete(
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_signup_complete', {
 		flow,
+		site_id: siteId,
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
 		has_cart_items: hasCartItems,

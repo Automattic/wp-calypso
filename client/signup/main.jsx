@@ -290,7 +290,7 @@ class Signup extends React.Component {
 		const { isNewishUser, existingSiteCount } = this.props;
 
 		const isNewUser = !! ( dependencies && dependencies.username );
-		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
@@ -301,17 +301,17 @@ class Signup extends React.Component {
 			isNewishUser,
 			existingSiteCount,
 			isNewUser,
-			isNewSite,
 			hasCartItems,
 			isNew7DUserSite,
 			flow: this.props.flowName,
+			siteId,
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
 		recordSignupComplete( {
 			flow: this.props.flowName,
+			siteId,
 			isNewUser,
-			isNewSite,
 			hasCartItems,
 			isNew7DUserSite,
 		} );
