@@ -26,8 +26,6 @@ import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'components/locale-suggestions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 
 /**
  * Style dependencies
@@ -48,7 +46,7 @@ class InviteAccept extends React.Component {
 	state = {
 		invite: false,
 		error: false,
-		matchEmailError: false
+		matchEmailError: false,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -72,7 +70,7 @@ class InviteAccept extends React.Component {
 			// add subscription-related keys to the invite
 			Object.assign( invite, {
 				activationKey: this.props.activationKey,
-				authKey: this.props.authKey
+				authKey: this.props.authKey,
 			} );
 		}
 		this.setState( { invite, error } );
@@ -93,7 +91,7 @@ class InviteAccept extends React.Component {
 
 	decline = () => {
 		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
-			displayOnNextPage: true
+			displayOnNextPage: true,
 		} );
 		page( '/' );
 	};
@@ -124,7 +122,6 @@ class InviteAccept extends React.Component {
 
 	renderForm = () => {
 		const { invite } = this.state;
-		const { isWPForTeamsSite } = this.props;
 
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
@@ -133,11 +130,11 @@ class InviteAccept extends React.Component {
 		debug( 'Rendering invite' );
 
 		const props = {
-			redirectTo: getRedirectAfterAccept( invite, isWPForTeamsSite ),
+			redirectTo: getRedirectAfterAccept( invite, invite.site.is_wpforteams_site ),
 			invite: invite,
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: this.isMatchEmailError()
+			forceMatchingEmail: this.isMatchEmailError(),
 		};
 
 		return this.props.user ? (
@@ -153,12 +150,12 @@ class InviteAccept extends React.Component {
 
 		const props = {
 			title: this.props.translate( 'Oops, that invite is not valid', {
-				context: 'Title that is display to users when attempting to accept an invalid invite.'
+				context: 'Title that is display to users when attempting to accept an invalid invite.',
 			} ),
 			line: this.props.translate( "We weren't able to verify that invitation.", {
-				context: 'Message that is displayed to users when an invitation is invalid.'
+				context: 'Message that is displayed to users when an invitation is invalid.',
 			} ),
-			illustration: whoopsImage
+			illustration: whoopsImage,
 		};
 
 		if ( error.error && error.message ) {
@@ -171,19 +168,19 @@ class InviteAccept extends React.Component {
 							'Would you like to accept the invite with a different account?'
 						),
 						action: this.props.translate( 'Switch Accounts' ),
-						actionURL: login( { redirectTo: window.location.href } )
+						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
 						action: this.props.translate( 'Switch Accounts' ),
-						actionURL: login( { redirectTo: window.location.href } )
+						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				default:
 					Object.assign( props, {
-						line: error.message
+						line: error.message,
 					} );
 					break;
 			}
@@ -218,7 +215,7 @@ class InviteAccept extends React.Component {
 
 	render() {
 		const formClasses = classNames( 'invite-accept__form', {
-			'is-error': !! this.isInvalidInvite()
+			'is-error': !! this.isInvalidInvite(),
 		} );
 		const { invite } = this.state;
 		const { user } = this.props;
@@ -230,7 +227,7 @@ class InviteAccept extends React.Component {
 					{ this.isMatchEmailError() && user && (
 						<Notice
 							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
-								args: { email: invite.sentTo }
+								args: { email: invite.sentTo },
 							} ) }
 							status="is-error"
 							showDismiss={ false }
@@ -246,8 +243,8 @@ class InviteAccept extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		user: getCurrentUser( state )
+	( state ) => ( {
+		user: getCurrentUser( state ),
 	} ),
 	{ successNotice, infoNotice }
 )( localize( InviteAccept ) );
