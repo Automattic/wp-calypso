@@ -513,11 +513,12 @@ export class SiteSettingsFormGeneral extends Component {
 							onChange={ this.handleEarthDayLiveToggle }
 						>
 							{ translate(
-								'From April 22 - 24, activists, performers, thought leaders and artists will come together ' +
-									'for a {{earthDayLiveLink}}massive 3 day live stream{{/earthDayLiveLink}} for the future ' +
-									'of our planet. Show your support by displaying the {{earthDayLiveBannerLink}}Earth Day ' +
-									'Live banner{{/earthDayLiveBannerLink}} on your site. On April 22, the 50th anniversary ' +
-									'of Earth Day, the banner will expand to a full-screen overlay that site visitors can dismiss.',
+								'From April 22-24, experts, activists, artists, and performers will run a ' +
+									'{{earthDayLiveLink}}massive, three-day livestream{{/earthDayLiveLink}} to inspire people ' +
+									'around the world to join the movement and take action against climate change. Show your support! ' +
+									'Display the {{earthDayLiveBannerLink}}Earth Day Live Banner{{/earthDayLiveBannerLink}} on your ' +
+									'site. On April 22 – the 50th anniversary of Earth Day – the banner will become a full-site ' +
+									'overlay that your visitors can dismiss.',
 								{
 									components: {
 										earthDayLiveLink: (
