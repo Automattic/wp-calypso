@@ -18,7 +18,7 @@ module.exports = function () {
 		response.json( { version } );
 	} );
 
-	if ( config.isEnabled( 'oauth' ) ) {
+	if ( config.isEnabled( 'oauth' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		oauth( app );
 	}
 
