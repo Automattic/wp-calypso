@@ -122,7 +122,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{

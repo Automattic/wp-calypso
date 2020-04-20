@@ -78,7 +78,7 @@ export class EmbedDialog extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		if ( this.state.embedUrl !== newProps.embedUrl ) {
 			this.setState( {
 				embedUrl: newProps.embedUrl,
@@ -100,11 +100,11 @@ export class EmbedDialog extends React.Component {
 		}
 	};
 
-	isURLInCache = url => {
+	isURLInCache = ( url ) => {
 		return !! this.state.previewMarkup[ url ];
 	};
 
-	parseEmbedEndpointResult = url => ( error, data, headers ) => {
+	parseEmbedEndpointResult = ( url ) => ( error, data, headers ) => {
 		let cachedMarkup;
 
 		if ( data && data.result ) {
@@ -136,7 +136,7 @@ export class EmbedDialog extends React.Component {
 		} );
 	};
 
-	fetchEmbedPreviewMarkup = url => {
+	fetchEmbedPreviewMarkup = ( url ) => {
 		// Use cached data if it's available
 		if ( this.isURLInCache( url ) || url.trim() === '' ) {
 			this.setState( { isLoading: false } );
@@ -150,7 +150,7 @@ export class EmbedDialog extends React.Component {
 			.embeds( { embed_url: url }, this.parseEmbedEndpointResult( url ) );
 	};
 
-	onChangeEmbedUrl = event => {
+	onChangeEmbedUrl = ( event ) => {
 		this.setState( { embedUrl: event.target.value } );
 	};
 
@@ -158,7 +158,7 @@ export class EmbedDialog extends React.Component {
 		this.props.onUpdate( this.state.embedUrl );
 	};
 
-	onKeyDownEmbedUrl = event => {
+	onKeyDownEmbedUrl = ( event ) => {
 		if ( 'Enter' !== event.key ) {
 			return;
 		}
@@ -167,7 +167,7 @@ export class EmbedDialog extends React.Component {
 		this.onUpdate();
 	};
 
-	getError = errorObj => {
+	getError = ( errorObj ) => {
 		switch ( errorObj.error ) {
 			case 'invalid_embed_url':
 				return this.props.translate( 'The Embed URL parameter must be a valid URL.' );
@@ -247,12 +247,12 @@ export class EmbedDialog extends React.Component {
 		this.setState( { iframeLoading: false } );
 	};
 
-	handleIframeRef = iframe => {
+	handleIframeRef = ( iframe ) => {
 		this.iframe = iframe;
 		this.setHtml();
 	};
 
-	handleViewRef = view => {
+	handleViewRef = ( view ) => {
 		this.viewref = view;
 	};
 

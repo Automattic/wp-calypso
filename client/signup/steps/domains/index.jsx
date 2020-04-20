@@ -173,7 +173,7 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	handleAddDomain = suggestion => {
+	handleAddDomain = ( suggestion ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -203,7 +203,7 @@ class DomainsStep extends React.Component {
 		return { themeSlug, themeSlugWithRepo, themeItem: theme };
 	};
 
-	getThemeSlugWithRepo = themeSlug => {
+	getThemeSlugWithRepo = ( themeSlug ) => {
 		if ( ! themeSlug ) {
 			return undefined;
 		}
@@ -502,7 +502,7 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	onTransferSave = state => {
+	onTransferSave = ( state ) => {
 		this.handleSave( 'transferForm', state );
 	};
 

@@ -14,7 +14,7 @@ let channel = null;
 
 const debug = debugFactory( 'lasagna:channel:user:wpcom' );
 
-const joinChannel = store => {
+const joinChannel = ( store ) => {
 	if ( ! socket || channel ) {
 		return;
 	}
@@ -43,7 +43,7 @@ const leaveChannel = () => {
 	channel = null;
 };
 
-export default store => next => action => {
+export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case LASAGNA_SOCKET_CONNECTED: {
 			joinChannel( store );

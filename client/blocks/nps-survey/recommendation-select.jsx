@@ -32,7 +32,7 @@ class RecommendationSelect extends PureComponent {
 	render() {
 		const { translate } = this.props;
 		const values = range( 0, 11 );
-		const options = values.map( value => this.renderOption( value ) );
+		const options = values.map( ( value ) => this.renderOption( value ) );
 
 		return (
 			<div className="nps-survey__recommendation-select">

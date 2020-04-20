@@ -71,7 +71,7 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
 		const layout = action.pageLayout;
 		if ( state.includes( layout.slug ) ) {
-			return state.filter( item => item !== layout.slug );
+			return state.filter( ( item ) => item !== layout.slug );
 		}
 		return [ ...state, layout.slug ];
 	}

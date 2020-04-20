@@ -216,9 +216,9 @@ class Search extends Component {
 }
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
-const checkForSearchProduct = purchase =>
+const checkForSearchProduct = ( purchase ) =>
 	purchase.active && isJetpackSearch( purchase.productSlug );
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const hasSearchProduct = getSitePurchases( state, siteId ).find( checkForSearchProduct );

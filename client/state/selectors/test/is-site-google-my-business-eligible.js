@@ -40,7 +40,7 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		];
 
-		plans.forEach( plan => {
+		plans.forEach( ( plan ) => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( true );
@@ -65,7 +65,7 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		];
 
-		plans.forEach( plan => {
+		plans.forEach( ( plan ) => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( false );

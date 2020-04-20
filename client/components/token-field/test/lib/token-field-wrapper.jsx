@@ -64,7 +64,7 @@ class TokenFieldWrapper extends React.Component {
 		);
 	}
 
-	_onTokensChange = value => {
+	_onTokensChange = ( value ) => {
 		this.setState( { tokens: value } );
 	};
 }

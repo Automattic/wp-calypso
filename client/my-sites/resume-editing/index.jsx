@@ -79,7 +79,7 @@ class ResumeEditing extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getEditorLastDraftSiteId( state );
 		const postId = getEditorLastDraftPostId( state );
 

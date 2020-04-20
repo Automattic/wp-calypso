@@ -37,7 +37,7 @@ export class ReaderSidebarTags extends Component {
 		addTagCounter: 0,
 	};
 
-	followTag = tag => {
+	followTag = ( tag ) => {
 		if ( startsWith( tag, '#' ) ) {
 			tag = tag.substring( 1 );
 		}
@@ -49,7 +49,7 @@ export class ReaderSidebarTags extends Component {
 		this.props.onFollowTag( tag );
 
 		// reset the FormTextInputWithAction field to empty by rerendering it with a new `key`
-		this.setState( state => ( { addTagCounter: state.addTagCounter + 1 } ) );
+		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
 	render() {
@@ -78,7 +78,7 @@ export class ReaderSidebarTags extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		tags: getReaderFollowedTags( state ),
 	} ),
 	{

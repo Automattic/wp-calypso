@@ -42,12 +42,12 @@ QueryPackages.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		loaded: isLoaded( state ),
 		fetching: isFetching( state ),
 		error: isFetchError( state ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				fetchSettings,

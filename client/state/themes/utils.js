@@ -50,7 +50,7 @@ export function normalizeJetpackTheme( theme = {} ) {
 		...omit( theme, 'tags' ),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, slug => ( { slug } ) ),
+			theme_feature: map( theme.tags, ( slug ) => ( { slug } ) ),
 		},
 	};
 }
@@ -223,7 +223,7 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const foundInTaxonomies = some(
 					SEARCH_TAXONOMIES,
-					taxonomy =>
+					( taxonomy ) =>
 						theme.taxonomies &&
 						some(
 							theme.taxonomies[ 'theme_' + taxonomy ],
@@ -247,7 +247,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
-				return every( filters, f => some( theme.taxonomies, terms => some( terms, { slug: f } ) ) );
+				return every( filters, ( f ) =>
+					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
+				);
 			}
 		}
 

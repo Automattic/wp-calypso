@@ -31,7 +31,7 @@ class StatsVideoSummary extends Component {
 		selectedBar: null,
 	};
 
-	selectBar = bar => {
+	selectBar = ( bar ) => {
 		this.setState( {
 			selectedBar: bar,
 		} );
@@ -41,7 +41,7 @@ class StatsVideoSummary extends Component {
 		const { query, isRequesting, moment, siteId, summaryData, translate } = this.props;
 		const data =
 			summaryData && summaryData.data
-				? summaryData.data.map( item => {
+				? summaryData.data.map( ( item ) => {
 						return {
 							...item,
 							period: moment( item.period ).format( 'MMM D' ),

@@ -52,7 +52,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		page.back( `/marketing/tools/${ this.props.siteSlug }` );
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId, siteSlug } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -225,7 +225,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

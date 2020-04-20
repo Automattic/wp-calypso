@@ -16,7 +16,7 @@ import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 
-export const UpgradeToPremiumNudgePure = props => {
+export const UpgradeToPremiumNudgePure = ( props ) => {
 	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
 
 	let featureList;

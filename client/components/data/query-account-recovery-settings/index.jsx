@@ -24,7 +24,7 @@ class QueryAccountRecoverySettings extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFetching: isFetchingAccountRecoverySettings( state ),
 	} ),
 	{ accountRecoverySettingsFetch }

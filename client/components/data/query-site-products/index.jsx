@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSiteProducts } from 'state/sites/products/selectors';
 import { fetchSiteProducts } from 'state/sites/products/actions';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSiteProducts( getState(), siteId ) ) {
 		dispatch( fetchSiteProducts( siteId ) );
 	}

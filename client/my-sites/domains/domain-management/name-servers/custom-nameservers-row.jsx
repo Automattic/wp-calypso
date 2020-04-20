@@ -51,7 +51,7 @@ class CustomNameserversRow extends React.PureComponent {
 		);
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		if ( this.props.onChange ) {
 			this.props.onChange( event.target.value, this.props.index );
 		}
@@ -61,7 +61,7 @@ class CustomNameserversRow extends React.PureComponent {
 		this.props.customNameserverInputFocus( this.props.selectedDomainName );
 	};
 
-	handleRemove = event => {
+	handleRemove = ( event ) => {
 		event.preventDefault();
 
 		this.props.removeNameserversClick( this.props.selectedDomainName );
@@ -70,7 +70,7 @@ class CustomNameserversRow extends React.PureComponent {
 	};
 }
 
-const customNameserverInputFocus = domainName =>
+const customNameserverInputFocus = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -83,7 +83,7 @@ const customNameserverInputFocus = domainName =>
 		} )
 	);
 
-const removeNameserversClick = domainName =>
+const removeNameserversClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

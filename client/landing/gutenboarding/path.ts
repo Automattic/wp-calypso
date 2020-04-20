@@ -63,7 +63,7 @@ export function useStepRouteParam() {
 
 export function useCurrentStep() {
 	const stepRouteParam = useStepRouteParam();
-	return findKey( Step, step => step === stepRouteParam ) as StepNameType;
+	return findKey( Step, ( step ) => step === stepRouteParam ) as StepNameType;
 }
 
 // Returns true if the url has a `?new`, which is used by the

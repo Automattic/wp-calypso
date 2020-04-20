@@ -38,6 +38,7 @@
 		"qs": "^6.9.1",
 		"redux": "^4.0.4",
 		"tslib": "^1.10.0",
+		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {

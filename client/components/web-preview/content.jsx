@@ -41,7 +41,7 @@ export class WebPreviewContent extends Component {
 		isLoadingSubpage: false,
 	};
 
-	setIframeInstance = ref => {
+	setIframeInstance = ( ref ) => {
 		this.iframe = ref;
 	};
 
@@ -86,7 +86,7 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleMessage = e => {
+	handleMessage = ( e ) => {
 		let data;
 		try {
 			data = JSON.parse( e.data );
@@ -135,12 +135,12 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleLocationChange = payload => {
+	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
 	};
 
-	setWrapperElement = el => {
+	setWrapperElement = ( el ) => {
 		this.wrapperElementRef = el;
 	};
 
@@ -180,7 +180,7 @@ export class WebPreviewContent extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl = iframeUrl => {
+	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
 			return;
 		}
@@ -222,7 +222,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = caller => {
+	setLoaded = ( caller ) => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -417,7 +417,7 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 };
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),

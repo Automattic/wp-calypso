@@ -28,7 +28,7 @@ const CelebrateSiteCreation = ( { checklistMode, displayChecklist, siteHasPaidPl
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),

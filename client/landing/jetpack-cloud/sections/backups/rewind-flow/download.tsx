@@ -39,9 +39,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
-	const downloadId = useSelector( state => getBackupDownloadId( state, siteId, rewindId ) );
-	const downloadUrl = useSelector( state => getBackupDownloadUrl( state, siteId, rewindId ) );
-	const downloadProgress = useSelector( state =>
+	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId, rewindId ) );
+	const downloadUrl = useSelector( ( state ) => getBackupDownloadUrl( state, siteId, rewindId ) );
+	const downloadProgress = useSelector( ( state ) =>
 		getBackupDownloadProgress( state, siteId, rewindId )
 	);
 
@@ -84,7 +84,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ requestDownload }
-				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
+				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
 			>
 				{ translate( 'Create downloadable file' ) }
 			</Button>

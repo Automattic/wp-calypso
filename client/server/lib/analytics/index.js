@@ -52,14 +52,14 @@ function getUserFromRequest( request ) {
 
 const analytics = {
 	statsd: {
-		recordTiming: function( featureSlug, eventType, duration ) {
+		recordTiming: function ( featureSlug, eventType, duration ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
 				const url = statsdTimingUrl( featureSlug, eventType, duration );
 				superagent.get( url ).end();
 			}
 		},
 
-		recordCounting: function( featureSlug, eventType, increment = 1 ) {
+		recordCounting: function ( featureSlug, eventType, increment = 1 ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
 				const url = statsdCountingUrl( featureSlug, eventType, increment );
 				superagent.get( url ).end();
@@ -68,7 +68,7 @@ const analytics = {
 	},
 
 	tracks: {
-		createPixel: function( data ) {
+		createPixel: function ( data ) {
 			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {
@@ -80,7 +80,7 @@ const analytics = {
 			superagent.get( pixelUrl ).end();
 		},
 
-		recordEvent: function( eventName, eventProperties, req ) {
+		recordEvent: function ( eventName, eventProperties, req ) {
 			eventProperties = eventProperties || {};
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {

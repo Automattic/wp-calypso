@@ -13,7 +13,7 @@ import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-v
 import { addCartItem } from 'lib/cart-values/cart-items';
 
 function addProductsToCart( cart, newCartItems ) {
-	forEach( newCartItems, function( cartItem ) {
+	forEach( newCartItems, function ( cartItem ) {
 		cartItem.extra = Object.assign( cartItem.extra || {}, {
 			context: 'signup',
 		} );
@@ -26,7 +26,7 @@ function addProductsToCart( cart, newCartItems ) {
 }
 
 export default {
-	createCart: function( cartKey, newCartItems, callback ) {
+	createCart: function ( cartKey, newCartItems, callback ) {
 		let newCart = {
 			cart_key: cartKey,
 			products: [],
@@ -36,12 +36,12 @@ export default {
 		newCart = addProductsToCart( newCart, newCartItems );
 		newCart = preprocessCartForServer( newCart );
 
-		wpcom.undocumented().setCart( cartKey, newCart, function( postError ) {
+		wpcom.undocumented().setCart( cartKey, newCart, function ( postError ) {
 			callback( postError );
 		} );
 	},
-	addToCart: function( cartKey, newCartItems, callback ) {
-		wpcom.undocumented().getCart( cartKey, function( error, data ) {
+	addToCart: function ( cartKey, newCartItems, callback ) {
+		wpcom.undocumented().getCart( cartKey, function ( error, data ) {
 			if ( error ) {
 				return callback( error );
 			}

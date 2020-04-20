@@ -28,8 +28,8 @@ class CrowdsignalOauthMasterbar extends Component {
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, font => {
-				font.load().then( loadedFont => document.fonts.add( loadedFont ) );
+			map( crowdsignalFonts, ( font ) => {
+				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
 			} );
 		}
 	}
@@ -54,18 +54,20 @@ class CrowdsignalOauthMasterbar extends Component {
 						<li className="masterbar__crowdsignal-nav-item masterbar__crowdsignal-nav-text">
 							<p className="masterbar__crowdsignal-text">
 								<span>
-									{ // translators: product here is an Automattic product (eg: CrowdSignal or JetPack)
-									translate(
-										'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
-										{
-											args: {
-												product: oauth2Client.title,
-											},
-											components: {
-												span: <span className="masterbar__crowdsignal-wide-screen-only" />,
-											},
-										}
-									) }
+									{
+										// translators: product here is an Automattic product (eg: CrowdSignal or JetPack)
+										translate(
+											'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
+											{
+												args: {
+													product: oauth2Client.title,
+												},
+												components: {
+													span: <span className="masterbar__crowdsignal-wide-screen-only" />,
+												},
+											}
+										)
+									}
 								</span>
 							</p>
 						</li>

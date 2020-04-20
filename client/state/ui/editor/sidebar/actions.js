@@ -11,7 +11,7 @@ import {
 import { savePreference } from 'state/preferences/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-export const openEditorSidebar = () => dispatch => {
+export const openEditorSidebar = () => ( dispatch ) => {
 	dispatch( savePreference( 'editor-sidebar', 'open' ) );
 	dispatch(
 		withAnalytics(
@@ -25,7 +25,7 @@ export const openEditorSidebar = () => dispatch => {
 	);
 };
 
-export const closeEditorSidebar = () => dispatch => {
+export const closeEditorSidebar = () => ( dispatch ) => {
 	dispatch( savePreference( 'editor-sidebar', 'closed' ) );
 	dispatch(
 		withAnalytics(

@@ -54,7 +54,7 @@ export function addItem( item ) {
 }
 
 export function addItems( items ) {
-	const extendedItems = items.map( item => {
+	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
 		} );
@@ -68,7 +68,7 @@ export function addItems( items ) {
 }
 
 export function replaceCartWithItems( items ) {
-	const extendedItems = items.map( item => {
+	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
 		} );
@@ -146,7 +146,7 @@ export function getRememberedCoupon() {
 	// delete coupons if they're older than thirty days; find the most recent one
 	let mostRecentTimestamp = 0;
 	let mostRecentCouponCode = null;
-	Object.keys( coupons ).forEach( key => {
+	Object.keys( coupons ).forEach( ( key ) => {
 		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
 			delete coupons[ key ];
 		} else if ( coupons[ key ] > mostRecentTimestamp ) {

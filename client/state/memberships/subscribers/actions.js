@@ -20,7 +20,7 @@ export const requestSubscribers = ( siteId, offset ) => ( {
 } );
 
 export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			siteId,
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
@@ -31,7 +31,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 			.post( `/sites/${ siteId }/memberships/subscriptions/${ subscriber.id }/cancel`, {
 				user_id: subscriber.user.ID,
 			} )
-			.then( result => {
+			.then( ( result ) => {
 				const errorMsg = result.error || '';
 
 				if ( errorMsg.length > 0 ) {
@@ -65,7 +65,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 					},
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 					subscriptionId: subscriber.id,

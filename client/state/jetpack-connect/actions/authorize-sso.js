@@ -23,7 +23,7 @@ import 'state/jetpack-connect/init';
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function authorizeSSO( siteId, ssoNonce, siteUrl ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Attempting to authorize SSO for ' + siteId );
 		dispatch( {
 			type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
@@ -33,7 +33,7 @@ export function authorizeSSO( siteId, ssoNonce, siteUrl ) {
 		return wpcom
 			.undocumented()
 			.jetpackAuthorizeSSONonce( siteId, ssoNonce )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( recordTracksEvent( 'calypso_jpc_authorize_sso_success' ) );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -41,7 +41,7 @@ export function authorizeSSO( siteId, ssoNonce, siteUrl ) {
 					siteUrl,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_sso_error', {
 						error: error,

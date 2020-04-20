@@ -55,7 +55,7 @@ const SiteSettingsSecurity = ( {
 	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
 		rewindState.state
 	);
-	const hasScanProduct = sitePurchases.some( p => p.productSlug.includes( 'jetpack_scan' ) );
+	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
 
 	const showCredentials = ! isManaged && ( isRewindActive || hasScanProduct );
 
@@ -87,7 +87,7 @@ SiteSettingsSecurity.propTypes = {
 	siteIsJetpack: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const rewindState = getRewindState( state, siteId );

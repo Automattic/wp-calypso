@@ -39,7 +39,7 @@ class ThemeMoreButton extends Component {
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
 	};
 
-	closePopover = action => {
+	closePopover = ( action ) => {
 		this.setState( { showPopover: false } );
 		if ( isFunction( action ) ) {
 			action();

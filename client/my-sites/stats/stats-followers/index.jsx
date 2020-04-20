@@ -33,7 +33,7 @@ class StatModuleFollowers extends Component {
 		activeFilter: 'wpcom-followers',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		let gaEvent;
 		if ( filter !== this.state.activeFilter ) {
@@ -190,7 +190,7 @@ class StatModuleFollowers extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const emailQuery = { type: 'email', max: 10 };

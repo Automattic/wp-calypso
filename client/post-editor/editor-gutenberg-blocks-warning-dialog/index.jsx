@@ -96,7 +96,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg( siteId, gutenbergUrl );
 	};
 
-	showDocumentHistory = e => {
+	showDocumentHistory = ( e ) => {
 		e.preventDefault();
 		this.props.openPostRevisionsDialog();
 		this.useClassicEditor();
@@ -149,7 +149,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	switchToGutenberg: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
@@ -188,7 +188,7 @@ const mapDispatchToProps = dispatch => ( {
 	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 } );
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );

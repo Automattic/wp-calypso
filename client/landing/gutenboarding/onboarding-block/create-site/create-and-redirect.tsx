@@ -14,9 +14,9 @@ import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion'
 import { Step, usePath } from '../../path';
 
 const CreateAndRedirect = () => {
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const makePath = usePath();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 

@@ -31,14 +31,14 @@ class RecoveryEmail extends Component {
 		);
 	}
 
-	onSave = newEmail => {
+	onSave = ( newEmail ) => {
 		this.props.updateEmail( newEmail );
 	};
 
 	onDelete = () => {
 		const { translate, deleteEmail } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the email address?' ), accepted => {
+		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
 			if ( accepted ) {
 				deleteEmail();
 			}

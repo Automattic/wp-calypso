@@ -37,7 +37,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number.isRequired,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = ( timestamp ) => {
 		const { currentUserId, signupForm, site, scheduleId } = this.props;
 		const meta = {
 			firstname: signupForm.firstname,
@@ -97,7 +97,7 @@ class CalendarStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		appointmentTimespan: getConciergeAppointmentTimespan( state ),
 		signupForm: getConciergeSignupForm( state ),
 		scheduleId: getConciergeScheduleId( state ),

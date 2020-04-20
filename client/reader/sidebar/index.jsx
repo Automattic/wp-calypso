@@ -60,7 +60,7 @@ export class ReaderSidebar extends React.Component {
 		this.openExpandableMenuForCurrentTagOrList();
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
@@ -70,7 +70,7 @@ export class ReaderSidebar extends React.Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function() {
+			defer( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
 			} );
@@ -253,7 +253,7 @@ ReaderSidebar.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,

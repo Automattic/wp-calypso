@@ -58,7 +58,8 @@ class EditorConfirmationSidebar extends Component {
 		return null;
 	}
 
-	getCloseOverlayHandler = context => () => this.props.setStatus( { status: 'closed', context } );
+	getCloseOverlayHandler = ( context ) => () =>
+		this.props.setStatus( { status: 'closed', context } );
 
 	closeAndPublish = () => {
 		this.props.setStatus( { status: 'closed', context: 'publish' } );
@@ -210,7 +211,7 @@ class EditorConfirmationSidebar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

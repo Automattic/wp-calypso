@@ -11,7 +11,7 @@ import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 
-export default function() {
+export default function () {
 	page( '/plans', siteSelection, sites, makeLayout, clientRender );
 	page( '/plans/compare', siteSelection, navigation, redirectToPlans, makeLayout, clientRender );
 	page(

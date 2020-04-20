@@ -44,7 +44,7 @@ class MediaLibraryHeader extends React.Component {
 		isMoreOptionsVisible: false,
 	};
 
-	setMoreOptionsContext = component => {
+	setMoreOptionsContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -54,14 +54,14 @@ class MediaLibraryHeader extends React.Component {
 		} );
 	};
 
-	toggleAddViaUrl = state => {
+	toggleAddViaUrl = ( state ) => {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
 		} );
 	};
 
-	toggleMoreOptions = state => {
+	toggleMoreOptions = ( state ) => {
 		this.setState( {
 			isMoreOptionsVisible: state,
 		} );

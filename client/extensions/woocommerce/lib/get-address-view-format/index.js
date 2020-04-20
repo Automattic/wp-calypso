@@ -7,7 +7,7 @@
  * @param {object} address The address as returned from the remote site API
  * @returns {object} An object with keys matching the expected AddressView props
  */
-const getAddressViewFormat = address => {
+const getAddressViewFormat = ( address ) => {
 	return {
 		street: address.address_1 || '',
 		street2: address.address_2 || '',

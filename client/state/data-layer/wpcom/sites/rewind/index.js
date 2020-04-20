@@ -11,9 +11,9 @@ import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { rewindStatus } from './schema';
 import { transformApi } from './api-transformer';
 
-const getType = o => ( o && o.constructor && o.constructor.name ) || typeof o;
+const getType = ( o ) => ( o && o.constructor && o.constructor.name ) || typeof o;
 
-const fetchRewindState = action =>
+const fetchRewindState = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -40,7 +40,7 @@ const updateRewindState = ( { siteId }, data ) => {
 		return stateUpdate;
 	}
 
-	const delayedStateRequest = dispatch =>
+	const delayedStateRequest = ( dispatch ) =>
 		setTimeout( () => dispatch( requestRewindState( siteId ) ), 3000 );
 
 	return [ stateUpdate, delayedStateRequest ];

@@ -6,7 +6,7 @@ import getNote from '../../selectors/get-note';
 import { markReadStatus } from '../../../rest-client/wpcom';
 import { bumpStat } from '../../../rest-client/bump-stat';
 
-const clearLocalReadCache = noteId => {
+const clearLocalReadCache = ( noteId ) => {
 	try {
 		localStorage.removeItem( `note_read_status_${ noteId }` );
 	} catch ( e ) {}

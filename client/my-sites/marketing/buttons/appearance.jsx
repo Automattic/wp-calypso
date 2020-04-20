@@ -54,7 +54,7 @@ class SharingButtonsAppearance extends Component {
 		);
 	}
 
-	onReblogsLikesCheckboxClicked = event => {
+	onReblogsLikesCheckboxClicked = ( event ) => {
 		this.props.onChange( event.target.name, ! event.target.checked );
 
 		const { path } = this.props;
@@ -201,7 +201,7 @@ class SharingButtonsAppearance extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );

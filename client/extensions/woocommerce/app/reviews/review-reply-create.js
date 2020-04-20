@@ -40,7 +40,7 @@ class ReviewReplyCreate extends Component {
 		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
 
-	bindTextareaRef = textarea => {
+	bindTextareaRef = ( textarea ) => {
 		this.textarea = textarea;
 	};
 
@@ -63,7 +63,7 @@ class ReviewReplyCreate extends Component {
 		} );
 	};
 
-	onTextChange = event => {
+	onTextChange = ( event ) => {
 		const { value } = event.target;
 
 		const textareaHeight = this.calculateTextareaHeight();
@@ -85,7 +85,7 @@ class ReviewReplyCreate extends Component {
 			textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 		} );
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 		const { siteId, review, translate } = this.props;
 		const { commentText } = this.state;

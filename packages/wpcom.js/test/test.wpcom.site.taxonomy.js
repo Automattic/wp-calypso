@@ -14,9 +14,10 @@ describe( 'wpcom.site.taxonomy', () => {
 	var taxonomy = site.taxonomy( 'category' );
 
 	describe( 'wpcom.site.taxonomy.termsList', () => {
-		it( 'should return a list of terms', done => {
-			taxonomy.termsList()
-				.then( data => {
+		it( 'should return a list of terms', ( done ) => {
+			taxonomy
+				.termsList()
+				.then( ( data ) => {
 					let foundTerm = data.terms[ 0 ];
 					assert.ok( data );
 					assert.equal( 'number', typeof data.found );

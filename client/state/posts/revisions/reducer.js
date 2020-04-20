@@ -67,7 +67,7 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 			[ postId ]: {
 				...{
 					...omit( sitePostState, 'revisions' ),
-					...keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` ),
+					...keyBy( filteredDiffs, ( d ) => `${ d.from }:${ d.to }` ),
 				},
 				revisions: mergedRevisions,
 			},

@@ -85,7 +85,7 @@ class ThanksModal extends Component {
 		this.onCloseModal();
 	};
 
-	onLinkClick = link => {
+	onLinkClick = ( link ) => {
 		return () => {
 			this.onCloseModal();
 			this.trackClick( link, 'click' );
@@ -284,7 +284,7 @@ class ThanksModal extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
@@ -307,12 +307,12 @@ export default connect(
 			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
-			clearActivated: siteId => dispatch( clearActivated( siteId ) ),
-			refreshSite: siteId => dispatch( requestSite( siteId ) ),
 			activateGutenberg: ( siteId, customizeUrl ) =>
 				dispatch( setSelectedEditor( siteId, 'gutenberg', customizeUrl ) ),
+			clearActivated: ( siteId ) => dispatch( clearActivated( siteId ) ),
+			refreshSite: ( siteId ) => dispatch( requestSite( siteId ) ),
 		};
 	}
 )( ThanksModal );

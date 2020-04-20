@@ -58,7 +58,7 @@ export function generateFlows( {
 
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
-			destination: function( dependencies ) {
+			destination: function ( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
 			description: 'Create an account for REBRAND cities partnership',
@@ -243,7 +243,7 @@ export function generateFlows( {
 	if ( isEnabled( 'signup/wpforteams' ) ) {
 		flows[ 'wp-for-teams' ] = {
 			steps: [ 'team-site', 'user' ],
-			destination: dependencies => `https://${ dependencies.siteSlug }`,
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'WordPress for Teams signup flow',
 			lastModified: '2020-03-23',
 		};

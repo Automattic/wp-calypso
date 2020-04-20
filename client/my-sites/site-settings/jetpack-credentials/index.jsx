@@ -83,7 +83,7 @@ class JetpackCredentials extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const { credentials, state: rewindState } = getRewindState( state, siteId );
 

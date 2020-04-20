@@ -89,7 +89,7 @@ EditorRevisions.propTypes = {
 export default flow(
 	localize,
 	connect(
-		state => {
+		( state ) => {
 			const postId = getEditorPostId( state );
 			const siteId = getSelectedSiteId( state );
 

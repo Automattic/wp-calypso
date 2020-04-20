@@ -40,7 +40,7 @@ class EditorLocationSearch extends React.Component {
 		this.mounted = false;
 	}
 
-	geocode = address => {
+	geocode = ( address ) => {
 		const { onError } = this.props;
 
 		if ( ! this.hasTrackedStats ) {
@@ -60,7 +60,7 @@ class EditorLocationSearch extends React.Component {
 		}
 
 		geocode( address )
-			.then( results => {
+			.then( ( results ) => {
 				if ( ! this.mounted ) {
 					return;
 				}
@@ -101,7 +101,7 @@ class EditorLocationSearch extends React.Component {
 					initialValue={ value }
 				/>
 				<ul className="editor-location__search-results">
-					{ results.map( result => {
+					{ results.map( ( result ) => {
 						return (
 							<li key={ result.formatted_address }>
 								<EditorLocationSearchResult

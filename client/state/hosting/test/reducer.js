@@ -11,7 +11,7 @@ import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE, SERIALIZE } from 'sta
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

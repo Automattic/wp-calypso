@@ -29,13 +29,13 @@ const DUMMY_SITE = {
 	},
 };
 
-describe( 'EditorDiscussion', function() {
-	beforeEach( function() {
+describe( 'EditorDiscussion', function () {
+	beforeEach( function () {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
-	describe( '#getDiscussionSetting()', function() {
-		test( 'should return an empty object if both post and site are unknown', function() {
+	describe( '#getDiscussionSetting()', function () {
+		test( 'should return an empty object if both post and site are unknown', function () {
 			const tree = TestUtils.renderIntoDocument( <EditorDiscussion /> );
 
 			expect( tree.getDiscussionSetting() ).to.eql( {} );

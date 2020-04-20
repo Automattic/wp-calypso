@@ -26,7 +26,7 @@ export function decodeEntities( text ) {
  * @returns {*[]} the list with separators
  */
 export function interpose( separator, list ) {
-	return list.reduce( function( previousValue, currentValue, index ) {
+	return list.reduce( function ( previousValue, currentValue, index ) {
 		let value;
 		if ( index > 0 ) {
 			value = previousValue.concat( separator, currentValue );
@@ -124,19 +124,19 @@ export function wpautop( pee ) {
 		preserve_br = false;
 
 	if ( pee.indexOf( '<object' ) !== -1 ) {
-		pee = pee.replace( /<object[\s\S]+?<\/object>/g, function( a ) {
+		pee = pee.replace( /<object[\s\S]+?<\/object>/g, function ( a ) {
 			return a.replace( /[\r\n]+/g, '' );
 		} );
 	}
 
-	pee = pee.replace( /<[^<>]+>/g, function( a ) {
+	pee = pee.replace( /<[^<>]+>/g, function ( a ) {
 		return a.replace( /[\r\n]+/g, ' ' );
 	} );
 
 	// Protect pre|script tags
 	if ( pee.indexOf( '<pre' ) !== -1 || pee.indexOf( '<script' ) !== -1 ) {
 		preserve_linebreaks = true;
-		pee = pee.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function( a ) {
+		pee = pee.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function ( a ) {
 			return a.replace( /(\r\n|\n)/g, '<wp-line-break>' );
 		} );
 	}
@@ -144,11 +144,11 @@ export function wpautop( pee ) {
 	// keep <br> tags inside captions and convert line breaks
 	if ( pee.indexOf( '[caption' ) !== -1 ) {
 		preserve_br = true;
-		pee = pee.replace( /\[caption[\s\S]+?\[\/caption\]/g, function( a ) {
+		pee = pee.replace( /\[caption[\s\S]+?\[\/caption\]/g, function ( a ) {
 			// keep existing <br>
 			a = a.replace( /<br([^>]*)>/g, '<wp-temp-br$1>' );
 			// no line breaks inside HTML tags
-			a = a.replace( /<[a-zA-Z0-9]+( [^<>]+)?>/g, function( b ) {
+			a = a.replace( /<[a-zA-Z0-9]+( [^<>]+)?>/g, function ( b ) {
 				return b.replace( /[\r\n\t]+/, ' ' );
 			} );
 			// convert remaining line breaks to <br>
@@ -184,7 +184,7 @@ export function wpautop( pee ) {
 		'[caption$1[/caption]'
 	);
 
-	pee = pee.replace( /(<(?:div|th|td|form|fieldset|dd)[^>]*>)(.*?)<\/p>/g, function( a, b, c ) {
+	pee = pee.replace( /(<(?:div|th|td|form|fieldset|dd)[^>]*>)(.*?)<\/p>/g, function ( a, b, c ) {
 		if ( c.match( /<p( [^>]*)?>/ ) ) {
 			return a;
 		}
@@ -223,7 +223,7 @@ export function removep( html ) {
 	// Protect pre|script tags
 	if ( html.indexOf( '<pre' ) !== -1 || html.indexOf( '<script' ) !== -1 ) {
 		preserve_linebreaks = true;
-		html = html.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function( a ) {
+		html = html.replace( /<(pre|script)[^>]*>[\s\S]+?<\/\1>/g, function ( a ) {
 			a = a.replace( /<br ?\/?>(\r\n|\n)?/g, '<wp-line-break>' );
 			a = a.replace( /<\/?p( [^>]*)?>(\r\n|\n)?/g, '<wp-line-break>' );
 			return a.replace( /\r?\n/g, '<wp-line-break>' );
@@ -233,7 +233,7 @@ export function removep( html ) {
 	// keep <br> tags inside captions and remove line breaks
 	if ( html.indexOf( '[caption' ) !== -1 ) {
 		preserve_br = true;
-		html = html.replace( /\[caption[\s\S]+?\[\/caption\]/g, function( a ) {
+		html = html.replace( /\[caption[\s\S]+?\[\/caption\]/g, function ( a ) {
 			return a.replace( /<br([^>]*)>/g, '<wp-temp-br$1>' ).replace( /[\r\n\t]+/, '' );
 		} );
 	}
@@ -277,7 +277,7 @@ export function removep( html ) {
 	}
 
 	if ( html.indexOf( '<object' ) !== -1 ) {
-		html = html.replace( /<object[\s\S]+?<\/object>/g, function( a ) {
+		html = html.replace( /<object[\s\S]+?<\/object>/g, function ( a ) {
 			return a.replace( /[\r\n]+/g, '' );
 		} );
 	}

@@ -34,14 +34,14 @@ class RecoveryPhone extends Component {
 		);
 	}
 
-	onSave = phone => {
+	onSave = ( phone ) => {
 		this.props.updatePhone( phone );
 	};
 
 	onDelete = () => {
 		const { translate, deletePhone } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the SMS number?' ), accepted => {
+		accept( translate( 'Are you sure you want to remove the SMS number?' ), ( accepted ) => {
 			if ( accepted ) {
 				deletePhone();
 			}

@@ -360,7 +360,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		const productInstallStatus = getJetpackProductInstallStatus( state, siteId );

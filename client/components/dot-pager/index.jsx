@@ -36,7 +36,7 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					<Gridicon icon="chevron-left" size={ 18 } />
 				</button>
 			</li>
-			{ times( numberOfPages, page => (
+			{ times( numberOfPages, ( page ) => (
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }

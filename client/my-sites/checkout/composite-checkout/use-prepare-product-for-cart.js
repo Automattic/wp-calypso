@@ -35,7 +35,7 @@ export default function usePrepareProductsForCart( {
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 } ) {
-	const planSlug = useSelector( state =>
+	const planSlug = useSelector( ( state ) =>
 		getUpgradePlanSlugFromPath( state, siteId, productAlias )
 	);
 	const [ { canInitializeCart, productsForCart }, setState ] = useState( {
@@ -60,9 +60,9 @@ export default function usePrepareProductsForCart( {
 }
 
 function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
-	const selectedSiteSlug = useSelector( state => getSelectedSiteSlug( state ) );
-	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
-	const products = useSelector( state => getProductsList( state ) );
+	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const products = useSelector( ( state ) => getProductsList( state ) );
 
 	useEffect( () => {
 		if ( ! originalPurchaseId ) {
@@ -108,8 +108,8 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 }
 
 function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
-	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
+	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
 	useEffect( () => {
 		if ( ! planSlug || isFetchingPlans ) {
 			return;
@@ -148,9 +148,9 @@ function useAddProductFromSlug( {
 	isJetpackNotAtomic,
 	originalPurchaseId,
 } ) {
-	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
-	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
-	const product = useSelector( state =>
+	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const product = useSelector( ( state ) =>
 		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
 	);
 
@@ -200,8 +200,8 @@ function useAddProductFromSlug( {
 
 function useFetchProductsIfNotLoaded() {
 	const reduxDispatch = useDispatch();
-	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
-	const products = useSelector( state => getProductsList( state ) );
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const products = useSelector( ( state ) => getProductsList( state ) );
 	useEffect( () => {
 		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
 			debug( 'fetching products list' );
@@ -213,8 +213,8 @@ function useFetchProductsIfNotLoaded() {
 
 function useFetchPlansIfNotLoaded() {
 	const reduxDispatch = useDispatch();
-	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
-	const plans = useSelector( state => getPlans( state ) );
+	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
+	const plans = useSelector( ( state ) => getPlans( state ) );
 	useEffect( () => {
 		if ( ! isFetchingPlans && plans?.length < 1 ) {
 			debug( 'fetching plans list' );

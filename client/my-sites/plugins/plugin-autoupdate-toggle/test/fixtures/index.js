@@ -13,5 +13,5 @@ export default {
 		errors: [],
 	},
 	wporg: true,
-	action: function() {},
+	action: function () {},
 };

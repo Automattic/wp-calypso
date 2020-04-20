@@ -176,7 +176,7 @@ class DomainProductPrice extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	domainsWithPlansOnly: getCurrentUser( state )
 		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 		: true,

@@ -29,8 +29,8 @@ import { decodeEntities } from 'lib/formatting';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const commentsFromApi = comments =>
-	map( comments, comment =>
+export const commentsFromApi = ( comments ) =>
+	map( comments, ( comment ) =>
 		comment.author
 			? {
 					...comment,
@@ -43,7 +43,7 @@ export const commentsFromApi = comments =>
 	);
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
-export const fetchPostComments = action => ( dispatch, getState ) => {
+export const fetchPostComments = ( action ) => ( dispatch, getState ) => {
 	const { siteId, postId, query, direction, isPoll } = action;
 	const state = getState();
 	const oldestDate = getPostOldestCommentDate( state, siteId, postId );
@@ -116,14 +116,7 @@ export const addComments = ( action, { comments, found } ) => {
 
 export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) => {
 	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
+	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
 	const error = postTitle
 		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not retrieve comments for requested post' );
@@ -132,7 +125,7 @@ export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) 
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
-export const deleteComment = action => ( dispatch, getState ) => {
+export const deleteComment = ( action ) => ( dispatch, getState ) => {
 	const { siteId, commentId } = action;
 
 	if ( startsWith( commentId, 'placeholder' ) ) {
@@ -170,7 +163,7 @@ export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
 	] );
 };
 
-export const announceDeleteFailure = action => {
+export const announceDeleteFailure = ( action ) => {
 	const { siteId, postId, comment } = action;
 
 	const error = errorNotice( translate( 'Could not delete the comment.' ), {

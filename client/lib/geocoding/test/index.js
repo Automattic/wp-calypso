@@ -25,9 +25,9 @@ describe( 'geocoding', () => {
 				expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
+			test( 'should call to the Google Maps API', ( done ) => {
 				geocode( TEST_ADDRESS )
-					.then( results => {
+					.then( ( results ) => {
 						expect( results ).to.eql( [ 1, 2, 3 ] );
 						done();
 					} )
@@ -42,9 +42,9 @@ describe( 'geocoding', () => {
 				expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
+			test( 'should call to the Google Maps API', ( done ) => {
 				reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
-					.then( results => {
+					.then( ( results ) => {
 						expect( results ).to.eql( [ 1, 2, 3 ] );
 						done();
 					} )

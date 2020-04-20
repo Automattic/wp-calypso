@@ -74,7 +74,7 @@ describe( 'actions', () => {
 	}
 
 	function matchFunction( fn ) {
-		return sinon.match( value => isEqualFunction( value, fn ) );
+		return sinon.match( ( value ) => isEqualFunction( value, fn ) );
 	}
 
 	beforeEach( () => {
@@ -165,7 +165,7 @@ describe( 'actions', () => {
 	describe( '#requestThemes()', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.2/themes' )
 					.reply( 200, {
@@ -190,7 +190,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'with a Jetpack site', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1/sites/77203074/themes' )
 					.reply( 200, {
@@ -230,7 +230,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'with the WP.org API', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://api.wordpress.org' )
 					.persist()
 					.defaultReplyHeaders( {
@@ -264,7 +264,7 @@ describe( 'actions', () => {
 
 	describe( '#requestTheme()', () => {
 		describe( 'with a wpcom site', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.2/themes/twentysixteen' )
@@ -316,7 +316,7 @@ describe( 'actions', () => {
 
 		describe( 'with a Jetpack site', () => {
 			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/sites/77203074/themes', { themes: 'twentyfifteen' } )
@@ -367,7 +367,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'with the WP.org API', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://api.wordpress.org' )
 					.persist()
 					.defaultReplyHeaders( {
@@ -488,7 +488,7 @@ describe( 'actions', () => {
 			search_term: 'simple, white',
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
@@ -541,13 +541,13 @@ describe( 'actions', () => {
 	describe( '#installAndActivateTheme', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise( ( res ) => {
 				res();
 			} )
 		);
 
 		test( 'should dispatch installTheme() and activateTheme()', () => {
-			return new Promise( done => {
+			return new Promise( ( done ) => {
 				installAndActivateTheme(
 					'karuna-wpcom',
 					2211667
@@ -567,7 +567,7 @@ describe( 'actions', () => {
 	describe( '#activate', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise( ( res ) => {
 				res();
 			} )
 		);
@@ -589,7 +589,7 @@ describe( 'actions', () => {
 				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-				return new Promise( done => {
+				return new Promise( ( done ) => {
 					activate( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.have.been.calledWith(
 							matchFunction( activateTheme( 'karuna', 77203074 ) )
@@ -626,7 +626,7 @@ describe( 'actions', () => {
 					},
 				} );
 				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-					return new Promise( done => {
+					return new Promise( ( done ) => {
 						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 							expect( stub ).to.have.been.calledWith(
 								matchFunction( activateTheme( 'karuna', 2211667 ) )
@@ -649,7 +649,7 @@ describe( 'actions', () => {
 					},
 				} );
 				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {
-					return new Promise( done => {
+					return new Promise( ( done ) => {
 						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 							expect( stub ).to.not.have.been.calledWith(
 								matchFunction( activate( 'karuna', 2211667 ) )
@@ -719,7 +719,7 @@ describe( 'actions', () => {
 			},
 		} );
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2211667/themes/mine' )
@@ -765,7 +765,7 @@ describe( 'actions', () => {
 	describe( '#pollThemeTransferStatus', () => {
 		const siteId = '2211667';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
 				.reply( 200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' } )
@@ -862,7 +862,7 @@ describe( 'actions', () => {
 	describe( '#initiateThemeTransfer', () => {
 		const siteId = '2211667';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
 				.reply( 200, { success: true, status: 'progress', transfer_id: 1 } )
@@ -948,7 +948,7 @@ describe( 'actions', () => {
 			message: 'The theme is already installed',
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
@@ -1003,7 +1003,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteTheme', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2211667/themes/karuna/delete' )
 				.reply( 200, { id: 'karuna', name: 'Karuna' } )
@@ -1043,13 +1043,13 @@ describe( 'actions', () => {
 	describe( '#installAndTryAndCustomizeTheme', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise( ( res ) => {
 				res();
 			} )
 		);
 
 		test( 'should dispatch installTheme(), and tryAndCustomizeTheme()', () => {
-			return new Promise( done => {
+			return new Promise( ( done ) => {
 				installAndTryAndCustomizeTheme(
 					'karuna-wpcom',
 					2211667
@@ -1069,7 +1069,7 @@ describe( 'actions', () => {
 	describe( '#tryAndCustomize', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise( ( res ) => {
 				res();
 			} )
 		);
@@ -1086,7 +1086,7 @@ describe( 'actions', () => {
 				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-				return new Promise( done => {
+				return new Promise( ( done ) => {
 					tryAndCustomize( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.have.been.calledWith(
 							matchFunction( tryAndCustomizeTheme( 'karuna', 77203074 ) )
@@ -1123,7 +1123,7 @@ describe( 'actions', () => {
 					},
 				} );
 				test( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', () => {
-					return new Promise( done => {
+					return new Promise( ( done ) => {
 						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 							expect( stub ).to.have.been.calledWith(
 								matchFunction( tryAndCustomizeTheme( 'karuna', 2211667 ) )
@@ -1146,7 +1146,7 @@ describe( 'actions', () => {
 					},
 				} );
 				test( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', () => {
-					return new Promise( done => {
+					return new Promise( ( done ) => {
 						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 							expect( stub ).to.not.have.been.calledWith(
 								matchFunction( tryAndCustomize( 'karuna', 2211667 ) )

@@ -67,7 +67,7 @@ const getDB = once( () => {
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
 		try {
 			if ( request ) {
-				request.onerror = event => {
+				request.onerror = ( event ) => {
 					// InvalidStateError is special in Firefox.
 					// We need to `preventDefault` to stop it from reaching the console.
 					if ( request.error && request.error.name === 'InvalidStateError' ) {
@@ -81,7 +81,7 @@ const getDB = once( () => {
 					// Add a general error handler for any future requests made against this db handle.
 					// See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#Handling_Errors for
 					// more information on how error events bubble with IndexedDB
-					db.onerror = function( errorEvent: any ) {
+					db.onerror = function ( errorEvent: any ) {
 						debug( 'IDB Error', errorEvent );
 						if ( errorEvent.target?.error?.name ) {
 							bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
@@ -112,7 +112,7 @@ const getDB = once( () => {
 function idbGet< T >( key: string ): Promise< T | undefined > {
 	return new Promise( ( resolve, reject ) => {
 		getDB()
-			.then( db => {
+			.then( ( db ) => {
 				const transaction = db.transaction( STORE_NAME, 'readonly' );
 				const get = transaction.objectStore( STORE_NAME ).get( key );
 
@@ -123,7 +123,7 @@ function idbGet< T >( key: string ): Promise< T | undefined > {
 				transaction.onabort = error;
 				transaction.onerror = error;
 			} )
-			.catch( err => reject( err ) );
+			.catch( ( err ) => reject( err ) );
 	} );
 }
 
@@ -131,7 +131,7 @@ type EventTargetWithCursorResult = EventTarget & { result: IDBCursorWithValue | 
 
 function idbGetAll( pattern?: RegExp ): Promise< StoredItems > {
 	return getDB().then(
-		db =>
+		( db ) =>
 			new Promise( ( resolve, reject ) => {
 				const results: StoredItems = {};
 				const transaction = db.transaction( STORE_NAME, 'readonly' );
@@ -179,7 +179,7 @@ async function idbSet< T >( key: string, value: T ): Promise< void > {
 
 	return new Promise( ( resolve, reject ) => {
 		getDB()
-			.then( async db => {
+			.then( async ( db ) => {
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
 				transaction.objectStore( STORE_NAME ).put( value, key );
 
@@ -190,14 +190,14 @@ async function idbSet< T >( key: string, value: T ): Promise< void > {
 				transaction.onabort = error;
 				transaction.onerror = error;
 			} )
-			.catch( err => reject( err ) );
+			.catch( ( err ) => reject( err ) );
 	} );
 }
 
 function idbClear(): Promise< void > {
 	return new Promise( ( resolve, reject ) => {
 		getDB()
-			.then( db => {
+			.then( ( db ) => {
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
 				transaction.objectStore( STORE_NAME ).clear();
 
@@ -208,7 +208,7 @@ function idbClear(): Promise< void > {
 				transaction.onabort = error;
 				transaction.onerror = error;
 			} )
-			.catch( err => reject( err ) );
+			.catch( ( err ) => reject( err ) );
 	} );
 }
 
@@ -219,7 +219,7 @@ function idbRemove(): Promise< void > {
 			getDB.clear();
 			resolve();
 		};
-		deleteRequest.onerror = event => reject( event );
+		deleteRequest.onerror = ( event ) => reject( event );
 	} );
 }
 
@@ -243,7 +243,7 @@ async function _idbSafariReset(): Promise< void > {
 
 	return new Promise( ( resolve, reject ) => {
 		getDB().then(
-			db => {
+			( db ) => {
 				const transaction = db.transaction( STORE_NAME, 'readwrite' );
 				const oStore = transaction.objectStore( STORE_NAME );
 				// eslint-disable-next-line prefer-const
@@ -257,7 +257,7 @@ async function _idbSafariReset(): Promise< void > {
 				transaction.onabort = error;
 				transaction.onerror = error;
 			},
-			err => reject( err )
+			( err ) => reject( err )
 		);
 	} );
 }

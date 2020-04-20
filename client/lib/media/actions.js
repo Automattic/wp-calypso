@@ -49,7 +49,7 @@ const MediaActions = {
  */
 const ONE_YEAR_IN_MILLISECONDS = 31540000000;
 
-MediaActions.setQuery = function( siteId, query ) {
+MediaActions.setQuery = function ( siteId, query ) {
 	Dispatcher.handleViewAction( {
 		type: 'SET_MEDIA_QUERY',
 		siteId: siteId,
@@ -57,7 +57,7 @@ MediaActions.setQuery = function( siteId, query ) {
 	} );
 };
 
-MediaActions.fetch = function( siteId, itemId ) {
+MediaActions.fetch = function ( siteId, itemId ) {
 	const fetchKey = [ siteId, itemId ].join();
 	if ( MediaActions._fetching[ fetchKey ] ) {
 		return;
@@ -74,7 +74,7 @@ MediaActions.fetch = function( siteId, itemId ) {
 	wpcom
 		.site( siteId )
 		.media( itemId )
-		.get( function( error, data ) {
+		.get( function ( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_MEDIA_ITEM',
 				error: error,
@@ -86,7 +86,7 @@ MediaActions.fetch = function( siteId, itemId ) {
 		} );
 };
 
-MediaActions.fetchNextPage = function( siteId ) {
+MediaActions.fetchNextPage = function ( siteId ) {
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
 		return;
 	}
@@ -123,11 +123,8 @@ MediaActions.fetchNextPage = function( siteId ) {
 	}
 };
 
-const getExternalUploader = service => ( file, siteId ) => {
-	return wpcom
-		.undocumented()
-		.site( siteId )
-		.uploadExternalMedia( service, [ file.guid ] );
+const getExternalUploader = ( service ) => ( file, siteId ) => {
+	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ] );
 };
 
 const getFileUploader = () => ( file, siteId ) => {
@@ -204,7 +201,7 @@ function uploadFiles( uploader, files, site ) {
 			const action = { type: 'RECEIVE_MEDIA_ITEM', id: transientMedia.ID, siteId };
 
 			return uploader( file, siteId )
-				.then( data => {
+				.then( ( data ) => {
 					Dispatcher.handleServerAction(
 						Object.assign( action, {
 							data: data.media[ 0 ],
@@ -220,7 +217,7 @@ function uploadFiles( uploader, files, site ) {
 						siteId: siteId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					Dispatcher.handleServerAction( Object.assign( action, { error } ) );
 					reduxDispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 				} );
@@ -228,11 +225,11 @@ function uploadFiles( uploader, files, site ) {
 	}, Promise.resolve() );
 }
 
-MediaActions.addExternal = function( site, files, service ) {
+MediaActions.addExternal = function ( site, files, service ) {
 	return uploadFiles( getExternalUploader( service ), files, site );
 };
 
-MediaActions.add = function( site, files ) {
+MediaActions.add = function ( site, files ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
 	}
@@ -244,7 +241,7 @@ MediaActions.add = function( site, files ) {
 	return uploadFiles( getFileUploader(), files, site );
 };
 
-MediaActions.edit = function( siteId, item ) {
+MediaActions.edit = function ( siteId, item ) {
 	const newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
 
 	Dispatcher.handleViewAction( {
@@ -254,7 +251,7 @@ MediaActions.edit = function( siteId, item ) {
 	} );
 };
 
-MediaActions.update = function( siteId, item, editMediaFile = false ) {
+MediaActions.update = function ( siteId, item, editMediaFile = false ) {
 	if ( Array.isArray( item ) ) {
 		item.forEach( MediaActions.update.bind( null, siteId ) );
 		return;
@@ -300,7 +297,7 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 	wpcom
 		.site( siteId )
 		.media( item.ID )
-		[ method ]( item, function( error, data ) {
+		[ method ]( item, function ( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_MEDIA_ITEM',
 				error: error,
@@ -310,7 +307,7 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 		} );
 };
 
-MediaActions.delete = function( siteId, item ) {
+MediaActions.delete = function ( siteId, item ) {
 	if ( Array.isArray( item ) ) {
 		item.forEach( MediaActions.delete.bind( null, siteId ) );
 		return;
@@ -326,7 +323,7 @@ MediaActions.delete = function( siteId, item ) {
 	wpcom
 		.site( siteId )
 		.media( item.ID )
-		.delete( function( error, data ) {
+		.delete( function ( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'REMOVE_MEDIA_ITEM',
 				error: error,
@@ -341,7 +338,7 @@ MediaActions.delete = function( siteId, item ) {
 		} );
 };
 
-MediaActions.setLibrarySelectedItems = function( siteId, items ) {
+MediaActions.setLibrarySelectedItems = function ( siteId, items ) {
 	debug( 'Setting selected items for %d as %o', siteId, items );
 	Dispatcher.handleViewAction( {
 		type: 'SET_MEDIA_LIBRARY_SELECTED_ITEMS',
@@ -350,7 +347,7 @@ MediaActions.setLibrarySelectedItems = function( siteId, items ) {
 	} );
 };
 
-MediaActions.clearValidationErrors = function( siteId, itemId ) {
+MediaActions.clearValidationErrors = function ( siteId, itemId ) {
 	debug( 'Clearing validation errors for %d, with item ID %d', siteId, itemId );
 	Dispatcher.handleViewAction( {
 		type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
@@ -360,7 +357,7 @@ MediaActions.clearValidationErrors = function( siteId, itemId ) {
 	reduxDispatch( clearMediaItemErrors( siteId, itemId ) );
 };
 
-MediaActions.clearValidationErrorsByType = function( siteId, type ) {
+MediaActions.clearValidationErrorsByType = function ( siteId, type ) {
 	debug( 'Clearing validation errors for %d, by type %s', siteId, type );
 	Dispatcher.handleViewAction( {
 		type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
@@ -370,7 +367,7 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 	reduxDispatch( clearMediaErrors( siteId, type ) );
 };
 
-MediaActions.sourceChanged = function( siteId ) {
+MediaActions.sourceChanged = function ( siteId ) {
 	debug( 'Media data source changed' );
 	Dispatcher.handleViewAction( {
 		type: 'CHANGE_MEDIA_SOURCE',

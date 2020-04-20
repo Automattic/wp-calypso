@@ -38,7 +38,7 @@ describe( 'FormToggle', () => {
 		} );
 
 		test( 'should be checked when checked is true', () => {
-			[ true, false ].forEach( function( bool ) {
+			[ true, false ].forEach( function ( bool ) {
 				const toggle = shallow( <FormToggle checked={ bool } onChange={ noop } /> );
 				const toggleInput = toggle.find( '.form-toggle' );
 
@@ -47,11 +47,11 @@ describe( 'FormToggle', () => {
 			} );
 		} );
 
-		test( 'should fire onChange event with value param when clicked', done => {
+		test( 'should fire onChange event with value param when clicked', ( done ) => {
 			const toggle = shallow(
 				<FormToggle
 					checked={ false }
-					onChange={ function( checked ) {
+					onChange={ function ( checked ) {
 						assert( checked, 'onChange handler was called with a value param' );
 						done();
 					} }
@@ -94,7 +94,7 @@ describe( 'FormToggle', () => {
 				</div>
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
-			const ids = toggleInputs.map( input => input.props().id );
+			const ids = toggleInputs.map( ( input ) => input.props().id );
 
 			assert( ids.length === uniq( ids ).length );
 		} );

@@ -89,7 +89,7 @@ class DnsRecord extends React.Component {
 		const isRoot = name === `${ domain }.`;
 
 		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
+			return `_${ service }._${ protocol }.${ isRoot ? '' : name + '.'}${ domain }`;
 		}
 
 		if ( endsWith( name, '.' ) ) {

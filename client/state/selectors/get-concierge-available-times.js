@@ -3,4 +3,4 @@
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'concierge.availableTimes', null );
+export default ( state ) => get( state, 'concierge.availableTimes', null );

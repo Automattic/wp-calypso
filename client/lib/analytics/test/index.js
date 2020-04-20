@@ -39,15 +39,15 @@ function logImageLoads() {
 		imagesLoaded.length = 0;
 		originalImage = global.Image;
 
-		global.Image = function() {
+		global.Image = function () {
 			this._src = '';
 		};
 
 		Object.defineProperty( global.Image.prototype, 'src', {
-			get: function() {
+			get: function () {
 				return this._src;
 			},
-			set: function( value ) {
+			set: function ( value ) {
 				this._src = value;
 				imagesLoaded.push( url.parse( value, true, true ) );
 			},

@@ -4,7 +4,7 @@
  * @param {object} state - current state object
  * @returns {Array} WordPress activePromotions
  */
-export const getActivePromotions = state => {
+export const getActivePromotions = ( state ) => {
 	return state.activePromotions.items;
 };
 
@@ -25,6 +25,6 @@ export const hasActivePromotion = ( state, name ) => {
  * @param {object} state - current state object
  * @returns {boolean} is activePromotions requesting?
  */
-export const isRequestingActivePromotions = state => {
+export const isRequestingActivePromotions = ( state ) => {
 	return state.activePromotions.requesting;
 };

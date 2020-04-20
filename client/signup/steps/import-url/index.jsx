@@ -48,23 +48,24 @@ class ImportURLStepComponent extends Component {
 		this.focusInput();
 	}
 
-	handleInputChange = event => {
+	handleInputChange = ( event ) => {
 		this.props.setNuxUrlInputValue( event.target.value );
 	};
 
-	handleInputBlur = event => {
+	handleInputBlur = ( event ) => {
 		if ( event.target.value ) {
 			this.validateUrl();
 		}
 	};
 
-	handleInputRef = el => ( this.inputRef = el );
+	handleInputRef = ( el ) => ( this.inputRef = el );
 
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
-	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
+	setUrlError = ( urlValidationMessage ) =>
+		this.setState( { urlValidationMessage }, this.focusInput );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const isValid = this.validateUrl();
 
@@ -133,7 +134,7 @@ class ImportURLStepComponent extends Component {
 					);
 					this.props.goToNextStep();
 				},
-				error => {
+				( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setUrlError(
@@ -306,7 +307,7 @@ class ImportURLStepComponent extends Component {
 
 export default flow(
 	connect(
-		state => ( {
+		( state ) => ( {
 			urlInputValue: getNuxUrlInputValue( state ),
 		} ),
 		{

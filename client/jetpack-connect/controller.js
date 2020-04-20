@@ -47,6 +47,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
 } from 'lib/products-values/constants';
 
 /**
@@ -58,10 +60,13 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
+	realtimebackup: 'Jetpack Realtime Backup',
+	backup: 'Jetpack Daily Backup',
 	jetpack_search: 'Jetpack Search',
+	scan: 'Jetpack Scan',
 };
 
-const removeSidebar = context => context.store.dispatch( hideSidebar() );
+const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -72,6 +77,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH,
+			scan: PRODUCT_JETPACK_SCAN,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -80,6 +86,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
+			scan: PRODUCT_JETPACK_SCAN_MONTHLY,
 		},
 	};
 
@@ -108,7 +115,9 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
+			some( MOBILE_APP_REDIRECT_URL_WHITELIST, ( pattern ) =>
+				pattern.test( query.mobile_redirect )
+			)
 		) {
 			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
 			persistMobileRedirect( query.mobile_redirect );

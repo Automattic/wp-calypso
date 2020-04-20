@@ -106,7 +106,7 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
 		let src,
@@ -132,7 +132,7 @@ class ImageEditor extends React.Component {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = ( blob ) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob

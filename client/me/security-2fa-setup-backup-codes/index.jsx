@@ -30,7 +30,7 @@ class Security2faSetupBackupCodes extends React.Component {
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
 	}
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 

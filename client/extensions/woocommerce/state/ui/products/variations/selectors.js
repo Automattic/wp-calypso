@@ -21,7 +21,7 @@ export function getVariationEditsStateForProduct(
 	siteId = getSelectedSiteId( state )
 ) {
 	const variations = getAllVariationEdits( state, siteId );
-	return find( variations, v => isEqual( productId, v.productId ) );
+	return find( variations, ( v ) => isEqual( productId, v.productId ) );
 }
 
 /**
@@ -42,7 +42,7 @@ export function getVariationEdits(
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const bucket = ( isNumber( variationId ) && 'updates' ) || 'creates';
 	const array = get( edits, bucket, [] );
-	return find( array, v => isEqual( variationId, v.id ) );
+	return find( array, ( v ) => isEqual( variationId, v.id ) );
 }
 
 /**
@@ -107,8 +107,10 @@ export function getProductVariationsWithLocalEdits(
 	const deletes = get( edits, 'deletes', undefined );
 
 	const updatedVariations = compact(
-		( variations || [] ).map( variation => {
-			const isDeleted = Boolean( find( deletes, deletedId => isEqual( variation.id, deletedId ) ) );
+		( variations || [] ).map( ( variation ) => {
+			const isDeleted = Boolean(
+				find( deletes, ( deletedId ) => isEqual( variation.id, deletedId ) )
+			);
 
 			if ( isDeleted ) {
 				return undefined;

@@ -14,18 +14,10 @@ const TimeSinceExample = () => {
 	return (
 		<div>
 			<div>
-				<TimeSince
-					date={ moment()
-						.subtract( 5, 'minutes' )
-						.toDate() }
-				/>
+				<TimeSince date={ moment().subtract( 5, 'minutes' ).toDate() } />
 			</div>
 			<div>
-				<TimeSince
-					date={ moment()
-						.subtract( 5, 'months' )
-						.toDate() }
-				/>
+				<TimeSince date={ moment().subtract( 5, 'months' ).toDate() } />
 			</div>
 		</div>
 	);

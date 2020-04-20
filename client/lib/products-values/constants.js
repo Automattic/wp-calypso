@@ -34,7 +34,7 @@ export const JETPACK_BACKUP_PRODUCTS = [
 ];
 
 export const JETPACK_SEARCH_PRODUCTS = [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ];
-export const isJetpackSearch = slug => JETPACK_SEARCH_PRODUCTS.includes( slug );
+export const isJetpackSearch = ( slug ) => JETPACK_SEARCH_PRODUCTS.includes( slug );
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
 
@@ -233,7 +233,7 @@ export const getJetpackProducts = () => {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
 			},
-			optionShortNamesCallback: productObject => {
+			optionShortNamesCallback: ( productObject ) => {
 				const numberOfDefinedTiers = 5;
 				switch ( productObject.price_tier_slug ) {
 					case JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
@@ -270,7 +270,7 @@ export const getJetpackProducts = () => {
 			optionActionButtonNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabelCallback: productObject => {
+			optionsLabelCallback: ( productObject ) => {
 				return translate(
 					'Your current site record size: %(numberOfRecords)s record',
 					'Your current site record size: %(numberOfRecords)s records',

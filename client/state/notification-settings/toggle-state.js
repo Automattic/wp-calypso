@@ -4,7 +4,7 @@
 import { find, findIndex, get, includes } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>
-	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
+	array.map( ( item, idx ) => ( idx === index ? newItem : item)  );
 
 const replaceOrAppend = ( array, originalItem, newItem ) =>
 	includes( array, originalItem )

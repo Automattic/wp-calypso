@@ -37,7 +37,7 @@ export default class ErrorLogger {
 		this.lastReport = 0;
 
 		if ( ! window.onerror ) {
-			TraceKit.report.subscribe( errorReport => {
+			TraceKit.report.subscribe( ( errorReport ) => {
 				const error = {
 					message: errorReport.message,
 					url: document.location.href,
@@ -45,8 +45,8 @@ export default class ErrorLogger {
 
 				if ( Array.isArray( errorReport.stack ) ) {
 					const trace = errorReport.stack.slice( 0, 10 );
-					trace.forEach( report =>
-						Object.keys( report ).forEach( key => {
+					trace.forEach( ( report ) =>
+						Object.keys( report ).forEach( ( key ) => {
 							if ( key === 'context' && report[ key ] ) {
 								report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 256 );
 							} else if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
@@ -98,7 +98,7 @@ export default class ErrorLogger {
 	}
 
 	diagnose() {
-		this.diagnosticReducers.forEach( diagnosticReducer => {
+		this.diagnosticReducers.forEach( ( diagnosticReducer ) => {
 			try {
 				this.saveDiagnosticData( diagnosticReducer() );
 			} catch ( e ) {

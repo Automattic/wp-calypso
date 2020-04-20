@@ -24,7 +24,7 @@ const _fetching = {};
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function checkUrl( url, isUrlOnSites ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		if ( _fetching[ url ] ) {
 			return;
 		}
@@ -61,7 +61,7 @@ export function checkUrl( url, isUrlOnSites ) {
 		wpcom
 			.undocumented()
 			.getSiteConnectInfo( url )
-			.then( data => {
+			.then( ( data ) => {
 				_fetching[ url ] = null;
 				debug( 'jetpack-connect state checked for url', url, data );
 				dispatch( {
@@ -96,7 +96,7 @@ export function checkUrl( url, isUrlOnSites ) {
 					);
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				_fetching[ url ] = null;
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,

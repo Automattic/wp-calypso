@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 
-const canUserUploadFiles = editor => {
+const canUserUploadFiles = ( editor ) => {
 	const store = editor.getParam( 'redux_store' );
 	const state = store ? store.getState() : null;
 	const siteId = state ? getSelectedSiteId( state ) : null;

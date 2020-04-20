@@ -308,7 +308,7 @@ describe( 'LanguagePickerModal', () => {
 						defaultProps.languages[ 0 ],
 					],
 				},
-			].forEach( item => {
+			].forEach( ( item ) => {
 				Object.defineProperty( global.navigator, 'languages', {
 					get: () => item.navigatorLanguages,
 					configurable: true,
@@ -333,17 +333,14 @@ describe( 'LanguagePickerModal', () => {
 			test( 'should switch country lists when user clicks a language group tab', () => {
 				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
 				expect( wrapper.state().filter ).toEqual( DEFAULT_LANGUAGE_GROUP );
-				wrapper
-					.find( 'NavItem' )
-					.at( 1 )
-					.simulate( 'click' );
+				wrapper.find( 'NavItem' ).at( 1 ).simulate( 'click' );
 				expect( wrapper.state().filter ).toEqual( LANGUAGE_GROUPS[ 1 ].id );
 			} );
 		} );
 	} );
 
 	describe( 'keyboard support', () => {
-		const simulateKeyDownEvent = key => {
+		const simulateKeyDownEvent = ( key ) => {
 			window.dispatchEvent( new KeyboardEvent( 'keydown', { key } ) ); // eslint-disable-line no-undef
 		};
 
@@ -384,7 +381,7 @@ describe( 'LanguagePickerModal', () => {
 
 			expect( wrapper.state().selectedLanguageSlug ).toBe( 'en' );
 
-			languages.forEach( langSlug => {
+			languages.forEach( ( langSlug ) => {
 				wrapper.instance().handleSearch( langSlug );
 				expect( wrapper.state().selectedLanguageSlug ).toBe( langSlug );
 			} );

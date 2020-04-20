@@ -57,7 +57,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 		];
 
-		dailyBackupProductSlugs.map( productSlug => {
+		dailyBackupProductSlugs.map( ( productSlug ) => {
 			const state = {
 				purchases: {
 					data: [
@@ -84,7 +84,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 		];
 
-		realtimeBackupProductSlugs.map( productSlug => {
+		realtimeBackupProductSlugs.map( ( productSlug ) => {
 			const state = {
 				purchases: {
 					data: [
@@ -108,7 +108,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 		const siteId = 123456;
 		const premiumPlanSlugs = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 
-		premiumPlanSlugs.map( productSlug => {
+		premiumPlanSlugs.map( ( productSlug ) => {
 			const state = {
 				purchases: {
 					data: [],
@@ -135,7 +135,7 @@ describe( 'siteSupportsRealtimeBackup()', () => {
 		const siteId = 123456;
 		const professionalPlanSlugs = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
-		professionalPlanSlugs.map( productSlug => {
+		professionalPlanSlugs.map( ( productSlug ) => {
 			const state = {
 				purchases: {
 					data: [],

@@ -65,8 +65,8 @@ export function setImages( content ) {
 	return content.replace( REGEXP_ORIGINAL_IMG, setImageSrc );
 }
 
-export default function( editor ) {
-	editor.on( 'BeforeSetContent BeforeSetWpcomMedia', event => {
+export default function ( editor ) {
+	editor.on( 'BeforeSetContent BeforeSetWpcomMedia', ( event ) => {
 		if ( ! event.content || 'html' === event.mode ) {
 			return;
 		}
@@ -74,7 +74,7 @@ export default function( editor ) {
 		event.content = setImages( event.content );
 	} );
 
-	editor.on( 'BeforeSetWpcomMedia', event => {
+	editor.on( 'BeforeSetWpcomMedia', ( event ) => {
 		/**
 		 * Add the resized image URL so we can properly preload it in the editor
 		 */
@@ -85,7 +85,7 @@ export default function( editor ) {
 		}
 	} );
 
-	editor.on( 'GetContent', event => {
+	editor.on( 'GetContent', ( event ) => {
 		if ( event.format !== 'raw' || ! event.content || event.selection ) {
 			return;
 		}
@@ -93,7 +93,7 @@ export default function( editor ) {
 		event.content = resetImages( event.content );
 	} );
 
-	editor.on( 'PostProcess', event => {
+	editor.on( 'PostProcess', ( event ) => {
 		if ( ! event.content ) {
 			return;
 		}
@@ -101,7 +101,7 @@ export default function( editor ) {
 		event.content = resetImages( event.content );
 	} );
 
-	editor.on( 'BeforeAddUndo', event => {
+	editor.on( 'BeforeAddUndo', ( event ) => {
 		if ( ! event.level.content ) {
 			return;
 		}

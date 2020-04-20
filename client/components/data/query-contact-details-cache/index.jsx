@@ -34,7 +34,7 @@ QueryContactDetailsCache.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		contactDetailsCache: getContactDetailsCache( state ),
 		isRequesting: isRequestingContactDetailsCache( state ),
 	} ),

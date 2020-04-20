@@ -15,7 +15,7 @@ const initialWPCheckoutErrorBoundaryState: WPCheckoutErrorBoundaryState = {
 
 export default class WpcomCheckoutErrorBoundary extends React.Component {
 	state = initialWPCheckoutErrorBoundaryState;
-	translate = x => x;
+	translate = ( x ) => x;
 
 	constructor( props: { translate: ( string ) => string } ) {
 		super( props );

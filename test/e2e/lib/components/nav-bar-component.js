@@ -54,7 +54,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		return this.driver
 			.findElement( by.css( '.masterbar__item-notifications' ) )
 			.getAttribute( 'class' )
-			.then( classNames => {
+			.then( ( classNames ) => {
 				return classNames.includes( 'has-unread' );
 			} );
 	}

@@ -259,7 +259,7 @@ describe( '#getRatesErrors', () => {
 describe( 'Shipping label selectors', () => {
 	const siteId = 1;
 	const orderId = 1;
-	const getFullState = labelsState => {
+	const getFullState = ( labelsState ) => {
 		const countries = [
 			{
 				code: 'US',
@@ -535,7 +535,7 @@ describe( 'Shipping label selectors', () => {
 		[ 'state', 'QQ', false ],
 	];
 
-	incorrectAddressValues.forEach( row => {
+	incorrectAddressValues.forEach( ( row ) => {
 		const [ name, value, shouldFail ] = row;
 
 		const verb = shouldFail ? 'triggers' : 'does not trigger';

@@ -22,7 +22,7 @@ export function getSiteVerticalData( state ) {
 
 	const match = find(
 		verticals,
-		item => item.verticalName.toLowerCase() === verticalName.toLowerCase()
+		( item ) => item.verticalName.toLowerCase() === verticalName.toLowerCase()
 	);
 
 	if ( match ) {

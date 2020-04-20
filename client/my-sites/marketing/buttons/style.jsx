@@ -24,11 +24,11 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: function () {},
 		disabled: false,
 	};
 
-	onChange = value => {
+	onChange = ( value ) => {
 		const { path } = this.props;
 
 		this.props.onChange( value );
@@ -65,7 +65,7 @@ class SharingButtonsStyle extends React.Component {
 					context: 'Sharing: Sharing button option label',
 				} ),
 			},
-		].map( function( option ) {
+		].map( function ( option ) {
 			return (
 				<label key={ option.value }>
 					<input
@@ -95,6 +95,6 @@ class SharingButtonsStyle extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
 } )( localize( SharingButtonsStyle ) );

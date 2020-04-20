@@ -23,7 +23,7 @@ export const DEFAULT_PER_PAGE = 10;
  * @param {object} user Raw user from the API
  * @returns {object} the normalized user
  */
-export const normalizeUser = user =>
+export const normalizeUser = ( user ) =>
 	omitBy(
 		{
 			ID: user.id,
@@ -39,7 +39,7 @@ export const normalizeUser = user =>
  * @param {object} action The `POST_REVISIONS_AUTHORS_REQUEST` action used to trigger the fetch
  * @returns {object} The low-level action used to execute the fetch
  */
-export const fetchPostRevisionAuthors = action => {
+export const fetchPostRevisionAuthors = ( action ) => {
 	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	return http(
 		{
@@ -63,7 +63,7 @@ export const fetchPostRevisionAuthors = action => {
  * @param {Array} users raw data from post revisions API
  * @returns {object|Function} Action or action thunk that handles the response
  */
-export const receivePostRevisionAuthorsSuccess = ( action, users ) => dispatch => {
+export const receivePostRevisionAuthorsSuccess = ( action, users ) => ( dispatch ) => {
 	// receive users from response into Redux state
 	const normalizedUsers = map( users, normalizeUser );
 	dispatch( receivePostRevisionAuthors( normalizedUsers ) );

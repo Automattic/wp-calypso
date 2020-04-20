@@ -27,7 +27,7 @@ import './style.scss';
  * 3. dismount old ReaderMain from the first step (dismount, 1 ref)
  */
 let activeReaderMainRefCount = 0;
-const setIsReaderPage = add => {
+const setIsReaderPage = ( add ) => {
 	if ( add ) {
 		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
 	} else if ( activeReaderMainRefCount === 0 ) {

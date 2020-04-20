@@ -34,12 +34,12 @@ const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const Security2faSMSSettings = createReactClass( {
 	displayName: 'Security2faSMSSettings',
 
-	componentDidMount: function() {
+	componentDidMount: function () {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 		this.props.userSettings.getSettings();
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount: function () {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
@@ -56,7 +56,7 @@ const Security2faSMSSettings = createReactClass( {
 
 	verifyByApp: null,
 
-	getInitialState: function() {
+	getInitialState: function () {
 		let phoneNumber = null;
 		const storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
 		const storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
@@ -74,7 +74,7 @@ const Security2faSMSSettings = createReactClass( {
 		};
 	},
 
-	getSubmitDisabled: function() {
+	getSubmitDisabled: function () {
 		if ( this.getDisabledState() ) {
 			return true;
 		}
@@ -91,13 +91,13 @@ const Security2faSMSSettings = createReactClass( {
 		return false;
 	},
 
-	onVerifyByApp: function( event ) {
+	onVerifyByApp: function ( event ) {
 		event.preventDefault();
 		this.verifyByApp = true;
 		this.submitSMSSettings();
 	},
 
-	onVerifyBySMS: function( event ) {
+	onVerifyBySMS: function ( event ) {
 		event.preventDefault();
 		this.verifyByApp = false;
 		this.submitSMSSettings();
@@ -107,7 +107,7 @@ const Security2faSMSSettings = createReactClass( {
 	 * Note:  We purposely do not use form-base's submitForm so that we can
 	 * manage Notices ourselves
 	 */
-	submitSMSSettings: function() {
+	submitSMSSettings: function () {
 		if ( ! this.refs.phoneInput ) {
 			return;
 		}
@@ -126,7 +126,7 @@ const Security2faSMSSettings = createReactClass( {
 		this.props.userSettings.saveSettings( this.onSubmitResponse );
 	},
 
-	onChangePhoneInput: function( phoneNumber ) {
+	onChangePhoneInput: function ( phoneNumber ) {
 		this.setState( {
 			phoneNumber: {
 				phoneNumber: phoneNumber.phoneNumber,
@@ -137,7 +137,7 @@ const Security2faSMSSettings = createReactClass( {
 		} );
 	},
 
-	onSubmitResponse: function( error ) {
+	onSubmitResponse: function ( error ) {
 		this.setState( { submittingForm: false } );
 
 		if ( error ) {
@@ -152,11 +152,11 @@ const Security2faSMSSettings = createReactClass( {
 		}
 	},
 
-	clearLastError: function() {
+	clearLastError: function () {
 		this.setState( { lastError: false } );
 	},
 
-	possiblyRenderError: function() {
+	possiblyRenderError: function () {
 		let errorMessage;
 
 		if ( ! this.state.lastError ) {
@@ -174,7 +174,7 @@ const Security2faSMSSettings = createReactClass( {
 		);
 	},
 
-	render: function() {
+	render: function () {
 		const savingLabel = this.props.translate( 'Saving…' );
 
 		return (
@@ -198,12 +198,12 @@ const Security2faSMSSettings = createReactClass( {
 							countriesList={ this.props.countriesList }
 							disabled={ this.state.submittingForm }
 							countrySelectProps={ {
-								onFocus: function() {
+								onFocus: function () {
 									gaRecordEvent( 'Me', 'Focused On 2fa SMS Country Select' );
 								},
 							} }
 							phoneInputProps={ {
-								onFocus: function() {
+								onFocus: function () {
 									gaRecordEvent( 'Me', 'Focused On 2fa SMS Phone Number' );
 								},
 							} }
@@ -220,7 +220,7 @@ const Security2faSMSSettings = createReactClass( {
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
-							onClick={ function( event ) {
+							onClick={ function ( event ) {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use App Button' );
 								this.onVerifyByApp( event );
 							}.bind( this ) }
@@ -231,7 +231,7 @@ const Security2faSMSSettings = createReactClass( {
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
 							isPrimary={ false }
-							onClick={ function( event ) {
+							onClick={ function ( event ) {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use SMS Button' );
 								this.onVerifyBySMS( event );
 							}.bind( this ) }
@@ -242,7 +242,7 @@ const Security2faSMSSettings = createReactClass( {
 						<FormButton
 							className="security-2fa-sms-settings__cancel-button"
 							isPrimary={ false }
-							onClick={ function( event ) {
+							onClick={ function ( event ) {
 								gaRecordEvent( 'Me', 'Clicked On Step 1 2fa Cancel Button' );
 								this.props.onCancel( event );
 							}.bind( this ) }
@@ -259,7 +259,7 @@ const Security2faSMSSettings = createReactClass( {
 export default flowRight(
 	protectForm,
 	localize,
-	connect( state => ( {
+	connect( ( state ) => ( {
 		countriesList: getCountries( state, 'sms' ),
 	} ) )
 )( Security2faSMSSettings );

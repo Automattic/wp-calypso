@@ -39,7 +39,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 				<div className="create-site__content">
 					<div className="create-site__progress">
 						<div className="create-site__progress-steps">
-							{ progressSteps.map( step => (
+							{ progressSteps.map( ( step ) => (
 								<div key={ step } className="create-site__progress-step">
 									{ step }
 								</div>
@@ -53,11 +53,13 @@ const CreateSite: FunctionComponent< {} > = () => {
 					<div className="create-site__progress-numbered-steps">
 						{ progressSteps.map( ( _, index ) => (
 							<p>
-								{ // translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: index + 1,
-									totalSteps: progressSteps.length,
-								} ) }
+								{
+									// translators: these are progress steps. Eg: step 1 of 4.
+									sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+										currentStep: index + 1,
+										totalSteps: progressSteps.length,
+									} )
+								}
 							</p>
 						) ) }
 					</div>

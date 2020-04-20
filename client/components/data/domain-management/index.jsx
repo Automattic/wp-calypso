@@ -147,7 +147,7 @@ class DomainManagementData extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	const siteId = get( selectedSite, 'ID', null );
 

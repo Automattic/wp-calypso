@@ -1,11 +1,11 @@
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 export function getFreeDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
-	return allSuggestions?.filter( suggestion => suggestion.is_free );
+	return allSuggestions?.filter( ( suggestion ) => suggestion.is_free );
 }
 
 export function getPaidDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
-	return allSuggestions?.filter( suggestion => ! suggestion.is_free );
+	return allSuggestions?.filter( ( suggestion ) => ! suggestion.is_free );
 }
 
 // Recommend either an exact match or the highest relevance score

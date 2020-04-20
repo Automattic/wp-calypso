@@ -25,7 +25,7 @@ export function createPayPalMethod( { registerStore } ) {
 		label: <PaypalLabel />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
-		getAriaLabel: localize => localize( 'PayPal' ),
+		getAriaLabel: ( localize ) => localize( 'PayPal' ),
 	};
 
 	registerStore( 'paypal', {
@@ -117,10 +117,10 @@ export function PaypalSubmitButton( { disabled } ) {
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
 	const { showErrorMessage } = useMessages();
-	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) => select( 'paypal' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'paypal' ).getTransactionError() );
 	const { setFormReady, setFormSubmitting } = useFormStatus();
-	const paypalExpressUrl = useSelect( select => select( 'paypal' ).getRedirectUrl() );
+	const paypalExpressUrl = useSelect( ( select ) => select( 'paypal' ).getRedirectUrl() );
 	const onEvent = useEvents();
 
 	useEffect( () => {

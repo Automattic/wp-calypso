@@ -23,7 +23,7 @@ import {
  * @param {string} method name of HTTP method for request
  * @returns {Function} the fetcher
  */
-const fetcherMap = method =>
+const fetcherMap = ( method ) =>
 	get(
 		{
 			GET: wpcom.req.get.bind( wpcom.req ),
@@ -71,10 +71,10 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 				}
 
 				return nextError
-					? failures.forEach( handler =>
+					? failures.forEach( ( handler ) =>
 							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
 					  )
-					: successes.forEach( handler =>
+					: successes.forEach( ( handler ) =>
 							dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
 					  );
 			},
@@ -82,7 +82,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	);
 
 	if ( 'POST' === method && onProgress ) {
-		request.upload.onprogress = event =>
+		request.upload.onprogress = ( event ) =>
 			dispatch( extendAction( onProgress, progressMeta( event ) ) );
 	}
 };

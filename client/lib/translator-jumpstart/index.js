@@ -190,7 +190,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
@@ -246,7 +246,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
+			loadjQueryDependentScriptDesktopWrapper( injectUrl, function ( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;

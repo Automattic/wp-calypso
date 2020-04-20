@@ -64,7 +64,7 @@ ShippingZoneHeader.propTypes = {
 	onDelete: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const zone = getCurrentlyEditingShippingZone( state );
 	const isRestOfTheWorld = zone && 0 === Number( zone.id );
 	return {

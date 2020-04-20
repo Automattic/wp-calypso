@@ -54,11 +54,6 @@ describe( 'External Link', () => {
 
 	test( 'should have icon first if specified', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
-		assert.isTrue(
-			externalLink
-				.children()
-				.first()
-				.is( Gridicon )
-		);
+		assert.isTrue( externalLink.children().first().is( Gridicon ) );
 	} );
 } );

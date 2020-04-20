@@ -56,7 +56,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 	}
 
-	setWrapperRef = element => {
+	setWrapperRef = ( element ) => {
 		this.scrollWrapperDOM = element;
 		if ( element ) {
 			element.addEventListener( 'scroll', this.handleScroll );
@@ -64,13 +64,13 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 	};
 
-	scrollLeft = event => {
+	scrollLeft = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.scrollBy( -1 );
 	};
 
-	scrollRight = event => {
+	scrollRight = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.scrollBy( 1 );
@@ -101,8 +101,8 @@ export default class PlanFeaturesScroller extends PureComponent {
 		const step = ( to - from ) / 200;
 		let startTime = null;
 
-		return new Promise( resolve => {
-			const animate = timestamp => {
+		return new Promise( ( resolve ) => {
+			const animate = ( timestamp ) => {
 				if ( ! startTime ) {
 					startTime = timestamp;
 				}
@@ -190,10 +190,10 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 			paneWidth = SIDE_PANE_RATIO * vpw;
 			scrollerWidth = ( cellWidth + borderSpacing ) * planCount + borderSpacing;
-			scrollerPadding = `0 ${ paneWidth - borderSpacing / 2 }px`;
+			scrollerPadding = `0 ${ paneWidth - borderSpacing / 2}px`;
 			visibleIndex = round( scrollPos / ( cellWidth + borderSpacing ) );
 
-			styleWeights = range( 0, planCount ).map( index => {
+			styleWeights = range( 0, planCount ).map( ( index ) => {
 				const pos = index - scrollPos / ( cellWidth + borderSpacing );
 
 				if ( inRange( pos, -0.5, visibleCount - 0.5 ) ) {
@@ -231,7 +231,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		return (
 			<>
 				{ styleWeights.map( ( weight, index ) => {
-					const selector = `${ cellSelector }:nth-child(${ index + 1 })`;
+					const selector = `${ cellSelector }:nth-child(${ index + 1})`;
 					const opacity = round( weight * ( 1 - MIN_PLAN_OPACITY ) + MIN_PLAN_OPACITY, 2 );
 					let translateX = inRange( weight, 0, 1 ) ? ( 1 - weight ) * 5 : 0;
 
@@ -266,7 +266,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 		return (
 			<div className="plan-features__scroll-indicator">
-				{ range( 0, this.props.planCount ).map( index => (
+				{ range( 0, this.props.planCount ).map( ( index ) => (
 					<span
 						key={ index }
 						className={ classNames( dotClass, { 'is-highlighted': inRange( index, start, end ) } ) }
@@ -311,7 +311,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 				</div>
 				<div
 					className="plan-features__scroller-wrapper"
-					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2 }px` } }
+					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2}px` } }
 					ref={ this.setWrapperRef }
 				>
 					<div

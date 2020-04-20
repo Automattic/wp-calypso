@@ -37,7 +37,7 @@ function FormTextInputWithAction( {
 	const [ value, setValue ] = useState( defaultValue );
 
 	const handleFocus = useCallback(
-		e => {
+		( e ) => {
 			setFocused( true );
 			onFocus( e );
 		},
@@ -45,7 +45,7 @@ function FormTextInputWithAction( {
 	);
 
 	const handleBlur = useCallback(
-		e => {
+		( e ) => {
 			setFocused( false );
 			onBlur( e );
 		},
@@ -53,7 +53,7 @@ function FormTextInputWithAction( {
 	);
 
 	const handleChange = useCallback(
-		e => {
+		( e ) => {
 			setValue( e.target.value );
 			onChange( e.target.value, e );
 		},
@@ -61,14 +61,14 @@ function FormTextInputWithAction( {
 	);
 
 	const handleAction = useCallback(
-		e => {
+		( e ) => {
 			onAction( value, e );
 		},
 		[ onAction, value ]
 	);
 
 	const handleKeyDown = useCallback(
-		e => {
+		( e ) => {
 			onKeyDown( e );
 			if ( e.which === 13 && value ) {
 				handleAction( e );

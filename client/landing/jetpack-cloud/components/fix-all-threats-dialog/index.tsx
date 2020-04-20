@@ -100,7 +100,7 @@ const FixAllThreatsDialog = ( {
 						<div className="fix-all-threats-dialog__warning-message">
 							{ translate( 'To fix this threat, Jetpack will be:' ) }
 							<ul>
-								{ threats.map( threat => (
+								{ threats.map( ( threat ) => (
 									<li key={ threat.id }>{ threat.title }</li>
 								) ) }
 							</ul>

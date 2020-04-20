@@ -238,7 +238,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	visitSite = event => {
+	visitSite = ( event ) => {
 		event.preventDefault();
 
 		const { primaryPurchase, selectedSite, primaryCta } = this.props;
@@ -254,7 +254,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
-	visitSiteHostingSettings = event => {
+	visitSiteHostingSettings = ( event ) => {
 		event.preventDefault();
 
 		const { selectedSite } = this.props;
@@ -264,7 +264,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = `/hosting-config/${ selectedSite.slug }`;
 	};
 
-	visitScheduler = event => {
+	visitScheduler = ( event ) => {
 		event.preventDefault();
 		const { selectedSite } = this.props;
 
@@ -273,7 +273,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
-	startTransfer = event => {
+	startTransfer = ( event ) => {
 		event.preventDefault();
 
 		const { primaryPurchase, selectedSite } = this.props;
@@ -457,7 +457,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const CHECKMARK_SIZE = 24;
 		return (
 			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( message => (
+				{ messages.map( ( message ) => (
 					<li className="checkout-thank-you__success-message-item">
 						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
 						<div>{ preventWidows( message ) }</div>

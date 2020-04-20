@@ -16,7 +16,7 @@ import 'state/jetpack-connect/init';
  * @param  {object}  state Global state tree
  * @returns {boolean}       True if there's a blacklisted site error, false otherwise
  */
-export const isSiteBlacklistedError = function( state ) {
+export const isSiteBlacklistedError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return get( authorizeData, [ 'authorizeError', 'error' ] ) === 'site_blacklisted';

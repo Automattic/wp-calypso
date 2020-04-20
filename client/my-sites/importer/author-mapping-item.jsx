@@ -20,7 +20,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 import './author-mapping-item.scss';
 
-const userShape = nameField =>
+const userShape = ( nameField ) =>
 	PropTypes.shape( {
 		ID: PropTypes.number.isRequired,
 		[ nameField ]: PropTypes.string.isRequired,
@@ -92,6 +92,6 @@ class ImporterAuthorMapping extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 } ) )( ImporterAuthorMapping );

@@ -47,7 +47,7 @@ describe( 'getSite', () => {
 		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				const unsubscribe = subscribe( () => {
 					unsubscribe();
 					resolve();
@@ -83,7 +83,7 @@ describe( 'getSite', () => {
 		const listenForStateUpdate = () => {
 			// The subscribe function in wordpress/data stores only updates when state changes,
 			// so for this test (where state remains the same), use setTimeout instead.
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				setTimeout( () => {
 					resolve();
 				}, 0 );

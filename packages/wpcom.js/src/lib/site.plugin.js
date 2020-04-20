@@ -4,7 +4,6 @@
 const root = '/sites';
 
 class SitePlugin {
-
 	/**
 	 * `SitePlugin` constructor.
 	 *
@@ -26,7 +25,7 @@ class SitePlugin {
 		this._sid = sid;
 		this.wpcom = wpcom;
 
-		const path = `${root}/${ this._sid }/plugins`;
+		const path = `${ root }/${ this._sid }/plugins`;
 		this.pluginPath = `${ path }/${ this._slug }`;
 	}
 
@@ -51,7 +50,7 @@ class SitePlugin {
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.pluginPath, query, body, fn );
-	};
+	}
 
 	/**
 	 * Update the plugin version
@@ -62,7 +61,7 @@ class SitePlugin {
 	 */
 	updateVersion( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/update`, query, fn );
-	};
+	}
 
 	/**
 	 * Install the plugin
@@ -73,7 +72,7 @@ class SitePlugin {
 	 */
 	install( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/install`, query, fn );
-	};
+	}
 
 	/**
 	 * Delete the plugin
@@ -84,7 +83,7 @@ class SitePlugin {
 	 */
 	delete( query, fn ) {
 		return this.wpcom.req.put( `${ this.pluginPath }/delete`, query, fn );
-	};
+	}
 
 	/**
 	 * Activate the plugin
@@ -96,7 +95,7 @@ class SitePlugin {
 	 */
 	activate( query, fn ) {
 		return this.update( query, { active: true }, fn );
-	};
+	}
 
 	/**
 	 * Deactivate the plugin
@@ -132,7 +131,7 @@ class SitePlugin {
 	 */
 	disableAutoupdate( query, fn ) {
 		return this.update( query, { autoupdate: false }, fn );
-	};
+	}
 }
 
 /**

@@ -28,10 +28,10 @@ function setup( siteId ) {
 		jetpackScan: { history: { requestStatus: siteId } },
 	};
 
-	const store = createStore( state => state, initialState );
+	const store = createStore( ( state ) => state, initialState );
 
 	// eslint-disable-next-line no-shadow
-	const renderUI = siteId => (
+	const renderUI = ( siteId ) => (
 		<Provider store={ store }>
 			<QueryJetpackScanHistory siteId={ siteId } />
 		</Provider>

@@ -35,7 +35,7 @@ export class JetpackRemoteInstallNotices extends Component {
 		url: PropTypes.string,
 	};
 
-	trackManualInstallClick = noticeType => () => {
+	trackManualInstallClick = ( noticeType ) => () => {
 		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click', {
 			notice_type: noticeType,
 		} );
@@ -108,7 +108,7 @@ export class JetpackRemoteInstallNotices extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		return {

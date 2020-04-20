@@ -33,7 +33,7 @@ export default function addQueryArgs( args: QueryArgs, url: URLString ): URLStri
 	}
 
 	// Remove any undefined query args
-	args = pickBy( args, arg => arg != null );
+	args = pickBy( args, ( arg ) => arg != null );
 
 	const parsed = new URL( url, BASE_URL );
 

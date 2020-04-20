@@ -77,7 +77,7 @@ export const getSiteStatsPostStreakData = treeSelect(
 		const response = {};
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
-			Object.keys( streakData.data ).forEach( timestamp => {
+			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = moment.unix( timestamp );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
@@ -140,7 +140,7 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	}
 
 	return flatten(
-		map( data, item => {
+		map( data, ( item ) => {
 			return buildExportArray( item );
 		} )
 	);
@@ -180,7 +180,7 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	const viewSummary = {};
 
-	viewData.data.forEach( item => {
+	viewData.data.forEach( ( item ) => {
 		const [ date, value ] = item;
 		const momentDate = moment( date );
 		const { years, months } = momentDate.toObject();

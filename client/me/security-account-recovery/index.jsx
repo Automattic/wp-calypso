@@ -51,7 +51,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
-const SecurityAccountRecovery = props => (
+const SecurityAccountRecovery = ( props ) => (
 	<Main className="security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
@@ -110,7 +110,7 @@ const SecurityAccountRecovery = props => (
 );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
 		accountRecoveryEmailValidated: isAccountRecoveryEmailValidated( state ),

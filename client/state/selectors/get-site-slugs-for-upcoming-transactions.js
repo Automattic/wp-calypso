@@ -19,7 +19,7 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * @returns {object}           Site slugs, indexed by site ID
  */
 const getSiteSlugsForUpcomingTransactions = createSelector(
-	state => {
+	( state ) => {
 		const siteIds = compact(
 			uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) )
 		).map( Number );
@@ -32,7 +32,7 @@ const getSiteSlugsForUpcomingTransactions = createSelector(
 			return result;
 		}, {} );
 	},
-	state => [ getUpcomingBillingTransactions( state ), state.sites.items ]
+	( state ) => [ getUpcomingBillingTransactions( state ), state.sites.items ]
 );
 
 export default getSiteSlugsForUpcomingTransactions;

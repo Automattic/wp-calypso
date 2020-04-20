@@ -54,7 +54,7 @@ class BlogSettingsHeader extends PureComponent {
 			'timeline.store_order',
 		] );
 		// Ignore the device_id of each device found.
-		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
+		const devicesSettings = map( settings.devices, ( device ) => omit( device, 'device_id' ) );
 		const { true: onCount, false: offCount } = countBy(
 			// Here we're flattening the values of both sets of settings
 			// as both sets have two 'streams' of settings: 'email' and 'timeline'

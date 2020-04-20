@@ -20,7 +20,7 @@ describe( 'actions', () => {
 	describe( '#deleteProduct()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {

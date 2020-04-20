@@ -35,7 +35,7 @@ class PaymentMethodPaypal extends Component {
 		onDone: PropTypes.func.isRequired,
 	};
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
 
 		if ( 'email' === e.target.name ) {

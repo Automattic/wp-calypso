@@ -64,7 +64,7 @@ class ProfileLinks extends React.Component {
 		} );
 	};
 
-	onRemoveLink = profileLink => {
+	onRemoveLink = ( profileLink ) => {
 		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
 	};
 
@@ -101,7 +101,7 @@ class ProfileLinks extends React.Component {
 	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{ this.props.profileLinks.map( profileLink => (
+				{ this.props.profileLinks.map( ( profileLink ) => (
 					<ProfileLink
 						key={ profileLink.link_slug }
 						title={ profileLink.title }
@@ -127,7 +127,7 @@ class ProfileLinks extends React.Component {
 	renderPlaceholders() {
 		return (
 			<ul className="profile-links__list">
-				{ times( 2, index => (
+				{ times( 2, ( index ) => (
 					<ProfileLink
 						title="Loading Profile Links"
 						url="http://wordpress.com"
@@ -190,7 +190,7 @@ class ProfileLinks extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		profileLinks: getProfileLinks( state ),
 		errorType: getProfileLinksErrorType( state ),
 	} ),

@@ -43,7 +43,7 @@ class SocialLoginActionButton extends Component {
 		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
 	};
 
-	handleSocialServiceResponse = response => {
+	handleSocialServiceResponse = ( response ) => {
 		const { service } = this.props;
 
 		let socialInfo = {
@@ -140,7 +140,7 @@ class SocialLoginActionButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isUpdatingSocialConnection: isRequesting( state ),
 	} ),
 	{

@@ -17,7 +17,7 @@ import {
 import wpcom from 'lib/wp';
 import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships';
 
-export const requestProducts = siteId => ( {
+export const requestProducts = ( siteId ) => ( {
 	siteId,
 	type: MEMBERSHIPS_PRODUCTS_LIST,
 } );
@@ -39,7 +39,7 @@ export function receiveDeleteProduct( siteId, productId ) {
 }
 
 export const requestAddProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_ADD,
 			siteId,
@@ -54,7 +54,7 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				},
 				product
 			)
-			.then( newProduct => {
+			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch( {
@@ -67,7 +67,7 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				} );
 				return membershipProduct;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_ADD_FAILURE,
 					siteId,
@@ -86,7 +86,7 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 };
 
 export const requestUpdateProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_UPDATE,
 			siteId,
@@ -101,7 +101,7 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				},
 				product
 			)
-			.then( newProduct => {
+			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch( {
@@ -114,7 +114,7 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				} );
 				return membershipProduct;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 					siteId,
@@ -133,7 +133,7 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 };
 
 export const requestDeleteProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_DELETE,
 			siteId,
@@ -156,7 +156,7 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 				} );
 				return product.ID;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 					siteId,

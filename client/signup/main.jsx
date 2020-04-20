@@ -267,10 +267,10 @@ class Signup extends React.Component {
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
 	};
 
-	removeFulfilledSteps = nextProps => {
+	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
-		map( flowSteps, flowStepName => this.processFulfilledSteps( flowStepName, nextProps ) );
+		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
 			this.goToNextStep( flowName );
@@ -290,7 +290,7 @@ class Signup extends React.Component {
 		const { isNewishUser, existingSiteCount } = this.props;
 
 		const isNewUser = !! ( dependencies && dependencies.username );
-		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
@@ -301,17 +301,17 @@ class Signup extends React.Component {
 			isNewishUser,
 			existingSiteCount,
 			isNewUser,
-			isNewSite,
 			hasCartItems,
 			isNew7DUserSite,
 			flow: this.props.flowName,
+			siteId,
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
 		recordSignupComplete( {
 			flow: this.props.flowName,
+			siteId,
 			isNewUser,
-			isNewSite,
 			hasCartItems,
 			isNew7DUserSite,
 		} );
@@ -365,7 +365,7 @@ class Signup extends React.Component {
 		}
 	}
 
-	loginRedirectTo = path => {
+	loginRedirectTo = ( path ) => {
 		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
@@ -388,14 +388,14 @@ class Signup extends React.Component {
 		}
 
 		// animate the scroll position to the top
-		const scrollPromise = new Promise( resolve => {
+		const scrollPromise = new Promise( ( resolve ) => {
 			this.setState( { scrolling: true } );
 
 			const ANIMATION_LENGTH_MS = 200;
 			const startTime = window.performance.now();
 			const scrollHeight = window.pageYOffset;
 
-			const scrollToTop = timestamp => {
+			const scrollToTop = ( timestamp ) => {
 				const progress = timestamp - startTime;
 
 				if ( progress < ANIMATION_LENGTH_MS ) {

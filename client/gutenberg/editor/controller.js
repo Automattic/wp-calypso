@@ -54,7 +54,7 @@ function getPostID( context ) {
 }
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );

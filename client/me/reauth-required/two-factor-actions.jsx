@@ -32,7 +32,7 @@ class TwoFactorActions extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	recordButtonClicked = event => {
+	recordButtonClicked = ( event ) => {
 		event.preventDefault();
 		let tracksEvent;
 

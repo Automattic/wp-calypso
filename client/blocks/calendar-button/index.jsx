@@ -50,7 +50,7 @@ class CalendarButton extends Component {
 
 	state = { showPopover: false };
 
-	setDate = date => {
+	setDate = ( date ) => {
 		this.setState( { date } );
 		this.props.onDateChange( date );
 	};

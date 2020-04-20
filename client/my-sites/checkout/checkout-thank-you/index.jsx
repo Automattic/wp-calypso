@@ -195,7 +195,7 @@ export class CheckoutThankYou extends React.Component {
 
 	hasPlanOrDomainProduct = ( props = this.props ) => {
 		return getPurchases( props ).some(
-			purchase => isPlan( purchase ) || isDomainProduct( purchase )
+			( purchase ) => isPlan( purchase ) || isDomainProduct( purchase )
 		);
 	};
 
@@ -276,7 +276,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 	};
 
-	redirectIfDomainOnly = props => {
+	redirectIfDomainOnly = ( props ) => {
 		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
 			const purchases = getPurchases( props );
 			const failedPurchases = getFailedPurchases( props );
@@ -478,7 +478,7 @@ export class CheckoutThankYou extends React.Component {
 		);
 	}
 
-	startTransfer = event => {
+	startTransfer = ( event ) => {
 		event.preventDefault();
 
 		const { selectedSite } = this.props;
@@ -660,7 +660,7 @@ export default connect(
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			activatedTheme( meta, site ) {
 				dispatch( themeActivated( meta, site, 'calypstore', true ) );

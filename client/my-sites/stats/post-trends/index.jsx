@@ -85,7 +85,7 @@ class PostTrends extends React.Component {
 		this.setState( scrollProps );
 	};
 
-	scroll = direction => {
+	scroll = ( direction ) => {
 		const node = this.wrapperRef.current,
 			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -128,10 +128,7 @@ class PostTrends extends React.Component {
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
-			const startDate = this.props
-				.moment()
-				.subtract( i, 'months' )
-				.startOf( 'month' );
+			const startDate = this.props.moment().subtract( i, 'months' ).startOf( 'month' );
 			months.push(
 				<Month key={ i } startDate={ startDate } streakData={ streakData } max={ maxPosts } />
 			);
@@ -193,7 +190,7 @@ class PostTrends extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
 		startDate: moment()
@@ -201,10 +198,7 @@ const mapStateToProps = state => {
 			.subtract( 1, 'year' )
 			.startOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
-		endDate: moment()
-			.locale( 'en' )
-			.endOf( 'month' )
-			.format( 'YYYY-MM-DD' ),
+		endDate: moment().locale( 'en' ).endOf( 'month' ).format( 'YYYY-MM-DD' ),
 		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 		max: 3000,
 	};

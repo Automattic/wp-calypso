@@ -140,7 +140,7 @@ export function getErrorFromHTTPError( httpError ) {
  * @param {object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
-export const getErrorFromWPCOMError = wpcomError => ( {
+export const getErrorFromWPCOMError = ( wpcomError ) => ( {
 	message: wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
@@ -153,7 +153,7 @@ export const getErrorFromWPCOMError = wpcomError => ( {
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is regular, false otherwise
  */
-export const isRegularAccount = authAccountType => authAccountType === 'regular';
+export const isRegularAccount = ( authAccountType ) => authAccountType === 'regular';
 
 /**
  * Determines whether the user account uses authentication without password.
@@ -161,7 +161,7 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is passwordless, false otherwise
  */
-export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
+export const isPasswordlessAccount = ( authAccountType ) => authAccountType === 'passwordless';
 
 export async function postLoginRequest( action, bodyObj ) {
 	const response = await window.fetch(

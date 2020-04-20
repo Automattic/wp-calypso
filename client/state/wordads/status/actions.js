@@ -7,7 +7,7 @@ import { pick } from 'lodash';
 
 import 'state/data-layer/wpcom/wordads/status';
 
-export const requestWordadsStatus = siteId => ( {
+export const requestWordadsStatus = ( siteId ) => ( {
 	type: WORDADS_STATUS_REQUEST,
 	siteId,
 } );

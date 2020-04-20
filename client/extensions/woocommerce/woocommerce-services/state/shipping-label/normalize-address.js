@@ -21,7 +21,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 		siteId,
 	} );
 
-	const setSuccess = json => {
+	const setSuccess = ( json ) => {
 		dispatch( {
 			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 			siteId,
@@ -34,7 +34,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 		} );
 	};
 
-	const setError = error => {
+	const setError = ( error ) => {
 		dispatch(
 			NoticeActions.errorNotice(
 				translate( 'Error validating %(group)s address: %(error)s', {

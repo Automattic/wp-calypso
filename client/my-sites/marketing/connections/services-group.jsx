@@ -31,7 +31,7 @@ import './services-group.scss';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-const serviceWarningLevelToNoticeStatus = level => {
+const serviceWarningLevelToNoticeStatus = ( level ) => {
 	switch ( level ) {
 		case 'error':
 			return 'is-error';
@@ -54,7 +54,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ services.length
-					? services.map( service => {
+					? services.map( ( service ) => {
 							const Component = Components[ service.ID.replace( /-/g, '_' ) ] || Service;
 
 							if ( service.warnings ) {
@@ -76,7 +76,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 
 							return <Component key={ service.ID } service={ service } />;
 					  } )
-					: times( NUMBER_OF_PLACEHOLDERS, index => (
+					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 							<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					  ) ) }
 			</ul>

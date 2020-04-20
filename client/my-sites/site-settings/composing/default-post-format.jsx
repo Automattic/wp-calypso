@@ -69,7 +69,7 @@ DefaultPostFormat.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

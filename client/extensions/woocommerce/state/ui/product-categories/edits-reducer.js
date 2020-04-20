@@ -39,7 +39,7 @@ function productCategoryUpdatedAction( edits, action ) {
 		const prevCreates = prevEdits.creates || [];
 
 		const newCreates = compact(
-			prevCreates.map( category => {
+			prevCreates.map( ( category ) => {
 				if ( isEqual( prevCategoryId, category.id ) ) {
 					// Remove this create, it's no longer needed.
 					return undefined;
@@ -60,7 +60,7 @@ function productCategoryUpdatedAction( edits, action ) {
 		const prevUpdates = prevEdits.updates || [];
 
 		const newUpdates = compact(
-			prevUpdates.map( category => {
+			prevUpdates.map( ( category ) => {
 				if ( isEqual( prevCategoryId, category.id ) ) {
 					return undefined;
 				}
@@ -102,7 +102,7 @@ function editProductCategory( array, category, data ) {
 
 	// Look for this object in the appropriate create or edit array first.
 	const newArray = compact(
-		prevArray.map( c => {
+		prevArray.map( ( c ) => {
 			if ( isEqual( category.id, c.id ) ) {
 				found = true;
 

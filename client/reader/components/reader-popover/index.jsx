@@ -15,7 +15,7 @@ import Popover from 'components/popover';
  */
 import './style.scss';
 
-const ReaderPopover = props => {
+const ReaderPopover = ( props ) => {
 	const classes = classnames( 'reader-popover', props.className );
 	const popoverProps = omit( props, 'className' );
 	return (

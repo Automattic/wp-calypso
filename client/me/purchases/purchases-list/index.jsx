@@ -101,7 +101,7 @@ class PurchasesList extends Component {
 				<div>
 					{ this.renderConciergeBanner() }
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
@@ -167,7 +167,7 @@ PurchasesList.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

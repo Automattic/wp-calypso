@@ -35,6 +35,6 @@ class JetpackImporter extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( JetpackImporter ) );

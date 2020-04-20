@@ -108,7 +108,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		return true;
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
@@ -149,7 +149,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		this.props.onDelete();
 	};
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

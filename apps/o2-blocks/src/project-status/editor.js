@@ -48,13 +48,13 @@ const edit = ( {
 					<TextControl
 						label={ __( 'Team Assignment' ) }
 						value={ team }
-						onChange={ value => setAttributes( { team: value } ) }
+						onChange={ ( value ) => setAttributes( { team: value } ) }
 					/>
 					<CustomSelectControl
 						label={ __( 'Time Estimate' ) }
 						options={ estimates }
-						value={ estimates.find( option => option.key === estimate ) || estimates[ 0 ] }
-						onChange={ value => setAttributes( { estimate: value.selectedItem.key } ) }
+						value={ estimates.find( ( option ) => option.key === estimate ) || estimates[ 0 ] }
+						onChange={ ( value ) => setAttributes( { estimate: value.selectedItem.key } ) }
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -91,7 +91,7 @@ const edit = ( {
 					{ team && <span className="wp-block-project-status__team">{ 'Team ' + team }</span> }
 					{ estimate && (
 						<span className="wp-block-project-status__estimate">
-							{ estimate && estimates.find( option => option.key === estimate ).name }
+							{ estimate && estimates.find( ( option ) => option.key === estimate ).name }
 						</span>
 					) }
 				</div>
@@ -100,17 +100,17 @@ const edit = ( {
 	);
 };
 
-export default withSelect( select => {
+export default withSelect( ( select ) => {
 	const tasks = select( 'core/block-editor' )
 		.getBlocks()
-		.filter( block => {
+		.filter( ( block ) => {
 			return block.name === 'a8c/task';
 		} );
 
 	return {
 		allTasks: tasks.length,
-		completedTasks: tasks.filter( task => task.attributes.status === 'done' ).length,
-		pendingTasks: tasks.filter( task => task.attributes.status === 'in-progress' ).length,
-		unassignedTasks: tasks.filter( task => task.attributes.status === 'new' ).length,
+		completedTasks: tasks.filter( ( task ) => task.attributes.status === 'done' ).length,
+		pendingTasks: tasks.filter( ( task ) => task.attributes.status === 'in-progress' ).length,
+		unassignedTasks: tasks.filter( ( task ) => task.attributes.status === 'new' ).length,
 	};
 } )( edit );

@@ -55,16 +55,13 @@ export class EditGravatar extends Component {
 		recordReceiveImageEvent: PropTypes.func,
 	};
 
-	onReceiveFile = files => {
+	onReceiveFile = ( files ) => {
 		const {
 			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
 			translate,
 			recordReceiveImageEvent,
 		} = this.props;
-		const extension = path
-			.extname( files[ 0 ].name )
-			.toLowerCase()
-			.substring( 1 );
+		const extension = path.extname( files[ 0 ].name ).toLowerCase().substring( 1 );
 
 		recordReceiveImageEvent();
 
@@ -168,7 +165,7 @@ export class EditGravatar extends Component {
 
 	render() {
 		const { isUploading, translate, user } = this.props;
-		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		const gravatarLink = `https://gravatar.com/${ user.username || ''}`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
@@ -261,7 +258,7 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_file_receive' );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		user: getCurrentUser( state ) || {},
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),

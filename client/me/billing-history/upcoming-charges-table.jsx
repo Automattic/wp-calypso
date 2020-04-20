@@ -19,7 +19,7 @@ class UpcomingChargesTable extends Component {
 		siteSlugs: PropTypes.object.isRequired,
 	};
 
-	renderTransaction = transaction => {
+	renderTransaction = ( transaction ) => {
 		const { translate } = this.props;
 		const siteSlug = this.props.siteSlugs[ Number( transaction.blog_id ) ];
 
@@ -58,6 +58,6 @@ class UpcomingChargesTable extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteSlugs: getSiteSlugsForUpcomingTransactions( state ),
 } ) )( localize( UpcomingChargesTable ) );

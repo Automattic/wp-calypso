@@ -13,7 +13,7 @@ import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
-const createError = function( error, message, name = false ) {
+const createError = function ( error, message, name = false ) {
 	const errorObj = new Error( message );
 	errorObj.error = error;
 	errorObj.name = name || error;

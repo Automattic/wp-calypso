@@ -68,7 +68,7 @@ class RefundDialog extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const newSiteId = newProps.siteId;
 		const oldSiteId = this.props.siteId;
 
@@ -92,7 +92,7 @@ class RefundDialog extends Component {
 		const { order } = this.props;
 		return (
 			sum(
-				order.fee_lines.map( item => {
+				order.fee_lines.map( ( item ) => {
 					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, item.id ) );
 				} )
 			) +
@@ -101,7 +101,7 @@ class RefundDialog extends Component {
 		);
 	};
 
-	recalculateRefund = data => {
+	recalculateRefund = ( data ) => {
 		const { order } = this.props;
 		if ( ! order ) {
 			return 0;
@@ -128,11 +128,11 @@ class RefundDialog extends Component {
 		return total;
 	};
 
-	recalculateAndSetState = data => {
+	recalculateAndSetState = ( data ) => {
 		this.setState( { refundTotal: this.recalculateRefund( data ) } );
 	};
 
-	isRefundInvalid = thisRefund => {
+	isRefundInvalid = ( thisRefund ) => {
 		const { order, translate } = this.props;
 		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
@@ -144,7 +144,7 @@ class RefundDialog extends Component {
 		return false;
 	};
 
-	updateNote = event => {
+	updateNote = ( event ) => {
 		this.setState( {
 			refundNote: event.target.value,
 		} );
@@ -270,5 +270,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
 )( localize( RefundDialog ) );

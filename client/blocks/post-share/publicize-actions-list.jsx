@@ -46,7 +46,7 @@ class PublicizeActionsList extends PureComponent {
 		previewService: '',
 	};
 
-	setFooterSection = selectedShareTab => () => {
+	setFooterSection = ( selectedShareTab ) => () => {
 		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
 		this.setState( { selectedShareTab } );
 	};
@@ -148,7 +148,7 @@ class PublicizeActionsList extends PureComponent {
 		};
 	}
 
-	closeDeleteDialog = dialogAction => {
+	closeDeleteDialog = ( dialogAction ) => {
 		if ( dialogAction === 'delete' ) {
 			const { siteId, postId } = this.props;
 			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );

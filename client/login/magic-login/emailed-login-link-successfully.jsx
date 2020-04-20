@@ -40,7 +40,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
-	onClickBackLink = event => {
+	onClickBackLink = ( event ) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
@@ -98,7 +98,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),

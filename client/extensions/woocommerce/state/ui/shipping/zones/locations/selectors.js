@@ -151,7 +151,7 @@ export const getShippingZoneLocations = createSelector(
 		const countries = new Set( locations.country );
 		// Extract the country/state pair from the raw states (they are in the format "Country:State")
 		const states = new Set();
-		locations.state.forEach( fullCode => {
+		locations.state.forEach( ( fullCode ) => {
 			const [ countryCode, stateCode ] = fullCode.split( ':' );
 			countries.add( countryCode );
 			states.add( stateCode );
@@ -220,12 +220,12 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 			switch ( action ) {
 				case JOURNAL_ACTIONS.ADD_CONTINENT:
 					// When selecting a whole continent, remove all its countries from the selection
-					getCountriesByContinent( state, code, siteId ).forEach( country =>
+					getCountriesByContinent( state, code, siteId ).forEach( ( country ) =>
 						countries.delete( country.code )
 					);
 					if ( countries.size ) {
 						// If the zone has countries selected, then instead of selecting the continent we select all its countries
-						getCountriesByContinent( state, code, siteId ).forEach( country => {
+						getCountriesByContinent( state, code, siteId ).forEach( ( country ) => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
 								countries.add( country.code );
 							}
@@ -236,18 +236,18 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					break;
 				case JOURNAL_ACTIONS.REMOVE_CONTINENT:
 					continents.delete( code );
-					getCountriesByContinent( state, code, siteId ).forEach( country =>
+					getCountriesByContinent( state, code, siteId ).forEach( ( country ) =>
 						countries.delete( country.code )
 					);
 					break;
 				case JOURNAL_ACTIONS.ADD_COUNTRY:
-					forbiddenCountries.forEach( countryCode => {
+					forbiddenCountries.forEach( ( countryCode ) => {
 						countries.delete( countryCode );
 					} );
 					countries.add( code );
 					// If the zone has continents selected, then we need to replace them with their respective countries
-					continents.forEach( continentCode => {
-						getCountriesByContinent( state, continentCode, siteId ).forEach( country => {
+					continents.forEach( ( continentCode ) => {
+						getCountriesByContinent( state, continentCode, siteId ).forEach( ( country ) => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
 								countries.add( country.code );
 							}
@@ -271,8 +271,8 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					}
 					// If the user unselected a country that was inside a selected continent, replace the continent for its countries
 					if ( insideSelectedContinent ) {
-						continents.forEach( continentCode => {
-							getCountriesByContinent( state, continentCode, siteId ).forEach( country => {
+						continents.forEach( ( continentCode ) => {
+							getCountriesByContinent( state, continentCode, siteId ).forEach( ( country ) => {
 								if ( ! forbiddenCountries.has( country.code ) ) {
 									countries.add( country.code );
 								}
@@ -291,8 +291,8 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 			states.clear();
 		}
 		if ( edits.states ) {
-			edits.states.add.forEach( code => states.add( code ) );
-			edits.states.remove.forEach( code => states.delete( code ) );
+			edits.states.add.forEach( ( code ) => states.add( code ) );
+			edits.states.remove.forEach( ( code ) => states.delete( code ) );
 		}
 
 		return {
@@ -539,7 +539,7 @@ const getShippingZoneLocationsListFromLocations = (
 
 	//if postcode filter exists, then only one country should be selected
 	if ( locations.postcode[ 0 ] ) {
-		return locations.country.map( code => ( {
+		return locations.country.map( ( code ) => ( {
 			type: 'country',
 			code,
 			name: getCountryName( state, code, siteId ),

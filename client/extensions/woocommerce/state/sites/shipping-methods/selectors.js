@@ -46,7 +46,7 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
 	const availableMethods = isWcsEnabled( state, siteId )
 		? allMethods
 		: filter( allMethods, ( { id } ) => ! startsWith( id, 'wc_services' ) );
-	return availableMethods.map( method => ( {
+	return availableMethods.map( ( method ) => ( {
 		...method,
 		title: METHOD_NAMES[ method.id ] || method.title,
 	} ) );
@@ -106,7 +106,7 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
 export const getShippingMethodNameMap = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! areShippingMethodsLoaded( state, siteId ) ) {
-			return typeId => typeId;
+			return ( typeId ) => typeId;
 		}
 
 		const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
@@ -114,7 +114,7 @@ export const getShippingMethodNameMap = createSelector(
 			return result;
 		}, {} );
 
-		return typeId => map[ typeId ] || typeId;
+		return ( typeId ) => map[ typeId ] || typeId;
 	},
 	[ areShippingMethodsLoaded, getShippingMethods ]
 );

@@ -215,7 +215,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -226,7 +226,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Tax' ).map( element => expect( element ).toHaveTextContent( 'R$7' ) );
+		getAllByLabelText( 'Tax' ).map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
 	} );
 
 	it( 'renders the total amount', async () => {
@@ -235,7 +235,9 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Total' ).map( element => expect( element ).toHaveTextContent( 'R$156' ) );
+		getAllByLabelText( 'Total' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$156' )
+		);
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
@@ -470,7 +472,7 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -498,10 +500,10 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Domain Mapping: bar.com' ).map( element =>
+		getAllByLabelText( 'Domain Mapping: bar.com' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
 	} );
@@ -517,7 +519,7 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -579,10 +581,10 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( element =>
+		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( '-$0' )
 		);
 	} );
@@ -666,7 +668,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 }
 
 function convertRequestProductToResponseProduct( currency ) {
-	return product => {
+	return ( product ) => {
 		const { product_id } = product;
 
 		switch ( product_id ) {

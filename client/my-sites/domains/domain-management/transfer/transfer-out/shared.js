@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
-export const displayResponseError = responseError => {
+export const displayResponseError = ( responseError ) => {
 	const errorMessages = {
 		unlock_domain_and_disable_private_reg_failed: translate(
 			'The domain could not be unlocked. ' +

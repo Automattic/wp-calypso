@@ -13,7 +13,7 @@ import { sanitizeSectionContent as clean } from '../sanitize-section-content';
  * @param {string} html expected HTML to create node
  * @returns {Node | null} possible node described by HTML
  */
-const cleanNode = html => {
+const cleanNode = ( html ) => {
 	const div = document.createElement( 'div' );
 
 	div.innerHTML = clean( html );

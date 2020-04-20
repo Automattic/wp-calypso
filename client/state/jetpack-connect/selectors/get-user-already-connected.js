@@ -16,6 +16,6 @@ import 'state/jetpack-connect/init';
  * @param  {object}  state Global state tree
  * @returns {boolean}       True if the user is connected otherwise false
  */
-export const getUserAlreadyConnected = state => {
+export const getUserAlreadyConnected = ( state ) => {
 	return get( getAuthorizationData( state ), 'userAlreadyConnected', false );
 };

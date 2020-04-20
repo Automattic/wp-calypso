@@ -34,13 +34,14 @@ export default function siteSupportsRealtimeBackup( state, siteId ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const purchases = getSitePurchases( state, siteId );
 
-	const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
+	const currentPlanSupportsRealtimeBackup = some( productSlugs, ( productSlug ) =>
 		planHasFeature( currentPlanSlug, productSlug )
 	);
 	const hasActiveRealtimeBackupProduct = some(
 		purchases,
-		purchase =>
-			purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
+		( purchase ) =>
+			purchase.active &&
+			some( productSlugs, ( productSlug ) => productSlug === purchase.productSlug )
 	);
 
 	return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;

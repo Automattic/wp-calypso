@@ -162,7 +162,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._flow.steps ), step => {
+		forEach( pick( steps, this._flow.steps ), ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -194,7 +194,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
 
-		forEach( pick( steps, this._flow.steps ), step => {
+		forEach( pick( steps, this._flow.steps ), ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -233,13 +233,13 @@ export default class SignupFlowController {
 	_getFlowProvidesDependencies() {
 		return flatMap(
 			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
 		const currentSteps = this._flow.steps;
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), step =>
+		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
@@ -355,7 +355,7 @@ export default class SignupFlowController {
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap(
 			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 
 		return reduce(

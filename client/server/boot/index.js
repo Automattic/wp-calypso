@@ -38,7 +38,7 @@ function setup() {
 				const username = config( 'wordpress_logged_in_cookie' ).split( '%7C' )[ 0 ];
 				console.info( chalk.cyan( '\nYour logged in cookie set to user: ' + username ) );
 
-				app.use( function( req, res, next ) {
+				app.use( function ( req, res, next ) {
 					if ( ! req.cookies.wordpress_logged_in ) {
 						req.cookies.wordpress_logged_in = config( 'wordpress_logged_in_cookie' );
 					}
@@ -58,7 +58,7 @@ function setup() {
 			try {
 				const supportSessionIdCookie = config( 'support_session_id_cookie' );
 				if ( supportSessionIdCookie ) {
-					app.use( function( req, res, next ) {
+					app.use( function ( req, res, next ) {
 						if ( ! req.cookies.support_session_id ) {
 							req.cookies.support_session_id = supportSessionIdCookie;
 						}
@@ -78,7 +78,7 @@ function setup() {
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
-	app.get( '/nostats.js', function( request, response ) {
+	app.get( '/nostats.js', function ( request, response ) {
 		analytics.tracks.recordEvent(
 			'calypso_stats_blocked',
 			{
@@ -95,7 +95,10 @@ function setup() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) ) );
+		app.use(
+			'/desktop',
+			express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) )
+		);
 	}
 
 	app.use( require( 'server/api' )() );

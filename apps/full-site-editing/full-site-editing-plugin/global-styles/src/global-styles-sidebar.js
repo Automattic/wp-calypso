@@ -16,25 +16,20 @@ import { FONT_BASE, FONT_HEADINGS } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
 
-const isFor = filterProperty => option =>
+const isFor = ( filterProperty ) => ( option ) =>
 	option.prop === ANY_PROPERTY || option.prop === filterProperty;
 
-const toOption = font => {
+const toOption = ( font ) => {
 	if ( typeof font === 'object' ) {
 		const { label, value, prop = ANY_PROPERTY } = font;
 		return { label, value, prop };
 	}
 	return { label: font, value: font, prop: ANY_PROPERTY };
 };
-const isNotNull = option => option.value !== null && option.label !== null;
+const isNotNull = ( option ) => option.value !== null && option.label !== null;
 
 const toOptions = ( options, filterProperty ) =>
-	! options
-		? []
-		: options
-				.map( toOption )
-				.filter( isNotNull )
-				.filter( isFor( filterProperty ) );
+	! options ? [] : options.map( toOption ).filter( isNotNull ).filter( isFor( filterProperty ) );
 
 const PanelActionButtons = ( {
 	hasLocalChanges,
@@ -88,8 +83,10 @@ export default ( {
 			>
 				<PanelBody>
 					<p>
-						{ /* translators: %s: Name of site. */
-						sprintf( __( 'You are customizing %s.' ), siteName ) }
+						{
+							/* translators: %s: Name of site. */
+							sprintf( __( 'You are customizing %s.' ), siteName )
+						}
 					</p>
 					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
 					{ hasLocalChanges ? (
@@ -113,8 +110,8 @@ export default ( {
 						fontHeadingsDefault={ fontHeadingsDefault }
 						fontBaseOptions={ toOptions( fontOptions, FONT_BASE ) }
 						fontHeadingsOptions={ toOptions( fontOptions, FONT_HEADINGS ) }
-						updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value } ) }
-						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
+						updateBaseFont={ ( value ) => updateOptions( { [ FONT_BASE ]: value } ) }
+						updateHeadingsFont={ ( value ) => updateOptions( { [ FONT_HEADINGS ]: value } ) }
 					/>
 					<FontPairingsPanel
 						fontHeadings={ fontHeadings }

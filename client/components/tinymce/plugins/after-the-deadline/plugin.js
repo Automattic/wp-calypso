@@ -52,7 +52,7 @@ function plugin( editor ) {
 			settings.autofix = false;
 
 			this.throttledReposition = throttle( this.reposition.bind( this ), 200 );
-			this.on( 'autohide', event => event.preventDefault() );
+			this.on( 'autohide', ( event ) => event.preventDefault() );
 			this.boundHideIfNotMarked = this.hideIfNotMarked.bind( this );
 
 			this._super( settings );
@@ -105,11 +105,11 @@ function plugin( editor ) {
 		atdCore.map = each;
 		atdCore._isTinyMCE = true;
 
-		atdCore.getAttrib = function( node, key ) {
+		atdCore.getAttrib = function ( node, key ) {
 			return dom.getAttrib( node, key );
 		};
 
-		atdCore.findSpans = function( parent ) {
+		atdCore.findSpans = function ( parent ) {
 			if ( parent === undefined ) {
 				return dom.select( 'span' );
 			}
@@ -117,28 +117,28 @@ function plugin( editor ) {
 			return dom.select( 'span', parent );
 		};
 
-		atdCore.hasClass = function( node, className ) {
+		atdCore.hasClass = function ( node, className ) {
 			return dom.hasClass( node, className );
 		};
 
-		atdCore.contents = function( node ) {
+		atdCore.contents = function ( node ) {
 			return node.childNodes;
 		};
 
-		atdCore.replaceWith = function( old_node, new_node ) {
+		atdCore.replaceWith = function ( old_node, new_node ) {
 			return dom.replace( new_node, old_node );
 		};
 
-		atdCore.create = function( node_html ) {
+		atdCore.create = function ( node_html ) {
 			return dom.create( 'span', { class: 'mceItemHidden', 'data-mce-bogus': 1 }, node_html );
 		};
 
-		atdCore.removeParent = function( node ) {
+		atdCore.removeParent = function ( node ) {
 			dom.remove( node, true );
 			return node;
 		};
 
-		atdCore.remove = function( node ) {
+		atdCore.remove = function ( node ) {
 			dom.remove( node );
 		};
 
@@ -176,7 +176,7 @@ function plugin( editor ) {
 				editor.dom.select(
 					'span.hiddenSpellError, span.hiddenGrammarError, span.hiddenSuggestion'
 				),
-				function( node ) {
+				function ( node ) {
 					const text = node.innerText || node.textContent;
 
 					if ( text === word ) {
@@ -220,7 +220,7 @@ function plugin( editor ) {
 		// Attempt to find a supported localized subdomain which matches the
 		// currently configured locale slug
 		const localeSlug = getLocaleSlug();
-		const subdomain = find( SERVICE_LOCALIZED_SUBDOMAINS, locale => {
+		const subdomain = find( SERVICE_LOCALIZED_SUBDOMAINS, ( locale ) => {
 			// Match on full localeSlug ("en") or with variant ("pt-BR")
 			return localeSlug === locale || 0 === localeSlug.indexOf( locale + '-' );
 		} );
@@ -291,10 +291,10 @@ function plugin( editor ) {
 			if ( errorDescription.suggestions.length ) {
 				items.push( { text: '-' } ); // separator
 
-				each( errorDescription.suggestions, function( suggestion ) {
+				each( errorDescription.suggestions, function ( suggestion ) {
 					items.push( {
 						text: suggestion,
-						onclick: function() {
+						onclick: function () {
 							atdCore.applySuggestion( target, suggestion );
 							checkIfFinished();
 						},
@@ -308,7 +308,7 @@ function plugin( editor ) {
 
 			items.push( {
 				text: translate( 'Explain…', { comment: 'Editor proofreading menu item' } ),
-				onclick: function() {
+				onclick: function () {
 					editor.windowManager.open( {
 						title: translate( 'Explain…', { comment: 'Editor proofreading menu item' } ),
 						url: errorDescription.moreinfo,
@@ -324,7 +324,7 @@ function plugin( editor ) {
 			{ text: '-' }, // separator
 			{
 				text: translate( 'Ignore suggestion', { comment: 'Editor proofreading menu item' } ),
-				onclick: function() {
+				onclick: function () {
 					ignoreWord( target, text );
 				},
 			},
@@ -333,7 +333,7 @@ function plugin( editor ) {
 		if ( editor.getParam( 'atd_ignore_enable' ) ) {
 			items.push( {
 				text: translate( 'Ignore always', { comment: 'Editor proofreading menu item' } ),
-				onclick: function() {
+				onclick: function () {
 					setAlwaysIgnore( text );
 					ignoreWord( target, text, true );
 				},
@@ -341,7 +341,7 @@ function plugin( editor ) {
 		} else {
 			items.push( {
 				text: translate( 'Ignore all', { comment: 'Editor proofreading menu item' } ),
-				onclick: function() {
+				onclick: function () {
 					ignoreWord( target, text, true );
 				},
 			} );
@@ -356,18 +356,18 @@ function plugin( editor ) {
 	}
 
 	// Init everything
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		// Set dom and atdCore
 		dom = editor.dom;
 		initAtDCore();
 
 		// add a command to request a document check and process the results.
-		editor.addCommand( 'mceWritingImprovementTool', function( callback ) {
+		editor.addCommand( 'mceWritingImprovementTool', function ( callback ) {
 			let results,
 				errorCount = 0;
 
 			if ( typeof callback !== 'function' ) {
-				callback = function() {};
+				callback = function () {};
 			}
 
 			// checks if a global var for click stats exists and increments it if it does...
@@ -382,7 +382,7 @@ function plugin( editor ) {
 			}
 
 			// send request to our service
-			sendRequest( 'checkDocument', editor.getContent( { format: 'raw' } ), function(
+			sendRequest( 'checkDocument', editor.getContent( { format: 'raw' } ), function (
 				data,
 				request
 			) {
@@ -447,7 +447,7 @@ function plugin( editor ) {
 		}
 
 		// Click on misspelled word
-		editor.on( 'click', function( event ) {
+		editor.on( 'click', function ( event ) {
 			if ( isMarkedNode( event.target ) ) {
 				event.preventDefault();
 				editor.selection.select( event.target );
@@ -492,7 +492,7 @@ function plugin( editor ) {
 		} );
 	} )();
 
-	editor.on( 'SpellcheckStart SpellcheckEnd', event => {
+	editor.on( 'SpellcheckStart SpellcheckEnd', ( event ) => {
 		editor.contentDocument.body.spellcheck = 'spellcheckend' === event.type;
 		if ( ! editor.contentDocument.body.spellcheck ) {
 			editor.contentDocument.body.focus();
@@ -504,10 +504,10 @@ function plugin( editor ) {
 		text: translate( 'Proofread Writing', { comment: 'Editor proofreading toolbar tooltip' } ),
 		context: 'tools',
 		cmd: 'mceWritingImprovementTool',
-		onPostRender: function() {
+		onPostRender: function () {
 			const self = this;
 
-			editor.on( 'SpellcheckStart SpellcheckEnd', function() {
+			editor.on( 'SpellcheckStart SpellcheckEnd', function () {
 				self.active( started );
 			} );
 		},
@@ -516,16 +516,16 @@ function plugin( editor ) {
 	editor.addButton( 'spellchecker', {
 		tooltip: translate( 'Proofread Writing', { comment: 'Editor proofreading button tooltip' } ),
 		cmd: 'mceWritingImprovementTool',
-		onPostRender: function() {
+		onPostRender: function () {
 			const self = this;
 
-			editor.on( 'SpellcheckStart SpellcheckEnd', function() {
+			editor.on( 'SpellcheckStart SpellcheckEnd', function () {
 				self.active( started );
 			} );
 		},
 	} );
 
-	editor.on( 'remove', function() {
+	editor.on( 'remove', function () {
 		if ( suggestionsMenu ) {
 			suggestionsMenu.remove();
 			suggestionsMenu = null;
@@ -533,6 +533,6 @@ function plugin( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'AtD', plugin );
 }

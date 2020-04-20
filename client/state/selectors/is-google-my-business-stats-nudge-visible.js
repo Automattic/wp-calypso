@@ -26,7 +26,7 @@ export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
 	// Don't show the nudge if the site is already connected (can be from another admin)
 	const siteKeyrings = state.siteKeyrings.items[ siteId ] ?? [];
 	const googleMyBusinessSiteKeyring = siteKeyrings.find(
-		keyring => keyring.service === 'google_my_business' && !! keyring.external_user_id
+		( keyring ) => keyring.service === 'google_my_business' && !! keyring.external_user_id
 	);
 
 	if ( googleMyBusinessSiteKeyring ) {

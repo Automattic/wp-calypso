@@ -18,17 +18,17 @@ const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
 
 // Start xvfb display and recording
-before( async function() {
+before( async function () {
 	await videoRecorder.startDisplay();
 } );
 
 // Start xvfb display and recording
-before( async function() {
+before( async function () {
 	await videoRecorder.startVideo();
 } );
 
 // Sauce Breakpoint
-afterEach( function() {
+afterEach( function () {
 	const driver = global.__BROWSER__;
 
 	if (
@@ -42,7 +42,7 @@ afterEach( function() {
 } );
 
 // Take Screenshot
-afterEach( async function() {
+afterEach( async function () {
 	this.timeout( afterHookTimeoutMS );
 	if ( ! this.currentTest ) {
 		return;
@@ -70,8 +70,8 @@ afterEach( async function() {
 		}
 
 		await driver.getCurrentUrl().then(
-			url => console.log( `FAILED: Taking screenshot of: '${ url }'` ),
-			err => {
+			( url ) => console.log( `FAILED: Taking screenshot of: '${ url }'` ),
+			( err ) => {
 				slackNotifier.warn( `Could not capture the URL when taking a screenshot: '${ err }'` );
 			}
 		);
@@ -85,12 +85,12 @@ afterEach( async function() {
 	}
 
 	return await driver.takeScreenshot().then(
-		async data => {
-			return await driver.getCurrentUrl().then( async url => {
+		async ( data ) => {
+			return await driver.getCurrentUrl().then( async ( url ) => {
 				return await mediaHelper.writeScreenshot( data, filenameCallback, { url } );
 			} );
 		},
-		err => {
+		( err ) => {
 			slackNotifier.warn( `Could not take screenshot due to error: '${ err }'`, {
 				suppressDuplicateMessages: true,
 			} );
@@ -99,7 +99,7 @@ afterEach( async function() {
 } );
 
 // Dismiss any alerts for switching away
-afterEach( async function() {
+afterEach( async function () {
 	await this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 
@@ -113,7 +113,7 @@ afterEach( async function() {
 } );
 
 // Check for console errors
-afterEach( async function() {
+afterEach( async function () {
 	this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 	await driverHelper.logPerformance( driver );
@@ -121,7 +121,7 @@ afterEach( async function() {
 } );
 
 // Update Sauce Job Status locally
-afterEach( function() {
+afterEach( function () {
 	const driver = global.__BROWSER__;
 
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
@@ -130,14 +130,14 @@ afterEach( function() {
 } );
 
 // Stop video recording if the test has failed
-afterEach( async function() {
+afterEach( async function () {
 	if ( this.currentTest && this.currentTest.state === 'failed' ) {
 		await videoRecorder.stopVideo( this.currentTest );
 	}
 } );
 
 // Push SauceLabs job status update (if applicable)
-after( async function() {
+after( async function () {
 	await this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 
@@ -147,7 +147,7 @@ after( async function() {
 } );
 
 // Quit browser
-after( function() {
+after( function () {
 	this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 
@@ -161,11 +161,11 @@ after( function() {
 } );
 
 // Stop video
-after( async function() {
+after( async function () {
 	await videoRecorder.stopVideo();
 } );
 
 // Stop xvfb display
-after( async function() {
+after( async function () {
 	await videoRecorder.stopDisplay();
 } );

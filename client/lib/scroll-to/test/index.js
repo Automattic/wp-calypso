@@ -20,7 +20,7 @@ describe( 'scroll-to', () => {
 		window.scrollTo.resetHistory();
 	} );
 
-	test( 'window position x', done => {
+	test( 'window position x', ( done ) => {
 		scrollTo( {
 			x: 500,
 			y: 300,
@@ -32,7 +32,7 @@ describe( 'scroll-to', () => {
 			},
 		} );
 	} );
-	test( 'window position y', done => {
+	test( 'window position y', ( done ) => {
 		scrollTo( {
 			x: 0,
 			y: 100,

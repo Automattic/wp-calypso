@@ -40,9 +40,9 @@ export function fetchNameservers( domainName ) {
 }
 
 export function updateNameservers( domainName, nameservers, onComplete ) {
-	const postData = nameservers.map( nameserver => ( { nameserver } ) );
+	const postData = nameservers.map( ( nameserver ) => ( { nameserver } ) );
 
-	wpcom.undocumented().updateNameservers( domainName, { nameservers: postData }, error => {
+	wpcom.undocumented().updateNameservers( domainName, { nameservers: postData }, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: NAMESERVERS_UPDATE_COMPLETED,

@@ -15,7 +15,7 @@ import 'state/data-layer/wpcom/plans';
  * @param {Array} plans - WordPress.com plans list
  * @returns {object} action object
  */
-export const plansReceiveAction = plans => {
+export const plansReceiveAction = ( plans ) => {
 	return {
 		type: PLANS_RECEIVE,
 		plans,
@@ -37,7 +37,7 @@ export const plansRequestSuccessAction = () => {
  * @param {string} error - error message
  * @returns {object} action object
  */
-export const plansRequestFailureAction = error => {
+export const plansRequestFailureAction = ( error ) => {
 	return {
 		type: PLANS_REQUEST_FAILURE,
 		error: error,

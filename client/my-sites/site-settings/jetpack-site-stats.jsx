@@ -59,7 +59,7 @@ class JetpackSiteStats extends Component {
 			let groupFields = this.getCurrentGroupFields( groupName );
 
 			if ( includes( groupFields, fieldName ) ) {
-				groupFields = groupFields.filter( field => field !== fieldName );
+				groupFields = groupFields.filter( ( field ) => field !== fieldName );
 			} else {
 				groupFields.push( fieldName );
 			}
@@ -156,7 +156,7 @@ class JetpackSiteStats extends Component {
 					<FormFieldset>
 						<FormLegend>{ translate( 'Count logged in page views from' ) }</FormLegend>
 						{ siteRoles &&
-							siteRoles.map( role =>
+							siteRoles.map( ( role ) =>
 								this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
@@ -169,7 +169,7 @@ class JetpackSiteStats extends Component {
 					<FormFieldset>
 						<FormLegend>{ translate( 'Allow stats reports to be viewed by' ) }</FormLegend>
 						{ siteRoles &&
-							siteRoles.map( role =>
+							siteRoles.map( ( role ) =>
 								this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
@@ -189,7 +189,7 @@ class JetpackSiteStats extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

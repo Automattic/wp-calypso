@@ -25,7 +25,7 @@ export function showUpsellIfNoScan( context, next ) {
 
 	const showUpsellOrNext = () => {
 		const hasScan = purchases.find(
-			purchase =>
+			( purchase ) =>
 				JETPACK_SCAN_PRODUCTS.includes( purchase.productSlug ) ||
 				( getPlan( purchase.productSlug ) &&
 					planHasFeature( purchase.productSlug, PRODUCT_JETPACK_SCAN ) )

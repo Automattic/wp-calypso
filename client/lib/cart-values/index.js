@@ -21,7 +21,7 @@ import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products
 import { detectWebPaymentMethod } from 'lib/web-payment';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
-extendImmutabilityHelper( '$auto', function( value, object ) {
+extendImmutabilityHelper( '$auto', function ( value, object ) {
 	return object ? update( object, value ) : update( {}, value );
 } );
 
@@ -112,7 +112,7 @@ export function emptyCart( siteId, attributes ) {
 }
 
 export function applyCoupon( coupon ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false },
@@ -122,7 +122,7 @@ export function applyCoupon( coupon ) {
 }
 
 export function removeCoupon() {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			coupon: { $set: '' },
 			is_coupon_applied: { $set: false },
@@ -131,14 +131,14 @@ export function removeCoupon() {
 	};
 }
 
-export const getTaxCountryCode = cart => get( cart, [ 'tax', 'location', 'country_code' ] );
+export const getTaxCountryCode = ( cart ) => get( cart, [ 'tax', 'location', 'country_code' ] );
 
-export const getTaxPostalCode = cart => get( cart, [ 'tax', 'location', 'postal_code' ] );
+export const getTaxPostalCode = ( cart ) => get( cart, [ 'tax', 'location', 'postal_code' ] );
 
-export const getTaxLocation = cart => get( cart, [ 'tax', 'location' ], {} );
+export const getTaxLocation = ( cart ) => get( cart, [ 'tax', 'location' ], {} );
 
 export function setTaxCountryCode( countryCode ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -158,7 +158,7 @@ export function setTaxCountryCode( countryCode ) {
 }
 
 export function setTaxPostalCode( postalCode ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -178,7 +178,7 @@ export function setTaxPostalCode( postalCode ) {
 }
 
 export function setTaxLocation( { postalCode, countryCode } ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -254,10 +254,10 @@ export function isFree( cart ) {
 export function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
-			$apply: function( items ) {
+			$apply: function ( items ) {
 				return (
 					items &&
-					items.map( function( cartItem ) {
+					items.map( function ( cartItem ) {
 						return fillInSingleCartItemAttributes( cartItem, products );
 					} )
 				);
@@ -300,25 +300,25 @@ export function getEnabledPaymentMethods( cart ) {
 	let allowedPaymentMethods = cart.allowed_payment_methods.slice( 0 );
 
 	// Ebanx is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
 	} );
 
 	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
 	} );
 
 	// Web payment methods such as Apple Pay are enabled based on client-side
 	// capabilities.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
 	} );
 
 	// Invert so we can search by class name.
 	const paymentMethodsKeys = invert( PAYMENT_METHODS );
 
-	return allowedPaymentMethods.map( function( methodClassName ) {
+	return allowedPaymentMethods.map( function ( methodClassName ) {
 		return paymentMethodsKeys[ methodClassName ];
 	} );
 }

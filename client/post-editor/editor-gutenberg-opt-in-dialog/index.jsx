@@ -111,7 +111,7 @@ class EditorGutenbergOptInDialog extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	optIn: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
@@ -150,7 +150,7 @@ const mapDispatchToProps = dispatch => ( {
 	hideDialog: () => dispatch( hideGutenbergOptInDialog() ),
 } );
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const isDialogVisible = isGutenbergOptInDialogShowing( state );
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );

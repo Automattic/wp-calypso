@@ -8,7 +8,7 @@ import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 import config from 'config';
 
-const requestLayout = action => {
+const requestLayout = ( action ) => {
 	return http(
 		{
 			method: 'GET',

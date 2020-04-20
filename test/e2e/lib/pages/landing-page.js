@@ -15,7 +15,7 @@ export default class LandingPage extends AsyncBaseContainer {
 	}
 
 	checkURL() {
-		this.driver.getCurrentUrl().then( currentUrl => {
+		this.driver.getCurrentUrl().then( ( currentUrl ) => {
 			assert.strictEqual(
 				true,
 				currentUrl.includes( 'wordpress.com' ),

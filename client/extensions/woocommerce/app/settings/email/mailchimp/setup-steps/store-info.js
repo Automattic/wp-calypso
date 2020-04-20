@@ -24,7 +24,7 @@ const fields = [
 ];
 
 const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
-	const onTimezoneSelect = value => {
+	const onTimezoneSelect = ( value ) => {
 		const e = {
 			target: {
 				name: 'store_timezone',
@@ -34,7 +34,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		onChange( e );
 	};
 
-	const selectLanguage = e => {
+	const selectLanguage = ( e ) => {
 		const event = {
 			target: {
 				name: 'store_locale',
@@ -44,7 +44,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		onChange( event );
 	};
 
-	const isError = name => {
+	const isError = ( name ) => {
 		if ( name === 'store_phone' ) {
 			return validateFields && ! ( storeData.name && storeData[ name ].length >= 6 );
 		}

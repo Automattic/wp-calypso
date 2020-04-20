@@ -65,14 +65,14 @@ class OrderFulfillment extends Component {
 		trackingNumber: '',
 	};
 
-	toggleDialog = event => {
+	toggleDialog = ( event ) => {
 		event && event.preventDefault();
 		this.setState( {
 			showDialog: ! this.state.showDialog,
 		} );
 	};
 
-	updateTrackingNumber = event => {
+	updateTrackingNumber = ( event ) => {
 		this.setState( {
 			errorMessage: false,
 			trackingNumber: event.target.value,
@@ -314,5 +314,5 @@ export default connect(
 			storeAddress,
 		};
 	},
-	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
+	( dispatch ) => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );

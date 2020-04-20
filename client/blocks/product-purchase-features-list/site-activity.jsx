@@ -30,6 +30,6 @@ const SiteActivity = ( { siteSlug, translate } ) => (
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( SiteActivity ) );

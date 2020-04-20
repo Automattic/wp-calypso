@@ -23,7 +23,7 @@ class NewCardForm extends Component {
 		selected: PropTypes.bool,
 	};
 
-	getErrorMessage = fieldName => {
+	getErrorMessage = ( fieldName ) => {
 		const { transaction } = this.props;
 		return transaction.step.name === INPUT_VALIDATION && transaction.errors[ fieldName ];
 	};

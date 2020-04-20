@@ -56,13 +56,13 @@ export function makeJsonSchemaParser( schema, transformer = identity, schemaOpti
 			)
 		);
 
-		validate = data => {
+		validate = ( data ) => {
 			if ( ! validator( data ) ) {
 				if ( 'development' === process.env.NODE_ENV ) {
 					// eslint-disable-next-line no-console
 					console.warn( 'JSON Validation Failure' );
 
-					validator.errors.forEach( error =>
+					validator.errors.forEach( ( error ) =>
 						// eslint-disable-next-line no-console
 						console.warn( {
 							field: error.field,
@@ -89,7 +89,7 @@ export function makeJsonSchemaParser( schema, transformer = identity, schemaOpti
 			return filter( data );
 		};
 
-		transform = data => {
+		transform = ( data ) => {
 			try {
 				return transformer( data );
 			} catch ( e ) {
@@ -120,7 +120,7 @@ export function makeJsonSchemaParser( schema, transformer = identity, schemaOpti
 		};
 	};
 
-	return data => {
+	return ( data ) => {
 		if ( ! transform ) {
 			genParser();
 		}

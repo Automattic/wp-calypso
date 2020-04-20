@@ -42,7 +42,7 @@ class JetpackNewSite extends Component {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
-	handleJetpackUrlChange = event => {
+	handleJetpackUrlChange = ( event ) => {
 		const url = event.target.value;
 
 		this.setState( {

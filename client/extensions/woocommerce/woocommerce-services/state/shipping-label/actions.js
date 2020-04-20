@@ -111,7 +111,7 @@ import {
 const PRINTING_FAILED_NOTICE_ID = 'label-image-download-failed';
 const PRINTING_IN_PROGRESS_NOTICE_ID = 'label-image-download-printing';
 
-export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
+export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,
 		orderId,
@@ -121,7 +121,7 @@ export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
 
 	api
 		.get( siteId, api.url.orderLabels( orderId ) )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 				siteId,
@@ -129,7 +129,7 @@ export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
 				...data,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR,
 				orderId,
@@ -157,10 +157,10 @@ export const toggleStep = ( orderId, siteId, stepName ) => {
 	};
 };
 
-const waitForAllPromises = promises => {
+const waitForAllPromises = ( promises ) => {
 	// Thin wrapper over Promise.all, that makes the Promise chain wait for all the promises
 	// to be completed, even if one of them is rejected.
-	return Promise.all( promises.map( p => p.catch( e => e ) ) );
+	return Promise.all( promises.map( ( p ) => p.catch( ( e ) => e ) ) );
 };
 
 const expandFirstErroneousStep = ( orderId, siteId, dispatch, getState ) => {
@@ -251,10 +251,12 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
 
 	const customsItems = isCustomsFormRequired( getState(), orderId, siteId ) ? customs.items : null;
-	const apiPackages = map( packages.selected, pckg => convertToApiPackage( pckg, customsItems ) );
+	const apiPackages = map( packages.selected, ( pckg ) =>
+		convertToApiPackage( pckg, customsItems )
+	);
 	getRates( orderId, siteId, dispatch, origin.values, destination.values, apiPackages )
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
-		.catch( error => {
+		.catch( ( error ) => {
 			console.error( error );
 			dispatch(
 				NoticeActions.errorNotice( error.toString(), {
@@ -736,12 +738,12 @@ const getPDFFileName = ( orderId, isReprint = false ) => {
 const labelStatusTask = ( orderId, siteId, labelId, retryCount ) => {
 	return api
 		.get( siteId, api.url.labelStatus( orderId, labelId ) )
-		.then( statusResponse => statusResponse.label )
-		.catch( pollError => {
+		.then( ( statusResponse ) => statusResponse.label )
+		.catch( ( pollError ) => {
 			if ( ! includes( pollError, 'cURL error 28' ) || retryCount >= 3 ) {
 				throw pollError;
 			}
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				setTimeout(
 					() => resolve( labelStatusTask( orderId, siteId, labelId, retryCount + 1 ) ),
 					1000
@@ -759,7 +761,7 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 	}
 
 	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
-		const trackingNumbers = labels.map( label => label.tracking );
+		const trackingNumbers = labels.map( ( label ) => label.tracking );
 		const carrierId = first( labels ).carrier_id;
 		let note = '';
 		if ( 'usps' === carrierId ) {
@@ -814,7 +816,7 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
  * @param {number} count The amount of labels that were successfuly purchased and printed.
  * @returns {object}     TheA plain action object.
  */
-const createPrintSuccessNotice = count => {
+const createPrintSuccessNotice = ( count ) => {
 	return NoticeActions.successNotice(
 		translate(
 			'Your shipping label was purchased successfully',
@@ -904,7 +906,7 @@ function downloadAndPrint( orderId, siteId, dispatch, getState, labels ) {
 
 	api
 		.get( siteId, printUrl )
-		.then( fileData => {
+		.then( ( fileData ) => {
 			dispatch( NoticeActions.removeNotice( PRINTING_IN_PROGRESS_NOTICE_ID ) );
 
 			if ( 'addon' === getPDFSupport() ) {
@@ -922,7 +924,7 @@ function downloadAndPrint( orderId, siteId, dispatch, getState, labels ) {
 					.then( () => {
 						showSuccessNotice();
 					} )
-					.catch( err => {
+					.catch( ( err ) => {
 						dispatch( NoticeActions.errorNotice( err.toString() ) );
 						hasError = true;
 					} )
@@ -943,17 +945,17 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 
 	if ( ! every( labels, { status: 'PURCHASED' } ) ) {
 		setTimeout( () => {
-			const statusTasks = labels.map( label => {
+			const statusTasks = labels.map( ( label ) => {
 				return label.status === 'PURCHASED'
 					? label
 					: labelStatusTask( orderId, siteId, label.label_id, 0 );
 			} );
 
 			Promise.all( statusTasks )
-				.then( pollResponse =>
+				.then( ( pollResponse ) =>
 					pollForLabelsPurchase( orderId, siteId, dispatch, getState, pollResponse )
 				)
-				.catch( pollError =>
+				.catch( ( pollError ) =>
 					handleLabelPurchaseError( orderId, siteId, dispatch, getState, pollError )
 				);
 		}, 1000 );
@@ -969,11 +971,11 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	let error = null;
 	let labels = null;
 
-	const setError = err => ( error = err );
-	const setSuccess = json => {
+	const setError = ( err ) => ( error = err );
+	const setSuccess = ( json ) => {
 		labels = json.labels;
 	};
-	const setIsSaving = saving => {
+	const setIsSaving = ( saving ) => {
 		if ( saving ) {
 			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST, orderId, siteId } );
 		} else if ( error ) {
@@ -1001,7 +1003,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	}
 
 	Promise.all( addressNormalizationQueue )
-		.then( normalizationResults => {
+		.then( ( normalizationResults ) => {
 			if ( ! every( normalizationResults ) ) {
 				return;
 			}
@@ -1026,7 +1028,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 						carrier_id: rate.carrier_id,
 						service_name: rate.title,
 						products: flatten(
-							pckg.items.map( item => fill( new Array( item.quantity ), item.product_id ) )
+							pckg.items.map( ( item ) => fill( new Array( item.quantity ), item.product_id ) )
 						),
 					};
 				} ),
@@ -1045,7 +1047,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 				.catch( setError )
 				.then( () => setIsSaving( false ) );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			console.error( err );
 			dispatch( NoticeActions.errorNotice( err.toString() ) );
 		} );
@@ -1066,7 +1068,7 @@ export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) =
 				shippingLabel.form.labelsToPrint
 			);
 		} )
-		.catch( error => dispatch( NoticeActions.errorNotice( error.toString() ) ) );
+		.catch( ( error ) => dispatch( NoticeActions.errorNotice( error.toString() ) ) );
 };
 
 export const openRefundDialog = ( orderId, siteId, labelId ) => {
@@ -1081,15 +1083,15 @@ export const openRefundDialog = ( orderId, siteId, labelId ) => {
 export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 
-	const labelRequests = shippingLabel.labels.map( label => {
+	const labelRequests = shippingLabel.labels.map( ( label ) => {
 		if ( label.statusUpdated ) {
 			return;
 		}
 		const labelId = label.label_id;
 		let error = null;
 		let response = null;
-		const setError = err => ( error = err );
-		const setSuccess = json => {
+		const setError = ( err ) => ( error = err );
+		const setSuccess = ( json ) => {
 			response = json.label;
 		};
 
@@ -1113,7 +1115,7 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 	} );
 
 	// Handle error with a single notice
-	Promise.all( labelRequests ).catch( error => {
+	Promise.all( labelRequests ).catch( ( error ) => {
 		dispatch(
 			NoticeActions.errorNotice( `Failed to retrieve shipping label refund status: ${ error }` )
 		);
@@ -1128,13 +1130,13 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const labelId = getShippingLabel( getState(), orderId, siteId ).refundDialog.labelId;
 	let error = null;
 	let response = null;
-	const setError = err => {
+	const setError = ( err ) => {
 		error = err;
 	};
-	const setSuccess = json => {
+	const setSuccess = ( json ) => {
 		response = json.refund;
 	};
-	const setIsSaving = saving => {
+	const setIsSaving = ( saving ) => {
 		if ( saving ) {
 			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST, orderId, siteId } );
 		} else {
@@ -1180,7 +1182,7 @@ export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, get
 
 	api
 		.get( siteId, printUrl )
-		.then( fileData => {
+		.then( ( fileData ) => {
 			const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
 			if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
 				dispatch( {
@@ -1192,7 +1194,7 @@ export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, get
 				} );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR,
 				labelId,
@@ -1218,7 +1220,7 @@ export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 
 	printDocument( shippingLabel.reprintDialog.fileData, getPDFFileName( orderId, true ) )
-		.catch( error => {
+		.catch( ( error ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
 		} )

@@ -10,6 +10,6 @@ import getHappychatConnectionStatus from 'state/happychat/selectors/get-happycha
  * @param {object} state - global redux state
  * @returns {boolean} Whether Happychat connection status is uninitialized
  */
-export default function( state ) {
+export default function ( state ) {
 	return getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED;
 }

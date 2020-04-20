@@ -35,7 +35,7 @@ const CancelPurchaseRefundInformation = ( {
 	const { refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
-	const onCancelBundledDomainChange = event => {
+	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain: newCancelBundledDomainValue,
@@ -43,7 +43,7 @@ const CancelPurchaseRefundInformation = ( {
 		} );
 	};
 
-	const onConfirmCancelBundledDomainChange = event => {
+	const onConfirmCancelBundledDomainChange = ( event ) => {
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,

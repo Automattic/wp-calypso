@@ -35,7 +35,7 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
 export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 	type: JITM_SET,
 	keyedPath: messagePath + siteId,
-	jitms: jitms.map( jitm => ( { ...jitm, lastUpdated: Date.now() } ) ),
+	jitms: jitms.map( ( jitm ) => ( { ...jitm, lastUpdated: Date.now() } ) ),
 } );
 
 /**
@@ -65,7 +65,7 @@ export const setupDevTool = ( siteId, dispatch ) => {
 	window._jitm = {
 		siteId,
 		insert: ( messagePath, jitms ) => dispatch( insertJITM( siteId, messagePath, jitms ) ),
-		clear: messagePath => dispatch( clearJITM( siteId, messagePath ) ),
+		clear: ( messagePath ) => dispatch( clearJITM( siteId, messagePath ) ),
 	};
 };
 

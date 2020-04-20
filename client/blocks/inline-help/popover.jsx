@@ -63,7 +63,7 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
-	openResultView = event => {
+	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
@@ -73,11 +73,11 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	setSecondaryViewKey = secondaryViewKey => {
+	setSecondaryViewKey = ( secondaryViewKey ) => {
 		this.setState( { activeSecondaryView: secondaryViewKey } );
 	};
 
-	openSecondaryView = secondaryViewKey => {
+	openSecondaryView = ( secondaryViewKey ) => {
 		this.setSecondaryViewKey( secondaryViewKey );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
 		this.setState( { showSecondaryView: true } );

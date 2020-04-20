@@ -22,6 +22,6 @@ const LayoutLoader = ( { isLoading } ) => (
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isLoading: isSectionLoading( state ),
 } ) )( LayoutLoader );

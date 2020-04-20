@@ -18,7 +18,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const createBackup = action =>
+const createBackup = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -32,7 +32,7 @@ const createBackup = action =>
 		action
 	);
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'downloadId' ) ) {
 		throw new Error( 'Missing downloadId field in response' );
 	}

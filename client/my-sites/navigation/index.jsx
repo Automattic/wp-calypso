@@ -14,7 +14,7 @@ import AsyncLoad from 'components/async-load';
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
 
-	preventPickerDefault = event => {
+	preventPickerDefault = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};

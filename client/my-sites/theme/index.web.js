@@ -16,7 +16,7 @@ function redirectToLoginIfSiteRequested( context, next ) {
 	next();
 }
 
-export default function( router ) {
+export default function ( router ) {
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		router(
 			'/theme/:slug/:section(setup|support)?/:site_id?',

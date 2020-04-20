@@ -32,7 +32,7 @@ export class ActionTypeSelector extends Component {
 		this.activityTypeButton = React.createRef();
 	}
 
-	resetActivityTypeSelector = event => {
+	resetActivityTypeSelector = ( event ) => {
 		const { selectActionType, siteId, activityTypes } = this.props;
 		selectActionType( siteId, [], activityTypes );
 		event.preventDefault();
@@ -44,7 +44,7 @@ export class ActionTypeSelector extends Component {
 		if ( ! selectedCheckboxes.length ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: activityTypes.map( type => type.key ),
+				selectedCheckboxes: activityTypes.map( ( type ) => type.key ),
 			} );
 		} else {
 			this.setState( {
@@ -54,7 +54,7 @@ export class ActionTypeSelector extends Component {
 		}
 	};
 
-	handleSelectClick = event => {
+	handleSelectClick = ( event ) => {
 		const group = event.target.getAttribute( 'id' );
 
 		if ( this.getSelectedCheckboxes().includes( group ) ) {
@@ -81,7 +81,7 @@ export class ActionTypeSelector extends Component {
 		return [];
 	};
 
-	activityKeyToName = key => {
+	activityKeyToName = ( key ) => {
 		const { activityTypes } = this.props;
 		const match = find( activityTypes, [ 'key', key ] );
 		return ( match && match.name ) || key;
@@ -98,7 +98,7 @@ export class ActionTypeSelector extends Component {
 		onClose();
 	};
 
-	humanReadable = count => {
+	humanReadable = ( count ) => {
 		if ( count >= 1000 ) {
 			return this.props.translate( '%(number_over_thousand)d K+', {
 				args: {
@@ -109,7 +109,7 @@ export class ActionTypeSelector extends Component {
 		return count;
 	};
 
-	renderCheckbox = group => {
+	renderCheckbox = ( group ) => {
 		return (
 			<FormLabel key={ group.key }>
 				<FormCheckbox
@@ -173,13 +173,13 @@ export class ActionTypeSelector extends Component {
 		);
 	};
 
-	renderPlaceholder = i => {
+	renderPlaceholder = ( i ) => {
 		return (
 			<div className="filterbar__activity-types-selection-placeholder" key={ 'placeholder' + i } />
 		);
 	};
 
-	isSelected = key => this.getSelectedCheckboxes().includes( key );
+	isSelected = ( key ) => this.getSelectedCheckboxes().includes( key );
 
 	handleButtonClick = () => {
 		const { isVisible, onButtonClick } = this.props;
@@ -253,7 +253,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectActionType: ( siteId, group, allTypes ) => {
 		if ( 0 === group.length ) {
 			return dispatch(
@@ -264,7 +264,9 @@ const mapDispatchToProps = dispatch => ( {
 			);
 		}
 		const eventProps = { num_groups_selected: group.length };
-		allTypes.forEach( type => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) ) );
+		allTypes.forEach(
+			( type ) => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) )
+		);
 		eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
 			return group.includes( type.key ) ? accumulator + type.count : accumulator;
 		}, 0 );

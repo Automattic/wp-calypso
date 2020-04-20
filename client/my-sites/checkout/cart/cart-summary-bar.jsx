@@ -32,7 +32,7 @@ class CartSummaryBar extends React.Component {
 		);
 	}
 
-	toggleVisibility = event => {
+	toggleVisibility = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.onClick ) {

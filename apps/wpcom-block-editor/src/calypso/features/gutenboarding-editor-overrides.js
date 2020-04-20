@@ -16,7 +16,7 @@ import './gutenboarding-editor-overrides.scss';
 domReady( () => {
 	calypsoifyGutenberg.isGutenboarding && updateEditor();
 	// Hook fallback incase setGutenboardingStatus runs after initial dom render.
-	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', isGutenboarding => {
+	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', ( isGutenboarding ) => {
 		isGutenboarding && updateEditor();
 	} );
 } );

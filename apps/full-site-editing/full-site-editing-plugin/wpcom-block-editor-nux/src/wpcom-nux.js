@@ -23,7 +23,7 @@ import editorImage from './images/editor.svg';
 //import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
+	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.

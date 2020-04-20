@@ -23,7 +23,7 @@ const StatsActionFollow = createReactClass( {
 
 	mixins: [ observe( 'followSite' ) ],
 
-	clickHandler: function( event ) {
+	clickHandler: function ( event ) {
 		let site = this.props.followSite,
 			gaEvent;
 
@@ -42,7 +42,7 @@ const StatsActionFollow = createReactClass( {
 		gaRecordEvent( 'Stats', 'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List' );
 	},
 
-	render: function() {
+	render: function () {
 		let site = this.props.followSite,
 			following = site.is_following,
 			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {

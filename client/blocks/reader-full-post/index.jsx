@@ -133,7 +133,7 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 	}
 
-	handleBack = event => {
+	handleBack = ( event ) => {
 		event.preventDefault();
 		recordAction( 'full_post_close' );
 		recordGaEvent( 'Closed Full Post Dialog' );

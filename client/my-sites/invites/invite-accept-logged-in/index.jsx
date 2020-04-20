@@ -31,7 +31,7 @@ class InviteAcceptLoggedIn extends React.Component {
 
 	accept = () => {
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( this.props.invite, error => {
+		this.props.acceptInvite( this.props.invite, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			} else if ( get( this.props, 'invite.site.is_vip' ) ) {
@@ -154,6 +154,6 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
+export default connect( null, ( dispatch ) => bindActionCreators( { acceptInvite }, dispatch ) )(
 	localize( InviteAcceptLoggedIn )
 );

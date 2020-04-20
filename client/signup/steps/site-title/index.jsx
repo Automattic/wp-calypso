@@ -45,7 +45,7 @@ class SiteTitleStep extends Component {
 
 	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { flowName, siteTitle, stepName } = this.props;
@@ -112,7 +112,7 @@ class SiteTitleStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteType: getSiteType( state ),
 	} ),

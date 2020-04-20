@@ -100,7 +100,7 @@ export class Notifications extends Component {
 		}
 	}
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
 			return;
 		}
@@ -124,7 +124,7 @@ export class Notifications extends Component {
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
-	receiveServiceWorkerMessage = event => {
+	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
 		// Firefox does not support document.origin; we can use location.origin instead
@@ -154,13 +154,13 @@ export class Notifications extends Component {
 		}
 	};
 
-	postServiceWorkerMessage = message => {
+	postServiceWorkerMessage = ( message ) => {
 		if ( ! ( 'serviceWorker' in window.navigator ) ) {
 			return;
 		}
 
 		window.navigator.serviceWorker.ready.then(
-			registration => 'active' in registration && registration.active.postMessage( message )
+			( registration ) => 'active' in registration && registration.active.postMessage( message )
 		);
 	};
 
@@ -254,7 +254,7 @@ export class Notifications extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 	} ),
 	{

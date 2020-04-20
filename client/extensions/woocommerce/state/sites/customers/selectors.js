@@ -68,7 +68,7 @@ export const getCustomerSearchResults = (
 		`extensions.woocommerce.sites[${ siteId }].customers.queries[${ searchTerm }]`,
 		[]
 	);
-	return filter( customerIdsForTerm.map( id => customers[ id ] || false ) );
+	return filter( customerIdsForTerm.map( ( id ) => customers[ id ] || false ) );
 };
 
 /**

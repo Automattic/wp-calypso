@@ -52,15 +52,15 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 					<CustomSelectControl
 						label={ __( 'Status' ) }
 						options={ options }
-						value={ options.find( option => option.key === status ) || options[ 0 ] }
-						onChange={ value => setAttributes( { status: value.selectedItem.key } ) }
+						value={ options.find( ( option ) => option.key === status ) || options[ 0 ] }
+						onChange={ ( value ) => setAttributes( { status: value.selectedItem.key } ) }
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Assignment' ) }>
 					<TextControl
 						label={ __( 'Username' ) }
 						value={ assignedTo || '' }
-						onChange={ value => setAttributes( { assignedTo: value } ) }
+						onChange={ ( value ) => setAttributes( { assignedTo: value } ) }
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Date' ) }>
@@ -100,7 +100,7 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						renderContent={ () => (
 							<DatePicker
 								currentDate={ startDate }
-								onChange={ date => setAttributes( { startDate: date } ) }
+								onChange={ ( date ) => setAttributes( { startDate: date } ) }
 							/>
 						) }
 					/>
@@ -127,7 +127,7 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 						renderContent={ () => (
 							<DatePicker
 								currentDate={ dueDate }
-								onChange={ date => setAttributes( { dueDate: date } ) }
+								onChange={ ( date ) => setAttributes( { dueDate: date } ) }
 							/>
 						) }
 					/>
@@ -155,9 +155,9 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 					identifier="content"
 					wrapperClassName="wp-block-todo__text"
 					value={ content }
-					onChange={ value => setAttributes( { content: value } ) }
+					onChange={ ( value ) => setAttributes( { content: value } ) }
 					onMerge={ mergeBlocks }
-					onSplit={ value => {
+					onSplit={ ( value ) => {
 						if ( ! content.length ) {
 							return createBlock( 'core/paragraph' );
 						}
@@ -193,7 +193,7 @@ const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } 
 							renderContent={ () => (
 								<DatePicker
 									currentDate={ dueDate }
-									onChange={ date => setAttributes( { dueDate: date } ) }
+									onChange={ ( date ) => setAttributes( { dueDate: date } ) }
 								/>
 							) }
 						/>

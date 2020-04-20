@@ -29,7 +29,7 @@ class ZoneContentForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = data => this.props.onSubmit( form, data );
+	save = ( data ) => this.props.onSubmit( form, data );
 
 	render() {
 		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;

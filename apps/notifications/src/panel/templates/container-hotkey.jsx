@@ -35,15 +35,17 @@ export class HotkeyContainer extends Component {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 	}
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( ! this.props.shortcuts || ! shortcutsAreEnabled() ) {
 			return;
 		}
 
 		this.props.shortcuts
-			.filter( shortcut => shortcut.hotkey === event.keyCode )
-			.filter( shortcut => ( shortcut.withModifiers || false ) === modifierKeyIsActive( event ) )
-			.forEach( shortcut => dispatch( event, shortcut.action ) );
+			.filter( ( shortcut ) => shortcut.hotkey === event.keyCode )
+			.filter(
+				( shortcut ) => ( shortcut.withModifiers || false ) === modifierKeyIsActive( event )
+			)
+			.forEach( ( shortcut ) => dispatch( event, shortcut.action ) );
 	};
 
 	render() {

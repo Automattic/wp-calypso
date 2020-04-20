@@ -62,7 +62,7 @@ class MagicLogin extends React.Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 	}
 
-	onClickEnterPasswordInstead = event => {
+	onClickEnterPasswordInstead = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
@@ -164,7 +164,7 @@ class MagicLogin extends React.Component {
 	}
 }
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,

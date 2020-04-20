@@ -34,7 +34,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
-const StatsInsights = props => {
+const StatsInsights = ( props ) => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
@@ -108,7 +108,7 @@ StatsInsights.propTypes = {
 	translate: PropTypes.func,
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		isJetpack: isJetpackSite( state, siteId ),

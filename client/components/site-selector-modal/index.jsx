@@ -50,11 +50,11 @@ class SiteSelectorModal extends Component {
 		siteId: this.props.initialSiteId,
 	};
 
-	setSite = siteId => {
+	setSite = ( siteId ) => {
 		this.setState( { siteId } );
 	};
 
-	onClose = action => {
+	onClose = ( action ) => {
 		if ( 'mainAction' === action ) {
 			this.props.mainAction( this.state.siteId );
 		}
@@ -105,7 +105,7 @@ export default connect( ( state, { filter } ) => {
 	const primarySiteId = getPrimarySiteId( state );
 	const visibleSites = getVisibleSites( state );
 
-	let filteredSiteIds = visibleSites.map( site => site.ID );
+	let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
 
 	if ( filter ) {
 		filteredSiteIds = filteredSiteIds.filter( filter );

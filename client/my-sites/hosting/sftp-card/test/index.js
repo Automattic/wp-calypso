@@ -13,8 +13,8 @@ import React from 'react';
  */
 import { SftpCard } from '..';
 
-const translate = x => x;
-const requestSftpUsers = x => x;
+const translate = ( x ) => x;
+const requestSftpUsers = ( x ) => x;
 
 describe( 'SftpCard', () => {
 	describe( 'Sftp Questions', () => {

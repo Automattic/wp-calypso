@@ -17,7 +17,7 @@ export default withoutPersistence( ( state = {}, action ) => {
 		case WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS: {
 			const { data } = action;
 			const methods = state || [];
-			const newMethods = methods.map( method => {
+			const newMethods = methods.map( ( method ) => {
 				if ( method.id === data.id ) {
 					return data;
 				}

@@ -37,7 +37,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		@param   {object}  task The task that we'll check to see if it's completed.
 		@returns {boolean}      Whether the task is considered to be completed or not.
 	*/
-	const isTaskComplete = task => {
+	const isTaskComplete = ( task ) => {
 		if ( task.isCompleted ) {
 			return true;
 		}

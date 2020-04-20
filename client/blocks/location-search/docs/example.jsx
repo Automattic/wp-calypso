@@ -16,7 +16,7 @@ class LocationSearchExample extends Component {
 		createNotice: PropTypes.func.isRequired,
 	};
 
-	handlePredictionClick = prediction => {
+	handlePredictionClick = ( prediction ) => {
 		this.props.createNotice(
 			'is-info',
 			`You clicked the '${ prediction.structured_formatting.main_text }' location`

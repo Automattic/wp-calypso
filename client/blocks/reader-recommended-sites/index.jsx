@@ -49,7 +49,7 @@ export class RecommendedSites extends React.PureComponent {
 		const sites = isEmpty( this.props.sites ) ? placeholders : this.props.sites;
 
 		function recordRecommendationRender( index ) {
-			return function( railcar ) {
+			return function ( railcar ) {
 				recordTracksRailcarRender( 'recommended_site', railcar, {
 					ui_algo: 'following_manage_recommended_site',
 					ui_position: index,

@@ -99,7 +99,7 @@ const CheckoutModalWrapper = styled.div`
 	position: fixed;
 	top: 0;
 	left: 0;
-	background: ${props => props.theme.colors.modalBackground};
+	background: ${( props ) => props.theme.colors.modalBackground};
 	width: 100%;
 	height: 100vh;
 	z-index: 999;
@@ -114,11 +114,11 @@ const CheckoutModalWrapper = styled.div`
 `;
 
 const CheckoutModalContent = styled.div`
-	background: ${props => props.theme.colors.surface};
+	background: ${( props ) => props.theme.colors.surface};
 	display: block;
 	width: 100%;
 	max-width: 350px;
-	border: 1px solid ${props => props.theme.colors.borderColorLight};
+	border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	padding: 32px;
 	animation: ${animateIn} 0.2s 0.1s ease-out;
 	animation-fill-mode: backwards;
@@ -126,9 +126,9 @@ const CheckoutModalContent = styled.div`
 
 const CheckoutModalTitle = styled.h1`
 	margin: 0 0 16px;
-	font-weight: ${props => props.theme.weights.normal};
+	font-weight: ${( props ) => props.theme.weights.normal};
 	font-size: 24px;
-	color: ${props => props.theme.colors.textColor};
+	color: ${( props ) => props.theme.colors.textColor};
 	line-height: 1.3;
 `;
 
@@ -176,7 +176,7 @@ function useModalScreen( isVisible, closeModal ) {
 
 function makeHandleKeyPress( closeModal ) {
 	const escapeKey = 27;
-	return key => {
+	return ( key ) => {
 		if ( key.keyCode === escapeKey ) {
 			closeModal();
 		}

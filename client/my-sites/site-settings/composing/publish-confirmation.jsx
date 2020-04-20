@@ -95,7 +95,7 @@ PublishConfirmation.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -105,7 +105,7 @@ export default connect(
 			showPublishFlow: shouldLoadGutenberg( state, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				savePublishConfirmationPreference: saveConfirmationSidebarPreference,

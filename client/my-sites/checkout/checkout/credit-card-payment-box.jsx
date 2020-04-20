@@ -169,7 +169,7 @@ class CreditCardPaymentBox extends React.Component {
 		);
 	};
 
-	submit = event => {
+	submit = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.stripe ) {

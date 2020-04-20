@@ -49,7 +49,7 @@ function middleware( app ) {
 		} );
 	}
 
-	compiler.hooks.done.tap( 'Calypso', function() {
+	compiler.hooks.done.tap( 'Calypso', function () {
 		built = true;
 
 		// Dequeue and call request handlers
@@ -61,8 +61,8 @@ function middleware( app ) {
 		// we need to skip two event loop ticks, because webpack's callback is
 		// also hooked on the "done" event, it calls nextTick to print the message
 		// and runs before our callback (calls app.use earlier in the code)
-		process.nextTick( function() {
-			process.nextTick( function() {
+		process.nextTick( function () {
+			process.nextTick( function () {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
 					console.info(
@@ -115,7 +115,7 @@ function middleware( app ) {
 	app.use(
 		webpackMiddleware( compiler, {
 			mode: 'development',
-			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/`,
+			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen'}/`,
 			stats: {
 				colors: true,
 				hash: true,

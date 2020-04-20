@@ -140,7 +140,7 @@ const Account = createReactClass( {
 		// This is a workaround that allows us to use userSettings.updateSetting() without an
 		// existing value. Without this workaround the save button wouldn't become active.
 		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
+		update( this.props.userSettings.settings, colorSchemeKey, ( value ) => value || 'default' );
 
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
@@ -341,7 +341,7 @@ const Account = createReactClass( {
 	},
 
 	getCheckboxHandler( checkboxName ) {
-		return event => {
+		return ( event ) => {
 			const action = 'Clicked ' + checkboxName + ' checkbox';
 			const value = event.target.checked ? 1 : 0;
 
@@ -377,7 +377,7 @@ const Account = createReactClass( {
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, error => {
+		this.props.username.change( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
 				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
@@ -648,19 +648,21 @@ const Account = createReactClass( {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
-				{ // message is translated in the API
-				map( actions, ( message, key ) => (
-					<FormLabel key={ key }>
-						<FormRadio
-							name="usernameAction"
-							onChange={ this.handleRadioChange }
-							onClick={ this.handleUsernameChangeBlogRadio }
-							value={ key }
-							checked={ key === this.state.usernameAction }
-						/>
-						<span>{ message }</span>
-					</FormLabel>
-				) ) }
+				{
+					// message is translated in the API
+					map( actions, ( message, key ) => (
+						<FormLabel key={ key }>
+							<FormRadio
+								name="usernameAction"
+								onChange={ this.handleRadioChange }
+								onClick={ this.handleUsernameChangeBlogRadio }
+								value={ key }
+								checked={ key === this.state.usernameAction }
+							/>
+							<span>{ message }</span>
+						</FormLabel>
+					) )
+				}
 			</FormFieldset>
 		);
 	},
@@ -830,7 +832,7 @@ const Account = createReactClass( {
 
 export default compose(
 	connect(
-		state => ( {
+		( state ) => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
 		} ),

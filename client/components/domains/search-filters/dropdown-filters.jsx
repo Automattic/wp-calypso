@@ -102,7 +102,7 @@ export class DropdownFilters extends Component {
 		} );
 	};
 
-	handleOnChange = event => {
+	handleOnChange = ( event ) => {
 		const { currentTarget } = event;
 		if ( currentTarget.type === 'checkbox' ) {
 			this.updateFilterValues( currentTarget.name, currentTarget.checked );

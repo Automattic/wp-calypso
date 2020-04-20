@@ -48,7 +48,7 @@ class PhoneInput extends React.PureComponent {
 
 	numberInput = undefined;
 
-	setNumberInputRef = element => {
+	setNumberInputRef = ( element ) => {
 		this.numberInput = element;
 
 		const { inputRef } = this.props;
@@ -134,13 +134,13 @@ class PhoneInput extends React.PureComponent {
 		const nonDigitCountOld = currentFormat
 			.substring( 0, currentCursorPoint )
 			.split( '' )
-			.map( char => /\D/.test( char ) )
+			.map( ( char ) => /\D/.test( char ) )
 			.filter( identity ).length;
 
 		const nonDigitCountNew = nextFormat
 			.substring( 0, currentCursorPoint )
 			.split( '' )
-			.map( char => /\D/.test( char ) )
+			.map( ( char ) => /\D/.test( char ) )
 			.filter( identity ).length;
 
 		if ( currentFormat !== nextFormat ) {
@@ -184,7 +184,7 @@ class PhoneInput extends React.PureComponent {
 		return formatNumber( value, this.getCountry( countryCode ) );
 	}
 
-	handleInput = event => {
+	handleInput = ( event ) => {
 		const inputValue = event.target.value;
 		if ( inputValue === this.props.value ) {
 			// nothing changed
@@ -215,7 +215,7 @@ class PhoneInput extends React.PureComponent {
 		return { value: calculatedValue, countryCode: calculatedCountryCode };
 	}
 
-	handleCountrySelection = event => {
+	handleCountrySelection = ( event ) => {
 		const newCountryCode = event.target.value;
 		if ( newCountryCode === this.props.countryCode ) {
 			return;

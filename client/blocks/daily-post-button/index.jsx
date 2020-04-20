@@ -96,7 +96,7 @@ export class DailyPostButton extends React.Component {
 		} );
 	}
 
-	openEditorWithSite = siteSlug => {
+	openEditorWithSite = ( siteSlug ) => {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -109,7 +109,7 @@ export class DailyPostButton extends React.Component {
 		return true;
 	};
 
-	toggle = event => {
+	toggle = ( event ) => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			recordAction( 'open_daily_post_challenge' );
@@ -190,7 +190,7 @@ export class DailyPostButton extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const user = getCurrentUser( state );
 		const visibleSiteCount = get( user, 'visible_site_count', 0 );

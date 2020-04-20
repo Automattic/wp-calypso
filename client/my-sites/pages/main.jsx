@@ -143,7 +143,7 @@ class PagesMain extends React.Component {
 		const sitePart = ( site && site.slug ) || siteId;
 		const siteFilter = sitePart ? '/' + sitePart : '';
 
-		return statuses.map( function( status ) {
+		return statuses.map( function ( status ) {
 			let path = `/pages${ siteFilter }`;
 			if ( status !== 'publish' ) {
 				path = `/pages/${ status }${ siteFilter }`;
@@ -161,7 +161,7 @@ class PagesMain extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const queryType = 'page';
 
 	const siteId = getSelectedSiteId( state );

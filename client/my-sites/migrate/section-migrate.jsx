@@ -108,8 +108,8 @@ class SectionMigrate extends Component {
 			if ( data.themes ) {
 				const sourceSiteThemes = [
 					// Put active theme first
-					...data.themes.filter( theme => theme.active ),
-					...data.themes.filter( theme => ! theme.active ),
+					...data.themes.filter( ( theme ) => theme.active ),
+					...data.themes.filter( ( theme ) => ! theme.active ),
 				];
 				this.setState( { sourceSiteThemes } );
 			}
@@ -159,7 +159,7 @@ class SectionMigrate extends Component {
 			} );
 	};
 
-	setMigrationState = state => {
+	setMigrationState = ( state ) => {
 		// A response from the status endpoint may come in after the
 		// migrate/from endpoint has returned an error. This avoids that
 		// response accidentally clearing the error state.
@@ -201,7 +201,7 @@ class SectionMigrate extends Component {
 				.get( {
 					apiVersion: '1.2',
 				} )
-				.then( site => {
+				.then( ( site ) => {
 					if ( ! ( site && site.capabilities ) ) {
 						// A site isn't connected if we cannot manage it.
 						return this.setState( { isJetpackConnected: false } );
@@ -219,11 +219,11 @@ class SectionMigrate extends Component {
 		} );
 	};
 
-	setSourceSiteId = sourceSiteId => {
+	setSourceSiteId = ( sourceSiteId ) => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
-	setUrl = event => this.setState( { url: event.target.value } );
+	setUrl = ( event ) => this.setState( { url: event.target.value } );
 
 	startMigration = () => {
 		const { sourceSiteId, targetSiteId, targetSite } = this.props;
@@ -250,7 +250,7 @@ class SectionMigrate extends Component {
 			.undocumented()
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
-			.catch( error => {
+			.catch( ( error ) => {
 				const { code = '', message = '' } = error;
 
 				if ( 'no_supported_plan' === code ) {
@@ -279,7 +279,7 @@ class SectionMigrate extends Component {
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
-			.then( response => {
+			.then( ( response ) => {
 				const {
 					status: migrationStatus,
 					percent,
@@ -334,7 +334,7 @@ class SectionMigrate extends Component {
 					} );
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const { message = '' } = error;
 				this.setMigrationState( {
 					migrationStatus: 'error',
@@ -591,7 +591,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<ul className="migrate__progress-list">
-				{ steps.map( step => this.renderProgressItem( step ) ) }
+				{ steps.map( ( step ) => this.renderProgressItem( step ) ) }
 			</ul>
 		);
 	}
@@ -683,7 +683,7 @@ class SectionMigrate extends Component {
 	}
 }
 
-const navigateToSelectedSourceSite = sourceSiteId => ( dispatch, getState ) => {
+const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	const sourceSite = getSite( state, sourceSiteId );
 	const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );

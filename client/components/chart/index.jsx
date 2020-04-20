@@ -78,8 +78,8 @@ function Chart( {
 
 	// Callback to handle element size changes.
 	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
-	const handleContentRectChange = useCallback( contentRect => {
-		setSizing( prevSizing => {
+	const handleContentRectChange = useCallback( ( contentRect ) => {
+		setSizing( ( prevSizing ) => {
 			const clientWidth = contentRect.width - 82;
 
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
@@ -107,7 +107,7 @@ function Chart( {
 
 		return {
 			chartData: nextData,
-			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
+			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
 	}, [ data, maxBars, hasResized ] );

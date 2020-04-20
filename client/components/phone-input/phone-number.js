@@ -24,13 +24,13 @@ export const MIN_LENGTH_TO_FORMAT = 3;
  * @param {string} inputNumber - Text to remove non-digits from
  * @returns {string} - Text with non-digits removed
  */
-export const stripNonDigits = inputNumber => inputNumber.replace( /\D/g, '' );
+export const stripNonDigits = ( inputNumber ) => inputNumber.replace( /\D/g, '' );
 
 function prefixSearch( prefixQuery ) {
 	return flatten(
 		Object.keys( dialCodeMap )
-			.filter( dialCode => startsWith( prefixQuery, dialCode ) )
-			.map( dialCode => dialCodeMap[ dialCode ] )
+			.filter( ( dialCode ) => startsWith( prefixQuery, dialCode ) )
+			.map( ( dialCode ) => dialCodeMap[ dialCode ] )
 	);
 }
 
@@ -38,9 +38,7 @@ export function findCountryFromNumber( inputNumber ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
-		const query = stripNonDigits( inputNumber )
-			.replace( /^0+/, '' )
-			.substr( 0, i );
+		const query = stripNonDigits( inputNumber ).replace( /^0+/, '' ).substr( 0, i );
 		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {
@@ -55,7 +53,7 @@ export function findCountryFromNumber( inputNumber ) {
 
 		if ( ! prefixMatch.length && lastExactMatch ) {
 			// the one with high priority
-			return map( lastExactMatch, key => countries[ key ] )[ 0 ];
+			return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
 		}
 
 		if ( prefixMatch.length === 1 ) {
@@ -65,7 +63,7 @@ export function findCountryFromNumber( inputNumber ) {
 	}
 
 	if ( lastExactMatch ) {
-		return map( lastExactMatch, key => countries[ key ] )[ 0 ];
+		return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
 	}
 
 	return null;
@@ -89,7 +87,7 @@ export const findPattern = ( inputNumber, patterns ) =>
  * @returns {string} The template string
  */
 export function makeTemplate( phoneNumber, patterns ) {
-	const selectedPattern = find( patterns, pattern => {
+	const selectedPattern = find( patterns, ( pattern ) => {
 		if ( includes( pattern.format, '|' ) ) {
 			return false;
 		}

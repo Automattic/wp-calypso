@@ -59,13 +59,13 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
 		sandbox.stub( console, 'error' );
 	} );
 
 	describe( '#fetchPlugins()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/plugins' )
@@ -138,7 +138,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activatePlugin()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: true } )
@@ -189,7 +189,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#deactivatePlugin()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
@@ -248,7 +248,7 @@ describe( 'actions', () => {
 			canUpdateFiles: true,
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
@@ -325,7 +325,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { autoupdate: true } )
@@ -409,7 +409,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { autoupdate: false } )
@@ -473,7 +473,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack/install' )
@@ -542,7 +542,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet/delete' )

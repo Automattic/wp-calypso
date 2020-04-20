@@ -20,7 +20,7 @@ import 'state/jetpack-connect/init';
  * @returns {Promise}                  Resolves to { username, bearerToken }
  */
 export function createAccount( userData ) {
-	return async dispatch => {
+	return async ( dispatch ) => {
 		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
 
 		try {

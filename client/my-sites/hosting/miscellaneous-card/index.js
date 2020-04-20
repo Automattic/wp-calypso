@@ -47,7 +47,7 @@ const MiscellaneousCard = ( {
 		setShowDialog( false );
 	};
 
-	const onReasonChange = event => {
+	const onReasonChange = ( event ) => {
 		setReason( event.target.value );
 	};
 
@@ -130,7 +130,7 @@ const MiscellaneousCard = ( {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

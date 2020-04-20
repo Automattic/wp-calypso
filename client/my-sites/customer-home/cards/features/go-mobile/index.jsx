@@ -79,14 +79,14 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	);
 };
 
-const sendMobileLoginEmail = email =>
+const sendMobileLoginEmail = ( email ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_customer_home_request_mobile_email_login' ),
 		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			email: getCurrentUserEmail( state ),
 		};

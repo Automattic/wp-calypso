@@ -21,7 +21,7 @@ const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
 function transformData( data ) {
-	const sortedData = sortBy( data, datum => datum.value )
+	const sortedData = sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
 			...datum,
@@ -30,13 +30,13 @@ function transformData( data ) {
 
 	const arcs = d3Pie()
 		.startAngle( -Math.PI )
-		.value( datum => datum.value )( sortedData );
+		.value( ( datum ) => datum.value )( sortedData );
 
 	const arcGen = d3Arc()
 		.innerRadius( 0 )
 		.outerRadius( SVG_SIZE / 2 );
 
-	const paths = arcs.map( arc => arcGen( arc ) );
+	const paths = arcs.map( ( arc ) => arcGen( arc ) );
 
 	return sortedData.map( ( datum, index ) => ( {
 		...datum,
@@ -60,7 +60,7 @@ class PieChart extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, datum => datum.value ),
+				dataTotal: sumBy( nextProps.data, ( datum ) => datum.value ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}
@@ -71,7 +71,7 @@ class PieChart extends Component {
 	renderPieChart() {
 		const { transformedData } = this.state;
 
-		return transformedData.map( datum => {
+		return transformedData.map( ( datum ) => {
 			return (
 				<path
 					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
@@ -99,7 +99,7 @@ class PieChart extends Component {
 					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					preserveAspectRatio={ 'xMidYMid meet' }
 				>
-					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
+					<g transform={ `translate(${ SVG_SIZE / 2}, ${ SVG_SIZE / 2})` }>
 						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
 					</g>
 				</svg>

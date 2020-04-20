@@ -99,7 +99,7 @@ function throttleAndDebounce( fn, throttleMs, debounceMs ) {
 	const throttled = throttle( fn, throttleMs );
 	const debounced = debounce( throttled, debounceMs );
 
-	const throttledAndDebounced = function() {
+	const throttledAndDebounced = function () {
 		return debounced.apply( this, arguments );
 	};
 
@@ -205,7 +205,7 @@ export class PostEditor extends React.Component {
 		this.onEditedPostChange( nextProps );
 	}
 
-	storeEditor = ref => {
+	storeEditor = ( ref ) => {
 		this.editor = ref;
 	};
 
@@ -249,7 +249,7 @@ export class PostEditor extends React.Component {
 		}
 	};
 
-	handleConfirmationSidebarPreferenceChange = event => {
+	handleConfirmationSidebarPreferenceChange = ( event ) => {
 		this.setState( { confirmationSidebarPreference: event.target.checked } );
 	};
 
@@ -259,7 +259,7 @@ export class PostEditor extends React.Component {
 			: this.props.openEditorSidebar();
 	};
 
-	loadRevision = revision => {
+	loadRevision = ( revision ) => {
 		this.restoreRevision( {
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
@@ -435,7 +435,7 @@ export class PostEditor extends React.Component {
 		this.restoreRevision( get( this.props.post, 'meta.data.autosave' ) );
 	};
 
-	restoreRevision = revision => {
+	restoreRevision = ( revision ) => {
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			excerpt: revision.excerpt,
 			title: revision.title,
@@ -454,7 +454,7 @@ export class PostEditor extends React.Component {
 		this.setState( { showVerifyEmailDialog: false } );
 	};
 
-	onEditedPostChange = nextProps => {
+	onEditedPostChange = ( nextProps ) => {
 		if ( nextProps.loadingError ) {
 			return;
 		}
@@ -578,7 +578,7 @@ export class PostEditor extends React.Component {
 		page.back( this.getAllPostsUrl() );
 	};
 
-	getAllPostsUrl = context => {
+	getAllPostsUrl = ( context ) => {
 		const { type, selectedSite } = this.props;
 		const site = selectedSite;
 
@@ -627,7 +627,7 @@ export class PostEditor extends React.Component {
 		page( this.getAllPostsUrl( 'trashed' ) );
 	};
 
-	onSave = status => {
+	onSave = ( status ) => {
 		// Refuse to save if the current edits would mean that an unpublished post gets published.
 		// That's an exclusive resposibility of the `onPublish` method.
 		if (
@@ -678,7 +678,7 @@ export class PostEditor extends React.Component {
 		);
 	}
 
-	onPreview = async event => {
+	onPreview = async ( event ) => {
 		this.recordPreviewButtonClick();
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
@@ -741,11 +741,11 @@ export class PostEditor extends React.Component {
 		return false;
 	};
 
-	onSaveDraftFailure = error => {
+	onSaveDraftFailure = ( error ) => {
 		this.onSaveFailure( error, 'saveFailure' );
 	};
 
-	onSaveDraftSuccess = saveResult => {
+	onSaveDraftSuccess = ( saveResult ) => {
 		this.onSaveSuccess( saveResult, 'save' );
 	};
 
@@ -790,7 +790,7 @@ export class PostEditor extends React.Component {
 		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
-	onPublishFailure = error => {
+	onPublishFailure = ( error ) => {
 		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
@@ -798,7 +798,7 @@ export class PostEditor extends React.Component {
 		this.onSaveFailure( error, 'publishFailure' );
 	};
 
-	onPublishSuccess = saveResult => {
+	onPublishSuccess = ( saveResult ) => {
 		if ( ! this.state.confirmationSidebarPreference ) {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
@@ -822,7 +822,7 @@ export class PostEditor extends React.Component {
 		} );
 	};
 
-	setPostDate = date => {
+	setPostDate = ( date ) => {
 		const { siteId, postId } = this.props;
 		const dateValue = date ? date.format() : false;
 
@@ -918,7 +918,7 @@ export class PostEditor extends React.Component {
 		return null;
 	};
 
-	getCursorMarkerSpan = type => {
+	getCursorMarkerSpan = ( type ) => {
 		const tagType = type ? type : 'start';
 
 		return `<span
@@ -972,7 +972,7 @@ export class PostEditor extends React.Component {
 		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
 	};
 
-	focusHTMLBookmarkInVisualEditor = ed => {
+	focusHTMLBookmarkInVisualEditor = ( ed ) => {
 		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
 		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
 
@@ -1006,7 +1006,7 @@ export class PostEditor extends React.Component {
 	 * @param {object} editor The editor where we must find the selection
 	 * @returns {null | object} The selection range position in the editor
 	 */
-	findBookmarkedPosition = editor => {
+	findBookmarkedPosition = ( editor ) => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
 		const TinyMCEWIndow = editor.getWin();
 
@@ -1122,7 +1122,7 @@ export class PostEditor extends React.Component {
 		};
 	};
 
-	switchEditorMode = mode => {
+	switchEditorMode = ( mode ) => {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
@@ -1158,7 +1158,7 @@ const enhance = flow(
 	localize,
 	protectForm,
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const postId = getEditorPostId( state );
 			const userId = getCurrentUserId( state );

@@ -120,7 +120,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	validateContactDetails = contactDetails => {
+	validateContactDetails = ( contactDetails ) => {
 		wpcom.validateDomainContactInformation(
 			contactDetails,
 			this.props.getDomainNames(),
@@ -132,7 +132,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		);
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		const { value, name, checked, type, id } = event.target;
 		const newContactDetails = {};
 
@@ -252,7 +252,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

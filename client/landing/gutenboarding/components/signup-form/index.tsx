@@ -6,7 +6,6 @@ import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/com
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
+import { trackEventWithFlow } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
@@ -30,9 +30,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
-	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
-	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
+	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
@@ -43,8 +43,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	};
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
-			flow: 'gutenboarding',
+		trackEventWithFlow( 'calypso_signup_step_enter', {
+			step: 'account_creation',
 		} );
 	}, [] );
 
@@ -68,6 +68,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		if ( success ) {
 			closeModal();
+			trackEventWithFlow( 'calypso_signup_step_leave', {
+				step: 'account_creation',
+			} );
 		}
 	};
 
@@ -101,7 +104,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }`
+		`${ window.location.origin}/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }`
 	);
 	const signupUrl = encodeURIComponent(
 		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`

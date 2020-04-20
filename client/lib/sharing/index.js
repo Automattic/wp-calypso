@@ -24,7 +24,7 @@ const requestExternalAccess = ( url, cb ) => {
 		cb( result );
 	} );
 
-	popupMonitor.on( 'message', message => ( lastMessage = message ) );
+	popupMonitor.on( 'message', ( message ) => ( lastMessage = message ) );
 };
 
 export default requestExternalAccess;

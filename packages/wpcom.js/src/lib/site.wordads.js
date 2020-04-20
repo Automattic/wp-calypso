@@ -36,7 +36,7 @@ export default function SiteWordAds( sid, wpcom ) {
  *
  * @returns {SiteWordAdsSettings} site WordAds settings instance
  */
-SiteWordAds.prototype.settings = function() {
+SiteWordAds.prototype.settings = function () {
 	return new SiteWordAdsSettings( this._sid, this.wpcom );
 };
 
@@ -53,7 +53,7 @@ SiteWordAds.prototype.settings = function() {
  *
  * @returns {SiteWordAdsEarnings} site WordAds earnings instance
  */
-SiteWordAds.prototype.earnings = function() {
+SiteWordAds.prototype.earnings = function () {
 	return new SiteWordAdsEarnings( this._sid, this.wpcom );
 };
 
@@ -72,6 +72,6 @@ SiteWordAds.prototype.earnings = function() {
  *
  * @returns {SiteWordAdsTOS} site wordAds TOS instance
  */
-SiteWordAds.prototype.tos = function() {
+SiteWordAds.prototype.tos = function () {
 	return new SiteWordAdsTOS( this._sid, this.wpcom );
 };

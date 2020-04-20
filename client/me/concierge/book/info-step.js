@@ -47,7 +47,7 @@ class InfoStep extends Component {
 		validation: '',
 	};
 
-	setTimezone = timezone => {
+	setTimezone = ( timezone ) => {
 		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
 	};
 
@@ -58,11 +58,11 @@ class InfoStep extends Component {
 		} );
 	}
 
-	setRebrandCitiesValue = value => {
+	setRebrandCitiesValue = ( value ) => {
 		this.updateSignupForm( 'isRebrandCitiesSite', value );
 	};
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
 			this.setState( {
 				validation: this.props.translate( 'Please enter a valid phone number.' ),
@@ -230,7 +230,7 @@ class InfoStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),

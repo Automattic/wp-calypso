@@ -59,7 +59,7 @@ class ExportMediaCard extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		mediaExportUrl: getMediaExportUrl( state ),
 	} ),
 	{

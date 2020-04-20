@@ -65,7 +65,7 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	}
 
-	onTimezoneSelect = timezone => {
+	onTimezoneSelect = ( timezone ) => {
 		this.props.updateFields( {
 			timezone_string: timezone,
 		} );
@@ -595,7 +595,7 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	disablePrivacySettings = e => {
+	disablePrivacySettings = ( e ) => {
 		e.target.blur();
 	};
 
@@ -716,7 +716,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
@@ -738,7 +738,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	const defaultSettings = {
 		blogname: '',
 		blogdescription: '',

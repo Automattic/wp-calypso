@@ -51,7 +51,7 @@ export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => 
 	siteId,
 } );
 
-export const selectPostRevision = revisionId => ( {
+export const selectPostRevision = ( revisionId ) => ( {
 	type: POST_REVISIONS_SELECT,
 	revisionId,
 } );

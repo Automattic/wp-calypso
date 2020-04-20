@@ -43,7 +43,7 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 				) }
 				<div className="tasks__timing">
 					<Gridicon icon="time" size={ 18 } />
-					<p>{ translate( '3 minutes' ) }</p>
+					<p>{ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }</p>
 				</div>
 				<ActionPanelTitle>{ translate( 'Drive traffic to your site' ) }</ActionPanelTitle>
 				<p className="tasks__description">
@@ -78,7 +78,7 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
@@ -86,7 +86,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	skipTask: siteId =>
+	skipTask: ( siteId ) =>
 		savePreference( `dismissible-card-home-task-connect-accounts-${ siteId }`, true ),
 };
 

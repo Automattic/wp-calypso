@@ -36,7 +36,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 
 	const lastNonEditorRoute = getLastNonEditorRoute( state );
 
-	const doesRouteMatch = matcher => lastNonEditorRoute.match( matcher );
+	const doesRouteMatch = ( matcher ) => lastNonEditorRoute.match( matcher );
 
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {

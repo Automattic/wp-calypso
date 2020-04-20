@@ -26,7 +26,7 @@ import './style.scss';
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 
 export default {
-	oauthLogin: function( context, next ) {
+	oauthLogin: function ( context, next ) {
 		if ( ! config.isEnabled( 'oauth' ) || getToken() ) {
 			page( '/' );
 			return;
@@ -38,7 +38,7 @@ export default {
 
 	// This controller renders the API authentication screen
 	// for granting the app access to the user data using oauth
-	authorize: function( context, next ) {
+	authorize: function ( context, next ) {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
@@ -63,7 +63,7 @@ export default {
 	},
 
 	// Retrieve token from local storage
-	getToken: function( context, next ) {
+	getToken: function ( context, next ) {
 		if ( context.hash && context.hash.access_token ) {
 			store.set( 'wpcom_token', context.hash.access_token );
 			wpcom.loadToken( context.hash.access_token );
@@ -85,7 +85,7 @@ export default {
 		const user = userFactory();
 		user.fetching = false;
 		user.fetch();
-		user.on( 'change', function() {
+		user.on( 'change', function () {
 			if ( config.isEnabled( 'devdocs' ) ) {
 				window.location = '/devdocs/welcome';
 			} else {

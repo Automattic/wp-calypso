@@ -18,7 +18,7 @@ import PaymentCountrySelect from 'components/payment-country-select';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
 
 jest.mock( 'config', () => {
-	const configMock = jest.fn( i => i );
+	const configMock = jest.fn( ( i ) => i );
 	configMock.isEnabled = jest.fn( () => true );
 	return configMock;
 } );
@@ -91,7 +91,7 @@ describe( 'WebPaymentBox', () => {
 		describe( 'Postal Code', () => {
 			const postalCodeInputWrapper = () =>
 				webPaymentBoxWrapper().findWhere(
-					n => n.type() === 'input' && n.prop( 'name' ) === 'postal-code'
+					( n ) => n.type() === 'input' && n.prop( 'name' ) === 'postal-code'
 				);
 
 			test( 'Should render value from the cart store', () => {

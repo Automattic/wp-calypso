@@ -42,7 +42,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -129,7 +129,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteVouchers() - success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
@@ -153,7 +153,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
@@ -180,7 +180,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteVouchers() - failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
@@ -202,7 +202,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
