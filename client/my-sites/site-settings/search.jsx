@@ -163,7 +163,6 @@ class Search extends Component {
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
 					feature={ FEATURE_SEARCH }
 					plan={ this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS }
-					jetpack={ this.props.siteIsJetpack }
 					showIcon={ true }
 					title={
 						this.props.siteIsJetpack

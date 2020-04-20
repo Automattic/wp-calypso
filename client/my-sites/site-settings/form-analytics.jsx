@@ -141,7 +141,6 @@ export class GoogleAnalyticsForm extends Component {
 							type: TYPE_PREMIUM,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
-						jetpack={ siteIsJetpack }
 						showIcon={ true }
 						title={ nudgeTitle }
 					/>

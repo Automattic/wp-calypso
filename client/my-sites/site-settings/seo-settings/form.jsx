@@ -377,7 +377,6 @@ export class SeoForm extends React.Component {
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
 							showIcon={ true }
-							jetpack={ siteIsJetpack }
 							title={ nudgeTitle }
 						/>
 					) }
