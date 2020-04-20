@@ -41,7 +41,7 @@
 	label {
 		margin-bottom: 5px;
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	legend + label,
@@ -51,7 +51,7 @@
 	input[type='radio'] + label,
 	label input[type='checkbox'],
 	label input[type='radio'] {
-		font-weight: normal;
+		font-weight: 400;
 	}
 
 	label a,
@@ -155,7 +155,7 @@
 
 	.verification-code-error {
 		color: var( --color-error );
-		font-weight: bold;
+		font-weight: 700;
 	}
 
 	.seo-settings__seo-form .counted-textarea {
@@ -224,7 +224,7 @@
 	}
 
 	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.eligibility-warnings {
@@ -302,7 +302,7 @@
 
 	.site-settings__moderation-settings {
 		.form-label {
-			font-weight: normal;
+			font-weight: 400;
 		}
 	}
 }
@@ -514,6 +514,17 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__search-block {
 	margin-bottom: 16px;
+
+	.site-settings__jetpack-instant-search-toggle {
+		margin-left: 36px;
+	}
+
+	.search__module-settings {
+		margin-top: 0;
+		&:not( :last-child ) {
+			margin-bottom: 1em;
+		}
+	}
 }
 
 .site-settings__speed-up-site-settings {
@@ -547,7 +558,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	.theme-enhancements__card {
 		.form-fieldset.minileven {
 			&.inactive {
-				p, .form-toggle__label, .support-info {
+				p,
+				.form-toggle__label,
+				.support-info {
 					opacity: 0.3;
 					transition: all 0.75s;
 				}
