@@ -82,7 +82,7 @@ class ScanHistoryPage extends Component {
 				<div className="history__entries">
 					{ logEntries.map( ( entry ) => (
 						<ScanHistoryItem
-							entry={ entry }
+							threat={ entry }
 							key={ entry.id }
 							isPlaceholder={ this.props.isRequestingHistory }
 						/>
