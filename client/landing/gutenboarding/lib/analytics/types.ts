@@ -26,4 +26,9 @@ export interface OnboardingCompleteParameters {
 	 * Whether a new site is created in the flow
 	 */
 	isNewSite: boolean;
+
+	/**
+	 * The blog id of the newly created site
+	 */
+	blogId: number | string | undefined;
 }

@@ -42,7 +42,11 @@ export function recordOnboardingStart( ref = '' ): void {
  * @param {object} params A set of params to pass to analytics for signup completion
  */
 export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
-	trackEventWithFlow( 'calypso_signup_complete', params );
+	trackEventWithFlow( 'calypso_signup_complete', {
+		is_new_user: params.isNewUser,
+		is_new_site: params.isNewSite,
+		blog_id: params.blogId,
+	} );
 }
 
 /**
@@ -51,7 +55,10 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
  * @param {object} params A set of params to pass to analytics for signup errors
  */
 export function recordOnboardingError( params: ErrorParameters ): void {
-	trackEventWithFlow( 'calypso_signup_error', params );
+	trackEventWithFlow( 'calypso_signup_error', {
+		error: params.error,
+		step: params.step,
+	} );
 }
 
 interface TrainTracksRenderProps {
