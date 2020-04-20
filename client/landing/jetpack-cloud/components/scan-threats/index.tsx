@@ -133,8 +133,8 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
 					siteName={ site.name }
-					threatTitle={ selectedThreat.title }
-					threatDescription={ selectedThreat.details }
+					threatTitle={ selectedThreat.signature }
+					threatDescription={ selectedThreat.description }
 					action={ actionToPerform }
 				/>
 			) }
