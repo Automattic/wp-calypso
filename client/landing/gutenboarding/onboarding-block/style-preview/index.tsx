@@ -20,7 +20,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
-import { recordEnterStep, recordLeaveStep } from '../../analytics';
+import { recordEnterStep, recordLeaveStep } from '../../lib/analytics';
 
 import './style.scss';
 import { useOnUnmount } from 'landing/gutenboarding/hooks/use-on-unmount';

@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import { FLOW_ID } from '../../constants';
+import { StepNameType } from '../../path';
 
 /**
  * Make tracks call with embedded flow.
@@ -105,4 +106,52 @@ export function recordTrainTracksEvent( uiAlgo: string, event: RecordTrainTracks
 
 export function getNewRailcarId( suffix = 'suggestion' ) {
 	return `${ uuid().replace( /-/g, '' ) }-${ suffix }`;
+}
+
+/**
+ * Records the closing of a modal in tracks
+ *
+ * @param modalName The name of the modal to record in tracks
+ * @param eventProperties Additional properties to record on closing the modal
+ */
+export function recordCloseModal( modalName: string, eventProperties?: any ) {
+	trackEventWithFlow( 'calypso_signup_modal_close', {
+		step: modalName,
+		...eventProperties,
+	} );
+}
+
+/**
+ * Records the closing of a modal in tracks
+ *
+ * @param modalName The name of the modal to record in tracks
+ */
+export function recordEnterModal( modalName: string ) {
+	trackEventWithFlow( 'calypso_signup_modal_open', {
+		step: modalName,
+	} );
+}
+
+/**
+ * Records leaving a signup step in tracks
+ *
+ * @param stepName The name of the step to record in tracks
+ * @param eventProperties Additional properties to record on leaving the step
+ */
+export function recordLeaveStep( stepName: StepNameType, eventProperties?: any ) {
+	trackEventWithFlow( 'calypso_signup_step_leave', {
+		step: stepName,
+		...eventProperties,
+	} );
+}
+
+/**
+ * Records entering a step in tracks
+ *
+ * @param stepName The name of the step to record in tracks
+ */
+export function recordEnterStep( stepName: StepNameType ) {
+	trackEventWithFlow( 'calypso_signup_step_enter', {
+		step: stepName,
+	} );
 }

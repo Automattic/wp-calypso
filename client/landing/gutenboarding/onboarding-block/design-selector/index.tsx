@@ -16,7 +16,7 @@ import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';
 import { SubTitle, Title } from '../../components/titles';
-import { useTrackStep } from '../../analytics';
+import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;

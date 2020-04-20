@@ -23,7 +23,7 @@ import {
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
-import { useTrackModal } from '../../analytics';
+import { useTrackModal } from '../../hooks/use-track-modal';
 
 /**
  * Style dependencies

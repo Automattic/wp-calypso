@@ -11,7 +11,7 @@ import { Icon } from '@wordpress/components';
  */
 import CreateAndRedirect from './create-and-redirect';
 import { useNewQueryParam } from '../../path';
-import { useTrackStep } from 'landing/gutenboarding/analytics';
+import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

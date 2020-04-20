@@ -20,12 +20,8 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
-<<<<<<< HEAD
-import GUTENARDING_BASE_NAME from './basename.json';
 import { recordOnboardingStart } from './lib/analytics';
 
-=======
->>>>>>> WIP add tracks analytics to gutenboarding steps
 registerBlockType( name, settings );
 
 interface BlockListProps extends OriginalBlockList.Props {

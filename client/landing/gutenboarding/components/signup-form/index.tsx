@@ -20,7 +20,7 @@ import GUTENBOARDING_BASE_NAME from '../../basename.json';
 import { trackEventWithFlow } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
-import { useTrackStep } from '../../analytics';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 interface Props {
 	onRequestClose: () => void;
