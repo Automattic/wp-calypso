@@ -161,7 +161,7 @@ describe( 'index', () => {
 				// eslint-disable-next-line jest/no-test-callback
 				test( 'should handle errors and revert the optimistic updates', done => {
 					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					setPrimaryDomainReject();
+					setPrimaryDomainReject( { error: 'Message' } );
 					setTimeout( () => {
 						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
 						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );

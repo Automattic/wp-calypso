@@ -55,7 +55,7 @@ class RemovePurchase extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
-		isPrimaryDomainRegistered: PropTypes.bool,
+		hasCustomPrimaryDomain: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
@@ -174,14 +174,9 @@ class RemovePurchase extends Component {
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
-		const {
-			hasNonPrimaryDomainsFlag,
-			isAtomicSite,
-			isPrimaryDomainRegistered,
-			purchase,
-		} = this.props;
+		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase } = this.props;
 		return (
-			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && isPrimaryDomainRegistered
+			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && hasCustomPrimaryDomain
 		);
 	}
 
