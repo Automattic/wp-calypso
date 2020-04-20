@@ -25,7 +25,6 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QueryHomeLayout from 'components/data/query-home-layout';
@@ -49,7 +48,6 @@ const Home = ( {
 	layout,
 	site,
 	siteId,
-	siteIsUnlaunched,
 	trackViewSiteAction,
 } ) => {
 	const translate = useTranslate();
@@ -79,13 +77,11 @@ const Home = ( {
 					) }
 					align="left"
 				/>
-				{ ! siteIsUnlaunched && (
-					<div className="customer-home__view-site-button">
-						<Button href={ site.URL } onClick={ trackViewSiteAction }>
-							{ translate( 'View site' ) }
-						</Button>
-					</div>
-				) }
+				<div className="customer-home__view-site-button">
+					<Button href={ site.URL } onClick={ trackViewSiteAction }>
+						{ translate( 'View site' ) }
+					</Button>
+				</div>
 			</div>
 			{ layout ? (
 				<>
@@ -154,7 +150,6 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		displayChecklist: layout?.primary?.includes( 'home-primary-checklist-site-setup' ),
-		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		user,
 		layout,
 	};
