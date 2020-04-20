@@ -17,7 +17,7 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { trackEventWithFlow } from '../../lib/analytics';
+import { trackEventWithFlow, recordOnboardingError } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
@@ -100,6 +100,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				);
 				break;
 		}
+
+		recordOnboardingError( {
+			step: 'account_creation',
+			error: newUserError.error || 'signup_form_new_user_error',
+		} );
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';

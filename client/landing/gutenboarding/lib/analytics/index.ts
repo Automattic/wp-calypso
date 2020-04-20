@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import { FLOW_ID } from '../../constants';
+import { ErrorParameters, OnboardingCompleteParameters } from './types';
 
 /**
  * Make tracks call with embedded flow.
@@ -39,14 +40,18 @@ export function recordOnboardingStart( ref = '' ): void {
  * Analytics call at the completion  of a Gutenboarding flow
  *
  * @param {object} params A set of params to pass to analytics for signup completion
- * @param {boolean} params.isNewUser Whether the user is newly signed up
- * @param {boolean} params.isNewSite Whether a new site is created in the flow
  */
-export function recordOnboardingComplete( { isNewUser = false, isNewSite = true } ): void {
-	trackEventWithFlow( 'calypso_signup_complete', {
-		is_new_user: isNewUser,
-		is_new_site: isNewSite,
-	} );
+export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
+	trackEventWithFlow( 'calypso_signup_complete', params );
+}
+
+/**
+ * A generic event for onboarding errors
+ *
+ * @param {object} params A set of params to pass to analytics for signup errors
+ */
+export function recordOnboardingError( params: ErrorParameters ): void {
+	trackEventWithFlow( 'calypso_signup_error', params );
 }
 
 interface TrainTracksRenderProps {
