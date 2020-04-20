@@ -62,13 +62,15 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( { after, before, gro
 		<Main className="backup-activity-log">
 			<DocumentHead title="Activity log" />
 			<SidebarNavigation />
-			<div>
-				<h3>{ translate( 'Find a backup or restore point' ) }</h3>
-				<p>
-					{ translate(
-						'This is the complete event history for your site. Filter by date range and/or activity type.'
-					) }
-				</p>
+			<div className="backup-activity-log__content">
+				<div className="backup-activity-log__header">
+					<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+					<p>
+						{ translate(
+							'This is the complete event history for your site. Filter by date range and/or activity type.'
+						) }
+					</p>
+				</div>
 				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
 			</div>
 		</Main>

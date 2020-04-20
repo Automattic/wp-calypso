@@ -1,6 +1,5 @@
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
-
 	.main {
 		box-sizing: border-box;
 		padding-left: 16px;
@@ -36,7 +35,6 @@
 		&[disabled],
 		&:disabled {
 			color: var( --studio-gray-10 );
-			background: none;
 			border-color: var( --color-gray-10 );
 			background: var( --studio-white );
 		}
@@ -164,12 +162,45 @@
 			color: var( --color-scary-60 );
 		}
 	}
+
+	// Universal Text Styles
+
+	h2 {
+		font-size: 22px;
+		font-weight: 700;
+		line-height: 32px;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 36px;
+			line-height: 40px;
+		}
+	}
+
+	h3 {
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 23px;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 18px;
+			line-height: 23px;
+		}
+	}
+
+	p {
+		font-size: 16px;
+		line-height: 24px;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 18px;
+			line-height: 24px;
+		}
+	}
 }
 
 .theme-jetpack-cloud .ReactModalPortal {
 	.dialog.card {
-		box-shadow: 0 0 0 1px var( --color-border-subtle ),
-					0 4px 12px var( --color-neutral-10 );
+		box-shadow: 0 0 0 1px var( --color-border-subtle ), 0 4px 12px var( --color-neutral-10 );
 		border-radius: 3px;
 	}
 
