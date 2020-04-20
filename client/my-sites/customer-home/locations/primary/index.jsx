@@ -11,6 +11,7 @@ import ChecklistSiteSetup from 'my-sites/customer-home/cards/tasks/checklist-sit
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
 import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
+import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts';
 import config from 'config';
 
 const cardComponents = {
@@ -20,6 +21,7 @@ const cardComponents = {
 	'home-education-mastering-gutenberg': MasteringGutenberg,
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 	'home-task-site-setup-checklist': ChecklistSiteSetup,
+	'home-task-connect-accounts': ConnectAccounts,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
