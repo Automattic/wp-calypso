@@ -52,7 +52,7 @@ function WpcomNux() {
 
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
 	const welcomeHeading = isGutenboarding
-		? __( 'Welcome to your site' )
+		? __( 'Welcome to your website' )
 		: __( 'Welcome to the WordPress editor' );
 
 	return (
@@ -67,7 +67,7 @@ function WpcomNux() {
 				description={
 					isGutenboarding
 						? __(
-								'Edit your homepage and add the pages you need, change the look and feel of everything.'
+								'Edit your homepage, add the pages you need, and change your site’s look and feel.'
 						  )
 						: __( 'Create and edit site pages, and customize the look and feel of each page.' )
 				}
@@ -83,7 +83,7 @@ function WpcomNux() {
 				}
 				description={
 					isGutenboarding
-						? __( 'Start with a pre-made layout and make it your own.' )
+						? __( 'Start with an existing layout and make it your own.' )
 						: __(
 								'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
 						  )
@@ -92,9 +92,9 @@ function WpcomNux() {
 			/>
 
 			<NuxPage
-				heading={ __( 'Add anything you want' ) }
+				heading={ __( 'Add (almost) anything' ) }
 				description={ __(
-					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page till it’s just right.'
+					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
 				) }
 				imgSrc={ blockPickerImage }
 			/>

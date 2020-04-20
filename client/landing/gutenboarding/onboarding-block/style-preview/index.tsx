@@ -61,7 +61,7 @@ const StylePreview: React.FunctionComponent = () => {
 				<div className="style-preview__titles">
 					<Title>{ __( 'Pick a font pairing' ) }</Title>
 					<SubTitle>
-						{ __( 'Add some personality to your design. You can fine-tune later.' ) }
+						{ __( 'Customize your design with typography. You can always fine-tune it later.' ) }
 					</SubTitle>
 				</div>
 				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
