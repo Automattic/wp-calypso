@@ -22,7 +22,7 @@ class PostRelativeTime extends React.PureComponent {
 		post: PropTypes.object.isRequired,
 		link: PropTypes.string,
 		target: PropTypes.string,
-		gridIconSize: PropTypes.number,
+		gridiconSize: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -78,7 +78,7 @@ class PostRelativeTime extends React.PureComponent {
 			<span className="post-relative-time-status__time">
 				{ time && (
 					<>
-						<Gridicon icon="time" size={ this.props.gridIconSize || 18 } />
+						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
 							{ this.getDisplayedTimeForLabel() }
 						</time>
@@ -158,7 +158,7 @@ class PostRelativeTime extends React.PureComponent {
 		if ( statusText ) {
 			return (
 				<span className={ statusClassName }>
-					<Gridicon icon={ statusIcon } size={ this.props.gridIconSize || 18 } />
+					<Gridicon icon={ statusIcon } size={ this.props.gridiconSize || 18 } />
 					<span className="post-relative-time-status__status-text">{ statusText }</span>
 				</span>
 			);

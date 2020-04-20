@@ -62,7 +62,7 @@ function PageCardInfo( {
 						post={ page }
 						link={ contentLink.contentLinkURL }
 						target={ contentLink.contentLinkTarget }
-						gridIconSize={ ICON_SIZE }
+						gridiconSize={ ICON_SIZE }
 						includeBasicStatus={ true }
 					/>
 				) }

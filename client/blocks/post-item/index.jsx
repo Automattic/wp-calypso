@@ -211,7 +211,7 @@ class PostItem extends React.Component {
 										post={ post }
 										link={ enabledPostLink }
 										target={ null }
-										gridIconSize={ ICON_SIZE }
+										gridiconSize={ ICON_SIZE }
 										includeBasicStatus={ true }
 										showPublishedStatus={ showPublishedStatus }
 									/>
