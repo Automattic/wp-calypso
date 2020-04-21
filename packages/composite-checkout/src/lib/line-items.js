@@ -26,7 +26,7 @@ export function useTotal() {
 	return total;
 }
 
-export function useLineItemsOfType( itemType = null ) {
+export function useLineItemsOfType( itemType ) {
 	if ( ! itemType ) {
 		throw new Error( 'missing itemType for useLineItemsOfType' );
 	}
