@@ -52,7 +52,7 @@ const AcquireIntent: FunctionComponent = () => {
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
 					) }
-					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
+					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } isMobile={ isMobile } />
 					<div
 						className={ classnames( 'acquire-intent__footer', {
 							'acquire-intent__footer--hidden': ! siteVertical,
