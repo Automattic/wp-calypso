@@ -28,9 +28,15 @@ interface Props {
 	after?: string;
 	before?: string;
 	group?: string;
+	page?: string;
 }
 
-const BackupActivityLogPage: FunctionComponent< Props > = ( { after, before, group } ) => {
+const BackupActivityLogPage: FunctionComponent< Props > = ( {
+	after,
+	before,
+	group,
+	page = 1,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -48,10 +54,22 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( { after, before, gro
 		if (
 			! isEqual( filter.group, processedGroup ) ||
 			filter.after !== after ||
-			filter.before !== before
+			filter.before !== before ||
+			filter.page !== page
 		)
-			dispatch( setFilter( siteId, { page: 1, after, before, group: processedGroup } ) );
-	}, [ after, before, dispatch, filter.after, filter.before, filter.group, group, siteId ] );
+			dispatch( setFilter( siteId, { page: page, after, before, group: processedGroup } ) );
+	}, [
+		after,
+		before,
+		dispatch,
+		filter.after,
+		filter.before,
+		filter.group,
+		filter.page,
+		group,
+		page,
+		siteId,
+	] );
 
 	// when the filter changes, re-request the logs
 	useEffect( () => {

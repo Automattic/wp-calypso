@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -13,6 +13,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
@@ -100,7 +101,15 @@ class ActivityCardList extends Component {
 	}
 
 	renderData() {
-		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
+		const {
+			filter,
+			isBreakpointActive: isMobile,
+			logs,
+			pageSize,
+			showFilter,
+			showPagination,
+			siteId,
+		} = this.props;
 		const { page: requestedPage } = filter;
 
 		const actualPage = Math.max(
@@ -122,7 +131,7 @@ class ActivityCardList extends Component {
 				) }
 				{ showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={ isMobile }
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
 						nextLabel={ 'Older' }
@@ -136,7 +145,7 @@ class ActivityCardList extends Component {
 				{ this.renderLogs( theseLogs ) }
 				{ showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
 						nextLabel={ 'Older' }
@@ -192,4 +201,4 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) );
+)( withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) ) );
