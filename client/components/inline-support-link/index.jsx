@@ -98,7 +98,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	} = ownProps;
 	return {
 		openDialog: ( event ) => {
-			if ( ! supportPostId ) {
+			if ( ! supportPostId || 'en' !== getLocaleSlug() ) {
 				return;
 			}
 			event.preventDefault();
