@@ -132,7 +132,9 @@ export function render( element, key = JSON.stringify( element ), req ) {
 
 const cachedLanguageManifest = {};
 const getLanguageManifest = ( langSlug, target ) => {
-	if ( ! cachedLanguageManifest[ target ] ) {
+	const key = `${ target }/${ langSlug }`;
+
+	if ( ! cachedLanguageManifest[ key ] ) {
 		const languageManifestFilepath = path.join(
 			__dirname,
 			'..',
@@ -143,11 +145,11 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
-		cachedLanguageManifest[ target ] = JSON.parse(
+		cachedLanguageManifest[ key ] = JSON.parse(
 			fs.readFileSync( languageManifestFilepath, 'utf8' )
 		);
 	}
-	return cachedLanguageManifest[ target ];
+	return cachedLanguageManifest[ key ];
 };
 
 export function attachI18n( context ) {
