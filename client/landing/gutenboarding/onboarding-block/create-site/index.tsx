@@ -18,7 +18,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
 
 // Total time to perform "loading"
-const DURATION_IN_MS = 12000;
+const DURATION_IN_MS = 6000;
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: React.FunctionComponent = () => {
@@ -54,20 +54,14 @@ const CreateSite: React.FunctionComponent = () => {
 	const isComplete = progress >= 1;
 
 	useInterval(
-		() => {
-			setCurrentStep( ( s ) => s + 1 );
-		},
+		() => setCurrentStep( ( s ) => s + 1 ),
 		// Enable the interval when progress is incomplete
 		isComplete ? null : DURATION_IN_MS / totalSteps
 	);
 
 	React.useEffect( () => {
 		if ( isComplete ) {
-			const id = setTimeout(
-				() => setCreateAndRedirect( true ),
-				DURATION_IN_MS / steps.current.length
-			);
-			return () => clearTimeout( id );
+			setCreateAndRedirect( true );
 		}
 	}, [ isComplete ] );
 
