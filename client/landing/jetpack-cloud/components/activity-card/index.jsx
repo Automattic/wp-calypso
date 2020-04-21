@@ -20,7 +20,7 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -29,14 +29,18 @@ import './style.scss';
 import downloadIcon from './download-icon.svg';
 
 class ActivityCard extends Component {
+	static defaultProps = {
+		summarize: false,
+	};
+
+	popoverContext = React.createRef();
+
 	constructor() {
 		super();
 		this.state = {
 			showPopoverMenu: false,
 		};
 	}
-
-	popoverContext = React.createRef();
 
 	togglePopoverMenu = () => this.setState( { showPopoverMenu: ! this.state.showPopoverMenu } );
 	closePopoverMenu = () => this.setState( { showPopoverMenu: false } );
@@ -49,6 +53,7 @@ class ActivityCard extends Component {
 			gmtOffset,
 			timezone,
 			siteSlug,
+			summarize,
 			translate,
 		} = this.props;
 
@@ -59,10 +64,12 @@ class ActivityCard extends Component {
 
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
-				<div className="activity-card__time">
-					<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
-					<div className="activity-card__time-text">{ backupTimeDisplay }</div>
-				</div>
+				{ ! summarize && (
+					<div className="activity-card__time">
+						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
+						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+					</div>
+				) }
 				<Card>
 					<ActivityActor
 						{ ...{
@@ -76,55 +83,58 @@ class ActivityCard extends Component {
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
-					<div className="activity-card__activity-actions">
-						<a
-							className="activity-card__detail-link"
-							href={ backupDetailPath( siteSlug, activity.rewindId ) }
-						>
-							{ isSuccessfulBackup( activity )
-								? translate( 'Changes in this backup' )
-								: translate( 'See content' ) }
-						</a>
-						<Button
-							compact
-							borderless
-							className="activity-card__actions-button"
-							onClick={ this.togglePopoverMenu }
-							ref={ this.popoverContext }
-						>
-							{ translate( 'Actions' ) }
-							<Gridicon icon="add" className="activity-card__actions-icon" />
-						</Button>
 
-						<PopoverMenu
-							context={ this.popoverContext.current }
-							isVisible={ this.state.showPopoverMenu }
-							onClose={ this.closePopoverMenu }
-							className="activity-card__popover"
-						>
-							<Button
-								href={ backupRestorePath( siteSlug, activity.rewindId ) }
-								className="activity-card__restore-button"
+					{ ! summarize && (
+						<div className="activity-card__activity-actions">
+							<a
+								className="activity-card__detail-link"
+								href={ backupDetailPath( siteSlug, activity.rewindId ) }
 							>
-								{ translate( 'Restore to this point' ) }
-							</Button>
+								{ isSuccessfulDailyBackup( activity )
+									? translate( 'Changes in this backup' )
+									: translate( 'See content' ) }
+							</a>
 							<Button
-								borderless
 								compact
-								isPrimary={ false }
-								href={ backupDownloadPath( siteSlug, activity.rewindId ) }
-								className="activity-card__download-button"
+								borderless
+								className="activity-card__actions-button"
+								onClick={ this.togglePopoverMenu }
+								ref={ this.popoverContext }
 							>
-								<img
-									src={ downloadIcon }
-									className="activity-card__download-icon"
-									role="presentation"
-									alt=""
-								/>
-								{ translate( 'Download backup' ) }
+								{ translate( 'Actions' ) }
+								<Gridicon icon="add" className="activity-card__actions-icon" />
 							</Button>
-						</PopoverMenu>
-					</div>
+
+							<PopoverMenu
+								context={ this.popoverContext.current }
+								isVisible={ this.state.showPopoverMenu }
+								onClose={ this.closePopoverMenu }
+								className="activity-card__popover"
+							>
+								<Button
+									href={ backupRestorePath( siteSlug, activity.rewindId ) }
+									className="activity-card__restore-button"
+								>
+									{ translate( 'Restore to this point' ) }
+								</Button>
+								<Button
+									borderless
+									compact
+									isPrimary={ false }
+									href={ backupDownloadPath( siteSlug, activity.rewindId ) }
+									className="activity-card__download-button"
+								>
+									<img
+										src={ downloadIcon }
+										className="activity-card__download-icon"
+										role="presentation"
+										alt=""
+									/>
+									{ translate( 'Download backup' ) }
+								</Button>
+							</PopoverMenu>
+						</div>
+					) }
 				</Card>
 			</div>
 		);

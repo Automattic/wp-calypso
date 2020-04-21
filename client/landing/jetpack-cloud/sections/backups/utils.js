@@ -4,6 +4,11 @@
 import moment from 'moment';
 
 /**
+ * Internal dependencies
+ */
+import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
+
+/**
  * if the activityDateString is on the same date as we are looking at
  *
  * @param {string} activityDateString date string from activity log in ISO 8601 format
@@ -139,14 +144,49 @@ export const isActivityBackup = ( activity ) => {
 	);
 };
 
+export const getRealtimeBackups = ( logs, date ) => {
+	const backups = [];
+
+	logs.forEach( ( event ) => {
+		if (
+			moment( event.activityDate ).format( INDEX_FORMAT ) === moment( date ).format( INDEX_FORMAT )
+		) {
+			if ( event.activityIsRewindable ) {
+				backups.push( event );
+			}
+
+			if ( event.streams ) {
+				event.streams.forEach( ( stream ) => {
+					if ( stream.activityIsRewindable ) {
+						backups.push( stream );
+					}
+				} );
+			}
+		}
+	} );
+
+	return backups;
+};
+
 /**
  * Check if the backup is completed
  *
  * @param backup {object} Backup to check
  */
-export const isSuccessfulBackup = ( backup ) => {
+export const isSuccessfulDailyBackup = ( backup ) => {
 	return (
 		'rewind__backup_complete_full' === backup.activityName ||
 		'rewind__backup_complete_initial' === backup.activityName
 	);
+};
+
+/**
+ * Check if a Realtime backup backup is completed
+ *
+ * @param backup {object} Backup to check
+ */
+export const isSuccessfulRealtimeBackup = ( backup ) => {
+	const hasRestorableStreams =
+		backup.streams && !! backup.streams.filter( ( stream ) => stream.activityIsRewindable ).length;
+	return hasRestorableStreams || backup.activityIsRewindable;
 };
