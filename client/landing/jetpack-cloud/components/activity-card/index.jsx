@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-
 /**
  * Internal dependencies
  */
@@ -43,7 +42,15 @@ class ActivityCard extends Component {
 	closePopoverMenu = () => this.setState( { showPopoverMenu: false } );
 
 	render() {
-		const { activity, allowRestore, className, gmtOffset, timezone, siteSlug, translate } = this.props;
+		const {
+			activity,
+			allowRestore,
+			className,
+			gmtOffset,
+			timezone,
+			siteSlug,
+			translate,
+		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
