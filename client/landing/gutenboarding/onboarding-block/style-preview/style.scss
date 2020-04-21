@@ -331,25 +331,25 @@ $gutenboarding-style-preview-bar-height: 30px;
 
 	// Need the extra specificity here to override core
 	&.components-button {
+		color: var( --studio-gray-10 );
 		height: auto;
 		padding: 4px;
 
-		color: var( --studio-gray-10 );
+		&.is-selected,
+		&:hover,
+		&:focus {
+			color: var( --studio-black );
+		}
 
 		svg {
 			fill: none;
 		}
 	}
-
-	&.is-selected {
-		color: var( --studio-black );
-	}
 }
 
 // Remove focus styling from clicking a button
 // Keep keyboard-focused focus style
-html:not( .accessible-focus )
-	.style-preview__viewport-select-button.is-selected:focus:not( :hover ) {
+html:not( .accessible-focus ) .components-button:focus:not( :disabled ) {
 	box-shadow: none;
 }
 
