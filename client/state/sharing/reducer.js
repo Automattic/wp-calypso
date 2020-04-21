@@ -11,7 +11,7 @@ import services from './services/reducer';
 export const expandedService = withoutPersistence( ( state = '', action ) => {
 	switch ( action.type ) {
 		case CONNECTIONS_EXPANDED_SERVICE:
-			return action.serviceName;
+			return action.serviceName ? action.serviceName : null;
 	}
 
 	return state;
