@@ -163,12 +163,4 @@ export default function () {
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
-
-	page(
-		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
-		siteSelection,
-		upsellNudge,
-		makeLayout,
-		clientRender
-	);
 }

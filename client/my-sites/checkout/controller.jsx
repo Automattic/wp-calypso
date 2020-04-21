@@ -171,8 +171,6 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
 		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
-	} else if ( context.path.includes( 'offer-plan-with-domain' ) ) {
-		upsellType = 'offer-plan-with-domain';
 	}
 
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );

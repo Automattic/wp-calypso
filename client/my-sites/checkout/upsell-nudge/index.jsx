@@ -34,7 +34,6 @@ import {
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
-import { PlanWithDomainUpgrade } from './plan-with-domain';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 
 /**
@@ -164,45 +163,22 @@ export class UpsellNudge extends React.Component {
 						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
-
-			case 'offer-plan-with-domain':
-				return (
-					<PlanWithDomainUpgrade
-						siteSlug={ siteSlug }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
 		}
 	}
 
-	handleClickDecline = ( shouldHideUpsellNudges = true, shouldEmptyCart = false ) => {
+	handleClickDecline = () => {
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect( shouldHideUpsellNudges, shouldEmptyCart );
+		handleCheckoutCompleteRedirect();
 	};
 
-	getCheckoutUrl( url ) {
-		return addQueryArgs(
-			{
-				upgrade: 1,
-			},
-			url
-		);
-	}
-
-	handleClickAccept = ( buttonAction, redirectPath ) => {
+	handleClickAccept = ( buttonAction ) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
-
-		if ( redirectPath ) {
-			return page( redirectPath );
-		}
 
 		return siteSlug
 			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
