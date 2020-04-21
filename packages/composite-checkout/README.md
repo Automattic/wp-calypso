@@ -119,12 +119,6 @@ The main wrapper component for the checkout form. It has the following props.
 
 - `className?: string`. The className for the component.
 
-### CheckoutSummary
-
-Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
-
-- `className?: string`. The className for the component.
-
 ### CheckoutProvider
 
 Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this.
@@ -145,6 +139,10 @@ It has the following props.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
+
+### CheckoutReviewOrder
+
+Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
 
 ## CheckoutStep
 
@@ -194,9 +192,11 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 A wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
 
-### CheckoutReviewOrder
+### CheckoutSummary
 
-Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
+
+- `className?: string`. The className for the component.
 
 ### OrderReviewLineItems
 
