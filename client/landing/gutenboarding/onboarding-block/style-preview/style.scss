@@ -204,6 +204,13 @@
 		color: var( --studio-gray-90 );
 		height: auto;
 		border-radius: 2px;
+
+		&:hover,
+		&:focus,
+		&:focus:not( :disabled ) {
+			color: var( --studio-gray-90 );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
+		}
 	}
 
 	&.is-selected {
@@ -211,10 +218,6 @@
 		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
 		color: var( --studio-blue-40 ) !important;
 		box-shadow: inset 0 0 0 1px var( --studio-blue-40 ) !important;
-	}
-
-	&:hover {
-		box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
 	}
 }
 
