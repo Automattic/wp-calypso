@@ -2,6 +2,13 @@
 	margin-bottom: 2rem;
 }
 
+.activity-card-list__pagination-bottom,
+.activity-card-list__pagination-top {
+	.pagination__list .pagination__list-item .button {
+		padding: 5px 8px;
+	}
+}
+
 .activity-card-list__pagination-bottom {
 	margin-bottom: 1rem;
 }
