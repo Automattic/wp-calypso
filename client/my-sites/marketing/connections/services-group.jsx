@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -43,7 +43,18 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 	}
 };
 
-const SharingServicesGroup = ( { isFetching, services, title } ) => {
+const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
+	useEffect( () => {
+		if ( expandedService ) {
+			const serviceElement = document.querySelector(
+				'.sharing-service.' + expandedService.replace( /_/g, '-' )
+			);
+			if ( serviceElement ) {
+				serviceElement.scrollIntoView();
+			}
+		}
+	}, [ expandedService, services ] );
+
 	if ( ! services.length && ! isFetching ) {
 		return null;
 	}
@@ -60,7 +71,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 							if ( service.warnings ) {
 								return (
 									<Fragment key={ service.ID }>
-										<Component service={ service } />
+										<Component service={ service } expanded={ expandedService === service.ID } />
 										{ service.warnings.map( ( warning, index ) => (
 											<Notice
 												key={ `warning-${ index }` }
@@ -74,7 +85,13 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 								);
 							}
 
-							return <Component key={ service.ID } service={ service } />;
+							return (
+								<Component
+									key={ service.ID }
+									service={ service }
+									expanded={ expandedService === service.ID }
+								/>
+							);
 					  } )
 					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 							<ServicePlaceholder key={ 'service-placeholder-' + index } />

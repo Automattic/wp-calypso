@@ -14,13 +14,45 @@ import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
+import { requestSite } from 'state/sites/actions';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	isJetpackModuleActive,
+	getSiteOption,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { fetchPreferences } from 'state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { isJetpackSite, isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
 export const redirectConnections = ( context ) => {
-	page.redirect( '/marketing/connections/' + context.params.domain );
+	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
+	page.redirect( `/marketing/connections/${ context.params.domain }${ serviceParam }` );
+};
+
+export const redirectDefaultConnectionsDomain = async ( context ) => {
+	const { getState, dispatch } = context.store;
+
+	if ( ! hasReceivedRemotePreferences( getState() ) ) {
+		await dispatch( fetchPreferences() );
+	}
+	const state = getState();
+
+	const recentSiteId = getPreference( state, 'recentSites' )[ 0 ];
+
+	let recentSiteSlug = getSiteSlug( state, recentSiteId );
+	if ( ! recentSiteSlug ) {
+		await dispatch( requestSite( recentSiteId ) );
+		recentSiteSlug = getSiteSlug( getState(), recentSiteId );
+		if ( ! recentSiteSlug ) {
+			// TODO Maybe get the primary site slug, but for now redirect to site selection.
+			page.redirect( '/marketing/connections' );
+		}
+	}
+	context.params.domain = recentSiteSlug;
+	redirectConnections( context );
 };
 
 export const redirectMarketingTools = ( context ) => {
@@ -50,7 +82,9 @@ export const connections = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingConnections );
+	context.contentComponent = createElement( SharingConnections, {
+		expandedService: context.query.service,
+	} );
 
 	next();
 };

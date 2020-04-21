@@ -552,7 +552,7 @@ export class SharingService extends Component {
 					header={ header }
 					clickableHeader
 					//For Mailchimp we want to open settings, because in other services we have the popup.
-					expanded={ this.shouldBeExpanded( connectionStatus ) }
+					expanded={ this.props.expanded || this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
 					expandedSummary={ action }
