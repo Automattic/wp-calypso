@@ -118,7 +118,7 @@ export function generateFlows( {
 		},
 
 		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains' ],
+			steps: [ 'user', 'plans', 'domains', 'upsell-plan', 'plans-plan-only' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-04-09',
@@ -126,7 +126,7 @@ export function generateFlows( {
 		},
 
 		'plan-only': {
-			steps: [ 'plans-plan-only' ],
+			steps: [ 'upsell-plan', 'plans-plan-only' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-04-09',

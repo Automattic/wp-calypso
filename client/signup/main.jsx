@@ -170,9 +170,7 @@ class Signup extends React.Component {
 
 		if ( this.props.flowName !== flowName ) {
 			this.signupFlowController.changeFlowName( flowName );
-		}
-
-		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
+		} else if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 	}

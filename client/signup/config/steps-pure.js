@@ -36,6 +36,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	shouldShowUpsell = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -251,11 +252,21 @@ export function generateSteps( {
 			},
 		},
 
+		'upsell-plan': {
+			stepName: 'upsell-plan',
+			fulfilledStepCallback: shouldShowUpsell,
+			providesDependencies: [ 'domainItem' ],
+			optionalDependencies: [ 'domainItem' ],
+			// dependencies: [ 'siteSlug', 'domainItem' ]
+		},
+
 		'plans-plan-only': {
 			stepName: 'plans-plan-only',
 			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: shouldShowUpsell,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'isUpsellItem' ],
+			providesDependencies: [ 'cartItem', 'domainItem' ],
+			optionalDependencies: [ 'domainItem' ],
 			props: {
 				hideFreePlan: true,
 				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
