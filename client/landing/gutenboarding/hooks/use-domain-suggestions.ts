@@ -9,7 +9,7 @@ import { useDebounce } from 'use-debounce';
  */
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { selectorDebounce } from '../constants';
+import { DOMAIN_SUGGESTION_VENDOR, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
 
 export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
@@ -38,6 +38,7 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 				include_wordpressdotcom: true,
 				include_dotblogsubdomain: false,
 				locale,
+				vendor: DOMAIN_SUGGESTION_VENDOR,
 				...{ vertical: siteVertical?.id },
 			} );
 		},
