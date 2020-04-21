@@ -5,6 +5,7 @@ import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
+import { useInterval } from '../../../../lib/interval/use-interval';
 
 /**
  * Internal dependencies
@@ -23,32 +24,38 @@ const CreateSite: React.FunctionComponent = () => {
 	const shouldTriggerCreate = useNewQueryParam();
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 
-	// Some very rudimentary progress illusions
+	const steps = React.useRef< string[] >(
+		[ __( 'Building your site' ), __( 'Getting your domain' ), __( 'Applying design' ) ].filter(
+			Boolean
+		) as string[]
+	);
+	const totalSteps = steps.current.length;
 
-	const progressSteps = React.useRef( [
-		__( 'Building your site' ),
-		__( 'Getting your domain' ),
-		__( 'Applying design' ),
-	] );
+	const [ currentStep, setCurrentStep ] = React.useState( 0 );
 
-	const [ step, setStep ] = React.useState< number >( 0 );
-	const [ progress, setProgress ] = React.useState< number >( 0 );
+	/**
+	 * Completion progress: 0 <= progress <= 1
+	 */
+	const progress = ( currentStep + 1 ) / totalSteps;
+	const isComplete = progress >= 1;
 
-	// Give an initial progress indication…
-	React.useEffect( () => setProgress( 7 ), [] );
+	useInterval(
+		() => {
+			setCurrentStep( ( s ) => s + 1 );
+		},
+		// Enable the interval when progress is incomplete
+		isComplete ? null : DURATION_IN_MS / totalSteps
+	);
 
 	React.useEffect( () => {
-		const totalSteps = progressSteps.current.length;
-		const maxIndex = totalSteps - 1;
-		if ( step >= maxIndex && progress >= 100 ) {
-			setCreateAndRedirect( true );
+		if ( isComplete ) {
+			const id = setTimeout(
+				() => setCreateAndRedirect( true ),
+				DURATION_IN_MS / steps.current.length
+			);
+			return () => clearTimeout( id );
 		}
-		const timeoutId = window.setTimeout( () => {
-			setStep( Math.min( step + 1, maxIndex ) );
-			setProgress( Math.min( ( ( step + 1 ) / totalSteps ) * 100, 100 ) );
-		}, DURATION_IN_MS / totalSteps );
-		return () => window.clearTimeout( timeoutId );
-	}, [ progress, step ] );
+	}, [ isComplete ] );
 
 	useTrackStep( 'CreateSite' );
 
@@ -64,7 +71,7 @@ const CreateSite: React.FunctionComponent = () => {
 				<div className="create-site__content">
 					<div className="create-site__progress">
 						<div className="create-site__progress-steps">
-							<div className="create-site__progress-step">{ progressSteps.current[ step ] }</div>
+							<div className="create-site__progress-step">{ steps.current[ currentStep ] }</div>
 						</div>
 					</div>
 					<div
@@ -80,8 +87,8 @@ const CreateSite: React.FunctionComponent = () => {
 							{
 								// translators: these are progress steps. Eg: step 1 of 4.
 								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: step + 1,
-									totalSteps: progressSteps.current.length,
+									currentStep: currentStep + 1,
+									totalSteps,
 								} )
 							}
 						</p>
