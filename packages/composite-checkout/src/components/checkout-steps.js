@@ -406,6 +406,7 @@ const CheckoutSummaryUI = styled.div`
 	background: ${( props ) => props.theme.colors.surface};
 	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
+	margin: 0 auto;
 	width: 100%;
 
 	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
@@ -427,7 +428,7 @@ const CheckoutSummaryUI = styled.div`
 const CheckoutStepsWrapperUI = styled.div`
 	background: ${( props ) => props.theme.colors.surface};
 	box-sizing: border-box;
-	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
 	width: 100%;
 
 	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
@@ -436,8 +437,9 @@ const CheckoutStepsWrapperUI = styled.div`
 	}
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		width: 556px;
+		margin: 0;
 		order: 1;
+		width: 556px;
 	}
 `;
 
