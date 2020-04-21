@@ -66,6 +66,7 @@ class InlineSupportLink extends Component {
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
 		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
+		const shouldOpenDialog = 'en' === getLocaleSlug();
 		const externalLinkProps = ! supportPostId && {
 			icon: showIcon,
 			iconSize,
@@ -75,7 +76,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className="inline-support-link"
 				href={ url }
-				onClick={ openDialog }
+				onClick={ shouldOpenDialog && openDialog }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
@@ -98,7 +99,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	} = ownProps;
 	return {
 		openDialog: ( event ) => {
-			if ( ! supportPostId || 'en' !== getLocaleSlug() ) {
+			if ( ! supportPostId ) {
 				return;
 			}
 			event.preventDefault();
