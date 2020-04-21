@@ -71,7 +71,7 @@ class PostRelativeTime extends React.PureComponent {
 		} );
 
 		const scheduledTime = scheduledDate.calendar( null, {
-			nextDay: this.props.translate( '[tomorrow at] LT', {
+			nextDay: this.props.translate( '[for tomorrow at] LT', {
 				comment: 'LT refers to time (eg. 18:00)',
 			} ),
 			sameElse: isScheduledPost ? sameElseForScheduled : sameElse,
