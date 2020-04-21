@@ -53,12 +53,13 @@
 }
 
 .activity-card__activity-actions {
+	border-top: 1px solid #e4e4e6;
+	display: flex;
+	flex-flow: row-reverse;
+	justify-content: space-between;
+	padding-top: 0.7rem;
 	position: relative;
 	top: 0.5rem;
-	border-top: 1px solid #e4e4e6;
-	padding-top: 0.7rem;
-	display: flex;
-	justify-content: space-between;
 }
 
 .activity-card__detail-link {

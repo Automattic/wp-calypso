@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -29,6 +30,14 @@ import './style.scss';
 import downloadIcon from './download-icon.svg';
 
 class ActivityCard extends Component {
+	static propTypes = {
+		showContentLink: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showContentLink: true,
+	};
+
 	constructor() {
 		super();
 		this.state = {
@@ -47,8 +56,9 @@ class ActivityCard extends Component {
 			allowRestore,
 			className,
 			gmtOffset,
-			timezone,
+			showContentLink,
 			siteSlug,
+			timezone,
 			translate,
 		} = this.props;
 
@@ -77,14 +87,6 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 					<div className="activity-card__activity-actions">
-						<a
-							className="activity-card__detail-link"
-							href={ backupDetailPath( siteSlug, activity.rewindId ) }
-						>
-							{ isSuccessfulBackup( activity )
-								? translate( 'Changes in this backup' )
-								: translate( 'See content' ) }
-						</a>
 						<Button
 							compact
 							borderless
@@ -124,6 +126,17 @@ class ActivityCard extends Component {
 								{ translate( 'Download backup' ) }
 							</Button>
 						</PopoverMenu>
+
+						{ showContentLink && (
+							<a
+								className="activity-card__detail-link"
+								href={ backupDetailPath( siteSlug, activity.rewindId ) }
+							>
+								{ isSuccessfulBackup( activity )
+									? translate( 'Changes in this backup' )
+									: translate( 'See content' ) }
+							</a>
+						) }
 					</div>
 				</Card>
 			</div>
