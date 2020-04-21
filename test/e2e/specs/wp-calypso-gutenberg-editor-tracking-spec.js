@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
+import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -47,32 +49,48 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( driver );
 			}
-			return await this.loginFlow.loginAndStartNewPage( null, true );
-		} );
+			await this.loginFlow.loginAndSelectWPAdmin();
 
-		step( 'Can enter page title, content and image', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			//Wait for the new window or tab
+			await driver.wait( async () => ( await driver.getAllWindowHandles() ).length === 2, 10000 );
 
-			await driver.executeScript(
-				`window.localStorage.setItem( 'debug', 'wpcom-block-editor*' );`
-			);
+			//Loop through until we find a new window handle
+			const windows = await driver.getAllWindowHandles();
 
-			const debugConfig = await driver.executeScript(
-				`return window.localStorage.getItem('debug');`
-			);
+			await driver.switchTo().window( windows[ 1 ] );
 
-			console.log( 'Using Tracks debug: ' + debugConfig );
-
-			await gEditorComponent.enterTitle( pageTitle );
-			await gEditorComponent.enterText( pageQuote );
-			await gEditorComponent.addBlock( 'Columns' );
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '#menu-pages ul li:last-child > a]' )
+			); //
 
 			await driver.sleep( 50000 );
-			const logs = await driver.manage().logs().get( 'browser' );
-
-			console.log( logs );
-			driver.quit();
 		} );
+
+		// step( 'Can enter page title, content and image', async function () {
+
+		// 	// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+
+		// 	// await driver.executeScript(
+		// 	// 	`window.localStorage.setItem( 'debug', 'wpcom-block-editor*' );`
+		// 	// );
+
+		// 	// const debugConfig = await driver.executeScript(
+		// 	// 	`return window.localStorage.getItem('debug');`
+		// 	// );
+
+		// 	// console.log( 'Using Tracks debug: ' + debugConfig );
+
+		// 	// await gEditorComponent.enterTitle( pageTitle );
+		// 	// await gEditorComponent.enterText( pageQuote );
+		// 	// await gEditorComponent.addBlock( 'Columns' );
+
+		// 	// await driver.sleep( 50000 );
+		// 	// const logs = await driver.manage().logs().get( 'browser' );
+
+		// 	// console.log( logs );
+		// 	// driver.quit();
+		// } );
 
 		after( async function () {} );
 	} );
