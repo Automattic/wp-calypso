@@ -27,8 +27,14 @@ import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import InfoPopover from 'components/info-popover';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { preload } from 'sections-helper';
-import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
+import {
+	getSite,
+	hasStaticFrontPage,
+	isJetpackSite,
+	isSitePreviewable,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -41,6 +47,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import canCurrentUser from 'state/selectors/can-current-user';
 import config from 'config';
 
@@ -316,11 +323,12 @@ class Page extends Component {
 	}
 
 	getCopyPageItem() {
-		const { wpAdminGutenberg, page: post, duplicateUrl } = this.props;
+		const { copyPagesModuleDisabled, wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post ) ||
-			wpAdminGutenberg
+			wpAdminGutenberg ||
+			copyPagesModuleDisabled
 		) {
 			return null;
 		}
@@ -446,6 +454,7 @@ class Page extends Component {
 			page,
 			shadowStatus,
 			showPublishedStatus,
+			siteId,
 			translate,
 			isPostsPage: latestPostsPage,
 		} = this.props;
@@ -523,6 +532,7 @@ class Page extends Component {
 
 		return (
 			<CompactCard className={ classNames( cardClasses ) }>
+				<QueryJetpackModules siteId={ siteId } />
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
@@ -749,6 +759,9 @@ const mapState = ( state, props ) => {
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
+		copyPagesModuleDisabled:
+			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
+			isJetpackSite( state, pageSiteId ),
 		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
