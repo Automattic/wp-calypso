@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/popup-monitor",
+	"version": "1.0.0",
+	"description": "Utility to facilitate the monitoring of a popup window close action.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"wordpress",
+		"popup"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/popup-monitor",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/popup-monitor"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
+	},
+	"dependencies": {
+		"lodash": "^4.17.15"
+	}
+}
