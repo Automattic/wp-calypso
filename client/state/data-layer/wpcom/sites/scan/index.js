@@ -11,6 +11,18 @@ import {
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'state/action-types';
 
+const formatScanStateRawResponse = ( { state, threats, credentials, most_recent: mostRecent } ) => {
+	return {
+		state,
+		threats,
+		credentials,
+		mostRecent: {
+			...mostRecent,
+			timestamp: new Date( mostRecent.timestamp ),
+		},
+	};
+};
+
 const fetchStatus = ( action ) => {
 	return http(
 		{
@@ -51,6 +63,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/scan', {
 			fetch: fetchStatus,
 			onSuccess: onFetchStatusSuccess,
 			onError: onFetchStatusFailure,
+			fromApi: formatScanStateRawResponse,
 		} ),
 	],
 } );

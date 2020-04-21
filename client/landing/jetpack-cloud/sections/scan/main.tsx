@@ -41,6 +41,9 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
+	// @todo: understand when this state can happen
+	// It seems, the user won't ever get to this place because it they don't have
+	// Scan they won't get this far in the app.
 	renderUnavailable() {
 		const { siteSlug } = this.props;
 
@@ -154,10 +157,10 @@ class ScanPage extends Component< Props > {
 			return <div className="scan__is-loading" />;
 		}
 
-		// @todo: make most_recent camelCase
-		const { state, most_recent: mostRecent, threats } = scanState;
+		const { state, mostRecent, threats } = scanState;
 
 		// @todo: find out what should we do when the scan state is 'provisioning' (design missing)
+		// @todo: figure out if these states can happen at all
 		if ( state === 'unavailable' || state === 'provisioning' ) {
 			return this.renderUnavailable();
 		}
