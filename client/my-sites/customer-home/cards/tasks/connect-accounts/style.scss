@@ -1,4 +1,10 @@
 .connect-accounts {
+	padding-bottom: 24px;
+
+	@include breakpoint( '>480px' ) {
+		padding-bottom: 32px;
+	}
+	
 	.connect-accounts__timing {
 		display: flex;
 
@@ -9,7 +15,14 @@
 
 	.action-panel__title {
 		font-family: 'Recoleta', serif;
-		font-size: 36px;
+		font-size: 32px;
+		line-height: 40px;
+		margin-bottom: 0;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 40px;
+			line-height: 48px;
+		}
 	}
 
 	.action-panel__figure {
@@ -18,6 +31,13 @@
 
 	.connect-accounts__description {
 		font-size: 16px;
+		line-height: 24px;
+		color: var( --color-text );
+
+		@include breakpoint( '>660px' ) {
+			font-size: 20px;
+			line-height: 32px;
+		}
 	}
 
 	.action-panel__cta {
