@@ -12,7 +12,7 @@ Once published, you'll be able to install this package using npm with:
 
 ## Description
 
-This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
+This package provides a context provider, `CheckoutProvider`, a default component, `Checkout`, and the `CheckoutSteps` component which creates a checkout form.
 
 The form has two default steps:
 
@@ -47,10 +47,11 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
  - [useSelect](#useSelect)
  - [useTotal](#useTotal)
 
-The [Checkout](#checkout) component creates the form itself. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
- - [CheckoutSummary](#CheckoutSummary) can be used to render a summary that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
- - [CheckoutStepBody](#CheckoutStepBody) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
- - [CheckoutSteps](#CheckoutSteps) with [CheckoutStep](#CheckoutStep) children can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
+ - [CheckoutSummary](#CheckoutSummary) (optional) can be used to render a summary that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSteps](#CheckoutSteps) (required) creates the Checkout form itself. This includes the Checkout submit button and logic to handle step progression.
+ - [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+ - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
 
 Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
@@ -115,7 +116,7 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 ### Checkout
 
-The main wrapper component for the checkout form. It has the following props.
+The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
 
@@ -190,7 +191,7 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 ## CheckoutSteps
 
-A wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
+Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
 
 ### CheckoutSummary
 
@@ -340,7 +341,7 @@ A React Hook that will return true if the current step is complete as defined by
 
 ### useLineItems
 
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop). Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` from the `CheckoutProvider`), and the second element is the current total (matching the `total` from the `CheckoutProvider`). Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useLineItemsOfType
 
