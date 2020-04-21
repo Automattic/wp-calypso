@@ -88,12 +88,12 @@ export function CheckoutOrderSummary() {
 const CheckoutSummaryTitle = styled.div`
 	color: ${( props ) => props.theme.colors.textColor};
 	font-weight: ${( props ) => props.theme.weights.bold};
-	padding: 16px;
+	padding: 24px 20px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	padding: 16px;
+	padding: 24px 20px;
 `;
 
 const CheckoutSummaryLineItem = styled.div`

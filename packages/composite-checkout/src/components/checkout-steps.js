@@ -417,11 +417,10 @@ const CheckoutSummaryUI = styled.div`
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		box-sizing: border-box;
-		margin-left: 16px;
+		margin-left: 24px;
 		margin-right: 0;
 		order: 2;
-		width: 326px;
+		width: 328px;
 	}
 `;
 
