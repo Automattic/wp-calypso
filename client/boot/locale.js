@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getLanguageSlugs } from 'lib/i18n-utils';
+import { getLanguageSlugs, isDefaultLocale } from 'lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
@@ -71,7 +71,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const lastPathSegment = window.location.pathname.substr(
 			window.location.pathname.lastIndexOf( '/' ) + 1
 		);
-		const pathLocaleSlug = getLanguageSlugs().includes( lastPathSegment ) && lastPathSegment;
+		const pathLocaleSlug =
+			getLanguageSlugs().includes( lastPathSegment ) &&
+			! isDefaultLocale( lastPathSegment ) &&
+			lastPathSegment;
 		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
 		if ( localeSlug ) {
