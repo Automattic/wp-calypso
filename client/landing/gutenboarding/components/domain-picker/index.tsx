@@ -22,7 +22,7 @@ import {
 } from '../../utils/domain-suggestions';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { getNewRailcarId, RecordTrainTracksEventProps } from '../../utils/analytics';
+import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
 
 /**
  * Style dependencies

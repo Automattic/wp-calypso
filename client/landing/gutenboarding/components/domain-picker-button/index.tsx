@@ -13,7 +13,7 @@ import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
-import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../utils/analytics';
+import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
 
 /**
  * Style dependencies
