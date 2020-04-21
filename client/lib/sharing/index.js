@@ -1,8 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-
-import PopupMonitor from 'lib/popup-monitor';
+import PopupMonitor from '@automattic/popup-monitor';
 
 const requestExternalAccess = ( url, cb ) => {
 	const popupMonitor = new PopupMonitor();
