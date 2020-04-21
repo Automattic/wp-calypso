@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ export default function WPCheckoutOrderReview( {
 	onChangePlanLength,
 	siteUrl,
 } ) {
+	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const isPurchaseFree = total.amount.value === 0;
@@ -35,7 +37,7 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-			{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }
+			{ domainUrl && <DomainURL>{ translate( 'Site' ) + ': ' + domainUrl }</DomainURL> }
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
@@ -72,12 +74,14 @@ WPCheckoutOrderReview.propTypes = {
 };
 
 const DomainURL = styled.div`
-	margin-top: -12px;
+	color: ${( props ) => props.theme.colors.textColorLight};
+	font-size: 14px;
+	margin-top: -10px;
 	word-break: break-word;
 `;
 
 const CouponField = styled( Coupon )`
-	margin: 24px 30px 24px 0;
-	padding-bottom: 24px;
+	margin: 20px 30px 20px 0;
+	padding-bottom: 20px;
 	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 `;
