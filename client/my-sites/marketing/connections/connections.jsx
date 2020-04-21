@@ -16,22 +16,14 @@ import QueryKeyringServices from 'components/data/query-keyring-services';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import SharingServicesGroup from './services-group';
 
-const SharingConnections = ( { translate, expandedService } ) => (
+const SharingConnections = ( { translate } ) => (
 	<div className="connections__sharing-settings connections__sharing-connections">
 		<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 		<QueryKeyringConnections />
 		<QueryKeyringServices />
 		<QueryPublicizeConnections selectedSite />
-		<SharingServicesGroup
-			type="publicize"
-			title={ translate( 'Publicize Your Posts' ) }
-			expandedService={ expandedService }
-		/>
-		<SharingServicesGroup
-			type="other"
-			title={ translate( 'Manage Connections' ) }
-			expandedService={ expandedService }
-		/>
+		<SharingServicesGroup type="publicize" title={ translate( 'Publicize Your Posts' ) } />
+		<SharingServicesGroup type="other" title={ translate( 'Manage Connections' ) } />
 	</div>
 );
 

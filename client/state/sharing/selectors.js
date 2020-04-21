@@ -69,3 +69,13 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 		);
 	}, [] );
 }
+
+/**
+ * Given a service determine if this service should be displayed expanded on /marketing/connections
+ *
+ * @param {object} state Global state tree
+ * @param {object} service The service object to check
+ */
+export function isServiceExpanded( state, service ) {
+	return service.ID === state.sharing.expandedService;
+}

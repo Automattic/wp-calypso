@@ -26,6 +26,7 @@ import { fetchPreferences } from 'state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import versionCompare from 'lib/version-compare';
+import { setExpandedService } from 'state/sharing/actions';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -73,6 +74,9 @@ export const layout = ( context, next ) => {
 
 export const connections = ( context, next ) => {
 	const { store } = context;
+	const { dispatch } = store;
+	dispatch( setExpandedService( context.query.service ) );
+
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
 
@@ -82,9 +86,7 @@ export const connections = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingConnections, {
-		expandedService: context.query.service,
-	} );
+	context.contentComponent = createElement( SharingConnections );
 
 	next();
 };

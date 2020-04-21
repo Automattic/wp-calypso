@@ -71,7 +71,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 							if ( service.warnings ) {
 								return (
 									<Fragment key={ service.ID }>
-										<Component service={ service } expanded={ expandedService === service.ID } />
+										<Component service={ service } />
 										{ service.warnings.map( ( warning, index ) => (
 											<Notice
 												key={ `warning-${ index }` }
@@ -85,13 +85,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 								);
 							}
 
-							return (
-								<Component
-									key={ service.ID }
-									service={ service }
-									expanded={ expandedService === service.ID }
-								/>
-							);
+							return <Component key={ service.ID } service={ service } />;
 					  } )
 					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 							<ServicePlaceholder key={ 'service-placeholder-' + index } />
@@ -107,14 +101,17 @@ SharingServicesGroup.propTypes = {
 	services: PropTypes.array,
 	title: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
+	expandedService: PropTypes.string,
 };
 
 SharingServicesGroup.defaultProps = {
 	isFetching: false,
 	services: [],
+	expandedService: '',
 };
 
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
+	expandedService: state.sharing.expandedService,
 } ) )( SharingServicesGroup );
