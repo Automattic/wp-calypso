@@ -25,8 +25,8 @@ export type Threat = {
 	signature: string;
 	description: string;
 	status: ThreatStatus;
-	first_detected: string;
-	fixed_on?: string;
+	firstDetected: string;
+	fixedOn?: string;
 	fixable: false | ThreatFix;
 	filename?: string;
 	extension?: Extension;

@@ -11,10 +11,39 @@ import {
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'state/action-types';
 
+/**
+ * Make a Threat object response contain only camel-case keys and transform
+ * dates represented as string to Date object.
+ *
+ * @param {object} threat Raw threat object from Scan endpoint
+ * @returns {object} Processed threat object
+ */
+export const formatScanThreat = ( threat ) => ( {
+	id: threat.id,
+	signature: threat.signature,
+	description: threat.description,
+	status: threat.status,
+	firstDetected: new Date( threat.first_detected ),
+	fixedOn: new Date( threat.fixed_on ),
+	fixable: threat.fixable,
+	filename: threat.filename,
+	extension: threat.extension,
+	rows: threat.rows,
+	diff: threat.diff,
+	context: threat.context,
+} );
+
+/**
+ * Make a Scan object response contain only camel-case keys and transform
+ * dates represented as string to Date object.
+ *
+ * @param {object} scanState Raw Scan state object from Scan endpoint
+ * @returns {object} Processed Scan state
+ */
 const formatScanStateRawResponse = ( { state, threats, credentials, most_recent: mostRecent } ) => {
 	return {
 		state,
-		threats,
+		threats: threats.map( formatScanThreat ),
 		credentials,
 		mostRecent: {
 			...mostRecent,
