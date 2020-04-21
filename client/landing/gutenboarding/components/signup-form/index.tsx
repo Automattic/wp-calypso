@@ -28,6 +28,7 @@ interface Props {
 const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
@@ -47,6 +48,32 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			step: 'account_creation',
 		} );
 	}, [] );
+
+	useEffect( () => {
+		if ( newUserError ) {
+			let newErrorMessage: string | undefined;
+			switch ( newUserError.error ) {
+				case 'already_taken':
+				case 'already_active':
+				case 'email_exists':
+					newErrorMessage = __( 'An account with this email address already exists.' );
+					break;
+				case 'password_invalid':
+					newErrorMessage = newUserError.message;
+					break;
+				default:
+					newErrorMessage = __(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					);
+					break;
+			}
+			setErrorMessage( newErrorMessage );
+			recordOnboardingError( {
+				step: 'account_creation',
+				error: newUserError.error || 'signup_form_new_user_error',
+			} );
+		}
+	}, [ newUserError ] );
 
 	const lang = useLangRouteParam();
 
@@ -82,30 +109,6 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			link_to_tos: <ExternalLink href={ localizedTosLink } />,
 		}
 	);
-
-	let errorMessage: string | undefined;
-	if ( newUserError ) {
-		switch ( newUserError.error ) {
-			case 'already_taken':
-			case 'already_active':
-			case 'email_exists':
-				errorMessage = __( 'An account with this email address already exists.' );
-				break;
-			case 'password_invalid':
-				errorMessage = newUserError.message;
-				break;
-			default:
-				errorMessage = __(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				);
-				break;
-		}
-
-		recordOnboardingError( {
-			step: 'account_creation',
-			error: newUserError.error || 'signup_form_new_user_error',
-		} );
-	}
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
