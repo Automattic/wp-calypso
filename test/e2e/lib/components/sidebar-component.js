@@ -55,6 +55,13 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		); // TODO: data-tip-target target is missing
 	}
 
+	async selectWPAdmin() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.menu-link-text[data-e2e-sidebar="WP Admin"]' )
+		); // TODO: data-tip-target target is missing
+	}
+
 	async customizeTheme() {
 		return await this._scrollToAndClickMenuItem( 'themes' );
 	}

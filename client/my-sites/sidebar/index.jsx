@@ -830,7 +830,9 @@ export class MySitesSidebar extends Component {
 							onClick={ this.trackWpadminClick }
 						>
 							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
-							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+							<span className="menu-link-text" data-e2e-sidebar="WP Admin">
+								{ this.props.translate( 'WP Admin' ) }
+							</span>
 						</ExternalLink>
 					</li>
 				</ul>
