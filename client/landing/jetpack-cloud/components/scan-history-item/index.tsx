@@ -41,7 +41,7 @@ class ScanHistoryItem extends Component< ThreatsProps & PlaceholderProps > {
 		};
 	}
 
-	formatDate( date: string ) {
+	formatDate( date: Date ) {
 		return this.props.moment( date ).format( 'LL' );
 	}
 
