@@ -24,7 +24,7 @@ import {
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
-	hasEcommercePlan,
+	hasEcommercePlan
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
@@ -33,6 +33,7 @@ import { persistSignupDestination, retrieveSignupDestination } from 'signup/util
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
+import { abtest } from 'lib/abtest';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -48,7 +49,7 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	previousRoute,
-	isEligibleForSignupDestinationResult,
+	isEligibleForSignupDestinationResult
 } ) {
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
@@ -70,8 +71,8 @@ export function getThankYouPageUrl( {
 				query: {
 					post: parseInt( query.post, 10 ),
 					action: 'edit',
-					plan_upgraded: 1,
-				},
+					plan_upgraded: 1
+				}
 			} );
 			return sanitizedRedirectTo;
 		}
@@ -87,7 +88,7 @@ export function getThankYouPageUrl( {
 		feature,
 		cart,
 		isJetpackNotAtomic,
-		product,
+		product
 	} );
 
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
@@ -118,7 +119,7 @@ export function getThankYouPageUrl( {
 		pendingOrReceiptId,
 		cart,
 		siteSlug,
-		previousRoute,
+		previousRoute
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		return redirectPathForConciergeUpsell;
@@ -149,7 +150,7 @@ function getFallbackDestination( {
 	feature,
 	cart,
 	isJetpackNotAtomic,
-	product,
+	product
 } ) {
 	const isCartEmpty = getAllCartItems( cart ).length === 0;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -195,9 +196,9 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
-		// if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-		return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
-		// }
+		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+		}
 	}
 
 	return;
@@ -221,8 +222,8 @@ function getUrlWithQueryParam( url, queryParams ) {
 		pathname,
 		query: {
 			...query,
-			...queryParams,
-		},
+			...queryParams
+		}
 	} );
 }
 
@@ -266,14 +267,14 @@ export function useGetThankYouUrl( {
 	cart,
 	isJetpackNotAtomic,
 	product,
-	siteId,
+	siteId
 } ) {
-	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
+	const isEligibleForSignupDestinationResult = useSelector( state =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
-	const previousRoute = useSelector( ( state ) => getPreviousPath( state ) );
+	const previousRoute = useSelector( state => getPreviousPath( state ) );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
@@ -293,7 +294,7 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			previousRoute,
-			isEligibleForSignupDestinationResult,
+			isEligibleForSignupDestinationResult
 		} );
 		const url = getThankYouPageUrl( {
 			siteSlug,
@@ -307,7 +308,7 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			previousRoute,
-			isEligibleForSignupDestinationResult,
+			isEligibleForSignupDestinationResult
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;
@@ -321,7 +322,7 @@ export function useGetThankYouUrl( {
 		redirectTo,
 		feature,
 		purchaseId,
-		cart,
+		cart
 	] );
 	return getThankYouUrl;
 }
