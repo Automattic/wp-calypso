@@ -111,7 +111,7 @@ const CreateSite: React.FunctionComponent = () => {
 						className="create-site__progress-bar"
 						style={
 							{
-								'--progress': ! hasStarted ? 0 : progress,
+								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
 							} as React.CSSProperties
 						}
 					/>
