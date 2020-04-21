@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import classnames from 'classnames';
 
 /**
@@ -21,6 +20,7 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
+import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -41,15 +41,16 @@ class ActivityCard extends Component {
 	togglePopoverMenu = () => this.setState( { showPopoverMenu: ! this.state.showPopoverMenu } );
 	closePopoverMenu = () => this.setState( { showPopoverMenu: false } );
 
-	triggerRestore = () =>
-		page.redirect( backupRestorePath( this.props.siteSlug, this.props.activity.rewindId ) );
-	triggerDownload = () =>
-		page.redirect( backupDownloadPath( this.props.siteSlug, this.props.activity.rewindId ) );
-	triggerDetails = () =>
-		page.redirect( backupDetailPath( this.props.siteSlug, this.props.activity.rewindId ) );
-
 	render() {
-		const { activity, allowRestore, className, gmtOffset, timezone, translate } = this.props;
+		const {
+			activity,
+			allowRestore,
+			className,
+			gmtOffset,
+			timezone,
+			siteSlug,
+			translate,
+		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -76,15 +77,14 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 					<div className="activity-card__activity-actions">
-						<Button
-							compact
-							borderless
-							className="activity-card__detail-button"
-							onClick={ this.triggerDetails }
+						<a
+							className="activity-card__detail-link"
+							href={ backupDetailPath( siteSlug, activity.rewindId ) }
 						>
-							{ translate( 'See content' ) }
-							<Gridicon icon="chevron-down" />
-						</Button>
+							{ isSuccessfulBackup( activity )
+								? translate( 'Changes in this backup' )
+								: translate( 'See content' ) }
+						</a>
 						<Button
 							compact
 							borderless
@@ -102,14 +102,17 @@ class ActivityCard extends Component {
 							onClose={ this.closePopoverMenu }
 							className="activity-card__popover"
 						>
-							<Button onClick={ this.triggerRestore } className="activity-card__restore-button">
+							<Button
+								href={ backupRestorePath( siteSlug, activity.rewindId ) }
+								className="activity-card__restore-button"
+							>
 								{ translate( 'Restore to this point' ) }
 							</Button>
 							<Button
 								borderless
 								compact
 								isPrimary={ false }
-								onClick={ this.triggerDownload }
+								href={ backupDownloadPath( siteSlug, activity.rewindId ) }
 								className="activity-card__download-button"
 							>
 								<img
