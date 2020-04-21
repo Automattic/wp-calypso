@@ -130,7 +130,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<form onSubmit={ handleSignUp }>
 					<fieldset>
 						<legend className="signup-form__legend">
-							<p>{ __( 'Enter an email and password to save your progress and continue' ) }</p>
+							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
 						</legend>
 
 						<TextControl

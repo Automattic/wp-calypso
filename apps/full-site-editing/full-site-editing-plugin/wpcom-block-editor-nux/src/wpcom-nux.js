@@ -52,7 +52,7 @@ function WpcomNux() {
 
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
 	const welcomeHeading = isGutenboarding
-		? __( 'Welcome to your new website' )
+		? __( 'Welcome to your website' )
 		: __( 'Welcome to the WordPress editor' );
 
 	return (
@@ -64,25 +64,37 @@ function WpcomNux() {
 		>
 			<NuxPage
 				heading={ welcomeHeading }
-				description={ __(
-					'Create and edit site pages, and customize the look and feel of each page.'
-				) }
+				description={
+					isGutenboarding
+						? __(
+								'Edit your homepage, add the pages you need, and change your site’s look and feel.'
+						  )
+						: __( 'Create and edit site pages, and customize the look and feel of each page.' )
+				}
 				imgSrc={ editorImage }
 				alignBottom
 			/>
 
 			<NuxPage
-				heading={ __( 'Create pages and add your content' ) }
-				description={ __(
-					'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
-				) }
+				heading={
+					isGutenboarding
+						? __( 'Customize your content' )
+						: __( 'Create pages and add your content' )
+				}
+				description={
+					isGutenboarding
+						? __( 'Start with an existing layout and make it your own.' )
+						: __(
+								'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
+						  )
+				}
 				imgSrc={ blockImage }
 			/>
 
 			<NuxPage
-				heading={ __( 'Add anything you want' ) }
+				heading={ __( 'Add (almost) anything' ) }
 				description={ __(
-					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and many more types of blocks. Rearrange blocks on your pages to meet your needs.'
+					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
 				) }
 				imgSrc={ blockPickerImage }
 			/>

@@ -52,24 +52,29 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
-	const madlib = createInterpolateElement( madlibTemplate, {
-		Input: (
-			<span className="site-title__input-wrapper">
-				<span
-					contentEditable
-					tabIndex={ 0 }
-					role="textbox"
-					aria-multiline="true"
-					spellCheck={ false }
-					ref={ inputRef }
-					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-					className="madlib__input"
-					onKeyDown={ handleKeyDown }
-					onKeyUp={ handleKeyUp }
-				/>
-			</span>
-		),
-	} );
+	// translators: Form input for a site's title where "<Input />" is replaced by user input with an existing value.
+	const madlibTemplateWithPeriod = __( 'Itʼs called <Input />.' );
+	const madlib = createInterpolateElement(
+		siteTitle.trim().length ? madlibTemplateWithPeriod : madlibTemplate,
+		{
+			Input: (
+				<span className="site-title__input-wrapper">
+					<span
+						contentEditable
+						tabIndex={ 0 }
+						role="textbox"
+						aria-multiline="true"
+						spellCheck={ false }
+						ref={ inputRef }
+						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+						className="madlib__input"
+						onKeyDown={ handleKeyDown }
+						onKeyUp={ handleKeyUp }
+					/>
+				</span>
+			),
+		}
+	);
 
 	return (
 		<form
