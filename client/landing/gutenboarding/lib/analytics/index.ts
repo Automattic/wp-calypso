@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
+import { DependencyList } from 'react';
 
 /**
  * Internal dependencies
@@ -114,7 +115,7 @@ export function getNewRailcarId( suffix = 'suggestion' ) {
  * @param modalName The name of the modal to record in tracks
  * @param eventProperties Additional properties to record on closing the modal
  */
-export function recordCloseModal( modalName: string, eventProperties?: any ) {
+export function recordCloseModal( modalName: string, eventProperties?: DependencyList ) {
 	trackEventWithFlow( 'calypso_signup_modal_close', {
 		step: modalName,
 		...eventProperties,
@@ -138,7 +139,7 @@ export function recordEnterModal( modalName: string ) {
  * @param stepName The name of the step to record in tracks
  * @param eventProperties Additional properties to record on leaving the step
  */
-export function recordLeaveStep( stepName: StepNameType, eventProperties?: any ) {
+export function recordLeaveStep( stepName: StepNameType, eventProperties?: DependencyList ) {
 	trackEventWithFlow( 'calypso_signup_step_leave', {
 		step: stepName,
 		...eventProperties,

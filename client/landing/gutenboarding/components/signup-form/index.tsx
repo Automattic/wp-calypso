@@ -17,10 +17,9 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { trackEventWithFlow } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
-import { useTrackStep } from '../../hooks/use-track-step';
+import { useTrackModal } from '../../hooks/use-track-modal';
 
 interface Props {
 	onRequestClose: () => void;
@@ -43,7 +42,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		onRequestClose();
 	};
 
-	useTrackStep( 'Signup' );
+	useTrackModal( 'Signup' );
 
 	const lang = useLangRouteParam();
 
@@ -64,10 +63,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		} );
 
 		if ( success ) {
-			trackEventWithFlow( 'calypso_signup_step_leave', {
-				step: 'account_creation',
-			} );
-			clearErrors();
+			closeModal();
 		}
 	};
 

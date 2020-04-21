@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, DependencyList } from 'react';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { recordEnterModal, recordCloseModal } from '../lib/analytics';
  * @param eventProperties Additional properties to be recorded on completing the modal
  * @param deps Dependencies as will be passeed into react's useEffect
  */
-export function useTrackModal( modalName: string, eventProperties?: any, deps?: any ) {
+export function useTrackModal( modalName: string, eventProperties?: any, deps?: DependencyList ) {
 	useOnUnmount( () => {
 		recordCloseModal( modalName, eventProperties );
 	}, deps || [] );
