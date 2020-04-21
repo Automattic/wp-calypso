@@ -7,6 +7,7 @@ import { translate, TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { ThreatStatus } from 'landing/jetpack-cloud/components/threat-item/types';
 import MarkedLines from 'components/marked-lines';
 import DiffViewer from 'components/diff-viewer';
 
@@ -17,10 +18,9 @@ import './style.scss';
 
 export interface Props {
 	children?: ReactNode;
-	action?: 'ignored' | 'fixed';
-	details: string | ReactNode;
-	fix: string | ReactNode;
+	status: ThreatStatus;
 	problem: string | ReactNode;
+	fix?: string | ReactNode;
 	context?: object;
 	diff?: string;
 	filename?: string;
@@ -50,8 +50,7 @@ class ThreatDescription extends React.PureComponent< Props > {
 	}
 
 	render() {
-		const { children, action, details, problem, fix, diff, context, filename } = this.props;
-		const isThreatFixedOrIgnored = !! action;
+		const { children, status, problem, fix, diff, context, filename } = this.props;
 
 		return (
 			<div className="threat-description">
@@ -62,19 +61,18 @@ class ThreatDescription extends React.PureComponent< Props > {
 				{ fix && (
 					<p className="threat-description__section-title">
 						<strong>
-							{ ! isThreatFixedOrIgnored
+							{ status === 'current'
 								? translate( 'How we will fix it?' )
 								: translate( 'How did Jetpack fix it?' ) }
 						</strong>
 					</p>
 				) }
 				{ fix && this.renderTextOrNode( fix ) }
-				{ ( details || filename || context || diff ) && (
+				{ ( filename || context || diff ) && (
 					<p className="threat-description__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>
 					</p>
 				) }
-				{ this.renderTextOrNode( details ) }
 				{ this.renderFilename() }
 				{ context && <MarkedLines context={ context } /> }
 				{ diff && <DiffViewer diff={ diff } /> }

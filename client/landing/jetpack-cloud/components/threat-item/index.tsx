@@ -11,6 +11,7 @@ import { Button } from '@automattic/components';
  */
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
+import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatType } from './threat';
 
@@ -21,8 +22,8 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
-	onFixThreat: Function;
-	onIgnoreThreat: Function;
+	onFixThreat?: Function;
+	onIgnoreThreat?: Function;
 	isFixing: boolean;
 }
 
@@ -48,7 +49,8 @@ class ThreatItem extends Component< Props > {
 		);
 	}
 
-	getSubtitle( threat: Threat ) {
+	getThreatSubHeader(): string | i18nCalypso.TranslateResult {
+		const { threat } = this.props;
 		switch ( getThreatType( threat ) ) {
 			case 'core':
 				return translate( 'Vulnerability found in WordPress' );
@@ -67,7 +69,7 @@ class ThreatItem extends Component< Props > {
 				return translate( 'Vulnerability found in theme' );
 
 			case 'database':
-				return null;
+				return '';
 
 			case 'none':
 			default:
@@ -75,62 +77,7 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getTitle( threat: Threat ): i18nCalypso.TranslateResult {
-		// This should be temprary since this data should be coming from the api
-		// and not something that we should change to accompadate the results.
-		const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
-
-		const basename = filename ? filename.replace( /.*\//, '' ) : '';
-
-		switch ( getThreatType( threat ) ) {
-			case 'core':
-				return translate( 'Infected core file: {{filename/}} ', {
-					components: {
-						filename: <code className="threat-item__alert-filename">{ basename }</code>,
-					},
-				} );
-
-			case 'file':
-				return translate( 'The file {{filename/}} contains a malicious code pattern.', {
-					components: {
-						filename: <code className="threat-item__alert-filename">{ basename }</code>,
-					},
-				} );
-
-			case 'plugin':
-				return translate( 'Vulnerable Plugin: {{pluginSlug/}} (version {{version/}})', {
-					components: {
-						pluginSlug: <span className="threat-item__alert-slug">{ extension.slug }</span>,
-						version: <span className="threat-item__alert-version">{ extension.version }</span>,
-					},
-				} );
-
-			case 'theme':
-				return translate( 'Vulnerable Theme {{themeSlug/}} (version {{version/}})', {
-					components: {
-						themeSlug: <span className="threat-item__alert-slug">{ extension.slug }</span>,
-						version: <span className="threat-item__alert-version">{ extension.version }</span>,
-					},
-				} );
-
-			case 'database':
-				if ( ! threat.rows ) {
-					return translate( 'Database threat' );
-				}
-				return translate( 'Database %(threatCount)d threat', 'Database %(threatCount)d threats', {
-					count: Object.keys( threat.rows ).length,
-					args: {
-						threatCount: Object.keys( threat.rows ).length,
-					},
-				} );
-
-			case 'none':
-			default:
-				return translate( 'Threat found' );
-		}
-	}
-
-	getThreatFix(): null | i18nCalypso.TranslateResult {
+	getThreatFix(): i18nCalypso.TranslateResult {
 		const { threat } = this.props;
 		if ( ! threat.fixable ) {
 			return translate(
@@ -166,16 +113,15 @@ class ThreatItem extends Component< Props > {
 		return (
 			<LogItem
 				className="threat-item"
-				header={ this.getTitle( threat ) }
-				subheader={ this.getSubtitle( threat ) }
+				header={ <ThreatItemHeader threat={ threat } /> }
+				subheader={ this.getThreatSubHeader() }
 				summary={ fixThreatCTA }
 				expandedSummary={ fixThreatCTA }
 				key={ threat.id }
 				highlight="error"
 			>
 				<ThreatDescription
-					action={ threat.action }
-					details={ null }
+					status={ threat.status }
 					fix={ this.getThreatFix() }
 					problem={ threat.description }
 					context={ threat.context }
