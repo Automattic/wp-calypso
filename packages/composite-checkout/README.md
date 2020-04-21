@@ -344,7 +344,7 @@ A React Hook that will return a two element array where the first element is the
 
 ### useLineItemsOfType
 
-A React Hook that will return an array of line items matching a specific 'type' (i.e. 'tax'). Only works within [CheckoutProvider](#CheckoutProvider).
+A React Hook taking one string argument that will return an array of [line items](#line-items) from the cart (derived from the same data returned by [useLineItems](#useLineItems)) whose `type` property matches that string. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useMessages
 
