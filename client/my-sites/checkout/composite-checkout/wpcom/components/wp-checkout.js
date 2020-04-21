@@ -130,9 +130,9 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<CheckoutSummary>
+			<CheckoutSummaryUI>
 				<WPCheckoutOrderSummary />
-			</CheckoutSummary>
+			</CheckoutSummaryUI>
 			<CheckoutSteps>
 				<CheckoutStep
 					stepId="review-order-step"
@@ -212,6 +212,14 @@ export default function WPCheckout( {
 		</Checkout>
 	);
 }
+
+const CheckoutSummaryUI = styled( CheckoutSummary )`
+	display: none;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		display: block;
+	}
+`;
 
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
