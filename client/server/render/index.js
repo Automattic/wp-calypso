@@ -173,9 +173,9 @@ export function attachI18n( context ) {
 
 		context.entrypoint.language.translations = context.entrypoint.js
 			.concat( context.chunkFiles.js )
-			.map( chunk => path.parse( chunk ).name )
-			.filter( chunkId => translatedChunks.includes( chunkId ) )
-			.map( chunkId =>
+			.map( ( chunk ) => path.parse( chunk ).name )
+			.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
+			.map( ( chunkId ) =>
 				getTranslationChunkFileUrl( {
 					chunkId,
 					localeSlug: context.lang,
