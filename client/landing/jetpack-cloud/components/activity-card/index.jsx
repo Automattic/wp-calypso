@@ -27,6 +27,7 @@ import {
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
+import cloudIcon from './cloud-icon.svg';
 
 class ActivityCard extends Component {
 	constructor() {
