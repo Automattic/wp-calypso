@@ -20,7 +20,7 @@ export default function contactSupportUrl( siteUrl, scanState ) {
 	return addQueryArgs(
 		{
 			url: siteUrl,
-			'scan-state': scanState
+			'scan-state': scanState,
 		},
 		JETPACK_CONTACT_SUPPORT
 	);

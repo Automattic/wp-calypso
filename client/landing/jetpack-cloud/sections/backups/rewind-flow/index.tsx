@@ -14,7 +14,7 @@ import getSiteUrl from 'state/sites/selectors/get-site-url';
 import { RewindFlowPurpose } from './types';
 import {
 	applySiteOffsetType,
-	useApplySiteOffset
+	useApplySiteOffset,
 } from 'landing/jetpack-cloud/components/site-offset';
 import BackupDownloadFlow from './download';
 import BackupRestoreFlow from './restore';
@@ -40,7 +40,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteUrl = useSelector( state => ( siteId && getSiteUrl( state, siteId ) ) || '' );
+	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
 	const render = ( loadedApplySiteOffset: applySiteOffsetType ) => {
 		const backupDisplayDate = loadedApplySiteOffset(
