@@ -5,7 +5,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -32,6 +32,7 @@ interface Props {
 		URL: string;
 	};
 	threats: Array< Threat >;
+	error: boolean;
 }
 
 const ScanThreats = ( { site, threats }: Props ) => {
@@ -113,6 +114,11 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		<>
 			<SecurityIcon icon="error" />
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
+			<Card highlight="error">
+				Something went wrong with the most recent Scan. Please, get in touch with support to get
+				more information. <br />
+				Despite this error, we can inform you we have found threats in your site.
+			</Card>
 			<p>
 				{ translate(
 					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
