@@ -134,6 +134,10 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	renderSignInLinkOnly = () => {
+		// TODO: this needs a refactor to unify it with components/logged-out-form as it's using
+		// styles from there but not the component
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="sign-up-form">
 				<Card className="logged-out-form">
@@ -145,6 +149,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					</Card>
 				</Card>
 			</div>
+			/* eslint-enable */
 		);
 	};
 
