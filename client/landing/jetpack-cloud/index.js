@@ -8,8 +8,8 @@ import page from 'page';
  */
 import config from 'config';
 
-export default function () {
-	page( '/', ( context ) => {
+export default function() {
+	page( '/', context => {
 		let redirectPath = '/error';
 
 		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
