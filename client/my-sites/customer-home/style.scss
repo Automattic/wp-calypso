@@ -30,7 +30,7 @@
 	display: flex;
 
 	@include breakpoint( '<660px' ) {
-		margin-right: 16px;
+		padding-right: 16px;
 	}
 
 	.formatted-header {
@@ -86,7 +86,7 @@
 .customer-home__section-heading {
 	font-family: 'Recoleta', serif;
 	font-size: 1.25rem;
-	margin-bottom: 0.25rem;
+	margin: 32px 0 16px;
 
 	@include breakpoint( '<660px' ) {
 		padding: 0 16px;
@@ -123,11 +123,19 @@
 }
 
 .customer-home__main.is-experimental {
+	.customer-home__heading {
+		border-bottom: 1px solid var( --color-neutral-5 );
+	}
+
 	.card-heading,
 	.foldable-card__header {
 		margin-top: 0;
 		font-size: inherit;
 		font-weight: 700;
+	}
+
+	.card-heading {
+		margin-bottom: 8px;
 	}
 
 	.customer-home__card-subheader {
