@@ -7,17 +7,12 @@ import debug from 'debug';
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
-import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
+import { urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
-import {
-	retarget as retargetAdTrackers,
-	recordAliasInFloodlight,
-	recordAddToCart,
-	recordOrder,
-} from 'lib/analytics/ad-tracking';
+import { retarget as retargetAdTrackers, recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { trackAffiliateReferral } from './refer';
-import { gaRecordEvent, gaRecordPageView } from './ga';
+import { gaRecordPageView } from './ga';
 import { process as processQueue } from './queue';
 import {
 	recordTracksEvent,
@@ -72,30 +67,6 @@ const analytics = {
 				processQueue();
 			}, 0 );
 		},
-	},
-
-	recordAddToCart: function ( { cartItem } ) {
-		// TODO: move Tracks event here?
-		// Google Analytics
-		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
-		gaRecordEvent( 'Checkout', 'calypso_cart_product_add', '', usdValue ? usdValue : undefined );
-		// Marketing
-		recordAddToCart( cartItem );
-	},
-
-	recordPurchase: function ( { cart, orderId } ) {
-		if ( cart.total_cost >= 0.01 ) {
-			// Google Analytics
-			const usdValue = costToUSD( cart.total_cost, cart.currency );
-			gaRecordEvent(
-				'Purchase',
-				'calypso_checkout_payment_success',
-				'',
-				usdValue ? usdValue : undefined
-			);
-			// Marketing
-			recordOrder( cart, orderId );
-		}
 	},
 
 	tracks: {
