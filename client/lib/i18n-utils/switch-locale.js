@@ -163,7 +163,7 @@ export function getLanguageManifestFileUrl( {
 export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
 	if (
 		window?.i18nLanguageManifest &&
-		window?.i18nLanguageManifest?.[ '' ]?.localeSlug === localeSlug
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
 	) {
 		return Promise.resolve( window.i18nLanguageManifest );
 	}
