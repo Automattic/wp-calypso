@@ -59,7 +59,7 @@ describe( 'Reader: (' + screenSize + ') @parallel', function () {
 				await readerPage.waitForCommentToAppear( this.comment );
 			} );
 
-			describe( 'Delete the new comment', function () {
+			describe.skip( 'Delete the new comment', function () {
 				step( 'Can log in as test site owner', async function () {
 					this.loginFlow = new LoginFlow( driver, 'notificationsUser' );
 					return await this.loginFlow.login();
