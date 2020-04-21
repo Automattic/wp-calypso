@@ -72,10 +72,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
