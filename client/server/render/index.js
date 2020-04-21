@@ -160,11 +160,12 @@ export function attachI18n( context ) {
 	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		context.entrypoint.language.manifest = getLanguageManifestFileUrl(
-			context.lang,
-			'js',
-			context.languageRevisions
-		);
+		context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
+			localeSlug: context.lang,
+			fileType: 'js',
+			targetBuild: context.target,
+			languageRevisions: context.languageRevisions,
+		} );
 
 		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
 
@@ -173,7 +174,13 @@ export function attachI18n( context ) {
 			.map( chunk => path.parse( chunk ).name )
 			.filter( chunkId => translatedChunks.includes( chunkId ) )
 			.map( chunkId =>
-				getTranslationChunkFileUrl( chunkId, context.lang, 'js', context.languageRevisions )
+				getTranslationChunkFileUrl( {
+					chunkId,
+					localeSlug: context.lang,
+					fileType: 'js',
+					buildTarget: context.target,
+					languageRevisions: context.languageRevisions,
+				} )
 			);
 	}
 

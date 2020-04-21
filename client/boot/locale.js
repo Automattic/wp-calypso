@@ -17,7 +17,10 @@ import {
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
 const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
-	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
+	const { translatedChunks, locale } = await getLanguageManifestFile(
+		localeSlug,
+		window.BUILD_TARGET
+	);
 
 	reduxStore.dispatch( setLocaleRawData( locale ) );
 
@@ -27,10 +30,12 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
-			i18n.addTranslations( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
+			( translations ) => {
+				i18n.addTranslations( translations );
+				loadedTranslationChunks[ chunkId ] = true;
+			}
+		);
 	};
 	const installedChunks = new Set(
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
