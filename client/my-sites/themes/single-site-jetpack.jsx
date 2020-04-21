@@ -97,6 +97,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<UpsellNudge
+					forceDisplay
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 					description={ translate(
