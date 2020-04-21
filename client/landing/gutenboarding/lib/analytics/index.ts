@@ -117,7 +117,7 @@ export function getNewRailcarId( suffix = 'suggestion' ) {
  */
 export function recordCloseModal( modalName: string, eventProperties?: DependencyList ) {
 	trackEventWithFlow( 'calypso_signup_modal_close', {
-		step: modalName,
+		name: modalName,
 		...eventProperties,
 	} );
 }
@@ -129,7 +129,7 @@ export function recordCloseModal( modalName: string, eventProperties?: Dependenc
  */
 export function recordEnterModal( modalName: string ) {
 	trackEventWithFlow( 'calypso_signup_modal_open', {
-		step: modalName,
+		name: modalName,
 	} );
 }
 
