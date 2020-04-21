@@ -27,6 +27,7 @@
 	&:active {
 		background: var( --color-primary-5 );
 		border-color: var( --color-primary-40 );
+		border-width: 1px;
 	}
 
 	&[disabled],
