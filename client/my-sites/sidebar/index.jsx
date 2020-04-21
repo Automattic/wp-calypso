@@ -237,6 +237,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		if ( ! site ) {
+			return null;
+		}
+
 		if ( site && ! canUserUseEarn ) {
 			return null;
 		}
