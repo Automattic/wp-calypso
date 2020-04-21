@@ -14,6 +14,7 @@ import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
+import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
 import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
@@ -30,7 +31,43 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-class ScanPage extends Component {
+interface Props {
+	site: object | null;
+	siteSlug: string | null;
+	scanState: Scan | null;
+	lastScanTimestamp: number;
+	nextScanTimestamp: number;
+	moment: Function;
+}
+
+class ScanPage extends Component< Props > {
+	renderUnavailable() {
+		const { siteSlug } = this.props;
+
+		return (
+			<>
+				<SecurityIcon icon="scan-error" />
+				<h1 className="scan__header">{ 'Scan unavailable' }</h1>
+				<p>
+					The scan was unable to process the themes directory and did not completed successfully. In
+					order to complete the scan you will need to speak to support who can help determine what
+					went wrong.
+				</p>
+				<Button
+					primary
+					target="_blank"
+					rel="noopener noreferrer"
+					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+					className="scan__button"
+				>
+					{ translate( 'Contact Support {{externalIcon/}}', {
+						components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+					} ) }
+				</Button>
+			</>
+		);
+	}
+
 	renderScanOkay() {
 		const { site, siteSlug, moment, lastScanTimestamp, dispatchRecordTracksEvent } = this.props;
 
@@ -117,18 +154,35 @@ class ScanPage extends Component {
 			return <div className="scan__is-loading" />;
 		}
 
-		const status = scanState.state;
-		if ( status === 'scanning' ) {
+		// @todo: make most_recent camelCase
+		const { state, most_recent: mostRecent, threats } = scanState;
+
+		// @todo: find out what should we do when the scan state is 'provisioning' (design missing)
+		if ( state === 'unavailable' || state === 'provisioning' ) {
+			return this.renderUnavailable();
+		}
+
+		if ( state === 'scanning' ) {
 			return this.renderScanning();
 		}
 
-		if ( status !== 'done' && status !== 'idle' ) {
+		const errorFound = !! mostRecent.error;
+		const threatsFound = threats.length > 0;
+
+		if ( errorFound && ! threatsFound ) {
 			return this.renderScanError();
 		}
 
-		const threats = scanState.threats;
-		if ( threats && threats.length ) {
-			return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
+		if ( threatsFound ) {
+			// @todo: we should display somehow that an error happened (design missing)
+			return (
+				<ScanThreats
+					className="scan__threats"
+					threats={ threats }
+					error={ errorFound }
+					site={ site }
+				/>
+			);
 		}
 
 		return this.renderScanOkay();
