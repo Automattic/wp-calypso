@@ -4,7 +4,7 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
@@ -65,7 +65,7 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should render optimize SEO banner when has no SEO features', () => {
+	test( 'should render optimize SEO nudge when has no SEO features', () => {
 		const comp = shallow(
 			<SeoForm
 				{ ...props }
@@ -74,27 +74,29 @@ describe( 'SeoForm basic tests', () => {
 				selectedSite={ { plan: { product_slug: 'free' } } }
 			/>
 		);
-		expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Banner' ).props().event ).toContain( 'calypso_seo_settings_upgrade_nudge' );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+		expect( comp.find( 'UpsellNudge' ).props().event ).toContain(
+			'calypso_seo_settings_upgrade_nudge'
+		);
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has any SEO features', () => {
 		const comp = shallow( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 
 		comp.setProps( {
 			...props,
 			hasSeoPreviewFeature: false,
 			hasAdvancedSEOFeature: true,
 		} );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 
 		comp.setProps( {
 			...props,
 			hasSeoPreviewFeature: true,
 			hasAdvancedSEOFeature: true,
 		} );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has no site', () => {
@@ -106,7 +108,7 @@ describe( 'SeoForm basic tests', () => {
 				hasAdvancedSEOFeature={ false }
 			/>
 		);
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render SEO editor when has advanced seo and there is no conflicted SEO plugin', () => {
@@ -163,14 +165,14 @@ describe( 'SeoForm basic tests', () => {
 	} );
 } );
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
+describe( 'UpsellNudge should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
 		} );
 	} );
 
@@ -184,8 +186,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 						selectedSite={ { plan: { product_slug } } }
 					/>
 				);
-				expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
+				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
 			} );
 		}
 	);
@@ -200,8 +202,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 						selectedSite={ { plan: { product_slug } } }
 					/>
 				);
-				expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );
+				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );
 			} );
 		}
 	);

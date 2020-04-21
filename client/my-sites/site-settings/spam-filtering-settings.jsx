@@ -11,7 +11,7 @@ import { includes, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -54,12 +54,13 @@ const SpamFilteringSettings = ( {
 
 	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
 		return (
-			<Banner
+			<UpsellNudge
 				description={ translate( 'Automatically remove spam from comments and contact forms.' ) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
 				plan={ PLAN_JETPACK_PERSONAL }
 				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
+				showIcon={ true }
 			/>
 		);
 	}

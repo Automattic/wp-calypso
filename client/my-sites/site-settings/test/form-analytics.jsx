@@ -7,7 +7,7 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
@@ -54,11 +54,11 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 	} );
 	test( 'should not show upgrade nudge if disabled', () => {
 		const comp = shallow( <GoogleAnalyticsForm { ...props } showUpgradeNudge={ false } /> );
-		expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 0 );
 	} );
 } );
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
+describe( 'UpsellNudge should get appropriate plan constant', () => {
 	const myProps = {
 		...props,
 		showUpgradeNudge: true,
@@ -73,8 +73,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					site={ { plan: { product_slug } } }
 				/>
 			);
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
+			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
+			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
 				PLAN_PREMIUM
 			);
 		} );
@@ -89,8 +89,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					site={ { plan: { product_slug } } }
 				/>
 			);
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
+			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
+			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
 				PLAN_PREMIUM_2_YEARS
 			);
 		} );
@@ -106,8 +106,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 						site={ { plan: { product_slug } } }
 					/>
 				);
-				expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
-				expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
+				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
+				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
 					PLAN_JETPACK_PREMIUM
 				);
 			} );

@@ -12,7 +12,7 @@ import wrapSettingsForm from './wrap-settings-form';
 import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SupportInfo from 'components/support-info';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import FormLabel from 'components/forms/form-label';
@@ -131,7 +131,7 @@ export class GoogleAnalyticsForm extends Component {
 				/>
 
 				{ showUpgradeNudge && site && site.plan ? (
-					<Banner
+					<UpsellNudge
 						description={ translate(
 							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
 						) }
@@ -141,6 +141,7 @@ export class GoogleAnalyticsForm extends Component {
 							type: TYPE_PREMIUM,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
+						showIcon={ true }
 						title={ nudgeTitle }
 					/>
 				) : (
