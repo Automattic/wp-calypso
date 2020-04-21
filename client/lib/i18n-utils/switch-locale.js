@@ -251,6 +251,7 @@ export default function switchLocale( localeSlug ) {
 
 	// Todo: Handle switch locale with translation chunks
 	if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		setLocaleInDOM();
 		return;
 	}
 
