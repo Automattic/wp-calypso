@@ -20,7 +20,7 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -76,6 +76,7 @@ class ActivityCard extends Component {
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 				) }
+
 				<Card>
 					<ActivityActor
 						{ ...{
@@ -90,54 +91,22 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
-					<div className="activity-card__activity-actions">
-						<a
-							className="activity-card__detail-link"
-							href={ backupDetailPath( siteSlug, activity.rewindId ) }
-						>
-							{ isSuccessfulBackup( activity )
-								? translate( 'Changes in this backup' )
-								: translate( 'See content' ) }
-						</a>
-						<Button
-							compact
-							borderless
-							className="activity-card__actions-button"
-							onClick={ this.togglePopoverMenu }
-							ref={ this.popoverContext }
-						>
-							{ translate( 'Actions' ) }
-							<Gridicon icon="add" className="activity-card__actions-icon" />
-						</Button>
-
-						<PopoverMenu
-							context={ this.popoverContext.current }
-							isVisible={ this.state.showPopoverMenu }
-							onClose={ this.closePopoverMenu }
-							className="activity-card__popover"
-						>
-							<Button
-								href={ backupRestorePath( siteSlug, activity.rewindId ) }
-								className="activity-card__restore-button"
+					{ ! summarize && (
+						<div className="activity-card__activity-actions">
+							<a
+								className="activity-card__detail-link"
+								href={ backupDetailPath( siteSlug, activity.rewindId ) }
 							>
-								{ translate( 'Restore to this point' ) }
-							</Button>
-
+								{ isSuccessfulDailyBackup( activity )
+									? translate( 'Changes in this backup' )
+									: translate( 'See content' ) }
+							</a>
 							<Button
 								compact
 								borderless
-								className="activity-card__detail-button"
-								onClick={ this.triggerDetails }
-							>
-								{ translate( 'See content' ) }
-								<Gridicon icon="chevron-down" />
-							</Button>
-							<Button
-								compact
-								isPrimary={ false }
-								href={ backupDownloadPath( siteSlug, activity.rewindId ) }
-								className="activity-card__download-button"
-
+								className="activity-card__actions-button"
+								onClick={ this.togglePopoverMenu }
+								ref={ this.popoverContext }
 							>
 								{ translate( 'Actions' ) }
 								<Gridicon icon="add" className="activity-card__actions-icon" />
@@ -149,22 +118,18 @@ class ActivityCard extends Component {
 								onClose={ this.closePopoverMenu }
 								className="activity-card__popover"
 							>
-								<Button onClick={ this.triggerRestore } className="activity-card__restore-button">
+								<Button
+									href={ backupRestorePath( siteSlug, activity.rewindId ) }
+									className="activity-card__restore-button"
+								>
 									{ translate( 'Restore to this point' ) }
 								</Button>
+
 								<Button
-									borderless
-									compact
 									isPrimary={ false }
-									onClick={ this.triggerDownload }
+									href={ backupDownloadPath( siteSlug, activity.rewindId ) }
 									className="activity-card__download-button"
 								>
-									<img
-										src={ downloadIcon }
-										className="activity-card__download-icon"
-										role="presentation"
-										alt=""
-									/>
 									{ translate( 'Download backup' ) }
 								</Button>
 							</PopoverMenu>
