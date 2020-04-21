@@ -54,7 +54,6 @@
 	}
 }
 
-
 .style-preview__actions {
 	position: absolute;
 	top: 50%;
@@ -96,7 +95,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__header {
 		display: grid;
 		grid-template-areas: 'title viewport-select actions';
@@ -147,7 +146,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__content {
 		display: block;
 		width: 100%;
@@ -199,7 +198,6 @@
 		width: 100%;
 	}
 
-
 	// Extra specificity to override core style
 	// This is effectively a more-specific synonmy of the same selector
 	&.components-button {
@@ -248,7 +246,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__preview {
 		grid-area: preview;
 		width: 100%;
