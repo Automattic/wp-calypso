@@ -50,10 +50,12 @@ import {
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
 import { useFormStatus } from './lib/form-status';
+import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutCheckIcon,
 	CheckoutModal,
 	CheckoutOrderSummaryStep,
 	CheckoutOrderSummary,
