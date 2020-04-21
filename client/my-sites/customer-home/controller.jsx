@@ -9,20 +9,13 @@ import page from 'page';
  * Internal Dependencies
  */
 import CustomerHome from './main';
-import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSitePlan } from 'state/sites/selectors';
+import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 import isRecentlyMigratedSite from 'state/selectors/is-site-recently-migrated';
-import reducer from 'state/concierge/reducer';
 
 export default async function ( context, next ) {
 	const state = await context.store.getState();
 	const siteId = await getSelectedSiteId( state );
-	const plan = await getSitePlan( state, siteId );
-
-	if ( isBusinessPlan( plan.product_slug ) || isEcommercePlan( plan.product_slug ) ) {
-		await context.store.addReducer( [ 'concierge' ], reducer );
-	}
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
