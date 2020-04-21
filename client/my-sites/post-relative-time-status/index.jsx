@@ -55,27 +55,31 @@ class PostRelativeTime extends React.PureComponent {
 		const scheduledDate = moment( this.getTimestamp() );
 
 		const isScheduledPost = this.props.post.status === 'future';
-		if ( ! isScheduledPost && Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
-			const time = moment( this.getTimestamp() );
-			return time.fromNow();
+
+		let scheduledTime;
+		if ( isScheduledPost ) {
+			scheduledTime = scheduledDate.calendar( null, {
+				nextDay: this.props.translate( '[for tomorrow at] LT', {
+					comment: 'LT refers to time (eg. 18:00)',
+				} ),
+				sameElse: this.props.translate( '[for] ll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" and "for" is translated',
+				} ),
+			} );
+		} else {
+			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
+				const time = moment( this.getTimestamp() );
+				return time.fromNow();
+			}
+
+			scheduledTime = scheduledDate.calendar( null, {
+				sameElse: this.props.translate( '[on] ll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
+				} ),
+			} );
 		}
-
-		const sameElseForScheduled = this.props.translate( '[for] ll [at] LT', {
-			comment:
-				'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" and "for" is translated',
-		} );
-
-		const sameElse = this.props.translate( '[on] ll [at] LT', {
-			comment:
-				'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
-		} );
-
-		const scheduledTime = scheduledDate.calendar( null, {
-			nextDay: this.props.translate( '[for tomorrow at] LT', {
-				comment: 'LT refers to time (eg. 18:00)',
-			} ),
-			sameElse: isScheduledPost ? sameElseForScheduled : sameElse,
-		} );
 
 		// If the content is scheduled to be release within a year, do not display the year at the end
 		return scheduledDate.diff( now, 'years' ) > 0
