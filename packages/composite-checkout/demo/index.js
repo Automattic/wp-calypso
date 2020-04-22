@@ -9,10 +9,11 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
-	CheckoutSummary,
-	CheckoutSteps,
+	CheckoutStepArea,
 	CheckoutStep,
 	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummary,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
@@ -400,7 +401,7 @@ function MyCheckoutBody() {
 			<CheckoutSummary className={ orderSummary.className }>
 				{ orderSummary.summaryContent }
 			</CheckoutSummary>
-			<CheckoutSteps>
+			<CheckoutStepArea>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }
 					completeStepContent={ orderSummaryStep.completeStepContent }
@@ -412,38 +413,40 @@ function MyCheckoutBody() {
 					totalSteps={ 1 }
 					stepId={ 'order-summary' }
 				/>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
-				/>
-				<CheckoutStep
-					stepId={ contactFormStep.id }
-					isCompleteCallback={ () =>
-						new Promise( ( resolve ) =>
-							setTimeout( () => {
-								if ( country.length === 0 ) {
-									showError( 'The country field is required' );
-									resolve( false );
-									return;
-								}
-								resolve( true );
-							}, 1500 )
-						)
-					}
-					activeStepContent={ contactFormStep.activeStepContent }
-					completeStepContent={ contactFormStep.completeStepContent }
-					titleContent={ contactFormStep.titleContent }
-				/>
-				<CheckoutStep
-					stepId="payment-method-step"
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-				/>
-			</CheckoutSteps>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId={ contactFormStep.id }
+						isCompleteCallback={ () =>
+							new Promise( ( resolve ) =>
+								setTimeout( () => {
+									if ( country.length === 0 ) {
+										showError( 'The country field is required' );
+										resolve( false );
+										return;
+									}
+									resolve( true );
+								}, 1500 )
+							)
+						}
+						activeStepContent={ contactFormStep.activeStepContent }
+						completeStepContent={ contactFormStep.completeStepContent }
+						titleContent={ contactFormStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</Checkout>
 	);
 }
