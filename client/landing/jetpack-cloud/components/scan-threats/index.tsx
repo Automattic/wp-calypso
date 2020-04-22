@@ -35,7 +35,16 @@ interface Props {
 	error: boolean;
 }
 
-const ScanThreats = ( { site, threats }: Props ) => {
+// @todo: once we have designs for the "error+threats found" case, we should update this component
+const ScanError = () => (
+	<Card highlight="error">
+		Something went wrong with the most recent Scan. Please, get in touch with support to get more
+		information. <br />
+		Despite this error, we can inform you we have found threats in your site.
+	</Card>
+);
+
+const ScanThreats = ( { error, site, threats }: Props ) => {
 	const [ fixingThreats, setFixingThreats ] = React.useState< Array< Threat > >( [] );
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >( threats[ 0 ] );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
@@ -114,11 +123,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		<>
 			<SecurityIcon icon="error" />
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
-			<Card highlight="error">
-				Something went wrong with the most recent Scan. Please, get in touch with support to get
-				more information. <br />
-				Despite this error, we can inform you we have found threats in your site.
-			</Card>
+			{ error && <ScanError /> }
 			<p>
 				{ translate(
 					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
