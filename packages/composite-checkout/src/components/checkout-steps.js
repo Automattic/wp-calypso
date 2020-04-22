@@ -313,9 +313,10 @@ export function CheckoutStepBody( {
 	nextStepNumber,
 	formStatus,
 	completeStepContent,
+	onError,
 } ) {
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
 			<StepWrapperUI
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
@@ -372,6 +373,7 @@ export function CheckoutStepBody( {
 
 CheckoutStepBody.propTypes = {
 	errorMessage: PropTypes.string,
+	onError: PropTypes.func,
 	editButtonAriaLabel: PropTypes.string,
 	nextStepButtonText: PropTypes.string,
 	nextStepButtonAriaLabel: PropTypes.string,
