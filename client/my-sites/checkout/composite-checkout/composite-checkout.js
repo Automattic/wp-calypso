@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	WPCheckout,
-	WPCheckoutErrorBoundary,
 	useWpcomStore,
 	useShoppingCart,
 	FormFieldAnnotation,
@@ -289,18 +288,16 @@ export default function CompositeCheckout( {
 	) => {
 		const getIsFieldDisabled = () => isDisabled;
 		return (
-			<WPCheckoutErrorBoundary>
-				<ContactDetailsFormFields
-					countriesList={ countriesList }
-					contactDetails={ contactDetails }
-					contactDetailsErrors={
-						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-					}
-					onContactDetailsChange={ updateDomainContactFields }
-					shouldForceRenderOnPropChange={ true }
-					getIsFieldDisabled={ getIsFieldDisabled }
-				/>
-			</WPCheckoutErrorBoundary>
+			<ContactDetailsFormFields
+				countriesList={ countriesList }
+				contactDetails={ contactDetails }
+				contactDetailsErrors={
+					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+				}
+				onContactDetailsChange={ updateDomainContactFields }
+				shouldForceRenderOnPropChange={ true }
+				getIsFieldDisabled={ getIsFieldDisabled }
+			/>
 		);
 	};
 
