@@ -11,12 +11,14 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
+import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import Badge from 'components/badge';
+import ScanBadge from 'landing/jetpack-cloud/components/scan-badge';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -69,8 +71,16 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { selectedSiteSlug, translate, threats } = this.props;
+		const { selectedSiteSlug, translate, threats, siteId, scanProgress } = this.props;
 		const numberOfThreatsFound = threats.length;
+
+		const scanTitle = this.props.translate( 'Scan', {
+			comment: 'Jetpack Cloud / Scan sidebar navigation item',
+		} );
+
+		const scanBadge = (
+			<ScanBadge progress={ scanProgress } numberOfThreatsFound={ numberOfThreatsFound } />
+		);
 
 		return (
 			<Sidebar className="sidebar__jetpack-cloud">
@@ -112,52 +122,52 @@ class JetpackCloudSidebar extends Component {
 						</ExpandableSidebarMenu>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/scan' ) && (
-						<ExpandableSidebarMenu
-							onClick={ this.toggleSection( SIDEBAR_SECTION_SCAN ) }
-							expanded={ this.props.isScanSectionOpen }
-							title={ this.props.translate( 'Scan', {
-								comment: 'Jetpack Cloud / Scan sidebar navigation item',
-							} ) }
-							materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
-							materialIconStyle="filled"
-						>
-							<ul>
-								<SidebarItem
-									expandSection={ this.expandScanSection }
-									label={ translate( 'Scanner', {
-										comment: 'Jetpack Cloud / Scanner sidebar navigation item',
-									} ) }
-									link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
-									onNavigate={ this.onNavigate }
-									selected={
-										itemLinkMatches( '/scan', this.props.path ) &&
-										! itemLinkMatches( '/scan/history', this.props.path )
-									}
-								>
-									{ numberOfThreatsFound > 0 && (
-										<Badge type="error">
-											{ translate( '%(number)d threat', '%(number)d threats', {
-												count: numberOfThreatsFound,
-												args: {
-													number: numberOfThreatsFound,
-												},
-											} ) }
-										</Badge>
-									) }
-								</SidebarItem>
-								<SidebarItem
-									expandSection={ this.expandScanSection }
-									label={ translate( 'History', {
-										comment: 'Jetpack Cloud / Scan History sidebar navigation item',
-									} ) }
-									link={
-										selectedSiteSlug ? `/scan/history/${ selectedSiteSlug }` : '/scan/history'
-									}
-									onNavigate={ this.onNavigate }
-									selected={ itemLinkMatches( '/scan/history', this.props.path ) }
-								/>
-							</ul>
-						</ExpandableSidebarMenu>
+						<>
+							<QueryJetpackScan siteId={ siteId } />
+							<ExpandableSidebarMenu
+								onClick={ this.toggleSection( SIDEBAR_SECTION_SCAN ) }
+								expanded={ this.props.isScanSectionOpen }
+								title={
+									this.props.isScanSectionOpen ? (
+										scanTitle
+									) : (
+										<>
+											{ scanTitle } { scanBadge }{ ' ' }
+										</>
+									)
+								}
+								materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
+								materialIconStyle="filled"
+							>
+								<ul>
+									<SidebarItem
+										expandSection={ this.expandScanSection }
+										label={ translate( 'Scanner', {
+											comment: 'Jetpack Cloud / Scanner sidebar navigation item',
+										} ) }
+										link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
+										onNavigate={ this.onNavigate }
+										selected={
+											itemLinkMatches( '/scan', this.props.path ) &&
+											! itemLinkMatches( '/scan/history', this.props.path )
+										}
+									>
+										{ scanBadge }
+									</SidebarItem>
+									<SidebarItem
+										expandSection={ this.expandScanSection }
+										label={ translate( 'History', {
+											comment: 'Jetpack Cloud / Scan History sidebar navigation item',
+										} ) }
+										link={
+											selectedSiteSlug ? `/scan/history/${ selectedSiteSlug }` : '/scan/history'
+										}
+										onNavigate={ this.onNavigate }
+										selected={ itemLinkMatches( '/scan/history', this.props.path ) }
+									/>
+								</ul>
+							</ExpandableSidebarMenu>
+						</>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/settings' ) && (
 						<SidebarItem
@@ -210,12 +220,15 @@ export default connect(
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteScanThreats( state, siteId );
+		const scanProgress = getSiteScanProgress( state, siteId );
 
 		return {
+			siteId,
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			threats,
+			scanProgress,
 		};
 	},
 	{
