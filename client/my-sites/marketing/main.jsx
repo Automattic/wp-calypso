@@ -33,7 +33,7 @@ import './style.scss';
 
 export const Sharing = ( {
 	contentComponent,
-	path,
+	pathname,
 	showButtons,
 	showConnections,
 	showTraffic,
@@ -82,8 +82,7 @@ export const Sharing = ( {
 		} );
 	}
 
-	const selected = find( filters, { route: path } );
-
+	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -99,7 +98,7 @@ export const Sharing = ( {
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
 						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ path === route }>
+							<NavItem key={ id } path={ route } selected={ pathname === route }>
 								{ title }
 							</NavItem>
 						) ) }

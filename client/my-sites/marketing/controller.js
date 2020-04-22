@@ -65,9 +65,9 @@ export const redirectSharingButtons = ( context ) => {
 };
 
 export const layout = ( context, next ) => {
-	const { contentComponent, path } = context;
+	const { contentComponent, pathname } = context;
 
-	context.primary = createElement( Sharing, { contentComponent, path } );
+	context.primary = createElement( Sharing, { contentComponent, pathname } );
 
 	next();
 };
