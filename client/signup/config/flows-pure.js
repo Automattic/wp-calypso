@@ -121,16 +121,7 @@ export function generateFlows( {
 			steps: [ 'user', 'plans', 'domains', 'upsell-plan', 'plans-plan-only' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-04-09',
-			showRecaptcha: true,
-		},
-
-		'plan-only': {
-			steps: [ 'upsell-plan', 'plans-plan-only' ],
-			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-04-09',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			lastModified: '2020-04-22',
 			showRecaptcha: true,
 		},
 

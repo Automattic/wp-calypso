@@ -130,14 +130,6 @@ export default function () {
 		);
 	}
 
-	page(
-		'/checkout/offer-plan-with-domain/:site?',
-		siteSelection,
-		upsellNudge,
-		makeLayout,
-		clientRender
-	);
-
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
@@ -163,4 +155,12 @@ export default function () {
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
+
+	page(
+		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
 }

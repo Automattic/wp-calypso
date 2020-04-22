@@ -257,7 +257,6 @@ export function generateSteps( {
 			fulfilledStepCallback: shouldShowUpsell,
 			providesDependencies: [ 'domainItem' ],
 			optionalDependencies: [ 'domainItem' ],
-			// dependencies: [ 'siteSlug', 'domainItem' ]
 		},
 
 		'plans-plan-only': {
