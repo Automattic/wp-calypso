@@ -189,6 +189,7 @@ const Header: FunctionComponent = () => {
 			recordOnboardingComplete( {
 				isNewSite: !! newSite,
 				isNewUser: !! newUser,
+				blogId: newSite.blogid,
 			} );
 
 			setIsRedirecting( true );
