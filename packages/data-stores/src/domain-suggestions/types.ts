@@ -49,6 +49,11 @@ export interface DomainSuggestionQuery {
 	 * The vertical id or slug
 	 */
 	vertical?: string;
+
+	/**
+	 * An array of tlds
+	 */
+	tlds?: Array< string >;
 }
 
 export type DomainName = string;

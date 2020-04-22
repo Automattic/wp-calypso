@@ -28,6 +28,11 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
+export const setDomainCategory = ( domainCategory: string ) => ( {
+	type: 'SET_DOMAIN_CATEGORY' as const,
+	domainCategory,
+} );
+
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	type: 'SET_SELECTED_DESIGN' as const,
 	selectedDesign,
@@ -122,6 +127,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetSiteVertical
 	| typeof setDomain
 	| typeof setDomainSearch
+	| typeof setDomainCategory
 	| typeof setFonts
 	| typeof setSelectedDesign
 	| typeof setSelectedSite

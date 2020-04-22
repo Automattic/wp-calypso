@@ -37,6 +37,13 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
+const domainCategory: Reducer< string, OnboardAction > = ( state = 'Popular', action ) => {
+	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
+		return action.domainCategory;
+	}
+	return state;
+};
+
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -110,6 +117,7 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
+	domainCategory,
 	selectedFonts,
 	selectedDesign,
 	siteTitle,
