@@ -7,6 +7,7 @@ import {
 	Checkout,
 	CheckoutStep,
 	CheckoutStepBody,
+	CheckoutSummary,
 	useIsStepActive,
 	useIsStepComplete,
 } from './components/checkout-steps';
@@ -19,7 +20,7 @@ import {
 import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal } from './lib/line-items';
+import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
 	createRegistry,
 	defaultRegistry,
@@ -38,27 +39,33 @@ import {
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import CheckoutOrderSummary, {
-	CheckoutOrderSummaryTitle,
+import CheckoutOrderSummaryStep, {
+	CheckoutOrderSummary,
+	CheckoutOrderSummaryStepTitle,
 } from './components/checkout-order-summary';
 import {
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
 import { useFormStatus } from './lib/form-status';
+import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutCheckIcon,
 	CheckoutModal,
+	CheckoutOrderSummaryStep,
 	CheckoutOrderSummary,
-	CheckoutOrderSummaryTitle,
+	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSummary,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
@@ -71,6 +78,7 @@ export {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -89,5 +97,6 @@ export {
 	useRegisterStore,
 	useRegistry,
 	useSelect,
+	useLineItemsOfType,
 	useTotal,
 };

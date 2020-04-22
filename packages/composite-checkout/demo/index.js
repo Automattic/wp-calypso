@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
+	CheckoutSummary,
 	CheckoutSteps,
 	CheckoutStep,
 	CheckoutStepBody,
@@ -18,6 +19,7 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -258,6 +260,7 @@ function ContactForm( { summary } ) {
 	);
 }
 
+const orderSummary = getDefaultOrderSummary();
 const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
@@ -394,18 +397,21 @@ function MyCheckoutBody() {
 
 	return (
 		<Checkout>
-			<CheckoutStepBody
-				activeStepContent={ orderSummaryStep.activeStepContent }
-				completeStepContent={ orderSummaryStep.completeStepContent }
-				titleContent={ orderSummaryStep.titleContent }
-				errorMessage={ 'There was an error with this step.' }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-			/>
+			<CheckoutSummary className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummary>
 			<CheckoutSteps>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary' }
+				/>
 				<CheckoutStep
 					stepId="review-order-step"
 					isCompleteCallback={ () => true }

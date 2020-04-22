@@ -6,9 +6,9 @@ import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
 	Checkout,
-	CheckoutStepBody,
 	CheckoutSteps,
 	CheckoutStep,
+	CheckoutSummary,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	useIsStepComplete,
@@ -25,7 +25,7 @@ import {
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
+import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
@@ -130,17 +130,9 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<CheckoutStepBody
-				activeStepContent={ null }
-				completeStepContent={ <WPCheckoutOrderSummary siteUrl={ siteUrl } /> }
-				titleContent={ <WPCheckoutOrderSummaryTitle /> }
-				errorMessage={ translate( 'There was an error with the summary step.' ) }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-			/>
+			<CheckoutSummaryUI>
+				<WPCheckoutOrderSummary />
+			</CheckoutSummaryUI>
 			<CheckoutSteps>
 				<CheckoutStep
 					stepId="review-order-step"
@@ -155,6 +147,7 @@ export default function WPCheckout( {
 							variantRequestStatus={ variantRequestStatus }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
+							siteUrl={ siteUrl }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
@@ -220,6 +213,14 @@ export default function WPCheckout( {
 	);
 }
 
+const CheckoutSummaryUI = styled( CheckoutSummary )`
+	display: none;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		display: block;
+	}
+`;
+
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
@@ -228,7 +229,7 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	const [ items, total ] = useLineItems();
 	const taxes = items.filter( ( item ) => item.type === 'tax' );
 	return (
-		<React.Fragment>
+		<>
 			{ paymentMethodStep.activeStepContent }
 
 			<CheckoutTermsUI>
@@ -242,7 +243,7 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 				) ) }
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
-		</React.Fragment>
+		</>
 	);
 }
 
