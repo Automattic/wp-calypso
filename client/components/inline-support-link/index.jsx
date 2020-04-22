@@ -76,7 +76,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className="inline-support-link"
 				href={ url }
-				onClick={ shouldOpenDialog && openDialog }
+				onClick={ ( shouldOpenDialog && openDialog ) || null }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
