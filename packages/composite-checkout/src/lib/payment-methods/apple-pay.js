@@ -45,8 +45,8 @@ export function createApplePayMethod( {
 				};
 				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
-				debug( 'stripe transaction had an error', error );
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+				debug( 'stripe transaction had an error', error.message );
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error.message };
 			}
 			debug( 'stripe transaction is successful' );
 			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
@@ -365,7 +365,7 @@ async function submitStripePayment( {
 		setFormReady();
 		debug( 'showing error for submit', error );
 		onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: error } );
-		showErrorMessage( error );
+		showErrorMessage( error.message );
 		return;
 	}
 }

@@ -16,13 +16,17 @@ export type ThreatFix = {
 	target?: string;
 };
 
+export type ThreatStatus = 'fixed' | 'ignored' | 'current';
+
+// @todo: we should transform any snake case key to camel case before the data touches the store
+// @todo: make the history API response use a number for a threat ID instead of a string
 export type Threat = {
 	id: number;
 	signature: string;
 	description: string;
-	action?: 'fixed' | 'ignored';
-	detectionDate: string;
-	actionDate: string;
+	status: ThreatStatus;
+	first_detected: string;
+	fixed_on?: string;
 	fixable: false | ThreatFix;
 	filename?: string;
 	extension?: Extension;

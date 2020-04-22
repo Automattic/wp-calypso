@@ -17,7 +17,7 @@ import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,
-	getEventsInDailyBackup,
+	getRealtimeBackups,
 	getMetaDiffForDailyBackup,
 } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -49,7 +49,7 @@ import { backupMainPath } from './paths';
  */
 import './style.scss';
 
-const INDEX_FORMAT = 'YYYYMMDD';
+export const INDEX_FORMAT = 'YYYYMMDD';
 
 const backupStatusNames = [
 	'rewind__backup_complete_full',
@@ -171,7 +171,10 @@ class BackupsPage extends Component {
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
+		const realtimeBackups = getRealtimeBackups(
+			logs,
+			applySiteOffset( moment( selectedDateString ), { timezone, gmtOffset } )
+		);
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
@@ -199,14 +202,18 @@ class BackupsPage extends Component {
 				{ ! isLoadingBackups && (
 					<>
 						<DailyBackupStatus
-							allowRestore={ allowRestore }
-							siteSlug={ siteSlug }
-							backup={ backupsOnSelectedDate.lastBackup }
-							lastDateAvailable={ lastDateAvailable }
-							selectedDate={ this.getSelectedDate() }
-							timezone={ timezone }
-							gmtOffset={ gmtOffset }
-							onDateChange={ this.onDateChange }
+							{ ...{
+								allowRestore,
+								siteSlug,
+								dailyBackup: backupsOnSelectedDate.lastBackup,
+								lastDateAvailable,
+								selectedDate: this.getSelectedDate(),
+								timezone,
+								gmtOffset,
+								onDateChange: this.onDateChange,
+								hasRealtimeBackups,
+								realtimeBackups,
+							} }
 						/>
 						{ doesRewindNeedCredentials && (
 							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
@@ -216,7 +223,7 @@ class BackupsPage extends Component {
 								deltas,
 								backupAttempts,
 								hasRealtimeBackups,
-								realtimeEvents,
+								realtimeBackups,
 								allowRestore,
 								moment,
 								siteSlug,

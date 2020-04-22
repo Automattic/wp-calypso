@@ -11,7 +11,10 @@ import { get } from 'lodash';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
-import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import {
+	isSuccessfulDailyBackup,
+	isSuccessfulRealtimeBackup,
+} from 'landing/jetpack-cloud/sections/backups/utils';
 import {
 	/*backupDetailPath,*/ backupDownloadPath,
 	backupRestorePath,
@@ -19,15 +22,21 @@ import {
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
+import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const INDEX_FORMAT = 'YYYYMMDD';
-
 class DailyBackupStatus extends Component {
+	getValidRestoreId = () => {
+		const { dailyBackup, hasRealtimeBackups, realtimeBackups } = this.props;
+		const realtimeBackup = get( realtimeBackups, '[0]', [] );
+		return hasRealtimeBackups ? realtimeBackup.rewindId : dailyBackup.rewindId;
+	};
+
 	getDisplayDate = ( date, withLatest = true ) => {
 		const { translate, moment, timezone, gmtOffset } = this.props;
 
@@ -276,11 +285,44 @@ class DailyBackupStatus extends Component {
 		);
 	}
 
-	renderBackupStatus( backup ) {
-		const { selectedDate, lastDateAvailable, moment, timezone, gmtOffset } = this.props;
+	renderRealtimeDetails( backup ) {
+		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
+		return (
+			<div className="daily-backup-status__realtime-details">
+				<div className="daily-backup-status__realtime-details-title">Backup details</div>
+				<div className="daily-backup-status__realtime-details-card">
+					<ActivityCard
+						{ ...{
+							moment,
+							activity: backup,
+							allowRestore,
+							timezone,
+							gmtOffset,
+							siteSlug,
+							summarize: true,
+						} }
+					/>
+				</div>
+			</div>
+		);
+	}
 
-		if ( backup ) {
-			return isSuccessfulBackup( backup )
+	renderBackupStatus( backup ) {
+		const {
+			hasRealtimeBackups,
+			selectedDate,
+			lastDateAvailable,
+			moment,
+			timezone,
+			gmtOffset,
+		} = this.props;
+
+		if ( backup && hasRealtimeBackups ) {
+			return isSuccessfulRealtimeBackup( backup )
+				? this.renderGoodBackup( backup )
+				: this.renderFailedBackup( backup );
+		} else if ( backup && ! hasRealtimeBackups ) {
+			return isSuccessfulDailyBackup( backup )
 				? this.renderGoodBackup( backup )
 				: this.renderFailedBackup( backup );
 		}
@@ -303,11 +345,15 @@ class DailyBackupStatus extends Component {
 	}
 
 	render() {
-		const backup = this.props.backup;
+		const { dailyBackup, hasRealtimeBackups, realtimeBackups } = this.props;
+		const backup = hasRealtimeBackups ? realtimeBackups[ 0 ] : dailyBackup;
 
 		return (
 			<div className="daily-backup-status">
-				<Card className="daily-backup-status__success">{ this.renderBackupStatus( backup ) }</Card>
+				<Card className="daily-backup-status__success">
+					{ this.renderBackupStatus( backup ) }
+					{ hasRealtimeBackups && backup && this.renderRealtimeDetails( backup ) }
+				</Card>
 			</div>
 		);
 	}

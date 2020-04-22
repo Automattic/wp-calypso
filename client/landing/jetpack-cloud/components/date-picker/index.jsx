@@ -85,7 +85,7 @@ class DatePicker extends Component {
 	};
 
 	goToActivityLog = () => {
-		page.redirect( `/activity/${ this.props.siteSlug }` );
+		page.redirect( `/backups/activity/${ this.props.siteSlug }` );
 	};
 
 	onSpace = ( evt, fn ) => {

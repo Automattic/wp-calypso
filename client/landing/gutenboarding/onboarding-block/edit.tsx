@@ -4,7 +4,7 @@
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
-import { Redirect, Switch, Route } from 'react-router-dom';
+import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -30,6 +30,12 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();
+
+	const { pathname } = useLocation();
+
+	React.useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [ pathname ] );
 
 	return (
 		<div className="onboarding-block" data-vertical={ siteVertical?.label }>

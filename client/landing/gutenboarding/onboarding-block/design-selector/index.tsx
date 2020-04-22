@@ -16,7 +16,7 @@ import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';
 import { SubTitle, Title } from '../../components/titles';
-
+import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
@@ -24,6 +24,8 @@ type Design = import('../../stores/onboard/types').Design;
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
+	useTrackStep( 'DesignSelection' );
+
 	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
@@ -50,11 +52,9 @@ const DesignSelector: React.FunctionComponent = () => {
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
-					<Title>{ __( 'Choose a starting design' ) }</Title>
+					<Title>{ __( 'Choose a design' ) }</Title>
 					<SubTitle>
-						{ __(
-							'Get started with one of our top website layouts. You can always change it later'
-						) }
+						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
 					</SubTitle>
 				</div>
 				<Link

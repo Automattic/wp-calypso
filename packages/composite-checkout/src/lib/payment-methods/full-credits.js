@@ -32,8 +32,8 @@ export function createFullCreditsMethod( { registerStore, submitTransaction } ) 
 				};
 				debug( 'full credits transaction complete', response );
 			} catch ( error ) {
-				debug( 'full credits transaction had an error', error );
-				return { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error };
+				debug( 'full credits transaction had an error', error.message );
+				return { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message };
 			}
 			debug( 'full credits transaction requires is successful' );
 			return { type: 'FULL_CREDITS_TRANSACTION_END', payload: response };

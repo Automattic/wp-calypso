@@ -16,6 +16,7 @@ import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import Arrow from './arrow';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 /**
  * Style dependencies
@@ -32,6 +33,8 @@ const AcquireIntent: FunctionComponent = () => {
 
 	const displaySiteTitle = isSiteTitleActive || ! isMobile;
 	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
+
+	useTrackStep( 'IntentGathering' );
 
 	return (
 		<div

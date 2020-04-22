@@ -20,7 +20,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -366,7 +366,7 @@ export class SeoForm extends React.Component {
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
 					selectedSite.plan && (
-						<Banner
+						<UpsellNudge
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
 							) }
@@ -376,6 +376,7 @@ export class SeoForm extends React.Component {
 								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
+							showIcon={ true }
 							title={ nudgeTitle }
 						/>
 					) }

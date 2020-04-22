@@ -69,6 +69,7 @@ class Document extends React.Component {
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
+			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -218,9 +219,17 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
+
+					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
+
+					{ ( entrypoint?.language?.translations || [] ).map( ( translationChunk ) => (
+						<script key={ translationChunk } src={ translationChunk } />
+					) ) }
+
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
+
 					{ chunkFiles.js.map( ( chunk ) => (
 						<script key={ chunk } src={ chunk } />
 					) ) }

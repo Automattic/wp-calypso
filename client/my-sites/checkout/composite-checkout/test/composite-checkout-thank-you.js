@@ -13,7 +13,7 @@ import { isEnabled } from 'config';
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'lib/user', () =>
 	jest.fn( () => ( {
-		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
+		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } )
 	} ) )
 );
 
@@ -23,9 +23,16 @@ jest.mock( 'config', () => {
 	return mock;
 } );
 
+// Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
+jest.mock( 'lib/abtest', () => ( {
+	abtest: jest.fn( () => {
+		return 'offer';
+	} )
+} ) );
+
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
-	saveUrlToCookie: jest.fn(),
+	saveUrlToCookie: jest.fn()
 };
 
 describe( 'getThankYouPageUrl', () => {
@@ -38,7 +45,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			purchaseId: '1234abcd',
+			purchaseId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -47,7 +54,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -68,7 +75,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			purchaseId: '1234abcd',
+			purchaseId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/1234abcd' );
 	} );
@@ -78,7 +85,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/1234abcd' );
 	} );
@@ -88,7 +95,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			orderId: '1234abcd',
+			orderId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/pending/1234abcd' );
 	} );
@@ -99,7 +106,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			cart,
+			cart
 		} );
 		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/:receiptId' );
 	} );
@@ -109,7 +116,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'fake-key',
-			purchaseId: '1234abcd',
+			purchaseId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -120,7 +127,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			product: 'jetpack_backup_daily',
+			product: 'jetpack_backup_daily'
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_daily' );
 	} );
@@ -130,7 +137,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
-			isJetpackNotAtomic: true,
+			isJetpackNotAtomic: true
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
@@ -141,7 +148,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			feature: 'all-free-features',
-			isJetpackNotAtomic: true,
+			isJetpackNotAtomic: true
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
@@ -150,7 +157,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			redirectTo: '/foo/bar',
+			redirectTo: '/foo/bar'
 		} );
 		expect( url ).toBe( '/foo/bar' );
 	} );
@@ -172,8 +179,8 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
 			products: [
-				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } },
-			],
+				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } }
+			]
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
@@ -182,14 +189,14 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'does not redirect to url from cookie if isEligibleForSignupDestination is false', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			products: [ { product_slug: 'foo' } ],
+			products: [ { product_slug: 'foo' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: false,
+			isEligibleForSignupDestination: false
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
@@ -197,14 +204,14 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to url from cookie if isEligibleForSignupDestination is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			products: [ { product_slug: 'foo' } ],
+			products: [ { product_slug: 'foo' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: true,
+			isEligibleForSignupDestinationResult: true
 		} );
 		expect( url ).toBe( '/cookie' );
 	} );
@@ -212,14 +219,14 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to url from cookie if cart is empty and no receipt is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			products: [],
+			products: []
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: true,
+			isEligibleForSignupDestination: true
 		} );
 		expect( url ).toBe( '/cookie' );
 	} );
@@ -228,14 +235,14 @@ describe( 'getThankYouPageUrl', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			purchaseId: '1234abcd',
+			purchaseId: '1234abcd'
 		} );
 		expect( url ).toBe( '/cookie/1234abcd' );
 	} );
@@ -244,14 +251,14 @@ describe( 'getThankYouPageUrl', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			getUrlFromCookie,
+			getUrlFromCookie
 		} );
 		expect( url ).toBe( '/cookie/1234abcd' );
 	} );
@@ -260,14 +267,14 @@ describe( 'getThankYouPageUrl', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			orderId: '1234abcd',
-			getUrlFromCookie,
+			getUrlFromCookie
 		} );
 		expect( url ).toBe( '/cookie/pending/1234abcd' );
 	} );
@@ -276,13 +283,13 @@ describe( 'getThankYouPageUrl', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			getUrlFromCookie,
+			getUrlFromCookie
 		} );
 		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
@@ -291,7 +298,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to thank-you page followed by placeholder receiptId twice if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId/:receiptId' );
@@ -301,13 +308,13 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to thank-you page followed by purchase id twice if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
 		const cart = {
 			create_new_blog: true,
-			products: [ { id: '123' } ],
+			products: [ { id: '123' } ]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
-			cart,
+			cart
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd/1234abcd' );
 	} );
@@ -319,9 +326,9 @@ describe( 'getThankYouPageUrl', () => {
 					product_slug: 'some_domain',
 					is_domain_registration: true,
 					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
+					meta: 'my.site'
+				}
+			]
 		};
 		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
@@ -330,7 +337,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 			didPurchaseFail: true,
-			isNewlyCreatedSite: true,
+			isNewlyCreatedSite: true
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -342,9 +349,9 @@ describe( 'getThankYouPageUrl', () => {
 					product_slug: 'some_domain',
 					is_domain_registration: false,
 					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
+					meta: 'my.site'
+				}
+			]
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
@@ -352,7 +359,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			isNewlyCreatedSite: true,
+			isNewlyCreatedSite: true
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
@@ -365,9 +372,9 @@ describe( 'getThankYouPageUrl', () => {
 					product_slug: 'some_domain',
 					is_domain_registration: true,
 					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
+					meta: 'my.site'
+				}
+			]
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
@@ -375,7 +382,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			isNewlyCreatedSite: true,
+			isNewlyCreatedSite: true
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
@@ -387,9 +394,9 @@ describe( 'getThankYouPageUrl', () => {
 					product_slug: 'some_domain',
 					is_domain_registration: true,
 					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
+					meta: 'my.site'
+				}
+			]
 		};
 		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
@@ -397,117 +404,117 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			isNewlyCreatedSite: true,
+			isNewlyCreatedSite: true
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	// We are temporarily disabling the premium bump offer, so skipping this test for now. Check pNEWy-cIg-p2.
 	it.skip( 'redirects to premium upgrade nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'personal-bundle',
-				},
-			],
+					product_slug: 'personal-bundle'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd' );
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'blogger-bundle',
-				},
-			],
+					product_slug: 'blogger-bundle'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, premium is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'value_bundle',
-				},
-			],
+					product_slug: 'value_bundle'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
 	} );
 
 	it( 'redirects to thank-you page (with concierge display mode) if concierge is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'concierge-session',
-				},
-			],
+					product_slug: 'concierge-session'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
 
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'jetpack_premium',
-				},
-			],
+					product_slug: 'jetpack_premium'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			receiptId: '1234abcd',
+			receiptId: '1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but the previous route is the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
-					product_slug: 'personal-bundle',
-				},
-			],
+					product_slug: 'personal-bundle'
+				}
+			]
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			previousRoute: '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd',
+			previousRoute: '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd'
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );

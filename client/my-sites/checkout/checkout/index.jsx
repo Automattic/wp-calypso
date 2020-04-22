@@ -94,6 +94,7 @@ import {
 } from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -464,9 +465,9 @@ export class Checkout extends React.Component {
 			// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 			// being offered and so sold, to be inline with HE availability.
 			// To dial back, uncomment the condition below and modify the test config.
-			// if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			// }
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
+			}
 		}
 	}
 

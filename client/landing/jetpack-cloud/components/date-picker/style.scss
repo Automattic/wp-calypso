@@ -1,6 +1,8 @@
 .date-picker {
 	display: flex;
 	max-width: 30rem;
+	background: #fff;
+	padding-top: 0.5rem;
 }
 
 .date-picker__select-date {
@@ -57,8 +59,15 @@
 	align-self: center;
 	margin-left: 0.5rem;
 	margin-right: 1rem;
+	cursor: pointer;
 }
 
 .date-picker__search-icon.gridicon {
 	fill: green;
+}
+
+@include breakpoint( '>660px' ) {
+	.date-picker {
+		background: transparent;
+	}
 }
