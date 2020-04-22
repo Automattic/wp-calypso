@@ -13,6 +13,7 @@ import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
 import ScanHistoryItem from 'landing/jetpack-cloud/components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -40,11 +41,15 @@ class ScanHistoryPage extends Component {
 	};
 
 	handleOnFilterChange = ( filter ) => {
-		const { siteSlug } = this.props;
+		const { siteSlug, siteId, dispatchRecordTracksEvent } = this.props;
 		let filterValue = filter.value;
 		if ( 'all' === filterValue ) {
 			filterValue = '';
 		}
+		dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
+			site_id: siteId,
+			filter: filterValue,
+		} );
 		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
 	};
 
@@ -93,23 +98,26 @@ class ScanHistoryPage extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
 
-	const logEntries = isRequestingHistory
-		? [
-				{ id: 1, status: 'fixed' },
-				{ id: 2, status: 'ignored' },
-				{ id: 3, status: 'fixed' },
-				{ id: 4, status: 'ignored' },
-		  ]
-		: getSiteScanHistory( state, siteId );
+		const logEntries = isRequestingHistory
+			? [
+					{ id: 1, status: 'fixed' },
+					{ id: 2, status: 'ignored' },
+					{ id: 3, status: 'fixed' },
+					{ id: 4, status: 'ignored' },
+			  ]
+			: getSiteScanHistory( state, siteId );
 
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		isRequestingHistory,
-		logEntries,
-	};
-} )( ScanHistoryPage );
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			isRequestingHistory,
+			logEntries,
+		};
+	},
+	{ dispatchRecordTracksEvent: recordTracksEvent }
+)( ScanHistoryPage );

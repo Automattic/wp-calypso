@@ -19,11 +19,6 @@
 		padding: 20px 0;
 	}
 
-	&__fix-button {
-		color: var( --color-primary-50 );
-		border-color: var( --color-primary-50 );
-	}
-
 	&__fix-button.is-summary {
 		display: none;
 
