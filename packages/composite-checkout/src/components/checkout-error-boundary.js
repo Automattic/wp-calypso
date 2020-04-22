@@ -18,7 +18,7 @@ export default class CheckoutErrorBoundary extends React.Component {
 		return { currentError: error, hasError: true };
 	}
 
-	static componentDidCatch( error ) {
+	componentDidCatch( error ) {
 		if ( this.props.onError ) {
 			debug( 'reporting error', error );
 			this.props.onError( error );
