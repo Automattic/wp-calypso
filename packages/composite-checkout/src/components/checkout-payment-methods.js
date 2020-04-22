@@ -79,6 +79,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 						errorMessage={
 							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
 						}
+						onError={ onError }
 					>
 						<PaymentMethod
 							{ ...method }
