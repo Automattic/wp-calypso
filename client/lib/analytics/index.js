@@ -84,14 +84,6 @@ const analytics = {
 			}
 		},
 	},
-
-	setProperties: function ( properties ) {
-		pushEventToTracksQueue( [ 'setProperties', properties ] );
-	},
-
-	clearedIdentity: function () {
-		pushEventToTracksQueue( [ 'clearIdentity' ] );
-	},
 };
 
 emitter( analytics );
