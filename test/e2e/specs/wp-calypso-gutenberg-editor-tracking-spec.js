@@ -41,7 +41,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		// Create image file for upload
 		before( async function () {} );
 
-		step( 'Can log in', async function () {
+		step( 'Can log in to WPAdmin and create new Post', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( driver );
@@ -60,37 +60,32 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			const wpadminSidebarComponent = await WPAdminSidebar.Expect( driver );
 			await wpadminSidebarComponent.selectNewPost();
-
-			// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
-
-			await driver.sleep( 5000 );
 		} );
 
-		// step( 'Can enter page title, content and image', async function () {
+		step( 'Can enter page title, content and image', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 
-		// 	// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await driver.executeScript(
+				`window.localStorage.setItem( 'debug', 'wpcom-block-editor*' );`
+			);
 
-		// 	// await driver.executeScript(
-		// 	// 	`window.localStorage.setItem( 'debug', 'wpcom-block-editor*' );`
-		// 	// );
+			const debugConfig = await driver.executeScript(
+				`return window.localStorage.getItem('debug');`
+			);
 
-		// 	// const debugConfig = await driver.executeScript(
-		// 	// 	`return window.localStorage.getItem('debug');`
-		// 	// );
+			console.log( 'Using Tracks debug: ' + debugConfig );
 
-		// 	// console.log( 'Using Tracks debug: ' + debugConfig );
+			await gEditorComponent.addBlock( 'Markdown' );
+			await gEditorComponent.addBlock( 'Columns' );
 
-		// 	// await gEditorComponent.enterTitle( pageTitle );
-		// 	// await gEditorComponent.enterText( pageQuote );
-		// 	// await gEditorComponent.addBlock( 'Columns' );
+			await driver.sleep( 30000 );
 
-		// 	// await driver.sleep( 50000 );
-		// 	// const logs = await driver.manage().logs().get( 'browser' );
+			// await driver.sleep( 50000 );
+			const logs = await driver.manage().logs().get( 'browser' );
 
-		// 	// console.log( logs );
-		// 	// driver.quit();
-		// } );
+			console.log( logs );
+			driver.quit();
+		} );
 
 		after( async function () {} );
 	} );
