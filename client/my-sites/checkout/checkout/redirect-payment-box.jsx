@@ -18,7 +18,7 @@ import { Input, Select } from 'my-sites/domains/components/form';
 import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import wpcom from 'lib/wp';
 import notices from 'notices';
@@ -187,7 +187,7 @@ export class RedirectPaymentBox extends PureComponent {
 						disabled: true,
 					} );
 					gaRecordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-					analytics.tracks.recordEvent(
+					recordTracksEvent(
 						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
 					);
 					window.location.href = result.redirect_url;

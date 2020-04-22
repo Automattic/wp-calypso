@@ -13,7 +13,7 @@ import React, { Component, Fragment } from 'react';
  */
 import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
@@ -320,7 +320,7 @@ class ManagePurchase extends Component {
 		}
 
 		const onClick = ( event ) => {
-			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
+			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,
 				link_text: text,

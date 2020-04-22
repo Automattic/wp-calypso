@@ -28,7 +28,7 @@ import {
 	editProductRemoveCategory,
 } from 'woocommerce/state/ui/products/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {

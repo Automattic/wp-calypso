@@ -10,10 +10,10 @@ import { identity } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import { preventWidows } from 'lib/formatting';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
+const trackForumOpen = () => recordTracksEvent( 'calypso_inlinehelp_forums_open' );
 
 const InlineHelpForumView = ( { translate = identity } ) => (
 	<div className="inline-help__forum-view">

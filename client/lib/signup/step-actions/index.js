@@ -16,7 +16,7 @@ import guessTimezone from 'lib/i18n-utils/guess-timezone';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 import { abtest, getSavedVariations } from 'lib/abtest';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { recordRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
@@ -598,7 +598,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 }
 
 function recordExcludeStepEvent( step, value ) {
-	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
 		value,
 	} );
@@ -720,7 +720,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 		// Track our landing page verticals
 		if ( isValidLandingPageVertical( vertical ) ) {
-			analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+			recordTracksEvent( 'calypso_signup_vertical_landing_page', {
 				vertical,
 				flow: flowName,
 			} );

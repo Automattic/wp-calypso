@@ -31,7 +31,7 @@ import FormButton from 'components/forms/form-button';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { countries } from 'components/phone-input/data';
 import formState from 'lib/form-state';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
@@ -251,7 +251,7 @@ export class ContactDetailsFormFields extends Component {
 			return result;
 		}, tracksData );
 
-		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
+		recordTracksEvent( 'calypso_contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	}
 

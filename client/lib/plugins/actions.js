@@ -7,7 +7,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { bumpStat } from 'lib/analytics/mc';
 import Dispatcher from 'dispatcher';
 import { userCan } from 'lib/site/utils';
@@ -111,7 +111,7 @@ const getPluginBoundMethod = ( site, pluginId, method ) => {
 
 const recordEvent = ( eventType, plugin, site, error ) => {
 	if ( error ) {
-		analytics.tracks.recordEvent( eventType + '_error', {
+		recordTracksEvent( eventType + '_error', {
 			site: site.ID,
 			plugin: plugin.slug,
 			error: error.error,
@@ -119,7 +119,7 @@ const recordEvent = ( eventType, plugin, site, error ) => {
 		bumpStat( eventType, 'failed' );
 		return;
 	}
-	analytics.tracks.recordEvent( eventType + '_success', {
+	recordTracksEvent( eventType + '_success', {
 		site: site.ID,
 		plugin: plugin.slug,
 	} );
@@ -368,7 +368,7 @@ const PluginsActions = {
 				( ! ( data && data.active ) && ! error )
 			) {
 				bumpStat( 'calypso_plugin_activated', 'failed' );
-				analytics.tracks.recordEvent( 'calypso_plugin_activated_error', {
+				recordTracksEvent( 'calypso_plugin_activated_error', {
 					error: error && error.error ? error.error : 'Undefined activation error',
 					site: site.ID,
 					plugin: plugin.slug,
@@ -378,7 +378,7 @@ const PluginsActions = {
 			}
 
 			bumpStat( 'calypso_plugin_activated', 'succeeded' );
-			analytics.tracks.recordEvent( 'calypso_plugin_activated_success', {
+			recordTracksEvent( 'calypso_plugin_activated_success', {
 				site: site.ID,
 				plugin: plugin.slug,
 			} );
@@ -413,7 +413,7 @@ const PluginsActions = {
 			// Activation error is ok, because it means the plugin is already active
 			if ( error && error.error !== 'deactivation_error' ) {
 				bumpStat( 'calypso_plugin_deactivated', 'failed' );
-				analytics.tracks.recordEvent( 'calypso_plugin_deactivated_error', {
+				recordTracksEvent( 'calypso_plugin_deactivated_error', {
 					error: error.error ? error.error : 'Undefined deactivation error',
 					site: site.ID,
 					plugin: plugin.slug,
@@ -422,7 +422,7 @@ const PluginsActions = {
 				return;
 			}
 			bumpStat( 'calypso_plugin_deactivated', 'succeeded' );
-			analytics.tracks.recordEvent( 'calypso_plugin_deactivated_success', {
+			recordTracksEvent( 'calypso_plugin_deactivated_success', {
 				site: site.ID,
 				plugin: plugin.slug,
 			} );

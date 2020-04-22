@@ -12,7 +12,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
 import {
 	conciergeSessionItem,
@@ -195,7 +195,7 @@ export class Checkout extends React.Component {
 	trackPageView( props ) {
 		props = props || this.props;
 
-		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
+		recordTracksEvent( 'calypso_checkout_page_view', {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
 			apple_pay_available: isApplePayAvailable(),
@@ -808,7 +808,7 @@ export class Checkout extends React.Component {
 		const cartItem = getCartItemForPlan( planSlug, {
 			domainToBundle: get( product, 'extra.domain_to_bundle', '' ),
 		} );
-		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+		recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
 			from_section: 'checkout',

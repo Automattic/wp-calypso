@@ -19,7 +19,7 @@ import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -86,7 +86,7 @@ class InviteAccept extends React.Component {
 	};
 
 	clickedNoticeSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_notice_site_link_click' );
 	};
 
 	decline = () => {
