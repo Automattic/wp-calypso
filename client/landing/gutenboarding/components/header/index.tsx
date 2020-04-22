@@ -196,7 +196,7 @@ const Header: FunctionComponent = () => {
 			setIsRedirecting( true );
 			resetOnboardStore();
 
-			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
+			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
 	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting ] );
 

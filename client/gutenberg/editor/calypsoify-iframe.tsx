@@ -297,7 +297,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding =
-				config.isEnabled( 'gutenboarding' ) && this.props.siteCreationFlow === 'gutenboarding';
+				config.isEnabled( 'gutenboarding' ) &&
+				this.props.siteCreationFlow === 'gutenboarding' &&
+				this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				isSiteLaunched: ! this.props.isSiteUnlaunched,
@@ -721,7 +723,7 @@ const mapStateToProps = (
 		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
-		isSiteUnlaunched: isUnlaunchedSite( state, siteId )
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 	};
 };
 
