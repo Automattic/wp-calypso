@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -18,6 +18,7 @@ import {
 	usePaymentMethodId,
 	useIsStepActive,
 	useIsStepComplete,
+	useEvents,
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
@@ -25,6 +26,11 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
 	const localize = useLocalize();
+	const onEvent = useEvents();
+	const onError = useCallback(
+		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', errorMessage: error.message } ),
+		[ onEvent ]
+	);
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
@@ -40,6 +46,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with this payment method.' ) }
+					onError={ onError }
 				>
 					<PaymentMethod
 						{ ...paymentMethod }
