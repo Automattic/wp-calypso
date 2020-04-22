@@ -13,7 +13,7 @@ import { retarget as retargetAdTrackers, recordAliasInFloodlight } from 'lib/ana
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { trackAffiliateReferral } from './refer';
 import { gaRecordPageView } from './ga';
-import { process as processQueue } from './queue';
+import { processQueue } from './queue';
 import {
 	recordTracksEvent,
 	analyticsEvents,

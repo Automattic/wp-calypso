@@ -8,7 +8,7 @@ import debug from 'debug';
  */
 import analytics from 'lib/analytics';
 import { gaRecordEvent } from 'lib/analytics/ga';
-import { add as addToQueue } from 'lib/analytics/queue';
+import { addToQueue } from 'lib/analytics/queue';
 import {
 	adTrackSignupStart,
 	adTrackSignupComplete,

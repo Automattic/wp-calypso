@@ -50,7 +50,15 @@ function runTrigger( moduleName, trigger, ...args ) {
 	return; // Not possible.
 }
 
-export function add( moduleName, trigger, ...args ) {
+/**
+ * Add an item to the analytics queue.
+ *
+ * @param {*} moduleName the name of the module where the queued method exists, e.g. `signup`.
+ * See the `modules` constant at the top of this file (`lib/analytics/queue.js`).
+ * @param {*} trigger the exported function in the chosen module to be run, e.g. `recordSignupStart` in `signup`.
+ * @param  {...any} args the arguments to be passed to the chosen function. Optional.
+ */
+export function addToQueue( moduleName, trigger, ...args ) {
 	if ( ! window.localStorage ) {
 		// If unable to queue, trigger it now.
 		return runTrigger( moduleName, trigger, ...args );
@@ -66,7 +74,10 @@ export function add( moduleName, trigger, ...args ) {
 	window.localStorage.setItem( lsKey(), JSON.stringify( items ) );
 }
 
-export function process() {
+/**
+ * Process the existing analytics queue, by running any pending triggers and clearing it.
+ */
+export function processQueue() {
 	if ( ! window.localStorage ) {
 		return; // Not possible.
 	}
