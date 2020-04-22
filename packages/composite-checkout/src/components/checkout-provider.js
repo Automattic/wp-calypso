@@ -94,7 +94,7 @@ export const CheckoutProvider = ( props ) => {
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
 	const onError = useCallback(
-		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', errorMessage: error.message } ),
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error.message } ),
 		[ onEvent ]
 	);
 	return (

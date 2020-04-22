@@ -28,7 +28,7 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 	const localize = useLocalize();
 	const onEvent = useEvents();
 	const onError = useCallback(
-		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', errorMessage: error.message } ),
+		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', payload: error.message } ),
 		[ onEvent ]
 	);
 
