@@ -77,10 +77,41 @@
 }
 
 // primary cards get primary card emphasis on the left
-.activity-card-list__primary-card {
+.activity-card-list__primary-card,
+.activity-card-list__primary-card-with-more {
 	.card {
 		padding-left: 20px; // reduce standard 24px padding by 4
 		border-left: 4px solid var( --color-primary-40 );
+	}
+}
+
+.activity-card-list__primary-card-with-more {
+	// draw vertical line after the card
+	&::before {
+		background: var( --color-neutral-5 );
+		content: '';
+		height: 16px;
+		// center on the icons ( they render @ 1.1rem, so half that )
+		left: 0.55rem;
+		position: absolute;
+		top: 100%;
+		width: 1px;
+		z-index: -2;
+	}
+	// draw ball on the end of the line
+	&::after {
+		background: var( --color-neutral-5 );
+		content: '';
+		// make sure we stay in our element
+		height: 9px;
+		width: 9px;
+		left: calc( 0.55rem - 4px );
+		position: absolute;
+		// immediately after the existing horizontal line draw on over the top of it
+		top: calc( 100% + 16px );
+		visibility: visible;
+		z-index: -1;
+		border-radius: 50%;
 	}
 }
 

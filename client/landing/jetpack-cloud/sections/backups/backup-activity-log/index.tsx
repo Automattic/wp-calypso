@@ -89,7 +89,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 						) }
 					</p>
 				</div>
-				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
+				{ logs && <ActivityCardList logs={ logs } pageSize={ 9 } /> }
 			</div>
 		</Main>
 	);

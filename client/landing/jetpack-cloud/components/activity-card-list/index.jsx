@@ -78,6 +78,11 @@ class ActivityCardList extends Component {
 	renderLogs( actualPage ) {
 		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
 
+		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
+			hasMore && dateLogsLength === 1
+				? 'activity-card-list__primary-card-with-more'
+				: 'activity-card-list__primary-card';
+
 		const getSecondaryCardClassName = ( hasMore ) =>
 			hasMore
 				? 'activity-card-list__secondary-card-with-more'
@@ -104,7 +109,7 @@ class ActivityCardList extends Component {
 									allowRestore,
 									siteSlug,
 									className: isActivityBackup( activity )
-										? 'activity-card-list__primary-card'
+										? getPrimaryCardClassName( hasMore, dateLogs.length )
 										: getSecondaryCardClassName( hasMore ),
 								} }
 							/>
