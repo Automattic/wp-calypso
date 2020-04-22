@@ -28,6 +28,7 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
+import { abtest } from 'lib/abtest';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -193,6 +194,14 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
+
+		if (
+			'onboarding' === flowName &&
+			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+		) {
+			const switchFlowName = 'onboarding-plan-first';
+			this.props.goToNextStep( switchFlowName );
+		}
 
 		this.props.goToNextStep();
 	};
