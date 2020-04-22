@@ -120,8 +120,14 @@ class PostRelativeTime extends React.PureComponent {
 			statusClassName += ' is-sticky';
 			statusIcon = 'bookmark-outline';
 		} else if ( status === 'pending' ) {
-			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
+			const displayScheduleTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'pending review last modified %(displayScheduleTime)s', {
+				comment: '%(displayScheduleTime)s is when a pending review post or page was last modified',
+				args: {
+					displayScheduleTime,
+				},
+			} );
 		} else if ( status === 'trash' ) {
 			statusClassName += ' is-trash';
 			statusIcon = 'trash';
@@ -144,7 +150,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'draft' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft, last modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'draft last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a draft post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -152,7 +158,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'publish' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published, last modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'published on %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a post or page was last modified',
 				args: {
 					displayScheduleTime,
@@ -160,7 +166,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'private' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'private, last modified %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'private last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a private post or page was last modified',
 				args: {
 					displayScheduleTime,
