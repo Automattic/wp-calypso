@@ -12,7 +12,8 @@ import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
-import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page';
+import SidebarComponent from '../lib/components/sidebar-component.js';
+import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -22,6 +23,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
@@ -36,11 +38,6 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 	this.timeout( mochaTimeOut );
 
 	describe( 'Tracking: @parallel', function () {
-		let fileDetails;
-		const pageTitle = dataHelper.randomPhrase();
-		const pageQuote =
-			'If you have the same problem for a long time, maybe it’s not a problem. Maybe it’s a fact..\n— Itzhak Rabin';
-
 		// Create image file for upload
 		before( async function () {} );
 
@@ -49,6 +46,8 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( driver );
 			}
+			// await this.loginFlow.loginAndStartNewPage();
+
 			await this.loginFlow.loginAndSelectWPAdmin();
 
 			//Wait for the new window or tab
@@ -59,7 +58,11 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			await driver.switchTo().window( windows[ 1 ] );
 
-			await driverHelper.clickWhenClickable( driver, By.css( '#menu-pages > a' ) ); //
+			const wpadminSidebarComponent = await WPAdminSidebar.Expect( driver );
+			await wpadminSidebarComponent.selectNewPost();
+
+			// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			// await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
 
 			await driver.sleep( 5000 );
 		} );
