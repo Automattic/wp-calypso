@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -133,12 +133,17 @@ export function CheckoutSummary( { children, className } ) {
 
 export function CheckoutStepArea( { children, className } ) {
 	const localize = useLocalize();
+	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
 
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
+	const onSubmitButtonLoadError = useCallback(
+		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', errorMessage: error.message } ),
+		[ onEvent ]
+	);
 
 	return (
 		<CheckoutStepAreaUI className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }>
@@ -147,6 +152,7 @@ export function CheckoutStepArea( { children, className } ) {
 			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
 				<CheckoutErrorBoundary
 					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
 				</CheckoutErrorBoundary>
