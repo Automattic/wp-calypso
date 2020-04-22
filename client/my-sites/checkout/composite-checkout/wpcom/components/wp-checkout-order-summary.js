@@ -30,14 +30,6 @@ export default function WPCheckoutOrderSummary() {
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon />
-						{ translate( 'Free custom domain for a year' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Dozens of free themes' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
 						{ translate( 'Money back guarantee' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</CheckoutSummaryFeaturesList>
