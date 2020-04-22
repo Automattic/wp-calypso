@@ -17,7 +17,7 @@ import Main from 'components/main';
 import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
-import ContactFormNotice from 'me/help/contact-form-notice/index';
+import LimitedChatAvailabilityNotice from 'me/help/contact-form-notice/limited-chat-availability';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -550,28 +550,10 @@ class HelpContact extends React.Component {
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
 					<>
-						<ContactFormNotice
-							showAt="2020-04-18 00:00Z"
-							hideAt="2020-04-20 06:00Z"
-							heading="Live Chat closed"
-							message={
-								<div>
-									<p>
-										Live Chat will be closed between Saturday, April 18 00:00 UTC and Monday, April
-										20 06:00 UTC.
-									</p>
-									<p>
-										Our Happiness Engineers will continue to be available by email during this time.
-										While we are not immediately available in chat, we will respond to your email as
-										soon as we can.
-									</p>
-									<p>
-										Thank you for patience and we aim to return to normal weekend chat coverage
-										soon.
-									</p>
-								</div>
-							}
+						<LimitedChatAvailabilityNotice
 							compact={ compact }
+							showAt="2020-03-27 00:00Z"
+							hideAt="2050-01-01 00:00Z"
 						/>
 					</>
 				) }
