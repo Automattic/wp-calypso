@@ -266,9 +266,21 @@ export function CheckoutStep( {
 		...( className ? [ className ] : [] ),
 	];
 
+	const onError = useCallback(
+		( error ) =>
+			onEvent( {
+				type: 'STEP_LOAD_ERROR',
+				payload: {
+					errorMessage: error.message,
+				},
+			} ),
+		[ onEvent ]
+	);
+
 	return (
 		<CheckoutStepBody
 			errorMessage={ localize( 'There was an error with this step.' ) }
+			onError={ onError }
 			editButtonText={ editButtonText || localize( 'Edit' ) }
 			editButtonAriaLabel={ editButtonAriaLabel || localize( 'Edit this step' ) }
 			nextStepButtonText={ nextStepButtonText || localize( 'Continue' ) }
