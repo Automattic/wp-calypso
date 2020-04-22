@@ -29,6 +29,12 @@ function updateEditor() {
 }
 
 function updateSettingsBar() {
+
+	// TODO: check what we need to show in an unlaunched state in Gutenboarding
+	if ( calypsoifyGutenberg.isSiteLaunched ) {
+		return false;
+	}
+
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 		if ( ! settingsBar ) {
@@ -51,6 +57,8 @@ function updateSettingsBar() {
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
+
+
 		settingsBar.prepend( saveButton );
 	} );
 }

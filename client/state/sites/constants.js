@@ -66,4 +66,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'videopress_enabled',
 	'woocommerce_is_active',
 	'wordads',
+	'site_creation_flow',
 ].join();
