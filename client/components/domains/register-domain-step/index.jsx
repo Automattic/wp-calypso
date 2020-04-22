@@ -1141,7 +1141,12 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
+		return (
+			<FreeDomainExplainer
+				onSkip={ this.props.hideFreePlan }
+				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
+			/>
+		);
 	}
 
 	onAddDomain = ( suggestion ) => {
@@ -1253,6 +1258,7 @@ class RegisterDomainStep extends React.Component {
 			>
 				{ this.props.isEligibleVariantForDomainTest &&
 					hasResults &&
+					! this.props.shouldHideFreeDomainExplainer &&
 					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (

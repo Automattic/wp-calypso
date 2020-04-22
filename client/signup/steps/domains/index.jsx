@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, has, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -121,10 +121,15 @@ class DomainsStep extends React.Component {
 
 		this.showTestCopy = false;
 
+		const isEligibleFlowForDomainTest = includes(
+			[ 'onboarding', 'onboarding-plan-first' ],
+			props.flowName
+		);
+
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
 			false !== this.props.shouldShowDomainTestCopy &&
-			! props.isPlanStepFulfilled &&
+			isEligibleFlowForDomainTest &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
 			this.showTestCopy = true;
@@ -443,6 +448,14 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
+		const hasCartItemInDependencyStore = has( this.props, 'signupDependencies.cartItem' );
+		const cartItem = get( this.props, 'signupDependencies.cartItem', false );
+		const hasSelectedFreePlan = hasCartItemInDependencyStore && ! cartItem;
+		const shouldHideFreeDomainExplainer =
+			'onboarding-plan-first' === this.props.flowName && cartItem;
+		const showFreeDomainExplainerForFreePlan =
+			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -474,6 +487,8 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
+				showFreeDomainExplainerForFreePlan={ showFreeDomainExplainerForFreePlan }
 			/>
 		);
 	};
@@ -718,7 +733,6 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		};
 	},
