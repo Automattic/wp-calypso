@@ -47,7 +47,7 @@ $progress-widget-height: 300px;
 			--progress: 0;
 
 			&::before {
-				background: var( --mainColor );
+				background: var( --studio-blue-40 );
 				transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
 				position: absolute;
 				content: '';

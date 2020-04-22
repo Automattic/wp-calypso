@@ -74,26 +74,8 @@ const CreateSite: React.FunctionComponent = () => {
 		return () => clearTimeout( id );
 	}, [] );
 
-	// Site creation triggers a reset of the store, which causes vertical colors
-	// to clear and reset to defaults.
-	// "Clone" mainColor here so it persists through store reset and navigation.
-	const containerRef = React.useRef< HTMLDivElement >( null );
-	const [ mainColor, setMainColor ] = React.useState< string >();
-	React.useEffect( () => {
-		if ( containerRef.current ) {
-			const color = window
-				.getComputedStyle( containerRef.current )
-				.getPropertyValue( '--mainColor' );
-			setMainColor( color );
-		}
-	}, [] );
-
 	return (
-		<div
-			className="gutenboarding-page create-site__background"
-			style={ mainColor ? ( { '--mainColor': mainColor } as React.CSSProperties ) : undefined }
-			ref={ containerRef }
-		>
+		<div className="gutenboarding-page create-site__background">
 			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
 			<div className="create-site__layout">
 				<div className="create-site__header">
