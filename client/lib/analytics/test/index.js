@@ -12,6 +12,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { identifyUser } from 'lib/analytics/identify-user';
 import { initializeAnalytics } from 'lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
@@ -121,38 +122,38 @@ describe( 'Analytics', () => {
 		} );
 
 		test( 'should not call window._tkq.push or recordAliasInFloodlight when there is no user data', () => {
-			analytics.identifyUser( {} );
+			identifyUser( {} );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when user ID is missing', () => {
-			analytics.identifyUser( { ID: undefined, username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: undefined, username: 'eight', email: 'eight@example.com' } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when username is missing', () => {
-			analytics.identifyUser( { ID: 8, username: undefined, email: 'eight@example.com' } );
+			identifyUser( { ID: 8, username: undefined, email: 'eight@example.com' } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when email is missing', () => {
-			analytics.identifyUser( { ID: 8, username: 'eight', email: undefined } );
+			identifyUser( { ID: 8, username: 'eight', email: undefined } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call window._tkq.push and recordAliasInFloodlight when user ID, username, and email are given', () => {
-			analytics.identifyUser( { ID: '8', username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: '8', username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
 		} );
 
 		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
 			cookie.parse.mockImplementationOnce( () => ( {} ) );
-			analytics.identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
 		} );
