@@ -263,6 +263,12 @@ export default class LoginFlow {
 		return await StoreDashboardPage.Expect( this.driver );
 	}
 
+	async loginAndSelectWPAdmin() {
+		await this.loginAndSelectMySite();
+		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await this.sideBarComponent.selectWPAdmin();
+	}
+
 	end() {
 		if ( typeof this.account !== 'string' ) {
 			dataHelper.releaseAccount( this.account );
