@@ -10,10 +10,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	isSuccessfulDailyBackup,
-	isSuccessfulRealtimeBackup,
-} from 'landing/jetpack-cloud/sections/backups/utils';
+import { isActivityBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -53,17 +50,25 @@ class ActivityCardList extends Component {
 	};
 
 	splitLogsByDate( logs ) {
-		const { applySiteOffset, moment } = this.props;
+		const { applySiteOffset, moment, pageSize } = this.props;
 		const logsByDate = [];
 		let lastDate = null;
-		for ( const log of logs ) {
-			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
-			if ( activityDateMoment ) {
-				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
-					logsByDate[ logsByDate.length - 1 ].logs.push( log );
+		let logsAdded = 0;
+		if ( applySiteOffset ) {
+			for ( const log of logs ) {
+				const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
+				if ( logsAdded === pageSize ) {
+					if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+						logsByDate[ logsByDate.length - 1 ].hasMore = true;
+					}
 				} else {
-					logsByDate.push( { date: activityDateMoment, logs: [ log ] } );
-					lastDate = activityDateMoment;
+					if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+						logsByDate[ logsByDate.length - 1 ].logs.push( log );
+					} else {
+						logsByDate.push( { date: activityDateMoment, logs: [ log ], hasMore: false } );
+						lastDate = activityDateMoment;
+					}
+					logsAdded++;
 				}
 			}
 		}
@@ -73,57 +78,41 @@ class ActivityCardList extends Component {
 	renderLogs( actualPage ) {
 		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
 
-		// 1. move the start index to the right place
-		const logWithCorrectStart = logs.slice( ( actualPage - 1 ) * pageSize );
+		const getSecondaryCardClassName = ( hasMore ) =>
+			hasMore
+				? 'activity-card-list__secondary-card-with-more'
+				: 'activity-card-list__secondary-card';
 
-		let numberOfLogsRendered = 0;
-
-		const renderDateLogs = ( dateLogs ) => {
-			const renderedLogs = ( numberOfLogsRendered + dateLogs.length > pageSize
-				? dateLogs.slice( 0, pageSize - numberOfLogsRendered )
-				: dateLogs
-			).map( ( activity ) => (
-				<ActivityCard
-					{ ...{
-						key: activity.activityId,
-						showContentLink:
-							isSuccessfulDailyBackup( activity ) || isSuccessfulRealtimeBackup( activity )
-								? dateLogs.length > 1
-								: true,
-						moment,
-						activity,
-						allowRestore,
-						siteSlug,
-						className:
-							isSuccessfulDailyBackup( activity ) || isSuccessfulRealtimeBackup( activity )
-								? 'activity-card-list__primary-card'
-								: 'activity-card-list__secondary-card',
-					} }
-				/>
-			) );
-			numberOfLogsRendered += renderedLogs.length;
-			return renderedLogs;
-		};
-
-		const renderedGroups = [];
-		const splitLogs = this.splitLogsByDate( logWithCorrectStart );
-
-		for ( let i = 0; i < splitLogs.length && numberOfLogsRendered < pageSize; i++ ) {
-			const { date, logs: dateLogs } = splitLogs[ i ];
-			renderedGroups.push(
-				<div key={ `activity-card-list__date-group-${ i }` }>
+		return this.splitLogsByDate( logs.slice( ( actualPage - 1 ) * pageSize ) ).map(
+			( { date, logs: dateLogs, hasMore }, index ) => (
+				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
 							{ date && date.format( 'MMM Do' ) }
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
-						{ renderDateLogs( dateLogs ) }
+						{ dateLogs.map( ( activity ) => (
+							<ActivityCard
+								{ ...{
+									key: activity.activityId,
+									showContentLink: isActivityBackup( activity )
+										? dateLogs.length > 1 || hasMore
+										: true,
+									moment,
+									activity,
+									allowRestore,
+									siteSlug,
+									className: isActivityBackup( activity )
+										? 'activity-card-list__primary-card'
+										: getSecondaryCardClassName( hasMore ),
+								} }
+							/>
+						) ) }
 					</div>
 				</div>
-			);
-		}
-		return renderedGroups;
+			)
+		);
 	}
 
 	renderData() {

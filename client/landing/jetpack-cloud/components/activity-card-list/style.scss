@@ -43,7 +43,7 @@
 }
 
 .activity-card-list__date-group-date {
-	font-weight: 700;
+	font-weight: 600;
 	font-size: 16px;
 	line-height: 23px;
 	border-bottom: 1px solid #000000;
@@ -85,7 +85,8 @@
 }
 
 // work happens in the secondary cards
-.activity-card-list__secondary-card {
+.activity-card-list__secondary-card,
+.activity-card-list__secondary-card-with-more {
 	// this brings in the right side, otherwise the translated elements would look the same
 	// 32px to adjust for the scooch, 16px to make the card shorted than the primary one
 	width: calc( 100% - 32px - 16px );
@@ -110,7 +111,9 @@
 			z-index: -2;
 		}
 	}
+}
 
+.activity-card-list__secondary-card {
 	// draw over the line that goes off the screen on the last card
 	&:last-of-type {
 		.card {
@@ -126,6 +129,28 @@
 				visibility: visible;
 				width: 1px;
 				z-index: -1;
+			}
+		}
+	}
+}
+
+.activity-card-list__secondary-card-with-more {
+	// a tiny circle at the end of the line, indicating there is more on the next pagination
+	&:last-of-type {
+		.card {
+			&::after {
+				background: var( --color-neutral-5 );
+				content: '';
+				// make sure we stay in our element
+				height: 9px;
+				width: 9px;
+				left: calc( 0.55rem - 32px - 4px );
+				position: absolute;
+				// immediately after the existing horizontal line draw on over the top of it
+				top: calc( 100% - 9px );
+				visibility: visible;
+				z-index: -1;
+				border-radius: 50%;
 			}
 		}
 	}
