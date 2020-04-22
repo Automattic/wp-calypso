@@ -23,8 +23,8 @@ export default function () {
 			'/scan/:site',
 			siteSelection,
 			navigation,
-			showUpsellIfNoScan,
 			scan,
+			showUpsellIfNoScan,
 			makeLayout,
 			clientRender
 		);
@@ -34,8 +34,8 @@ export default function () {
 				'/scan/history/:site/:filter?',
 				siteSelection,
 				navigation,
-				showUpsellIfNoScan,
 				scanHistory,
+				showUpsellIfNoScan,
 				makeLayout,
 				clientRender
 			);
