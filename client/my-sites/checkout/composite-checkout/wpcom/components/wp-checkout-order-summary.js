@@ -26,7 +26,7 @@ export default function WPCheckoutOrderSummary() {
 				<CheckoutSummaryFeaturesList>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon />
-						{ translate( 'Live chat and email support' ) }
+						{ translate( 'Email and live chat support' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
 						<WPCheckoutCheckIcon />
