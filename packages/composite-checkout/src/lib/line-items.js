@@ -25,11 +25,3 @@ export function useTotal() {
 	const [ , total ] = useLineItems();
 	return total;
 }
-
-export function useLineItemsOfType( itemType ) {
-	if ( ! itemType ) {
-		throw new Error( 'missing itemType for useLineItemsOfType' );
-	}
-	const [ items ] = useLineItems();
-	return items.filter( ( item ) => item.type === itemType );
-}

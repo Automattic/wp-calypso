@@ -7,16 +7,10 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import {
-	useLineItems,
-	useLineItemsOfType,
-	useTotal,
-	renderDisplayValueMarkdown,
-} from '../public-api';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '../public-api';
 import { useLocalize } from '../lib/localize';
-import { useTranslate } from 'i18n-calypso';
 
-export default function CheckoutOrderSummaryStep() {
+export default function CheckoutOrderSummary() {
 	const [ items ] = useLineItems();
 
 	return (
@@ -39,68 +33,24 @@ const ProductListItem = styled.li`
 	list-style-type: none;
 `;
 
-export function CheckoutOrderSummaryStepTitle() {
+export function CheckoutOrderSummaryTitle() {
 	const localize = useLocalize();
 	const total = useTotal();
 	return (
-		<CheckoutSummaryStepTitle>
+		<CheckoutSummaryTitle>
 			<span>{ localize( 'You are all set to check out' ) }</span>
-			<CheckoutSummaryStepTotal>
+			<CheckoutSummaryTotal>
 				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-			</CheckoutSummaryStepTotal>
-		</CheckoutSummaryStepTitle>
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryTitle>
 	);
 }
 
-const CheckoutSummaryStepTitle = styled.span`
+const CheckoutSummaryTitle = styled.span`
 	display: flex;
 	justify-content: space-between;
 `;
 
-const CheckoutSummaryStepTotal = styled.span`
-	font-weight: ${( props ) => props.theme.weights.bold};
-`;
-
-export function CheckoutOrderSummary() {
-	const translate = useTranslate();
-	const taxes = useLineItemsOfType( 'tax' );
-	const total = useTotal();
-
-	return (
-		<>
-			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
-			<CheckoutSummaryAmountWrapper>
-				{ taxes.map( ( tax ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<span>{ tax.label }</span>
-						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
-		</>
-	);
-}
-
-const CheckoutSummaryTitle = styled.div`
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
-	padding: 24px 20px;
-`;
-
-const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	padding: 24px 20px;
-`;
-
-const CheckoutSummaryLineItem = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummaryTotal = styled.span`
 	font-weight: ${( props ) => props.theme.weights.bold};
 `;

@@ -6,30 +6,19 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CheckoutOrderSummaryStep, {
-	CheckoutOrderSummaryStepTitle,
-	CheckoutOrderSummary,
-} from './checkout-order-summary';
+import CheckoutOrderSummary, { CheckoutOrderSummaryTitle } from './checkout-order-summary';
 import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
 import CheckoutPaymentMethods, { CheckoutPaymentMethodsTitle } from './checkout-payment-methods';
 
-export function getDefaultOrderSummary() {
-	return {
-		id: 'order-summary',
-		className: 'checkout__order-summary',
-		summaryContent: <CheckoutOrderSummary />,
-	};
-}
-
 export function getDefaultOrderSummaryStep() {
 	return {
-		id: 'order-summary-step',
+		id: 'order-summary',
 		className: 'checkout__order-summary-step',
 		hasStepNumber: false,
-		titleContent: <CheckoutOrderSummaryStepTitle />,
+		titleContent: <CheckoutOrderSummaryTitle />,
 		activeStepContent: null,
 		incompleteStepContent: null,
-		completeStepContent: <CheckoutOrderSummaryStep />,
+		completeStepContent: <CheckoutOrderSummary />,
 		isCompleteCallback: () => true,
 	};
 }

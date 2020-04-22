@@ -431,13 +431,13 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the checkout summary', async () => {
+	it( 'renders the checkout greeting header', async () => {
 		let renderResult;
 		await act( async () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( getByText( 'You are all set to check out' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
