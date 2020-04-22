@@ -13,6 +13,7 @@ import Button from 'components/forms/form-button';
 import { Card } from '@automattic/components';
 import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
 import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import { applySiteOffset } from 'lib/site/timezone';
 import PopoverMenu from 'components/popover/menu';
 import {
@@ -20,7 +21,11 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import {
+	isSuccessfulDailyBackup,
+	isSuccessfulRealtimeBackup,
+	hasAnyStreams,
+} from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -31,6 +36,7 @@ import downloadIcon from './download-icon.svg';
 class ActivityCard extends Component {
 	static defaultProps = {
 		summarize: false,
+		hasRealtimeBackups: false,
 	};
 
 	popoverContext = React.createRef();
@@ -51,11 +57,14 @@ class ActivityCard extends Component {
 			allowRestore,
 			className,
 			gmtOffset,
+			hasRealtimeBackups,
 			timezone,
 			siteSlug,
 			summarize,
 			translate,
 		} = this.props;
+
+		const { activityMedia } = activity;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -79,21 +88,42 @@ class ActivityCard extends Component {
 							actorType: activity.actorType,
 						} }
 					/>
-					<div className="activity-card__activity-description">
-						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
-					</div>
+					{ activityMedia && activityMedia.available ? (
+						<div className="activity-card__activity-media">
+							<ActivityMedia
+								name={ activityMedia.name }
+								thumbnail={ activityMedia.thumbnail_url }
+								fullImage={ false }
+							/>
+						</div>
+					) : (
+						<div className="activity-card__activity-description">
+							<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
+						</div>
+					) }
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
 					{ ! summarize && (
 						<div className="activity-card__activity-actions">
-							<a
-								className="activity-card__detail-link"
-								href={ backupDetailPath( siteSlug, activity.rewindId ) }
-							>
-								{ isSuccessfulDailyBackup( activity )
-									? translate( 'Changes in this backup' )
-									: translate( 'See content' ) }
-							</a>
+							{ ! hasRealtimeBackups && isSuccessfulDailyBackup( activity ) && (
+								<a
+									className="activity-card__detail-link"
+									href={ backupDetailPath( siteSlug, activity.rewindId ) }
+								>
+									{ translate( 'Changes in this backup' ) }
+								</a>
+							) }
+							{ hasRealtimeBackups &&
+								isSuccessfulRealtimeBackup( activity ) &&
+								hasAnyStreams( activity ) && (
+									<a
+										className="activity-card__detail-link"
+										href={ backupDetailPath( siteSlug, activity.rewindId ) }
+									>
+										{ translate( 'See content' ) }
+									</a>
+								) }
+							{ hasAnyStreams( activity ) && <div>HAS STREAMS</div> }
 							<Button
 								compact
 								borderless

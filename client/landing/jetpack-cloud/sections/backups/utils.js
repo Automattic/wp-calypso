@@ -154,14 +154,6 @@ export const getRealtimeBackups = ( logs, date ) => {
 			if ( event.activityIsRewindable ) {
 				backups.push( event );
 			}
-
-			if ( event.streams ) {
-				event.streams.forEach( ( stream ) => {
-					if ( stream.activityIsRewindable ) {
-						backups.push( stream );
-					}
-				} );
-			}
 		}
 	} );
 
@@ -181,12 +173,24 @@ export const isSuccessfulDailyBackup = ( backup ) => {
 };
 
 /**
+ * Check if an activity log item contains any streams/sub-activities
+ *
+ * @param backup {object} Backup to check
+ */
+export const hasAnyStreams = ( backup ) => !! backup.streams;
+
+/**
+ * Check if an activity log item contains any restorable streams/sub-activities
+ *
+ * @param backup {object} Backup to check
+ */
+export const hasRestorableStreams = ( backup ) =>
+	!! backup.streams && !! backup.streams.filter( ( stream ) => stream.activityIsRewindable ).length;
+
+/**
  * Check if a Realtime backup backup is completed
  *
  * @param backup {object} Backup to check
  */
-export const isSuccessfulRealtimeBackup = ( backup ) => {
-	const hasRestorableStreams =
-		backup.streams && !! backup.streams.filter( ( stream ) => stream.activityIsRewindable ).length;
-	return hasRestorableStreams || backup.activityIsRewindable;
-};
+export const isSuccessfulRealtimeBackup = ( backup ) =>
+	hasRestorableStreams( backup ) || backup.activityIsRewindable;

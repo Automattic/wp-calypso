@@ -28,6 +28,7 @@ class BackupDelta extends Component {
 			allowRestore,
 			timezone,
 			gmtOffset,
+			hasRealtimeBackups,
 			moment,
 			realtimeBackups,
 			siteSlug,
@@ -41,6 +42,7 @@ class BackupDelta extends Component {
 				key={ activity.activityId }
 				{ ...{
 					moment,
+					hasRealtimeBackups,
 					activity,
 					allowRestore,
 					timezone,
