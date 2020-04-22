@@ -186,6 +186,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		inputRef.current.innerText = siteVertical?.label || '';
 	}, [ siteVertical, inputRef ] );
 
+	React.useEffect( () => {
+		if ( !! suggestions.length && isMobile ) {
+			window.scrollTo( 0, 0 );
+		}
+	}, [ suggestions, isMobile ] );
+
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'My site is about <Input />' );
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
