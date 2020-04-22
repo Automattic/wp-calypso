@@ -757,14 +757,11 @@ export function shouldShowUpsell( stepName, defaultDependencies, nextProps ) {
 	const hasCartItemInDependencyStore = has( nextProps, 'signupDependencies.cartItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+	const hasAddedFreePlanFreeDomain =
+		hasCartItemInDependencyStore && ! cartItem && hasdDomainItemInDependencyStore && ! domainItem;
 
-	if (
-		cartItem ||
-		( hasCartItemInDependencyStore &&
-			hasdDomainItemInDependencyStore &&
-			! cartItem &&
-			! domainItem )
-	) {
+	// Don't show the upsell offer if paid plan is selected or free plan + free domain selected.
+	if ( cartItem || hasAddedFreePlanFreeDomain ) {
 		nextProps.submitSignupStep( { stepName, domainItem }, { domainItem } );
 		flows.excludeStep( stepName );
 	}
