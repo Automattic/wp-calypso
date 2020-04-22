@@ -11,22 +11,21 @@ import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
 
-export function showUpsellIfNoScan( context, next ) {
+export function scan( context, next ) {
 	context.primary = (
 		<UpsellSwitch upsell={ <ScanUpsellPage /> } targetCapability="scan">
-			{ context.primary }
+			<ScanPage />
 		</UpsellSwitch>
 	);
 	next();
 }
 
-export function scan( context, next ) {
-	context.primary = <ScanPage />;
-	next();
-}
-
 export function scanHistory( context, next ) {
 	const { filter } = context.params;
-	context.primary = <ScanHistoryPage filter={ filter } />;
+	context.primary = (
+		<UpsellSwitch upsell={ <ScanUpsellPage /> } targetCapability="scan">
+			<ScanHistoryPage filter={ filter } />
+		</UpsellSwitch>
+	);
 	next();
 }
