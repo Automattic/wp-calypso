@@ -92,8 +92,8 @@ export const handleSaveSuccess = ( { siteId } ) => [
 
 export const handleSaveFailure = ( {
 	siteId,
-	meta: { settings: previousSettings },
 	meta: {
+		settings: previousSettings,
 		dataLayer: {
 			error: { error },
 		},
