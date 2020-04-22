@@ -12,14 +12,10 @@ import { isEnabled } from 'config';
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import Site from 'blocks/site';
-import Gridicon from 'components/gridicon';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 
 /**
@@ -29,18 +25,9 @@ import './style.scss';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		siteCount: PropTypes.number.isRequired,
-		setLayoutFocus: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
-	};
-
-	switchSites = ( event ) => {
-		event.preventDefault();
-		event.stopPropagation();
-		this.props.setLayoutFocus( 'sites' );
-		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
 	render() {
@@ -65,17 +52,6 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 && (
-					<span className="current-site__switch-sites">
-						<Button borderless onClick={ this.switchSites }>
-							<Gridicon icon="chevron-left" />
-							<span className="current-site__switch-sites-label">
-								{ translate( 'Switch Site' ) }
-							</span>
-						</Button>
-					</span>
-				) }
-
 				{ selectedSite ? (
 					<div>
 						<Site site={ selectedSite } homeLink={ true } />
@@ -101,12 +77,8 @@ class CurrentSite extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
-		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getCurrentUserSiteCount( state ),
-		hasAllSitesList: hasAllSitesList( state ),
-	} ),
-	{ recordGoogleEvent, setLayoutFocus }
-)( localize( CurrentSite ) );
+export default connect( ( state ) => ( {
+	selectedSite: getSelectedSite( state ),
+	anySiteSelected: getSelectedOrAllSites( state ),
+	hasAllSitesList: hasAllSitesList( state ),
+} ) )( localize( CurrentSite ) );
