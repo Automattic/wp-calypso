@@ -3,6 +3,7 @@
  */
 import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
+import { recordTracksEventAction } from '@automattic/calypso-analytics';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 
 /**
@@ -11,8 +12,11 @@ import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
+import { USER_STORE } from '../user';
+import { FLOW_ID } from '../../constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+type CreateAccountParams = import('@automattic/data-stores').User.CreateAccountParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type FontPair = import('../../constants').FontPair;
 type State = import('.').State;
@@ -112,6 +116,21 @@ export function* createSite(
 	};
 
 	const success = yield dispatch( SITE_STORE, 'createSite', params );
+
+	return success;
+}
+
+export function* createAccount( params: CreateAccountParams ) {
+	const success = yield dispatch( USER_STORE, 'createAccount', params );
+
+	if ( ! success ) {
+		const newUserError = yield select( USER_STORE, 'getNewUserError' );
+		yield recordTracksEventAction( 'calypso_signup_error', {
+			flow: FLOW_ID,
+			error: newUserError.error || 'signup_form_new_user_error',
+			step: 'account_creation',
+		} );
+	}
 
 	return success;
 }

@@ -14,3 +14,4 @@ export {
 	analyticsEvents,
 	pushEventToTracksQueue,
 } from './tracks';
+export { controls, recordTracksEvent as recordTracksEventAction } from './controls';

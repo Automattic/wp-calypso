@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { controls } from '@wordpress/data-controls';
+import { controls as dataControls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
+import { controls as analyticsControls } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ use( plugins.persistence, persistOptions );
 
 registerStore< State >( STORE_KEY, {
 	actions,
-	controls,
+	controls: { ...dataControls, ...analyticsControls } as any,
 	reducer: reducer as any,
 	selectors,
 	persist: [
