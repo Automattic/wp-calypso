@@ -34,45 +34,61 @@ interface Props {
 	page?: string;
 }
 
+interface Filter {
+	group?: string[];
+	after?: string;
+	before?: string;
+	page: number;
+}
+
 const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	after,
 	before,
 	group,
-	page: pageNumber = 1,
+	page: pageNumber = '1',
 } ) => {
 	const translate = useTranslate();
 
-	const filter = {
+	const filter: Filter = {
 		after,
 		before,
 		group: group?.split( ',' ),
-		page: pageNumber,
+		page: parseInt( pageNumber ),
 	};
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
 
-	// const onDateRangeChange = ( newAfterDate: string, newBeforeDate: string ) => {
-	// 	page(
-	// 		addQueryArgs(
-	// 			{ ...filter, after: newAfterDate, before: newBeforeDate, group },
-	// 			backupActivityPath( siteSlug )
-	// 		)
-	// 	);
-	// };
-
-	const onGroupChange = ( newGroup: string[] ) => {
+	const onFilterChange = ( newFilter: Filter ) => {
 		page(
-			addQueryArgs( { ...filter, group: newGroup.join( ',' ) }, backupActivityPath( siteSlug ) )
+			addQueryArgs(
+				{ ...newFilter, group: newFilter.group?.join( ',' ) },
+				backupActivityPath( siteSlug )
+			)
 		);
 	};
 
-	// const onPageChange = ( newPageNumber: number ) => {
-	// 	page(
-	// 		addQueryArgs( { ...filter, page: newPageNumber, group }, backupActivityPath( siteSlug ) )
-	// 	);
-	// };
+	const render = ( loadedSiteId: number ) => (
+		<div className="backup-activity-log__content">
+			<div className="backup-activity-log__header">
+				<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+				<p>
+					{ translate(
+						'This is the complete event history for your site. Filter by date range and/or activity type.'
+					) }
+				</p>
+			</div>
+			<FilterBar
+				siteId={ loadedSiteId }
+				filter={ filter }
+				onFilterChange={ onFilterChange }
+				showDateRangeSelector={ false }
+			/>
+			{ /* placeholder rendering */ }
+			<p>{ `logs length: ${ logs && logs.length }` }</p>
+		</div>
+	);
 
 	// when the filter changes, re-request the logs
 	useEffect( () => {
@@ -84,23 +100,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 			<DocumentHead title="Activity log" />
 			<SidebarNavigation />
 			<PageViewTracker path="/backups/activity/:site" title="Activity log" />
-			<div className="backup-activity-log__content">
-				<div className="backup-activity-log__header">
-					<h2>{ translate( 'Find a backup or restore point' ) }</h2>
-					<p>
-						{ translate(
-							'This is the complete event history for your site. Filter by date range and/or activity type.'
-						) }
-					</p>
-				</div>
-				<FilterBar
-					group={ group || [] }
-					onGroupChange={ onGroupChange }
-					showDateRangeSelector={ false }
-				/>
-				{ /* placeholder rendering */ }
-				<p>{ `logs length: ${ logs && logs.length}` }</p>
-			</div>
+			{ siteId && render( siteId ) }
 		</Main>
 	);
 };
