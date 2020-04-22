@@ -88,7 +88,7 @@ function DefaultCheckoutSteps() {
 			<CheckoutSummary className={ orderSummary.className }>
 				{ orderSummary.summaryContent }
 			</CheckoutSummary>
-			<CheckoutSteps>
+			<CheckoutStepArea>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }
 					completeStepContent={ orderSummaryStep.completeStepContent }
@@ -101,22 +101,24 @@ function DefaultCheckoutSteps() {
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
-					className={ reviewOrderStep.className }
-				/>
-				<CheckoutStep
-					stepId="payment-method-step"
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-					className={ paymentMethodStep.className }
-				/>
-			</CheckoutSteps>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+						className={ reviewOrderStep.className }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+						className={ paymentMethodStep.className }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</React.Fragment>
 	);
 }
@@ -129,20 +131,39 @@ export function CheckoutSummary( { children, className } ) {
 	);
 }
 
-export function CheckoutSteps( { children, className } ) {
+export function CheckoutStepArea( { children, className } ) {
 	const localize = useLocalize();
 	const { formStatus } = useFormStatus();
 
+	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
+	const actualActiveStepNumber =
+		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
+
+	return (
+		<CheckoutStepAreaUI className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }>
+			{ children }
+
+			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+				>
+					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
+				</CheckoutErrorBoundary>
+			</SubmitButtonWrapperUI>
+		</CheckoutStepAreaUI>
+	);
+}
+
+export function CheckoutSteps( { children } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
-	const componentChildren = React.Children.toArray( children ).filter( ( child ) => child );
-	const nonSteps = componentChildren.filter( ( child ) => child.type?.name !== 'CheckoutStep' );
-	const steps = componentChildren.filter( ( child ) => child.type?.name === 'CheckoutStep' );
+
+	const steps = React.Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
 	);
-	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -157,41 +178,25 @@ export function CheckoutSteps( { children, className } ) {
 		totalSteps
 	);
 
-	return (
-		<CheckoutStepsWrapperUI
-			className={ joinClasses( [ className, 'checkout__steps-wrapper' ] ) }
-			isLastStepActive={ ! isThereAnotherNumberedStep }
-		>
-			{ nonSteps }
-			{ steps.map( ( child ) => {
-				stepNumber = nextStepNumber;
-				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-				const isStepActive = activeStepNumber === stepNumber;
-				const isStepComplete = !! stepCompleteStatus[ stepNumber ];
-				return (
-					<CheckoutSingleStepDataContext.Provider
-						key={ 'checkout-step-' + stepNumber }
-						value={ {
-							stepNumber,
-							nextStepNumber,
-							isStepActive,
-							isStepComplete,
-						} }
-					>
-						{ child }
-					</CheckoutSingleStepDataContext.Provider>
-				);
-			} ) }
-
-			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
-				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with the submit button.' ) }
-				>
-					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
-				</CheckoutErrorBoundary>
-			</SubmitButtonWrapperUI>
-		</CheckoutStepsWrapperUI>
-	);
+	return steps.map( ( child ) => {
+		stepNumber = nextStepNumber;
+		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+		const isStepActive = activeStepNumber === stepNumber;
+		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
+		return (
+			<CheckoutSingleStepDataContext.Provider
+				key={ 'checkout-step-' + stepNumber }
+				value={ {
+					stepNumber,
+					nextStepNumber,
+					isStepActive,
+					isStepComplete,
+				} }
+			>
+				{ child }
+			</CheckoutSingleStepDataContext.Provider>
+		);
+	} );
 }
 
 export function CheckoutStep( {
@@ -424,7 +429,7 @@ const CheckoutSummaryUI = styled.div`
 	}
 `;
 
-const CheckoutStepsWrapperUI = styled.div`
+const CheckoutStepAreaUI = styled.div`
 	background: ${( props ) => props.theme.colors.surface};
 	box-sizing: border-box;
 	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };

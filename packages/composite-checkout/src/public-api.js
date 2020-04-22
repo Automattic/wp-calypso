@@ -3,10 +3,11 @@
  */
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
-	CheckoutSteps,
 	Checkout,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
+	CheckoutSteps,
 	CheckoutSummary,
 	useIsStepActive,
 	useIsStepComplete,
@@ -63,6 +64,7 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
 	CheckoutSteps,
 	CheckoutSummary,

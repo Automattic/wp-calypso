@@ -6,8 +6,9 @@ import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
 	Checkout,
-	CheckoutSteps,
 	CheckoutStep,
+	CheckoutStepArea,
+	CheckoutSteps,
 	CheckoutSummary,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
@@ -133,82 +134,86 @@ export default function WPCheckout( {
 			<CheckoutSummaryUI>
 				<WPCheckoutOrderSummary />
 			</CheckoutSummaryUI>
-			<CheckoutSteps>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={
-						<WPCheckoutOrderReview
-							removeItem={ removeItem }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-							removeCoupon={ removeCouponAndResetActiveStep }
-							onChangePlanLength={ changePlanLength }
-							variantRequestStatus={ variantRequestStatus }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							siteUrl={ siteUrl }
-						/>
-					}
-					titleContent={ <OrderReviewTitle /> }
-					completeStepContent={ <InactiveOrderReview /> }
-					editButtonText={ translate( 'Edit' ) }
-					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-					nextStepButtonText={ translate( 'Continue' ) }
-					nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-					validatingButtonText={ translate( 'Please wait…' ) }
-					validatingButtonAriaLabel={ translate( 'Please wait…' ) }
-				/>
-				{ shouldShowContactStep && (
+			<CheckoutStepArea>
+				<CheckoutSteps>
 					<CheckoutStep
-						stepId={ 'contact-form' }
-						isCompleteCallback={ () => {
-							setShouldShowContactDetailsValidationErrors( true );
-							return contactValidationCallback();
-						} }
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
 						activeStepContent={
-							<WPContactForm
+							<WPCheckoutOrderReview
+								removeItem={ removeItem }
+								couponStatus={ couponStatus }
+								couponFieldStateProps={ couponFieldStateProps }
+								removeCoupon={ removeCouponAndResetActiveStep }
+								onChangePlanLength={ changePlanLength }
+								variantRequestStatus={ variantRequestStatus }
+								variantSelectOverride={ variantSelectOverride }
+								getItemVariants={ getItemVariants }
 								siteUrl={ siteUrl }
-								isComplete={ false }
-								isActive={ true }
-								CountrySelectMenu={ CountrySelectMenu }
-								countriesList={ countriesList }
-								StateSelect={ StateSelect }
-								renderDomainContactFields={ renderDomainContactFields }
-								shouldShowContactDetailsValidationErrors={
-									shouldShowContactDetailsValidationErrors
-								}
 							/>
 						}
-						completeStepContent={ <WPContactForm summary isComplete={ true } isActive={ false } /> }
-						titleContent={ <ContactFormTitle /> }
+						titleContent={ <OrderReviewTitle /> }
+						completeStepContent={ <InactiveOrderReview /> }
 						editButtonText={ translate( 'Edit' ) }
-						editButtonAriaLabel={ translate( 'Edit the contact details' ) }
+						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 						nextStepButtonText={ translate( 'Continue' ) }
-						nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
+						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
 						validatingButtonText={ translate( 'Please wait…' ) }
 						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
 					/>
-				) }
-				<CheckoutStep
-					stepId="payment-method-step"
-					activeStepContent={
-						<PaymentMethodStep
-							CheckoutTerms={ CheckoutTerms }
-							responseCart={ responseCart }
-							subtotal={ subtotal }
+					{ shouldShowContactStep && (
+						<CheckoutStep
+							stepId={ 'contact-form' }
+							isCompleteCallback={ () => {
+								setShouldShowContactDetailsValidationErrors( true );
+								return contactValidationCallback();
+							} }
+							activeStepContent={
+								<WPContactForm
+									siteUrl={ siteUrl }
+									isComplete={ false }
+									isActive={ true }
+									CountrySelectMenu={ CountrySelectMenu }
+									countriesList={ countriesList }
+									StateSelect={ StateSelect }
+									renderDomainContactFields={ renderDomainContactFields }
+									shouldShowContactDetailsValidationErrors={
+										shouldShowContactDetailsValidationErrors
+									}
+								/>
+							}
+							completeStepContent={
+								<WPContactForm summary isComplete={ true } isActive={ false } />
+							}
+							titleContent={ <ContactFormTitle /> }
+							editButtonText={ translate( 'Edit' ) }
+							editButtonAriaLabel={ translate( 'Edit the contact details' ) }
+							nextStepButtonText={ translate( 'Continue' ) }
+							nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
+							validatingButtonText={ translate( 'Please wait…' ) }
+							validatingButtonAriaLabel={ translate( 'Please wait…' ) }
 						/>
-					}
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-					editButtonText={ translate( 'Edit' ) }
-					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-					nextStepButtonText={ translate( 'Continue' ) }
-					nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-					validatingButtonText={ translate( 'Please wait…' ) }
-					validatingButtonAriaLabel={ translate( 'Please wait…' ) }
-				/>
-			</CheckoutSteps>
+					) }
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={
+							<PaymentMethodStep
+								CheckoutTerms={ CheckoutTerms }
+								responseCart={ responseCart }
+								subtotal={ subtotal }
+							/>
+						}
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+						editButtonText={ translate( 'Edit' ) }
+						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
+						nextStepButtonText={ translate( 'Continue' ) }
+						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
+						validatingButtonText={ translate( 'Please wait…' ) }
+						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</Checkout>
 	);
 }
