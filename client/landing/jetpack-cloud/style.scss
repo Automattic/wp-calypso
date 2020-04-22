@@ -29,6 +29,10 @@
 		border-width: 1px;
 	}
 
+	&[disabled]:active {
+		border-width: 1px;
+	}
+
 	&[disabled],
 	&:disabled {
 		color: var( --studio-gray-10 );
@@ -55,6 +59,7 @@
 
 	&[disabled],
 	&:disabled {
+		color: var( --studio-white );
 		background: var( --studio-gray-10 );
 		border-color: var( --studio-gray-10 );
 	}
