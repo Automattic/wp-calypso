@@ -107,17 +107,21 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	skipTask: ( siteId, reminder ) => {
+	skipTask: ( siteId, dismissalPreferenceName, reminder ) => {
 		const timestamp = Math.floor( Date.now() / 1000 );
 		const preference = reminder === 'never' || { dismissed: timestamp, reminder };
-		return savePreference( `dismissible-card-home-task-connect-accounts-${ siteId }`, preference );
+		return savePreference(
+			`dismissible-card-${ dismissalPreferenceName }-${ siteId }`,
+			preference
+		);
 	},
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	return {
 		...stateProps,
-		skipTask: ( reminder ) => dispatchProps.skipTask( stateProps.siteId, reminder ),
+		skipTask: ( reminder ) =>
+			dispatchProps.skipTask( stateProps.siteId, ownProps.dismissalPreferenceName, reminder ),
 		...ownProps,
 	};
 };
