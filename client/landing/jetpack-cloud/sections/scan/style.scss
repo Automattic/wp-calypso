@@ -44,11 +44,6 @@
 	}
 }
 
-.scan__is-loading {
-	height: 300px;
-	@include placeholder( --color-neutral-10 );
-}
-
 .scan__header {
 	color: var( --studio-black );
 	font-size: 28px;
@@ -60,6 +55,16 @@
 		font-weight: 600;
 		margin: 32px 0 24px;
 	}
+	&.is-placeholder {
+		display: block;
+		max-width: 60%;
+		@include placeholder( --color-neutral-10 );
+	}
+}
+.scan__content.is-placeholder {
+	display: block;
+	max-width: 80%;
+	@include placeholder( --color-neutral-10 );
 }
 
 .scan__button {

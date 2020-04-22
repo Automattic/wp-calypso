@@ -31,6 +31,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
+
 interface Props {
 	site: object | null;
 	siteSlug: string | null;
@@ -43,6 +44,18 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
+
+	renderPlaceholder() {
+		return (
+			<>
+				<SecurityIcon icon="placeholder" />
+				<h1 className="scan__header is-placeholder">Scan Result heading</h1>
+				<p className="scan__content is-placeholder">This is some placeholder text there.</p>
+				<p className="scan__content is-placeholder">This is some placeholder text there.</p>
+			</>
+		);
+	}
+
 	// @todo: missing copy and design for this state
 	renderUnavailable() {
 		const { siteSlug } = this.props;
@@ -154,7 +167,7 @@ class ScanPage extends Component< Props > {
 	renderScanState() {
 		const { site, scanState } = this.props;
 		if ( ! scanState ) {
-			return <div className="scan__is-loading" />;
+			return this.renderPlaceholder();
 		}
 
 		const { state, mostRecent, threats } = scanState;
