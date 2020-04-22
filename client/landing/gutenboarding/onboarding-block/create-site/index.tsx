@@ -25,16 +25,7 @@ const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
-	const hasPaidDomain: boolean = useSelect( ( select ) => {
-		const domain = select( STORE_KEY ).getState().domain;
-
-		// No domain is not paid
-		if ( ! domain ) {
-			return false;
-		}
-
-		return ! domain.is_free;
-	} );
+	const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
 
 	const steps = React.useRef< string[] >(
 		[
