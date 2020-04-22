@@ -190,50 +190,55 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				<DatePicker
-					onDateChange={ this.onDateChange }
-					selectedDate={ this.getSelectedDate() }
-					siteId={ siteId }
-					oldestDateAvailable={ oldestDateAvailable }
-					today={ today }
-					siteSlug={ siteSlug }
-				/>
+				<div className="backups__last-backup-status">
+					<DatePicker
+						onDateChange={ this.onDateChange }
+						selectedDate={ this.getSelectedDate() }
+						siteId={ siteId }
+						oldestDateAvailable={ oldestDateAvailable }
+						today={ today }
+						siteSlug={ siteSlug }
+					/>
 
-				{ isLoadingBackups && <div className="backups__is-loading" /> }
+					{ isLoadingBackups && <div className="backups__is-loading" /> }
+
+					{ ! isLoadingBackups && (
+						<>
+							<DailyBackupStatus
+								{ ...{
+									allowRestore,
+									siteUrl,
+									siteSlug,
+									dailyBackup: backupsOnSelectedDate.lastBackup,
+									lastDateAvailable,
+									selectedDate: this.getSelectedDate(),
+									timezone,
+									gmtOffset,
+									onDateChange: this.onDateChange,
+									hasRealtimeBackups,
+									realtimeBackups,
+								} }
+							/>
+							{ doesRewindNeedCredentials && (
+								<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+							) }
+						</>
+					) }
+				</div>
 
 				{ ! isLoadingBackups && (
-					<>
-						<DailyBackupStatus
-							{ ...{
-								allowRestore,
-								siteUrl,
-								siteSlug,
-								dailyBackup: backupsOnSelectedDate.lastBackup,
-								lastDateAvailable,
-								selectedDate: this.getSelectedDate(),
-								timezone,
-								gmtOffset,
-								onDateChange: this.onDateChange,
-								hasRealtimeBackups,
-								realtimeBackups,
-							} }
-						/>
-						{ doesRewindNeedCredentials && (
-							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-						) }
-						<BackupDelta
-							{ ...{
-								deltas,
-								backupAttempts,
-								hasRealtimeBackups,
-								realtimeBackups,
-								allowRestore,
-								moment,
-								siteSlug,
-								metaDiff,
-							} }
-						/>
-					</>
+					<BackupDelta
+						{ ...{
+							deltas,
+							backupAttempts,
+							hasRealtimeBackups,
+							realtimeBackups,
+							allowRestore,
+							moment,
+							siteSlug,
+							metaDiff,
+						} }
+					/>
 				) }
 			</Main>
 		);
