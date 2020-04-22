@@ -255,8 +255,6 @@ export function generateSteps( {
 		'upsell-plan': {
 			stepName: 'upsell-plan',
 			fulfilledStepCallback: shouldShowUpsell,
-			providesDependencies: [ 'domainItem' ],
-			optionalDependencies: [ 'domainItem' ],
 		},
 
 		'plans-plan-only': {
@@ -264,8 +262,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: shouldShowUpsell,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'domainItem' ],
-			optionalDependencies: [ 'domainItem' ],
+			providesDependencies: [ 'cartItem' ],
 			props: {
 				hideFreePlan: true,
 				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],

@@ -64,9 +64,13 @@ class Upsell extends Component {
 		const { stepName } = this.props;
 
 		if ( type === 'decline' ) {
-			this.props.submitSignupStep( { stepName }, { domainItem: undefined } );
+			this.props.submitSignupStep( { stepName } );
+			this.props.submitSignupStep(
+				{ stepName: 'domains', domainItem: undefined },
+				{ domainItem: undefined }
+			);
 		} else if ( type === 'accept' ) {
-			this.props.submitSignupStep( { stepName }, {} );
+			this.props.submitSignupStep( { stepName } );
 		}
 
 		this.props.goToNextStep();

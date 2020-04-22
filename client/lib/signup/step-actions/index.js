@@ -8,6 +8,7 @@ import {
 	difference,
 	get,
 	has,
+	includes,
 	isEmpty,
 	isNull,
 	omitBy,
@@ -758,11 +759,21 @@ export function shouldShowUpsell( stepName, defaultDependencies, nextProps ) {
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
 	const hasAddedFreePlanFreeDomain =
-		hasCartItemInDependencyStore && ! cartItem && hasdDomainItemInDependencyStore && ! domainItem;
+		hasCartItemInDependencyStore &&
+		! cartItem &&
+		hasdDomainItemInDependencyStore &&
+		isEmpty( domainItem );
 
 	// Don't show the upsell offer if paid plan is selected or free plan + free domain selected.
 	if ( cartItem || hasAddedFreePlanFreeDomain ) {
-		nextProps.submitSignupStep( { stepName, domainItem }, { domainItem } );
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
+
+		nextProps.submitSignupStep( { stepName }, {} );
 		flows.excludeStep( stepName );
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		flows.resetExcludedStep( stepName );
+		nextProps.removeStep( { stepName } );
 	}
 }
