@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -28,7 +28,6 @@ interface Props {
 const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
@@ -45,32 +44,6 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	useTrackModal( 'Signup' );
 
-	useEffect( () => {
-		if ( newUserError ) {
-			let newErrorMessage: string | undefined;
-			switch ( newUserError.error ) {
-				case 'already_taken':
-				case 'already_active':
-				case 'email_exists':
-					newErrorMessage = __( 'An account with this email address already exists.' );
-					break;
-				case 'password_invalid':
-					newErrorMessage = newUserError.message;
-					break;
-				default:
-					newErrorMessage = __(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					);
-					break;
-			}
-			setErrorMessage( newErrorMessage );
-			recordOnboardingError( {
-				step: 'account_creation',
-				error: newUserError.error || 'signup_form_new_user_error',
-			} );
-		}
-	}, [ newUserError ] );
-
 	const lang = useLangRouteParam();
 
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -78,7 +51,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		const username_hint = siteTitle || siteVertical?.label;
 
-		const success = await createAccount( {
+		const result = await createAccount( {
 			email: emailVal,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
@@ -89,8 +62,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			is_passwordless: false,
 		} );
 
-		if ( success ) {
+		if ( result.ok ) {
 			closeModal();
+		} else {
+			recordOnboardingError( {
+				step: 'account_creation',
+				error: result.newUserError.error || 'signup_form_new_user_error',
+			} );
 		}
 	};
 
@@ -102,6 +80,25 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			link_to_tos: <ExternalLink href={ localizedTosLink } />,
 		}
 	);
+
+	let errorMessage: string | undefined;
+	if ( newUserError ) {
+		switch ( newUserError.error ) {
+			case 'already_taken':
+			case 'already_active':
+			case 'email_exists':
+				errorMessage = __( 'An account with this email address already exists.' );
+				break;
+			case 'password_invalid':
+				errorMessage = newUserError.message;
+				break;
+			default:
+				errorMessage = __(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
+				);
+				break;
+		}
+	}
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
