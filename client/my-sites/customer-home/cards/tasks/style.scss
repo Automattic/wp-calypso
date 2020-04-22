@@ -1,0 +1,54 @@
+.single-task {
+	padding-bottom: 24px;
+
+	@include breakpoint( '>480px' ) {
+		padding-bottom: 32px;
+	}
+
+	.action-panel__title {
+		font-family: 'Recoleta', serif;
+		font-size: 32px;
+		line-height: 40px;
+		margin-bottom: 0;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 40px;
+			line-height: 48px;
+		}
+	}
+
+	.action-panel__figure {
+		max-width: 33.3333%;
+	}
+
+	.action-panel__cta {
+		display: flex;
+
+		.single-task__skip {
+			margin: auto 16px;
+		}
+	}
+}
+
+.single-task__timing {
+	display: flex;
+
+	.gridicon {
+		margin-right: 4px;
+	}
+}
+
+.single-task__description {
+	font-size: 16px;
+	line-height: 24px;
+	color: var( --color-text );
+
+	@include breakpoint( '>660px' ) {
+		font-size: 20px;
+		line-height: 32px;
+	}
+}
+
+.single-task__skip-popover .popover__menu {
+	min-width: 130px;
+}
