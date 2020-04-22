@@ -70,6 +70,13 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
+			case 'PAGE_LOAD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
+						error_message: String( action.payload.errorMessage ),
+					} )
+				);
+
 			case 'CART_ERROR':
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
