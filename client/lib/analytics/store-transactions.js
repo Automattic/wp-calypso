@@ -9,6 +9,7 @@ import { omit } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import { gaRecordEvent } from 'lib/analytics/ga';
+import { recordPurchase } from 'lib/analytics/record-purchase';
 import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import { getTld } from 'lib/domains';
 import {
@@ -96,7 +97,7 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 				// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 				// zero-value cost and would thus lead to a wrong computation of conversions
 				if ( ! hasFreeTrial( cart ) ) {
-					analytics.recordPurchase( { cart, orderId: step.data.receipt_id } );
+					recordPurchase( { cart, orderId: step.data.receipt_id } );
 				}
 
 				analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {

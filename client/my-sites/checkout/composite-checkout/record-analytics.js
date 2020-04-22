@@ -9,7 +9,7 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordPurchase } from 'lib/analytics/record-purchase';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
@@ -36,7 +36,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 				const transactionResult = select( 'wpcom' ).getTransactionResult();
-				analytics.recordPurchase( {
+				recordPurchase( {
 					cart: {
 						total_cost,
 						currency: action.payload.total.amount.currency,

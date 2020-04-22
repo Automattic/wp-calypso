@@ -7,18 +7,13 @@ import debug from 'debug';
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
-import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
+import { urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
-import {
-	retarget as retargetAdTrackers,
-	recordAliasInFloodlight,
-	recordAddToCart,
-	recordOrder,
-} from 'lib/analytics/ad-tracking';
+import { retarget as retargetAdTrackers, recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { trackAffiliateReferral } from './refer';
-import { recordSignupComplete } from './signup';
-import { gaRecordEvent, gaRecordPageView } from './ga';
+import { gaRecordPageView } from './ga';
+import { processQueue } from './queue';
 import {
 	recordTracksEvent,
 	analyticsEvents,
@@ -35,7 +30,6 @@ import {
  * Module variables
  */
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-const queueDebug = debug( 'calypso:analytics:queue' );
 
 const analytics = {
 	initialize: function ( currentUser, superProps ) {
@@ -70,106 +64,9 @@ const analytics = {
 				analytics.emit( 'page-view', urlPath, pageTitle );
 
 				// Process queue.
-				analytics.queue.process();
+				processQueue();
 			}, 0 );
 		},
-	},
-
-	// This is `localStorage` queue for delayed event triggers.
-	queue: {
-		lsKey: function () {
-			return 'analyticsQueue';
-		},
-
-		clear: function () {
-			if ( ! window.localStorage ) {
-				return; // Not possible.
-			}
-
-			window.localStorage.removeItem( analytics.queue.lsKey() );
-		},
-
-		get: function () {
-			if ( ! window.localStorage ) {
-				return []; // Not possible.
-			}
-
-			let items = window.localStorage.getItem( analytics.queue.lsKey() );
-
-			items = items ? JSON.parse( items ) : [];
-			items = Array.isArray( items ) ? items : [];
-
-			return items;
-		},
-
-		add: function ( trigger, ...args ) {
-			if ( ! window.localStorage ) {
-				// If unable to queue, trigger it now.
-				if ( 'string' === typeof trigger && 'function' === typeof analytics[ trigger ] ) {
-					analytics[ trigger ].apply( null, args || undefined );
-				}
-				return; // Not possible.
-			}
-
-			let items = analytics.queue.get();
-			const newItem = { trigger, args };
-
-			items.push( newItem );
-			items = items.slice( -100 ); // Upper limit.
-
-			queueDebug( 'Adding new item to queue.', newItem );
-			window.localStorage.setItem( analytics.queue.lsKey(), JSON.stringify( items ) );
-		},
-
-		process: function () {
-			if ( ! window.localStorage ) {
-				return; // Not possible.
-			}
-
-			const items = analytics.queue.get();
-			analytics.queue.clear();
-
-			queueDebug( 'Processing items in queue.', items );
-
-			items.forEach( ( item ) => {
-				if (
-					'object' === typeof item &&
-					'string' === typeof item.trigger &&
-					'function' === typeof analytics[ item.trigger ]
-				) {
-					queueDebug( 'Processing item in queue.', item );
-					analytics[ item.trigger ].apply( null, item.args || undefined );
-				}
-			} );
-		},
-	},
-
-	// `analytics.recordSignupComplete` needs to be present for `analytics.queue` to call
-	// the method after page navigation.
-	recordSignupComplete,
-
-	recordAddToCart: function ( { cartItem } ) {
-		// TODO: move Tracks event here?
-		// Google Analytics
-		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
-		gaRecordEvent( 'Checkout', 'calypso_cart_product_add', '', usdValue ? usdValue : undefined );
-		// Marketing
-		recordAddToCart( cartItem );
-	},
-
-	recordPurchase: function ( { cart, orderId } ) {
-		if ( cart.total_cost >= 0.01 ) {
-			// Google Analytics
-			const usdValue = costToUSD( cart.total_cost, cart.currency );
-			gaRecordEvent(
-				'Purchase',
-				'calypso_checkout_payment_success',
-				'',
-				usdValue ? usdValue : undefined
-			);
-			// Marketing
-			recordOrder( cart, orderId );
-		}
 	},
 
 	tracks: {
@@ -237,6 +134,5 @@ const analytics = {
 emitter( analytics );
 
 export default analytics;
-export const queue = analytics.queue;
 export const tracks = analytics.tracks;
 export const pageView = analytics.pageView;
