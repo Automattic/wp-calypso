@@ -17,7 +17,6 @@ import { processQueue } from './queue';
 import {
 	recordTracksEvent,
 	analyticsEvents,
-	initializeAnalytics,
 	identifyUser,
 	getTracksAnonymousUserId,
 	recordTracksPageView,
@@ -32,18 +31,6 @@ import {
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
 
 const analytics = {
-	initialize: function ( currentUser, superProps ) {
-		return initializeAnalytics( currentUser, superProps ).then( () => {
-			const user = getCurrentUser();
-
-			// This block is neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
-			if ( 'object' === typeof currentUser && user && getTracksAnonymousUserId() ) {
-				identifyUserDebug( 'recordAliasInFloodlight', user );
-				recordAliasInFloodlight();
-			}
-		} );
-	},
-
 	// pageView is a wrapper for pageview events across Tracks and GA.
 	pageView: {
 		record: function ( urlPath, pageTitle, params = {} ) {

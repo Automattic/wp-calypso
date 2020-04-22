@@ -12,6 +12,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { initializeAnalytics } from 'lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 
@@ -164,7 +165,7 @@ describe( 'Analytics', () => {
 			cookie.serialize.mockImplementation( () => {} );
 		} );
 		test( 'if stat.js load fails, should load nostat.js', () => {
-			return analytics.initialize().then( () => {
+			return initializeAnalytics().then( () => {
 				expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/nostats.js/ ) );
 			} );
 		} );
@@ -218,7 +219,7 @@ describe( 'Analytics', () => {
 			} );
 
 			test( 'should add _superProps if they are initialized', () => {
-				analytics.initialize( {}, () => {
+				initializeAnalytics( {}, () => {
 					return { super: 'prop' };
 				} );
 				analytics.tracks.recordEvent( 'calypso_abc_def' );
