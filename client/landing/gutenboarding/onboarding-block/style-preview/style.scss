@@ -352,7 +352,7 @@ $gutenboarding-style-preview-bar-height: 30px;
 
 // Remove focus styling from clicking a button
 // Keep keyboard-focused focus style
-html:not( .accessible-focus ) .components-button:focus:not( :disabled ) {
+html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( :disabled ) {
 	box-shadow: none;
 }
 

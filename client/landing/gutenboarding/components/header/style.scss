@@ -47,17 +47,6 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 .gutenboarding__header-domain-picker-button {
 	padding: 0.3em 0.5em;
-	border-radius: $radius-round-rectangle;
-
-	&:focus,
-	&:hover {
-		box-shadow: 0 0 0 2px $blue-medium-focus;
-		outline: 0;
-	}
-
-	&:disabled {
-		opacity: 1;
-	}
 }
 
 .gutenboarding__header-domain-picker-button-domain {
