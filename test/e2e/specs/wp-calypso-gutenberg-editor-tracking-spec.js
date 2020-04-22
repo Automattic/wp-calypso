@@ -59,12 +59,9 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			await driver.switchTo().window( windows[ 1 ] );
 
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '#menu-pages ul li:last-child > a]' )
-			); //
+			await driverHelper.clickWhenClickable( driver, By.css( '#menu-pages > a' ) ); //
 
-			await driver.sleep( 50000 );
+			await driver.sleep( 5000 );
 		} );
 
 		// step( 'Can enter page title, content and image', async function () {
