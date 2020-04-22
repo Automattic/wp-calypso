@@ -16,7 +16,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
 
 interface Props {
-	isVisible: boolean;
+	isVisible?: boolean;
 	isMobile: boolean; // needed as a prop to be defined when component mounts
 }
 
