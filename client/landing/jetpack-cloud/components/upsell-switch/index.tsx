@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import JetpackLogo from 'components/jetpack-logo';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 interface Props {
@@ -42,7 +43,13 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	}, [ siteCapabilities, targetCapability, siteId ] );
 
 	if ( isLoading ) {
-		return <QueryRewindCapabilities siteId={ siteId } />;
+		return (
+			<>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<JetpackLogo size={ 72 } className="wpcom-site__logo" />
+				<QueryRewindCapabilities siteId={ siteId } />
+			</>
+		);
 	}
 	if ( showUpsell ) {
 		return upsell;
