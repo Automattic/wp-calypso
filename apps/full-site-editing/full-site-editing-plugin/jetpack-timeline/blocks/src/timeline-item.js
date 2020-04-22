@@ -44,7 +44,7 @@ export function registerTimelineItemBlock() {
 					<div className="timeline-item">
 						<div className="timeline-item__bubble" style={ bubbleStyle } />
 						<div className="timeline-item__dot" style={ style } />
-						<InnerBlocks template={ [ [ 'core/heading' ] ] } />
+						<InnerBlocks template={ [ [ 'core/paragraph' ] ] } />
 					</div>
 				</li>
 			);

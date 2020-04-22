@@ -1,19 +1,22 @@
 $timeline-spot-color: #320467;
 $timeline-border-width: 4px;
 $timeline-gutter: 24px;
+$timeline-width: 36px;
+$timeline-dot-size: 16px;
+$timeline-bubble-connector-width: 6px;
+$timeline-bubble-connector-height: 12px;
 
 // Styles shared between editor and frontend.
 .wp-block-jetpack-timeline {
 	margin: 0;
-	padding-left: 8px;
+	padding: 0;
 
 	li {
 		list-style-type: none;
 		position: relative;
-		position: relative;
 		padding: 12px 24px;
 		border-radius: 4px;
-		margin-left: $timeline-gutter;
+		margin-left: $timeline-width;
 
 		// Note, this needs extra specificity in the editor, so there's an additional style there.
 		margin-bottom: $timeline-gutter;
@@ -23,13 +26,13 @@ $timeline-gutter: 24px;
 			display: block;
 			width: 0;
 			height: 0;
-			border-top: 8px solid transparent !important; // We use !important here to be able to use "borderColor" instead of "borderColorRight" in code, thus enabling RTL.
-			border-right: 10px solid #eee;
-			border-bottom: 8px solid transparent !important;
+			border-top: ( $timeline-bubble-connector-height / 2 ) solid transparent !important; // We use !important here to be able to use "borderColor" instead of "borderColorRight" in code, thus enabling RTL.
+			border-right: $timeline-bubble-connector-width solid #eee;
+			border-bottom: ( $timeline-bubble-connector-height / 2 ) solid transparent !important;
 			position: absolute;
 			top: 50%;
-			transform: translateY( -8px );
-			left: -10px;
+			transform: translateY( -( $timeline-bubble-connector-height / 2 ) );
+			left: -$timeline-bubble-connector-width;
 		}
 
 		// Draw the vertical line.
@@ -38,7 +41,7 @@ $timeline-gutter: 24px;
 			display: block;
 			background: $timeline-spot-color;
 			position: absolute;
-			left: -4px - $timeline-gutter;
+			left: ( -$timeline-width / 2 ) - ( $timeline-border-width / 2 );
 			top: -$timeline-gutter;
 			bottom: -$timeline-gutter;
 			width: $timeline-border-width;
@@ -62,18 +65,72 @@ $timeline-gutter: 24px;
 		.timeline-item__dot {
 			display: block;
 			border: $timeline-border-width solid $timeline-spot-color;
-			width: 16px;
-			height: 16px;
+			width: $timeline-dot-size;
+			height: $timeline-dot-size;
 			position: absolute;
 			z-index: 1;
 			border-radius: 50%;
 			top: 50%;
-			transform: translateY( -8px );
-			left: -10px - $timeline-gutter;
+			transform: translateY( -#{$timeline-dot-size / 2} );
+			left: -( $timeline-width / 2 ) - ( $timeline-dot-size / 2 );
 			box-sizing: border-box;
 
 			// Fallback background color.
 			background-color: #fff;
+		}
+	}
+}
+
+
+// Alternating bubbles.
+// Some CSS here is specific to both editor and frontend.
+@media only screen and ( min-width: 640px ) {
+	.wp-block .wp-block-jetpack-timeline {
+		display: flex;
+		flex-direction: column;
+
+		// Bubbles.
+		.wp-block[data-type='jetpack/timeline-item'], // Editor.
+		.wp-block.wp-block-jetpack-timeline-item { // Frontend.
+			width: calc( 50% + #{ $timeline-width - 3 } ); // 33px makes them align. Not sure where the 3px come from.
+		}
+
+		[data-type='jetpack/timeline-item']:nth-child( odd ), // Editor.
+		.wp-block-jetpack-timeline-item:nth-child( odd ) { // Frontend.
+			margin-left: 0;
+			margin-right: auto;
+
+			// Override the bubble connector.
+			li {
+				margin-left: 0;
+				margin-right: $timeline-width;
+		
+				// Draw the bubble connector.
+				.timeline-item__bubble {
+					border-left: $timeline-bubble-connector-width solid #eee;
+					border-right: none;
+					right: -$timeline-bubble-connector-width;
+					left: auto;
+				}
+		
+				// Draw the vertical line.
+				.timeline-item::after {
+					right: ( -$timeline-width / 2 ) - ( $timeline-border-width / 2 );
+					left: auto;
+				}
+	
+				// Draw a timeline circle dot.
+				.timeline-item__dot {
+					right: -( $timeline-width / 2 ) - ( $timeline-dot-size / 2 );
+					left: auto;
+				}
+			}
+		}
+
+		[data-type='jetpack/timeline-item']:nth-child( even ), // Editor.
+		.wp-block-jetpack-timeline-item:nth-child( even ) { // Frontend.
+			margin-left: auto;
+			margin-right: 0;
 		}
 	}
 }

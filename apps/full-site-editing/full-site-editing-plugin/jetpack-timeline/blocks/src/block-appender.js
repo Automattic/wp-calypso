@@ -16,7 +16,7 @@ export const BlockAppender = ( props ) => {
 	const { onClick } = props;
 	return (
 		<button
-			className="block-editor-inserter__toggle timeline-item-appender"
+			className="block-editor-inserter__toggle timeline-item-appender components-button"
 			type="button"
 			style={ { zIndex: 99999 } }
 			onClick={ onClick }

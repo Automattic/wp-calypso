@@ -1,8 +1,12 @@
 $timeline-gutter: 24px;
 
 // Editor-only styles.
-[data-type='jetpack/timeline'] ul.wp-block-jetpack-timeline {
-	padding-left: 8px;
+[data-type='jetpack/timeline'] {
+
+	// Always show the Timeline appender, even when a child block is selected.
+	&.has-child-selected .block-list-appender {
+		display: block;
+	}
 }
 
 [data-type='jetpack/timeline-item'] {
