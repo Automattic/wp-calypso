@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { CONNECTIONS_EXPANDED_SERVICE } from 'state/action-types';
+import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'state/action-types';
 
 /**
  * Triggers a network request for a user's connected services.
@@ -13,7 +13,7 @@ import { CONNECTIONS_EXPANDED_SERVICE } from 'state/action-types';
 export function setExpandedService( serviceName ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: CONNECTIONS_EXPANDED_SERVICE,
+			type: CONNECTIONS_SET_EXPANDED_SERVICE,
 			serviceName,
 		} );
 	};
