@@ -173,6 +173,7 @@ const mapStateToProps = ( state ) => {
 	const allowRestore =
 		'active' === rewind.state &&
 		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
+		Array.isArray( siteCapabilities ) &&
 		siteCapabilities.includes( 'restore' );
 
 	return {
