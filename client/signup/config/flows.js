@@ -20,7 +20,6 @@ function getCheckoutUrl( dependencies ) {
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
-			...( dependencies.isUpsellItem && { upgrade: 1 } ),
 		},
 		`/checkout/${ dependencies.siteSlug }`
 	);
@@ -28,10 +27,6 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
-}
-
-function dependenciesContainDomainItemWithoutPlan( dependencies ) {
-	return dependencies.domainItem && ! dependencies.cartItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -104,10 +99,6 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterDestination( destination, dependencies ) {
-	if ( dependenciesContainDomainItemWithoutPlan( dependencies ) ) {
-		return getPlanUpsellUrl( dependencies );
-	}
-
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
 	}

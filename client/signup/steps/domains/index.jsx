@@ -285,7 +285,6 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
