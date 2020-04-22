@@ -12,5 +12,5 @@ import 'state/data-layer/wpcom/sites/scan';
  * @returns {?number}		Undefined or percentage of the scan completed
  */
 export default function getSiteScanProgress( state, siteId ) {
-	return state.jetpackScan.scan?.[ siteId ]?.most_recent?.progress;
+	return state.jetpackScan.scan?.[ siteId ]?.mostRecent?.progress;
 }
