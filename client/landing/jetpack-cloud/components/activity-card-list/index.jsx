@@ -10,6 +10,10 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	isSuccessfulDailyBackup,
+	isSuccessfulRealtimeBackup,
+} from 'landing/jetpack-cloud/sections/backups/utils';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -66,38 +70,60 @@ class ActivityCardList extends Component {
 		return logsByDate;
 	}
 
-	renderLogs( logs ) {
-		const { allowRestore, moment, siteSlug, showDateSeparators } = this.props;
-		const logsByDate = this.splitLogsByDate( logs );
+	renderLogs( actualPage ) {
+		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
 
-		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
-			return (
-				<div key={ `activity-card-list__date-group-${ index }` }>
+		// 1. move the start index to the right place
+		const logWithCorrectStart = logs.slice( ( actualPage - 1 ) * pageSize );
+
+		let numberOfLogsRendered = 0;
+
+		const renderDateLogs = ( dateLogs ) => {
+			const renderedLogs = ( numberOfLogsRendered + dateLogs.length > pageSize
+				? dateLogs.slice( 0, pageSize - numberOfLogsRendered )
+				: dateLogs
+			).map( ( activity ) => (
+				<ActivityCard
+					{ ...{
+						key: activity.activityId,
+						showContentLink:
+							isSuccessfulDailyBackup( activity ) || isSuccessfulRealtimeBackup( activity )
+								? dateLogs.length > 1
+								: true,
+						moment,
+						activity,
+						allowRestore,
+						siteSlug,
+						className:
+							isSuccessfulDailyBackup( activity ) || isSuccessfulRealtimeBackup( activity )
+								? 'activity-card-list__primary-card'
+								: 'activity-card-list__secondary-card',
+					} }
+				/>
+			) );
+			numberOfLogsRendered += renderedLogs.length;
+			return renderedLogs;
+		};
+
+		const renderedGroups = [];
+		const splitLogs = this.splitLogsByDate( logWithCorrectStart );
+
+		for ( let i = 0; i < splitLogs.length && numberOfLogsRendered < pageSize; i++ ) {
+			const { date, logs: dateLogs } = splitLogs[ i ];
+			renderedGroups.push(
+				<div key={ `activity-card-list__date-group-${ i }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
 							{ date && date.format( 'MMM Do' ) }
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
-						{ dateLogs.map( ( activity ) => (
-							<ActivityCard
-								{ ...{
-									key: activity.activityId,
-									moment,
-									activity,
-									allowRestore,
-									siteSlug,
-									className:
-										activity.activityType === 'Backup'
-											? 'activity-card-list__primary-card'
-											: 'activity-card-list__secondary-card',
-								} }
-							/>
-						) ) }
+						{ renderDateLogs( dateLogs ) }
 					</div>
 				</div>
 			);
-		} );
+		}
+		return renderedGroups;
 	}
 
 	renderData() {
@@ -116,7 +142,7 @@ class ActivityCardList extends Component {
 			1,
 			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
 		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
+
 		return (
 			<>
 				{ showFilter && (
@@ -142,7 +168,7 @@ class ActivityCardList extends Component {
 						total={ logs.length }
 					/>
 				) }
-				{ this.renderLogs( theseLogs ) }
+				{ this.renderLogs( actualPage ) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }

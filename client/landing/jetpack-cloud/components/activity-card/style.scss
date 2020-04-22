@@ -52,13 +52,18 @@
 	margin: 0.5rem 0;
 }
 
-.activity-card__activity-actions {
+.activity-card__activity-actions,
+.activity-card__activity-actions-reverse {
 	position: relative;
 	top: 0.5rem;
 	border-top: 1px solid #e4e4e6;
 	padding-top: 0.7rem;
 	display: flex;
 	justify-content: space-between;
+}
+
+.activity-card__activity-actions-reverse {
+	flex-direction: row-reverse;
 }
 
 .activity-card__detail-link {
