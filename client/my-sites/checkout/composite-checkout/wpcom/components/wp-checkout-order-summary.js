@@ -3,109 +3,46 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
-import {
-	CheckoutCheckIcon,
-	renderDisplayValueMarkdown,
-	useLineItemsOfType,
-	useTotal,
-} from '@automattic/composite-checkout';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
-export default function WPCheckoutOrderSummary() {
-	const translate = useTranslate();
-	const taxes = useLineItemsOfType( 'tax' );
-	const total = useTotal();
+/**
+ * Internal dependencies
+ */
+import { isLineItemADomain } from '../hooks/has-domains';
 
+export default function WPCheckoutOrderSummary( { siteUrl } ) {
+	const [ items ] = useLineItems();
+
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+
+	return <React.Fragment>{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }</React.Fragment>;
+}
+
+export function WPCheckoutOrderSummaryTitle() {
+	const translate = useTranslate();
+	const total = useTotal();
 	return (
-		<>
-			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
-			<CheckoutSummaryFeatures>
-				<CheckoutSummaryFeaturesTitle>
-					{ translate( 'Included with your purchase' ) }
-				</CheckoutSummaryFeaturesTitle>
-				<CheckoutSummaryFeaturesList>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Live chat and email support' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Free custom domain for a year' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Dozens of free themes' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Money back guarantee' ) }
-					</CheckoutSummaryFeaturesListItem>
-				</CheckoutSummaryFeaturesList>
-			</CheckoutSummaryFeatures>
-			<CheckoutSummaryAmountWrapper>
-				{ taxes.map( ( tax ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<span>{ tax.label }</span>
-						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
-		</>
+		<CheckoutSummaryTitle>
+			<span>{ translate( 'You are all set to check out' ) }</span>
+			<CheckoutSummaryTotal>
+				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryTitle>
 	);
 }
 
-const CheckoutSummaryTitle = styled.h2`
-	color: ${( props ) => props.theme.colors.textColor};
-	display: none;
-	font-weight: ${( props ) => props.theme.weights.bold};
-	padding: 20px 20px 0;
-
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		display: none;
-	}
-`;
-
-const CheckoutSummaryFeatures = styled.div`
-	padding: 20px;
-`;
-
-const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 16px;
-	font-weight: ${( props ) => props.theme.weights.normal};
-	margin-bottom: 4px;
-`;
-
-const CheckoutSummaryFeaturesList = styled.ul`
-	margin: 0;
-	list-style: none;
-	font-size: 14px;
-`;
-
-const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
-	fill: ${( props ) => props.theme.colors.success};
-	margin-right: 4px;
-	vertical-align: bottom;
-`;
-
-const CheckoutSummaryFeaturesListItem = styled.li`
-	margin-bottom: 4px;
-`;
-
-const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	padding: 20px;
-`;
-
-const CheckoutSummaryLineItem = styled.div`
+const CheckoutSummaryTitle = styled.span`
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummaryTotal = styled.span`
 	font-weight: ${( props ) => props.theme.weights.bold};
+`;
+
+const DomainURL = styled.div`
+	margin-top: -12px;
+	word-break: break-word;
 `;

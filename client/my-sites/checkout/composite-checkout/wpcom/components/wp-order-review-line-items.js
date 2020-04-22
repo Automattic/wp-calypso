@@ -57,7 +57,7 @@ function WPLineItem( {
 				<LineItemPrice lineItem={ item } />
 			</span>
 			{ hasDeleteButton && formStatus === 'ready' && (
-				<>
+				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
 						disabled={ isDisabled }
@@ -96,7 +96,7 @@ function WPLineItem( {
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
-				</>
+				</React.Fragment>
 			) }
 
 			{ shouldShowVariantSelector && (
@@ -179,10 +179,11 @@ export const LineItemUI = styled( WPLineItem )`
 	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor) };
 	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
 	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
-		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0'};
+		isSummaryVisible || total || subtotal || tax ? '10px 0' : '24px 0'};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
+	margin-right: ${( { total, tax, subtotal } ) => ( subtotal || total || tax ? '0' : '30px') };
 `;
 
 const LineItemTitleUI = styled.div`
@@ -206,7 +207,7 @@ const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 8px;
+	top: 10px;
 
 	:hover rect {
 		fill: ${( props ) => props.theme.colors.error};
@@ -274,7 +275,7 @@ export function WPOrderReviewLineItems( {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( ( item ) => (
-				<WPOrderReviewListItem key={ item.id }>
+				<WPOrderReviewListItems key={ item.id }>
 					<LineItemUI
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
@@ -285,7 +286,7 @@ export function WPOrderReviewLineItems( {
 						getItemVariants={ getItemVariants }
 						onChangePlanLength={ onChangePlanLength }
 					/>
-				</WPOrderReviewListItem>
+				</WPOrderReviewListItems>
 			) ) }
 		</WPOrderReviewList>
 	);
@@ -309,16 +310,23 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-	box-sizing: border-box;
-	margin: 20px 30px 20px 0;
+	margin: -10px 0 10px 0;
+	padding: 0;
 `;
 
-const WPOrderReviewListItem = styled.li`
+const WPOrderReviewListItems = styled.li`
 	margin: 0;
 	padding: 0;
 	display: block;
 	list-style: none;
+
+	:first-of-type .checkout-line-item {
+		padding-top: 10px;
+	}
+
+	:first-of-type button {
+		top: -3px;
+	}
 `;
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
