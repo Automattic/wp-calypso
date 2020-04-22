@@ -54,24 +54,25 @@ class ActivityCardList extends Component {
 		const logsByDate = [];
 		let lastDate = null;
 		let logsAdded = 0;
-		if ( applySiteOffset ) {
-			for ( const log of logs ) {
-				const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
-				if ( logsAdded === pageSize ) {
-					if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
-						logsByDate[ logsByDate.length - 1 ].hasMore = true;
-					}
-				} else {
-					if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
-						logsByDate[ logsByDate.length - 1 ].logs.push( log );
-					} else {
-						logsByDate.push( { date: activityDateMoment, logs: [ log ], hasMore: false } );
-						lastDate = activityDateMoment;
-					}
-					logsAdded++;
+
+		for ( const log of logs ) {
+			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
+			if ( logsAdded >= pageSize ) {
+				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+					logsByDate[ logsByDate.length - 1 ].hasMore = true;
 				}
+				break;
+			} else {
+				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+					logsByDate[ logsByDate.length - 1 ].logs.push( log );
+				} else {
+					logsByDate.push( { date: activityDateMoment, logs: [ log ], hasMore: false } );
+					lastDate = activityDateMoment;
+				}
+				logsAdded++;
 			}
 		}
+
 		return logsByDate;
 	}
 
