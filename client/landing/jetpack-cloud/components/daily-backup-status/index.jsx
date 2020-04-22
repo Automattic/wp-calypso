@@ -29,6 +29,7 @@ import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
  * Style dependencies
  */
 import './style.scss';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -99,7 +100,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderFailedBackup( backup ) {
-		const { translate, timezone, gmtOffset } = this.props;
+		const { translate, timezone, gmtOffset, siteUrl } = this.props;
 
 		const backupTitleDate = this.getDisplayDate( backup.activityTs, false );
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
@@ -142,7 +143,7 @@ class DailyBackupStatus extends Component {
 					</p>
 					<Button
 						className="daily-backup-status__support-button"
-						href="https://jetpack.com/contact-support/"
+						href={ contactSupportUrl( siteUrl ) }
 						target="_blank"
 						rel="noopener noreferrer"
 						isPrimary={ false }
@@ -155,7 +156,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderNoBackupEver() {
-		const { translate } = this.props;
+		const { translate, siteUrl } = this.props;
 
 		return (
 			<>
@@ -173,7 +174,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href="https://jetpack.com/contact-support/"
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
@@ -185,7 +186,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderNoBackupOnDate() {
-		const { translate, selectedDate, siteSlug } = this.props;
+		const { translate, selectedDate, siteSlug, siteUrl } = this.props;
 
 		const displayDate = selectedDate.format( 'll' );
 		const nextDate = selectedDate.clone().add( 1, 'days' );
@@ -224,7 +225,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href="https://jetpack.com/contact-support/"
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
