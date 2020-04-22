@@ -71,11 +71,10 @@ class UpsellForm extends Component {
 
 				<div className="upsell__column-pane">
 					<div className="upsell__column-content">
-						<p>Adding a custom domain is an essential step for your site.</p>
-
 						<p>
-							Custom domains are great for SEO, they look more professional, and make it easier to
-							share your site on social media, in person, and on business cards.
+							Adding a custom domain is an essential step for your site. Custom domains are great
+							for SEO, they look more professional, and make it easier to share your site on social
+							media, in person, and on business cards.
 						</p>
 
 						<p>
