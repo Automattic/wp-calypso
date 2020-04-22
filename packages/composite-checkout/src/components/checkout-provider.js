@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -93,8 +93,12 @@ export const CheckoutProvider = ( props ) => {
 
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
+	const onError = useCallback(
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', errorMessage: error.message } ),
+		[ onEvent ]
+	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
