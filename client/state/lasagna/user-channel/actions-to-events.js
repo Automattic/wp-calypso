@@ -6,53 +6,48 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
+import { lasagna } from '../middleware';
 import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/action-types';
 import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
-import { socket } from '../socket';
 
-let channel = null;
+const debug = debugFactory( 'lasagna:channel:push:wordpress.com:user' );
 
-const debug = debugFactory( 'lasagna:channel:user' );
+const joinChannel = ( store, topic ) => {
+	lasagna.initChannel(
+		topic,
+		{ jwt: getCurrentUserLasagnaJwt( store.getState() ) },
+		{
+			onClose: () => debug( 'channel closed' ),
+			onError: ( reason ) => debug( 'channel error', reason ),
+		}
+	);
 
-const joinChannel = ( store ) => {
-	if ( ! socket || channel ) {
-		return;
-	}
-
-	const userId = getCurrentUserId( store.getState() );
-	const jwt = getCurrentUserLasagnaJwt( store.getState() );
-
-	if ( ! userId || ! jwt ) {
-		return;
-	}
-
-	channel = socket.channel( `push:wordpress.com:user:${ userId }`, { jwt } );
 	// registerEventHandlers here
 
-	channel
-		.join()
-		.receive( 'ok', () => debug( 'channel join ok' ) )
-		.receive( 'error', ( { reason } ) => {
-			debug( 'channel join error', reason );
-			channel.leave();
-			channel = null;
-		} );
+	lasagna.joinChannel( topic, () => debug( 'channel join ok' ) );
 };
 
-const leaveChannel = () => {
-	channel && channel.leave();
-	channel = null;
+const leaveChannel = ( topic ) => {
+	lasagna.leaveChannel( topic );
 };
 
 export default ( store ) => ( next ) => ( action ) => {
+	const userId = getCurrentUserId( store.getState() );
+
+	if ( ! userId ) {
+		return next( action );
+	}
+
+	const topic = `push:wordpress.com:user:${ userId }`;
+
 	switch ( action.type ) {
 		case LASAGNA_SOCKET_CONNECTED: {
-			joinChannel( store );
+			joinChannel( store, topic );
 			break;
 		}
 
 		case LASAGNA_SOCKET_DISCONNECTED:
-			leaveChannel();
+			leaveChannel( topic );
 			break;
 	}
 

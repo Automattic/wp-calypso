@@ -16,6 +16,14 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.2.1.tgz#e920af382a4db624ebca1591adace289912bf37b"
   integrity sha512-doMeOR5ly+qviYgWhWStByZHnnv3AFBC4Tj6aZLTrw8voulIu9AUv3Z9eit8a68uzCI77VkN7fUFadOiYIYBWg==
 
+"@automattic/lasagna@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.2.1.tgz#65a610853a3c3b2ac31ef53423f42717fda8748f"
+  integrity sha512-BvUaEld3ECbw3zD561kfPtgxPRJe48IC6pRG10vyyXUxYr4DNUezrEQJAUQe+fIrOyNlza13qE+Pon2hwYK/MQ==
+  dependencies:
+    jwt-decode "^2.2.0"
+    phoenix "^1.5.0"
+
 "@automattic/mini-css-extract-plugin-with-rtl@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@automattic/mini-css-extract-plugin-with-rtl/-/mini-css-extract-plugin-with-rtl-0.8.0.tgz#0e0dc9afc43a2d6a82c199aef211565e1211fcac"
@@ -13472,6 +13480,11 @@ just-extend@^4.0.2:
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.0.2.tgz#f3f47f7dfca0f989c55410a7ebc8854b07108afc"
   integrity sha512-FrLwOgm+iXrPV+5zDU6Jqu4gCRXbWEQg2O3SKONsWE4w7AXFRkryS53bpWdaL9cNol+AmR3AEYz6kn+o0fCPnw==
 
+jwt-decode@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
+  integrity sha1-fYa9VmefWM5qhHBKZX3TkruoGnk=
+
 keymaster@1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/keymaster/-/keymaster-1.6.2.tgz#e1ae54d0ea9488f9f60b66b668f02e9a1946c6eb"
@@ -16273,10 +16286,15 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-phoenix@1.4.16, phoenix@^1.4.16:
+phoenix@^1.4.16:
   version "1.4.16"
   resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.4.16.tgz#83b887ddb69b676024fd1c6ea6849a46ae0d837f"
   integrity sha512-XmKVTlFQuRwTYBO1WU1OaN2tzywRAtY6haUpxHPGxNZuyPEgmo+Caw7+BMlIPhipM197+d962i6sGZLylBtCbA==
+
+phoenix@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.0.tgz#800aa1b7adfdb45b959d5c45d25f7aaedfaa5818"
+  integrity sha512-Vzz6eb64BEufIXTVkTcT5HiNdRyLY2DF/l2eN1LaeedRbBhGCsdRWdDISFjBSjxODjqY+w2NmSzBeHM8MieLRw==
 
 phone@2.4.2:
   version "2.4.2"

@@ -6,47 +6,39 @@ import createDebug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { lasagna } from './middleware';
+import { getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 import { socketConnected, socketDisconnected } from 'state/lasagna/actions';
 
 /**
  * Module vars
  */
-export let socket = null;
-
 const debug = createDebug( 'lasagna:socket' );
-const url = config( 'lasagna_url' );
 
-export const socketConnect = ( store, jwt ) => {
-	if ( socket !== null || ! jwt ) {
-		return;
-	}
+export const socketConnect = async ( store ) => {
+	await lasagna.initSocket(
+		{ jwt: getCurrentUserLasagnaJwt( store.getState() ) },
+		{
+			onOpen: () => {
+				debug( 'socket opened' );
+				store.dispatch( socketConnected() );
+			},
+			onClose: () => {
+				debug( 'socket closed' );
+				store.dispatch( socketDisconnected() );
+			},
+			onError: () => {
+				debug( 'socket error' );
+			},
+		}
+	);
 
-	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
-		socket = new Socket( url, { params: { jwt } } );
-
-		socket.onOpen( () => {
-			debug( 'socket opened' );
-			store.dispatch( socketConnected() );
-		} );
-
-		socket.onClose( () => {
-			debug( 'socket closed' );
-			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
-
-		socket.onError( () => {
-			debug( 'socket error' );
-			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
-
-		socket.connect();
-	} );
+	return lasagna.connect();
 };
 
 export const socketDisconnect = ( store ) => {
-	debug( 'socket disconnected' );
-	socket && socket.disconnect();
-	socket = null;
-	store.dispatch( socketDisconnected() );
+	lasagna.disconnect( () => {
+		debug( 'socket disconnected' );
+		store.dispatch( socketDisconnected() );
+	} );
 };
