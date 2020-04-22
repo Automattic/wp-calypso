@@ -3,7 +3,7 @@
 
 $progress-step-title-height: 40px;
 $progress-step-number-step-height: 45px;
-$progress-duration: 5s;
+$progress-duration: 800ms;
 $progress-widget-height: 300px;
 
 .create-site__background {
@@ -35,38 +35,27 @@ $progress-widget-height: 300px;
 		padding: 1em;
 
 		.create-site__progress {
-			height: $progress-step-title-height;
-			overflow: hidden;
 			margin-bottom: 20px;
 		}
 
-		.create-site__progress-steps {
-			animation: create-site__progress-steps $progress-duration ease-out forwards;
-
-			@keyframes create-site__progress-steps {
-				@for $i from 0 through 3 {
-					#{$i / 3 * 100%} {
-						transform: translateY( -$progress-step-title-height * ( $i - 1 ) );
-					}
-				}
-			}
-		}
-
 		.create-site__progress-bar {
-			height: 7px;
-			background: var( --mainColor );
-			transform: scaleX( 0 );
-			transform-origin: 0% 0%;
+			position: relative;
+			overflow: hidden;
+			height: 6px;
 			margin-top: 1em;
+			background: var( --studio-gray-10 );
+			--progress: 0;
 
-			animation: create-site__progress-bar-progress-move #{$progress-duration + 1} ease-out forwards;
-
-			@keyframes create-site__progress-bar-progress-move {
-				@for $i from 1 through 3 {
-					#{$i / 3 * 100%} {
-						transform: scaleX( #{$i / 3} );
-					}
-				}
+			&::before {
+				background: var( --studio-blue-40 );
+				transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
+				position: absolute;
+				content: '';
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				transition: transform $progress-duration ease-out;
 			}
 		}
 
@@ -75,28 +64,15 @@ $progress-widget-height: 300px;
 			text-align: center;
 			vertical-align: middle;
 			margin: 0;
-			height: $progress-step-title-height;
 		}
 
 		.create-site__progress-numbered-steps {
-			height: $progress-step-title-height;
-			overflow: hidden;
 			margin-top: 0.7em;
 
 			> p {
-				height: $progress-step-number-step-height;
 				padding: 1em;
 				text-align: center;
 				color: var( --studio-gray-40 );
-
-				animation: create-site__progress-numbered-step-up $progress-duration steps( 2, end )
-					forwards;
-
-				@keyframes create-site__progress-numbered-step-up {
-					to {
-						transform: translateY( -$progress-step-number-step-height * 2 );
-					}
-				}
 			}
 		}
 	}
