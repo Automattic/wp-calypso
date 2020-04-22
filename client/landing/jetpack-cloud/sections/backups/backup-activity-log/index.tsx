@@ -1,24 +1,26 @@
 /**
  * External dependencies
  */
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import isEqual from 'lodash/isEqual';
 import React, { FunctionComponent, useEffect } from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { getHttpData } from 'state/data-layer/http-data';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
-import { setFilter } from 'state/activity-log/actions';
-import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
+// import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import DocumentHead from 'components/data/document-head';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+// import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { addQueryArgs } from 'lib/url';
+import { backupActivityPath } from '../paths';
+import FilterBar from 'landing/jetpack-cloud/components/filter-bar';
 
 /**
  * Style dependencies
@@ -36,41 +38,41 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	after,
 	before,
 	group,
-	page = 1,
+	page: pageNumber = 1,
 } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
-	const siteId = useSelector( getSelectedSiteId );
-	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
-
-	/*
-	 * When we load this page if the filter has a difference from the current filter that indicates we have navigate to the URL fresh
-	 * ( the filterbar makes modifications to the filter in state THEN navigates to the new page. )
-	 * Since we are loading this page fresh we want to "reset" the filter to what the query args tell us
-	 */
-	useEffect( () => {
-		const processedGroup = group ? group.split( ',' ) : undefined;
-		if (
-			! isEqual( filter.group, processedGroup ) ||
-			filter.after !== after ||
-			filter.before !== before ||
-			filter.page !== page
-		)
-			dispatch( setFilter( siteId, { page: page, after, before, group: processedGroup } ) );
-	}, [
+	const filter = {
 		after,
 		before,
-		dispatch,
-		filter.after,
-		filter.before,
-		filter.group,
-		filter.page,
-		group,
-		page,
-		siteId,
-	] );
+		group: group?.split( ',' ),
+		page: pageNumber,
+	};
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
+
+	const onDateRangeChange = ( newAfterDate: string, newBeforeDate: string ) => {
+		page(
+			addQueryArgs(
+				{ ...filter, after: newAfterDate, before: newBeforeDate, group },
+				backupActivityPath( siteSlug )
+			)
+		);
+	};
+
+	const onGroupChange = ( newGroup: string[] ) => {
+		page(
+			addQueryArgs( { ...filter, group: newGroup.join( ',' ) }, backupActivityPath( siteSlug ) )
+		);
+	};
+
+	const onPageChange = ( newPageNumber: number ) => {
+		page(
+			addQueryArgs( { ...filter, page: newPageNumber, group }, backupActivityPath( siteSlug ) )
+		);
+	};
 
 	// when the filter changes, re-request the logs
 	useEffect( () => {
@@ -91,7 +93,9 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 						) }
 					</p>
 				</div>
-				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
+				<FilterBar filter={ filter } />
+				{ /* placeholder rendering */ }
+				<p>{ `logs length: ${ logs && logs.length}` }</p>
 			</div>
 		</Main>
 	);
