@@ -17,7 +17,7 @@ import { Step, usePath } from '../../path';
 
 interface Props {
 	isVisible?: boolean;
-	isMobile: boolean; // needed as a prop to be defined when component mounts
+	isMobile?: boolean; // needed as a prop to be defined when component mounts
 }
 
 const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) => {
