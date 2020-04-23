@@ -1,3 +1,4 @@
+// because of the jetpack-cloud button overrides these rules must be more specific than usual
 button.is-compact.activity-type-selector__main-button,
 button.is-compact.activity-type-selector__main-button-active {
 	border: 1px solid var( --studio-gray-10 );
@@ -14,4 +15,32 @@ button.is-compact.activity-type-selector__main-button {
 button.is-compact.activity-type-selector__main-button-active {
 	color: var( --studio-white );
 	background: var( --studio-gray-80 );
+}
+
+.activity-type-selector__popover .popover__inner {
+	padding: 16px;
+
+	.activity-type-selector__popover-label {
+		text-align: left;
+	}
+
+	.activity-type-selector__popover-buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 16px;
+		& > :not( :last-child ) {
+			margin-right: 8px;
+		}
+
+		.button {
+			width: 40%;
+		}
+	}
+}
+
+// this rule is extremely specific to override other stylings
+input.activity-type-selector__popover-check-box.form-checkbox {
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+	}
 }

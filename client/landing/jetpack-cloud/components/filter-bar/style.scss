@@ -1,4 +1,14 @@
 .filter-bar {
+	align-items: center;
 	display: flex;
 	flex-direction: row;
+	margin-bottom: 16px;
+
+	& > :not( :last-child ) {
+		margin-right: 8px;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
 }

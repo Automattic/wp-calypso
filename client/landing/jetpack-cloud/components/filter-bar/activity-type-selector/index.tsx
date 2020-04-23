@@ -4,7 +4,6 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useRef, ChangeEvent, useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,6 +12,7 @@ import { Button } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -47,7 +47,7 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 
 	const [ localGroups, setLocalGroups ] = useState( groups );
 
-	const onChange = ( { target: { checked, name } }: ChangeEvent< HTMLInputElement > ) => {
+	const handleChange = ( { target: { checked, name } }: ChangeEvent< HTMLInputElement > ) => {
 		setLocalGroups(
 			( checked ? [ ...localGroups, name ] : localGroups.filter( ( key ) => key !== name ) ).filter(
 				( value, index, self ) => self.indexOf( value ) === index
@@ -55,13 +55,17 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const onApply = () => {
+	const handleApply = () => {
 		onGroupsChange( localGroups );
 		onClose();
 	};
 
-	const onSelectAll = () => {
+	const selectAll = () => {
 		setLocalGroups( activityCounts.map( ( { key } ) => key ) );
+	};
+
+	const clearSelection = () => {
+		setLocalGroups( [] );
 	};
 
 	const hasChanges = ! isEqual( groups, localGroups );
@@ -97,20 +101,30 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 				{ activityCounts.map( ( { name, key, count } ) => (
 					<FormLabel key={ key } optional={ false } required={ false }>
 						<FormCheckbox
-							className="activity-type-selector__check-box"
+							className="activity-type-selector__popover-check-box"
 							name={ key }
 							checked={ localGroups.includes( key ) }
-							onChange={ onChange }
+							onChange={ handleChange }
 						/>
-						<span>{ `${ name } (${ count })` }</span>
+						<span className="activity-type-selector__popover-label">{ `${ name } (${ count })` }</span>
 					</FormLabel>
 				) ) }
-				<Button borderless compact disabled={ hasAllSelected } onClick={ onSelectAll }>
-					{ translate( 'Select all' ) }
-				</Button>
-				<Button primary compact disabled={ ! hasChanges } onClick={ onApply }>
-					{ translate( 'Apply' ) }
-				</Button>
+				<div className="activity-type-selector__popover-buttons">
+					{ hasAllSelected ? (
+						<Button borderless compact onClick={ clearSelection }>
+							<Gridicon icon="cross" size={ 18 } />
+							{ translate( 'Clear all' ) }
+						</Button>
+					) : (
+						<Button borderless compact onClick={ selectAll }>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Select all' ) }
+						</Button>
+					) }
+					<Button primary compact disabled={ ! hasChanges } onClick={ handleApply }>
+						{ translate( 'Apply' ) }
+					</Button>
+				</div>
 			</Popover>
 		</div>
 	);
