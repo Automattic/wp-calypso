@@ -6,5 +6,5 @@
  * @returns {object} Object with list of cards for each region
  */
 export function getHomeLayout( state, siteId ) {
-	return state.home?.[ siteId ]?.layout ?? null;
+	return state.home?.sites?.[ siteId ]?.layout ?? null;
 }
