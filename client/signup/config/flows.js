@@ -11,7 +11,6 @@ import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
-import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
@@ -134,13 +133,6 @@ const Flows = {
 		}
 
 		if ( user && user.get() ) {
-			if (
-				'onboarding' === flowName &&
-				'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-			) {
-				flowName = 'onboarding-plan-first';
-				flow = Flows.getFlows()[ flowName ];
-			}
 			flow = removeUserStepFromFlow( flow );
 		}
 
