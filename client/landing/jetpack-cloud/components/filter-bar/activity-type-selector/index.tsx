@@ -99,24 +99,39 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 				position="bottom"
 			>
 				{ activityCounts.map( ( { name, key, count } ) => (
-					<FormLabel key={ key } optional={ false } required={ false }>
+					<FormLabel
+						className="activity-type-selector__popover-label"
+						key={ key }
+						optional={ false }
+						required={ false }
+					>
 						<FormCheckbox
 							className="activity-type-selector__popover-check-box"
 							name={ key }
 							checked={ localGroups.includes( key ) }
 							onChange={ handleChange }
 						/>
-						<span className="activity-type-selector__popover-label">{ `${ name } (${ count })` }</span>
+						<span className="activity-type-selector__popover-label-text">{ `${ name } (${ count })` }</span>
 					</FormLabel>
 				) ) }
 				<div className="activity-type-selector__popover-buttons">
 					{ hasAllSelected ? (
-						<Button borderless compact onClick={ clearSelection }>
+						<Button
+							borderless
+							className="activity-type-selector__popover-buttons-selection-button"
+							compact
+							onClick={ clearSelection }
+						>
 							<Gridicon icon="cross" size={ 18 } />
 							{ translate( 'Clear all' ) }
 						</Button>
 					) : (
-						<Button borderless compact onClick={ selectAll }>
+						<Button
+							borderless
+							className="activity-type-selector__popover-buttons-selection-button"
+							compact
+							onClick={ selectAll }
+						>
 							<Gridicon icon="checkmark" size={ 18 } />
 							{ translate( 'Select all' ) }
 						</Button>

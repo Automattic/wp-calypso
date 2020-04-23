@@ -19,28 +19,44 @@ button.is-compact.activity-type-selector__main-button-active {
 
 .activity-type-selector__popover .popover__inner {
 	padding: 16px;
-
 	.activity-type-selector__popover-label {
-		text-align: left;
+		align-items: center;
+		display: flex;
+		font-size: 16px;
+		margin-bottom: 8px;
+
+		.activity-type-selector__popover-label-text {
+			text-align: left;
+			margin-left: 0;
+		}
+		// this rule is extremely specific to override other stylings
+		input.activity-type-selector__popover-check-box.form-checkbox {
+			margin-bottom: 2px;
+			margin-right: 8px;
+			&:checked::before {
+				content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+			}
+		}
 	}
 
 	.activity-type-selector__popover-buttons {
 		display: flex;
+		font-size: 12px;
+		font-weight: 400;
 		justify-content: space-between;
+		line-height: 14px;
 		margin-top: 16px;
-		& > :not( :last-child ) {
-			margin-right: 8px;
-		}
 
 		.button {
 			width: 40%;
 		}
-	}
-}
 
-// this rule is extremely specific to override other stylings
-input.activity-type-selector__popover-check-box.form-checkbox {
-	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+		.activity-type-selector__popover-buttons-selection-button {
+			color: var( --studio-gray-40 );
+
+			.gridicon {
+				margin-right: 3px;
+			}
+		}
 	}
 }
