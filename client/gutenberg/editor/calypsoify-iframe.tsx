@@ -44,6 +44,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 /**
  * Types
@@ -295,10 +296,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			// TODO - In future iterations, replace window param with gutenboarding site info.
-			const urlParams = new URLSearchParams( window.location.search );
 			const isGutenboarding =
-				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+				config.isEnabled( 'gutenboarding' ) &&
+				this.props.siteCreationFlow === 'gutenboarding' &&
+				this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
@@ -720,6 +721,8 @@ const mapStateToProps = (
 			'wp_template_part'
 		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
+		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 	};
 };
 
