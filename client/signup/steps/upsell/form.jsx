@@ -71,21 +71,18 @@ class UpsellForm extends Component {
 
 				<div className="upsell__column-pane">
 					<div className="upsell__column-content">
+						<p>Adding a custom domain is an essential step for your site.</p>
 						<p>
-							Adding a custom domain is an essential step for your site. Custom domains are great
-							for SEO, they look more professional, and make it easier to share your site on social
-							media, in person, and on business cards.
+							Custom domains are great for SEO, they look more professional, and make it easier to
+							share your site on social media, in person, and on business cards.
 						</p>
 
 						<p>
-							Custom domains are only available on our paid plans, so you’ll need to upgrade if
-							you’d like to use <strong>{ domainName }</strong> as your custom domain.
+							Custom domains are only available on our paid plans, so you’ll need to upgrade to use{ ' ' }
+							<strong>{ domainName }</strong> as your custom domain.
 						</p>
 
-						<p>
-							Good news is that we’ll pay the domain registration fees for you. Click here to view
-							our plan upgrade options.
-						</p>
+						<p>Good news is that you'll get the first year for free, with any paid plan.</p>
 
 						<p>
 							Unlocking access to custom domains is just one of many great reasons to upgrade to a
@@ -202,7 +199,7 @@ class UpsellForm extends Component {
 						this.props.submitForm( 'accept' );
 					} }
 				>
-					{ translate( 'Yes, I want to upgrade and keep my domain »' ) }
+					{ translate( 'Yes, I want to upgrade and secure my domain »' ) }
 				</Button>
 			</footer>
 		);
