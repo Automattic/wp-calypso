@@ -111,7 +111,7 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'status';
 				noticeValues.text = translate(
-					'Good news! Search for WordPress.com sites is coming soon.'
+					'Good news! Jetpack Search is coming soon to WordPress.com sites.'
 				);
 				return noticeValues;
 
