@@ -168,9 +168,9 @@
 
 // Universal Text Styles
 
-h2 {
+html h2 {
 	font-size: 22px;
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 32px;
 
 	@include breakpoint( '>660px' ) {
@@ -179,9 +179,9 @@ h2 {
 	}
 }
 
-h3 {
+html h3 {
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 23px;
 
 	@include breakpoint( '>660px' ) {
@@ -190,7 +190,7 @@ h3 {
 	}
 }
 
-p {
+html p {
 	font-size: 16px;
 	line-height: 24px;
 
