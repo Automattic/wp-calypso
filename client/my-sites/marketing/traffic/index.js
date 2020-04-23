@@ -42,6 +42,7 @@ const SiteSettingsTraffic = ( {
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
+	onChangeField,
 	setFieldValue,
 	translate,
 } ) => (
@@ -62,6 +63,8 @@ const SiteSettingsTraffic = ( {
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
+				onSubmitForm={ handleSubmitForm }
+				onChangeField={ onChangeField }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
@@ -126,6 +129,8 @@ const getFormSettings = partialRight( pick, [
 	'count_roles',
 	'roles',
 	'enable_header_ad',
+	'wordads_ccpa_enabled',
+	'wordads_ccpa_privacy_policy_url',
 	'jetpack_relatedposts_allowed',
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
