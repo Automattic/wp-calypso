@@ -26,7 +26,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const SingleTask = ( {
+const Task = ( {
 	title,
 	description,
 	actionText,
@@ -50,25 +50,25 @@ const SingleTask = ( {
 	};
 
 	return (
-		<ActionPanel className="single-task">
+		<ActionPanel className="task">
 			<ActionPanelBody>
 				{ isDesktop() && (
 					<ActionPanelFigure align="right">
 						<img src={ illustration } alt="" />
 					</ActionPanelFigure>
 				) }
-				<div className="single-task__timing">
+				<div className="task__timing">
 					<Gridicon icon="time" size={ 18 } />
 					<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
 				</div>
 				<ActionPanelTitle>{ title }</ActionPanelTitle>
-				<p className="single-task__description">{ description }</p>
+				<p className="task__description">{ description }</p>
 				<ActionPanelCta>
-					<Button className="single-task__action" primary href={ actionUrl }>
+					<Button className="task__action" primary href={ actionUrl }>
 						{ actionText }
 					</Button>
 					<Button
-						className="single-task__skip is-link"
+						className="task__skip is-link"
 						ref={ skipButtonRef }
 						onClick={ () => {
 							setSkipOptionsVisible( true );
@@ -83,7 +83,7 @@ const SingleTask = ( {
 							isVisible={ areSkipOptionsVisible }
 							onClose={ () => setSkipOptionsVisible( false ) }
 							position="bottom"
-							className="single-task__skip-popover"
+							className="task__skip-popover"
 						>
 							<PopoverMenuItem onClick={ () => remindLater( '1d' ) }>
 								{ translate( 'Tomorrow' ) }
@@ -126,4 +126,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( SingleTask );
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( Task );

@@ -1,4 +1,4 @@
-.single-task {
+.task {
 	padding-bottom: 24px;
 
 	@include breakpoint( '>480px' ) {
@@ -24,13 +24,13 @@
 	.action-panel__cta {
 		display: flex;
 
-		.single-task__skip {
+		.task__skip {
 			margin: auto 16px;
 		}
 	}
 }
 
-.single-task__timing {
+.task__timing {
 	display: flex;
 
 	.gridicon {
@@ -38,7 +38,7 @@
 	}
 }
 
-.single-task__description {
+.task__description {
 	font-size: 16px;
 	line-height: 24px;
 	color: var( --color-text );
@@ -49,6 +49,6 @@
 	}
 }
 
-.single-task__skip-popover .popover__menu {
+.task__skip-popover .popover__menu {
 	min-width: 130px;
 }

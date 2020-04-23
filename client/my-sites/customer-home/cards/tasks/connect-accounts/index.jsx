@@ -11,7 +11,7 @@ import { isMobile } from '@automattic/viewport';
  */
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import SingleTask from '../single-task';
+import Task from '../task';
 
 const ConnectAccountsTask = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -19,7 +19,7 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 	return (
 		<>
 			<QueryPublicizeConnections selectedSite />
-			<SingleTask
+			<Task
 				title={ translate( 'Drive traffic to your site' ) }
 				description={ translate(
 					'Integrate your site with social media to automatically post your content and drive traffic to your site.'
