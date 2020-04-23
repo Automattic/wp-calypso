@@ -72,12 +72,13 @@ class BackupsPage extends Component {
 		const { siteSlug, moment, timezone, gmtOffset } = this.props;
 
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		const selectedDate = applySiteOffset( date, { timezone, gmtOffset } );
 
-		if ( date && date.isValid() && date <= today ) {
+		if ( selectedDate && selectedDate.isValid() && selectedDate <= today ) {
 			// Valid dates
 			page(
 				backupMainPath( siteSlug, {
-					date: date.format( INDEX_FORMAT ),
+					date: selectedDate.format( INDEX_FORMAT ),
 				} )
 			);
 		} else {
@@ -94,7 +95,10 @@ class BackupsPage extends Component {
 			gmtOffset: gmtOffset,
 		} );
 
-		const selectedDate = moment( queryDate, INDEX_FORMAT );
+		const selectedDate = applySiteOffset( moment( queryDate, INDEX_FORMAT ), {
+			timezone: timezone,
+			gmtOffset: gmtOffset,
+		} );
 
 		return ( selectedDate.isValid() && selectedDate ) || today;
 	}
