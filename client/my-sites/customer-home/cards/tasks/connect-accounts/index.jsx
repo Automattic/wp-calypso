@@ -32,7 +32,7 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 				}
 				illustration="/calypso/images/stats/tasks/social-links.svg"
 				timing={ 3 }
-				dismissalPreferenceName="home-task-connect-accounts"
+				taskId="connect-accounts"
 			/>
 		</>
 	);
