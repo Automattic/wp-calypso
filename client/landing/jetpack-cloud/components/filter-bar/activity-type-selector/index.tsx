@@ -4,6 +4,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useRef, ChangeEvent, useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,6 +13,11 @@ import { Button } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 interface ActivityCount {
 	count: number;
@@ -37,7 +43,7 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 	onGroupsChange,
 } ) => {
 	const translate = useTranslate();
-	const buttonRef = useRef();
+	const buttonRef = useRef< Button >();
 
 	const [ localGroups, setLocalGroups ] = useState( groups );
 
@@ -69,10 +75,20 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="activity-type-selector">
-			<Button ref={ buttonRef } compact onClick={ onClick }>
+			<Button
+				className={
+					isVisible
+						? 'activity-type-selector__main-button-active'
+						: 'activity-type-selector__main-button'
+				}
+				compact
+				onClick={ onClick }
+				ref={ buttonRef }
+			>
 				{ translate( 'Activity type' ) }
 			</Button>
 			<Popover
+				className="activity-type-selector__popover"
 				context={ buttonRef.current }
 				isVisible={ isVisible }
 				onClose={ onClose }

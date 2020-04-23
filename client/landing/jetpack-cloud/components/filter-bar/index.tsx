@@ -76,7 +76,12 @@ const FilterBar: FunctionComponent< Props > = ( {
 					onClick={ toggleIsActivityTypeSelectorVisible }
 					onClose={ closeActivityTypeSelector }
 					activityCounts={ activityActionTypeCounts }
-					onGroupsChange={ ( newGroups ) => onFilterChange( { ...filter, group: newGroups } ) }
+					onGroupsChange={ ( newGroups ) =>
+						onFilterChange( {
+							...filter,
+							group: newGroups.length > 0 ? newGroups : undefined,
+						} )
+					}
 					groups={ filter.group || [] }
 				/>
 			) }
