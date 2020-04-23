@@ -72,7 +72,7 @@ const MarkedLines = ( { context } ) => {
 
 					return (
 						<div
-							key={ `line-${ lineNumber }` }
+							key={ lineNumber }
 							className={ classNames( 'marked-lines__line-number', {
 								'marked-lines__marked-line': hasMarks,
 							} ) }
