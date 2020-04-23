@@ -24,23 +24,38 @@ const joinChannel = ( store, site, post, postKey ) => {
 		return;
 	}
 
-	channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
-	registerEventHandlers( channel, store );
+	channel = socket.channel( channelTopicPrefix + post.global_ID,  );
 
-	channel
-		.join()
-		.receive( 'ok', () => debug( 'channel join ok' ) )
-		.receive( 'error', ( { reason } ) => {
-			debug( 'channel join error', reason );
-			channel.leave();
-			channel = null;
-		} );
+	await lasagna.initChannel(
+		topic,
+		{ post_key: postKey },
+		{
+			onClose: () => debug( 'channel closed' ),
+			onError: ( reason ) => debug( 'channel error', reason ),
+		}
+	);
+
+	lasagna.registerEventHandler( topic, 'new_comment', ( { payload: comment } ) => {
+		debug( 'New comment', comment );
+
+		if ( ! comment ) {
+			return;
+		}
+
+		store.dispatch(
+			receiveComments( {
+				siteId: comment.post.site_ID,
+				postId: comment.post.ID,
+				comments: [ comment ],
+				commentById: true,
+			} )
+		);
+	} );
+
+	lasagna.joinChannel( topic, () => debug( 'channel join ok' ) );
 };
 
-const leaveChannel = () => {
-	channel && channel.leave();
-	channel = null;
-};
+const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
 export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
