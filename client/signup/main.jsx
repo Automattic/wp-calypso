@@ -51,7 +51,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep, saveSignupStep, removeStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -261,12 +261,8 @@ class Signup extends React.Component {
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			// return;
-		}
-
-		const isFulfilledCallback = steps[ stepName ] && steps[ stepName ].fulfilledStepCallback;
-		const defaultDependencies = steps[ stepName ] && steps[ stepName ].defaultDependencies;
+		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
+		const defaultDependencies = steps[ stepName ].defaultDependencies;
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
 	};
 
@@ -621,7 +617,6 @@ export default connect(
 		submitSiteType,
 		submitSiteVertical,
 		submitSignupStep,
-		saveSignupStep,
 		removeStep,
 		loadTrackingTool,
 		showSitePreview,
