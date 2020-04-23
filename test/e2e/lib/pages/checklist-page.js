@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import { By } from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
-import config from 'config';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 
