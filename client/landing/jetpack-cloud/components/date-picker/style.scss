@@ -1,8 +1,10 @@
 .date-picker {
 	display: flex;
+	align-items: center;
 	max-width: 30rem;
 	background: #fff;
 	padding-top: 0.5rem;
+	font-size: 16px;
 }
 
 .date-picker__select-date {
@@ -12,17 +14,27 @@
 }
 
 .date-picker__select-date--previous {
-	width: 45%;
-	padding-left: 0.5rem;
+	display: flex;
+	flex: 1;
+	align-items: center;
 	text-align: left;
 	cursor: pointer;
 }
 
 .date-picker__select-date--next {
-	width: 45%;
-	padding-right: 0.5rem;
+	display: flex;
+	flex: 1;
+	align-items: center;
 	text-align: right;
 	cursor: pointer;
+}
+.date-picker__button--next.button.is-borderless.is-compact,
+.date-picker__button--previous.button.is-borderless.is-compact {
+	.gridicon {
+		width: 24px;
+		height: 24px;
+		color: var( --studio-gray-70 );
+	}
 }
 
 .date-picker__button--previous {
@@ -36,8 +48,9 @@
 }
 
 .date-picker__select-date .date-range {
+	flex: 1;
 	text-align: center;
-	width: 10%;
+	max-width: 24px;
 }
 
 .button.is-primary.date-picker__button--previous:focus,
@@ -56,14 +69,26 @@
 }
 
 .date-picker__search-icon {
-	align-self: center;
 	margin-left: 0.5rem;
-	margin-right: 1rem;
 	cursor: pointer;
 }
 
+.date-picker__display-date {
+	flex: 1;
+}
+
+.date-picker__display-date.disabled {
+	color: var( --studio-gray-10 );
+}
+
+.filterbar__selection.button.is-borderless.is-compact .gridicon {
+	width: 24px;
+	height: 24px;
+	color: var( --studio-gray-70 );
+}
+
 .date-picker__search-icon.gridicon {
-	fill: green;
+	fill: var( --studio-jetpack-green-40 );
 }
 
 @include breakpoint( '>660px' ) {
