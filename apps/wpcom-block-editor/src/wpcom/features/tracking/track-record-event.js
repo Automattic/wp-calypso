@@ -39,7 +39,7 @@ export default ( eventName, eventProperties ) => {
 	const customProperties = {
 		blog_id: window._currentSiteId,
 		site_type: window._currentSiteType,
-		user_locale: window._currentUserLocale,
+		user_locale: window._currentUserLocale
 	};
 
 	eventProperties = eventProperties || {};
