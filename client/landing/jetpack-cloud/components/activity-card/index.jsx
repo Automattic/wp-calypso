@@ -88,19 +88,16 @@ class ActivityCard extends Component {
 							actorType: activity.actorType,
 						} }
 					/>
-					{ activityMedia && activityMedia.available ? (
-						<div className="activity-card__activity-media">
+					<div className="activity-card__activity-description">
+						{ activityMedia && activityMedia.available && (
 							<ActivityMedia
 								name={ activityMedia.name }
-								thumbnail={ activityMedia.thumbnail_url }
+								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
 								fullImage={ false }
 							/>
-						</div>
-					) : (
-						<div className="activity-card__activity-description">
-							<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
-						</div>
-					) }
+						) }
+						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
+					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
 					{ ! summarize && (
@@ -123,7 +120,6 @@ class ActivityCard extends Component {
 										{ translate( 'See content' ) }
 									</a>
 								) }
-							{ hasAnyStreams( activity ) && <div>HAS STREAMS</div> }
 							<Button
 								compact
 								borderless

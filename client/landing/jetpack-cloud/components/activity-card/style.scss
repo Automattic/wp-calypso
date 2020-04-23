@@ -50,7 +50,7 @@
 
 .activity-card__activity-description,
 .activity-card__activity-media {
-	margin: 0.5rem 0;
+	margin: 1rem 0;
 }
 
 .activity-card__activity-actions {
@@ -78,9 +78,10 @@
 }
 
 .backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
-	float: right;
 	font-size: 0.75rem;
 	font-weight: 400;
+	margin-left: auto;
+	order: 2;
 
 	@include breakpoint( '>660px' ) {
 		font-size: 1rem;
