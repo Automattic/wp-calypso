@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -43,7 +43,18 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 	}
 };
 
-const SharingServicesGroup = ( { isFetching, services, title } ) => {
+const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
+	useEffect( () => {
+		if ( expandedService ) {
+			const serviceElement = document.querySelector(
+				'.sharing-service.' + expandedService.replace( /_/g, '-' )
+			);
+			if ( serviceElement ) {
+				serviceElement.scrollIntoView();
+			}
+		}
+	}, [ expandedService, services ] );
+
 	if ( ! services.length && ! isFetching ) {
 		return null;
 	}
@@ -90,14 +101,17 @@ SharingServicesGroup.propTypes = {
 	services: PropTypes.array,
 	title: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
+	expandedService: PropTypes.string,
 };
 
 SharingServicesGroup.defaultProps = {
 	isFetching: false,
 	services: [],
+	expandedService: '',
 };
 
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
+	expandedService: state.sharing.expandedService,
 } ) )( SharingServicesGroup );
