@@ -1096,6 +1096,7 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 					/>
 				);
 			}, this );
@@ -1255,6 +1256,7 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 			>
 				{ this.props.isEligibleVariantForDomainTest &&
 					hasResults &&

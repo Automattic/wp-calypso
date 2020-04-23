@@ -346,6 +346,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }

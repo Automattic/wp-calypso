@@ -122,6 +122,7 @@ export class FeaturedDomainSuggestions extends Component {
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 					/>
 				) }
 				{ secondarySuggestion && (
