@@ -51,14 +51,20 @@ class SocialLoginActionButton extends Component {
 		};
 
 		if ( service === 'google' ) {
-			if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+			if ( ! response.getAuthResponse ) {
+				return;
+			}
+
+			const tokens = response.getAuthResponse();
+
+			if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 				return;
 			}
 
 			socialInfo = {
 				...socialInfo,
-				access_token: response.Zi.access_token,
-				id_token: response.Zi.id_token,
+				access_token: tokens.access_token,
+				id_token: tokens.id_token,
 			};
 		}
 
