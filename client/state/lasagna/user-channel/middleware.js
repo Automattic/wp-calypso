@@ -13,8 +13,8 @@ import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'state/current-user/s
 const channelTopicPrefix = 'push:wordpress.com:user:';
 const debug = debugFactory( 'lasagna:channel:push:wordpress.com:user' );
 
-const joinChannel = ( store, topic ) => {
-	lasagna.initChannel(
+const joinChannel = async ( store, topic ) => {
+	await lasagna.initChannel(
 		topic,
 		{ jwt: getCurrentUserLasagnaJwt( store.getState() ) },
 		{

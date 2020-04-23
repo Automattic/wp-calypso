@@ -17,8 +17,8 @@ import { lasagna } from '../middleware';
 const channelTopicPrefix = 'push:no_auth:wordpress.com:wp_post:';
 const debug = debugFactory( 'lasagna:channel:push:no_auth:wp_post' );
 
-const joinChannel = ( store, topic ) => {
-	lasagna.initChannel(
+const joinChannel = async ( store, topic ) => {
+	await lasagna.initChannel(
 		topic,
 		{},
 		{
@@ -67,6 +67,9 @@ const getTopic = ( store ) => {
 	return channelTopicPrefix + post.global_ID;
 };
 
+/**
+ * Middleware
+ */
 export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case LASAGNA_SOCKET_CONNECTED: {
