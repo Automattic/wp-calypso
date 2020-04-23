@@ -13,6 +13,7 @@ import Button from 'components/forms/form-button';
 import { Card } from '@automattic/components';
 import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
 import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import { applySiteOffset } from 'lib/site/timezone';
 import PopoverMenu from 'components/popover/menu';
 import {
@@ -62,6 +63,8 @@ class ActivityCard extends Component {
 			gmtOffset,
 		} ).format( 'LT' );
 
+		const { activityMedia } = activity;
+
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
 				{ ! summarize && (
@@ -80,6 +83,13 @@ class ActivityCard extends Component {
 						} }
 					/>
 					<div className="activity-card__activity-description">
+						{ activityMedia && activityMedia.available && (
+							<ActivityMedia
+								name={ activityMedia.name }
+								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
+								fullImage={ false }
+							/>
+						) }
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
