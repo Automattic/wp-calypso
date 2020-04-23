@@ -64,12 +64,10 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 	};
 
 	const clearSelection = () => {
-		setLocalGroups( [] );
+		setLocalGroups( groups );
 	};
 
 	const hasChanges = ! isEqual( groups, localGroups );
-
-	const hasAllSelected = localGroups.length === activityCounts.length;
 
 	// whenever we get a new controlled value or we are hidden/visible that is the new standard
 	useEffect( () => {
@@ -101,7 +99,7 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 				</FormLabel>
 			) ) }
 			<div className="activity-type-selector__popover-buttons">
-				{ hasAllSelected ? (
+				{ hasChanges ? (
 					<Button
 						borderless
 						className="activity-type-selector__popover-buttons-selection-button"
