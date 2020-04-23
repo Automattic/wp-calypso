@@ -299,8 +299,7 @@ const CancelPurchaseRefundInformation = ( {
 	} else {
 		text = i18n.translate(
 			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
-				'Once it expires, it will be automatically removed from your site. If you choose to downgrade your ' +
-				'subscription instead, the downgrade will come into effect immediately.',
+				'Once it expires, it will be automatically removed from your site.',
 			{
 				args: {
 					productName: getName( purchase ),
