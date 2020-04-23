@@ -210,6 +210,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
+			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber'
 		) {
@@ -248,6 +249,11 @@ export class JetpackAuthorize extends Component {
 	isFromJpo( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jpo' );
+	}
+
+	isFromBlockEditor( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'jetpack-block-editor' === from;
 	}
 
 	/**
