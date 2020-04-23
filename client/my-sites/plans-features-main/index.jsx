@@ -152,7 +152,7 @@ export class PlansFeaturesMain extends Component {
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const availablePlans = this.isDisplayingPlansNeededForFeature()
-			? visiblePlans.filter( plan => {
+			? visiblePlans.filter( ( plan ) => {
 					if ( isEcommercePlan( selectedPlan ) ) {
 						return isEcommercePlan( plan );
 					}
