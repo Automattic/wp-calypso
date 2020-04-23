@@ -9,12 +9,14 @@ import React, { FunctionComponent, useEffect, useState, useRef } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ActivityTypeSelector from './activity-type-selector';
+import { getHttpData } from 'state/data-layer/http-data';
 import {
 	getRequestActivityActionTypeCountsId,
 	requestActivityActionTypeCounts,
 } from 'state/data-getters';
-import { getHttpData } from 'state/data-layer/http-data';
+import ActivityTypeSelector from './activity-type-selector';
+import Gridicon from 'components/gridicon';
+
 /**
  * Style dependencies
  */
@@ -77,8 +79,13 @@ const FilterBar: FunctionComponent< Props > = ( {
 	// 	setIsDateRangeSelectorVisible( false );
 	// };
 
-	const getButtonClassName = ( isActive: boolean ) =>
-		isActive ? 'filter-bar__button-active' : 'filter-bar__button';
+	const getButtonClassName = ( isActive: boolean, hasSelections: boolean ) => {
+		if ( hasSelections ) {
+			return 'filter-bar__button-with-selections';
+		}
+
+		return isActive ? 'filter-bar__button-active' : 'filter-bar__button';
+	};
 
 	const renderActivityTypeSelectorButtonText = ( groups?: string[] ) =>
 		groups
@@ -86,6 +93,9 @@ const FilterBar: FunctionComponent< Props > = ( {
 					args: [ groups.length ],
 			  } )
 			: translate( 'Activity type' );
+
+	const onGroupsChange = ( newGroups: string[] ) =>
+		onFilterChange( { ...filter, group: newGroups.length > 0 ? newGroups : undefined } );
 
 	// when the filter changes re-request the activity counts
 	// the activity counts only use the date values, but the underlying data layer handles unnecessary re-requests via freshness
@@ -98,29 +108,41 @@ const FilterBar: FunctionComponent< Props > = ( {
 			<p>{ translate( 'Filter by:' ) }</p>
 			{ showActivityTypeSelector && (
 				<>
-					<Button
-						className={ getButtonClassName( isActivityTypeSelectorVisible ) }
-						compact
-						onClick={ toggleIsActivityTypeSelectorVisible }
-						ref={ activityTypeButtonRef }
-					>
-						{ renderActivityTypeSelectorButtonText( filter.group ) }
-					</Button>
+					<div className="filter-bar__button-group">
+						<Button
+							className={ getButtonClassName(
+								isActivityTypeSelectorVisible,
+								filter.group !== undefined
+							) }
+							compact
+							onClick={ toggleIsActivityTypeSelectorVisible }
+							ref={ activityTypeButtonRef }
+						>
+							{ renderActivityTypeSelectorButtonText( filter.group ) }
+						</Button>
+						{ filter.group && (
+							<Button
+								className="filter-bar__clear-selection-button"
+								compact
+								onClick={ () => onGroupsChange( [] ) }
+							>
+								<Gridicon icon="cross" />
+							</Button>
+						) }
+					</div>
 					<ActivityTypeSelector
 						activityCounts={ activityActionTypeCounts }
 						context={ activityTypeButtonRef }
 						groups={ filter.group || [] }
 						isVisible={ isActivityTypeSelectorVisible }
 						onClose={ closeActivityTypeSelector }
-						onGroupsChange={ ( newGroups ) =>
-							onFilterChange( { ...filter, group: newGroups.length > 0 ? newGroups : undefined } )
-						}
+						onGroupsChange={ onGroupsChange }
 					/>
 				</>
 			) }
 			{ showDateRangeSelector && (
 				<Button
-					className={ getButtonClassName( isActivityTypeSelectorVisible ) }
+					className={ getButtonClassName( isDateRangeSelectorVisible, false ) }
 					compact
 					onClick={ toggleIsDateRangeSelectorVisible }
 					ref={ dateRangeButtonRef }

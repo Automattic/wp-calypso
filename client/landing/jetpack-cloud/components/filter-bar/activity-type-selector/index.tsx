@@ -108,8 +108,9 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 						compact
 						onClick={ clearSelection }
 					>
-						<Gridicon icon="cross" size={ 18 } />
-						{ translate( 'Clear all' ) }
+						{ translate( '{{icon/}} Clear', {
+							components: { icon: <Gridicon icon="cross" size={ 18 } /> },
+						} ) }
 					</Button>
 				) : (
 					<Button
@@ -118,8 +119,9 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 						compact
 						onClick={ selectAll }
 					>
-						<Gridicon icon="checkmark" size={ 18 } />
-						{ translate( 'Select all' ) }
+						{ translate( '{{icon/}} Select all', {
+							components: { icon: <Gridicon icon="checkmark" size={ 18 } /> },
+						} ) }
 					</Button>
 				) }
 				<Button primary compact disabled={ ! hasChanges } onClick={ handleApply }>

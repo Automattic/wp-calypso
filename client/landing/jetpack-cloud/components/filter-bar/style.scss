@@ -12,15 +12,14 @@
 		margin-bottom: 0;
 	}
 
-	// because of the jetpack-cloud button overrides these rules must be more specific than usual
 	.filter-bar__button,
-	.filter-bar__button-active {
+	.filter-bar__button-active,
+	.filter-bar__button-with-selections,
+	.filter-bar__clear-selection-button {
 		border: 1px solid var( --studio-gray-10 );
 		font-size: 12px;
 		line-height: 14px;
 		text-align: center;
-		width: 33%;
-		max-width: 160px;
 	}
 
 	.filter-bar__button {
@@ -28,8 +27,24 @@
 		color: var( --studio-gray-30 );
 	}
 
+	.filter-bar__clear-selection-button,
+	.filter-bar__button-with-selections,
 	.filter-bar__button-active {
 		color: var( --studio-white );
 		background: var( --studio-gray-80 );
+	}
+
+	.filter-bar__button-group {
+		width: 33%;
+		max-width: 200px;
+		& > :first-child:not( :only-child ) {
+			border-radius: 3px 0 0 3px;
+			border-right: 0;
+		}
+
+		& > :last-child:not( :only-child ) {
+			border-left: 0;
+			border-radius: 0 3px 3px 0;
+		}
 	}
 }
