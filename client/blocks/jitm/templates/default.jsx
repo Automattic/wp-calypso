@@ -37,6 +37,7 @@ export default function DefaultTemplate( {
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
+				horizontal={ isJetpack }
 				target={ '_blank' }
 				showIcon={ true }
 				forceDisplay
