@@ -28,6 +28,11 @@
 	text-align: right;
 	cursor: pointer;
 }
+
+.date-picker__search-link {
+	display: flex;
+}
+
 .date-picker__button--next.button.is-borderless.is-compact,
 .date-picker__button--previous.button.is-borderless.is-compact {
 	.gridicon {

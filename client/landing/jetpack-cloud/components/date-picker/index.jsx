@@ -157,7 +157,7 @@ class DatePicker extends Component {
 							<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 						</Button>
 
-						<a href={ backupActivityPath( siteSlug ) }>
+						<a className="date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
 							<Gridicon icon="search" className="date-picker__search-icon" />
 						</a>
 					</div>
