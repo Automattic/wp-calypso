@@ -4,7 +4,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl, Icon } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { times, find } from 'lodash';
+import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -107,17 +107,23 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			setRailcarId( getNewRailcarId() );
 		}
 
-		if ( freeSuggestions && recommendedSuggestion ) {
-			if ( currentDomain?.is_free === true && currentDomain?.domain_name !== freeSuggestions[ 0 ].domain_name ) {
+		if ( freeSuggestions && recommendedSuggestion && paidSuggestions ) {
+			if (
+				currentDomain?.is_free === true &&
+				currentDomain?.domain_name !== freeSuggestions[ 0 ].domain_name
+			) {
 				onDomainSelect( freeSuggestions[ 0 ] );
 			}
 
-			if ( currentDomain?.is_free !== true && ! find( paidSuggestions, ['domain_name', currentDomain?.domain_name ] ) ) {
-				// but if it's not free, select the corresponding recommended?
+			if (
+				currentDomain?.is_free !== true &&
+				! paidSuggestions.find(
+					( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
+				)
+			) {
 				onDomainSelect( recommendedSuggestion );
 			}
 		}
-
 	}, [ allSuggestions ] );
 
 	useTrackModal( 'DomainPicker' );
