@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useRef, ChangeEvent, useEffect, useState } from 'react';
+import React, { FunctionComponent, ChangeEvent, useEffect, useState, RefObject } from 'react';
 import { isEqual } from 'lodash';
 
 /**
@@ -26,24 +26,23 @@ interface ActivityCount {
 }
 
 interface Props {
-	groups: string[];
-	onGroupsChange: ( newGroups: string[] ) => void;
-	isVisible: boolean;
-	onClick: () => void;
-	onClose: () => void;
 	activityCounts: ActivityCount[];
+	context: RefObject< Button >;
+	groups: string[];
+	isVisible: boolean;
+	onClose: () => void;
+	onGroupsChange: ( newGroups: string[] ) => void;
 }
 
 const ActivityTypeSelector: FunctionComponent< Props > = ( {
-	isVisible,
-	onClick,
-	onClose,
 	activityCounts,
+	context,
 	groups,
+	isVisible,
+	onClose,
 	onGroupsChange,
 } ) => {
 	const translate = useTranslate();
-	const buttonRef = useRef< Button >();
 
 	const [ localGroups, setLocalGroups ] = useState( groups );
 
@@ -78,70 +77,56 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( {
 	}, [ groups, isVisible ] );
 
 	return (
-		<div className="activity-type-selector">
-			<Button
-				className={
-					isVisible
-						? 'activity-type-selector__main-button-active'
-						: 'activity-type-selector__main-button'
-				}
-				compact
-				onClick={ onClick }
-				ref={ buttonRef }
-			>
-				{ translate( 'Activity type' ) }
-			</Button>
-			<Popover
-				className="activity-type-selector__popover"
-				context={ buttonRef.current }
-				isVisible={ isVisible }
-				onClose={ onClose }
-				position="bottom"
-			>
-				{ activityCounts.map( ( { name, key, count } ) => (
-					<FormLabel
-						className="activity-type-selector__popover-label"
-						key={ key }
-						optional={ false }
-						required={ false }
+		<Popover
+			className="activity-type-selector__popover"
+			context={ context.current }
+			isVisible={ isVisible }
+			onClose={ onClose }
+			position="bottom"
+		>
+			{ activityCounts.map( ( { name, key, count } ) => (
+				<FormLabel
+					className="activity-type-selector__popover-label"
+					key={ key }
+					optional={ false }
+					required={ false }
+				>
+					<FormCheckbox
+						className="activity-type-selector__popover-check-box"
+						name={ key }
+						checked={ localGroups.includes( key ) }
+						onChange={ handleChange }
+					/>
+					<span className="activity-type-selector__popover-label-text">{ `${ name } (${ count })` }</span>
+				</FormLabel>
+			) ) }
+			<div className="activity-type-selector__popover-buttons">
+				{ hasAllSelected ? (
+					<Button
+						borderless
+						className="activity-type-selector__popover-buttons-selection-button"
+						compact
+						onClick={ clearSelection }
 					>
-						<FormCheckbox
-							className="activity-type-selector__popover-check-box"
-							name={ key }
-							checked={ localGroups.includes( key ) }
-							onChange={ handleChange }
-						/>
-						<span className="activity-type-selector__popover-label-text">{ `${ name } (${ count })` }</span>
-					</FormLabel>
-				) ) }
-				<div className="activity-type-selector__popover-buttons">
-					{ hasAllSelected ? (
-						<Button
-							borderless
-							className="activity-type-selector__popover-buttons-selection-button"
-							compact
-							onClick={ clearSelection }
-						>
-							<Gridicon icon="cross" size={ 18 } />
-							{ translate( 'Clear all' ) }
-						</Button>
-					) : (
-						<Button
-							borderless
-							className="activity-type-selector__popover-buttons-selection-button"
-							compact
-							onClick={ selectAll }
-						>
-							<Gridicon icon="checkmark" size={ 18 } />
-							{ translate( 'Select all' ) }
-						</Button>
-					) }
-					<Button primary compact disabled={ ! hasChanges } onClick={ handleApply }>
-						{ translate( 'Apply' ) }
+						<Gridicon icon="cross" size={ 18 } />
+						{ translate( 'Clear all' ) }
 					</Button>
-				</div>
-			</Popover>
-		</div>
+				) : (
+					<Button
+						borderless
+						className="activity-type-selector__popover-buttons-selection-button"
+						compact
+						onClick={ selectAll }
+					>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ translate( 'Select all' ) }
+					</Button>
+				) }
+				<Button primary compact disabled={ ! hasChanges } onClick={ handleApply }>
+					{ translate( 'Apply' ) }
+				</Button>
+			</div>
+		</Popover>
 	);
 };
 

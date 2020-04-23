@@ -3,11 +3,12 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState, useRef } from 'react';
 
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import ActivityTypeSelector from './activity-type-selector';
 import {
 	getRequestActivityActionTypeCountsId,
@@ -50,12 +51,14 @@ const FilterBar: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ isActivityTypeSelectorVisible, setIsActivityTypeSelectorVisible ] = useState( false );
+	const [ isDateRangeSelectorVisible, setIsDateRangeSelectorVisible ] = useState( false );
 
 	const activityActionTypeCounts = useSelector< object, ActivityCount[] >(
 		() => getHttpData( getRequestActivityActionTypeCountsId( siteId, filter ) ).data
 	);
 
 	const toggleIsActivityTypeSelectorVisible = () => {
+		setIsDateRangeSelectorVisible( false );
 		setIsActivityTypeSelectorVisible( ! isActivityTypeSelectorVisible );
 	};
 
@@ -63,6 +66,20 @@ const FilterBar: FunctionComponent< Props > = ( {
 		setIsActivityTypeSelectorVisible( false );
 	};
 
+	const toggleIsDateRangeSelectorVisible = () => {
+		setIsActivityTypeSelectorVisible( false );
+		setIsDateRangeSelectorVisible( ! isDateRangeSelectorVisible );
+	};
+
+	const activityTypeButtonRef = useRef< Button >( null );
+	const dateRangeButtonRef = useRef< Button >( null );
+
+	// const closeDateRangeSelector = () => {
+	// 	setIsDateRangeSelectorVisible( false );
+	// };
+
+	// when the filter changes re-request the activity counts
+	// the activity counts only use the date values, but the underlying data layer handles unnecessary re-requests via freshness
 	useEffect( () => {
 		requestActivityActionTypeCounts( siteId, filter );
 	}, [ filter, siteId ] );
@@ -71,21 +88,44 @@ const FilterBar: FunctionComponent< Props > = ( {
 		<>
 			<p>{ translate( 'Filter by:' ) }</p>
 			{ showActivityTypeSelector && (
-				<ActivityTypeSelector
-					isVisible={ isActivityTypeSelectorVisible }
-					onClick={ toggleIsActivityTypeSelectorVisible }
-					onClose={ closeActivityTypeSelector }
-					activityCounts={ activityActionTypeCounts }
-					onGroupsChange={ ( newGroups ) =>
-						onFilterChange( {
-							...filter,
-							group: newGroups.length > 0 ? newGroups : undefined,
-						} )
-					}
-					groups={ filter.group || [] }
-				/>
+				<>
+					<Button
+						className={
+							isActivityTypeSelectorVisible ? 'filter-bar__button-active' : 'filter-bar__button'
+						}
+						compact
+						onClick={ toggleIsActivityTypeSelectorVisible }
+						ref={ activityTypeButtonRef }
+					>
+						{ translate( 'Activity type' ) }
+					</Button>
+					<ActivityTypeSelector
+						isVisible={ isActivityTypeSelectorVisible }
+						onClose={ closeActivityTypeSelector }
+						activityCounts={ activityActionTypeCounts }
+						onGroupsChange={ ( newGroups ) =>
+							onFilterChange( {
+								...filter,
+								group: newGroups.length > 0 ? newGroups : undefined,
+							} )
+						}
+						groups={ filter.group || [] }
+						context={ activityTypeButtonRef }
+					/>
+				</>
 			) }
-			{ showDateRangeSelector && <div>{ translate( 'Date range' ) }</div> }
+			{ showDateRangeSelector && (
+				<Button
+					className={
+						isDateRangeSelectorVisible ? 'filter-bar__button-active' : 'filter-bar__button'
+					}
+					compact
+					onClick={ toggleIsDateRangeSelectorVisible }
+					ref={ dateRangeButtonRef }
+				>
+					{ translate( 'Date range' ) }
+				</Button>
+			) }
 		</>
 	);
 

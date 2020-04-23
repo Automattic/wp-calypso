@@ -11,4 +11,23 @@
 	p {
 		margin-bottom: 0;
 	}
+
+	// because of the jetpack-cloud button overrides these rules must be more specific than usual
+	.filter-bar__button,
+	.filter-bar__button-active {
+		border: 1px solid var( --studio-gray-10 );
+		font-size: 12px;
+		line-height: 14px;
+		text-align: center;
+	}
+
+	.filter-bar__button {
+		background: var( --studio-white );
+		color: var( --studio-gray-30 );
+	}
+
+	.filter-bar__button-active {
+		color: var( --studio-white );
+		background: var( --studio-gray-80 );
+	}
 }

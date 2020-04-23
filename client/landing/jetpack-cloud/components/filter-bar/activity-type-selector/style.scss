@@ -1,22 +1,3 @@
-// because of the jetpack-cloud button overrides these rules must be more specific than usual
-button.is-compact.activity-type-selector__main-button,
-button.is-compact.activity-type-selector__main-button-active {
-	border: 1px solid var( --studio-gray-10 );
-	font-size: 12px;
-	line-height: 14px;
-	text-align: center;
-}
-
-button.is-compact.activity-type-selector__main-button {
-	background: var( --studio-white );
-	color: var( --studio-gray-30 );
-}
-
-button.is-compact.activity-type-selector__main-button-active {
-	color: var( --studio-white );
-	background: var( --studio-gray-80 );
-}
-
 .activity-type-selector__popover .popover__inner {
 	padding: 16px;
 	.activity-type-selector__popover-label {
