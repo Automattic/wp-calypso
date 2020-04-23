@@ -140,6 +140,10 @@ function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
+function isAutoRenewing( purchase ) {
+	return 'autoRenewing' === purchase.expiryStatus;
+}
+
 /**
  * Checks if a purchase can be cancelled.
  * Returns true for purchases that aren't expired
@@ -322,7 +326,8 @@ function isRemovable( purchase ) {
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
-		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
+		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) ) ||
+		( isDomainRegistration( purchase ) && isAutoRenewing( purchase ) )
 	);
 }
 

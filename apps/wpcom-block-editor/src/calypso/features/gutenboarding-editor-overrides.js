@@ -46,7 +46,7 @@ function updateSettingsBar() {
 		launchLink.target = '_top';
 		launchLink.className =
 			'gutenboarding-editor-overrides__launch-button components-button is-primary';
-		const textContent = document.createTextNode( __( 'Launch' ) );
+		const textContent = document.createTextNode( __( 'Update' ) );
 		launchLink.appendChild( textContent );
 
 		// Put 'Launch' and 'Save' back on bar in desired order.

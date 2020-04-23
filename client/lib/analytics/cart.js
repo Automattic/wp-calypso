@@ -8,6 +8,7 @@ import { differenceWith, get, isEqual, each, omit } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { recordAddToCart } from 'lib/analytics/record-add-to-cart';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 
 export function recordEvents( previousCart, nextCart ) {
@@ -24,7 +25,7 @@ function removeNestedProperties( cartItem ) {
 
 function recordAddEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
-	analytics.recordAddToCart( { cartItem } );
+	recordAddToCart( { cartItem } );
 }
 
 function recordRemoveEvent( cartItem ) {

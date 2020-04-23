@@ -8,7 +8,7 @@ Popup Monitor is a small utility to facilitate the monitoring of a popup window 
 A Popup Monitor instance offers an `open` function which accepts an identical set of arguments as the standard `window.open` browser offering. When the window is closed, a `close` event is emitted to the instance with the name of the closed window.
 
 ```js
-import PopupMonitor 'lib/popup-monitor';
+import PopupMonitor '@automattic/popup-monitor';
 
 const popupMonitor = new PopupMonitor();
 

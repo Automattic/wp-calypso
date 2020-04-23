@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getLanguageSlugs } from 'lib/i18n-utils';
+import { getLanguageSlugs, isDefaultLocale } from 'lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
@@ -16,10 +16,13 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
-const setupTranslationChunks = async ( localeSlug ) => {
-	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
+const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
+	const { translatedChunks, locale } = await getLanguageManifestFile(
+		localeSlug,
+		window.BUILD_TARGET
+	);
 
-	i18n.setLocale( locale );
+	reduxStore.dispatch( setLocaleRawData( locale ) );
 
 	const loadedTranslationChunks = {};
 	const loadTranslationForChunkIfNeeded = ( chunkId ) => {
@@ -27,10 +30,12 @@ const setupTranslationChunks = async ( localeSlug ) => {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
-			i18n.addTranslations( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
+			( translations ) => {
+				i18n.addTranslations( translations );
+				loadedTranslationChunks[ chunkId ] = true;
+			}
+		);
 	};
 	const installedChunks = new Set(
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
@@ -66,11 +71,14 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const lastPathSegment = window.location.pathname.substr(
 			window.location.pathname.lastIndexOf( '/' ) + 1
 		);
-		const pathLocaleSlug = getLanguageSlugs().includes( lastPathSegment ) && lastPathSegment;
+		const pathLocaleSlug =
+			getLanguageSlugs().includes( lastPathSegment ) &&
+			! isDefaultLocale( lastPathSegment ) &&
+			lastPathSegment;
 		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
 		if ( localeSlug ) {
-			setupTranslationChunks( localeSlug );
+			setupTranslationChunks( localeSlug, reduxStore );
 		}
 	}
 

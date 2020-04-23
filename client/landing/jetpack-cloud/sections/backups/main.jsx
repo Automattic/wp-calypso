@@ -17,7 +17,7 @@ import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,
-	getEventsInDailyBackup,
+	getRealtimeBackups,
 	getMetaDiffForDailyBackup,
 } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -36,6 +36,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import MissingCredentialsWarning from '../../components/missing-credentials';
+import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
@@ -49,7 +50,7 @@ import { backupMainPath } from './paths';
  */
 import './style.scss';
 
-const INDEX_FORMAT = 'YYYYMMDD';
+export const INDEX_FORMAT = 'YYYYMMDD';
 
 const backupStatusNames = [
 	'rewind__backup_complete_full',
@@ -157,6 +158,7 @@ class BackupsPage extends Component {
 			logs,
 			moment,
 			siteId,
+			siteUrl,
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
@@ -171,7 +173,10 @@ class BackupsPage extends Component {
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
+		const realtimeBackups = getRealtimeBackups(
+			logs,
+			applySiteOffset( moment( selectedDateString ), { timezone, gmtOffset } )
+		);
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
@@ -185,45 +190,55 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				<DatePicker
-					onDateChange={ this.onDateChange }
-					selectedDate={ this.getSelectedDate() }
-					siteId={ siteId }
-					oldestDateAvailable={ oldestDateAvailable }
-					today={ today }
-					siteSlug={ siteSlug }
-				/>
+				<div className="backups__last-backup-status">
+					<DatePicker
+						onDateChange={ this.onDateChange }
+						selectedDate={ this.getSelectedDate() }
+						siteId={ siteId }
+						oldestDateAvailable={ oldestDateAvailable }
+						today={ today }
+						siteSlug={ siteSlug }
+					/>
 
-				{ isLoadingBackups && <div className="backups__is-loading" /> }
+					{ isLoadingBackups && <div className="backups__is-loading" /> }
+
+					{ ! isLoadingBackups && (
+						<>
+							<DailyBackupStatus
+								{ ...{
+									allowRestore,
+									siteUrl,
+									siteSlug,
+									dailyBackup: backupsOnSelectedDate.lastBackup,
+									lastDateAvailable,
+									selectedDate: this.getSelectedDate(),
+									timezone,
+									gmtOffset,
+									onDateChange: this.onDateChange,
+									hasRealtimeBackups,
+									realtimeBackups,
+								} }
+							/>
+							{ doesRewindNeedCredentials && (
+								<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+							) }
+						</>
+					) }
+				</div>
 
 				{ ! isLoadingBackups && (
-					<>
-						<DailyBackupStatus
-							allowRestore={ allowRestore }
-							siteSlug={ siteSlug }
-							backup={ backupsOnSelectedDate.lastBackup }
-							lastDateAvailable={ lastDateAvailable }
-							selectedDate={ this.getSelectedDate() }
-							timezone={ timezone }
-							gmtOffset={ gmtOffset }
-							onDateChange={ this.onDateChange }
-						/>
-						{ doesRewindNeedCredentials && (
-							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-						) }
-						<BackupDelta
-							{ ...{
-								deltas,
-								backupAttempts,
-								hasRealtimeBackups,
-								realtimeEvents,
-								allowRestore,
-								moment,
-								siteSlug,
-								metaDiff,
-							} }
-						/>
-					</>
+					<BackupDelta
+						{ ...{
+							deltas,
+							backupAttempts,
+							hasRealtimeBackups,
+							realtimeBackups,
+							allowRestore,
+							moment,
+							siteSlug,
+							metaDiff,
+						} }
+					/>
 				) }
 			</Main>
 		);
@@ -343,6 +358,7 @@ const mapStateToProps = ( state ) => {
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
+		siteUrl: getSiteUrl( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		timezone,
 		gmtOffset,

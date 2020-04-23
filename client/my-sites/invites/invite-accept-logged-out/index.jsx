@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
 import debugModule from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,9 +52,11 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	submitForm = ( form, userData ) => {
+		const { invite } = this.props;
+
 		this.setState( { submitting: true } );
-		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
-		store.set( 'invite_accepted', this.props.invite );
+		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
+		store.set( 'invite_accepted', invite );
 		const createAccountCallback = ( error, bearerToken ) => {
 			debug( 'Create account error: ' + JSON.stringify( error ) );
 			debug( 'Create account bearerToken: ' + bearerToken );
@@ -66,7 +69,13 @@ class InviteAcceptLoggedOut extends React.Component {
 			}
 		};
 
-		this.props.createAccount( userData, this.props.invite, createAccountCallback );
+		const enhancedUserData = { ...userData };
+
+		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+			enhancedUserData.signup_flow_name = 'wp-for-teams';
+		}
+
+		this.props.createAccount( enhancedUserData, invite, createAccountCallback );
 	};
 
 	renderFormHeader = () => {
@@ -125,6 +134,10 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	renderSignInLinkOnly = () => {
+		// TODO: this needs a refactor to unify it with components/logged-out-form as it's using
+		// styles from there but not the component
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="sign-up-form">
 				<Card className="logged-out-form">
@@ -136,6 +149,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					</Card>
 				</Card>
 			</div>
+			/* eslint-enable */
 		);
 	};
 

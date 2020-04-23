@@ -16,10 +16,14 @@ import { TimeoutMS } from 'types';
  * https://github.com/gaearon/overreacted.io/blob/80c0a314c5d855891220852788f662c2e8ecc7d4/src/pages/making-setinterval-declarative-with-react-hooks/index.md
  */
 
-type Callback = () => void;
-
-export function useInterval( callback: Callback, delay: TimeoutMS ) {
-	const savedCallback = useRef< Callback >();
+/**
+ * Invoke a function on an interval.
+ *
+ * @param callback Function to invoke
+ * @param delay    Interval timout in MS. `null` or `false` to stop the interval.
+ */
+export function useInterval( callback: () => void, delay: TimeoutMS | null | false ) {
+	const savedCallback = useRef( callback );
 
 	// Remember the latest callback.
 	useEffect( () => {
@@ -28,12 +32,11 @@ export function useInterval( callback: Callback, delay: TimeoutMS ) {
 
 	// Set up the interval.
 	useEffect( () => {
-		function tick() {
-			( savedCallback.current as /* savedCallback ref should never be `undefined` */ Callback )();
+		if ( delay === null || delay === false ) {
+			return;
 		}
-		if ( delay !== null ) {
-			const id = setInterval( tick, delay );
-			return () => clearInterval( id );
-		}
+		const tick = () => void savedCallback.current();
+		const id = setInterval( tick, delay );
+		return () => clearInterval( id );
 	}, [ delay ] );
 }

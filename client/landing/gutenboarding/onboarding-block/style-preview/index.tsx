@@ -20,6 +20,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 import './style.scss';
 
@@ -39,6 +40,8 @@ const StylePreview: React.FunctionComponent = () => {
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	useTrackStep( 'Style' );
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );

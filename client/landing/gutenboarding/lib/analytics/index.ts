@@ -3,11 +3,14 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
+import { DependencyList } from 'react';
 
 /**
  * Internal dependencies
  */
 import { FLOW_ID } from '../../constants';
+import { StepNameType } from '../../path';
+import { ErrorParameters, OnboardingCompleteParameters } from './types';
 
 /**
  * Make tracks call with embedded flow.
@@ -39,13 +42,24 @@ export function recordOnboardingStart( ref = '' ): void {
  * Analytics call at the completion  of a Gutenboarding flow
  *
  * @param {object} params A set of params to pass to analytics for signup completion
- * @param {boolean} params.isNewUser Whether the user is newly signed up
- * @param {boolean} params.isNewSite Whether a new site is created in the flow
  */
-export function recordOnboardingComplete( { isNewUser = false, isNewSite = true } ): void {
+export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
 	trackEventWithFlow( 'calypso_signup_complete', {
-		is_new_user: isNewUser,
-		is_new_site: isNewSite,
+		is_new_user: params.isNewUser,
+		is_new_site: params.isNewSite,
+		blog_id: params.blogId,
+	} );
+}
+
+/**
+ * A generic event for onboarding errors
+ *
+ * @param {object} params A set of params to pass to analytics for signup errors
+ */
+export function recordOnboardingError( params: ErrorParameters ): void {
+	trackEventWithFlow( 'calypso_signup_error', {
+		error: params.error,
+		step: params.step,
 	} );
 }
 
@@ -105,4 +119,52 @@ export function recordTrainTracksEvent( uiAlgo: string, event: RecordTrainTracks
 
 export function getNewRailcarId( suffix = 'suggestion' ) {
 	return `${ uuid().replace( /-/g, '' ) }-${ suffix }`;
+}
+
+/**
+ * Records the closing of a modal in tracks
+ *
+ * @param modalName The name of the modal to record in tracks
+ * @param eventProperties Additional properties to record on closing the modal
+ */
+export function recordCloseModal( modalName: string, eventProperties?: DependencyList ) {
+	trackEventWithFlow( 'calypso_signup_modal_close', {
+		name: modalName,
+		...eventProperties,
+	} );
+}
+
+/**
+ * Records the closing of a modal in tracks
+ *
+ * @param modalName The name of the modal to record in tracks
+ */
+export function recordEnterModal( modalName: string ) {
+	trackEventWithFlow( 'calypso_signup_modal_open', {
+		name: modalName,
+	} );
+}
+
+/**
+ * Records leaving a signup step in tracks
+ *
+ * @param stepName The name of the step to record in tracks
+ * @param eventProperties Additional properties to record on leaving the step
+ */
+export function recordLeaveStep( stepName: StepNameType, eventProperties?: DependencyList ) {
+	trackEventWithFlow( 'calypso_signup_step_leave', {
+		step: stepName,
+		...eventProperties,
+	} );
+}
+
+/**
+ * Records entering a step in tracks
+ *
+ * @param stepName The name of the step to record in tracks
+ */
+export function recordEnterStep( stepName: StepNameType ) {
+	trackEventWithFlow( 'calypso_signup_step_enter', {
+		step: stepName,
+	} );
 }

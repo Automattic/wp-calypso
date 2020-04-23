@@ -14,6 +14,17 @@ add_action(
 		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
 		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/dist/event-countdown-block.js' );
 
+		$style_file = is_rtl()
+		? 'event-countdown-block.rtl.css'
+		: 'event-countdown-block.css';
+
+		wp_register_style(
+			'jetpack-event-countdown-style',
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		);
+
 		// Block JS.
 		wp_register_script(
 			'jetpack-event-countdown',
@@ -23,10 +34,26 @@ add_action(
 			true
 		);
 
+		// JavaScript that triggers countdown on front-end.
+		wp_register_script(
+			'jetpack-event-countdown-js',
+			plugins_url( 'event-countdown.js', __FILE__ ),
+			array(), // No dependencies.
+			filemtime( plugin_dir_path( __FILE__ ) . 'event-countdown.js' ),
+			true // In footer.
+		);
+
 		register_block_type(
 			'jetpack/event-countdown',
 			array(
-				'editor_script' => 'jetpack-event-countdown',
+				'editor_script'   => 'jetpack-event-countdown',
+				'editor_style'    => 'jetpack-event-countdown-style',
+				'render_callback' => function( $attribs, $content ) {
+					wp_enqueue_style( 'jetpack-event-countdown-style' );
+					wp_enqueue_script( 'jetpack-event-countdown-js' );
+					return $content;
+
+				},
 			)
 		);
 
@@ -35,36 +62,3 @@ add_action(
 	}
 );
 
-
-// Load block assets.
-add_action(
-	'enqueue_block_assets',
-	function() {
-
-		$style_file = is_rtl()
-		? 'event-countdown-block.rtl.css'
-		: 'event-countdown-block.css';
-
-		wp_enqueue_style(
-			'event-countdown-block',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
-
-	}
-);
-
-// JavaScript that triggers countdown on front-end.
-add_action(
-	'wp_enqueue_scripts',
-	function() {
-		wp_enqueue_script(
-			'event-countdown-js',
-			plugins_url( 'event-countdown.js', __FILE__ ),
-			array(), // No dependencies.
-			filemtime( plugin_dir_path( __FILE__ ) . 'event-countdown.js' ),
-			true // In footer.
-		);
-	}
-);

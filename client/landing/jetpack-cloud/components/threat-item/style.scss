@@ -16,19 +16,7 @@
 	&__buttons {
 		display: flex;
 		justify-content: space-evenly;
-		order: -1;
 		padding: 20px 0;
-
-		@include breakpoint( '>800px' ) {
-			display: block;
-			padding: 0 48px 0 20px;
-			order: initial;
-		}
-	}
-
-	&__fix-button {
-		color: var( --color-primary-50 );
-		border-color: var( --color-primary-50 );
 	}
 
 	&__fix-button.is-summary {
@@ -57,15 +45,6 @@
 	.foldable-card__header {
 		border-bottom: 1px solid var( --studio-gray-5 );
 	}
-
-	&.foldable-card.is-expanded .foldable-card__content {
-		display: flex;
-		flex-direction: column;
-
-		@include breakpoint( '>800px' ) {
-			flex-direction: row;
-		}
-	}
 }
 
 .button.is-compact {
@@ -73,6 +52,8 @@
 	&.threat-item__ignore-button {
 		width: 170px;
 		padding: 10px 30px;
+		margin-inline-start: 5px;
+		margin-inline-end: 5px;
 		border-width: 1px;
 		border-style: solid;
 		border-radius: 3px;

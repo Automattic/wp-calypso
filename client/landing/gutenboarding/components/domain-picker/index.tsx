@@ -23,6 +23,7 @@ import {
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
+import { useTrackModal } from '../../hooks/use-track-modal';
 
 /**
  * Style dependencies
@@ -120,6 +121,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			setRailcarId( getNewRailcarId() );
 		}
 	}, [ allSuggestions ] );
+
+	useTrackModal( 'DomainPicker' );
 
 	return (
 		<Panel className="domain-picker">

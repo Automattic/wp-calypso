@@ -17,7 +17,7 @@
 	margin: 1.5rem 0 0.5rem;
 }
 
-.activity-card__time-icon.gridicon {
+.activity-card__time-icon {
 	width: 1.1rem;
 	height: 1.1rem;
 	fill: var( --color-neutral-40 );
@@ -61,6 +61,14 @@
 	justify-content: space-between;
 }
 
+.activity-card__detail-link {
+	font-size: 0.75rem;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 1rem;
+	}
+}
+
 .activity-card__detail-button.button.is-borderless.is-primary {
 	color: #3d444a;
 	font-size: 0.9rem;
@@ -70,8 +78,12 @@
 
 .backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
 	float: right;
-	font-size: 0.9rem;
+	font-size: 0.75rem;
 	font-weight: 400;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 1rem;
+	}
 }
 
 .activity-card__restore-button {

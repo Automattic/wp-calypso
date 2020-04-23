@@ -16,6 +16,7 @@
 		.sidebar__heading {
 			padding-top: 15px;
 			padding-bottom: 15px;
+			line-height: 24px;
 		}
 
 		&.is-toggle-open {
@@ -31,6 +32,11 @@
 			padding-bottom: 10px;
 			font-weight: 400;
 		}
+	}
+
+	.sidebar__expandable-title .badge {
+		float: right;
+		font-weight: 400;
 	}
 
 	// Footer

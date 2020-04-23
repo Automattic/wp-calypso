@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from './emitter';
 
 /**
  * PopupMonitor component
@@ -16,7 +12,7 @@ function PopupMonitor() {
 	this.intervals = {};
 	this.monitorInterval = null;
 	this.windowInstance = null;
-	this.onMessage = ( messageEvent ) => {
+	this.onMessage = messageEvent => {
 		if ( messageEvent.source === this.windowInstance ) {
 			this.emit( 'message', messageEvent.data );
 		}
@@ -33,12 +29,12 @@ Emitter( PopupMonitor.prototype );
  * invoked on a user action to avoid the popup being blocked. Returns the
  * current instance of PopupMonitor to enable chainability
  *
- * @param (string) url The URL to be loaded in the newly opened window
- * @param (string) name A string name for the new window
- * @param (string) specs An optional parameter listing the features of the new window as a string
+ * @param {string} url The URL to be loaded in the newly opened window
+ * @param {string} name A string name for the new window
+ * @param {string} specs An optional parameter listing the features of the new window as a string
  * @public
  */
-PopupMonitor.prototype.open = function ( url, name, specs ) {
+PopupMonitor.prototype.open = function( url, name, specs ) {
 	name = name || Date.now();
 
 	this.windowInstance = window.open( url, name, specs );
@@ -58,8 +54,8 @@ PopupMonitor.prototype.open = function ( url, name, specs ) {
  * @returns {string} Popup window specificatino string fragment
  * @public
  */
-PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
-	let screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
+	const screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
 		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
@@ -74,10 +70,10 @@ PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
  * Returns true if the popup with the specified name is closed, or false
  * otherwise
  *
- * @param (string) name The name of the popup window to check
+ * @param {string} name The name of the popup window to check
  * @public
  */
-PopupMonitor.prototype.isOpen = function ( name ) {
+PopupMonitor.prototype.isOpen = function( name ) {
 	let isClosed = false;
 
 	try {
@@ -92,7 +88,7 @@ PopupMonitor.prototype.isOpen = function ( name ) {
  * triggers a close event for any closed windows. If no popup windows remain
  * open, then the interval is stopped.
  */
-PopupMonitor.prototype.checkStatus = function () {
+PopupMonitor.prototype.checkStatus = function() {
 	for ( const name in this.intervals ) {
 		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
 			this.emit( 'close', name );
@@ -111,10 +107,10 @@ PopupMonitor.prototype.checkStatus = function () {
  * Starts monitoring a popup window instance for changes on a recurring
  * interval.
  *
- * @param (string) name The name of hte popup window to monitor
- * @param (window) windowInstance The popup window instance
+ * @param {string} name The name of hte popup window to monitor
+ * @param {window} windowInstance The popup window instance
  */
-PopupMonitor.prototype.startMonitoring = function ( name, windowInstance ) {
+PopupMonitor.prototype.startMonitoring = function( name, windowInstance ) {
 	if ( ! this.monitorInterval ) {
 		this.monitorInterval = setInterval( this.checkStatus.bind( this ), 100 );
 	}

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -17,9 +17,9 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { trackEventWithFlow } from '../../lib/analytics';
-
+import { recordOnboardingError } from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
+import { useTrackModal } from '../../hooks/use-track-modal';
 
 interface Props {
 	onRequestClose: () => void;
@@ -42,11 +42,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		onRequestClose();
 	};
 
-	useEffect( () => {
-		trackEventWithFlow( 'calypso_signup_step_enter', {
-			step: 'account_creation',
-		} );
-	}, [] );
+	useTrackModal( 'Signup' );
 
 	const lang = useLangRouteParam();
 
@@ -55,7 +51,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		const username_hint = siteTitle || siteVertical?.label;
 
-		const success = await createAccount( {
+		const result = await createAccount( {
 			email: emailVal,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
@@ -66,10 +62,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			is_passwordless: false,
 		} );
 
-		if ( success ) {
+		if ( result.ok ) {
 			closeModal();
-			trackEventWithFlow( 'calypso_signup_step_leave', {
+		} else {
+			recordOnboardingError( {
 				step: 'account_creation',
+				error: result.newUserError.error || 'signup_form_new_user_error',
 			} );
 		}
 	};

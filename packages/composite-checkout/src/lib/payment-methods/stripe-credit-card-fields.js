@@ -81,8 +81,8 @@ export function createStripePaymentMethodStore( {
 				};
 				debug( 'stripe transaction complete', stripeResponse );
 			} catch ( error ) {
-				debug( 'stripe transaction had an error', error );
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
+				debug( 'stripe transaction had an error', error.message );
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error.message };
 			}
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				debug( 'stripe transaction requires auth' );
@@ -532,7 +532,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 					isSubscribed && setStripeComplete( authenticationResponse );
 				} )
 				.catch( ( error ) => {
-					debug( 'showing error for auth', error );
+					debug( 'showing error for auth', error.message );
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
@@ -652,8 +652,8 @@ async function submitStripePayment( {
 		resetTransaction();
 		setFormReady();
 		onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } );
-		debug( 'showing error for submit', error );
-		showErrorMessage( error );
+		debug( 'showing error for submit', error.message );
+		showErrorMessage( error.message );
 		return;
 	}
 }

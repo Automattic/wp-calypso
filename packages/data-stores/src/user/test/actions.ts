@@ -70,16 +70,18 @@ describe( 'createAccount', () => {
 		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
 		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
 
-		const finalResult = generator.next();
-
-		expect( finalResult.value ).toEqual( {
+		expect( generator.next().value ).toEqual( {
 			type: 'RECEIVE_NEW_USER',
 			response: apiResponse,
 		} );
+
+		const finalResult = generator.next();
+
+		expect( finalResult.value ).toEqual( { ok: true } );
 		expect( finalResult.done ).toBe( true );
 	} );
 
-	it( 'receives an error object and returns false', () => {
+	it( 'receives an error object and returns ok=false', () => {
 		const generator = createAccount( params );
 
 		expect( generator.next().value ).toEqual( { type: 'FETCH_NEW_USER' } );
@@ -110,7 +112,7 @@ describe( 'createAccount', () => {
 
 		const finalResult = generator.next();
 
-		expect( finalResult.value ).toBe( false );
+		expect( finalResult.value ).toMatchObject( { ok: false, newUserError: expect.anything() } );
 		expect( finalResult.done ).toBe( true );
 	} );
 
@@ -141,12 +143,14 @@ describe( 'createAccount', () => {
 		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
 		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
 
-		const finalResult = generator.next();
-
-		expect( finalResult.value ).toEqual( {
+		expect( generator.next().value ).toEqual( {
 			type: 'RECEIVE_NEW_USER',
 			response: apiResponse,
 		} );
+
+		const finalResult = generator.next();
+
+		expect( finalResult.value ).toEqual( { ok: true } );
 		expect( finalResult.done ).toBe( true );
 	} );
 } );

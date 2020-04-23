@@ -32,8 +32,8 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 				};
 				debug( 'free transaction complete', response );
 			} catch ( error ) {
-				debug( 'free transaction had an error', error );
-				return { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: error };
+				debug( 'free transaction had an error', error.message );
+				return { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: error.message };
 			}
 			debug( 'free transaction requires is successful' );
 			return { type: 'FREE_PURCHASE_TRANSACTION_END', payload: response };

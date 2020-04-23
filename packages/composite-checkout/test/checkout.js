@@ -18,9 +18,10 @@ import '@testing-library/jest-dom/extend-expect';
 import {
 	Checkout,
 	CheckoutProvider,
-	CheckoutSteps,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
+	CheckoutSteps,
 	useSelect,
 	useDispatch,
 	useFormStatus,
@@ -640,7 +641,9 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 	return (
 		<React.Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+			<CheckoutStepArea>
+				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+			</CheckoutStepArea>
 		</React.Fragment>
 	);
 }

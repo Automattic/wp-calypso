@@ -38,7 +38,7 @@ export const UpsellNudge = ( {
 	forceHref,
 	href,
 	icon,
-	isJetpack,
+	jetpack,
 	isVip,
 	list,
 	onClick,
@@ -66,8 +66,8 @@ export const UpsellNudge = ( {
 		( feature && planHasFeature ) ||
 		( ! feature && ! isFreePlan( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-		( ! isJetpack && site.jetpack ) ||
-		( isJetpack && ! site.jetpack );
+		( ! jetpack && site.jetpack ) ||
+		( jetpack && ! site.jetpack );
 
 	if ( shouldNotDisplay && ! forceDisplay ) {
 		return null;
@@ -90,7 +90,7 @@ export const UpsellNudge = ( {
 			forceHref={ forceHref }
 			href={ href }
 			icon={ icon }
-			jetpack={ isJetpack }
+			jetpack={ jetpack }
 			list={ list }
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
@@ -114,7 +114,7 @@ export default connect( ( state, ownProps ) => {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		isJetpack: isJetpackSite( state, siteId ),
+		jetpack: isJetpackSite( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 	};
 } )( localize( UpsellNudge ) );
