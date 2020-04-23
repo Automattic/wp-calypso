@@ -50,6 +50,11 @@
 			"title": "brice",
 			"defaults": "brice",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "coutoire",
+			"defaults": "coutoire",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
