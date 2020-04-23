@@ -70,6 +70,34 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
+			case 'STEP_LOAD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+
+			case 'SUBMIT_BUTTON_LOAD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+
+			case 'PAYMENT_METHOD_LOAD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+
+			case 'PAGE_LOAD_ERROR':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
+						error_message: String( action.payload ),
+					} )
+				);
+
 			case 'CART_ERROR':
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
