@@ -28,7 +28,7 @@ function loginWithApple( request, response, next ) {
 	const user = JSON.parse( request.body.user || '{}' );
 	const userEmail = user.email;
 	const userName = user.name
-		? `${ user.name.firstName || ''} ${ user.name.lastName || ''}`.trim()
+		? `${ user.name.firstName || '' } ${ user.name.lastName || '' }`.trim()
 		: undefined;
 
 	request.user_openid_data = {

@@ -144,14 +144,14 @@ describe( 'MySitesSidebar', () => {
 				},
 			},
 			siteSuffix: '/mysite.com',
-			translate: x => x,
+			translate: ( x ) => x,
 		};
 
 		test( 'Should return null item if no site selected', () => {
 			const Sidebar = new MySitesSidebar( {
 				site: null,
 				siteSuffix: '',
-				translate: x => x,
+				translate: ( x ) => x,
 			} );
 			const Earn = () => Sidebar.earn();
 			const wrapper = shallow( <Earn /> );

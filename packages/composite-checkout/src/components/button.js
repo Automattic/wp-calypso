@@ -112,7 +112,7 @@ const CallToAction = styled.button`
 `;
 
 function getImageFilter( { buttonType, buttonState } ) {
-	return `grayscale( ${ buttonState === 'primary' ? '0' : '100'} ) invert( ${
+	return `grayscale( ${ buttonState === 'primary' ? '0' : '100' } ) invert( ${
 		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : '0'
 	} );`;
 }

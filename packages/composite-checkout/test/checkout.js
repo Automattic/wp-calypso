@@ -760,7 +760,7 @@ function createMockStepObjects() {
 
 function PossiblyCompleteTitle() {
 	const isComplete = useIsStepComplete();
-	const text = `Possibly Complete isComplete ${ isComplete ? 'true' : 'false'}`;
+	const text = `Possibly Complete isComplete ${ isComplete ? 'true' : 'false' }`;
 	return (
 		<div>
 			<span>Custom Step - Possibly Complete Title</span>

@@ -184,7 +184,10 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset
-				className={ classnames( 'minileven', `${ minilevenModuleActive ? `active` : `inactive`}` ) }
+				className={ classnames(
+					'minileven',
+					`${ minilevenModuleActive ? `active` : `inactive` }`
+				) }
 			>
 				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
 				<Notice

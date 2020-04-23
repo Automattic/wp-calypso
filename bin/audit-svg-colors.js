@@ -268,7 +268,7 @@ function printReplacementRules( replacementObjects ) {
 
 		replacementObjects.forEach( ( replacementObject ) => {
 			const replacementRules = formatReplacementRules( replacementObject.rules );
-			console.log( `\n${ replacementObject.file}\n${ replacementRules.join( '\n' ) }` );
+			console.log( `\n${ replacementObject.file }\n${ replacementRules.join( '\n' ) }` );
 		} );
 	}
 }

@@ -80,7 +80,7 @@ class CrossPost extends PureComponent {
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ]}`;
+		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
 	getDescription = ( authorFirstName ) => {
