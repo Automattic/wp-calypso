@@ -10,6 +10,7 @@ import { lasagna } from '../middleware';
 import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/action-types';
 import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 
+const channelTopicPrefix = 'push:wordpress.com:user:';
 const debug = debugFactory( 'lasagna:channel:push:wordpress.com:user' );
 
 const joinChannel = ( store, topic ) => {
@@ -27,10 +28,11 @@ const joinChannel = ( store, topic ) => {
 	lasagna.joinChannel( topic, () => debug( 'channel join ok' ) );
 };
 
-const leaveChannel = ( topic ) => {
-	lasagna.leaveChannel( topic );
-};
+const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
+/**
+ * Middleware
+ */
 export default ( store ) => ( next ) => ( action ) => {
 	const userId = getCurrentUserId( store.getState() );
 
@@ -38,7 +40,7 @@ export default ( store ) => ( next ) => ( action ) => {
 		return next( action );
 	}
 
-	const topic = `push:wordpress.com:user:${ userId }`;
+	const topic = channelTopicPrefix + userId;
 
 	switch ( action.type ) {
 		case LASAGNA_SOCKET_CONNECTED: {

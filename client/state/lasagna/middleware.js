@@ -8,13 +8,9 @@ import Lasagna from '@automattic/lasagna';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import { socketConnect, socketDisconnect } from './socket';
-import userChannelMiddleware from './user-channel/actions-to-events';
-
-/**
- * Module variables
- */
-let socketConnecting = false;
+import connectMiddleware from './connect/middleware';
+import publicPostChannelMiddleware from './public-post-channel/middleware';
+import userChannelMiddleware from './user-channel/middleware';
 
 const jwtFetcher = () => {
 	return wpcom
@@ -42,34 +38,8 @@ const combineMiddleware = ( ...m ) => {
 	};
 };
 
-/**
- * Connection management middleware
- *
- * @param store middleware store
- */
-const connectMiddleware = ( store ) => ( next ) => async ( action ) => {
-	// bail unless this is a route set
-	if ( action.type !== 'ROUTE_SET' ) {
-		return next( action );
-	}
-
-	// we match the ROUTE_SET path because SECTION_SET can fire all over
-	// the place on hard loads of full post views and conversations
-	const readerPathRegex = new RegExp( '^/read$|^/read/' );
-
-	// connect if we are going to the reader without a socket
-	if ( ! lasagna.isConnected() && ! socketConnecting && readerPathRegex.test( action.path ) ) {
-		socketConnecting = true;
-		await socketConnect( store );
-		socketConnecting = false;
-	}
-
-	// disconnect if we are leaving the reader with a socket
-	else if ( lasagna.isConnected() && ! readerPathRegex.test( action.path ) ) {
-		socketDisconnect( store );
-	}
-
-	return next( action );
-};
-
-export default combineMiddleware( connectMiddleware, userChannelMiddleware );
+export default combineMiddleware(
+	connectMiddleware,
+	userChannelMiddleware,
+	publicPostChannelMiddleware
+);

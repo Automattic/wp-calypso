@@ -10,9 +10,6 @@ import { lasagna } from './middleware';
 import { getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 import { socketConnected, socketDisconnected } from 'state/lasagna/actions';
 
-/**
- * Module vars
- */
 const debug = createDebug( 'lasagna:socket' );
 
 export const socketConnect = async ( store ) => {
