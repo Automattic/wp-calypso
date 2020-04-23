@@ -67,6 +67,7 @@ import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
 import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
+import EditorDeprecationDialog from 'post-editor/editor-deprecation-dialog';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -89,6 +90,7 @@ import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
  * Style dependencies
  */
 import './style.scss';
+import { isEnabled } from 'config';
 
 /*
  * Throttle and debounce and callback. Used for autosave.
@@ -299,7 +301,8 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				<EditorGutenbergDialogs />
+				{ isEnabled( 'editor/deprecation-notice' ) && <EditorDeprecationDialog /> }
+				{ ! isEnabled( 'editor/deprecation-notice' ) && <EditorGutenbergDialogs /> }
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
