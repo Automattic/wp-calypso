@@ -90,13 +90,23 @@ export const handleSaveSuccess = ( { siteId } ) => [
 	} ),
 ];
 
-export const handleSaveFailure = ( { siteId, meta: { settings: previousSettings } } ) => [
+export const handleSaveFailure = ( {
+	siteId,
+	meta: {
+		settings: previousSettings,
+		dataLayer: {
+			error: { error },
+		},
+	},
+} ) => [
 	saveWordadsSettingsFailure( siteId ),
 	updateWordadsSettings( siteId, previousSettings ),
-	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `wordads-notice-error-${ siteId }`,
-		duration: 5000,
-	} ),
+	errorNotice(
+		error === 'invalid_paypal'
+			? translate( 'Please enter a valid PayPal email address.' )
+			: translate( 'An unexpected error occurred. Please try again later.' ),
+		{ id: `wordads-notice-error-${ siteId }`, duration: 5000 }
+	),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/wordads/settings/index.js', {
