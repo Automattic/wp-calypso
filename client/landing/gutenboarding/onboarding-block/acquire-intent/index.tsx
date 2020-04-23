@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
@@ -16,13 +16,14 @@ import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import Arrow from './arrow';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const AcquireIntent: FunctionComponent = () => {
+const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { siteVertical, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const makePath = usePath();
@@ -32,6 +33,8 @@ const AcquireIntent: FunctionComponent = () => {
 
 	const displaySiteTitle = isSiteTitleActive || ! isMobile;
 	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
+
+	useTrackStep( 'IntentGathering' );
 
 	return (
 		<div
@@ -49,7 +52,7 @@ const AcquireIntent: FunctionComponent = () => {
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
 					) }
-					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
+					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } isMobile={ isMobile } />
 					<div
 						className={ classnames( 'acquire-intent__footer', {
 							'acquire-intent__footer--hidden': ! siteVertical,

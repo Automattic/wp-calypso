@@ -1,4 +1,9 @@
 .scan-history-item {
+	&.is-placeholder .card-heading,
+	&.is-placeholder .log-item__subheader {
+		margin-bottom: 2px;
+		@include placeholder( --color-neutral-10 );
+	}
 	&.is-fixed {
 		border-left: 3px solid var( --studio-jetpack-green-40 );
 	}

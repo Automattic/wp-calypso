@@ -20,6 +20,7 @@ import { CheckIcon } from './shared-icons';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import {
 	getDefaultOrderReviewStep,
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	usePaymentMethod,
@@ -33,13 +34,11 @@ const CheckoutSingleStepDataContext = React.createContext();
 
 export function Checkout( { children, className } ) {
 	const { formStatus } = useFormStatus();
-	const localize = useLocalize();
 	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
@@ -61,79 +60,105 @@ export function Checkout( { children, className } ) {
 
 	return (
 		<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
-			<CheckoutStepDataContext.Provider
-				value={ {
-					activeStepNumber: actualActiveStepNumber,
-					stepCompleteStatus,
-					totalSteps,
-					setActiveStepNumber,
-					setStepCompleteStatus,
-					setTotalSteps,
-				} }
-			>
-				<MainContentUI
-					className={ joinClasses( [ className, 'checkout__content' ] ) }
-					isLastStepActive={ ! isThereAnotherNumberedStep }
+			<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
+				<CheckoutStepDataContext.Provider
+					value={ {
+						activeStepNumber: actualActiveStepNumber,
+						stepCompleteStatus,
+						totalSteps,
+						setActiveStepNumber,
+						setStepCompleteStatus,
+						setTotalSteps,
+					} }
 				>
 					{ children || getDefaultCheckoutSteps() }
-
-					<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
-						<CheckoutErrorBoundary
-							errorMessage={ localize( 'There was a problem with the submit button.' ) }
-						>
-							<CheckoutSubmitButton
-								disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' }
-							/>
-						</CheckoutErrorBoundary>
-					</SubmitButtonWrapperUI>
-				</MainContentUI>
-			</CheckoutStepDataContext.Provider>
+				</CheckoutStepDataContext.Provider>
+			</MainContentUI>
 		</ContainerUI>
 	);
 }
 
 function DefaultCheckoutSteps() {
+	const orderSummary = getDefaultOrderSummary();
 	const orderSummaryStep = getDefaultOrderSummaryStep();
 	const paymentMethodStep = getDefaultPaymentMethodStep();
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
 		<React.Fragment>
-			<CheckoutStepBody
-				activeStepContent={ orderSummaryStep.activeStepContent }
-				completeStepContent={ orderSummaryStep.completeStepContent }
-				titleContent={ orderSummaryStep.titleContent }
-				errorMessage={ 'There was an error with this step.' }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-				className={ orderSummaryStep.className }
-			/>
-			<CheckoutSteps>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
-					className={ reviewOrderStep.className }
+			<CheckoutSummary className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummary>
+			<CheckoutStepArea>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary-step' }
+					className={ orderSummaryStep.className }
 				/>
-				<CheckoutStep
-					stepId="payment-method-step"
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-					className={ paymentMethodStep.className }
-				/>
-			</CheckoutSteps>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+						className={ reviewOrderStep.className }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+						className={ paymentMethodStep.className }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</React.Fragment>
+	);
+}
+
+export function CheckoutSummary( { children, className } ) {
+	return (
+		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-wrapper' ] ) }>
+			{ children }
+		</CheckoutSummaryUI>
+	);
+}
+
+export function CheckoutStepArea( { children, className } ) {
+	const localize = useLocalize();
+	const { formStatus } = useFormStatus();
+
+	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
+	const actualActiveStepNumber =
+		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
+
+	return (
+		<CheckoutStepAreaUI className={ joinClasses( [ className, 'checkout__step-wrapper' ] ) }>
+			{ children }
+
+			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+				>
+					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
+				</CheckoutErrorBoundary>
+			</SubmitButtonWrapperUI>
+		</CheckoutStepAreaUI>
 	);
 }
 
 export function CheckoutSteps( { children } ) {
 	let stepNumber = 0;
 	let nextStepNumber = 1;
+
 	const steps = React.Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
@@ -366,16 +391,59 @@ const ContainerUI = styled.div`
 `;
 
 const MainContentUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		margin: 32px auto;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		max-width: none;
+	}
+`;
+
+const CheckoutSummaryUI = styled.div`
+	background: ${( props ) => props.theme.colors.surface};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
-	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	margin: 0 auto;
+	width: 100%;
 
 	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		margin: 32px auto;
-		box-sizing: border-box;
+		border-bottom: none 0;
 		max-width: 556px;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		margin-left: 24px;
+		margin-right: 0;
+		order: 2;
+		width: 328px;
+	}
+`;
+
+const CheckoutStepAreaUI = styled.div`
+	background: ${( props ) => props.theme.colors.surface};
+	box-sizing: border-box;
+	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	width: 100%;
+
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		max-width: 556px;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		margin: 0;
+		order: 1;
+		width: 556px;
 	}
 `;
 

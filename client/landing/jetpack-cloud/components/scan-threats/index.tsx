@@ -15,8 +15,10 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
+import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 /**
  * Style dependencies
@@ -27,6 +29,7 @@ interface Props {
 	site: {
 		ID: number;
 		name: string;
+		URL: string;
 	};
 	threats: Array< Threat >;
 }
@@ -43,20 +46,46 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	const dispatch = useDispatch();
 
 	const openFixAllThreatsDialog = React.useCallback( () => {
+		dispatch(
+			recordTracksEvent( `calypso_scan_all_threats_dialog_open`, {
+				site_id: site.ID,
+			} )
+		);
 		setShowFixAllThreatsDialog( true );
-	}, [] );
+	}, [ dispatch, site ] );
 
-	const openDialog = React.useCallback( ( action: ThreatAction, threat: Threat ) => {
-		setSelectedThreat( threat );
-		setActionToPerform( action );
-		setShowThreatDialog( true );
-	}, [] );
+	const openDialog = React.useCallback(
+		( action: ThreatAction, threat: Threat ) => {
+			const eventName =
+				action === 'fix'
+					? 'calypso_scan_fix_threat_dialog_open'
+					: 'calypso_scan_ignore_threat_dialog_open';
+			dispatch(
+				recordTracksEvent( eventName, {
+					site_id: site.ID,
+					threat_signature: threat.signature,
+				} )
+			);
+			setSelectedThreat( threat );
+			setActionToPerform( action );
+			setShowThreatDialog( true );
+		},
+		[ dispatch, site ]
+	);
 
 	const closeDialog = React.useCallback( () => {
 		setShowThreatDialog( false );
 	}, [] );
 
 	const confirmAction = React.useCallback( () => {
+		const eventName =
+			actionToPerform === 'fix' ? 'calypso_scan_threat_fix' : 'calypso_scan_threat_ignore';
+		dispatch(
+			recordTracksEvent( eventName, {
+				site_id: site.ID,
+				threat_signature: selectedThreat.signature,
+			} )
+		);
 		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
 		setFixingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
@@ -64,6 +93,12 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
+		dispatch(
+			recordTracksEvent( `calypso_scan_all_threats_fix`, {
+				site_id: site.ID,
+				threats_number: threats.length,
+			} )
+		);
 		threats.forEach( ( threat ) => {
 			dispatch( fixThreatAlert( site.ID, threat.id ) );
 		} );
@@ -94,7 +129,9 @@ const ScanThreats = ( { site, threats }: Props ) => {
 				{ translate(
 					'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
 					{
-						components: { a: <a href="https://jetpack.com/contact-support/" /> },
+						components: {
+							a: <a href={ contactSupportUrl( site.URL ) } />,
+						},
 						comment: 'The {{a}} tag is a link that goes to a contact support page.',
 					}
 				) }
@@ -133,8 +170,8 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
 					siteName={ site.name }
-					threatTitle={ selectedThreat.title }
-					threatDescription={ selectedThreat.details }
+					threatTitle={ selectedThreat.signature }
+					threatDescription={ selectedThreat.description }
 					action={ actionToPerform }
 				/>
 			) }

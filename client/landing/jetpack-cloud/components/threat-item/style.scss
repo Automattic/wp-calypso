@@ -16,16 +16,7 @@
 	&__buttons {
 		display: flex;
 		justify-content: space-evenly;
-
-		@include breakpoint( '>800px' ) {
-			justify-content: flex-end;
-			padding-right: 48px;
-		}
-	}
-
-	&__fix-button {
-		color: var( --color-primary-50 );
-		border-color: var( --color-primary-50 );
+		padding: 20px 0;
 	}
 
 	&__fix-button.is-summary {
@@ -61,6 +52,8 @@
 	&.threat-item__ignore-button {
 		width: 170px;
 		padding: 10px 30px;
+		margin-inline-start: 5px;
+		margin-inline-end: 5px;
 		border-width: 1px;
 		border-style: solid;
 		border-radius: 3px;

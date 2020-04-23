@@ -49,9 +49,14 @@ import {
 	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans/features-list';
 import { Button } from '@automattic/components';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
@@ -67,6 +72,7 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
@@ -109,6 +115,19 @@ export class PlansFeaturesMain extends Component {
 		return true;
 	}
 
+	isDisplayingPlansNeededForFeature() {
+		const { selectedFeature, selectedPlan, previousRoute } = this.props;
+
+		if (
+			isValidFeatureKey( selectedFeature ) &&
+			getPlan( selectedPlan ) &&
+			! isPersonalPlan( selectedPlan ) &&
+			! previousRoute.startsWith( '/plans/' )
+		) {
+			return true;
+		}
+	}
+
 	getPlanFeatures() {
 		const {
 			basePlansPath,
@@ -129,12 +148,24 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			translate,
 			customHeader,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const availablePlans = this.isDisplayingPlansNeededForFeature()
+			? visiblePlans.filter( ( plan ) => {
+					if ( isEcommercePlan( selectedPlan ) ) {
+						return isEcommercePlan( plan );
+					}
+					if ( isBusinessPlan( selectedPlan ) ) {
+						return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+					if ( isPremiumPlan( selectedPlan ) ) {
+						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+			  } )
+			: visiblePlans;
 
 		return (
 			<div
@@ -149,16 +180,7 @@ export class PlansFeaturesMain extends Component {
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				{ customHeader }
-				{ this.isJetpackBackupAvailable() && (
-					<FormattedHeader
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-						compactOnMobile
-						isSecondary
-					/>
-				) }
+				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -172,7 +194,7 @@ export class PlansFeaturesMain extends Component {
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
-					visiblePlans={ visiblePlans }
+					visiblePlans={ availablePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
@@ -419,6 +441,9 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			return null;
+		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
@@ -426,6 +451,41 @@ export class PlansFeaturesMain extends Component {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
+	}
+
+	renderSecondaryFormattedHeader() {
+		const { siteSlug, translate } = this.props;
+		let headerText;
+		let subHeaderText;
+		if ( this.isJetpackBackupAvailable() ) {
+			headerText = translate( 'Plans' );
+			subHeaderText = translate(
+				'Get everything your site needs, in one package — so you can focus on your business.'
+			);
+		}
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			headerText = translate( 'Upgrade your plan to access this feature and more' );
+			subHeaderText = (
+				<Button
+					className="plans-features-main__view-all-plans is-link"
+					href={ `/plans/${ siteSlug }` }
+				>
+					{ translate( 'View all plans' ) }
+				</Button>
+			);
+		}
+		if ( ! headerText ) {
+			return null;
+		}
+
+		return (
+			<FormattedHeader
+				headerText={ headerText }
+				subHeaderText={ subHeaderText }
+				compactOnMobile
+				isSecondary
+			/>
+		);
 	}
 
 	renderProductsSelector() {
@@ -554,6 +614,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			previousRoute: getPreviousRoute( state ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,

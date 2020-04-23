@@ -8,6 +8,17 @@
 		padding: 9px 12px;
 		height: auto; // prevent clipping when there are 2 lines
 		text-align: left;
+		border-radius: $radius-round-rectangle;
+
+		&:focus,
+		&:hover[type] {
+			box-shadow: 0 0 0 1px var( --studio-gray-100 );
+			outline: 0;
+		}
+
+		&:disabled {
+			opacity: 1;
+		}
 	}
 
 	&__label {
@@ -27,4 +38,10 @@
 	&.is-modal-open {
 		display: none; // Hide domain picker button when modal is open
 	}
+}
+
+// Remove focus styling from clicking a button
+// Keep keyboard-focused focus style
+html:not( .accessible-focus ) .domain-picker-button:focus:not( :disabled ):not( :hover ) {
+	box-shadow: none;
 }

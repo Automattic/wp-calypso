@@ -33,7 +33,7 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 		return null;
 	}
 	return (
-		<ActionPanel className="tasks connect-accounts">
+		<ActionPanel className="connect-accounts">
 			<QueryPublicizeConnections selectedSite />
 			<ActionPanelBody>
 				{ ! isMobile() && (
@@ -41,19 +41,19 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 						<img src="/calypso/images/stats/tasks/social-links.svg" alt="" />
 					</ActionPanelFigure>
 				) }
-				<div className="tasks__timing">
+				<div className="connect-accounts__timing">
 					<Gridicon icon="time" size={ 18 } />
 					<p>{ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }</p>
 				</div>
 				<ActionPanelTitle>{ translate( 'Drive traffic to your site' ) }</ActionPanelTitle>
-				<p className="tasks__description">
+				<p className="connect-accounts__description">
 					{ translate(
 						'Integrate your site with social media to automatically post your content and drive traffic to your site.'
 					) }
 				</p>
 				<ActionPanelCta>
 					<Button
-						className="tasks__action"
+						className="connect-accounts__action"
 						primary
 						href={
 							isMobile()
@@ -64,7 +64,7 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 						{ translate( 'Connect accounts' ) }
 					</Button>
 					<Button
-						className="tasks__action-skip is-link"
+						className="connect-accounts__action-skip is-link"
 						onClick={ () => {
 							setIsVisible( false );
 							skipTask();

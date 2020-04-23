@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl, Icon } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { times } from 'lodash';
@@ -22,6 +22,8 @@ import {
 } from '../../utils/domain-suggestions';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
+import { useTrackModal } from '../../hooks/use-track-modal';
 
 /**
  * Style dependencies
@@ -46,6 +48,8 @@ export interface Props {
 	 * Callback that will be invoked when close button is clicked
 	 */
 	onClose: () => void;
+
+	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -78,6 +82,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	onClose,
 	currentDomain,
+	recordAnalytics,
 } ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
@@ -107,6 +112,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			</Button>
 		);
 	};
+
+	const [ railcarId, setRailcarId ] = useState< string | undefined >();
+
+	useEffect( () => {
+		// Only generate a railcarId when the domain suggestions change and are not empty.
+		if ( allSuggestions ) {
+			setRailcarId( getNewRailcarId() );
+		}
+	}, [ allSuggestions ] );
+
+	useTrackModal( 'DomainPicker' );
 
 	return (
 		<Panel className="domain-picker">
@@ -142,6 +158,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									suggestion={ freeSuggestions[ 0 ] }
 									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onSelect={ onDomainSelect }
+									railcarId={ railcarId ? `${ railcarId }0` : undefined }
+									recordAnalytics={ recordAnalytics || undefined }
+									uiPosition={ 0 }
 								/>
 							) : (
 								<SuggestionNone />
@@ -150,13 +169,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							times( PAID_DOMAINS_TO_SHOW - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 						{ paidSuggestions &&
 							( paidSuggestions?.length ? (
-								paidSuggestions.map( ( suggestion ) => (
+								paidSuggestions.map( ( suggestion, i ) => (
 									<SuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
 										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
+										railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
+										recordAnalytics={ recordAnalytics || undefined }
+										uiPosition={ i + 1 }
 									/>
 								) )
 							) : (

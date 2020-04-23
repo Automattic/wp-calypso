@@ -45,6 +45,7 @@ export const socketConnect = ( store, jwt ) => {
 };
 
 export const socketDisconnect = ( store ) => {
+	debug( 'socket disconnected' );
 	socket && socket.disconnect();
 	socket = null;
 	store.dispatch( socketDisconnected() );

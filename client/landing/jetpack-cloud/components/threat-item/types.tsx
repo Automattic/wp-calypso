@@ -1,21 +1,36 @@
-/**
- * External dependencies
- */
-import { ReactNode } from 'react';
-
 export type ThreatAction = 'fix' | 'ignore';
 
+export type Extension = {
+	slug: string;
+	version: string;
+	type: 'plugin' | 'theme';
+};
+
+export type ThreatType = 'core' | 'file' | 'plugin' | 'theme' | 'database' | 'none' | string;
+
+export type ThreatFixType = 'replace' | 'delete' | 'update' | string;
+
+export type ThreatFix = {
+	fixer: ThreatFixType;
+	file?: string;
+	target?: string;
+};
+
+export type ThreatStatus = 'fixed' | 'ignored' | 'current';
+
+// @todo: we should transform any snake case key to camel case before the data touches the store
+// @todo: make the history API response use a number for a threat ID instead of a string
 export type Threat = {
 	id: number;
-	title: string;
-	details: string;
-	action: null | 'fixed' | 'ignored';
-	detectionDate: string;
-	actionDate: string;
-	description: {
-		title: string;
-		problem: string | ReactNode;
-		fix: string | ReactNode;
-		details: string | ReactNode;
-	};
+	signature: string;
+	description: string;
+	status: ThreatStatus;
+	first_detected: string;
+	fixed_on?: string;
+	fixable: false | ThreatFix;
+	filename?: string;
+	extension?: Extension;
+	rows?: number;
+	diff?: string;
+	context?: object;
 };

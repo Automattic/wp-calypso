@@ -56,6 +56,7 @@ export function acceptInvite( context, next ) {
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
+
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}

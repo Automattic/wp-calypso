@@ -23,6 +23,13 @@ jest.mock( 'config', () => {
 	return mock;
 } );
 
+// Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
+jest.mock( 'lib/abtest', () => ( {
+	abtest: jest.fn( () => {
+		return 'offer';
+	} ),
+} ) );
+
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
 	saveUrlToCookie: jest.fn(),

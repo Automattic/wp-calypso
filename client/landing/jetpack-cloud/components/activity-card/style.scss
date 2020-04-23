@@ -3,14 +3,14 @@
 }
 
 .activity-card .activity-log-item__actor {
-    margin-left: 0;
-    display: flex;
-    align-items: center;
+	margin-left: 0;
+	display: flex;
+	align-items: center;
 }
 
 .activity-card .button.is-borderless.is-primary {
-    float: none;
-    display: inline-block;
+	float: none;
+	display: inline-block;
 }
 
 .activity-card__time {
@@ -20,6 +20,7 @@
 .activity-card__time-icon {
 	width: 1.1rem;
 	height: 1.1rem;
+	fill: var( --color-neutral-40 );
 }
 
 .activity-card__time-text {
@@ -60,17 +61,29 @@
 	justify-content: space-between;
 }
 
+.activity-card__detail-link {
+	font-size: 0.75rem;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 1rem;
+	}
+}
+
 .activity-card__detail-button.button.is-borderless.is-primary {
 	color: #3d444a;
 	font-size: 0.9rem;
-	font-weight: normal;
+	font-weight: 400;
 	margin-left: 0;
 }
 
 .backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
 	float: right;
-	font-size: 0.9rem;
+	font-size: 0.75rem;
 	font-weight: 400;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 1rem;
+	}
 }
 
 .activity-card__restore-button {

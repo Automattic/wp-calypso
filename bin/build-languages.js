@@ -151,7 +151,7 @@ function downloadLanguagesRevions() {
 	return new Promise( ( resolve ) => {
 		function log( status ) {
 			logUpdate(
-				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...'}`
+				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
 			);
 		}
 
@@ -181,7 +181,7 @@ async function downloadLanguages() {
 
 	function log( status ) {
 		logUpdate(
-			`Downloading languages${ status ? ` ${ status }.` : '...'} ` +
+			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
 				`(${ downloadedLanguagesCount }/${ languages.length })`
 		);
 	}
@@ -266,20 +266,42 @@ function buildLanguageChunks( downloadedLanguages ) {
 				const translatedChunksKeys = Object.keys( languageChunks ).map(
 					( chunk ) => path.parse( chunk ).name
 				);
-				fs.writeFileSync(
-					path.join( publicPath, `${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }` ),
-					JSON.stringify( {
-						locale: _.pick( languageTranslations, [ '' ] ),
-						translatedChunks: translatedChunksKeys,
-					} )
+				const manifestJsonData = JSON.stringify( {
+					locale: _.pick( languageTranslations, [ '' ] ),
+					translatedChunks: translatedChunksKeys,
+				} );
+				const manifestFilepathJson = path.join(
+					publicPath,
+					`${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }`
 				);
+				fs.writeFileSync( manifestFilepathJson, manifestJsonData );
+
+				const manifestJsData = `var i18nLanguageManifest = ${ manifestJsonData }`;
+				const manifestFilepathJs = path.format( {
+					...path.parse( manifestFilepathJson ),
+					base: null,
+					ext: '.js',
+				} );
+				fs.writeFileSync( manifestFilepathJs, manifestJsData );
 
 				// Write language translation chunks
-				_.forEach( languageChunks, ( chunkTranslations, chunkId ) => {
-					const chunkFilename = path.basename( chunkId, path.extname( chunkId ) ) + '.json';
-					const chunkFilepath = path.join( publicPath, `${ langSlug }-${ chunkFilename }` );
+				_.forEach( languageChunks, ( chunkTranslations, chunkFilename ) => {
+					const chunkId = path.basename( chunkFilename, path.extname( chunkFilename ) );
+					const chunkJsonData = JSON.stringify( chunkTranslations );
+					const chunkJsData = `var i18nTranslationChunks = i18nTranslationChunks || {}; i18nTranslationChunks[${ JSON.stringify(
+						chunkId
+					) }] = ${ chunkJsonData }`;
 
-					fs.writeFileSync( chunkFilepath, JSON.stringify( chunkTranslations ) );
+					const chunkFilenameJson = chunkId + '.json';
+					const chunkFilepathJson = path.join( publicPath, `${ langSlug }-${ chunkFilenameJson }` );
+					fs.writeFileSync( chunkFilepathJson, chunkJsonData );
+
+					const chunkFilepathJs = path.format( {
+						...path.parse( chunkFilepathJson ),
+						base: null,
+						ext: '.js',
+					} );
+					fs.writeFileSync( chunkFilepathJs, chunkJsData );
 				} );
 			} );
 		} );

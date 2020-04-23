@@ -22,20 +22,6 @@
 
 	@include banner-color( var( --color-accent ) );
 
-	&.is-jetpack-plan {
-		&.is-upgrade-personal {
-			@include banner-color( var( --color-jetpack-plan-personal ) );
-		}
-
-		&.is-upgrade-premium {
-			@include banner-color( var( --color-jetpack-plan-premium ) );
-		}
-
-		&.is-upgrade-business {
-			@include banner-color( var( --color-jetpack-plan-professional ) );
-		}
-	}
-
 	&.is-jetpack {
 		@include banner-color( var( --color-jetpack ) );
 	}

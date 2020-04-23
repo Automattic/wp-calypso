@@ -50,12 +50,12 @@ const InserterMenuTrackingEvent = function () {
 		 * to the temporary solution below if the core version
 		 * is equal to 7.8.1.
 		 */
-		if ( pluginVersion && pluginVersion === '7.8.1' ) {
+		if ( ! pluginVersion || ( pluginVersion && pluginVersion === '7.8.1' ) ) {
 			return null;
 		}
 
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking with Slot parameter', pluginVersion );
+		debug( '%s version: tracking with Slot parameter', pluginVersion );
 
 		if ( has_items ) {
 			return;
@@ -81,7 +81,7 @@ const InserterMenuTrackingEvent = function () {
 			return;
 		}
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking inspecting DOM tree', pluginVersion );
+		debug( '%s: tracking inspecting DOM tree', ( pluginVersion || 'unknown' ) + ' version' );
 
 		if ( ! searchTerm || searchTerm.length < 3 ) {
 			return;

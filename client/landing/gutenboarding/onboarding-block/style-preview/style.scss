@@ -54,7 +54,6 @@
 	}
 }
 
-
 .style-preview__actions {
 	position: absolute;
 	top: 50%;
@@ -96,7 +95,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__header {
 		display: grid;
 		grid-template-areas: 'title viewport-select actions';
@@ -147,7 +146,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__content {
 		display: block;
 		width: 100%;
@@ -199,13 +198,19 @@
 		width: 100%;
 	}
 
-
 	// Extra specificity to override core style
 	// This is effectively a more-specific synonmy of the same selector
 	&.components-button {
 		color: var( --studio-gray-90 );
 		height: auto;
 		border-radius: 2px;
+
+		&:hover,
+		&:focus,
+		&:focus:not( :disabled ) {
+			color: var( --studio-gray-90 );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
+		}
 	}
 
 	&.is-selected {
@@ -213,10 +218,6 @@
 		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
 		color: var( --studio-blue-40 ) !important;
 		box-shadow: inset 0 0 0 1px var( --studio-blue-40 ) !important;
-	}
-
-	&:hover {
-		box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
 	}
 }
 
@@ -236,7 +237,7 @@
 
 .style-preview__preview {
 	width: calc( 100% - 163px );
-	margin: 0 auto 30px;
+	margin: 0 auto;
 	padding-left: 100px;
 
 	&.is-viewport-tablet {
@@ -248,7 +249,7 @@
 	}
 }
 
-@supports (display: grid) {
+@supports ( display: grid ) {
 	.style-preview__preview {
 		grid-area: preview;
 		width: 100%;
@@ -333,25 +334,25 @@ $gutenboarding-style-preview-bar-height: 30px;
 
 	// Need the extra specificity here to override core
 	&.components-button {
+		color: var( --studio-gray-10 );
 		height: auto;
 		padding: 4px;
 
-		color: var( --studio-gray-10 );
+		&.is-selected,
+		&:hover,
+		&:focus {
+			color: var( --studio-black );
+		}
 
 		svg {
 			fill: none;
 		}
 	}
-
-	&.is-selected {
-		color: var( --studio-black );
-	}
 }
 
 // Remove focus styling from clicking a button
 // Keep keyboard-focused focus style
-html:not( .accessible-focus )
-	.style-preview__viewport-select-button.is-selected:focus:not( :hover ) {
+html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( :disabled ) {
 	box-shadow: none;
 }
 

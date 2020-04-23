@@ -15,19 +15,19 @@ import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
 import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteUrl from 'state/selectors/get-site-url';
 import Gridicon from 'components/gridicon';
 import ProgressBar from './progress-bar';
 import QueryRewindState from 'components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import Spinner from 'components/spinner';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
-	siteSlug: string;
+	siteUrl: string;
 }
 
 //todo: move to dedicated types file
@@ -42,7 +42,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
 	siteId,
-	siteSlug,
+	siteUrl,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -50,7 +50,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 
 	const loading = rewindState.state === 'uninitialized';
@@ -180,7 +179,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				href={ contactSupportUrl( siteUrl, 'error' ) }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"

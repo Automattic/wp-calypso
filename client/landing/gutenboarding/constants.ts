@@ -10,6 +10,12 @@ import { ValuesType } from 'utility-types';
 export const FLOW_ID = 'gutenboarding';
 
 /**
+ * An ID that identifies the onboarding flow to analytics and other services.
+ *
+ */
+export const DOMAIN_SUGGESTION_VENDOR = 'variation4_front';
+
+/**
  * Debounce our input + HTTP dependent select changes
  *
  * Rapidly changing input generates excessive HTTP requests.

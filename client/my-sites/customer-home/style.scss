@@ -30,7 +30,7 @@
 	display: flex;
 
 	@include breakpoint( '<660px' ) {
-		margin-right: 16px;
+		padding-right: 16px;
 	}
 
 	.formatted-header {
@@ -56,12 +56,6 @@
 	}
 }
 
-.customer-home__card-subheader {
-	color: var( --color-text-subtle );
-	font-size: 0.85rem;
-	margin: -0.5rem 0 1rem;
-}
-
 .customer-home__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint( '>1040px' ) {
@@ -71,34 +65,14 @@
 		grid-gap: 24px;
 	}
 }
-.customer-home__layout-col {
-	.card-heading {
-		margin-top: -8px;
-	}
 
-	a:last-child .vertical-nav-item {
-		border-bottom: none;
-	}
-}
 .customer-home__layout-col-left {
 	@include breakpoint( '>1040px' ) {
 		@include grid-column( 1, 8 );
 	}
 }
+
 .customer-home__layout-col-right {
-	.vertical-nav {
-		margin-top: 0;
-	}
-
-	.vertical-nav-item {
-		border-bottom: 1px solid var( --color-neutral-5 );
-		box-shadow: none;
-		padding: 12px 0;
-
-		.gridicon {
-			right: 0;
-		}
-	}
 	@include breakpoint( '>1040px' ) {
 		@include grid-column( 9, 4 );
 	}
@@ -112,9 +86,60 @@
 .customer-home__section-heading {
 	font-family: 'Recoleta', serif;
 	font-size: 1.25rem;
-	margin-bottom: 0.25rem;
+	margin: 32px 0 16px;
 
 	@include breakpoint( '<660px' ) {
 		padding: 0 16px;
+	}
+}
+
+.customer-home__main .card-heading {
+	margin-top: -8px;
+}
+
+.customer-home__card-subheader {
+	color: var( --color-text-subtle );
+	font-size: 0.85rem;
+	margin: -0.5rem 0 1rem;
+}
+
+
+.customer-home__main .vertical-nav {
+	margin: -0.5rem 0;
+
+	.vertical-nav-item {
+		border-bottom: 1px solid var( --color-neutral-5 );
+		box-shadow: none;
+		padding: 12px 0;
+
+		.gridicon {
+			right: 0;
+		}
+	}
+
+	a:last-child .vertical-nav-item {
+		border-bottom: none;
+	}
+}
+
+.customer-home__main.is-experimental {
+	.customer-home__heading {
+		border-bottom: 1px solid var( --color-neutral-5 );
+	}
+
+	.card-heading,
+	.foldable-card__header {
+		margin-top: 0;
+		font-size: inherit;
+		font-weight: 600;
+	}
+
+	.card-heading {
+		margin-bottom: 8px;
+	}
+
+	.customer-home__card-subheader {
+		margin: 0 0 1rem;
+		font-size: inherit;
 	}
 }

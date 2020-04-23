@@ -9,8 +9,6 @@ import FormFieldAnnotation from './components/form-field-annotation';
 import { getNonProductWPCOMCartItemTypes } from './lib/translate-cart';
 import { areDomainsInLineItems } from './hooks/has-domains';
 import {
-	WPCOMCartItem,
-	CheckoutCartItem,
 	prepareDomainContactDetails,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	emptyManagedContactDetails,
@@ -30,8 +28,6 @@ export {
 	useShoppingCart,
 	useWpcomStore,
 	FormFieldAnnotation,
-	WPCOMCartItem,
-	CheckoutCartItem,
 	prepareDomainContactDetails,
 	getNonProductWPCOMCartItemTypes,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,

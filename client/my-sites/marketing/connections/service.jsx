@@ -24,7 +24,7 @@ import { successNotice, errorNotice, warningNotice } from 'state/notices/actions
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
+import { getAvailableExternalAccounts, isServiceExpanded } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getKeyringConnectionsByName,
@@ -477,6 +477,10 @@ export class SharingService extends Component {
 			return true;
 		}
 
+		if ( this.props.isExpanded ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -632,6 +636,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
+				isExpanded: isServiceExpanded( state, service ),
 			};
 			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
 		},

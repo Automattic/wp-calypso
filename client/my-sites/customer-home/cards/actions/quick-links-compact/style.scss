@@ -1,0 +1,27 @@
+.quick-links-compact.foldable-card.card {
+	margin: 0 0 16px;
+
+	&.is-expanded {
+		margin: 0 0 16px;
+	}
+
+	.foldable-card__header {
+		padding: 16px 22px;
+		min-height: auto;
+	}
+
+	.foldable-card__action {
+		margin-right: 8px;
+	}
+
+	.foldable-card__content {
+		border: 0;
+		padding-bottom: 0;
+		padding-top: 0;
+	}
+}
+
+.quick-links-compact__boxes {
+	margin-left: -16px;
+	margin-right: -16px;
+}

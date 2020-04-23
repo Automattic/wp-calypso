@@ -70,11 +70,13 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			// Need to rerequest access after the proxy is reloaded
 			yield requestAllBlogsAccess();
 
-			return receiveNewUser( newUser );
-		} catch ( err ) {
-			yield receiveNewUserFailed( err );
+			yield receiveNewUser( newUser );
 
-			return false;
+			return { ok: true } as const;
+		} catch ( newUserError ) {
+			yield receiveNewUserFailed( newUserError );
+
+			return { ok: false, newUserError } as const;
 		}
 	}
 

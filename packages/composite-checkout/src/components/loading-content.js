@@ -14,7 +14,7 @@ export default function LoadingContent() {
 	const localize = useLocalize();
 
 	return (
-		<div>
+		<LoadingContentWrapperUI>
 			<LoadingCard>
 				<LoadingTitle>{ localize( 'Loading checkout' ) }</LoadingTitle>
 				<LoadingCopy />
@@ -32,9 +32,23 @@ export default function LoadingContent() {
 				<LoadingTitle />
 			</LoadingCard>
 			<LoadingFooter />
-		</div>
+		</LoadingContentWrapperUI>
 	);
 }
+
+const LoadingContentWrapperUI = styled.div`
+	background: ${( props ) => props.theme.colors.surface};
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		margin: 32px auto;
+		box-sizing: border-box;
+		max-width: 556px;
+	}
+`;
 
 const LoadingCard = styled.div`
 	padding: 24px;

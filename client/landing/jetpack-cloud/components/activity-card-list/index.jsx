@@ -2,17 +2,18 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
+
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
@@ -71,28 +72,44 @@ class ActivityCardList extends Component {
 
 		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
 			return (
-				<Fragment key={ `activity-card-list__date-group-${ index }` }>
+				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
-						<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
+						<div className="activity-card-list__date-group-date">
+							{ date && date.format( 'MMM Do' ) }
+						</div>
 					) }
-					{ dateLogs.map( ( activity ) => (
-						<ActivityCard
-							{ ...{
-								key: activity.activityId,
-								moment,
-								activity,
-								allowRestore,
-								siteSlug,
-							} }
-						/>
-					) ) }
-				</Fragment>
+					<div className="activity-card-list__date-group-content">
+						{ dateLogs.map( ( activity ) => (
+							<ActivityCard
+								{ ...{
+									key: activity.activityId,
+									moment,
+									activity,
+									allowRestore,
+									siteSlug,
+									className:
+										activity.activityType === 'Backup'
+											? 'activity-card-list__primary-card'
+											: 'activity-card-list__secondary-card',
+								} }
+							/>
+						) ) }
+					</div>
+				</div>
 			);
 		} );
 	}
 
 	renderData() {
-		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
+		const {
+			filter,
+			isBreakpointActive: isMobile,
+			logs,
+			pageSize,
+			showFilter,
+			showPagination,
+			siteId,
+		} = this.props;
 		const { page: requestedPage } = filter;
 
 		const actualPage = Math.max(
@@ -114,7 +131,7 @@ class ActivityCardList extends Component {
 				) }
 				{ showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={ isMobile }
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
 						nextLabel={ 'Older' }
@@ -128,7 +145,7 @@ class ActivityCardList extends Component {
 				{ this.renderLogs( theseLogs ) }
 				{ showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
 						nextLabel={ 'Older' }
@@ -158,6 +175,7 @@ class ActivityCardList extends Component {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const siteCapabilities = getRewindCapabilities( state, siteId );
@@ -169,6 +187,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		siteId,
+		siteSlug,
 		filter,
 		rewind,
 		allowRestore,
@@ -182,4 +201,4 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) );
+)( withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) ) );

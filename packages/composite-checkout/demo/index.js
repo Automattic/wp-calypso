@@ -9,15 +9,18 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
-	CheckoutSteps,
+	CheckoutStepArea,
 	CheckoutStep,
 	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummary,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -258,6 +261,7 @@ function ContactForm( { summary } ) {
 	);
 }
 
+const orderSummary = getDefaultOrderSummary();
 const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
@@ -394,50 +398,55 @@ function MyCheckoutBody() {
 
 	return (
 		<Checkout>
-			<CheckoutStepBody
-				activeStepContent={ orderSummaryStep.activeStepContent }
-				completeStepContent={ orderSummaryStep.completeStepContent }
-				titleContent={ orderSummaryStep.titleContent }
-				errorMessage={ 'There was an error with this step.' }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-			/>
-			<CheckoutSteps>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
+			<CheckoutSummary className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummary>
+			<CheckoutStepArea>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary' }
 				/>
-				<CheckoutStep
-					stepId={ contactFormStep.id }
-					isCompleteCallback={ () =>
-						new Promise( ( resolve ) =>
-							setTimeout( () => {
-								if ( country.length === 0 ) {
-									showError( 'The country field is required' );
-									resolve( false );
-									return;
-								}
-								resolve( true );
-							}, 1500 )
-						)
-					}
-					activeStepContent={ contactFormStep.activeStepContent }
-					completeStepContent={ contactFormStep.completeStepContent }
-					titleContent={ contactFormStep.titleContent }
-				/>
-				<CheckoutStep
-					stepId="payment-method-step"
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-				/>
-			</CheckoutSteps>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId={ contactFormStep.id }
+						isCompleteCallback={ () =>
+							new Promise( ( resolve ) =>
+								setTimeout( () => {
+									if ( country.length === 0 ) {
+										showError( 'The country field is required' );
+										resolve( false );
+										return;
+									}
+									resolve( true );
+								}, 1500 )
+							)
+						}
+						activeStepContent={ contactFormStep.activeStepContent }
+						completeStepContent={ contactFormStep.completeStepContent }
+						titleContent={ contactFormStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</Checkout>
 	);
 }

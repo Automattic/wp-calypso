@@ -20,7 +20,7 @@ interface PageViewParams {
 export function getPageViewParams( urlPath: string ): PageViewParams {
 	const params = {
 		last_pageview_path_with_count: `${ mostRecentUrlPath }(${ pathCounter.toString() })`,
-		this_pageview_path_with_count: `${ urlPath }(${ pathCounter + 1})`,
+		this_pageview_path_with_count: `${ urlPath }(${ pathCounter + 1 })`,
 	};
 	// Record this path.
 	mostRecentUrlPath = urlPath;

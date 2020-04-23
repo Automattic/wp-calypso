@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from './emitter';
 
 /**
  * PopupMonitor component
@@ -33,9 +29,9 @@ Emitter( PopupMonitor.prototype );
  * invoked on a user action to avoid the popup being blocked. Returns the
  * current instance of PopupMonitor to enable chainability
  *
- * @param (string) url The URL to be loaded in the newly opened window
- * @param (string) name A string name for the new window
- * @param (string) specs An optional parameter listing the features of the new window as a string
+ * @param {string} url The URL to be loaded in the newly opened window
+ * @param {string} name A string name for the new window
+ * @param {string} specs An optional parameter listing the features of the new window as a string
  * @public
  */
 PopupMonitor.prototype.open = function ( url, name, specs ) {
@@ -59,7 +55,7 @@ PopupMonitor.prototype.open = function ( url, name, specs ) {
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
-	let screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+	const screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
 		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
@@ -74,7 +70,7 @@ PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
  * Returns true if the popup with the specified name is closed, or false
  * otherwise
  *
- * @param (string) name The name of the popup window to check
+ * @param {string} name The name of the popup window to check
  * @public
  */
 PopupMonitor.prototype.isOpen = function ( name ) {
@@ -111,8 +107,8 @@ PopupMonitor.prototype.checkStatus = function () {
  * Starts monitoring a popup window instance for changes on a recurring
  * interval.
  *
- * @param (string) name The name of hte popup window to monitor
- * @param (window) windowInstance The popup window instance
+ * @param {string} name The name of hte popup window to monitor
+ * @param {window} windowInstance The popup window instance
  */
 PopupMonitor.prototype.startMonitoring = function ( name, windowInstance ) {
 	if ( ! this.monitorInterval ) {

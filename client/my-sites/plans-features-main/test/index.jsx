@@ -8,7 +8,9 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'config', () => {
-	const fn = () => {};
+	const fn = () => {
+		return [];
+	};
 	fn.isEnabled = jest.fn( () => true );
 	return fn;
 } );

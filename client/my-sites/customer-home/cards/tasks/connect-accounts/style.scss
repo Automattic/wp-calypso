@@ -1,0 +1,50 @@
+.connect-accounts {
+	padding-bottom: 24px;
+
+	@include breakpoint( '>480px' ) {
+		padding-bottom: 32px;
+	}
+	
+	.connect-accounts__timing {
+		display: flex;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+	}
+
+	.action-panel__title {
+		font-family: 'Recoleta', serif;
+		font-size: 32px;
+		line-height: 40px;
+		margin-bottom: 0;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 40px;
+			line-height: 48px;
+		}
+	}
+
+	.action-panel__figure {
+		max-width: 280px;
+	}
+
+	.connect-accounts__description {
+		font-size: 16px;
+		line-height: 24px;
+		color: var( --color-text );
+
+		@include breakpoint( '>660px' ) {
+			font-size: 20px;
+			line-height: 32px;
+		}
+	}
+
+	.action-panel__cta {
+		display: flex;
+
+		.connect-accounts__action-skip {
+			margin: auto 16px;
+		}
+	}
+}

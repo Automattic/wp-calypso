@@ -1,5 +1,8 @@
 .scan-history-item .threat-description,
 .threat-item .threat-description {
+	overflow: auto;
+	flex: 1;
+
 	&__section-title {
 		margin-bottom: 20px;
 	}

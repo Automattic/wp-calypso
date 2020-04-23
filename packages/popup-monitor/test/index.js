@@ -10,7 +10,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import PopupMonitor from '../';
+import PopupMonitor from '../src';
 
 describe( 'PopupMonitor', () => {
 	let popupMonitor;
