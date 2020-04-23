@@ -54,7 +54,7 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 		'is-favorable': value !== 0 && isIncreaseFavorable,
 		'is-unfavorable': value !== 0 && ! isIncreaseFavorable,
 	} );
-	const since = previousItem ? `since ${ previousItem[ sinceLabels[ unit ] ]}` : null;
+	const since = previousItem ? `since ${ previousItem[ sinceLabels[ unit ] ] }` : null;
 	return {
 		classes: classes.split( ' ' ),
 		since,

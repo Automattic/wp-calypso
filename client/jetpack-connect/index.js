@@ -100,7 +100,7 @@ export default function () {
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
 		( { params } ) =>
-			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : ''}` )
+			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
 	if ( isLoggedOut ) {

@@ -176,7 +176,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
-										railcarId={ railcarId ? `${ railcarId }${ i + 1}` : undefined }
+										railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
 										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ i + 1 }
 									/>
