@@ -1,5 +1,5 @@
 {
-	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"extends": [ "config:base", "default:pinDigestsDisabled", "default:preserveSemverRanges" ],
 	"packageRules": [
 		{
 			"paths": [ "packages/**" ],
