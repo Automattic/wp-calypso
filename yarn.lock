@@ -16,13 +16,13 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.2.1.tgz#e920af382a4db624ebca1591adace289912bf37b"
   integrity sha512-doMeOR5ly+qviYgWhWStByZHnnv3AFBC4Tj6aZLTrw8voulIu9AUv3Z9eit8a68uzCI77VkN7fUFadOiYIYBWg==
 
-"@automattic/lasagna@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.2.1.tgz#65a610853a3c3b2ac31ef53423f42717fda8748f"
-  integrity sha512-BvUaEld3ECbw3zD561kfPtgxPRJe48IC6pRG10vyyXUxYr4DNUezrEQJAUQe+fIrOyNlza13qE+Pon2hwYK/MQ==
+"@automattic/lasagna@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.3.0.tgz#94b80223b396733fe0170b0c636ab6828ad483ea"
+  integrity sha512-QymbfOp/spN1E8S3F35G8pg9C8wh60/YxAjsHZcSM343/AJeAEDAW5eZfuPB7ijbIZOm9Al7MweqX8NGwzZOOQ==
   dependencies:
     jwt-decode "^2.2.0"
-    phoenix "^1.5.0"
+    phoenix "^1.5.1"
 
 "@automattic/mini-css-extract-plugin-with-rtl@0.8.0":
   version "0.8.0"
@@ -16286,10 +16286,10 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-phoenix@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.0.tgz#800aa1b7adfdb45b959d5c45d25f7aaedfaa5818"
-  integrity sha512-Vzz6eb64BEufIXTVkTcT5HiNdRyLY2DF/l2eN1LaeedRbBhGCsdRWdDISFjBSjxODjqY+w2NmSzBeHM8MieLRw==
+phoenix@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.1.tgz#a8bee36a02a9448c052ad3ba6f7e3ba061d46ce2"
+  integrity sha512-0cTQ5XfAqt8l3+KnnX0AW3hww0N37bOgTTeyt1cH80VJNeEMab8+0bK421XhVoaQ8R0Vsc0GS3W6CyI4eND0Ew==
 
 phone@2.4.2:
   version "2.4.2"
