@@ -10,16 +10,24 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * NHA dependencies
  */
-import { settings } from './newspack-homepage-articles/blocks/homepage-articles/index';
+import { settings as blogPostsSettings } from './newspack-homepage-articles/blocks/homepage-articles/index';
 import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage-articles/store';
+import { settings as carouselSettings } from './newspack-homepage-articles/blocks/carousel/index';
 
 /**
  * Block name in the A8C\FSE context.
  */
-const blockName = 'a8c/blog-posts';
+const blogPostskName = 'a8c/blog-posts';
+const postsCarouselName = 'a8c/posts-carousel';
 
 function setBlockTransformationName( name ) {
-	return name !== 'newspack-blocks/homepage-articles' ? name : blockName;
+	if ( name === 'newspack-blocks/homepage-articles' ) {
+		return blogPostskName;
+	}
+	if ( name === 'newspack-blocks/carousel' ) {
+		return postsCarouselName;
+	}
+	return name;
 }
 
 addFilter(
@@ -28,10 +36,15 @@ addFilter(
 	setBlockTransformationName
 );
 
-registerBlockType( blockName, {
-	...settings,
+registerBlockType( blogPostskName, {
+	...blogPostsSettings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
 	category: 'layout',
 } );
+registerQueryStore( blogPostskName );
 
-registerQueryStore( blockName );
+registerBlockType( postsCarouselName, {
+	...carouselSettings,
+	title: __( 'Posts Carousel', 'full-site-editing' ),
+	category: 'layout',
+} );

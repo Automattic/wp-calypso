@@ -24,6 +24,11 @@ function blog_posts_block_name( $name ) {
 	if ( 'newspack-blocks/homepage-articles' === $name ) {
 		return 'a8c/blog-posts';
 	}
+
+	if ( 'newspack-blocks/carousel' === $name ) {
+		return 'a8c/posts-carousel';
+	}
+
 	return $name;
 }
 add_filter( 'newspack_blocks_block_name', __NAMESPACE__ . '\blog_posts_block_name' );
