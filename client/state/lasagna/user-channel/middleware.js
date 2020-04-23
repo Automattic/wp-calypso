@@ -7,31 +7,31 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import { lasagna } from '../middleware';
-import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/action-types';
+import { LASAGNA_SOCKET_CONNECTED } from 'state/action-types';
 import { getCurrentUserId, getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
 
 const channelTopicPrefix = 'push:wordpress.com:user:';
-const debug = debugFactory( 'lasagna:channel:push:wordpress.com:user' );
+const debug = debugFactory( 'lasagna:channel' );
 
 const joinChannel = async ( store, topic ) => {
 	await lasagna.initChannel(
 		topic,
 		{ jwt: getCurrentUserLasagnaJwt( store.getState() ) },
 		{
-			onClose: () => debug( 'channel closed' ),
-			onError: ( reason ) => debug( 'channel error', reason ),
+			onClose: () => debug( topic + ' channel closed' ),
+			onError: ( reason ) => debug( topic + ' channel error', reason ),
 		}
 	);
 
 	// registerEventHandlers here
 
-	lasagna.joinChannel( topic, () => debug( 'channel join ok' ) );
+	lasagna.joinChannel( topic, () => debug( topic + ' channel join ok' ) );
 };
-
-const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
 /**
  * Middleware
+ *
+ * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {
 	const userId = getCurrentUserId( store.getState() );
@@ -47,10 +47,6 @@ export default ( store ) => ( next ) => ( action ) => {
 			joinChannel( store, topic );
 			break;
 		}
-
-		case LASAGNA_SOCKET_DISCONNECTED:
-			leaveChannel( topic );
-			break;
 	}
 
 	return next( action );
