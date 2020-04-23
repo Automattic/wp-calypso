@@ -10,6 +10,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isActivityBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -49,29 +50,47 @@ class ActivityCardList extends Component {
 	};
 
 	splitLogsByDate( logs ) {
-		const { applySiteOffset, moment } = this.props;
+		const { applySiteOffset, moment, pageSize } = this.props;
 		const logsByDate = [];
 		let lastDate = null;
+		let logsAdded = 0;
+
 		for ( const log of logs ) {
 			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
-			if ( activityDateMoment ) {
+			if ( logsAdded >= pageSize ) {
+				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+					logsByDate[ logsByDate.length - 1 ].hasMore = true;
+				}
+				break;
+			} else {
 				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
 					logsByDate[ logsByDate.length - 1 ].logs.push( log );
 				} else {
-					logsByDate.push( { date: activityDateMoment, logs: [ log ] } );
+					logsByDate.push( { date: activityDateMoment, logs: [ log ], hasMore: false } );
 					lastDate = activityDateMoment;
 				}
+				logsAdded++;
 			}
 		}
+
 		return logsByDate;
 	}
 
-	renderLogs( logs ) {
-		const { allowRestore, moment, siteSlug, showDateSeparators } = this.props;
-		const logsByDate = this.splitLogsByDate( logs );
+	renderLogs( actualPage ) {
+		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
 
-		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
-			return (
+		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
+			hasMore && dateLogsLength === 1
+				? 'activity-card-list__primary-card-with-more'
+				: 'activity-card-list__primary-card';
+
+		const getSecondaryCardClassName = ( hasMore ) =>
+			hasMore
+				? 'activity-card-list__secondary-card-with-more'
+				: 'activity-card-list__secondary-card';
+
+		return this.splitLogsByDate( logs.slice( ( actualPage - 1 ) * pageSize ) ).map(
+			( { date, logs: dateLogs, hasMore }, index ) => (
 				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
@@ -83,21 +102,23 @@ class ActivityCardList extends Component {
 							<ActivityCard
 								{ ...{
 									key: activity.activityId,
+									showContentLink: isActivityBackup( activity )
+										? dateLogs.length > 1 || hasMore
+										: true,
 									moment,
 									activity,
 									allowRestore,
 									siteSlug,
-									className:
-										activity.activityType === 'Backup'
-											? 'activity-card-list__primary-card'
-											: 'activity-card-list__secondary-card',
+									className: isActivityBackup( activity )
+										? getPrimaryCardClassName( hasMore, dateLogs.length )
+										: getSecondaryCardClassName( hasMore ),
 								} }
 							/>
 						) ) }
 					</div>
 				</div>
-			);
-		} );
+			)
+		);
 	}
 
 	renderData() {
@@ -116,7 +137,7 @@ class ActivityCardList extends Component {
 			1,
 			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
 		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
+
 		return (
 			<>
 				{ showFilter && (
@@ -142,7 +163,7 @@ class ActivityCardList extends Component {
 						total={ logs.length }
 					/>
 				) }
-				{ this.renderLogs( theseLogs ) }
+				{ this.renderLogs( actualPage ) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }
