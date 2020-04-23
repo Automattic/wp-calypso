@@ -29,6 +29,7 @@ export const UpsellNudge = ( {
 	canManageSite,
 	className,
 	compact,
+	customerType,
 	description,
 	disableHref,
 	dismissPreferenceName,
@@ -73,7 +74,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	if ( ! href && site ) {
+	if ( ! href && site && ! customerType ) {
 		href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 	}
 
@@ -82,6 +83,7 @@ export const UpsellNudge = ( {
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			customerType={ customerType }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
