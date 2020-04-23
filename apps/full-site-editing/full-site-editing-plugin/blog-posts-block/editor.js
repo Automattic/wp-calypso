@@ -17,12 +17,12 @@ import { settings as carouselSettings } from './newspack-homepage-articles/block
 /**
  * Block name in the A8C\FSE context.
  */
-const blogPostskName = 'a8c/blog-posts';
+const blogPostsName = 'a8c/blog-posts';
 const postsCarouselName = 'a8c/posts-carousel';
 
 function setBlockTransformationName( name ) {
 	if ( name === 'newspack-blocks/homepage-articles' ) {
-		return blogPostskName;
+		return blogPostsName;
 	}
 	if ( name === 'newspack-blocks/carousel' ) {
 		return postsCarouselName;
@@ -36,12 +36,12 @@ addFilter(
 	setBlockTransformationName
 );
 
-registerBlockType( blogPostskName, {
+registerBlockType( blogPostsName, {
 	...blogPostsSettings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
 	category: 'layout',
 } );
-registerQueryStore( blogPostskName );
+registerQueryStore( blogPostsName );
 
 registerBlockType( postsCarouselName, {
 	...carouselSettings,
