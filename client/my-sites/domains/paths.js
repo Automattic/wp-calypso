@@ -4,8 +4,14 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
-export function domainAddNew( siteName ) {
-	return '/domains/add/' + siteName;
+export function domainAddNew( siteName, searchTerm ) {
+	const path = `/domains/add/${ siteName }`;
+
+	if ( searchTerm ) {
+		return `${ path }?suggestion=${ searchTerm }`;
+	}
+
+	return path;
 }
 
 export function domainManagementRoot() {
