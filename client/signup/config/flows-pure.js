@@ -17,7 +17,7 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getPreLaunchEditorDestination = noop,
+	getEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -357,7 +357,7 @@ export function generateFlows( {
 	if ( isEnabled( 'gutenboarding' ) ) {
 		flows.prelaunch = {
 			steps: [ 'plans-with-domain' ],
-			destination: getPreLaunchEditorDestination,
+			destination: getEditorDestination,
 			description: 'Gutenboarding flow for creating a site with a paid domain',
 			lastModified: '2020-04-06',
 			pageTitle: translate( 'Get a domain for your site' ),

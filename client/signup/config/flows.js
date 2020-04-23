@@ -75,10 +75,6 @@ function getEditorDestination( dependencies ) {
 	return `/block-editor/page/${ dependencies.siteSlug }/home`;
 }
 
-function getPreLaunchEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home?is-gutenboarding`;
-}
-
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -87,7 +83,6 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
-	getPreLaunchEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
