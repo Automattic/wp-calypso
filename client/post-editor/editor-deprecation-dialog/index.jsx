@@ -20,7 +20,6 @@ import { composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analyt
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -57,7 +56,7 @@ class EditorDeprecationDialog extends Component {
 	};
 
 	render() {
-		const { translate, moment } = this.props;
+		const { translate } = this.props;
 		const { showModal } = this.state;
 
 		if ( ! showModal ) {
@@ -80,7 +79,7 @@ class EditorDeprecationDialog extends Component {
 						{
 							components: {
 								a: <a href="https://DOCS/" target="_blank" rel="noopener noreferrer" />,
-								date: <strong>{ moment( '2020-06-15' ).format( 'MMMM D' ) }</strong>,
+								date: <strong>{ translate( 'June 15' ) }</strong>,
 							},
 						}
 					) }
@@ -132,4 +131,4 @@ export default connect( ( state ) => {
 		siteId,
 		gutenbergUrl,
 	};
-}, mapDispatchToProps )( localize( withLocalizedMoment( EditorDeprecationDialog ) ) );
+}, mapDispatchToProps )( localize( EditorDeprecationDialog ) );
