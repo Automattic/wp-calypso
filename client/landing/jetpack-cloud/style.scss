@@ -4,6 +4,39 @@
 		box-sizing: border-box;
 		padding-left: 16px;
 		padding-right: 16px;
+
+		// Universal Text Styles
+		h2 {
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 32px;
+
+			@include breakpoint( '>660px' ) {
+				font-size: 36px;
+				line-height: 40px;
+			}
+		}
+
+		h3 {
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 23px;
+
+			@include breakpoint( '>660px' ) {
+				font-size: 18px;
+				line-height: 23px;
+			}
+		}
+
+		p {
+			font-size: 16px;
+			line-height: 24px;
+
+			@include breakpoint( '>660px' ) {
+				font-size: 18px;
+				line-height: 24px;
+			}
+		}
 	}
 
 	.current-section {
@@ -163,40 +196,6 @@
 
 	&:active {
 		color: var( --color-scary-60 );
-	}
-}
-
-// Universal Text Styles
-
-h2 {
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 32px;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 36px;
-		line-height: 40px;
-	}
-}
-
-h3 {
-	font-size: 16px;
-	font-weight: 700;
-	line-height: 23px;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
-		line-height: 23px;
-	}
-}
-
-p {
-	font-size: 16px;
-	line-height: 24px;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
-		line-height: 24px;
 	}
 }
 
