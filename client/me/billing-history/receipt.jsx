@@ -27,6 +27,7 @@ import {
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getPlanTermLabel } from 'lib/plans';
+import { PARTNER_PAYPAL_EXPRESS } from 'lib/checkout/payment-methods';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -76,7 +77,7 @@ class BillingReceipt extends React.Component {
 		const { transaction, translate } = this.props;
 		let text;
 
-		if ( transaction.pay_part === 'paypal_express' ) {
+		if ( transaction.pay_part === PARTNER_PAYPAL_EXPRESS ) {
 			text = translate( 'PayPal' );
 		} else if ( 'XXXX' !== transaction.cc_num ) {
 			text = translate( '%(cardType)s ending in %(cardNum)s', {

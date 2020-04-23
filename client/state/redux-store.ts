@@ -1,12 +1,16 @@
 /**
  * External Dependencies
  */
-import { Reducer, Store } from 'redux';
+import { Reducer, Store, Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 /**
  * Internal dependencies
  */
 import { addReducerToStore, clear as clearReducers, WithAddReducer } from './add-reducer';
+import { getInitialState } from './initial-state';
+
+export type ReduxDispatch = ThunkDispatch< ReturnType< typeof getInitialState >, unknown, Action >;
 
 type QueueEntry = [ string[], Reducer ];
 

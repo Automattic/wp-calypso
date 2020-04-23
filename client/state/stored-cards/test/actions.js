@@ -66,7 +66,7 @@ describe( 'actions', () => {
 		describe( 'success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.1/me/stored-cards' )
+					.get( '/rest/v1.1/me/payment-methods' )
 					.reply( 200, cards );
 			} );
 
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 		describe( 'fail', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.1/me/stored-cards' )
+					.get( '/rest/v1.1/me/payment-methods' )
 					.reply( 403, error );
 			} );
 
@@ -113,12 +113,16 @@ describe( 'actions', () => {
 	describe( '#deleteStoredCard', () => {
 		const card = {
 			stored_details_id: 1337,
+			allStoredDetailsIds: [ 1337, 56789 ],
 		};
 
 		describe( 'success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
+					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 0 ] }/delete` )
+					.reply( 200, { success: true } );
+				nock( 'https://public-api.wordpress.com:443' )
+					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 1 ] }/delete` )
 					.reply( 200, { success: true } );
 			} );
 
@@ -142,7 +146,10 @@ describe( 'actions', () => {
 		describe( 'fail', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
+					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 0 ] }/delete` )
+					.reply( 200, { success: true } );
+				nock( 'https://public-api.wordpress.com:443' )
+					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 1 ] }/delete` )
 					.reply( 403, error );
 			} );
 
