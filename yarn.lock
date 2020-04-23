@@ -18222,6 +18222,11 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
+redux-dynamic-middlewares@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/redux-dynamic-middlewares/-/redux-dynamic-middlewares-2.0.0.tgz#bb34e42d22deb5fe8d5e6af8af66d0739d26e8b1"
+  integrity sha512-Wqr76OhNkT+HqDumK9crfa/ZSR06wR29mB8DkTjR+Z/aTv9UmNv2zQKpjUBk4YiD7z2oXbPiWuycK4DB/jEQnQ==
+
 redux-form@8.2.6:
   version "8.2.6"
   resolved "https://registry.yarnpkg.com/redux-form/-/redux-form-8.2.6.tgz#6840bbe9ed5b2aaef9dd82e6db3e5efcfddd69b1"
