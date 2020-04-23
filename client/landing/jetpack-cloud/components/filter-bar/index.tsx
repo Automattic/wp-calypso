@@ -35,7 +35,6 @@ interface ActivityCount {
 
 interface Props {
 	siteId: number;
-	// group?: string[];
 	filter: Filter;
 	onFilterChange: ( newFilter: Filter ) => void;
 	showActivityTypeSelector?: boolean;
@@ -78,6 +77,16 @@ const FilterBar: FunctionComponent< Props > = ( {
 	// 	setIsDateRangeSelectorVisible( false );
 	// };
 
+	const getButtonClassName = ( isActive: boolean ) =>
+		isActive ? 'filter-bar__button-active' : 'filter-bar__button';
+
+	const renderActivityTypeSelectorButtonText = ( groups?: string[] ) =>
+		groups
+			? translate( 'Activity type: %d selected', {
+					args: [ groups.length ],
+			  } )
+			: translate( 'Activity type' );
+
 	// when the filter changes re-request the activity counts
 	// the activity counts only use the date values, but the underlying data layer handles unnecessary re-requests via freshness
 	useEffect( () => {
@@ -90,35 +99,28 @@ const FilterBar: FunctionComponent< Props > = ( {
 			{ showActivityTypeSelector && (
 				<>
 					<Button
-						className={
-							isActivityTypeSelectorVisible ? 'filter-bar__button-active' : 'filter-bar__button'
-						}
+						className={ getButtonClassName( isActivityTypeSelectorVisible ) }
 						compact
 						onClick={ toggleIsActivityTypeSelectorVisible }
 						ref={ activityTypeButtonRef }
 					>
-						{ translate( 'Activity type' ) }
+						{ renderActivityTypeSelectorButtonText( filter.group ) }
 					</Button>
 					<ActivityTypeSelector
+						activityCounts={ activityActionTypeCounts }
+						context={ activityTypeButtonRef }
+						groups={ filter.group || [] }
 						isVisible={ isActivityTypeSelectorVisible }
 						onClose={ closeActivityTypeSelector }
-						activityCounts={ activityActionTypeCounts }
 						onGroupsChange={ ( newGroups ) =>
-							onFilterChange( {
-								...filter,
-								group: newGroups.length > 0 ? newGroups : undefined,
-							} )
+							onFilterChange( { ...filter, group: newGroups.length > 0 ? newGroups : undefined } )
 						}
-						groups={ filter.group || [] }
-						context={ activityTypeButtonRef }
 					/>
 				</>
 			) }
 			{ showDateRangeSelector && (
 				<Button
-					className={
-						isDateRangeSelectorVisible ? 'filter-bar__button-active' : 'filter-bar__button'
-					}
+					className={ getButtonClassName( isActivityTypeSelectorVisible ) }
 					compact
 					onClick={ toggleIsDateRangeSelectorVisible }
 					ref={ dateRangeButtonRef }

@@ -79,9 +79,14 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 					) }
 				</p>
 			</div>
-			<FilterBar siteId={ loadedSiteId } filter={ filter } onFilterChange={ onFilterChange } />
+			<FilterBar
+				siteId={ loadedSiteId }
+				filter={ filter }
+				onFilterChange={ onFilterChange }
+				showDateRangeSelector={ false }
+			/>
 			{ /* placeholder rendering */ }
-			<p>{ `logs length: ${ logs && logs.length }` }</p>
+			<p>{ `logs length: ${ logs ? logs.length : 'loading...' }` }</p>
 		</div>
 	);
 
