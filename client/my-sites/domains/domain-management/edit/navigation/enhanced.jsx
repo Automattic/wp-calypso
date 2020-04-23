@@ -333,6 +333,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getSimilarDomains() {
 		const { domain, selectedSite, translate } = this.props;
+
+		// we don't use the full domain name, to avoid an error about the taken domain
 		const searchTerm = domain.name.split( '.' )[ 0 ];
 
 		return (
