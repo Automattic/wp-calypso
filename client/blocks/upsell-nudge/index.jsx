@@ -18,6 +18,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -83,7 +84,7 @@ export const UpsellNudge = ( {
 
 	return (
 		<Banner
-			callToAction={ callToAction }
+			callToAction={ preventWidows( callToAction ) }
 			className={ classes }
 			compact={ compact }
 			customerType={ customerType }
