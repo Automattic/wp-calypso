@@ -30,6 +30,8 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import ActionBox from 'my-sites/customer-home/cards/actions/quick-links/action-box';
+import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
 
 /**
  * Style dependencies
@@ -47,6 +49,9 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	isExpanded,
+	expand,
+	collapse,
 } ) => {
 	const translate = useTranslate();
 
@@ -113,6 +118,10 @@ export const QuickLinks = ( {
 		<FoldableCard
 			className="wp-for-teams-quick-links-compact quick-links-compact"
 			header={ translate( 'Quick Links' ) }
+			clickableHeader
+			expanded={ isExpanded }
+			onOpen={ expand }
+			onClose={ collapse }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -199,6 +208,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -209,12 +219,15 @@ const mapDispatchToProps = {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	expand: expandHomeQuickLinks,
+	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
+		...dispatchProps,
 		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
 		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
 		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),
