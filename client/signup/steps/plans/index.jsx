@@ -26,7 +26,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -110,14 +109,6 @@ export class PlansStep extends Component {
 	isGutenboarding = () =>
 		this.props.flowName === 'frankenflow' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
 
-	isEligibleForPlanStepTest() {
-		return (
-			! this.props.isLaunchPage &&
-			! this.isGutenboarding() &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
-		);
-	}
-
 	getGutenboardingHeader() {
 		if ( this.isGutenboarding() ) {
 			const { headerText, subHeaderText } = this.props;
@@ -153,7 +144,6 @@ export class PlansStep extends Component {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
-					isEligibleForPlanStepTest={ this.isEligibleForPlanStepTest() }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
@@ -169,34 +159,13 @@ export class PlansStep extends Component {
 		);
 	}
 
-	getHeaderTextAB() {
-		if ( this.isEligibleForPlanStepTest() ) {
-			return 'Select your WordPress.com plan';
-		}
-
-		return null;
-	}
-
-	getSubHeaderTextAB() {
-		if ( this.isEligibleForPlanStepTest() ) {
-			return 'All plans include blazing-fast WordPress hosting.';
-		}
-
-		return null;
-	}
-
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
-		const headerText =
-			this.getHeaderTextAB() ||
-			this.props.headerText ||
-			translate( "Pick a plan that's right for you." );
+		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText =
-			this.getSubHeaderTextAB() ||
-			this.props.subHeaderText ||
-			translate( 'Choose a plan. Upgrade as you grow.' );
+			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
