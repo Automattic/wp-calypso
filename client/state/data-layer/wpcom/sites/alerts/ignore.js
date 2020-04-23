@@ -52,7 +52,7 @@ export const success = ( action, rewind_state ) => [
 			};
 		} catch ( e ) {}
 	} )(),
-	...( action.requestScanState ? [ requestScanStatus( action.siteId ) ] : [] ),
+	...( action.requestScanState ? [ requestScanStatus( action.siteId, false ) ] : [] ),
 ];
 
 export const failure = ( action ) =>
