@@ -4,16 +4,16 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Task from '../task';
 
-const ConnectAccountsTask = ( { siteSlug } ) => {
+const FindDomain = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -21,18 +21,16 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 			<QueryPublicizeConnections selectedSite />
 			<Task
 				title={ translate( 'Look more professional' ) }
-				description={ translate(
-					"Get a custom domain and show the world you're serious. Sites with custom domains look more professional and rank higher in search engine results."
+				description={ preventWidows(
+					translate(
+						"Get a custom domain and show the world you're serious. Sites with custom domains look more professional and rank higher in search engine results."
+					)
 				) }
 				actionText={ translate( 'Find a domain' ) }
-				actionUrl={
-					isMobile()
-						? `/marketing/connections/${ siteSlug }`
-						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`
-				}
+				actionUrl={ `/domains/add/${ siteSlug }` }
 				illustration="/calypso/images/stats/tasks/social-links.svg"
 				timing={ 10 }
-				taskId="connect-accounts"
+				taskId="find-domain"
 			/>
 		</>
 	);
@@ -44,4 +42,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( ConnectAccountsTask );
+export default connect( mapStateToProps )( FindDomain );
