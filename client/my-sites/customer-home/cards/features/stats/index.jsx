@@ -68,7 +68,9 @@ export const Stats = ( {
 						? translate( 'Page views' )
 						: translate( 'Stats at a glance' ) }
 				</CardHeading>
-				<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
+				<h6 className="stats__subheader customer-home__card-subheader">
+					{ translate( 'Your site in the last week.' ) }
+				</h6>
 				<div className="stats__data">
 					{ ! showInsights && (
 						<>
