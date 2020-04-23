@@ -1,4 +1,12 @@
 /**
+ * External dependencies
+ */
+/* eslint-disable import/no-nodejs-modules */
+import fs from 'fs';
+import path from 'path';
+/* eslint-enable import/no-nodejs-modules */
+
+/**
  * Internal dependencies
  */
 import { makeLayout } from 'calypso/controller';
@@ -11,6 +19,42 @@ import {
 	redirectToThemeDetails,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
+import { getLanguage, getLanguageRouteParam } from 'lib/i18n-utils';
+import { setLocaleRawData } from 'state/ui/language/actions';
+
+function setupLocale( context, next ) {
+	if ( ! context.params.lang ) {
+		next();
+		return;
+	}
+
+	const language = getLanguage( context.params.lang );
+
+	if ( language ) {
+		context.lang = language.langSlug;
+		context.isRTL = language.rtl ? true : false;
+
+		const translations = JSON.parse(
+			fs.readFileSync(
+				path.join(
+					__dirname,
+					'..',
+					'..',
+					'..',
+					'public',
+					'evergreen',
+					'languages',
+					`${ context.lang }-v1.1.json`
+				),
+				'utf-8'
+			)
+		);
+
+		context.store.dispatch( setLocaleRawData( translations ) );
+	}
+
+	next();
+}
 
 export default function ( router ) {
 	// Redirect interim showcase route to permanent one
@@ -18,14 +62,17 @@ export default function ( router ) {
 		res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 	} );
 
+	const langParam = getLanguageRouteParam();
+
 	const showcaseRoutes = [
-		'/themes/:tier(free|premium)?',
-		'/themes/:tier(free|premium)?/filter/:filter',
-		'/themes/:vertical?/:tier(free|premium)?',
-		'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+		`/${ langParam }/themes/:tier(free|premium)?`,
+		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/filter/:filter`,
 	];
 	router(
 		showcaseRoutes,
+		setupLocale,
 		fetchThemeFilters,
 		validateVertical,
 		validateFilters,
