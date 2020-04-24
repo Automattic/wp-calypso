@@ -30,11 +30,9 @@ import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import UpsellNudge from 'blocks/upsell-nudge';
 import EmptyContent from 'components/empty-content';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -110,24 +108,18 @@ export class List extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Notice
-				status="is-success"
-				showDismiss={ false }
-				text={ translate( 'Free domain available' ) }
-				icon="info-outline"
+			<UpsellNudge
+				callToAction={ translate( 'Claim Free Domain' ) }
+				title={ translate( 'Free domain available' ) }
 				className="domain-management__claim-free-domain"
-			>
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.selectedSite.slug }` }
-				>
-					{ translate( 'Claim Free Domain' ) }
-					<TrackComponentView
-						eventName={ 'calypso_domain_credit_reminder_impression' }
-						eventProperties={ { cta_name: 'domain_info_notice' } }
-					/>
-				</NoticeAction>
-			</Notice>
+				forceDisplay
+				href={ `/domains/add/${ this.props.selectedSite.slug }` }
+				showIcon
+				tracksClickName="calypso_domain_credit_reminder_click"
+				tracksClickProperties={ { cta_name: 'domain_info_notice' } }
+				tracksImpressionName="calypso_domain_credit_reminder_impression"
+				tracksImpressionProperties={ { cta_name: 'domain_info_notice' } }
+			/>
 		);
 	}
 
@@ -499,12 +491,6 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			clickClaimDomainNotice: () =>
-				dispatch(
-					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
-						cta_name: 'domain_info_notice',
-					} )
-				),
 			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
