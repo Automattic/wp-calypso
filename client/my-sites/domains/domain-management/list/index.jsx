@@ -115,6 +115,7 @@ export class List extends React.Component {
 				forceDisplay
 				href={ `/domains/add/${ this.props.selectedSite.slug }` }
 				showIcon
+				event="calypso_domain_credit_reminder_impression"
 				tracksClickName="calypso_domain_credit_reminder_click"
 				tracksClickProperties={ { cta_name: 'domain_info_notice' } }
 				tracksImpressionName="calypso_domain_credit_reminder_impression"
