@@ -60,6 +60,9 @@ function getSignupDestination( dependencies ) {
 }
 
 function getLaunchDestination( dependencies ) {
+	if ( dependencies.source === 'editor' ) {
+		return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	}
 	return `/home/${ dependencies.siteSlug }?d=launched`;
 }
 
