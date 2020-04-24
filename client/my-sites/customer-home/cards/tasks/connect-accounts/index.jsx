@@ -13,6 +13,11 @@ import QueryPublicizeConnections from 'components/data/query-publicize-connectio
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Task from '../task';
 
+/**
+ * Image dependencies
+ */
+import connectSocialAccountsIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+
 const ConnectAccountsTask = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
@@ -30,7 +35,7 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 						? `/marketing/connections/${ siteSlug }`
 						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`
 				}
-				illustration="/calypso/images/stats/tasks/social-links.svg"
+				illustration={ connectSocialAccountsIllustration }
 				timing={ 3 }
 				taskId="connect-accounts"
 			/>
