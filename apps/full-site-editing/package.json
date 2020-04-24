@@ -81,7 +81,7 @@
 		"classnames": "2.2.6",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks#v1.3.0",
+		"newspack-blocks": "github:Automattic/newspack-blocks#trunk",
 		"swiper": "4.5.1"
 	}
 }
