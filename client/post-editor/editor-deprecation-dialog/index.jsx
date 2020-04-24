@@ -13,6 +13,8 @@ import { Button, Modal } from '@wordpress/components';
 /**
  * Internal dependencies
  */
+import isEditorDeprecationDialogShowing from 'state/selectors/is-editor-deprecation-dialog-showing';
+import { hideEditorDeprecationDialog } from 'state/ui/editor-deprecation-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
@@ -31,35 +33,30 @@ class EditorDeprecationDialog extends Component {
 	static propTypes = {
 		// connected properties
 		translate: PropTypes.func,
-		moment: PropTypes.func,
 		gutenbergUrl: PropTypes.string,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
-		logClassicEditorUsed: PropTypes.func,
+		logNotNow: PropTypes.func,
 		siteId: PropTypes.number,
-	};
-
-	state = {
-		showModal: true,
+		isDialogShowing: PropTypes.bool,
 	};
 
 	notNow = () => {
-		const { logNotNow } = this.props;
+		const { logNotNow, hideDialog } = this.props;
 		logNotNow();
-		this.setState( { showModal: false } );
+		hideDialog();
 	};
 
 	optInToGutenberg = () => {
-		const { gutenbergUrl, optIn, siteId } = this.props;
-		this.setState( { showModal: false } );
+		const { gutenbergUrl, optIn, siteId, hideDialog } = this.props;
+		hideDialog();
 		optIn( siteId, gutenbergUrl );
 	};
 
 	render() {
-		const { translate } = this.props;
-		const { showModal } = this.state;
+		const { isDialogShowing, translate } = this.props;
 
-		if ( ! showModal ) {
+		if ( ! isDialogShowing ) {
 			return null;
 		}
 
@@ -119,16 +116,19 @@ const mapDispatchToProps = ( dispatch ) => ( {
 			)
 		);
 	},
+	hideDialog: () => dispatch( hideEditorDeprecationDialog() ),
 } );
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const isDialogShowing = isEditorDeprecationDialogShowing( state );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
 	return {
 		siteId,
+		isDialogShowing,
 		gutenbergUrl,
 	};
 }, mapDispatchToProps )( localize( EditorDeprecationDialog ) );
