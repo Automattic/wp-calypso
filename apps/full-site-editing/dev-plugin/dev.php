@@ -16,20 +16,15 @@ namespace A8C\FSE;
 use A8C\FSE\EarnDev\SubscriptionService\Mock_SubscriptionService;
 
 function premium_content_dev_paywall() {
-	throw new \RuntimeException( 'nope' );
+	require_once __DIR__ . '/premium-content/class-mock-subscription-service.php';
+	return new Mock_SubscriptionService();
 }
 
-add_filter(
-	'earn_premium_content_subscription_service',
-	function() {
-		require_once __DIR__ . '/premium-content/class-mock-subscription-service.php';
-		return new Mock_SubscriptionService();
-	}
-);
+add_filter( 'earn_premium_content_subscription_service', __NAMESPACE__ . '\premium_content_dev_paywall' );
 
 add_action(
 	'plugins_loaded',
 	function() {
-		// throw new \RuntimeException( 'wtf' );
+		require_once __DIR__ . '/premium-content/jetpack-stubs.php';
 	}
 );
