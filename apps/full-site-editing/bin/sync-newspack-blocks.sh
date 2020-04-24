@@ -51,7 +51,7 @@ then
     exit 1
 fi
 
-TARGET=./full-site-editing-plugin/newspack-blocks/newspack-homepage-articles
+TARGET=./full-site-editing-plugin/newspack-blocks/synced-newspack-blocks
 ENTRY=./full-site-editing-plugin/newspack-blocks/index.php
 
 if [[ ( "$MODE" != "path" ) && ( "$MODE" != "npm" ) ]];

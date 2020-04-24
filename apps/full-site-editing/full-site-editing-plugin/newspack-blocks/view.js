@@ -1,2 +1,5 @@
-import './newspack-homepage-articles/blocks/homepage-articles/view';
-import './newspack-homepage-articles/blocks/carousel/view';
+/**
+ * Internal dependencies
+ */
+import './synced-newspack-blocks/blocks/homepage-articles/view';
+import './synced-newspack-blocks/blocks/carousel/view';
