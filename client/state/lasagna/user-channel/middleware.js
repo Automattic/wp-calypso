@@ -16,7 +16,7 @@ const debug = debugFactory( 'lasagna:channel' );
 const joinChannel = async ( store, topic ) => {
 	await lasagna.initChannel(
 		topic,
-		{ jwt: getCurrentUserLasagnaJwt( store.getState() ) },
+		{ content_type: 'user', jwt: getCurrentUserLasagnaJwt( store.getState() ) },
 		{
 			onClose: () => debug( topic + ' channel closed' ),
 			onError: ( reason ) => debug( topic + ' channel error', reason ),
