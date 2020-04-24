@@ -14,6 +14,7 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
 import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'components/gridicon';
+import { backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
 
 /**
  * Style dependencies
@@ -81,7 +82,7 @@ class DatePicker extends Component {
 	canGoToNextDay = () => {
 		const { today, moment, selectedDate } = this.props;
 
-		return ! moment( selectedDate ).isSame( moment( today ), 'day' );
+		return ! moment( today ).isSame( moment( selectedDate ), 'day' );
 	};
 
 	goToActivityLog = () => {
@@ -97,7 +98,7 @@ class DatePicker extends Component {
 	};
 
 	render() {
-		const { selectedDate, siteId, moment } = this.props;
+		const { selectedDate, siteId, siteSlug, moment } = this.props;
 
 		const previousDate = moment( selectedDate ).subtract( 1, 'days' );
 		const nextDate = moment( selectedDate ).add( 1, 'days' );
@@ -155,14 +156,12 @@ class DatePicker extends Component {
 						<Button compact borderless className="date-picker__button--next">
 							<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 						</Button>
+
+						<a className="date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
+							<Gridicon icon="search" className="date-picker__search-icon" />
+						</a>
 					</div>
 				</div>
-
-				<Gridicon
-					icon="search"
-					className="date-picker__search-icon"
-					onClick={ this.goToActivityLog }
-				/>
 			</div>
 		);
 	}
