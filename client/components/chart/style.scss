@@ -11,11 +11,9 @@
 // Y-axis
 
 // Y-axis markers (lines)
-// 1: Corresponds to padding of chart
 
 .chart .chart__y-axis-markers {
 	position: absolute;
-	top: 8px; // 1
 	left: 0;
 	right: 0;
 	height: 200px;
@@ -188,7 +186,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 100%;
 	transform: scaleY( 0 ); // 2
 	transition: transform 0.3s ease-in-out; // 3
-	transform-origin: 0% 100%; // 4 
+	transform-origin: 0% 100%; // 4
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
@@ -315,6 +313,7 @@ $y-axis-padding: 0 20px 0 10px;
 	bottom: 0;
 	left: 0;
 	z-index: z-index( 'root', '.chart__empty' );
+	padding: 0 50px;
 }
 
 // Chart tooltip
@@ -333,7 +332,7 @@ $y-axis-padding: 0 20px 0 10px;
 			li {
 				font-size: 11px;
 				text-transform: uppercase;
-				font-weight: 100;
+				font-weight: 400;
 				height: 24px;
 				letter-spacing: 0.1em;
 				border: 0;
@@ -384,7 +383,7 @@ $y-axis-padding: 0 20px 0 10px;
 					}
 
 					.post-count {
-						font-weight: bold;
+						font-weight: 600;
 					}
 				}
 				.value {
@@ -400,7 +399,7 @@ $y-axis-padding: 0 20px 0 10px;
 		font-size: 11px;
 		margin-bottom: 2px;
 		text-transform: uppercase;
-		font-weight: bold;
+		font-weight: 600;
 		border-bottom: 1px solid var( --color-neutral-60 );
 		padding-bottom: 2px;
 	}
@@ -427,6 +426,20 @@ $y-axis-padding: 0 20px 0 10px;
 				width: 30px;
 				height: 24px;
 			}
+		}
+	}
+}
+
+.chart.is-placeholder {
+	padding: 8px 20px;
+
+	.chart__bar,
+	.chart__bar:hover {
+		cursor: default;
+		background-color: transparent;
+
+		.chart__bar-section {
+			background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 		}
 	}
 }

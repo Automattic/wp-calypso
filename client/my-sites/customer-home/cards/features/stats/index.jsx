@@ -11,10 +11,8 @@ import { Card } from '@automattic/components';
  */
 import CardHeading from 'components/card-heading';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import QuerySiteStats from 'components/data/query-site-stats';
-import config from 'config';
 
 /**
  * Style dependencies
@@ -22,7 +20,6 @@ import config from 'config';
 import './style.scss';
 
 export const Stats = ( {
-	hideStats,
 	insightsData,
 	insightsStatsQuery,
 	insightsStatsType,
@@ -35,17 +32,8 @@ export const Stats = ( {
 } ) => {
 	const translate = useTranslate();
 
-	if ( hideStats ) {
-		return null;
-	}
-
 	return (
 		<>
-			{ config.isEnabled( 'home/experimental-layout' ) && (
-				<h2 className="stats__heading customer-home__section-heading">
-					{ translate( 'Stats at a glance' ) }
-				</h2>
-			) }
 			<Card className="stats">
 				{ siteId && (
 					<>
@@ -63,11 +51,7 @@ export const Stats = ( {
 						) }
 					</>
 				) }
-				<CardHeading>
-					{ config.isEnabled( 'home/experimental-layout' )
-						? translate( 'Page views' )
-						: translate( 'Stats at a glance' ) }
-				</CardHeading>
+				<CardHeading>{ translate( 'Stats at a glance' ) }</CardHeading>
 				<h6 className="stats__subheader customer-home__card-subheader">
 					{ translate( 'Your site in the last week.' ) }
 				</h6>
@@ -110,8 +94,6 @@ export const Stats = ( {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
 
 	const trafficStatsType = 'statsVisits';
 	const trafficStatsQuery = {
@@ -138,11 +120,7 @@ const mapStateToProps = ( state ) => {
 		insightsStatsQuery
 	);
 
-	const hideStats =
-		( isJetpack && ! isStatsModuleActive ) || ( showInsights && ! insightsData?.percent );
-
 	return {
-		hideStats,
 		insightsData,
 		insightsStatsQuery,
 		insightsStatsType,
