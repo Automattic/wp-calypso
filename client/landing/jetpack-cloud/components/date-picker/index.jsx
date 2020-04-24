@@ -82,7 +82,7 @@ class DatePicker extends Component {
 	canGoToNextDay = () => {
 		const { today, moment, selectedDate } = this.props;
 
-		return ! moment( selectedDate ).isSame( moment( today ), 'day' );
+		return ! moment( today ).isSame( moment( selectedDate ), 'day' );
 	};
 
 	goToActivityLog = () => {
