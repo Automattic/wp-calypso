@@ -43,7 +43,6 @@ class PostRelativeTime extends React.PureComponent {
 			case 'pending':
 				return this.props.post.modified;
 
-			case 'future':
 			default:
 				return this.props.post.date;
 		}
