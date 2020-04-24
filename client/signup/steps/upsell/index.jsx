@@ -17,6 +17,7 @@ import { getDomainPrice, getDomainSalePrice } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class Upsell extends Component {
 	componentDidMount() {
@@ -73,6 +74,8 @@ class Upsell extends Component {
 			this.props.submitSignupStep( { stepName } );
 		}
 
+		this.props.recordTracksEvent( `calypso_plan_for_custom_domain_${ type }_button_click` );
+
 		this.props.goToNextStep();
 	};
 }
@@ -103,6 +106,6 @@ const mapStateToProps = ( state, props ) => {
 	};
 };
 
-export default connect( mapStateToProps, { saveSignupStep, submitSignupStep } )(
+export default connect( mapStateToProps, { saveSignupStep, submitSignupStep, recordTracksEvent } )(
 	localize( Upsell )
 );
