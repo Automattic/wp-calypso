@@ -106,9 +106,10 @@ class PostRelativeTime extends React.PureComponent {
 	 * Get status label
 	 *
 	 * @param {boolean} onlySticky sends back the "sticky" label. Special case as is using the same template but for is unrelated to the status
+	 * @param {boolean} onlyPending sends back the "pendign review" label. Special case as is using the same template but for is unrelated to the status
 	 *
 	 */
-	getStatusText( onlySticky = false ) {
+	getStatusText( onlySticky = false, onlyPending = false ) {
 		const status = this.props.post.status;
 		let statusClassName = 'post-relative-time-status__status';
 		let statusIcon = 'aside';
@@ -118,15 +119,9 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'sticky' );
 			statusClassName += ' is-sticky';
 			statusIcon = 'bookmark-outline';
-		} else if ( status === 'pending' ) {
+		} else if ( onlyPending ) {
+			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'pending review last modified %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a pending review post or page was last modified',
-				args: {
-					displayScheduleTime,
-				},
-			} );
 		} else if ( status === 'trash' ) {
 			statusClassName += ' is-trash';
 			statusIcon = 'trash';
@@ -147,7 +142,7 @@ class PostRelativeTime extends React.PureComponent {
 					displayScheduleTime,
 				},
 			} );
-		} else if ( status === 'draft' ) {
+		} else if ( status === 'draft' || status === 'pending' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
 			statusText = this.props.translate( 'draft last modified %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a draft post or page was last modified',
@@ -192,6 +187,7 @@ class PostRelativeTime extends React.PureComponent {
 			<span>
 				{ showPublishedStatus ? this.getStatusText() : timeText }
 				{ post.sticky && this.getStatusText( true ) }
+				{ post.status === 'pending' && this.getStatusText( false, true ) }
 			</span>
 		);
 
