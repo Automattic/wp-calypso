@@ -157,7 +157,7 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		} else if ( status === 'publish' ) {
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published on %(displayScheduleTime)s', {
+			statusText = this.props.translate( 'published %(displayScheduleTime)s', {
 				comment: '%(displayScheduleTime)s is when a post or page was last modified',
 				args: {
 					displayScheduleTime,
