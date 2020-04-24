@@ -6,24 +6,25 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { LASAGNA_SOCKET_CONNECTED, ROUTE_SET } from 'state/action-types';
-import { READER_POST_SEEN } from 'state/reader/action-types';
+import {
+	READER_VIEWING_FULL_POST_SET,
+	READER_VIEWING_FULL_POST_UNSET,
+} from 'state/reader/action-types';
 import { getPostByKey } from 'state/reader/posts/selectors';
-import { getReaderFullViewPostKey } from 'state/reader/full-view/selectors/get-reader-full-view-post-key';
 import { getSite } from 'state/reader/sites/selectors';
 import { receiveComments } from 'state/comments/actions';
 import { lasagna } from '../middleware';
 
 const channelTopicPrefix = 'push:no_auth:wordpress.com:wp_post:';
-const debug = debugFactory( 'lasagna:channel:push:no_auth:wp_post' );
+const debug = debugFactory( 'lasagna:channel' );
 
 const joinChannel = async ( store, topic ) => {
 	await lasagna.initChannel(
 		topic,
 		{},
 		{
-			onClose: () => debug( 'channel closed' ),
-			onError: ( reason ) => debug( 'channel error', reason ),
+			onClose: () => debug( topic + ' channel closed' ),
+			onError: ( reason ) => debug( topic + ' channel error', reason ),
 		}
 	);
 
@@ -44,14 +45,13 @@ const joinChannel = async ( store, topic ) => {
 		);
 	} );
 
-	lasagna.joinChannel( topic, () => debug( 'channel join ok' ) );
+	lasagna.joinChannel( topic, () => debug( topic + ' channel join ok' ) );
 };
 
 const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
-const getTopic = ( store ) => {
+const getTopic = ( store, postKey ) => {
 	const state = store.getState();
-	const postKey = getReaderFullViewPostKey( state );
 	const post = getPostByKey( state, postKey );
 
 	if ( ! post ) {
@@ -60,7 +60,7 @@ const getTopic = ( store ) => {
 
 	const site = getSite( state, post.site_ID );
 
-	if ( ! site ) {
+	if ( ! site || site.is_private ) {
 		return false;
 	}
 
@@ -69,25 +69,22 @@ const getTopic = ( store ) => {
 
 /**
  * Middleware
+ *
+ * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
-		case LASAGNA_SOCKET_CONNECTED: {
-			const topic = getTopic( store );
-
+		// covers natural ingress/egress to full post from /read
+		case READER_VIEWING_FULL_POST_SET: {
+			const topic = getTopic( store, action.postKey );
 			if ( topic ) {
 				joinChannel( store, topic );
 			}
 			break;
 		}
 
-		case READER_POST_SEEN:
-			joinChannel( store, channelTopicPrefix + action.payload.post.global_ID );
-			break;
-
-		case ROUTE_SET: {
-			const topic = getTopic( store );
-
+		case READER_VIEWING_FULL_POST_UNSET: {
+			const topic = getTopic( store, action.postKey );
 			if ( topic ) {
 				leaveChannel( topic );
 			}
