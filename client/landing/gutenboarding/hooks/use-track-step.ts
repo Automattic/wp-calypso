@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, DependencyList } from 'react';
 
 /**
  * Internal dependencies
@@ -9,18 +9,23 @@ import { useEffect } from 'react';
 import { useOnUnmount } from './use-on-unmount';
 import { StepNameType } from '../path';
 import { recordEnterStep, recordLeaveStep } from '../lib/analytics';
+import { TracksEventProperties } from '../lib/analytics/types';
 
 /**
  * Records an event in tracks on entering and leaving the step.
  * When completing the step, additional properties can be recorded e.g. which theme was selected.
  *
  * @param stepName The name of the signup step to track
- * @param eventProperties Additional properties to be recorded on completing the step
+ * @param getEventProperties Returns additional properties to be recorded on completing the step
  * @param deps Dependencies as will be passeed into react's useEffect
  */
-export function useTrackStep( stepName: StepNameType, eventProperties?: any, deps?: any ) {
+export function useTrackStep(
+	stepName: StepNameType,
+	getEventProperties?: () => TracksEventProperties,
+	deps?: DependencyList
+) {
 	useOnUnmount( () => {
-		recordLeaveStep( stepName, eventProperties );
+		recordLeaveStep( stepName, getEventProperties && getEventProperties() );
 	}, deps || [] );
 	useEffect( () => {
 		recordEnterStep( stepName );

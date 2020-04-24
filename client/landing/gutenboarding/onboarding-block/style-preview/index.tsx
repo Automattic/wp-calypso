@@ -25,7 +25,8 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const onboardingStore = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { selectedDesign } = onboardingStore.getState();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -41,7 +42,10 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
-	useTrackStep( 'Style' );
+	useTrackStep( 'Style', () => ( {
+		selected_heading_font: onboardingStore.getSelectedFonts()?.headings,
+		selected_body_font: onboardingStore.getSelectedFonts()?.base,
+	} ) );
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );
