@@ -1,5 +1,10 @@
 
 .editor-deprecation-dialog {
+
+	&.components-modal__frame {
+		border: none;
+	}
+
 	.components-modal__content {
 		@include breakpoint( '>660px' ) {
 			width: 50%;
@@ -62,7 +67,7 @@
 }
 
 .editor-deprecation-dialog__illustration {
-	background: var( --color-neutral-0 ) url( '/calypso/images/illustrations/gutenberg.svg' ) no-repeat;
+	background: url( '/calypso/images/illustrations/block-library.svg' ) no-repeat;
 	background-position: 50%;
 	background-size: 320px;
 	height: 180px;
@@ -71,8 +76,7 @@
 	position: relative;
 
 	@include breakpoint( '>660px' ) {
-		background-position: 40px 43%;
-		background-size: 250px;
+		background-size: cover;
 		height: auto;
 		width: 50%;
 		margin: 0;
@@ -80,23 +84,5 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-	}
-
-	&::after {
-		content: '';
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		height: 48px;
-		background: linear-gradient( to bottom, rgba( 0, 0, 0, 0 ) 0%, rgba( 0, 0, 0, 0.1 ) 100% );
-
-		@include breakpoint( '>660px' ) {
-			top: 0;
-			left: auto;
-			height: auto;
-			width: 48px;
-			background: linear-gradient( to right, rgba( 0, 0, 0, 0 ) 0%, rgba( 0, 0, 0, 0.1 ) 100% );
-		}
 	}
 }
