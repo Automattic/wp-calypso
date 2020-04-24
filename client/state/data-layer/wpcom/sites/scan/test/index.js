@@ -8,10 +8,7 @@ import { JETPACK_SCAN_REQUEST } from 'state/action-types';
 
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.
-	const requestJetpackScanStatusActionSpy = jest.spyOn(
-		jetpackScanActions,
-		'requestJetpackScanStatus'
-	);
+	const requestScanStatusActionSpy = jest.spyOn( jetpackScanActions, 'requestScanStatus' );
 
 	// We don't want to make an HTTP request so we need to mock this utility.
 	wpcomHttpActions.http = jest.fn( () => ( {
@@ -30,17 +27,17 @@ function setup( siteId ) {
 
 	const dispatchSpy = jest.spyOn( store, 'dispatch' );
 
-	return { store, dispatchSpy, requestJetpackScanStatusActionSpy };
+	return { store, dispatchSpy, requestScanStatusActionSpy };
 }
 
 describe( 'Jetpack Scan data-layer', () => {
 	it( 'should reach the fetch handler middleware', () => {
 		const siteId = 9999;
-		const { store, dispatchSpy, requestJetpackScanStatusActionSpy } = setup( siteId );
+		const { store, dispatchSpy, requestScanStatusActionSpy } = setup( siteId );
 
 		// Dispatch action to fetch Jetpack Scan status
-		store.dispatch( jetpackScanActions.requestJetpackScanStatus( siteId ) );
-		expect( requestJetpackScanStatusActionSpy ).toHaveBeenCalled();
+		store.dispatch( jetpackScanActions.requestScanStatus( siteId ) );
+		expect( requestScanStatusActionSpy ).toHaveBeenCalled();
 
 		// Verify the dispatch function was called with the right argument
 		expect( dispatchSpy ).toHaveBeenCalled();

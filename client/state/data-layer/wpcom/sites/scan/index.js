@@ -63,8 +63,10 @@ const fetchStatus = ( action ) => {
 	);
 };
 
-const onFetchStatusSuccess = ( action, scanStatus ) => {
-	return [
+const POOL_EVERY_MILLISECONDS = 5000;
+
+const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
+	[
 		{
 			type: JETPACK_SCAN_REQUEST_SUCCESS,
 			siteId: action.siteId,
@@ -72,9 +74,18 @@ const onFetchStatusSuccess = ( action, scanStatus ) => {
 		{
 			type: JETPACK_SCAN_UPDATE,
 			siteId: action.siteId,
-			payload: scanStatus,
+			payload: scan,
 		},
-	];
+	].map( dispatch );
+	if ( action.pooling && scan.state === 'scanning' ) {
+		setTimeout( () => {
+			dispatch( {
+				type: JETPACK_SCAN_REQUEST,
+				siteId: action.siteId,
+				pooling: true,
+			} );
+		}, POOL_EVERY_MILLISECONDS );
+	}
 };
 
 const onFetchStatusFailure = ( ...response ) => {

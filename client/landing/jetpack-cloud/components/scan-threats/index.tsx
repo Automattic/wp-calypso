@@ -102,7 +102,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
 		setFixingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
-		dispatch( actionCreator( site.ID, selectedThreat.id ) );
+		dispatch( actionCreator( site.ID, selectedThreat.id, true ) );
 	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
