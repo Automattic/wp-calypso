@@ -45,7 +45,7 @@ const QuickStart = ( {
 			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
 			<div className="quick-start__date">
 				{ translate( 'Date' ) }
-				{ moment( nextSession.beginTimestamp ).format( 'llll' ) }
+				{ moment( nextSession.beginTimestamp ).format( 'LL' ) }
 			</div>
 			<div className="quick-start__time">
 				{ translate( 'Time' ) }
