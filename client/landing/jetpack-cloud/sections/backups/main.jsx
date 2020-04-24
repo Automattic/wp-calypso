@@ -207,6 +207,7 @@ class BackupsPage extends Component {
 									selectedDate: this.getSelectedDate(),
 									timezone,
 									gmtOffset,
+									hasRealtimeBackups,
 									onDateChange: this.onDateChange,
 								} }
 							/>
