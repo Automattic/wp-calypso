@@ -4,7 +4,6 @@
 import { combineReducers, withStorageKey } from 'state/utils';
 
 import conversations from './conversations/reducer';
-import fullView from './full-view/reducer';
 import feeds from './feeds/reducer';
 import feedSearches from './feed-searches/reducer';
 import follows from './follows/reducer';
@@ -19,13 +18,13 @@ import streams from './streams/reducer';
 import tags from './tags/reducer';
 import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
+import viewing from './viewing/reducer';
 
 const combinedReducer = combineReducers( {
 	conversations,
 	feeds,
 	feedSearches,
 	follows,
-	fullView,
 	lists,
 	posts,
 	recommendedSites,
@@ -37,6 +36,7 @@ const combinedReducer = combineReducers( {
 	tags,
 	teams,
 	thumbnails,
+	viewing,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;
