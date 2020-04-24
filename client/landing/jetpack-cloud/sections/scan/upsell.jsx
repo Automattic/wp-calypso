@@ -13,6 +13,7 @@ import DocumentHead from 'components/data/document-head';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -22,6 +23,7 @@ function ScanUpsellPage( props ) {
 		<Main className="scan__main">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
+			<PageViewTracker path="/scan/:site" title="Scanner UpSell" />
 			<div className="scan__content">
 				<SecurityIcon icon="info" />
 				<h1 className="scan__header">{ translate( 'Your site does not have scan' ) }</h1>

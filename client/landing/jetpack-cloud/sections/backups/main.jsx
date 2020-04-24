@@ -28,6 +28,7 @@ import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
@@ -184,6 +185,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
+				<PageViewTracker path="/backups/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
