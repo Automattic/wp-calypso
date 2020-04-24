@@ -328,13 +328,14 @@ export default class SignupFlowController {
 		apiFunction(
 			( errors, providedDependencies ) => {
 				this._processingSteps.delete( step.stepName );
-				recordTracksEvent( 'calypso_signup_actions_complete_step', {
-					step: step.stepName,
-				} );
 
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					recordTracksEvent( 'calypso_signup_actions_complete_step', {
+						step: step.stepName,
+						flow: this._flowName,
+					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
 			},
