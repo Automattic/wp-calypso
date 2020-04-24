@@ -43,21 +43,35 @@ const QuickStart = ( {
 		<Card className="quick-start next-session">
 			<HappinessEngineersTray />
 			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
-			<div className="quick-start__date">
-				{ translate( 'Date' ) }
-				{ moment( nextSession.beginTimestamp ).format( 'LL' ) }
-			</div>
-			<div className="quick-start__time">
-				{ translate( 'Time' ) }
-				{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }
-			</div>
+			<table>
+				<thead>
+					<tr>
+						<th>{ translate( 'Date' ) }</th>
+						<th>{ translate( 'Time' ) }</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{ moment( nextSession.beginTimestamp ).format( 'LL' ) }</td>
+						<td>{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }</td>
+					</tr>
+				</tbody>
+			</table>
 			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
-			<a
+			<Button
+				className={ 'quick-start__reschedule' }
 				href={ `/me/concierge/${ siteSlug }/book` }
+				onClick={ () => reschedule( siteSlug, nextSession.id ) }
+				borderless
+			>
+				{ translate( 'Reschedule' ) }
+			</Button>
+			{ /* <a
+				
 				onClick={ () => reschedule( siteSlug, nextSession.id ) }
 			>
 				{ translate( 'Reschedule' ) }
-			</a>
+			</a> */ }
 		</Card>
 	) : (
 		<>
