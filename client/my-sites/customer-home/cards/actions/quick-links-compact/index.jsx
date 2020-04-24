@@ -28,6 +28,8 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import ActionBox from '../quick-links/action-box';
+import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
 
 /**
  * Image dependencies
@@ -55,6 +57,9 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
+	isExpanded,
+	expand,
+	collapse,
 } ) => {
 	const translate = useTranslate();
 
@@ -145,7 +150,14 @@ export const QuickLinks = ( {
 	);
 
 	return (
-		<FoldableCard className="quick-links-compact" header={ translate( 'Quick links' ) }>
+		<FoldableCard
+			className="quick-links-compact"
+			header={ translate( 'Quick links' ) }
+			clickableHeader
+			expanded={ isExpanded }
+			onOpen={ expand }
+			onClose={ collapse }
+		>
 			{ quickLinks }
 		</FoldableCard>
 	);
@@ -272,6 +284,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -286,12 +299,15 @@ const mapDispatchToProps = {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
+	expand: expandHomeQuickLinks,
+	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
+		...dispatchProps,
 		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
 		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
 		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),
