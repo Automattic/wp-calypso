@@ -40,7 +40,7 @@ import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { loadTrackingTool } from 'state/analytics/actions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
 	isUserLoggedIn,
 	getCurrentUser,
@@ -593,7 +593,7 @@ export default connect(
 		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
 				: true,
 			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
