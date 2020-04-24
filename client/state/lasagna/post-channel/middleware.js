@@ -15,7 +15,9 @@ import { getSite } from 'state/reader/sites/selectors';
 import { receiveComments } from 'state/comments/actions';
 import { lasagna } from '../middleware';
 
-const channelTopicPrefix = 'push:no_auth:wordpress.com:wp_post:';
+const privateTopicScheme = 'push';
+const publicTopicScheme = 'push:no_auth';
+const topicNs = 'wordpress.com:wp_post';
 const debug = debugFactory( 'lasagna:channel' );
 
 const joinChannel = async ( store, topic ) => {
@@ -60,11 +62,13 @@ const getTopic = ( store, postKey ) => {
 
 	const site = getSite( state, post.site_ID );
 
-	if ( ! site || site.is_private ) {
+	if ( ! site ) {
 		return false;
 	}
 
-	return channelTopicPrefix + post.global_ID;
+	const scheme = site.is_private ? privateTopicScheme : publicTopicScheme;
+
+	return [ scheme, topicNs, post.global_ID ].join( ':' );
 };
 
 /**
@@ -74,9 +78,9 @@ const getTopic = ( store, postKey ) => {
  */
 export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
-		// covers natural ingress/egress to full post from /read
 		case READER_VIEWING_FULL_POST_SET: {
 			const topic = getTopic( store, action.postKey );
+
 			if ( topic ) {
 				joinChannel( store, topic );
 			}

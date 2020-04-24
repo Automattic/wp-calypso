@@ -9,7 +9,7 @@ import Lasagna from '@automattic/lasagna';
 import config from 'config';
 import wpcom from 'lib/wp';
 import connectMiddleware from './connect/middleware';
-import publicPostChannelMiddleware from './public-post-channel/middleware';
+import postChannelMiddleware from './post-channel/middleware';
 import userChannelMiddleware from './user-channel/middleware';
 
 const jwtFetcher = () => {
@@ -38,8 +38,4 @@ const combineMiddleware = ( ...m ) => {
 	};
 };
 
-export default combineMiddleware(
-	connectMiddleware,
-	userChannelMiddleware,
-	publicPostChannelMiddleware
-);
+export default combineMiddleware( connectMiddleware, userChannelMiddleware, postChannelMiddleware );
