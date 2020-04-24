@@ -31,13 +31,6 @@ class UpsellForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleSubmit = ( type ) => {
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
-			value: type,
-		} );
-		this.props.submitForm( type );
-	};
-
 	render() {
 		return (
 			<>
