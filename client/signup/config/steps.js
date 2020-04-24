@@ -21,7 +21,7 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	shouldShowUpsell,
+	addOrRemoveFromProgressStore,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
@@ -41,7 +41,7 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	shouldShowUpsell,
+	addOrRemoveFromProgressStore,
 } );
 
 export function isDomainStepSkippable( flowName ) {

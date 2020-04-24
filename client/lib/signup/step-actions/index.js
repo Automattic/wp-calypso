@@ -753,7 +753,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
-export function shouldShowUpsell( stepName, defaultDependencies, nextProps ) {
+export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nextProps ) {
 	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const hasCartItemInDependencyStore = has( nextProps, 'signupDependencies.cartItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
