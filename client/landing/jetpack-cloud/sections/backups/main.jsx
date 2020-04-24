@@ -17,7 +17,6 @@ import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,
-	getRealtimeBackups,
 	getMetaDiffForDailyBackup,
 } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -51,12 +50,6 @@ import { backupMainPath } from './paths';
 import './style.scss';
 
 export const INDEX_FORMAT = 'YYYYMMDD';
-
-const backupStatusNames = [
-	'rewind__backup_complete_full',
-	'rewind__backup_complete_initial',
-	'rewind__backup_error',
-];
 
 class BackupsPage extends Component {
 	componentDidMount() {
@@ -100,30 +93,31 @@ class BackupsPage extends Component {
 	}
 
 	/**
-	 *  Return an object with the last backup from the date and the rest of the activities
-	 *
-	 * @param date {Date} The current selected date
+	 *  Return an object with the last backup and the rest of the activities from the selected date
 	 */
-	getBackupLogsFor = ( date ) => {
+	backupsFromSelectedDate = () => {
 		const { moment } = this.props;
 
+		const date = this.getSelectedDate();
 		const index = moment( date ).format( INDEX_FORMAT );
 
 		const backupsOnSelectedDate = {
 			lastBackup: null,
-			activities: [],
+			rewindableActivities: [],
 		};
 
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
 			this.props.indexedLog[ index ].forEach( ( log ) => {
-				// Looking for the last backup on the date
-				if (
-					! backupsOnSelectedDate.lastBackup &&
-					includes( backupStatusNames, log.activityName )
-				) {
+				// Discard log if it's not activity rewindable, failed backup or with streams
+				if ( ! isActivityBackup( log ) && ! log.activityIsRewindable && ! log.streams ) {
+					return;
+				}
+
+				// Looking for the last backup on the date (any activity rewindable)
+				if ( ! backupsOnSelectedDate.lastBackup ) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
-					backupsOnSelectedDate.activities.push( log );
+					backupsOnSelectedDate.rewindableActivities.push( log );
 				}
 			} );
 		}
@@ -168,15 +162,14 @@ class BackupsPage extends Component {
 			gmtOffset,
 		} = this.props;
 
-		const backupsOnSelectedDate = this.getBackupLogsFor( this.getSelectedDate() );
+		const backupsFromSelectedDate = this.backupsFromSelectedDate();
+		const lastBackup = backupsFromSelectedDate.lastBackup;
+		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
+
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeBackups = getRealtimeBackups(
-			logs,
-			applySiteOffset( moment( selectedDateString ), { timezone, gmtOffset } )
-		);
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
@@ -209,14 +202,13 @@ class BackupsPage extends Component {
 									allowRestore,
 									siteUrl,
 									siteSlug,
-									dailyBackup: backupsOnSelectedDate.lastBackup,
+									backup: lastBackup,
 									lastDateAvailable,
 									selectedDate: this.getSelectedDate(),
 									timezone,
 									gmtOffset,
-									onDateChange: this.onDateChange,
 									hasRealtimeBackups,
-									realtimeBackups,
+									onDateChange: this.onDateChange,
 								} }
 							/>
 							{ doesRewindNeedCredentials && (
@@ -308,7 +300,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 			}
 
 			// Check for the oldest and the last backup dates
-			if ( isActivityBackup( log ) ) {
+			if ( isActivityBackup( log ) || log.activityIsRewindable ) {
 				if ( backupDate < oldestDateAvailable ) {
 					oldestDateAvailable = backupDate;
 				}

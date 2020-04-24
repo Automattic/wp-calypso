@@ -34,8 +34,6 @@ class BackupDelta extends Component {
 			translate,
 		} = this.props;
 
-		realtimeBackups.shift();
-
 		const cards = realtimeBackups.map( ( activity ) => (
 			<ActivityCard
 				key={ activity.activityId }
