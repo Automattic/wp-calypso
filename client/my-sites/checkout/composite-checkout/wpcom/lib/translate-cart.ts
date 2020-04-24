@@ -30,6 +30,8 @@ export function translateWpcomCartToCheckoutCart(
 		total_tax_display,
 		total_cost_integer,
 		total_cost_display,
+		savings_total_display,
+		savings_total_integer,
 		currency,
 		credits_integer,
 		credits_display,
@@ -37,7 +39,6 @@ export function translateWpcomCartToCheckoutCart(
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		coupon_discounts_integer,
 		is_coupon_applied,
 		tax,
 	} = serverCart;
@@ -53,22 +54,14 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-	// TODO: watch out for minimal currency units while localizing this
-	const couponValueRaw = products
-		.map( ( product ) => coupon_discounts_integer[ product.product_id ] )
-		.filter( Boolean )
-		.reduce( ( accum, current ) => accum + current, 0 );
-	const couponValue = Math.round( couponValueRaw );
-	const couponDisplayValue = `-$${ couponValueRaw / 100}`;
-
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
 		label: translate( 'Coupon: %s', { args: coupon } ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
-			value: couponValue,
-			displayValue: couponDisplayValue,
+			value: savings_total_integer,
+			displayValue: savings_total_display,
 		},
 		wpcom_meta: {
 			couponCode: coupon,
