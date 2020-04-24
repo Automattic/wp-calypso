@@ -60,23 +60,6 @@ export interface Props {
 	currentDomain?: DomainSuggestion;
 }
 
-const SearchIcon = () => (
-	<Icon
-		icon={ () => (
-			<svg
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
-				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
-			</svg>
-		) }
-	/>
-);
-
 const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
 	showDomainCategories,
@@ -155,10 +138,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__body">
 						{ showDomainCategories && (
 							<div className="domain-picker__aside">
-								<DomainCategories
-									selected={ domainCategory }
-									onSelect={ setDomainCategory }
-								></DomainCategories>
+								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
 							</div>
 						) }
 						<div className="domain-picker__suggestion-item-group">
@@ -189,7 +169,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 											onSelect={ onDomainSelect }
 											key={ suggestion.domain_name }
-											railcarId={ railcarId ? `${ railcarId }${ i + 1}` : undefined }
+											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
 											recordAnalytics={ recordAnalytics || undefined }
 											uiPosition={ i + 1 }
 										/>
@@ -209,5 +189,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		</Panel>
 	);
 };
+
+const SearchIcon = () => (
+	<Icon
+		icon={ () => (
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
+				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
+			</svg>
+		) }
+	/>
+);
 
 export default DomainPicker;
