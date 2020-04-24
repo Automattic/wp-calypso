@@ -929,7 +929,6 @@ export const PLANS_LIST = {
 				constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_EASY_SITE_MIGRATION,
 				constants.FEATURE_PREMIUM_SUPPORT,
-				constants.FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 				constants.FEATURE_SIMPLE_PAYMENTS,
 				constants.FEATURE_WORDADS_INSTANT,
@@ -943,7 +942,6 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_SEARCH,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
@@ -1014,7 +1012,6 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_SEARCH,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
