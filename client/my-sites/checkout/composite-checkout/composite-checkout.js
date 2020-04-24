@@ -26,13 +26,15 @@ import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkou
  * Internal dependencies
  */
 import { requestPlans } from 'state/plans/actions';
-import { computeProductsWithPrices } from 'state/products-list/selectors';
+import { computeProductsWithPrices, isProductsListFetching } from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
-import usePrepareProductsForCart from './use-prepare-product-for-cart';
+import usePrepareProductsForCart, {
+	useFetchProductsIfNotLoaded,
+} from './use-prepare-product-for-cart';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -165,6 +167,9 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 	} );
 
+	useFetchProductsIfNotLoaded();
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+
 	const {
 		items,
 		tax,
@@ -186,7 +191,7 @@ export default function CompositeCheckout( {
 		responseCart,
 	} = useShoppingCart(
 		siteSlug,
-		canInitializeCart && ! isLoadingCartSynchronizer,
+		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
