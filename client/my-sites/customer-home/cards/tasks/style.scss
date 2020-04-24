@@ -5,13 +5,18 @@
 		padding-bottom: 32px;
 	}
 
+	.action-panel__body {
+		display: flex;
+		align-items: center;
+	}
+
 	.action-panel__title {
 		font-family: 'Recoleta', serif;
 		font-size: 32px;
 		line-height: 40px;
 		margin-bottom: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( '>800px' ) {
 			font-size: 40px;
 			line-height: 48px;
 		}
@@ -19,6 +24,8 @@
 
 	.action-panel__figure {
 		max-width: 33.3333%;
+		margin-bottom: 0;
+		order: 1;
 	}
 
 	.action-panel__cta {
@@ -36,6 +43,10 @@
 	.gridicon {
 		margin-right: 4px;
 	}
+
+	p {
+		margin-bottom: 8px;
+	}
 }
 
 .task__description {
@@ -43,7 +54,7 @@
 	line-height: 24px;
 	color: var( --color-text );
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( '>800px' ) {
 		font-size: 20px;
 		line-height: 32px;
 	}

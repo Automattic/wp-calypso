@@ -109,46 +109,48 @@ const Task = ( {
 						<img src={ illustration } alt="" />
 					</ActionPanelFigure>
 				) }
-				<div className="task__timing">
-					<Gridicon icon="time" size={ 18 } />
-					<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
-				</div>
-				<ActionPanelTitle>{ title }</ActionPanelTitle>
-				<p className="task__description">{ description }</p>
-				<ActionPanelCta>
-					<Button className="task__action" primary href={ actionUrl }>
-						{ actionText }
-					</Button>
-					<Button
-						className="task__skip is-link"
-						ref={ skipButtonRef }
-						onClick={ () => {
-							setSkipOptionsVisible( true );
-						} }
-					>
-						{ translate( 'Remind me' ) }
-						<Gridicon icon="dropdown" size={ 18 } />
-					</Button>
-					{ areSkipOptionsVisible && (
-						<PopoverMenu
-							context={ skipButtonRef.current }
-							isVisible={ areSkipOptionsVisible }
-							onClose={ () => setSkipOptionsVisible( false ) }
-							position="bottom"
-							className="task__skip-popover"
+				<div className="task__text">
+					<div className="task__timing">
+						<Gridicon icon="time" size={ 18 } />
+						<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
+					</div>
+					<ActionPanelTitle>{ title }</ActionPanelTitle>
+					<p className="task__description">{ description }</p>
+					<ActionPanelCta>
+						<Button className="task__action" primary href={ actionUrl }>
+							{ actionText }
+						</Button>
+						<Button
+							className="task__skip is-link"
+							ref={ skipButtonRef }
+							onClick={ () => {
+								setSkipOptionsVisible( true );
+							} }
 						>
-							<PopoverMenuItem onClick={ () => skipTask( '1d' ) }>
-								{ translate( 'Tomorrow' ) }
-							</PopoverMenuItem>
-							<PopoverMenuItem onClick={ () => skipTask( '1w' ) }>
-								{ translate( 'Next week' ) }
-							</PopoverMenuItem>
-							<PopoverMenuItem onClick={ () => skipTask( 'never' ) }>
-								{ translate( 'Never' ) }
-							</PopoverMenuItem>
-						</PopoverMenu>
-					) }
-				</ActionPanelCta>
+							{ translate( 'Remind me' ) }
+							<Gridicon icon="dropdown" size={ 18 } />
+						</Button>
+						{ areSkipOptionsVisible && (
+							<PopoverMenu
+								context={ skipButtonRef.current }
+								isVisible={ areSkipOptionsVisible }
+								onClose={ () => setSkipOptionsVisible( false ) }
+								position="bottom"
+								className="task__skip-popover"
+							>
+								<PopoverMenuItem onClick={ () => skipTask( '1d' ) }>
+									{ translate( 'Tomorrow' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ () => skipTask( '1w' ) }>
+									{ translate( 'Next week' ) }
+								</PopoverMenuItem>
+								<PopoverMenuItem onClick={ () => skipTask( 'never' ) }>
+									{ translate( 'Never' ) }
+								</PopoverMenuItem>
+							</PopoverMenu>
+						) }
+					</ActionPanelCta>
+				</div>
 			</ActionPanelBody>
 		</ActionPanel>
 	);
