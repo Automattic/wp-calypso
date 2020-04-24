@@ -62,29 +62,32 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		step( 'Can enter page title, content and image', async function () {
+		step( 'Can track block editor events', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 
-			await driver.executeScript(
-				`window.localStorage.setItem( 'debug', 'wpcom-block-editor*' );`
-			);
-
-			const debugConfig = await driver.executeScript(
-				`return window.localStorage.getItem('debug');`
-			);
-
-			console.log( 'Using Tracks debug: ' + debugConfig );
-
+			// Insert some Blocks
 			await gEditorComponent.addBlock( 'Markdown' );
 			await gEditorComponent.addBlock( 'Columns' );
+			await gEditorComponent.addBlock( 'Columns' );
 
-			await driver.sleep( 30000 );
+			// Grab the events stack (only present on e2e test envs).
+			// see: https://github.com/Automattic/wp-calypso/pull/41329
+			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 
-			// await driver.sleep( 50000 );
-			const logs = await driver.manage().logs().get( 'browser' );
+			// Assert that Insertion Events were tracked.
+			assert.strictEqual(
+				eventsStack[ 0 ][ 0 ] === 'wpcom_block_inserted',
+				true,
+				`"wpcom_block_inserted" failed for ${ eventsStack[ 0 ][ 1 ].block_name }`
+			);
 
-			console.log( logs );
-			driver.quit();
+			assert.strictEqual(
+				eventsStack[ 0 ][ 1 ].block_name === 'core/columns',
+				true,
+				`Failed to track "block_name" property for "wpcom_block_inserted" event`
+			);
+
+			// await driver.sleep( 100000 );
 		} );
 
 		after( async function () {} );
