@@ -17,6 +17,7 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -34,6 +35,7 @@ class SettingsPage extends Component {
 				<DocumentHead title={ translate( 'Settings' ) } />
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
+				<PageViewTracker path="/settings/:site" title="Settings" />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (
 					<Card compact={ true } className="settings__connected">

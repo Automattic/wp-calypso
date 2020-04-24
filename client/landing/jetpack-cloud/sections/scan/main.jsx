@@ -14,6 +14,7 @@ import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
@@ -140,6 +141,7 @@ class ScanPage extends Component {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ this.props.site.ID } />
+				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
