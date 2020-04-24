@@ -25,12 +25,31 @@ const getTopic = ( { scheme, post } ) => {
 	return [ scheme, topicIss, topicSubPrefix, post.global_ID ].join( ':' );
 };
 
+const getJoinParams = ( store, postKey ) => {
+	const state = store.getState();
+	const post = getPostByKey( state, postKey );
+
+	if ( ! post ) {
+		return false;
+	}
+
+	const site = getSite( state, post.site_ID );
+
+	if ( ! site ) {
+		return false;
+	}
+
+	const scheme = site.is_private ? topicPrivateScheme : topicPublicScheme;
+
+	return { scheme, post };
+};
+
 const joinChannel = async ( store, joinParams ) => {
 	const topic = getTopic( joinParams );
 
 	await lasagna.initChannel(
 		topic,
-		{ jwt_type: topicSubPrefix, post_id: joinParams.post.ID, site_id: joinParams.post.site_ID },
+		{ content_type: topicSubPrefix, post_id: joinParams.post.ID, site_id: joinParams.post.site_ID },
 		{
 			onClose: () => debug( topic + ' channel closed' ),
 			onError: ( reason ) => debug( topic + ' channel error', reason ),
@@ -58,25 +77,6 @@ const joinChannel = async ( store, joinParams ) => {
 };
 
 const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
-
-const getJoinParams = ( store, postKey ) => {
-	const state = store.getState();
-	const post = getPostByKey( state, postKey );
-
-	if ( ! post ) {
-		return false;
-	}
-
-	const site = getSite( state, post.site_ID );
-
-	if ( ! site ) {
-		return false;
-	}
-
-	const scheme = site.is_private ? topicPrivateScheme : topicPublicScheme;
-
-	return { scheme, post };
-};
 
 /**
  * Middleware
