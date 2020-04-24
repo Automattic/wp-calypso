@@ -41,7 +41,7 @@ class ScanHistoryItem extends Component< ThreatsProps & PlaceholderProps > {
 		};
 	}
 
-	formatDate( date: string ) {
+	formatDate( date: Date ) {
 		return this.props.moment( date ).format( 'LL' );
 	}
 
@@ -51,11 +51,11 @@ class ScanHistoryItem extends Component< ThreatsProps & PlaceholderProps > {
 				<div className="scan-history-item__subheader">
 					<span className="scan-history-item__date">
 						{ translate( 'Threat found on %s', {
-							args: this.formatDate( threat.first_detected ),
+							args: this.formatDate( threat.firstDetected ),
 						} ) }
 					</span>
-					{ threat.fixed_on && <span className="scan-history-item__date-separator"></span> }
-					{ threat.fixed_on && (
+					{ threat.fixedOn && <span className="scan-history-item__date-separator"></span> }
+					{ threat.fixedOn && (
 						<span
 							className={ classnames(
 								'scan-history-item__date',
@@ -63,7 +63,7 @@ class ScanHistoryItem extends Component< ThreatsProps & PlaceholderProps > {
 							) }
 						>
 							{ translate( 'Threat %(action)s on %(fixedOn)s', {
-								args: { action: threat.status, fixedOn: this.formatDate( threat.fixed_on ) },
+								args: { action: threat.status, fixedOn: this.formatDate( threat.fixedOn ) },
 							} ) }
 						</span>
 					) }
