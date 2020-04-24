@@ -10,11 +10,20 @@ import UpsellSwitch from 'landing/jetpack-cloud/components/upsell-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
+import getSiteScanState from 'state/selectors/get-site-scan-state';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 
 export function showUpsellIfNoScan( context, next ) {
 	context.primary = (
-		<UpsellSwitch upsell={ <ScanUpsellPage /> } targetCapability="scan">
-			{ context.primary }
+		<UpsellSwitch
+			UpsellComponent={ ScanUpsellPage }
+			display={ context.primary }
+			getStateForSite={ getSiteScanState }
+			QueryComponent={ QueryJetpackScan }
+		>
+			<div className="scan__content">
+				<div className="scan__is-loading" />
+			</div>
 		</UpsellSwitch>
 	);
 	next();
