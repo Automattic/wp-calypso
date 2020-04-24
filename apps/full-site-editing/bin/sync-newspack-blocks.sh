@@ -40,7 +40,7 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: yarn run sync:blog-posts-block [arguments]"
+    echo "Usage: yarn run sync:newspack-blocks [arguments]"
     echo
     echo Possible arguments:
     echo --branch=master
@@ -51,8 +51,8 @@ then
     exit 1
 fi
 
-TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
-ENTRY=./full-site-editing-plugin/blog-posts-block/index.php
+TARGET=./full-site-editing-plugin/newspack-blocks/synced-newspack-blocks
+ENTRY=./full-site-editing-plugin/newspack-blocks/index.php
 
 if [[ ( "$MODE" != "path" ) && ( "$MODE" != "npm" ) ]];
 then
