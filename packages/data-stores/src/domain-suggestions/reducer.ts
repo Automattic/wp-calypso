@@ -24,7 +24,17 @@ const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined
 	return state;
 };
 
-const reducer = combineReducers( { domainSuggestions } );
+const categories: Reducer< Record< string, string[] > | undefined, Action > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'RECEIVE_CATEGORIES' ) {
+		return action.categories;
+	}
+	return state;
+};
+
+const reducer = combineReducers( { categories, domainSuggestions } );
 
 export type State = ReturnType< typeof reducer >;
 

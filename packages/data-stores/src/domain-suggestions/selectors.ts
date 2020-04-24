@@ -14,8 +14,8 @@ import { stringifyDomainQueryObject } from './utils';
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 const createSelectors = ( vendor: string ) => {
-	function getState( state: State ) {
-		return state;
+	function getCategories( state: State ) {
+		return state.categories;
 	}
 
 	function getDomainSuggestions(
@@ -88,7 +88,7 @@ const createSelectors = ( vendor: string ) => {
 	}
 
 	return {
-		getState,
+		getCategories,
 		getDomainSuggestions,
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
