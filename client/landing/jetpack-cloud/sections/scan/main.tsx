@@ -34,16 +34,16 @@ import './style.scss';
 interface Props {
 	site: object | null;
 	siteSlug: string | null;
+	siteUrl: string | null;
 	scanState: Scan | null;
 	lastScanTimestamp: number;
 	nextScanTimestamp: number;
 	moment: Function;
+	dispatchRecordTracksEvent: Function;
 }
 
 class ScanPage extends Component< Props > {
-	// @todo: understand when this state can happen
-	// It seems, the user won't ever get to this place because it they don't have
-	// Scan they won't get this far in the app.
+	// @todo: missing copy and design for this state
 	renderUnavailable() {
 		const { siteSlug } = this.props;
 
@@ -159,8 +159,7 @@ class ScanPage extends Component< Props > {
 
 		const { state, mostRecent, threats } = scanState;
 
-		// @todo: find out what should we do when the scan state is 'provisioning' (design missing)
-		// @todo: figure out if these states can happen at all
+		// @todo: missing copy and design for these states
 		if ( state === 'unavailable' || state === 'provisioning' ) {
 			return this.renderUnavailable();
 		}
