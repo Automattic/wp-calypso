@@ -53,7 +53,7 @@ export interface DomainSuggestionQuery {
 	/**
 	 * An array of tlds
 	 */
-	tlds?: Array< string >;
+	tlds?: readonly string[];
 }
 
 export type DomainName = string;
@@ -88,7 +88,7 @@ export interface DomainSuggestion {
 	 *
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons?: string[];
+	match_reasons?: readonly string[];
 
 	/**
 	 * Rendered cost with currency
