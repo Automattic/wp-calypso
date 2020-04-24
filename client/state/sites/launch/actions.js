@@ -4,7 +4,7 @@
 import { SITE_LAUNCH } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
+import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 export const launchSite = ( siteId ) => ( {
@@ -34,5 +34,12 @@ export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, 
 	const siteSlug = getSiteSlug( getState(), siteId );
 
 	// TODO: consider using the `page` library instead of calling using `location.href` here
-	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+
+	const isGutenboarding =
+		getSiteOption( getState(), siteId, 'site_creation_flow' ) === 'gutenboarding';
+	if ( isGutenboarding ) {
+		window.location.href = `/start/frankenflow?siteSlug=${ siteSlug }&source=home`;
+	} else {
+		window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
+	}
 };
