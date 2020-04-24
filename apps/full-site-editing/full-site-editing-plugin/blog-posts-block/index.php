@@ -88,6 +88,7 @@ require_once __DIR__ . '/newspack-homepage-articles/class-newspack-blocks.php';
 require_once __DIR__ . '/newspack-homepage-articles/class-newspack-blocks-api.php';
 
 require_once __DIR__ . '/newspack-homepage-articles/blocks/homepage-articles/view.php';
+require_once __DIR__ . '/newspack-homepage-articles/blocks/carousel/view.php';
 
 // REST Controller for Articles Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'newspack-homepage-articles/blocks/homepage-articles/class-wp-rest-newspack-articles-controller.php';
