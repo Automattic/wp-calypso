@@ -10,9 +10,9 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * NHA dependencies
  */
-import { settings as blogPostsSettings } from './newspack-homepage-articles/blocks/homepage-articles/index';
-import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage-articles/store';
-import { settings as carouselSettings } from './newspack-homepage-articles/blocks/carousel/index';
+import { settings as blogPostsSettings } from './synced-newspack-blocks/blocks/homepage-articles/index';
+import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
+import { settings as carouselSettings } from './synced-newspack-blocks/blocks/carousel/index';
 
 /**
  * Block name in the A8C\FSE context.
