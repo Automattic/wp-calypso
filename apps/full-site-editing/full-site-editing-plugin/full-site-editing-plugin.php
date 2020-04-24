@@ -251,3 +251,12 @@ function load_block_patterns() {
 	Block_Patterns::get_instance();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
+
+
+/**
+ * Load Premium Content Block
+ */
+function load_premium_content() {
+	require_once __DIR__ . '/premium-content/premium-content.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );

@@ -32,7 +32,7 @@ fi
 if [ ! -d "./gutenberg" ] ; then
 	echo -e "\nThe Gutenberg repo is not a sibling of wp-calypso in your file system."
 	echo "If you clone it, we can automatically link it to the WordPress environment."
-	read -p "Would you like to clone and builg WordPress/gutenberg as a sibling of wp-calypso? (y for yes)"
+	read -p "Would you like to clone and build WordPress/gutenberg as a sibling of wp-calypso? (y for yes)"
 	if [[ $REPLY = 'y' ]] ; then
 		gutenberg_url="git@github.com:WordPress/gutenberg.git"
 		git clone $gutenberg_url
