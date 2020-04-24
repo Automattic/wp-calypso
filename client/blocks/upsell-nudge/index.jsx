@@ -53,6 +53,7 @@ export const UpsellNudge = ( {
 	price,
 	showIcon = false,
 	site,
+	target,
 	title,
 	tracksClickName,
 	tracksClickProperties,
@@ -106,6 +107,7 @@ export const UpsellNudge = ( {
 			plan={ plan }
 			price={ price }
 			showIcon={ showIcon }
+			target={ target }
 			title={ title }
 			tracksClickName={ tracksClickName }
 			tracksClickProperties={ tracksClickProperties }
