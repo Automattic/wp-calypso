@@ -25,6 +25,7 @@ interface Props {
 	onFixThreat?: Function;
 	onIgnoreThreat?: Function;
 	isFixing: boolean;
+	contactSupportUrl?: string;
 }
 
 class ThreatItem extends Component< Props > {
@@ -78,13 +79,13 @@ class ThreatItem extends Component< Props > {
 	}
 
 	getThreatFix(): i18nCalypso.TranslateResult {
-		const { threat } = this.props;
+		const { threat, contactSupportUrl } = this.props;
 		if ( ! threat.fixable ) {
 			return translate(
 				'Jetpack Scan cannot automatically fix this threat. Please {{link}}contact us{{/link}} for help.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/contact-support/" />,
+						link: <a href={ contactSupportUrl } rel="noopener noreferrer" target="_blank" />,
 					},
 				}
 			);
