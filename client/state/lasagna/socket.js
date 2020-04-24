@@ -20,12 +20,12 @@ export const socketConnect = async ( store ) => {
 				debug( 'socket opened' );
 				store.dispatch( socketConnected() );
 			},
-			onClose: () => {
-				debug( 'socket closed' );
+			onClose: ( reason ) => {
+				debug( 'socket closed', reason );
 				store.dispatch( socketDisconnected() );
 			},
-			onError: () => {
-				debug( 'socket error' );
+			onError: ( reason ) => {
+				debug( 'socket error', reason );
 			},
 		}
 	);

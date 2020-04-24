@@ -12,13 +12,13 @@ import connectMiddleware from './connect/middleware';
 import postChannelMiddleware from './post-channel/middleware';
 import userChannelMiddleware from './user-channel/middleware';
 
-const jwtFetcher = () => {
+const jwtFetcher = ( jwtType, { params } ) => {
 	return wpcom
 		.request( {
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: '/lasagna/jwt/sign',
-			body: { payload: {} },
+			body: { payload: params },
 		} )
 		.then( ( { jwt } ) => jwt );
 };

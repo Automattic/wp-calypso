@@ -15,15 +15,22 @@ import { getSite } from 'state/reader/sites/selectors';
 import { receiveComments } from 'state/comments/actions';
 import { lasagna } from '../middleware';
 
-const privateTopicScheme = 'push';
-const publicTopicScheme = 'push:no_auth';
-const topicNs = 'wordpress.com:wp_post';
 const debug = debugFactory( 'lasagna:channel' );
+const topicPrivateScheme = 'push';
+const topicPublicScheme = 'push:no_auth';
+const topicIss = 'wordpress.com';
+const topicSubPrefix = 'wp_post';
 
-const joinChannel = async ( store, topic ) => {
+const getTopic = ( { scheme, post } ) => {
+	return [ scheme, topicIss, topicSubPrefix, post.global_ID ].join( ':' );
+};
+
+const joinChannel = async ( store, joinParams ) => {
+	const topic = getTopic( joinParams );
+
 	await lasagna.initChannel(
 		topic,
-		{},
+		{ jwt_type: topicSubPrefix, post_id: joinParams.post.ID, site_id: joinParams.post.site_ID },
 		{
 			onClose: () => debug( topic + ' channel closed' ),
 			onError: ( reason ) => debug( topic + ' channel error', reason ),
@@ -52,7 +59,7 @@ const joinChannel = async ( store, topic ) => {
 
 const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
-const getTopic = ( store, postKey ) => {
+const getJoinParams = ( store, postKey ) => {
 	const state = store.getState();
 	const post = getPostByKey( state, postKey );
 
@@ -66,9 +73,9 @@ const getTopic = ( store, postKey ) => {
 		return false;
 	}
 
-	const scheme = site.is_private ? privateTopicScheme : publicTopicScheme;
+	const scheme = site.is_private ? topicPrivateScheme : topicPublicScheme;
 
-	return [ scheme, topicNs, post.global_ID ].join( ':' );
+	return { scheme, post };
 };
 
 /**
@@ -79,16 +86,15 @@ const getTopic = ( store, postKey ) => {
 export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case READER_VIEWING_FULL_POST_SET: {
-			const topic = getTopic( store, action.postKey );
-
-			if ( topic ) {
-				joinChannel( store, topic );
+			const joinParams = getJoinParams( store, action.postKey );
+			if ( joinParams ) {
+				joinChannel( store, joinParams );
 			}
 			break;
 		}
 
 		case READER_VIEWING_FULL_POST_UNSET: {
-			const topic = getTopic( store, action.postKey );
+			const topic = getTopic( getJoinParams( store, action.postKey ) );
 			if ( topic ) {
 				leaveChannel( topic );
 			}
