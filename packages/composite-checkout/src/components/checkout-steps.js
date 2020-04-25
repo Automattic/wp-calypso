@@ -426,20 +426,15 @@ const MainContentUI = styled.div`
 `;
 
 const CheckoutSummaryUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
 	margin: 0 auto;
 	width: 100%;
 
 	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		border-bottom: none 0;
 		max-width: 556px;
 	}
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		margin-left: 24px;
 		margin-right: 0;
 		order: 2;
