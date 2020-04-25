@@ -230,6 +230,15 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
+		// Plans landing page at /jetpack/connect/store
+		if ( ! this.props.selectedSiteSlug ) {
+			return (
+				description +
+				`The price of this subscription is based on \
+       the number of records you have on your site.`
+			);
+		}
+
 		// Default product description.
 		return description;
 	}
@@ -613,7 +622,7 @@ export class ProductSelector extends Component {
 									optionsLabel={ optionsLabel }
 									options={ this.getProductOptions( product ) }
 									selectedSlug={ selectedSlug }
-									handleSelect={ productSlug =>
+									handleSelect={ ( productSlug ) =>
 										this.handleProductOptionSelect( stateKey, productSlug, product.id )
 									}
 									forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
