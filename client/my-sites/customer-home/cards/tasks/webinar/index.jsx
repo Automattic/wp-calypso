@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from '../task';
+import temporaryIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 
 const Webinar = () => {
 	const translate = useTranslate();
@@ -15,15 +16,15 @@ const Webinar = () => {
 	return (
 		<Task
 			title={ translate( 'Get hands-on learning' ) }
-			description={
-				translate(
-					"Join one of our live video webinars designed to help you get started " +
-          "or learn more advanced features."
-				)
-			}
+			description={ translate(
+				'Join one of our live video webinars designed to help you get started ' +
+					'or learn more advanced features.'
+			) }
 			actionText={ translate( 'Register for free' ) }
-			actionUrl="https://wordpress.com/webinars/"
-			illustration="/calypso/images/illustrations/support.svg"
+			actionOnClick={ () => {
+				window.open( 'https://wordpress.com/webinars/', '_blank' );
+			} }
+			illustration={ temporaryIllustration }
 			timing={ 2 }
 			taskId="webinar"
 		/>

@@ -34,6 +34,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import './style.scss';
 
 const Task = ( {
+	actionOnClick,
 	actionText,
 	actionUrl,
 	description,
@@ -117,7 +118,7 @@ const Task = ( {
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
-						<Button className="task__action" primary href={ actionUrl }>
+						<Button className="task__action" primary onClick={ actionOnClick } href={ actionUrl }>
 							{ actionText }
 						</Button>
 						<Button

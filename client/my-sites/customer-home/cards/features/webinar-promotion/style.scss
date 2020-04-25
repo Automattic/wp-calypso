@@ -1,0 +1,19 @@
+.webinar-promotion {
+	@include breakpoint( '>960px' ) {
+		.card-heading {
+			margin-bottom: 0;
+		}
+
+		.webinar-promotion__content {
+			display: flex;
+		}
+
+		.webinar-promotion__text {
+			margin: auto;
+		}
+
+		.webinar-promotion__illustration {
+			width: 25%;
+		}
+	}
+}

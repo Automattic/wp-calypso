@@ -7,21 +7,25 @@ import React from 'react';
  * Internal dependencies
  */
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
+import WebinarPromotion from 'my-sites/customer-home/cards/features/webinar-promotion';
 import ChecklistSiteSetup from 'my-sites/customer-home/cards/tasks/checklist-site-setup';
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
 import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts';
+import Webinar from 'my-sites/customer-home/cards/tasks/webinar';
 import config from 'config';
 
 const cardComponents = {
 	'home-feature-go-mobile-phones': GoMobile,
+	'home-feature-webinar-promotion': WebinarPromotion,
 	'home-primary-checklist-site-setup': ChecklistSiteSetup,
 	'home-primary-quick-links': QuickLinks,
 	'home-education-mastering-gutenberg': MasteringGutenberg,
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 	'home-task-site-setup-checklist': ChecklistSiteSetup,
 	'home-task-connect-accounts': ConnectAccounts,
+	'home-task-webinar': Webinar,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
