@@ -5,6 +5,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import {
 	CheckoutCheckIcon,
+	CheckoutSummaryCard,
 	renderDisplayValueMarkdown,
 	useLineItemsOfType,
 	useTotal,
@@ -17,7 +18,7 @@ export default function WPCheckoutOrderSummary() {
 	const total = useTotal();
 
 	return (
-		<>
+		<CheckoutSummaryCard>
 			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
@@ -46,7 +47,7 @@ export default function WPCheckoutOrderSummary() {
 					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</>
+		</CheckoutSummaryCard>
 	);
 }
 
