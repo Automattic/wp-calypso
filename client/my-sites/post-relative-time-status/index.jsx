@@ -48,7 +48,7 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getDisplayedTimeForLabel() {
+	getDisplayedTimeForLabel( noPrefix = false ) {
 		const moment = this.props.moment;
 		const now = moment();
 		const scheduledDate = moment( this.getTimestamp() );
@@ -72,11 +72,21 @@ class PostRelativeTime extends React.PureComponent {
 				return time.fromNow();
 			}
 
-			scheduledTime = scheduledDate.calendar( null, {
-				sameElse: this.props.translate( '[on] ll [at] LT', {
+			let sameElseTranslation;
+			if ( noPrefix ) {
+				sameElseTranslation = this.props.translate( 'll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+				} );
+			} else {
+				sameElseTranslation = this.props.translate( '[on] ll [at] LT', {
 					comment:
 						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
-				} ),
+				} );
+			}
+
+			scheduledTime = scheduledDate.calendar( null, {
+				sameElse: sameElseTranslation,
 			} );
 		}
 
@@ -94,7 +104,7 @@ class PostRelativeTime extends React.PureComponent {
 					<>
 						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
-							{ this.getDisplayedTimeForLabel() }
+							{ this.getDisplayedTimeForLabel( true ) }
 						</time>
 					</>
 				) }
