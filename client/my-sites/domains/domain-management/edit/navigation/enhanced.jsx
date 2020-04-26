@@ -20,7 +20,7 @@ import {
 	domainManagementTransfer,
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
-	domainManagementChangeSiteAddress
+	domainManagementChangeSiteAddress,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
@@ -34,7 +34,7 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 
 import './style.scss';
 
-const DomainManagementNavigationItemContents = function( props ) {
+const DomainManagementNavigationItemContents = function ( props ) {
 	const { materialIcon, text, description } = props;
 	return (
 		<React.Fragment>
@@ -47,7 +47,7 @@ const DomainManagementNavigationItemContents = function( props ) {
 	);
 };
 
-const DomainManagementNavigationItem = function( props ) {
+const DomainManagementNavigationItem = function ( props ) {
 	const { path, onClick, external, materialIcon, text, description } = props;
 
 	return (
@@ -100,9 +100,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{
 					count: gSuiteMailboxCount,
 					args: {
-						gSuiteMailboxCount
+						gSuiteMailboxCount,
 					},
-					comment: 'The number of GSuite mailboxes active for the current domain'
+					comment: 'The number of GSuite mailboxes active for the current domain',
 				}
 			);
 		} else if ( emailForwardsCount > 0 ) {
@@ -112,15 +112,15 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{
 					count: emailForwardsCount,
 					args: {
-						emailForwardsCount
+						emailForwardsCount,
 					},
-					comment: 'The number of email forwards active for the current domain'
+					comment: 'The number of email forwards active for the current domain',
 				}
 			);
 		} else {
 			navigationText = translate( 'Set up your email' );
 			navigationDescription = translate( 'Not connected', {
-				comment: 'The domain is not using any of the WordPress.com email solutions'
+				comment: 'The domain is not using any of the WordPress.com email solutions',
 			} );
 		}
 
@@ -149,14 +149,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( pointsToWpcom && isPrimary ) {
 			description = translate( 'Destination: primary domain for %(wpcomUrl)s', {
 				args: {
-					wpcomUrl
-				}
+					wpcomUrl,
+				},
 			} );
 		} else if ( pointsToWpcom && ! isPrimary ) {
 			description = translate( 'Destination: %(wpcomUrl)s', {
 				args: {
-					wpcomUrl
-				}
+					wpcomUrl,
+				},
 			} );
 		} else {
 			description = translate( 'Destination: external service' );
@@ -226,9 +226,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( transferAwayEligibleAt ) {
 			description = translate( 'Outbound transfers available after %(startDate)s', {
 				args: {
-					startDate: moment( transferAwayEligibleAt ).format( 'LL' )
+					startDate: moment( transferAwayEligibleAt ).format( 'LL' ),
 				},
-				comment: '%(startDate)s is a date string, e.g. April 1, 2020'
+				comment: '%(startDate)s is a date string, e.g. April 1, 2020',
 			} );
 		} else if ( isLocked ) {
 			description = translate( 'Transfer lock: on' );
@@ -279,7 +279,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_domain_management_change_navigation_click', {
 			action: 'change_site_address',
-			section: domain.type
+			section: domain.type,
 		} );
 	};
 
@@ -296,7 +296,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_domain_management_wpcom_domain_add_domain', {
 			action: 'change_site_address',
-			section: domain.type
+			section: domain.type,
 		} );
 	};
 
