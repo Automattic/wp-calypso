@@ -45,7 +45,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	useTrackStep( 'IntentGathering', () => ( {
 		selected_vertical: onboardingStore.getSelectedVertical()?.slug,
-		selected_site_title: onboardingStore.getSelectedSiteTitle()
+		selected_site_title: onboardingStore.getSelectedSiteTitle(),
 	} ) );
 
 	// translators: Button label for skipping filling an optional input in onboarding

@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { State } from './reducer';
-import { DomainName } from '@automattic/data-stores/dist/types/domain-suggestions';
 
 export const getState = ( state: State ) => state;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
@@ -10,8 +9,8 @@ export const hasPaidDomain = ( state: State ): boolean => {
 	if ( ! state.domain ) {
 		return false;
 	}
-    return ! state.domain.is_free;
-}
+	return ! state.domain.is_free;
+};
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedVertical = ( state: State ) => state.siteVertical;

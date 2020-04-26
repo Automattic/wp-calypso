@@ -137,7 +137,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	}, [ allSuggestions, currentDomain ] );
 
 	useTrackModal( 'DomainPicker', () => ( {
-		selected_domain: onboardingStore.getSelectedDomain(),
+		selected_domain: onboardingStore.getSelectedDomain()?.domain_name,
 	} ) );
 
 	return (

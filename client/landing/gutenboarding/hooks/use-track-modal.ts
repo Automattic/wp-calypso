@@ -23,9 +23,11 @@ export function useTrackModal(
 	getEventProperties?: () => TracksEventProperties,
 	deps?: DependencyList
 ) {
+	// eslint-disable-line react-hooks/exhaustive-deps
 	useOnUnmount( () => {
 		recordCloseModal( modalName, getEventProperties && getEventProperties() );
 	}, deps || [] );
+	// eslint-disable-line react-hooks/exhaustive-deps
 	useEffect( () => {
 		recordEnterModal( modalName );
 	}, [] );
