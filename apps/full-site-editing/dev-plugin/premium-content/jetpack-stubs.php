@@ -1,6 +1,7 @@
 <?php declare( strict_types = 1 );
 
 class Jetpack_Memberships {
+
 	const MOCK_CONNECTED_ACCOUNT_ID_FILTER = 'mock_connected_account';
 
 	/**
@@ -26,7 +27,7 @@ class Jetpack_Memberships {
 	}
 
 	/**
-	 * @param array $attrs
+	 * @param  array $attrs
 	 * @return ?string
 	 */
 	public function render_button( $attrs ) {
@@ -65,7 +66,7 @@ class Jetpack_Memberships {
  * @return array
  */
 function get_earn_cache() {
-	$previously_saved_data = get_option( 'earn_cache' );
+	 $previously_saved_data = get_option( 'earn_cache' );
 	if ( $previously_saved_data ) {
 		$previously_saved_data = json_decode( $previously_saved_data, true );
 	} else {

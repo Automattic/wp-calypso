@@ -12,6 +12,7 @@ use JSONWebToken\JWT;
 // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 abstract class Token_Subscription_Service implements Subscription_Service {
 
+
 	const JWT_AUTH_TOKEN_COOKIE_NAME = 'jp-premium-content-session';
 	const DECODE_EXCEPTION_FEATURE   = 'memberships';
 	const DECODE_EXCEPTION_MESSAGE   = 'Problem decoding provided token';
@@ -84,7 +85,7 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 				'message' => self::DECODE_EXCEPTION_MESSAGE,
 				'extra'   => json_encode( compact( 'exception', 'token' ) ),
 			);
-			// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+         // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 			log2logstash( $logstash );
 			return false;
 		}
@@ -124,7 +125,7 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 	}
 
 	/**
-	 * @param string $token
+	 * @param  string $token
 	 * @return void
 	 */
 	private function set_token_cookie( $token ) {
@@ -152,7 +153,7 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 	 *
 	 * @param int[]                          $valid_plan_ids
 	 * @param array<int, Token_Subscription> $token_subscriptions : ID must exist in the provided <code>$valid_subscriptions</code> parameter.
-	 *                                                             The provided end date needs to be greater than <code>now()</code>.
+	 *                                                            The provided end date needs to be greater than <code>now()</code>.
 	 *
 	 * @return bool
 	 */
@@ -179,8 +180,8 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 	}
 
 	/**
-	 * @param int    $site_id
-	 * @param string $redirect_url
+	 * @param  int    $site_id
+	 * @param  string $redirect_url
 	 * @return string
 	 */
 	private function get_rest_api_token_url( $site_id, $redirect_url ) {

@@ -21,6 +21,7 @@ use function rest_url;
  */
 final class Mock_SubscriptionService implements Subscription_Service {
 
+
 	const COOKIE_NAME      = 'mock-paywall';
 	const TOKEN_QUERY_NAME = 'token';
 
@@ -46,13 +47,13 @@ final class Mock_SubscriptionService implements Subscription_Service {
 		/**
 		 * Allows non-JSON responses
 		 */
-		// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+     // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 		add_filter( 'rest_pre_serve_request', array( Paywall_Response::class, 'rest_pre_serve_request' ), 10, 2 );
 
 		add_action(
 			'rest_api_init',
-			function() {
-				// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+			function () {
+            // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 				register_rest_route( 'mock-paywall', 'subscribe', array( 'callback' => array( Paywall_Response::class, 'challenge' ) ) );
 			}
 		);

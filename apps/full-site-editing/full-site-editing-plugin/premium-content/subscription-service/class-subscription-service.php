@@ -13,6 +13,7 @@
 namespace A8C\FSE\Earn\PremiumContent\SubscriptionService;
 
 interface Subscription_Service {
+
 	/**
 	 * Allows a Subscription Service to setup anything it needs to provide its features.
 	 *
@@ -41,7 +42,7 @@ interface Subscription_Service {
 	/**
 	 * The current visitor would like to obtain access. Where do they go?
 	 *
-	 * @param ('subscribe'|'login') $mode
+	 * @param  ('subscribe'|'login') $mode
 	 * @return string
 	 */
 	function access_url( $mode = 'subscribe' );

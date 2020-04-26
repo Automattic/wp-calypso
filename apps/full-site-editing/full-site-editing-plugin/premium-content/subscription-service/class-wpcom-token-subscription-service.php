@@ -10,8 +10,9 @@ namespace A8C\FSE\Earn\PremiumContent\SubscriptionService;
 // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 class WPCOM_Token_Subscription_Service extends Token_Subscription_Service {
 
+
 	public static function available() {
-		// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+     // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 		return defined( 'IS_WPCOM' ) && IS_WPCOM === true;
 	}
 
@@ -26,7 +27,7 @@ class WPCOM_Token_Subscription_Service extends Token_Subscription_Service {
 	 * @inheritDoc
 	 */
 	function get_key() {
-		// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+     // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 		return defined( 'EARN_JWT_SIGNING_KEY' ) ? EARN_JWT_SIGNING_KEY : false;
 	}
 }

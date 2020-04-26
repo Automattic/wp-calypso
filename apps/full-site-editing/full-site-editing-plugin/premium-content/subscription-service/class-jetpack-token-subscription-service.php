@@ -13,6 +13,7 @@ use Automattic\Jetpack\Connection\Manager;
 // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 class Jetpack_Token_Subscription_Service extends Token_Subscription_Service {
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -22,7 +23,7 @@ class Jetpack_Token_Subscription_Service extends Token_Subscription_Service {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
+	 * @throws     \Exception
 	 */
 	public function get_site_id() {
 		return \Jetpack_Options::get_option( 'id' );

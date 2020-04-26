@@ -7,7 +7,7 @@
  * License:         GPL-2.0-or-later
  * Text Domain:     create-block
  *
- * @package         create-block
+ * @package create-block
  */
 
 namespace A8C\FSE\Earn\PremiumContent;
@@ -32,12 +32,12 @@ require_once __DIR__ . '/premium-content-dom.php';
  * Registers all block assets so that they can be enqueued through the block editor
  * in the corresponding context.
  *
- * @see https://developer.wordpress.org/block-editor/tutorials/block-tutorial/applying-styles-with-stylesheets/
+ * @see    https://developer.wordpress.org/block-editor/tutorials/block-tutorial/applying-styles-with-stylesheets/
  * @return void
  */
 function premium_content_block_init() {
-	$url_path = plugin_dir_url( __FILE__ );
-	$dir      = __DIR__;
+	 $url_path = plugin_dir_url( __FILE__ );
+	$dir       = __DIR__;
 
 	$script_asset_path = "$dir/dist/premium-content.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
@@ -46,7 +46,7 @@ function premium_content_block_init() {
 		);
 	}
 	$index_js     = 'dist/premium-content.js';
-	$script_asset = require $script_asset_path;
+	$script_asset = include $script_asset_path;
 	wp_register_script(
 		'premium-content-container-block-editor',
 		"$url_path/$index_js",
@@ -129,9 +129,9 @@ function premium_content_current_visitor_can_access( $attributes ) {
 
 // TODO: I am planning to kill the other render methods and pull everything here. The data is too tightly coupled for the render methods being seperate
 /**
- * @param array  $attributes
- * @param string $content
- * @return string
+ * @param          array  $attributes
+ * @param          string $content
+ * @return         string
  * @psalm-suppress InvalidArgument
  */
 function premium_content_container_render( $attributes, $content ) {
@@ -148,10 +148,10 @@ function premium_content_container_render( $attributes, $content ) {
 		$content = preg_replace_callback(
 			'#<subscribeButtonText classNames="(.*?)" customTextButtonColor="(.*?)" customBackgroundButtonColor="(.*?)">(.*?)<\/subscribeButtonText>#is',
 			/**
-			 * @param array $matches
-			 *
-			 * @return null|string
-			 */
+			* @param array $matches
+			*
+			* @return null|string
+			*/
 			function ( $matches ) use ( $attributes ) {
 				return \Jetpack_Memberships::get_instance()->render_button(
 					array(
@@ -181,17 +181,18 @@ function premium_content_container_render( $attributes, $content ) {
  *
  * TODO: consider moving this to the DOM editing class or in javascript
  *
- * @param array  $attributes
- * @param string $content
+ * @param  array  $attributes
+ * @param  string $content
  * @return string
  */
 function premium_content_block_logged_out_view_render( $attributes, $content ) {
-
 	wp_enqueue_script( 'premium-content-frontend' );
 
 	$button_styles = array();
 	if ( ! empty( $attributes['customBackgroundButtonColor'] ) ) {
-		/** @psalm-suppress PossiblyNullArgument */
+		/**
+	* @psalm-suppress PossiblyNullArgument
+*/
 		array_push(
 			$button_styles,
 			sprintf(
@@ -201,7 +202,9 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
 		);
 	}
 	if ( ! empty( $attributes['customTextButtonColor'] ) ) {
-		/** @psalm-suppress PossiblyNullArgument */
+		/**
+	* @psalm-suppress PossiblyNullArgument
+*/
 		array_push(
 			$button_styles,
 			sprintf(
@@ -235,7 +238,7 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
  * @return void
  */
 function premium_content_paywall_initialize() {
-	$paywall = premium_content_subscription_service();
+	 $paywall = premium_content_subscription_service();
 	$paywall->initialize();
 }
 
@@ -251,7 +254,7 @@ function premium_content_subscription_service() {
 }
 
 /**
- * @param ?Subscription_Service $service
+ * @param  ?Subscription_Service $service
  * @return ?Subscription_Service
  */
 function premium_content_default_service( $service ) {

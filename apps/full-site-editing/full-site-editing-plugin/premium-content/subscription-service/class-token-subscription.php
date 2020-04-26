@@ -3,6 +3,9 @@
 namespace A8C\FSE\Earn\PremiumContent\SubscriptionService;
 
 class Token_Subscription {
-	/** @var string */
+
+	/**
+	 * @var string
+	 */
 	public $end_date = '';
 }

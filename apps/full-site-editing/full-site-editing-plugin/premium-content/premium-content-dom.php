@@ -10,11 +10,14 @@ namespace A8C\FSE\Earn\PremiumContent;
  * @package Automattic\Earn\PremiumContent
  */
 class Premium_Content_Dom {
+
 	const SUBSCRIBER_VIEW_CLASS    = 'wp-block-premium-content-subscriber-view';
 	const LOGGED_OUT_VIEW_CLASS    = 'wp-block-premium-content-logged-out-view';
 	const LOGGED_OUT_BUTTONS_CLASS = 'wp-block-premium-content-logged-out-view__buttons';
 
-	/** @var \DOMDocument */
+	/**
+	 * @var \DOMDocument
+	 */
 	private $doc;
 
 	/**
@@ -46,7 +49,7 @@ class Premium_Content_Dom {
 		}
 		for ( $i = $elements->length; --$i >= 0; ) {
 			$element = $elements->item( $i );
-			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+         // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$element->parentNode->removeChild( $element );
 		}
 		return $this;

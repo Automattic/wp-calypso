@@ -7,6 +7,7 @@ use WP_REST_Response;
 
 final class Paywall_Response extends WP_REST_Response {
 
+
 	/**
 	 * @param string $content
 	 */
@@ -15,7 +16,7 @@ final class Paywall_Response extends WP_REST_Response {
 	}
 
 	/**
-	 * @param \WP_REST_Request $request
+	 * @param  \WP_REST_Request $request
 	 * @return self
 	 */
 	public static function challenge( $request ) {
@@ -73,13 +74,13 @@ final class Paywall_Response extends WP_REST_Response {
 					</table>
 				</body>
 			</html>
-			HTML
+    			HTML
 		);
 	}
 
 	/**
-	 * @param boolean          $is_served
-	 * @param WP_REST_Response $response
+	 * @param  boolean          $is_served
+	 * @param  WP_REST_Response $response
 	 * @return boolean
 	 */
 	public static function rest_pre_serve_request( $is_served, $response ) {
