@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import ExternalLink from 'components/external-link';
 import temporaryIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 
 /**
@@ -30,9 +31,9 @@ export const WebinarPromotion = () => {
 							'Register for a live video webinar to help you get started or learn advanced features.'
 						) }
 					</p>
-					<a href="https://wordpress.com/webinars/" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="https://wordpress.com/webinars/" icon>
 						{ translate( 'Register for free' ) }
-					</a>
+					</ExternalLink>
 				</div>
 				{ isDesktop() && (
 					<img src={ temporaryIllustration } className="webinar-promotion__illustration" alt="" />
