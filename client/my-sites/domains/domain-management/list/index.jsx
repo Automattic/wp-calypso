@@ -105,15 +105,15 @@ export class List extends React.Component {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { translate, selectedSite } = this.props;
 
 		return (
 			<UpsellNudge
-				callToAction={ translate( 'Claim Free Domain' ) }
+				callToAction={ translate( 'Claim free domain' ) }
 				title={ translate( 'Free domain available' ) }
 				className="domain-management__claim-free-domain"
 				forceDisplay
-				href={ `/domains/add/${ this.props.selectedSite.slug }` }
+				href={ `/domains/add/${ selectedSite.slug }` }
 				showIcon
 				event="calypso_domain_credit_reminder_impression"
 				tracksClickName="calypso_domain_credit_reminder_click"
