@@ -129,19 +129,6 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
-	isEmptyFilter = ( filter ) => {
-		if ( ! filter ) {
-			return true;
-		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
-			return false;
-		}
-		if ( filter.page !== 1 ) {
-			return false;
-		}
-		return true;
-	};
-
 	TO_REMOVE_getSelectedDateString = () => {
 		const { moment } = this.props;
 
@@ -262,10 +249,10 @@ class BackupsPage extends Component {
 	}
 
 	render() {
-		const { filter } = this.props;
+		const { isEmptyFilter } = this.props;
 		return (
 			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
+				{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 			</div>
 		);
 	}
@@ -323,6 +310,19 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	};
 };
 
+const getIsEmptyFilter = ( filter ) => {
+	if ( ! filter ) {
+		return true;
+	}
+	if ( filter.group || filter.on || filter.before || filter.after ) {
+		return false;
+	}
+	if ( filter.page !== 1 ) {
+		return false;
+	}
+	return true;
+};
+
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
@@ -349,6 +349,7 @@ const mapStateToProps = ( state ) => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
+		isEmptyFilter: getIsEmptyFilter( filter ),
 		siteCapabilities,
 		logs: logs?.data ?? [],
 		rewind,
@@ -366,7 +367,9 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-	clearFilter: ( siteId ) => dispatch( setFilter( siteId, emptyFilter ) ),
+	clearFilter: ( siteId ) =>
+		// skipUrlUpdate prevents this action from trigger a redirect back to backups/activity in state/navigation/middleware.js
+		dispatch( { ...setFilter( siteId, emptyFilter ), meta: { skipUrlUpdate: true } } ),
 } );
 
 export default connect(
