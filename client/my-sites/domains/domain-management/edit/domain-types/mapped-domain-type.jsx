@@ -31,6 +31,7 @@ import {
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
 
 class MappedDomainType extends React.Component {
@@ -237,6 +238,9 @@ class MappedDomainType extends React.Component {
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+		const newDomainManagementNavigation = config.isEnabled(
+			'domains/new-status-design/new-options'
+		);
 
 		let expiresText;
 
@@ -289,12 +293,21 @@ class MappedDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				<DomainManagementNavigation
-					domain={ domain }
-					selectedSite={ this.props.selectedSite }
-					purchase={ mappingPurchase }
-					isLoadingPurchase={ isLoadingPurchase }
-				/>
+				{ newDomainManagementNavigation ? (
+					<DomainManagementNavigationEnhanced
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ mappingPurchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) : (
+					<DomainManagementNavigation
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ mappingPurchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) }
 			</div>
 		);
 	}
