@@ -25,6 +25,10 @@ export const counts = withSchemaValidation(
 		keyedReducer( 'period', ( state = [], action ) => {
 			switch ( action.type ) {
 				case STATS_CHART_COUNTS_RECEIVE: {
+					if ( action.data.length !== state.length ) {
+						return action.data;
+					}
+
 					let areThereChanges = false;
 
 					const newState = action.data.reduce(

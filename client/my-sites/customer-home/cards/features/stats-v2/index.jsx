@@ -13,6 +13,7 @@ import moment from 'moment';
  */
 import CardHeading from 'components/card-heading';
 import Chart from 'components/chart';
+import Spinner from 'components/spinner';
 import QuerySiteStats from 'components/data/query-site-stats';
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -20,33 +21,40 @@ import { buildChartData } from 'my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'state/sites/selectors';
 import { requestChartCounts } from 'state/stats/chart-tabs/actions';
-import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getCountRecords } from 'state/stats/chart-tabs/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	getMostPopularDatetime,
+	getTopPostAndPage,
+	getViewAndVisitors,
+	isLoadingStats,
+} from './utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const placeholderChartData = times( 10, () => ( {
+const placeholderChartData = times( 7, () => ( {
 	value: Math.random(),
 } ) );
 
 export const StatsV2 = ( {
 	chartData,
-	chartIsLoading,
 	chartQuery,
 	insightsQuery,
-	insightsType,
+	isLoading,
 	isSiteUnlaunched,
 	mostPopularDay,
 	mostPopularTime,
 	siteId,
 	siteSlug,
-	trafficData,
-	trafficStatsType,
-	trafficStatsQuery,
+	topPage,
+	topPost,
+	topPostsQuery,
+	views,
+	visitors,
+	visitsQuery,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -87,43 +95,65 @@ export const StatsV2 = ( {
 		);
 	}
 
+	const showTopPost = !! topPost;
+	const showTopPage = !! topPage;
+	const showViews = ! showTopPost || ! showTopPage;
+	const showVisitors = ! showTopPost && ! showTopPage;
+
 	return (
 		<>
 			{ heading }
 			<Card className="stats-v2">
-				<QuerySiteStats
-					siteId={ siteId }
-					statType={ trafficStatsType }
-					query={ trafficStatsQuery }
-				/>
-				<QuerySiteStats siteId={ siteId } statType={ insightsType } query={ insightsQuery } />
-				<CardHeading>{ translate( 'Views' ) }</CardHeading>
-				<Chart data={ chartData } loading={ chartIsLoading } />
-				<div className="stats-v2__data">
-					<div className="stats-v2__data-item">
-						<div className="stats-v2__data-label">{ translate( 'Most popular day' ) }</div>
-						<div className="stats-v2__data-value">{ mostPopularDay }</div>
-					</div>
-					<div className="stats-v2__data-item">
-						<div className="stats-v2__data-label">{ translate( 'Most popular hour' ) }</div>
-						<div className="stats-v2__data-value">{ mostPopularTime ?? '-' }</div>
-					</div>
-					<div className="stats-v2__data-item">
-						<div className="stats-v2__data-label">{ translate( 'Views' ) }</div>
-						<div className="stats-v2__data-value">
-							{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+				<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ visitsQuery } />
+				<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
+				<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
+				{ isLoading ? (
+					<Chart data={ placeholderChartData } isPlaceholder>
+						<Spinner />
+					</Chart>
+				) : (
+					<>
+						<CardHeading>{ translate( 'Views' ) }</CardHeading>
+						<Chart data={ chartData } />
+						<div className="stats-v2__data">
+							<div className="stats-v2__data-item">
+								<div className="stats-v2__data-label">{ translate( 'Most popular day' ) }</div>
+								<div className="stats-v2__data-value">{ mostPopularDay }</div>
+							</div>
+							<div className="stats-v2__data-item">
+								<div className="stats-v2__data-label">{ translate( 'Most popular hour' ) }</div>
+								<div className="stats-v2__data-value">{ mostPopularTime ?? '-' }</div>
+							</div>
+							{ showTopPost && (
+								<div className="stats-v2__data-item">
+									<div className="stats-v2__data-label">{ translate( 'Top post' ) }</div>
+									<div className="stats-v2__data-value">{ topPost.title }</div>
+								</div>
+							) }
+							{ showTopPage && (
+								<div className="stats-v2__data-item">
+									<div className="stats-v2__data-label">{ translate( 'Top page' ) }</div>
+									<div className="stats-v2__data-value">{ topPage.title }</div>
+								</div>
+							) }
+							{ showViews && (
+								<div className="stats-v2__data-item">
+									<div className="stats-v2__data-label">{ translate( 'Total views' ) }</div>
+									<div className="stats-v2__data-value">{ numberFormat( views ) }</div>
+								</div>
+							) }
+							{ showVisitors && (
+								<div className="stats-v2__data-item">
+									<div className="stats-v2__data-label">{ translate( 'Total visitors' ) }</div>
+									<div className="stats-v2__data-value">{ numberFormat( visitors ) }</div>
+								</div>
+							) }
 						</div>
-					</div>
-					<div className="stats-v2__data-item">
-						<div className="stats-v2__data-label">{ translate( 'Visitors' ) }</div>
-						<div className="stats-v2__data-value">
-							{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
-						</div>
-					</div>
-				</div>
-				<a href={ `/stats/day/${ siteSlug }` } className="stats-v2__all">
-					{ translate( 'See all stats' ) }
-				</a>
+						<a href={ `/stats/day/${ siteSlug }` } className="stats-v2__all">
+							{ translate( 'See all stats' ) }
+						</a>
+					</>
+				) }
 			</Card>
 		</>
 	);
@@ -134,82 +164,86 @@ const mapStateToProps = ( state ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-
-	const chartTab = 'views';
 	const date = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 	const period = 'day';
+	const quantity = 7;
+
+	const chartTab = 'views';
 	const chartQuery = {
 		chartTab,
 		date,
 		period,
-		quantity: 30,
+		quantity,
 		siteId,
 		statFields: [ chartTab ],
 	};
 	let chartData;
-	let chartIsLoading = false;
 
-	let trafficData;
-	const trafficStatsType = 'statsVisits';
-	const trafficStatsQuery = {
-		unit: 'week',
-		quantity: 1,
+	let topPost;
+	let topPage;
+	const topPostsQuery = {
+		date,
+		num: quantity,
+		period,
+	};
+
+	let views;
+	let visitors;
+	const visitsQuery = {
+		unit: period,
+		quantity: quantity,
 		stat_fields: 'views,visitors',
 	};
 
 	let mostPopularDay;
 	let mostPopularTime;
-	const insightsType = 'statsInsights';
 	const insightsQuery = {};
 
-	if ( ! isSiteUnlaunched ) {
+	const isLoading = isLoadingStats(
+		state,
+		siteId,
+		chartTab,
+		period,
+		insightsQuery,
+		topPostsQuery,
+		visitsQuery
+	);
+
+	if ( ! isSiteUnlaunched && ! isLoading ) {
 		const counts = getCountRecords( state, siteId, period );
 		chartData = buildChartData( [], chartTab, counts, period, date );
 
-		const loadingTabs = getLoadingTabs( state, siteId, period );
-		chartIsLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
+		const mostPopularDateTime = getMostPopularDatetime( state, siteId, insightsQuery );
+		mostPopularDay = mostPopularDateTime.day ?? '-';
+		mostPopularTime = mostPopularDateTime?.time ?? '-';
 
-		/*const trafficStats = getSiteStatsNormalizedData(
-			state,
-			siteId,
-			trafficStatsType,
-			trafficStatsQuery
-		);
-		trafficData = trafficStats && trafficStats.length ? trafficStats[ 0 ] : null;*/
+		const topPostAndPage = getTopPostAndPage( state, siteId, topPostsQuery );
+		topPost = topPostAndPage.post;
+		topPage = topPostAndPage.page;
 
-		//showInsights = trafficData && trafficData.views < 10;
-
-		const insightsData = getSiteStatsNormalizedData( state, siteId, insightsType, insightsQuery );
-		mostPopularDay = insightsData?.day ?? '-';
-		mostPopularTime = insightsData?.hour ?? '-';
-
-		/*
-		const isJetpack = isJetpackSite( state, siteId );
-		const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
-		const hideStats =
-			(
-				isJetpack && ! isStatsModuleActive
-			) || (
-				showInsights && ! insightsData?.percent
-			);*/
+		const viewsAndVisitors = getViewAndVisitors( state, siteId, visitsQuery );
+		views = viewsAndVisitors.views;
+		visitors = viewsAndVisitors.visitors;
 	}
 
 	return {
 		chartData,
-		chartIsLoading,
 		chartQuery,
 		insightsQuery,
-		insightsType,
+		isLoading,
 		isSiteUnlaunched,
 		mostPopularDay,
 		mostPopularTime,
 		siteId,
 		siteSlug,
-		trafficData,
-		trafficStatsQuery,
-		trafficStatsType,
+		topPage,
+		topPost,
+		topPostsQuery,
+		views,
+		visitors,
+		visitsQuery,
 	};
 };
 

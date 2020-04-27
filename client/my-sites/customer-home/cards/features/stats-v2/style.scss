@@ -45,10 +45,12 @@
 .stats-v2__data-item {
 	border: 1px solid var( --color-neutral-5 );
 	border-left: none;
-	flex: 0 0 25%;
+	width: 25%;
 	box-sizing: border-box;
 	text-align: center;
 	padding: 16px;
+	display: flex;
+	flex-direction: column;
 
 	&:first-child {
 		padding-left: 24px;
@@ -64,7 +66,7 @@
 	}
 
 	@include breakpoint( '1040px-1280px', '<960px' ) {
-		flex-basis: 50%;
+		width: 50%;
 
 		&:nth-child( 1 ),
 		&:nth-child( 2 ) {
@@ -81,6 +83,12 @@
 	font-size: 14px;
 	color: var( --color-text-subtle );
 	margin-bottom: 4px;
+}
+
+.stats-v2__data-value {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .stats-v2__all {
