@@ -23,7 +23,6 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -31,7 +30,6 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -714,9 +712,7 @@ export default connect(
 		return {
 			designType: getDesignType( state ),
 			// no user = DOMAINS_WITH_PLANS_ONLY
-			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-				: true,
+			domainsWithPlansOnly: true,
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
