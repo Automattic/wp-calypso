@@ -17,11 +17,21 @@ const user = userFactory();
 
 const { defaultFlowName } = flows;
 
+function isEligibleForSwapStepsTest() {
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+	const isUserFromUS = 'US' === countryCodeFromCookie;
+
+	if ( user && user.get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
+		return true;
+	}
+
+	return false;
+}
+
 function getDefaultFlowName() {
 	if (
-		user &&
-		user.get() &&
-		'onboarding' === defaultFlowName &&
+		isEligibleForSwapStepsTest() &&
 		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
 	) {
 		return 'onboarding-plan-first';

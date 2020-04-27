@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -170,6 +171,18 @@ export class UserStep extends Component {
 		} );
 	}
 
+	isEligibleForSwapStepsTest() {
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const isUserFromUS = 'US' === countryCodeFromCookie;
+
+		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -196,7 +209,7 @@ export class UserStep extends Component {
 		);
 
 		if (
-			'onboarding' === flowName &&
+			this.isEligibleForSwapStepsTest() &&
 			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
 		) {
 			const switchFlowName = 'onboarding-plan-first';
