@@ -17,6 +17,7 @@ import type {
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
+	TempResponseCartProduct,
 	CartLocation,
 } from './types/backend/shopping-cart-endpoint';
 import {
@@ -73,6 +74,7 @@ export type {
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
+	TempResponseCartProduct,
 	CartLocation,
 	WPCOMCart,
 	WPCOMCartItem,

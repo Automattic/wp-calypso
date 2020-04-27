@@ -15,6 +15,8 @@
  * @see WPCOM_JSON_API_Me_Shopping_Cart_Endpoint
  */
 
+let lastUUID = 100;
+
 /**
  * Request schema for the shopping cart endpoint
  */
@@ -50,7 +52,7 @@ export interface RequestCartProduct {
  * Response schema for the shopping cart endpoint
  */
 export interface ResponseCart {
-	products: ResponseCartProduct[];
+	products: ( TempResponseCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_cost_integer: number;
@@ -132,12 +134,34 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 }
 
-interface RequestCartOptions {
-	is_update?: boolean;
+/**
+ * A way to add an item to the response cart with incomplete data while the data is loading.
+ */
+export interface TempResponseCartProduct {
+	product_name: string | null;
+	product_slug: string;
+	product_id: number;
+	currency: string | null;
+	product_cost_integer: null;
+	product_cost_display: null;
+	item_subtotal_integer: null;
+	item_subtotal_display: null;
+	item_original_cost_display: null;
+	item_original_cost_integer: null;
+	is_domain_registration: boolean | null;
+	is_bundled: boolean | null;
+	meta: string;
+	volume: number;
+	extra: object;
+	uuid: string;
+	cost: null;
+	price: null;
+	product_type: null;
+	included_domain_purchase_amount: null;
 }
 
 export function convertResponseCartProductToRequestCartProduct(
-	product: ResponseCartProduct
+	product: ResponseCartProduct | TempResponseCartProduct
 ): RequestCartProduct {
 	const { product_slug, meta, product_id, extra } = product;
 	return {
@@ -258,30 +282,12 @@ export function convertRawResponseCartToResponseCart(
 
 export function addItemToResponseCart(
 	responseCart: ResponseCart,
-	product: ResponseCartProduct
+	product: RequestCartProduct
 ): ResponseCart {
-	const uuid = getFreshCartItemUUID( responseCart );
-	const newProductItem = addUUIDToResponseCartProduct( product, uuid );
+	const convertedProduct = convertRequestCartProductToResponseCartProduct( product );
 	return {
 		...responseCart,
-		products: [ ...responseCart.products, newProductItem ],
-	};
-}
-
-function getFreshCartItemUUID( responseCart: ResponseCart ): string {
-	const maxUUID = responseCart.products
-		.map( ( product ) => product.uuid )
-		.reduce( ( accum, current ) => ( accum > current ? accum : current) , '' );
-	return maxUUID + '1';
-}
-
-function addUUIDToResponseCartProduct(
-	product: ResponseCartProduct,
-	uuid: string
-): ResponseCartProduct {
-	return {
-		...product,
-		uuid,
+		products: [ ...responseCart.products, convertedProduct ],
 	};
 }
 
@@ -300,5 +306,31 @@ export function replaceItemInResponseCart(
 			}
 			return item;
 		} ),
+	};
+}
+
+function convertRequestCartProductToResponseCartProduct(
+	product: RequestCartProduct
+): TempResponseCartProduct {
+	const { product_slug, product_id, meta, extra } = product;
+	return {
+		product_name: '…',
+		product_slug,
+		product_id,
+		currency: null,
+		product_cost_integer: null,
+		product_cost_display: null,
+		item_subtotal_integer: null,
+		item_subtotal_display: null,
+		is_domain_registration: null,
+		is_bundled: null,
+		meta,
+		volume: 1,
+		extra,
+		uuid: 'calypso-shopping-cart-endpoint-uuid-' + lastUUID++,
+		cost: null,
+		price: null,
+		product_type: null,
+		included_domain_purchase_amount: null,
 	};
 }
