@@ -139,19 +139,6 @@ const Header: React.FunctionComponent = () => {
 		</span>
 	);
 
-	const [ shownDomain, setShownDomain ] = React.useState<
-		import('@automattic/data-stores').DomainSuggestions.DomainSuggestion
-	>();
-	React.useEffect( () => {
-		if ( domain && shownDomain !== domain ) {
-			setShownDomain( shownDomain );
-			return;
-		}
-		if ( ! shownDomain && freeDomainSuggestion ) {
-			setShownDomain( freeDomainSuggestion );
-		}
-	}, [ domain, shownDomain, freeDomainSuggestion ] );
-
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string ) => {
 			createSite( username, freeDomainSuggestion, bearerToken );
@@ -233,12 +220,12 @@ const Header: React.FunctionComponent = () => {
 				<div className="gutenboarding__header-section-item">
 					{
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
-						//   unless we're still at the IntentGathering step. In that case, we only
-						//   show it comes from a site title (but hide it if it comes from a vertical).
-						shownDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
+						// unless we're still at the IntentGathering step. In that case, we only
+						// show it comes from a site title (but hide it if it comes from a vertical).
+						domainElement && ( siteTitle || currentStep !== 'IntentGathering' ) && (
 							<DomainPickerButton
 								className="gutenboarding__header-domain-picker-button"
-								currentDomain={ shownDomain }
+								currentDomain={ domain }
 								onDomainSelect={ setDomain }
 							>
 								{ domainElement }
