@@ -44,6 +44,8 @@ import QuerySiteSettings from 'components/data/query-site-settings'; // Required
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
 
+import QueryBackups from 'components/data/query-backups';
+
 /**
  * Style dependencies
  */
@@ -182,6 +184,7 @@ class BackupsPage extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
+				<QueryBackups siteId={ siteId } />
 
 				<div className="backups__last-backup-status">
 					<DatePicker
@@ -283,7 +286,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	} );
 	let lastDateAvailable = null;
 
-	if ( 'success' === logs.state ) {
+	if ( 'success' === logs.state && Array.isArray( logs.data ) ) {
 		logs.data.forEach( ( log ) => {
 			//Move the backup date to the site timezone
 			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
@@ -347,7 +350,7 @@ const mapStateToProps = ( state ) => {
 		doesRewindNeedCredentials,
 		filter,
 		siteCapabilities,
-		logs: logs?.data ?? [],
+		logs: logs.data && Array.isArray( logs?.data ) ? logs.data : [],
 		rewind,
 		siteId,
 		siteUrl: getSiteUrl( state, siteId ),
