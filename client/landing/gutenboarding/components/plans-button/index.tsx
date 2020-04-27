@@ -29,7 +29,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const planLabel =
 		/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
 		sprintf(
-			__( '%s plan' ),
+			__( '%s Plan' ),
 			getPlan( hasPaidDomain ? plans.PLAN_PERSONAL : plans.PLAN_FREE ).getTitle()
 		);
 
