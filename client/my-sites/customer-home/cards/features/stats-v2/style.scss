@@ -1,4 +1,4 @@
-.stats-v2 {
+.stats-v2 .card {
 	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
@@ -34,6 +34,17 @@
 			height: 150px;
 		}
 	}
+}
+
+.stats-v2__empty {
+	margin-top: 16px;
+	display: flex;
+	align-items: center;
+}
+
+.stats-v2__empty-illustration {
+	flex: 1 0 70px;
+	margin-right: 16px;
 }
 
 .stats-v2__data {

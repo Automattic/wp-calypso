@@ -59,23 +59,31 @@ export const StatsV2 = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const showTopPost = !! topPost;
+	const showTopPage = !! topPage;
+	const showViews = ! showTopPost || ! showTopPage;
+	const showVisitors = ! showTopPost && ! showTopPage;
+
 	useEffect( () => {
 		if ( ! isSiteUnlaunched ) {
 			dispatch( requestChartCounts( chartQuery ) );
 		}
 	}, [ isSiteUnlaunched ] );
 
-	const heading = (
-		<h2 className="stats-v2__heading customer-home__section-heading">
-			{ translate( 'Stats at a glance' ) }
-		</h2>
-	);
-
-	if ( isSiteUnlaunched ) {
-		return (
-			<>
-				{ heading }
-				<Card className="stats-v2">
+	return (
+		<div className="stats-v2">
+			{ ! isSiteUnlaunched && (
+				<>
+					<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ visitsQuery } />
+					<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
+					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
+				</>
+			) }
+			<h2 className="stats-v2__heading customer-home__section-heading">
+				{ translate( 'Stats at a glance' ) }
+			</h2>
+			<Card>
+				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
 							{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }&nbsp;
@@ -90,28 +98,35 @@ export const StatsV2 = ( {
 							/>
 						</div>
 					</Chart>
-				</Card>
-			</>
-		);
-	}
-
-	const showTopPost = !! topPost;
-	const showTopPage = !! topPage;
-	const showViews = ! showTopPost || ! showTopPage;
-	const showVisitors = ! showTopPost && ! showTopPage;
-
-	return (
-		<>
-			{ heading }
-			<Card className="stats-v2">
-				<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ visitsQuery } />
-				<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
-				<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
-				{ isLoading ? (
+				) }
+				{ ! isSiteUnlaunched && ( isLoading || views === 0 ) && (
 					<Chart data={ placeholderChartData } isPlaceholder>
-						<Spinner />
+						{ isLoading ? <Spinner /> : translate( "No traffic this week, but don't give up!" ) }
 					</Chart>
-				) : (
+				) }
+				{ ! isSiteUnlaunched && views === 0 && (
+					<div className="stats-v2__empty">
+						<div className="stats-v2__empty-illustration">
+							<img src="/calypso/images/stats/illustration-stats-intro.svg" alt="" />
+						</div>
+						<div className="stats-v2__empty-text">
+							{ translate(
+								'Stats can help you optimize for the right keywords, and feature content your readers are interested in.'
+							) }
+							&nbsp;
+							<InlineSupportLink
+								supportPostId={ 4454 }
+								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
+								showIcon={ false }
+								text={ translate( 'Read more.' ) }
+								tracksEvent="calypso_customer_home_stats_support_page_view"
+								statsGroup="calypso_customer_home"
+								statsName="stats_learn_more"
+							/>
+						</div>
+					</div>
+				) }
+				{ ! isSiteUnlaunched && ! isLoading && views > 0 && (
 					<>
 						<CardHeading>{ translate( 'Views' ) }</CardHeading>
 						<Chart data={ chartData } />
@@ -155,7 +170,7 @@ export const StatsV2 = ( {
 					</>
 				) }
 			</Card>
-		</>
+		</div>
 	);
 };
 
