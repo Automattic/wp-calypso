@@ -2,7 +2,7 @@
 	.filterbar {
 		margin-bottom: 2rem;
 
-		// no border on filterbar active buttons
+		// filterbar button stylings
 		.filterbar__wrap {
 			button.filterbar__selection {
 				&.is-selected,
@@ -26,7 +26,7 @@
 				}
 			}
 
-			// this is a separate mechanism for the date range
+			// this is a separate mechanism for the date range when it is active
 			div.date-range.toggle-visible button.filterbar__selection {
 				border: 1px solid var( --color-neutral-60 );
 				background-color: var( --color-neutral-60 );
