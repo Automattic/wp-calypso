@@ -16,6 +16,16 @@
 				}
 			}
 
+			// the close buttons need a little love to bring them in line with jetpack cloud styles
+			button.filterbar__selection-close {
+				border-radius: 0 3px 3px 0;
+				border: 1px solid var( --color-neutral-60 );
+				background-color: var( --color-neutral-60 );
+				.gridicon {
+					fill: var( --color-text-inverted );
+				}
+			}
+
 			// this is a separate mechanism for the date range
 			div.date-range.toggle-visible button.filterbar__selection {
 				border: 1px solid var( --color-neutral-60 );
