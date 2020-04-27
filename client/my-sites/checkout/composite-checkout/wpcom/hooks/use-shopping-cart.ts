@@ -290,6 +290,7 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
  */
 export interface ShoppingCartManager {
 	isLoading: boolean;
+	isPendingUpdate: boolean;
 	allowedPaymentMethods: string[];
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
@@ -487,6 +488,7 @@ export function useShoppingCart(
 
 	return {
 		isLoading: cacheStatus === 'fresh',
+		isPendingUpdate: cacheStatus !== 'valid',
 		items: cart.items,
 		tax: cart.tax,
 		couponItem: cart.coupon,
