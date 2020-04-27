@@ -54,6 +54,8 @@ export interface ResponseCart {
 	total_tax_display: string;
 	total_cost_integer: number;
 	total_cost_display: string;
+	savings_total_integer: number;
+	savings_total_display: string;
 	sub_total_integer: number;
 	sub_total_display: string;
 	currency: string;
@@ -87,6 +89,8 @@ export const emptyResponseCart = {
 	total_tax_display: '0',
 	total_cost_integer: 0,
 	total_cost_display: '0',
+	savings_total_integer: 0,
+	savings_total_display: '0',
 	sub_total_integer: 0,
 	sub_total_display: '0',
 	currency: 'USD',
@@ -111,6 +115,8 @@ export interface ResponseCartProduct {
 	currency: string;
 	product_cost_integer: number;
 	product_cost_display: string;
+	item_original_cost_integer: number;
+	item_original_cost_display: string;
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;

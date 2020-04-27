@@ -39,6 +39,8 @@ const domainProduct = {
 	product_id: 106,
 	volume: 1,
 	is_domain_registration: true,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
 };
@@ -59,6 +61,8 @@ const domainTransferProduct = {
 	meta: 'foo.cash',
 	product_id: 106,
 	volume: 1,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
 };
@@ -75,6 +79,8 @@ const planWithBundledDomain = {
 	meta: '',
 	product_id: 1009,
 	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 };
@@ -90,6 +96,8 @@ const planWithoutDomain = {
 	meta: '',
 	product_id: 1009,
 	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 };
@@ -122,6 +130,8 @@ describe( 'CompositeCheckout', () => {
 			},
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
+			savings_total_integer: 0,
+			savings_total_display: '-R$0',
 			total_tax_integer: 700,
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
@@ -585,7 +595,7 @@ describe( 'CompositeCheckout', () => {
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( '-$0' )
+			expect( element ).toHaveTextContent( '$0' )
 		);
 	} );
 
@@ -654,6 +664,8 @@ async function mockSetCartEndpoint( _, requestCart ) {
 			'WPCOM_Billing_Ebanx',
 			'WPCOM_Billing_Web_Payment',
 		],
+		savings_total_display: '$0',
+		savings_total_integer: 0,
 		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
 		total_cost_display: 'R$156',
@@ -679,6 +691,8 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'personal-bundle',
 					currency: currency,
 					is_domain_registration: false,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
@@ -693,6 +707,8 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'domain_map',
 					currency: currency,
 					is_domain_registration: false,
+					item_original_cost_integer: 0,
+					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
 					item_tax: 0,
@@ -707,6 +723,8 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'domain_reg',
 					currency: currency,
 					is_domain_registration: true,
+					item_original_cost_integer: 70,
+					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
 					item_tax: 0,
@@ -722,8 +740,10 @@ function convertRequestProductToResponseProduct( currency ) {
 			product_slug: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
-			item_subtotal_integer: 0,
+			savings_total_display: '$0',
+			savings_total_integer: 0,
 			item_subtotal_display: '$0',
+			item_subtotal_integer: 0,
 			item_tax: 0,
 		};
 	};

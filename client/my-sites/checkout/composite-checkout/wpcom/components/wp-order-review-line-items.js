@@ -160,9 +160,10 @@ function LineItemDomainTitle( { item, id } ) {
 function LineItemPrice( { lineItem } ) {
 	return (
 		<LineItemPriceUI>
-			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+			{ lineItem.amount.value < lineItem.wpcom_meta?.item_original_cost_integer ? (
 				<>
-					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+					<s>{ lineItem.wpcom_meta?.item_original_cost_display }</s>{ ' ' }
+					{ lineItem.amount.displayValue }
 				</>
 			) : (
 				renderDisplayValueMarkdown( lineItem.amount.displayValue )

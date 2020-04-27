@@ -37,6 +37,8 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		product_slug: string;
 		extra: object;
 		volume?: number;
+		item_original_cost_display: string;
+		item_original_cost_integer: number;
 		is_bundled?: boolean;
 		is_domain_registration?: boolean;
 		couponCode?: string;
