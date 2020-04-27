@@ -46,9 +46,7 @@ class UpsellForm extends Component {
 	header() {
 		return (
 			<header className="upsell__small-header">
-				<i className="upsell__title">
-					Your domain { this.props.domainName } is currently available
-				</i>
+				<i className="upsell__title">Your domain { this.props.domainName } is awaiting you</i>
 			</header>
 		);
 	}
@@ -59,7 +57,7 @@ class UpsellForm extends Component {
 		return (
 			<>
 				<h2 className="upsell__header">
-					Upgrade to a paid plan to claim your custom domain for free
+					Upgrade to a paid plan to use a custom domain <br /> for free
 				</h2>
 
 				<div className="upsell__column-pane">
@@ -71,11 +69,14 @@ class UpsellForm extends Component {
 						</p>
 
 						<p>
-							Custom domains are only available on our paid plans, so you’ll need to upgrade to use{ ' ' }
-							<strong>{ domainName }</strong> as your custom domain.
+							Using custom domains is only available on our paid plans, so you’ll need to upgrade to
+							use <strong>{ domainName }</strong> as your primary domain.
 						</p>
 
-						<p>Good news is that you'll get the first year for free, with any paid plan.</p>
+						<p>
+							Good news is that you'll get the first year registration fee for free, with any paid
+							plan. Or if you're bringing your domain with us, your mapping or transferring fee.
+						</p>
 
 						<p>
 							Unlocking access to custom domains is just one of many great reasons to upgrade to a
@@ -144,8 +145,8 @@ class UpsellForm extends Component {
 
 						<p>
 							Our paid plans are the perfect companion for your custom domain. That’s why we’ll
-							cover your domain registration for the first year (saving you { domainPrice }), with
-							any paid plan.
+							cover your domain registration fee (or mapping or transferring fee) for the first
+							year, saving you { domainPrice }, with any paid plan.
 						</p>
 
 						<p>
@@ -155,7 +156,7 @@ class UpsellForm extends Component {
 
 						<p>
 							<strong>
-								Upgrade to any paid plan, and secure your domain { domainName }, for just as low as{ ' ' }
+								Upgrade to any paid plan and use your domain { domainName }, for just as low as{ ' ' }
 								{ planPrice }/mo.
 							</strong>
 						</p>
@@ -183,7 +184,7 @@ class UpsellForm extends Component {
 						this.props.submitForm( 'decline' );
 					} }
 				>
-					{ translate( 'No thanks, I’ll let that domain go for now' ) }
+					{ translate( "No thanks, I won't use that domain for now" ) }
 				</Button>
 				<Button
 					primary
@@ -192,7 +193,7 @@ class UpsellForm extends Component {
 						this.props.submitForm( 'accept' );
 					} }
 				>
-					{ translate( 'Yes, I want to upgrade and secure my domain »' ) }
+					{ translate( 'Yes, I want to upgrade and use my domain »' ) }
 				</Button>
 			</footer>
 		);
