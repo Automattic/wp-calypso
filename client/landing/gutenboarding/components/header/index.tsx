@@ -18,6 +18,7 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
+import PlansButton from '../plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import {
@@ -116,7 +117,7 @@ const Header: FunctionComponent = () => {
 			// explicitly hide the dialog.
 			setShowSignupDialog( false );
 		}
-	}, [ pathname, setShowSignupDialog ] );
+	}, [ pathname, setShowSignupDialog ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
@@ -198,7 +199,7 @@ const Header: FunctionComponent = () => {
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
-	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting ] );
+	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting, hasPaidDomain ] );
 
 	return (
 		<div
@@ -234,6 +235,9 @@ const Header: FunctionComponent = () => {
 							</DomainPickerButton>
 						)
 					}
+				</div>
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
+					{ currentStep !== 'IntentGathering' && <PlansButton /> }
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
