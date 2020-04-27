@@ -138,7 +138,8 @@ It has the following props.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
-- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
+- `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
@@ -335,7 +336,7 @@ A React Hook that will return an object with the following properties:
 - `setFormSubmitting: () => void`. Function to change the form status to 'submitting'.
 - `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider).
 
-Only works within [CheckoutProvider](#CheckoutProvider).
+Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
 ### useIsStepActive
 

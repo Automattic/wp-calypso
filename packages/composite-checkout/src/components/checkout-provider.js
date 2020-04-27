@@ -39,6 +39,7 @@ export const CheckoutProvider = ( props ) => {
 		registry,
 		onEvent,
 		isLoading,
+		isValidating,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -53,7 +54,7 @@ export const CheckoutProvider = ( props ) => {
 		}
 	}, [ paymentMethods, prevPaymentMethods ] );
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
