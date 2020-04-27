@@ -713,11 +713,17 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
 			} );
+			it( 'has the expected original cost value', function () {
+				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_integer ).toBe( 14400 );
+			} );
+			it( 'has the expected original cost display value', function () {
+				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_display ).toBe( '$144' );
+			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
+				expect( clientCart.items[ 0 ].amount.value ).toBe( 12700 );
 			} );
 			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$144' );
+				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$127' );
 			} );
 		} );
 
@@ -756,7 +762,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
 			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.coupon.amount.value ).toBe( 1700 );
+				expect( clientCart.coupon.amount.value ).toBe( -1700 );
 			} );
 			it( 'has the expected display value', function () {
 				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );
