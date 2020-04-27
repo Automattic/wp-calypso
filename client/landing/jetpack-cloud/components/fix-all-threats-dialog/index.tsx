@@ -115,6 +115,14 @@ const FixAllThreatsDialog = ( {
 								Go back
 							</Button>
 						) }
+						{ firstStep === currentStep && (
+							<Button
+								className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
+								onClick={ onCloseDialog }
+							>
+								{ translate( 'Cancel' ) }
+							</Button>
+						) }
 						<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
 							Fix all threats
 						</Button>
