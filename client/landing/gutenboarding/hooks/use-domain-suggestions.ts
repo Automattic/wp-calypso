@@ -11,7 +11,7 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { DOMAIN_SUGGESTION_VENDOR, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
-import { domainTldsByCategory } from '../domains';
+import { domainTldsByCategory } from '../domains-constants';
 
 export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 	const { siteTitle, siteVertical, domainSearch, domainCategory } = useSelect( ( select ) =>

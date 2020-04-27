@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import type { ValuesType } from 'utility-types';
+
 export const domainTldsByCategory = {
 	Popular: [ 'com', 'net', 'org' ],
 	'Arts & Creative': [
@@ -462,6 +467,9 @@ export const domainTldsByCategory = {
 		'voyage',
 		'world',
 	],
-};
+} as const;
 
-export const domainCategories: Array< string > = Object.keys( domainTldsByCategory );
+export type DomainTLD = ValuesType< ValuesType< typeof domainTldsByCategory > >;
+export type DomainCategory = keyof typeof domainTldsByCategory;
+
+export const domainCategories = Object.keys( domainTldsByCategory ) as DomainCategory[];

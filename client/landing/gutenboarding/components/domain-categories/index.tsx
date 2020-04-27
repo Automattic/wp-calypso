@@ -9,7 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 
-import { domainCategories } from '../../domains';
+import { domainCategories, DomainCategory } from '../../domains-constants';
 
 /**
  * Style dependencies
@@ -17,7 +17,7 @@ import { domainCategories } from '../../domains';
 import './style.scss';
 
 export interface Props {
-	onSelect: ( domainCategory: string ) => void;
+	onSelect: ( domainCategory: DomainCategory ) => void;
 	selected?: string;
 }
 

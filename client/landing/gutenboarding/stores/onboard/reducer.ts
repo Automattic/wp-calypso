@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { SiteVertical, Design } from './types';
-import { OnboardAction } from './actions';
-import { FontPair } from 'landing/gutenboarding/constants';
+import type { SiteVertical, Design } from './types';
+import type { OnboardAction } from './actions';
+import type { FontPair } from '../../constants';
+import type { DomainCategory } from '../../domains-constants';
 
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
@@ -37,7 +38,7 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const domainCategory: Reducer< string, OnboardAction > = ( state = 'Popular', action ) => {
+const domainCategory: Reducer< DomainCategory, OnboardAction > = ( state = 'Popular', action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}
