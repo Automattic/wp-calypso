@@ -10,7 +10,8 @@ import debugFactory from 'debug';
 import {
 	prepareRequestCart,
 	ResponseCart,
-	ResponseCartProduct,
+	RequestCart,
+	RequestCartProduct,
 	emptyResponseCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
@@ -73,7 +74,7 @@ const getInitialShoppingCartHookState: () => ShoppingCartHookState = () => {
 
 type ShoppingCartHookAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
-	| { type: 'ADD_CART_ITEM'; responseCartProductToAdd: ResponseCartProduct }
+	| { type: 'ADD_CART_ITEM'; requestCartProductToAdd: RequestCartProduct }
 	| { type: 'SET_LOCATION'; location: CartLocation }
 	| {
 			type: 'REPLACE_CART_ITEM';
@@ -108,11 +109,11 @@ function shoppingCartHookReducer(
 			};
 		}
 		case 'ADD_CART_ITEM': {
-			const responseCartProductToAdd = action.responseCartProductToAdd;
-			debug( 'adding item to cart', responseCartProductToAdd );
+			const { requestCartProductToAdd } = action;
+			debug( 'adding item to cart', requestCartProductToAdd );
 			return {
 				...state,
-				responseCart: addItemToResponseCart( state.responseCart, responseCartProductToAdd ),
+				responseCart: addItemToResponseCart( state.responseCart, requestCartProductToAdd ),
 				cacheStatus: 'invalid',
 			};
 		}
@@ -296,13 +297,13 @@ export interface ShoppingCartManager {
 	subtotal: CheckoutCartItem;
 	couponItem: WPCOMCartCouponItem;
 	credits: CheckoutCartItem;
-	addItem: ( ResponseCartProduct ) => void;
-	removeItem: ( string ) => void;
-	submitCoupon: ( string ) => void;
+	addItem: ( arg0: RequestCartProduct ) => void;
+	removeItem: ( arg0: string ) => void;
+	submitCoupon: ( arg0: string ) => void;
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	couponCode: string | null;
-	updateLocation: ( CartLocation ) => void;
+	updateLocation: ( arg0: CartLocation ) => void;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	responseCart: ResponseCart;
@@ -453,11 +454,14 @@ export function useShoppingCart(
 		hookDispatch
 	);
 
-	const addItem: ( ResponseCartProduct ) => void = useCallback( ( responseCartProductToAdd ) => {
-		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
-	}, [] );
+	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
+		( requestCartProductToAdd ) => {
+			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
+		},
+		[]
+	);
 
-	const removeItem: ( string ) => void = useCallback( ( uuidToRemove ) => {
+	const removeItem: ( arg0: string ) => void = useCallback( ( uuidToRemove ) => {
 		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 	}, [] );
 
@@ -469,11 +473,11 @@ export function useShoppingCart(
 		hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
 	}, [] );
 
-	const updateLocation: ( CartLocation ) => void = useCallback( ( location ) => {
+	const updateLocation: ( arg0: CartLocation ) => void = useCallback( ( location ) => {
 		hookDispatch( { type: 'SET_LOCATION', location } );
 	}, [] );
 
-	const submitCoupon: ( string ) => void = useCallback( ( newCoupon ) => {
+	const submitCoupon: ( arg0: string ) => void = useCallback( ( newCoupon ) => {
 		hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 	}, [] );
 
