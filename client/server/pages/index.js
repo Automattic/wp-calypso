@@ -328,7 +328,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
-			config.isEnabled( 'use-translation-chunks' ) || flags.includes( 'use-translation-chunks' ),
+			config.isEnabled( 'use-translation-chunks' ) ||
+			flags.includes( 'use-translation-chunks' ) ||
+			request.query.hasOwnProperty( 'useTranslationChunks' ),
 	} );
 
 	context.app = {

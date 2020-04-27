@@ -66,7 +66,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
-	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		/[?,&]useTranslationChunks(=.*)?$/.test( document.location.search );
+
+	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
 		const userLocaleSlug = currentUser && currentUser.localeSlug;
 		const lastPathSegment = window.location.pathname.substr(
 			window.location.pathname.lastIndexOf( '/' ) + 1

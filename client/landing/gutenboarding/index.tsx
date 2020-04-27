@@ -47,7 +47,9 @@ function generateGetSuperProps() {
 }
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
-const USE_TRANSLATION_CHUNKS: string = config.isEnabled( 'use-translation-chunks' );
+const USE_TRANSLATION_CHUNKS: string =
+	config.isEnabled( 'use-translation-chunks' ) ||
+	/[?,&]useTranslationChunks(=.*)?$/.test( document.location.search );
 
 type User = import('@automattic/data-stores').User.CurrentUser;
 

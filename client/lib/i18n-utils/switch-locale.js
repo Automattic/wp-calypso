@@ -258,10 +258,14 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		/[?,&]useTranslationChunks(=.*)?$/.test( document.location.search );
+
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
-	} else if ( config.isEnabled( 'use-translation-chunks' ) ) {
+	} else if ( useTranslationChunks ) {
 		// If requested locale is same as current locale, we don't need to
 		// re-fetch the manifest and translation chunks.
 		if ( localeSlug === i18n.getLocaleSlug() ) {
