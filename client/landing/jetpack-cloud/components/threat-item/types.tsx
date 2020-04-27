@@ -19,7 +19,7 @@ export type ThreatFix = {
 export type ThreatStatus = 'fixed' | 'ignored' | 'current';
 
 // @todo: make the history API response use a number for a threat ID instead of a string
-export type Threat = {
+export interface BaseThreat {
 	id: number;
 	signature: string;
 	description: string;
@@ -32,4 +32,14 @@ export type Threat = {
 	rows?: number;
 	diff?: string;
 	context?: object;
-};
+}
+
+export interface FixableThreat extends BaseThreat {
+	fixable: ThreatFix;
+}
+
+export interface IgnorableThreat extends BaseThreat {
+	fixable: false;
+}
+
+export type Threat = IgnorableThreat | FixableThreat;
