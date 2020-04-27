@@ -1,134 +1,108 @@
-$timeline-spot-color: #320467;
-$timeline-border-width: 4px;
-$timeline-gutter: 24px;
+/**
+ * Timeline Block styles.
+ */
+
+// Variables.
 $timeline-width: 36px;
-$timeline-dot-size: 16px;
-$timeline-bubble-connector-width: 6px;
-$timeline-bubble-connector-height: 12px;
+$timeline-gutter: 24px;
+$timeline-border-width: 4px;
 
 // Styles shared between editor and frontend.
 .wp-block-jetpack-timeline {
-	margin: 0;
-	padding: 0;
 
-	li {
+	// This padding needs extra specificity.
+	&.wp-block-jetpack-timeline {
+		margin: 0;
+		padding: 0;
+	}
+
+	li.wp-block-jetpack-timeline-item {
 		list-style-type: none;
 		position: relative;
-		padding: 12px 24px;
-		border-radius: 4px;
+		padding: 1em 2em;
+
+		// Make the spacing between items consistent so we can connect the timeline
+		margin-bottom: $timeline-width;
+
+		// Make room for the timeline.
 		margin-left: $timeline-width;
 
-		// Note, this needs extra specificity in the editor, so there's an additional style there.
-		margin-bottom: $timeline-gutter;
-
-		// Draw the bubble connector.
+		// Draw the line connecting to the timeline.
 		.timeline-item__bubble {
 			display: block;
-			width: 0;
-			height: 0;
-			border-top: ( $timeline-bubble-connector-height / 2 ) solid transparent !important; // We use !important here to be able to use "borderColor" instead of "borderColorRight" in code, thus enabling RTL.
-			border-right: $timeline-bubble-connector-width solid #eee;
-			border-bottom: ( $timeline-bubble-connector-height / 2 ) solid transparent !important;
+			width: $timeline-width;
+			height: $timeline-border-width;
+			background-color: currentColor;
 			position: absolute;
 			top: 50%;
-			transform: translateY( -( $timeline-bubble-connector-height / 2 ) );
-			left: -$timeline-bubble-connector-width;
+			transform: translateY( -( $timeline-border-width / 2 ) );
+			left: -$timeline-width;
 		}
 
-		// Draw the vertical line.
+		// Draw the vertical timeline line.
 		.timeline-item::after {
 			content: '';
 			display: block;
-			background: $timeline-spot-color;
+			background: currentColor;
 			position: absolute;
-			left: ( -$timeline-width / 2 ) - ( $timeline-border-width / 2 );
-			top: -$timeline-gutter;
-			bottom: -$timeline-gutter;
+			left: -$timeline-width;
+			top: -$timeline-width;
+			bottom: -$timeline-width;
 			width: $timeline-border-width;
 		}
-
-		// Add special timeline starting point and end point.
-		// Note, editor.scss has separate code for this.
-		&.wp-block-jetpack-timeline-item {
-			// First instance.
-			&:first-child .timeline-item::after {
-				top: 50%;
-			}
-
-			// Last instance.
-			&:last-child .timeline-item::after {
-				bottom: 50%;
-			}
-		}
-
-		// Draw a timeline circle dot.
-		.timeline-item__dot {
-			display: block;
-			border: $timeline-border-width solid $timeline-spot-color;
-			width: $timeline-dot-size;
-			height: $timeline-dot-size;
-			position: absolute;
-			z-index: 1;
-			border-radius: 50%;
-			top: 50%;
-			transform: translateY( -#{$timeline-dot-size / 2} );
-			left: -( $timeline-width / 2 ) - ( $timeline-dot-size / 2 );
-			box-sizing: border-box;
-
-			// Fallback background color.
-			background-color: #fff;
-		}
 	}
+
+	// Add special timeline starting point and end point.
+	[data-type='jetpack/timeline-item']:first-child .timeline-item::after, // Editor
+	& > li.wp-block-jetpack-timeline-item:first-child .timeline-item::after { // Frontend
+		top: 50%;
+	}
+
+	[data-type='jetpack/timeline-item']:nth-last-child( 2 )  .timeline-item::after, // Editor, is the 2nd last child here
+	& > li.wp-block-jetpack-timeline-item:last-child .timeline-item::after { // Frontend
+		bottom: 50%;
+	}
+
 }
 
 
-// Alternating bubbles.
-// Some CSS here is specific to both editor and frontend.
+/**
+ * Alternating Bubbles
+ */
+
+
 @media only screen and ( min-width: 640px ) {
-	.wp-block .wp-block-jetpack-timeline {
+	ul.wp-block-jetpack-timeline {
 		display: flex;
 		flex-direction: column;
 
 		// Bubbles.
-		.wp-block[data-type='jetpack/timeline-item'], // Editor.
-		.wp-block.wp-block-jetpack-timeline-item { // Frontend.
-			width: calc( 50% + #{ $timeline-width - 3 } ); // 33px makes them align. Not sure where the 3px come from.
+		.wp-block-jetpack-timeline-item {
+			width: calc( 50% - #{ $timeline-width } + #{ $timeline-border-width / 2 } );
 		}
 
-		[data-type='jetpack/timeline-item']:nth-child( odd ), // Editor.
-		.wp-block-jetpack-timeline-item:nth-child( odd ) { // Frontend.
+		// Left aligned.
+		[data-type='jetpack/timeline-item']:nth-child( odd ) .wp-block-jetpack-timeline-item, // Editor
+		& > .wp-block-jetpack-timeline-item:nth-child( odd ) { // Frontend
 			margin-left: 0;
 			margin-right: auto;
 
-			// Override the bubble connector.
-			li {
-				margin-left: 0;
-				margin-right: $timeline-width;
-		
-				// Draw the bubble connector.
-				.timeline-item__bubble {
-					border-left: $timeline-bubble-connector-width solid #eee;
-					border-right: none;
-					right: -$timeline-bubble-connector-width;
-					left: auto;
-				}
-		
-				// Draw the vertical line.
-				.timeline-item::after {
-					right: ( -$timeline-width / 2 ) - ( $timeline-border-width / 2 );
-					left: auto;
-				}
-	
-				// Draw a timeline circle dot.
-				.timeline-item__dot {
-					right: -( $timeline-width / 2 ) - ( $timeline-dot-size / 2 );
-					left: auto;
-				}
+			// Adjust the the line connecting to the timeline.
+			.timeline-item__bubble {
+				left: auto;
+				right: -$timeline-width;
+			}
+
+			// Adjust the vertical line.
+			.timeline-item::after {
+				left: auto;
+				right: -$timeline-width;
 			}
 		}
 
-		[data-type='jetpack/timeline-item']:nth-child( even ), // Editor.
-		.wp-block-jetpack-timeline-item:nth-child( even ) { // Frontend.
+		// Right aligned.
+		[data-type='jetpack/timeline-item']:nth-child( even ) .wp-block-jetpack-timeline-item, // Editor
+		.wp-block-jetpack-timeline-item:nth-child( even ) { // Frontend
 			margin-left: auto;
 			margin-right: 0;
 		}

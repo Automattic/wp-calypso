@@ -28,7 +28,8 @@ export function registerTimelineItemBlock() {
 			};
 
 			return (
-				<li style={ style }>
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				<li style={ style } className="wp-block-jetpack-timeline-item">
 					<InspectorControls>
 						<PanelColorSettings
 							title={ __( 'Color Settings', 'full-site-editing' ) }
