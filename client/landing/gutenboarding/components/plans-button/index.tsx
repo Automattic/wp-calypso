@@ -24,7 +24,9 @@ import './style.scss';
 const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
 	const { __ } = useI18n();
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
-	const isDesktop = useViewportMatch( 'mobile' );
+
+	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
+	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
 	const planLabel =
 		/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
