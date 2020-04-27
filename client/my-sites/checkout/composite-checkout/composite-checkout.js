@@ -26,7 +26,11 @@ import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkou
  * Internal dependencies
  */
 import { requestPlans } from 'state/plans/actions';
-import { computeProductsWithPrices, isProductsListFetching } from 'state/products-list/selectors';
+import {
+	computeProductsWithPrices,
+	getProductsList,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
@@ -59,6 +63,7 @@ import useCreatePaymentMethods from './use-create-payment-methods';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import createContactValidationCallback from './contact-validation';
+import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -190,6 +195,7 @@ export default function CompositeCheckout( {
 		variantRequestStatus,
 		variantSelectOverride,
 		responseCart,
+		addItem,
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
@@ -320,6 +326,15 @@ export default function CompositeCheckout( {
 		plan
 	);
 
+	const products = useSelector( ( state ) => getProductsList( state ) );
+
+	// Often products are added using just the product_slug but missing the
+	// product_id; this adds it.
+	const addItemWithEssentialProperties = useCallback(
+		( cartItem ) => addItem( fillInSingleCartItemAttributes( cartItem, products ) ),
+		[ addItem, products ]
+	);
+
 	return (
 		<React.Fragment>
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
@@ -357,6 +372,7 @@ export default function CompositeCheckout( {
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
 					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
 					CheckoutTerms={ CheckoutTerms }
 				/>
