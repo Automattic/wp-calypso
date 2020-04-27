@@ -14,6 +14,7 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { Button } from '@automattic/components';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
@@ -808,6 +809,30 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	renderSwitchSites() {
+		const { translate } = this.props;
+
+		if ( this.props.currentUser.site_count < 2 ) {
+			return null;
+		}
+
+		return (
+			<span className="sidebar__switch-sites">
+				<Button borderless onClick={ this.switchSites }>
+					<Gridicon icon="chevron-left" size={ 18 } />
+					<span className="sidebar__switch-sites-label">{ translate( 'Switch site' ) }</span>
+				</Button>
+			</span>
+		);
+	}
+
+	switchSites = ( event ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		this.props.setLayoutFocus( 'sites' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
+	};
+
 	render() {
 		return (
 			<Sidebar>
@@ -815,7 +840,10 @@ export class MySitesSidebar extends Component {
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
-				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
+				<SidebarFooter>
+					{ this.addNewSite() }
+					{ this.renderSwitchSites() }
+				</SidebarFooter>
 			</Sidebar>
 		);
 	}
