@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/jetpack-redirects",
+	"version": "1.0.0",
+	"description": "Jetpack Redirects helper",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"wordpress",
+		"jetpack"
+	],
+	"author": "Automattic Inc.",
+	"contributors": [
+		"leogermani"
+	],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/jetpack-redirects"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
+	}
+}
