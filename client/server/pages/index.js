@@ -391,37 +391,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const setupRequests = [];
-
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		const target = getBuildTargetFromRequest( req );
-		const rootPath = path.join( __dirname, '..', '..', '..' );
-		const langRevisionsPath = path.join(
-			rootPath,
-			'public',
-			target,
-			'languages',
-			'lang-revisions.json'
-		);
-		const langPromise = fs.promises
-			.readFile( langRevisionsPath, 'utf8' )
-			.then( ( languageRevisions ) => {
-				req.context.languageRevisions = filterLanguageRevisions( JSON.parse( languageRevisions ) );
-
-				return languageRevisions;
-			} )
-			.catch( ( error ) => {
-				console.error( 'Failed to read the language revision files.', error );
-
-				throw error;
-			} );
-
-		setupRequests.push( langPromise );
-	}
-
-	Promise.all( setupRequests )
-		.then( () => next() )
-		.catch( ( error ) => next( error ) );
+	next();
 }
 
 function setUpLoggedInRoute( req, res, next ) {
@@ -446,7 +416,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		const langPromise = fs.promises
 			.readFile( langRevisionsPath, 'utf8' )
 			.then( ( languageRevisions ) => {
-				req.context.languageRevisions = filterLanguageRevisions( JSON.parse( languageRevisions ) );
+				req.context.languageRevisions = languageRevisions;
 
 				return languageRevisions;
 			} )
