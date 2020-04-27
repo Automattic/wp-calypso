@@ -13,6 +13,7 @@ import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering
 import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts';
+import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import Webinar from 'my-sites/customer-home/cards/tasks/webinar';
 import config from 'config';
 
@@ -25,7 +26,8 @@ const cardComponents = {
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 	'home-task-site-setup-checklist': ChecklistSiteSetup,
 	'home-task-connect-accounts': ConnectAccounts,
-	'home-task-webinar': Webinar,
+	'home-task-find-domain': FindDomain,
+  'home-task-webinar': Webinar,
 };
 
 const Primary = ( { checklistMode, cards } ) => {

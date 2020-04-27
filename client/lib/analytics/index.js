@@ -1,15 +1,10 @@
 /**
- * External dependencies
- */
-import debug from 'debug';
-
-/**
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
 import { urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
-import { retarget as retargetAdTrackers, recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
+import { retarget as retargetAdTrackers } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { trackAffiliateReferral } from './refer';
 import { gaRecordPageView } from './ga';
@@ -17,33 +12,12 @@ import { processQueue } from './queue';
 import {
 	recordTracksEvent,
 	analyticsEvents,
-	initializeAnalytics,
-	identifyUser,
-	getTracksAnonymousUserId,
 	recordTracksPageView,
-	getCurrentUser,
 	recordTracksPageViewWithPageParams,
 	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
 
-/**
- * Module variables
- */
-const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-
 const analytics = {
-	initialize: function ( currentUser, superProps ) {
-		return initializeAnalytics( currentUser, superProps ).then( () => {
-			const user = getCurrentUser();
-
-			// This block is neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
-			if ( 'object' === typeof currentUser && user && getTracksAnonymousUserId() ) {
-				identifyUserDebug( 'recordAliasInFloodlight', user );
-				recordAliasInFloodlight();
-			}
-		} );
-	},
-
 	// pageView is a wrapper for pageview events across Tracks and GA.
 	pageView: {
 		record: function ( urlPath, pageTitle, params = {} ) {
@@ -109,25 +83,6 @@ const analytics = {
 				trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } );
 			}
 		},
-	},
-
-	identifyUser: function ( userData ) {
-		identifyUser( userData );
-
-		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
-		const user = getCurrentUser();
-		if ( 'object' === typeof userData && user && getTracksAnonymousUserId() ) {
-			identifyUserDebug( 'recordAliasInFloodlight', user );
-			recordAliasInFloodlight();
-		}
-	},
-
-	setProperties: function ( properties ) {
-		pushEventToTracksQueue( [ 'setProperties', properties ] );
-	},
-
-	clearedIdentity: function () {
-		pushEventToTracksQueue( [ 'clearIdentity' ] );
 	},
 };
 

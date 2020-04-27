@@ -5,10 +5,6 @@ import * as React from 'react';
 import { Button, Popover } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 import config from 'config';
-
-// Core package needs to add this to the type definitions.
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useViewportMatch } from '@wordpress/compose';
 
 /**

@@ -20,6 +20,18 @@ const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress
 		return null;
 	}
 
+	if ( progress ) {
+		return (
+			<Badge type="success">
+				{ translate( '%(number)d %', {
+					args: {
+						number: progress,
+					},
+				} ) }
+			</Badge>
+		);
+	}
+
 	if ( numberOfThreatsFound ) {
 		return (
 			<Badge type="error">
@@ -33,18 +45,6 @@ const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress
 		);
 	}
 
-	if ( 100 !== progress ) {
-		// No need to show a badge when there is no progress.
-		return (
-			<Badge type="success">
-				{ translate( '%(number)d %', {
-					args: {
-						number: progress,
-					},
-				} ) }
-			</Badge>
-		);
-	}
 	return null;
 };
 

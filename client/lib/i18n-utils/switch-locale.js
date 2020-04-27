@@ -161,7 +161,10 @@ export function getLanguageManifestFileUrl( {
  * @returns {Promise} Language manifest json content
  */
 export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
-	if ( window?.i18nLanguageManifest ) {
+	if (
+		window?.i18nLanguageManifest &&
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
+	) {
 		return Promise.resolve( window.i18nLanguageManifest );
 	}
 
@@ -249,15 +252,40 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
-	// Todo: Handle switch locale with translation chunks
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		setLocaleInDOM();
-		return;
-	}
-
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
+	} else if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		// If requested locale is same as current locale, we don't need to
+		// re-fetch the manifest and translation chunks.
+		if ( localeSlug === i18n.getLocaleSlug() ) {
+			setLocaleInDOM();
+			return;
+		}
+
+		// Switching locale with translation chunks will require to fetch
+		// the manifest and all installed translation chunks for
+		// the requested locale
+		getLanguageManifestFile( localeSlug, window.BUILD_TARGET )
+			.then( ( { translatedChunks, locale } ) => {
+				const installedChunks = new Set(
+					( window.installedChunks || [] )
+						.concat( window.__requireChunkCallback__.getInstalledChunks() )
+						.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
+				);
+				const chunksPromises = [ ...installedChunks ].map( ( chunkId ) =>
+					getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET )
+				);
+
+				return Promise.all( [ Promise.resolve( locale ), ...chunksPromises ] );
+			} )
+			.then( ( localeArray ) => {
+				const body = localeArray.reduce( ( acc, item ) => ( { ...acc, ...item } ), {} );
+
+				i18n.setLocale( body );
+				setLocaleInDOM();
+				loadUserUndeployedTranslations( localeSlug );
+			} );
 	} else {
 		getLanguageFile( localeSlug ).then(
 			// Success.

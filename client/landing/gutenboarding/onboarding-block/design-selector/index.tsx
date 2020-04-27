@@ -29,7 +29,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
 
 	const getDesignUrl = ( design: Design ) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
@@ -59,7 +59,6 @@ const DesignSelector: React.FunctionComponent = () => {
 				</div>
 				<Link
 					className="design-selector__start-over-button"
-					onClick={ () => resetOnboardStore() }
 					to={ makePath( Step.IntentGathering ) }
 					isLink
 				>

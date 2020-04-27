@@ -45,16 +45,3 @@ body.is-fullscreen-mode {
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
 }
-
-// The parent element .edit-post-header__toolbar provides
-// a padding-left of 24px. However, the right side of the header
-// only has a padding-right of 16px.
-//
-// To make the toolbar buttons look more balanced, an left offset of -8px
-// is added to this custom block inserter button (24px - 16px = 8px). This
-// -8px offset also contributes in solving spacing issue in mobile/tablet view.
-//
-// Specific to Gutenberg >= 7.7.
-.block-editor-editor-skeleton__header .block-editor-inserter__toggle {
-	margin-left: -8px;
-}
