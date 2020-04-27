@@ -5,11 +5,19 @@
 		// filterbar button stylings
 		.filterbar__wrap {
 			button.filterbar__selection {
+				// is-active is when the popover is expanded, but there is not a selection
 				&.is-selected,
 				&.is-active {
 					border: 1px solid var( --color-neutral-60 );
+
+					// we need to override these hover styles as well
+					&:hover {
+						color: var( --color-text-inverted );
+						background-color: var( --color-neutral-60 );
+					}
 				}
 
+				// is-selected is when there is a selection and a cancel button is rendered to the right
 				&.is-selected {
 					margin-right: 0;
 					border-radius: 3px 0 0 3px;
@@ -31,6 +39,7 @@
 				border: 1px solid var( --color-neutral-60 );
 				background-color: var( --color-neutral-60 );
 				color: var( --color-text-inverted );
+				padding-right: 8px;
 			}
 		}
 	}
