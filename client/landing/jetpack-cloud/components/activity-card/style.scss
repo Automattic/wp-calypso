@@ -45,11 +45,21 @@
 }
 
 .activity-card__activity-title {
+	margin: 16px 0;
 	font-style: italic;
 }
 
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
+	font-size: 16px;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 18px;
+	}
+}
+
+.activity-card__activity-media {
+	margin-bottom: 16px;
 }
 
 .activity-card__activity-actions,

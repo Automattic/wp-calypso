@@ -129,7 +129,7 @@ class ActivityCard extends Component {
 					onClick={ this.toggleSeeContent }
 					onKeyDown={ this.onSpace( this.toggleSeeContent ) }
 				>
-					{ translate( 'See content' ) }
+					{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
 					<Gridicon
 						size={ 18 }
 						icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
@@ -247,6 +247,7 @@ class ActivityCard extends Component {
 					<div className="activity-card__activity-description">
 						{ activityMedia && activityMedia.available && (
 							<ActivityMedia
+								className="activity-card__activity-media"
 								name={ activityMedia.name }
 								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
 								fullImage={ false }
