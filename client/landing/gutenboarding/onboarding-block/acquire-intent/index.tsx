@@ -17,6 +17,7 @@ import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import Arrow from './arrow';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { recordButtonClick } from '../../lib/analytics/index';
 
 /**
  * Style dependencies
@@ -35,6 +36,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
 
 	useTrackStep( 'IntentGathering' );
+
+	const onNextClick = () => {
+		recordButtonClick( 'IntentGathering', siteTitle ? 'next' : 'skip' );
+	};
 
 	return (
 		<div
@@ -61,6 +66,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 						<Link
 							className="acquire-intent__question-skip"
 							isPrimary
+							onClick={ onNextClick }
 							to={ siteVertical && makePath( Step.DesignSelection ) }
 						>
 							{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }

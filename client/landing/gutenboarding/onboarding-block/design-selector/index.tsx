@@ -18,6 +18,7 @@ import Link from '../../components/link';
 import { SubTitle, Title } from '../../components/titles';
 import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
+import { recordButtonClick } from '../../lib/analytics';
 
 type Design = import('../../stores/onboard/types').Design;
 
@@ -47,7 +48,10 @@ const DesignSelector: React.FunctionComponent = () => {
 		} );
 		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
-
+	const onBackClick = () => {
+		recordButtonClick( 'DesignSelection', 'back' );
+		resetOnboardStore();
+	};
 	return (
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
@@ -59,7 +63,7 @@ const DesignSelector: React.FunctionComponent = () => {
 				</div>
 				<Link
 					className="design-selector__start-over-button"
-					onClick={ () => resetOnboardStore() }
+					onClick={ onBackClick }
 					to={ makePath( Step.IntentGathering ) }
 					isLink
 				>
@@ -73,6 +77,8 @@ const DesignSelector: React.FunctionComponent = () => {
 							key={ design.slug }
 							className="design-selector__design-option"
 							onClick={ () => {
+								recordButtonClick( 'DesignSelection', 'select_design' );
+
 								setSelectedDesign( design );
 
 								// Update fonts to the design defaults

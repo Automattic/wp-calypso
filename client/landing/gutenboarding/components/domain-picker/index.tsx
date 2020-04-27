@@ -22,7 +22,11 @@ import {
 } from '../../utils/domain-suggestions';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
+import {
+	getNewRailcarId,
+	RecordTrainTracksEventProps,
+	recordButtonClick,
+} from '../../lib/analytics';
 import { useTrackModal } from '../../hooks/use-track-modal';
 
 /**
@@ -99,13 +103,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
 
+	const onConfirmClick = () => {
+		recordButtonClick( 'DomainPicker', 'confirm' );
+		onClose();
+	};
+
 	const ConfirmButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
 		return (
 			<Button
 				className="domain-picker__confirm-button"
 				isPrimary
 				disabled={ ! hasSuggestions }
-				onClick={ onClose }
+				onClick={ onConfirmClick }
 				{ ...props }
 			>
 				{ __( 'Confirm' ) }

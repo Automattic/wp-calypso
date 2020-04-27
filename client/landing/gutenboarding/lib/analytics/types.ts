@@ -1,3 +1,5 @@
+export type ModalNameType = 'DomainPicker';
+
 export interface ErrorParameters {
 	/**
 	 * A unique string in snakecase describing the error event.

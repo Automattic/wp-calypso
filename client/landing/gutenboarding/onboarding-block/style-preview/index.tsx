@@ -21,6 +21,7 @@ import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { recordButtonClick } from '../../lib/analytics';
 
 import './style.scss';
 
@@ -58,6 +59,11 @@ const StylePreview: React.FunctionComponent = () => {
 		[ createSite, freeDomainSuggestion ]
 	);
 
+	const onContinueClick = () => {
+		recordButtonClick( 'Signup', 'continue' );
+		currentUser ? handleCreateSite( currentUser.username ) : handleSignup();
+	};
+
 	return (
 		<div className="gutenboarding-page style-preview">
 			<div className="style-preview__header">
@@ -69,7 +75,13 @@ const StylePreview: React.FunctionComponent = () => {
 				</div>
 				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 				<div className="style-preview__actions">
-					<Link isLink to={ makePath( Step.DesignSelection ) }>
+					<Link
+						isLink
+						to={ makePath( Step.DesignSelection ) }
+						onClick={ () => {
+							recordButtonClick( 'Signup', 'back' );
+						} }
+					>
 						{ __( 'Choose another design' ) }
 					</Link>
 					{ hasSelectedDesign && (
@@ -77,9 +89,7 @@ const StylePreview: React.FunctionComponent = () => {
 							className="style-preview__actions-continue-button"
 							isPrimary
 							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
+							onClick={ onContinueClick }
 						>
 							{ __( 'Continue' ) }
 						</Button>

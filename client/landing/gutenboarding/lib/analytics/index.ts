@@ -10,7 +10,7 @@ import { DependencyList } from 'react';
  */
 import { FLOW_ID } from '../../constants';
 import { StepNameType } from '../../path';
-import { ErrorParameters, OnboardingCompleteParameters } from './types';
+import { ErrorParameters, OnboardingCompleteParameters, ModalNameType } from './types';
 
 /**
  * Make tracks call with embedded flow.
@@ -127,7 +127,7 @@ export function getNewRailcarId( suffix = 'suggestion' ) {
  * @param modalName The name of the modal to record in tracks
  * @param eventProperties Additional properties to record on closing the modal
  */
-export function recordCloseModal( modalName: string, eventProperties?: DependencyList ) {
+export function recordCloseModal( modalName: ModalNameType, eventProperties?: DependencyList ) {
 	trackEventWithFlow( 'calypso_signup_modal_close', {
 		name: modalName,
 		...eventProperties,
@@ -139,7 +139,7 @@ export function recordCloseModal( modalName: string, eventProperties?: Dependenc
  *
  * @param modalName The name of the modal to record in tracks
  */
-export function recordEnterModal( modalName: string ) {
+export function recordEnterModal( modalName: ModalNameType ) {
 	trackEventWithFlow( 'calypso_signup_modal_open', {
 		name: modalName,
 	} );
@@ -166,5 +166,21 @@ export function recordLeaveStep( stepName: StepNameType, eventProperties?: Depen
 export function recordEnterStep( stepName: StepNameType ) {
 	trackEventWithFlow( 'calypso_signup_step_enter', {
 		step: stepName,
+	} );
+}
+
+/**
+ * Records a button being clicked
+ *
+ * @param stepOrModalName The step that the user was on or the modal that they had open
+ * @param buttonName An identifier for the button that was clicked
+ */
+export function recordButtonClick(
+	stepOrModalName: StepNameType | ModalNameType,
+	buttonName: string
+) {
+	trackEventWithFlow( 'calypso_button_clicked', {
+		step_or_modal: stepOrModalName,
+		button: buttonName,
 	} );
 }
