@@ -30,12 +30,17 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 .gutenboarding__header-section {
 	display: flex;
+	width: 100%;
 	align-items: center;
 	font-size: 14px;
 }
 
 .gutenboarding__header-section-item {
 	margin-left: $margin-left--gutenboarding__header-section-item;
+
+	&--right {
+		margin-left: auto;
+	}
 }
 
 .gutenboarding__header-wp-logo {
