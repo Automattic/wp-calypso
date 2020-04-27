@@ -9,7 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
-	CheckoutSummary,
+	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	useIsStepComplete,
@@ -218,7 +218,7 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryUI = styled( CheckoutSummary )`
+const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
 	display: none;
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {

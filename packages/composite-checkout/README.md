@@ -48,7 +48,8 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
  - [useTotal](#useTotal)
 
 The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
- - [CheckoutSummary](#CheckoutSummary) (optional) can be used to render a summary that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
  - [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
  - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
  - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
@@ -200,11 +201,15 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
 
-### CheckoutSummary
+### CheckoutSummaryArea
 
 Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
+
+### CheckoutSummaryCard
+
+Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
 
 ### OrderReviewLineItems
 
