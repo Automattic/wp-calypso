@@ -399,20 +399,20 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
 export function useShoppingCart(
 	cartKey: string | null,
 	canInitializeCart: boolean,
-	productsToAdd: ResponseCartProduct[] | null,
+	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
-	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
-	getCart: ( string ) => Promise< ResponseCart >,
-	translate: ( string ) => string,
-	showAddCouponSuccessMessage: ( string ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	setCart: ( arg0: string, arg1: RequestCart ) => Promise< ResponseCart >,
+	getCart: ( arg0: string ) => Promise< ResponseCart >,
+	translate: ( arg0: string ) => string,
+	showAddCouponSuccessMessage: ( arg0: string ) => void,
+	onEvent?: ( arg0: ReactStandardAction ) => void
 ): ShoppingCartManager {
-	cartKey = cartKey || 'no-site';
-	const setServerCart = useCallback( ( cartParam ) => setCart( cartKey, cartParam ), [
-		cartKey,
+	const cartKeyString: string = cartKey || 'no-site';
+	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
+		cartKeyString,
 		setCart,
 	] );
-	const getServerCart = useCallback( () => getCart( cartKey ), [ cartKey, getCart ] );
+	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
 
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartHookReducer,
@@ -512,12 +512,12 @@ export function useShoppingCart(
 function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
 	canInitializeCart: boolean,
-	productsToAdd: ResponseCartProduct[] | null,
+	productsToAdd: RequestCartProduct[] | null,
 	couponToAdd: string | null,
 	getServerCart: () => Promise< ResponseCart >,
-	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( ShoppingCartHookAction ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
+	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
 	const isInitialized = useRef( false );
 	useEffect( () => {
