@@ -199,11 +199,6 @@ class ScanPage extends Component< Props > {
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
-					stats={ [
-						{ name: 'Files', number: 1201 },
-						{ name: 'Plugins', number: 4 },
-						{ name: 'Themes', number: 3 },
-					] }
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
 					noticeLink="https://jetpack.com/upgrade/backup"
 				/>
