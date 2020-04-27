@@ -226,8 +226,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
 						) }
 					</span>
-					<div className="vertical-select__suggestions">
-						{ !! verticals.length && (
+					{ !! suggestions.length && (
+						<div className="vertical-select__suggestions">
 							<Suggestions
 								ref={ suggestionRef }
 								query={ inputText }
@@ -235,8 +235,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 								suggest={ handleSuggestAction }
 								title={ __( 'Suggestions' ) }
 							/>
-						) }
-					</div>
+						</div>
+					) }
 				</span>
 			),
 		}
