@@ -166,7 +166,7 @@ export function attachI18n( context ) {
 			localeSlug: context.lang,
 			fileType: 'js',
 			targetBuild: context.target,
-			hash: context.commitSha,
+			hash: context?.languageRevisions?.hashes?.[ context.lang ],
 		} );
 
 		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
@@ -181,7 +181,7 @@ export function attachI18n( context ) {
 					localeSlug: context.lang,
 					fileType: 'js',
 					buildTarget: context.target,
-					hash: context.commitSha,
+					hash: context?.languageRevisions?.hashes?.[ context.lang ],
 				} )
 			);
 	}

@@ -168,7 +168,7 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
 		localeSlug,
 		fileType: 'json',
 		targetBuild,
-		hash: window.COMMIT_SHA || null,
+		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
 	} );
 
 	return getFile( url );
@@ -224,7 +224,7 @@ export function getTranslationChunkFile( chunkId, localeSlug, buildTarget = 'eve
 		localeSlug,
 		fileType: 'json',
 		buildTarget,
-		hash: window.COMMIT_SHA || null,
+		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
 	} );
 
 	return getFile( url );
