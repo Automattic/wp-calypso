@@ -21,7 +21,6 @@ import type {
 } from './types/backend/shopping-cart-endpoint';
 import {
 	emptyResponseCart,
-	prepareRequestCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
 	replaceItemInResponseCart,
@@ -29,7 +28,8 @@ import {
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-	processRawResponse,
+	convertRawResponseCartToResponseCart,
+	convertResponseCartToRequestCart,
 } from './types/backend/shopping-cart-endpoint';
 import type {
 	DomainContactDetails,
@@ -92,7 +92,7 @@ export {
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	emptyResponseCart,
-	prepareRequestCart,
+	convertResponseCartToRequestCart,
 	removeItemFromResponseCart,
 	addItemToResponseCart,
 	replaceItemInResponseCart,
@@ -100,7 +100,7 @@ export {
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-	processRawResponse,
+	convertRawResponseCartToResponseCart,
 	emptyWPCOMCart,
 	getInitialWpcomStoreState,
 	emptyManagedContactDetails,

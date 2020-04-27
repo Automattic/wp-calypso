@@ -33,6 +33,7 @@ export interface RequestCart {
 	is_coupon_applied: boolean;
 	temporary: false;
 	extra: string;
+	is_update?: boolean;
 }
 
 /**
@@ -135,36 +136,37 @@ interface RequestCartOptions {
 	is_update?: boolean;
 }
 
-export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
-	product_slug,
-	meta,
-	product_id,
-	extra,
-}: ResponseCartProduct ) => {
+export function convertResponseCartProductToRequestCartProduct(
+	product: ResponseCartProduct
+): RequestCartProduct {
+	const { product_slug, meta, product_id, extra } = product;
 	return {
 		product_slug,
 		meta,
 		product_id,
 		extra,
 	} as RequestCartProduct;
-};
+}
 
-export const prepareRequestCart: ( ResponseCart, RequestCartOptions ) => RequestCart = (
-	{ products, currency, locale, coupon, is_coupon_applied, tax }: ResponseCart,
-	{ is_update = false }: RequestCartOptions
-) => {
+export function convertResponseCartToRequestCart( {
+	products,
+	currency,
+	locale,
+	coupon,
+	is_coupon_applied,
+	tax,
+}: ResponseCart ): RequestCart {
 	return {
-		products: products.map( prepareRequestCartProduct ),
+		products: products.map( convertResponseCartProductToRequestCartProduct ),
 		currency,
 		locale,
 		coupon,
 		is_coupon_applied,
 		temporary: false,
 		tax,
-		is_update,
 		extra: '', // TODO: fix this
 	} as RequestCart;
-};
+}
 
 export function removeItemFromResponseCart(
 	cart: ResponseCart,
@@ -234,7 +236,9 @@ export interface CartLocation {
 	subdivisionCode: string | null;
 }
 
-export function processRawResponse( rawResponseCart ): ResponseCart {
+export function convertRawResponseCartToResponseCart(
+	rawResponseCart: ResponseCart
+): ResponseCart {
 	return {
 		...rawResponseCart,
 		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}

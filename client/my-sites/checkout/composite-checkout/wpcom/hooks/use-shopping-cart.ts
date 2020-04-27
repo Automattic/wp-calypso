@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	prepareRequestCart,
+	convertResponseCartToRequestCart,
 	ResponseCart,
 	RequestCart,
 	RequestCartProduct,
@@ -16,7 +16,7 @@ import {
 	removeItemFromResponseCart,
 	addItemToResponseCart,
 	replaceItemInResponseCart,
-	processRawResponse,
+	convertRawResponseCartToResponseCart,
 	addCouponToResponseCart,
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
@@ -27,7 +27,7 @@ import {
 	CheckoutCartItem,
 	CartLocation,
 } from '../types';
-import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
+import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
 
@@ -443,7 +443,7 @@ export function useShoppingCart(
 
 	// Translate the responseCart into the format needed in checkout.
 	const cart: WPCOMCart = useMemo(
-		() => translateWpcomCartToCheckoutCart( translate, responseCart ),
+		() => translateResponseCartToWPCOMCart( translate, responseCart ),
 		[ translate, responseCart ]
 	);
 
@@ -548,23 +548,23 @@ function useInitializeCartFromServer(
 						' and coupons',
 						couponToAdd
 					);
-					let updatedResponseCart = processRawResponse( response );
+					let responseCart = convertRawResponseCartToResponseCart( response );
 					if ( productsToAdd?.length ) {
-						updatedResponseCart = productsToAdd.reduce(
+						responseCart = productsToAdd.reduce(
 							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
-							updatedResponseCart
+							responseCart
 						);
 					}
 					if ( couponToAdd ) {
-						updatedResponseCart = addCouponToResponseCart( updatedResponseCart, couponToAdd );
+						responseCart = addCouponToResponseCart( responseCart, couponToAdd );
 					}
-					return setServerCart( prepareRequestCart( updatedResponseCart, {} ) );
+					return setServerCart( convertResponseCartToRequestCart( responseCart ) );
 				}
 				return response;
 			} )
 			.then( ( response ) => {
 				debug( 'initialized cart is', response );
-				const initialResponseCart = processRawResponse( response );
+				const initialResponseCart = convertRawResponseCartToResponseCart( response );
 				hookDispatch( {
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
 					initialResponseCart,
@@ -598,32 +598,34 @@ function useInitializeCartFromServer(
 function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
-	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( ShoppingCartHookAction ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
+	hookDispatch: ( arg0: ShoppingCartHookAction ) => void,
+	onEvent?: ( arg0: ReactStandardAction ) => void
 ): void {
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
 			return;
 		}
 
-		debug( 'sending edited cart to server', responseCart );
+		const requestCart = convertResponseCartToRequestCart( responseCart );
+		debug( 'sending edited cart to server', requestCart );
 
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
-		setServerCart( prepareRequestCart( responseCart, { is_update: true } ) )
+		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
+		setServerCart( { ...requestCart, is_update: true } )
 			.then( ( response ) => {
 				debug( 'updated cart is', response );
 				hookDispatch( {
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: processRawResponse( response ),
+					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
 				} );
 				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( ( error ) => {
-				// TODO: figure out what to do here
 				debug( 'error while fetching cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
+				// TODO: log the request (at least the products) so we can see why it failed
 				onEvent?.( {
 					type: 'CART_ERROR',
 					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
@@ -635,8 +637,8 @@ function useCartUpdateAndRevalidate(
 function useShowAddCouponSuccessMessage(
 	didAddCoupon: boolean,
 	responseCart: ResponseCart,
-	showAddCouponSuccessMessage: ( string ) => void,
-	hookDispatch: ( ShoppingCartHookAction ) => void
+	showAddCouponSuccessMessage: ( arg0: string ) => void,
+	hookDispatch: ( arg0: ShoppingCartHookAction ) => void
 ): void {
 	useEffect( () => {
 		if ( didAddCoupon ) {
