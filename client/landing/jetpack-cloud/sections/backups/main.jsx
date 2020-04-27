@@ -12,7 +12,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { updateFilter } from 'state/activity-log/actions';
+import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
@@ -43,6 +43,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
+import { emptyFilter } from 'state/activity-log/reducer';
 
 /**
  * Style dependencies
@@ -53,7 +54,10 @@ export const INDEX_FORMAT = 'YYYYMMDD';
 
 class BackupsPage extends Component {
 	componentDidMount() {
-		const { queryDate, moment } = this.props;
+		const { queryDate, moment, clearFilter, siteId } = this.props;
+
+		// filters in the global state are modified by other pages, we want to enter this page with is cleared
+		clearFilter( siteId );
 
 		// On first load, check if we have a selected date from the URL
 		if ( queryDate ) {
@@ -259,7 +263,6 @@ class BackupsPage extends Component {
 
 	render() {
 		const { filter } = this.props;
-
 		return (
 			<div className="backups__page">
 				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
@@ -363,6 +366,7 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
+	clearFilter: ( siteId ) => dispatch( setFilter( siteId, emptyFilter ) ),
 } );
 
 export default connect(
