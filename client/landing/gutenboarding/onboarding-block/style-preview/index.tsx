@@ -60,7 +60,7 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	const onContinueClick = () => {
-		recordButtonClick( 'Signup', 'continue' );
+		recordButtonClick( 'Style', 'continue' );
 		currentUser ? handleCreateSite( currentUser.username ) : handleSignup();
 	};
 
@@ -79,7 +79,7 @@ const StylePreview: React.FunctionComponent = () => {
 						isLink
 						to={ makePath( Step.DesignSelection ) }
 						onClick={ () => {
-							recordButtonClick( 'Signup', 'back' );
+							recordButtonClick( 'Style', 'back' );
 						} }
 					>
 						{ __( 'Choose another design' ) }

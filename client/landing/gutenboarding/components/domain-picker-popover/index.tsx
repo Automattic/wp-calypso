@@ -16,6 +16,7 @@ import { useViewportMatch } from '@wordpress/compose';
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
 import CloseButton from '../close-button';
+import { recordButtonClick } from '../../lib/analytics';
 
 /**
  * Style dependencies
@@ -37,7 +38,12 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( {
 
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
-
+	const onClickMoreOptions = () => {
+		recordButtonClick( 'DomainPicker', 'more_options' );
+		if ( onMoreOptions ) {
+			onMoreOptions();
+		}
+	};
 	// Don't render popover when isOpen is false.
 	// We need this component to be hot because useViewportMatch
 	// returns false on initial mount before returning true,
@@ -60,7 +66,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( {
 						<Button
 							className="domain-picker-popover__more-button"
 							isTertiary
-							onClick={ onMoreOptions }
+							onClick={ onClickMoreOptions }
 						>
 							{ __( 'More Options' ) }
 						</Button>
