@@ -99,7 +99,7 @@ class ActivityCard extends Component {
 			<div className="activity-card__content">
 				{ !! activity.streams && [
 					...this.renderStreams( activity.streams ),
-					this.renderToolbar( false ),
+					this.renderBottomToolbar(),
 				] }
 			</div>
 		);
@@ -195,6 +195,9 @@ class ActivityCard extends Component {
 		);
 	}
 
+	renderTopToolbar = () => this.renderToolbar( true );
+	renderBottomToolbar = () => this.renderToolbar( false );
+
 	renderToolbar( isTopToolbar = true ) {
 		const { showActions, showContentLink } = this.props;
 
@@ -257,7 +260,7 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
-					{ ! summarize && this.renderToolbar() }
+					{ ! summarize && this.renderTopToolbar() }
 
 					{ showActivityContent && this.renderActivityContent() }
 				</Card>
