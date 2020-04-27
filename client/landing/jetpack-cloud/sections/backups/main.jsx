@@ -56,7 +56,7 @@ class BackupsPage extends Component {
 	componentDidMount() {
 		const { queryDate, moment, clearFilter, siteId } = this.props;
 
-		// filters in the global state are modified by other pages, we want to enter this page with is cleared
+		// filters in the global state are modified by other pages, we want to enter this page with the filter empty
 		clearFilter( siteId );
 
 		// On first load, check if we have a selected date from the URL
