@@ -1,6 +1,28 @@
 .activity-card-list {
 	.filterbar {
 		margin-bottom: 2rem;
+
+		// no border on filterbar active buttons
+		.filterbar__wrap {
+			button.filterbar__selection {
+				&.is-selected,
+				&.is-active {
+					border: 1px solid var( --color-neutral-60 );
+				}
+
+				&.is-selected {
+					margin-right: 0;
+					border-radius: 3px 0 0 3px;
+				}
+			}
+
+			// this is a separate mechanism for the date range
+			div.date-range.toggle-visible button.filterbar__selection {
+				border: 1px solid var( --color-neutral-60 );
+				background-color: var( --color-neutral-60 );
+				color: var( --color-text-inverted );
+			}
+		}
 	}
 
 	.pagination__list-item {
