@@ -51,13 +51,13 @@ class PostRelativeTime extends React.PureComponent {
 	getDisplayedTimeForLabel( prefix = true ) {
 		const moment = this.props.moment;
 		const now = moment();
-		const scheduledDate = moment( this.getTimestamp() );
+		const timestamp = moment( this.getTimestamp() );
 
 		const isScheduledPost = this.props.post.status === 'future';
 
-		let scheduledTime;
+		let displayedTime;
 		if ( isScheduledPost ) {
-			scheduledTime = scheduledDate.calendar( null, {
+			displayedTime = timestamp.calendar( null, {
 				nextDay: this.props.translate( '[for tomorrow at] LT', {
 					comment: 'LT refers to time (eg. 18:00)',
 				} ),
@@ -85,15 +85,15 @@ class PostRelativeTime extends React.PureComponent {
 				} );
 			}
 
-			scheduledTime = scheduledDate.calendar( null, {
+			displayedTime = timestamp.calendar( null, {
 				sameElse: sameElseTranslation,
 			} );
 		}
 
 		// If the content is scheduled to be release within a year, do not display the year at the end
-		return scheduledDate.diff( now, 'years' ) > 0
-			? scheduledTime
-			: scheduledTime.replace( scheduledDate.format( 'Y' ), '' );
+		return timestamp.diff( now, 'years' ) > 0
+			? displayedTime
+			: displayedTime.replace( timestamp.format( 'Y' ), '' );
 	}
 
 	getTimeText() {
@@ -125,45 +125,45 @@ class PostRelativeTime extends React.PureComponent {
 		if ( status === 'trash' ) {
 			extraStatusClassName = 'is-trash';
 			statusIcon = 'trash';
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'trashed %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a post or page was trashed',
+			const displayedTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'trashed %(displayedTime)s', {
+				comment: '%(displayedTime)s is when a post or page was trashed',
 				args: {
-					displayScheduleTime,
+					displayedTime,
 				},
 			} );
 		} else if ( status === 'future' ) {
 			extraStatusClassName = 'is-scheduled';
 			statusIcon = 'calendar';
-			const displayTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'scheduled %(displayScheduleTime)s', {
+			const displayedTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'scheduled %(displayedTime)s', {
 				comment: '%(displayTime)s is when a scheduled post or page is set to be published',
+				args: {
+					displayedTime,
+				},
+			} );
+		} else if ( status === 'draft' || status === 'pending' ) {
+			const displayTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'draft last modified %(displayTime)s', {
+				comment: '%(displayTime)s is when a draft post or page was last modified',
 				args: {
 					displayTime,
 				},
 			} );
-		} else if ( status === 'draft' || status === 'pending' ) {
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft last modified %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a draft post or page was last modified',
-				args: {
-					displayScheduleTime,
-				},
-			} );
 		} else if ( status === 'publish' ) {
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a post or page was last modified',
+			const displayTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'published %(displayTime)s', {
+				comment: '%(displayTime)s is when a post or page was last modified',
 				args: {
-					displayScheduleTime,
+					displayTime,
 				},
 			} );
 		} else if ( status === 'private' ) {
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'private last modified %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a private post or page was last modified',
+			const displayedTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'private last modified %(displayedTime)s', {
+				comment: '%(displayedTime)s is when a private post or page was last modified',
 				args: {
-					displayScheduleTime,
+					displayedTime,
 				},
 			} );
 		} else if ( status === 'new' ) {
