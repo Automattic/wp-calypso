@@ -145,11 +145,11 @@ class PostRelativeTime extends React.PureComponent {
 		} else if ( status === 'future' ) {
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
-			const displayScheduleTime = this.getDisplayedTimeForLabel();
+			const displayTime = this.getDisplayedTimeForLabel();
 			statusText = this.props.translate( 'scheduled %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a scheduled post or page is set to be published',
+				comment: '%(displayTime)s is when a scheduled post or page is set to be published',
 				args: {
-					displayScheduleTime,
+					displayTime,
 				},
 			} );
 		} else if ( status === 'draft' || status === 'pending' ) {
