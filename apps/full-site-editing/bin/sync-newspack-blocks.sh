@@ -9,24 +9,21 @@ case "$(uname)" in
 	Darwin*) sedi=(-i "")
 esac
 
-# try whether user passed --release
-if [ -n "$npm_config_release" ]
+# pick up value considering that the argument
+# has the --key=value shape.
+key_value=$(echo ${1} | cut -d'=' -f 2)
+# Set mode depending on first argument
+if [[ $1 =~ ^--release= ]]
 then
 	MODE=release
-	NAME=$npm_config_release
+	NAME=${key_value}
 	URL=https://github.com/Automattic/newspack-blocks/releases/download/$NAME/newspack-blocks.zip
-fi
-
-# try whether user passed --branch
-if [ -n "$npm_config_branch" ]
+elif [[ $1 =~ ^--branch= ]]
 then
 	MODE=branch
-	NAME=$npm_config_branch
+	NAME=${key_value}
 	URL=https://github.com/Automattic/newspack-blocks/archive/$NAME.zip
-fi
-
-# try whether user passed --path
-if [ -n "$npm_config_path" ]
+elif [[ $1 =~ ^--path= ]]
 then
 	MODE=path
 fi
