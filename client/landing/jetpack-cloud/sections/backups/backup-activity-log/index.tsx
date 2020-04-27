@@ -10,7 +10,7 @@ import React, { FunctionComponent, useEffect } from 'react';
  * Internal dependencies
  */
 import { getHttpData } from 'state/data-layer/http-data';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
 import { setFilter } from 'state/activity-log/actions';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
@@ -42,6 +42,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
 
@@ -81,7 +82,11 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 		<Main className="backup-activity-log">
 			<DocumentHead title="Activity log" />
 			<SidebarNavigation />
-			<PageViewTracker path="/backups/activity/:site" title="Activity log" />
+			<PageViewTracker
+				path="/backups/activity/:site"
+				title="Activity log"
+				properties={ { site: siteSlug } }
+			/>
 			<div className="backup-activity-log__content">
 				<div className="backup-activity-log__header">
 					<h3>{ translate( 'Find a backup or restore point' ) }</h3>

@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -37,7 +37,7 @@ class BackupDetailPage extends Component {
 	};
 
 	render() {
-		const { backupId, filter, logs, moment, siteId, translate } = this.props;
+		const { backupId, filter, logs, moment, siteId, siteSlug, translate } = this.props;
 		const { page: requestedPage } = filter;
 
 		const backups = logs.filter( ( event ) => event.rewindId === backupId );
@@ -74,7 +74,14 @@ class BackupDetailPage extends Component {
 			<Main>
 				<DocumentHead title="Backup Details" />
 				<SidebarNavigation />
-				<PageViewTracker path="/backups/:site/detail/:backupId" title="Backup Details" />
+				<PageViewTracker
+					path="/backups/:site/detail/:backup_id"
+					title="Backup Details"
+					properties={ {
+						site: siteSlug,
+						backup_id: backupId,
+					} }
+				/>
 				<div>
 					<Gridicon icon="cloud-upload" />
 					{ thisBackup && moment( thisBackup.activityDate ).format( 'YYYY-MM-DD' ) }
@@ -135,6 +142,7 @@ class BackupDetailPage extends Component {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
 	const filter = getActivityLogFilter( state, siteId );
 
@@ -142,6 +150,7 @@ const mapStateToProps = ( state ) => {
 		filter,
 		logs: logs?.data ?? [],
 		siteId,
+		siteSlug,
 	};
 };
 

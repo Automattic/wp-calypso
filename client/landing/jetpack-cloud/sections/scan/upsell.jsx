@@ -23,7 +23,11 @@ function ScanUpsellPage( props ) {
 		<Main className="scan__main">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
-			<PageViewTracker path="/scan/:site" title="Scanner UpSell" />
+			<PageViewTracker
+				path="/scan/:site"
+				title="Scanner Upsell"
+				properties={ { site: this.props.siteSlug } }
+			/>
 			<div className="scan__content">
 				<SecurityIcon icon="info" />
 				<h1 className="scan__header">{ translate( 'Your site does not have scan' ) }</h1>

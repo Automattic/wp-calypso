@@ -71,7 +71,11 @@ class ScanHistoryPage extends Component {
 				<DocumentHead title={ translate( 'History' ) } />
 				<SidebarNavigation />
 				<QueryJetpackScanHistory siteId={ this.props.siteId } />
-				<PageViewTracker path="/scan/history/:site" title="History" />
+				<PageViewTracker
+					path="/scan/history/:site"
+					title="Scan History"
+					properties={ { site: this.props.siteSlug } }
+				/>
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p className="history__description">
 					{ translate(
