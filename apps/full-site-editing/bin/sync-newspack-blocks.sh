@@ -44,6 +44,8 @@ then
     echo
     echo Possible arguments:
     echo --branch=master
+    echo "--nodemodules (to use defined in package.json)"
+    echo "--path=/path/to/newspack-blocks"
     echo --release=1.0.0-alpha.17
     echo
     echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
