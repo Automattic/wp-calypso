@@ -32,8 +32,6 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__panel-row-main {
-	overflow: visible; // fixes search input focus outline clipped 
-	overflow-y: auto;
 	flex-grow: 1;
 	padding: 36px;
 }
@@ -226,7 +224,6 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__body {
 	display: flex;
-	flex-direction: vertical;
 }
 
 .domain-picker__aside {

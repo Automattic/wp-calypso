@@ -32,7 +32,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 						'is-selected': ! selected,
 					} ) }
 				>
-					<Button isTertiary onClick={ () => onSelect() }>
+					<Button onClick={ () => onSelect() }>
 						{
 							/* translators: Domain categories filtering. Option to disable the filer and view all categories. */
 							__( 'View all' )
@@ -46,9 +46,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 							'is-selected': domainCategory === selected,
 						} ) }
 					>
-						<Button isTertiary onClick={ () => onSelect( domainCategory ) }>
-							{ domainCategory }
-						</Button>
+						<Button onClick={ () => onSelect( domainCategory ) }>{ domainCategory }</Button>
 					</li>
 				) ) }
 			</ul>

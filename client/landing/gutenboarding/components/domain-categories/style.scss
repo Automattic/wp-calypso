@@ -1,22 +1,28 @@
 @import '../../mixins';
 
 .domain-categories__item {
-
-	.components-button.is-tertiary {
+	.components-button {
 		color: var( --studio-gray-100 );
-		padding: 0;
-		height: 38px;
-		line-height: 38px;
+		width: 100%;
+		text-align: left;
 
-		&:hover {
-			border: none;
-		}
-	}
-
-	&.is-selected {
-		.components-button.is-tertiary {
+		&:hover,
+		&:focus {
+			color: var( --studio-gray-100 );
+			box-shadow: none;
 			font-weight: 700;
 			text-decoration: underline;
 		}
 	}
+
+	&.is-selected {
+		.components-button {
+			font-weight: 700;
+			text-decoration: underline;
+		}
+	}
+}
+
+html:not( .accessible-focus ) .domain-categories__item .components-button:focus {
+	box-shadow: none;
 }
