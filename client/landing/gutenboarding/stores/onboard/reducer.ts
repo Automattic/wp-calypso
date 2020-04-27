@@ -38,9 +38,12 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const domainCategory: Reducer< DomainCategory, OnboardAction > = ( state = 'Popular', action ) => {
+const domainCategory: Reducer< DomainCategory | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
 	}
 	return state;
 };

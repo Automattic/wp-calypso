@@ -29,7 +29,7 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
-export const setDomainCategory = ( domainCategory: DomainCategory ) => ( {
+export const setDomainCategory = ( domainCategory: DomainCategory | undefined ) => ( {
 	type: 'SET_DOMAIN_CATEGORY' as const,
 	domainCategory,
 } );

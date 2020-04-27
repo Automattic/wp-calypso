@@ -29,7 +29,7 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 
 	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
 
-	const tlds = domainTldsByCategory[ domainCategory ];
+	const tlds = domainCategory && domainTldsByCategory[ domainCategory ];
 
 	return useSelect(
 		( select ) => {
@@ -42,8 +42,8 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 				include_dotblogsubdomain: false,
 				locale,
 				vendor: DOMAIN_SUGGESTION_VENDOR,
-				...{ vertical: siteVertical?.id },
-				tlds,
+				...( siteVertical && { vertical: siteVertical?.id } ),
+				...( tlds && { tlds } ),
 			} );
 		},
 		[ searchTerm, siteVertical, tlds ]
