@@ -81,15 +81,15 @@ class Global_Styles {
 	const VERSION = '2003121439';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
-	const AVAILABLE_FONTS = [
-		[
+	const AVAILABLE_FONTS = array(
+		array(
 			'label' => 'Theme Default',
 			'value' => 'unset',
-		],
-		[
+		),
+		array(
 			'label' => 'System Font',
 			'value' => self::SYSTEM_FONT,
-		],
+		),
 		'Arvo',
 		'Cabin',
 		'Chivo',
@@ -111,7 +111,7 @@ class Global_Styles {
 		'Source Serif Pro',
 		'Space Mono',
 		'Work Sans',
-	];
+	);
 
 	/**
 	 * Creates instance.
@@ -135,87 +135,87 @@ class Global_Styles {
 		// DATA TO EXPOSE THROUGH THE REST API.
 		require_once __DIR__ . '/includes/class-data-set.php';
 		$this->rest_api_data = new Data_Set(
-			[
-				'blogname'              => [
+			array(
+				'blogname'              => array(
 					'type'    => 'option',
 					'name'    => 'blogname',
 					'default' => 'Your site name',
-				],
-				'font_base'             => [
+				),
+				'font_base'             => array(
 					'type'      => 'option',
-					'name'      => [ 'jetpack_global_styles', 'font_base' ],
+					'name'      => array( 'jetpack_global_styles', 'font_base' ),
 					'default'   => 'unset',
 					'updatable' => true,
-				],
-				'font_headings'         => [
+				),
+				'font_headings'         => array(
 					'type'      => 'option',
-					'name'      => [ 'jetpack_global_styles', 'font_headings' ],
+					'name'      => array( 'jetpack_global_styles', 'font_headings' ),
 					'default'   => 'unset',
 					'updatable' => true,
-				],
-				'font_base_default'     => [
+				),
+				'font_base_default'     => array(
 					'type'    => 'theme',
-					'name'    => [ 'jetpack-global-styles', 'font_base' ],
+					'name'    => array( 'jetpack-global-styles', 'font_base' ),
 					'default' => self::SYSTEM_FONT,
-				],
-				'font_headings_default' => [
+				),
+				'font_headings_default' => array(
 					'type'    => 'theme',
-					'name'    => [ 'jetpack-global-styles', 'font_headings' ],
+					'name'    => array( 'jetpack-global-styles', 'font_headings' ),
 					'default' => self::SYSTEM_FONT,
-				],
-				'font_options'          => [
+				),
+				'font_options'          => array(
 					'type'    => 'literal',
 					'default' => self::AVAILABLE_FONTS,
-				],
-				'font_pairings'         => [
+				),
+				'font_pairings'         => array(
 					'type'    => 'literal',
-					'default' => [
-						[
+					'default' => array(
+						array(
 							'label'    => 'Playfair Display & Roboto',
 							'headings' => 'Playfair Display',
 							'base'     => 'Roboto',
 							'preview'  => 'PLAY_ROBOTO', // See font-pairings-panel-previews.js.
-						],
-						[
+						),
+						array(
 							'label'    => 'Rubik & Work Sans',
 							'headings' => 'Rubik',
 							'base'     => 'Work Sans',
 							'preview'  => 'RUBIK_WORK', // See font-pairings-panel-previews.js.
-						],
-						[
+						),
+						array(
 							'label'    => 'System Font & Libre Baskerville',
 							'headings' => self::SYSTEM_FONT,
 							'base'     => 'Libre Baskerville',
 							'preview'  => 'SYSTEM_BASKER', // See font-pairings-panel-previews.js.
-						],
-						[
+						),
+						array(
 							'label'    => 'Space Mono & Lora',
 							'headings' => 'Space Mono',
 							'base'     => 'Lora',
 							'preview'  => 'SPACE_LORA', // See font-pairings-panel-previews.js.
-						],
-					],
-				],
-			]
+						),
+					),
+				),
+			)
 		);
 
 		// Setup REST API for the editor. Some environments (WordPress.com)
 		// may not load the theme functions for REST API calls,
 		// so we need to initialize it independently of theme support.
-		add_action( 'rest_api_init', [ $this, 'rest_api_init' ] );
+		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
 
-		add_filter( 'jetpack_global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
-		add_filter( 'jetpack_global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
+		add_filter( 'jetpack_global_styles_data_set_get_data', array( $this, 'maybe_filter_font_list' ) );
+		add_filter( 'jetpack_global_styles_data_set_save_data', array( $this, 'filter_and_validate_font_options' ) );
 
 		// Setup editor.
 		if ( $this->can_use_global_styles() ) {
 			add_action(
 				'enqueue_block_editor_assets',
-				[ $this, 'enqueue_block_editor_assets' ]
+				array( $this, 'enqueue_block_editor_assets' )
 			);
 			add_filter(
 				'block_editor_settings',
-				[ $this, 'block_editor_settings' ],
+				array( $this, 'block_editor_settings' ),
 				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 			);
 		}
@@ -223,7 +223,7 @@ class Global_Styles {
 		// Setup front-end.
 		add_action(
 			'wp_enqueue_scripts',
-			[ $this, 'wp_enqueue_scripts' ],
+			array( $this, 'wp_enqueue_scripts' ),
 			PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 		);
 	}
@@ -234,7 +234,7 @@ class Global_Styles {
 	private function update_plugin_settings() {
 		$settings = apply_filters(
 			'jetpack_global_styles_settings',
-			[
+			array(
 				// Server-side settings.
 				'rest_namespace'   => $this->rest_namespace,
 				'rest_route'       => $this->rest_route,
@@ -244,7 +244,7 @@ class Global_Styles {
 				'rest_path_client' => $this->rest_path_client,
 				'redux_store_name' => $this->redux_store_name,
 				'plugin_name'      => $this->plugin_name,
-			]
+			)
 		);
 
 		$this->rest_namespace   = $settings['rest_namespace'];
@@ -265,7 +265,7 @@ class Global_Styles {
 			$this->rest_namespace,
 			$this->rest_route,
 			$this->rest_api_data,
-			[ $this, 'can_use_global_styles' ]
+			array( $this, 'can_use_global_styles' )
 		);
 		$rest_api->setup();
 	}
@@ -321,7 +321,7 @@ class Global_Styles {
 			: null;
 		$dependencies = isset( $asset['dependencies'] ) ?
 			$asset['dependencies'] :
-			[];
+			array();
 		$version      = isset( $asset['version'] ) ?
 			$asset['version'] :
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
@@ -336,16 +336,16 @@ class Global_Styles {
 		wp_localize_script(
 			'jetpack-global-styles-editor-script',
 			'JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS',
-			[
+			array(
 				'PLUGIN_NAME' => $this->plugin_name,
 				'REST_PATH'   => $this->rest_path_client,
 				'STORE_NAME'  => $this->redux_store_name,
-			]
+			)
 		);
 		wp_enqueue_style(
 			'jetpack-global-styles-editor-style',
 			plugins_url( 'dist/global-styles.css', __FILE__ ),
-			[],
+			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.css' )
 		);
 	}
@@ -359,13 +359,15 @@ class Global_Styles {
 	 * @return void
 	 */
 	public function wp_enqueue_scripts() {
-		wp_enqueue_style(
+		wp_register_style(
 			'jetpack-global-styles-frontend-style',
-			plugins_url( 'static/blank.css', __FILE__ ),
-			[],
-			self::VERSION // To bust cache when changes are done to font list, css custom vars, or style.css.
+			false,
+			array(),
+			true,
+			true
 		);
 		wp_add_inline_style( 'jetpack-global-styles-frontend-style', $this->get_inline_css( true ) );
+		wp_enqueue_style( 'jetpack-global-styles-frontend-style' );
 	}
 
 	/**
@@ -385,12 +387,12 @@ class Global_Styles {
 		 * - all of them for the backend
 		 * - only the selected ones for the frontend
 		 */
-		$font_list = [];
+		$font_list = array();
 		// We want $font_list to only contain valid Google Font values,
 		// so we filter out things like 'unset' on the system font.
-		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset', self::SYSTEM_FONT ] );
+		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), array( 'unset', self::SYSTEM_FONT ) );
 		if ( true === $only_selected_fonts ) {
-			foreach ( [ 'font_base', 'font_base_default', 'font_headings', 'font_headings_default' ] as $key ) {
+			foreach ( array( 'font_base', 'font_base_default', 'font_headings', 'font_headings_default' ) as $key ) {
 				if ( in_array( $data[ $key ], $font_values, true ) ) {
 					$font_list[] = $data[ $key ];
 				}
@@ -423,7 +425,7 @@ class Global_Styles {
 		 */
 		$result = $result . ':root {';
 		$value  = '';
-		$keys   = [ 'font_headings', 'font_base', 'font_headings_default', 'font_base_default' ];
+		$keys   = array( 'font_headings', 'font_base', 'font_headings_default', 'font_base_default' );
 		foreach ( $keys as $key ) {
 			$value  = $data[ $key ];
 			$result = $result . ' --' . str_replace( '_', '-', $key ) . ': ' . $value . ';';
@@ -479,7 +481,7 @@ class Global_Styles {
 	 * @return array Font values.
 	 */
 	private function get_font_values( $font_list ) {
-		$font_values = [];
+		$font_values = array();
 		foreach ( $font_list as $font ) {
 			if ( is_array( $font ) ) {
 				$font_values[] = $font['value'];
@@ -497,10 +499,10 @@ class Global_Styles {
 	 * @return array Filtered result.
 	 */
 	public function filter_and_validate_font_options( $incoming_data ) {
-		$result = [];
+		$result = array();
 
 		$font_values = $this->get_font_values( self::AVAILABLE_FONTS );
-		foreach ( [ 'font_base', 'font_headings' ] as $key ) {
+		foreach ( array( 'font_base', 'font_headings' ) as $key ) {
 			if (
 				array_key_exists( $key, $incoming_data ) &&
 				in_array( $incoming_data[ $key ], $font_values, true )
@@ -513,4 +515,4 @@ class Global_Styles {
 	}
 }
 
-add_action( 'init', [ __NAMESPACE__ . '\Global_Styles', 'init' ] );
+add_action( 'init', array( __NAMESPACE__ . '\Global_Styles', 'init' ) );
