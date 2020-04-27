@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
-import { getThreatType } from 'landing/jetpack-cloud/components/threat-item/threat';
+import { getThreatType } from 'landing/jetpack-cloud/components/threat-item/utils';
 
 interface Props {
 	threat: Threat;
