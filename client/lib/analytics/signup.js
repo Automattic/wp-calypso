@@ -7,6 +7,7 @@ import debug from 'debug';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { identifyUser } from 'lib/analytics/identify-user';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { addToQueue } from 'lib/analytics/queue';
 import {
@@ -97,7 +98,7 @@ export function recordRegistration( { userData, flow, type } ) {
 	signupDebug( 'recordRegistration:', { userData, flow, type } );
 
 	// Tracks user identification
-	analytics.identifyUser( userData );
+	identifyUser( userData );
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
 	// Google Analytics
