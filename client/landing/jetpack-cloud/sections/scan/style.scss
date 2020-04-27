@@ -19,20 +19,20 @@
 	}
 }
 
+.security-icon {
+	display: block;
+	margin: 0 auto;
+	width: 48px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0;
+		padding: 0;
+	}
+}
+
 .scan__content {
 	padding-top: 40px;
 	flex: 1 0 auto;
-
-	.security-icon {
-		display: block;
-		margin: 0 auto;
-		width: 48px;
-
-		@include breakpoint( '>660px' ) {
-			margin: 0;
-			padding: 0;
-		}
-	}
 
 	.progress-bar {
 		margin-bottom: 24px;

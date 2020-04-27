@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
@@ -31,7 +32,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-
 interface Props {
 	site: object | null;
 	siteSlug: string | null;
@@ -44,18 +44,6 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
-
-	renderPlaceholder() {
-		return (
-			<>
-				<SecurityIcon icon="placeholder" />
-				<h1 className="scan__header is-placeholder">Scan Result heading</h1>
-				<p className="scan__content is-placeholder">This is some placeholder text there.</p>
-				<p className="scan__content is-placeholder">This is some placeholder text there.</p>
-			</>
-		);
-	}
-
 	// @todo: missing copy and design for this state
 	renderUnavailable() {
 		const { siteSlug } = this.props;
@@ -167,7 +155,7 @@ class ScanPage extends Component< Props > {
 	renderScanState() {
 		const { site, scanState } = this.props;
 		if ( ! scanState ) {
-			return this.renderPlaceholder();
+			return <ScanPlaceholder />;
 		}
 
 		const { state, mostRecent, threats } = scanState;
