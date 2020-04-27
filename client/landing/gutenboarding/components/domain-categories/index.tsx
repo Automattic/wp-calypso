@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import * as React from 'react';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 
@@ -21,7 +21,7 @@ export interface Props {
 	selected?: string;
 }
 
-const DomainPickerCategories: FunctionComponent< Props > = ( { onSelect, selected } ) => {
+const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
 	return (
 		<div className="domain-categories">
 			<ul className="domain-categories__item-group">
