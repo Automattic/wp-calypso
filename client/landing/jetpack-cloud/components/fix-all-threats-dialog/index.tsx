@@ -12,6 +12,7 @@ import { Button, Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 import { FixableThreat } from 'landing/jetpack-cloud/components/threat-item/types';
+import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 
 /**
  * Style dependencies
@@ -101,7 +102,7 @@ const FixAllThreatsDialog = ( {
 							{ translate( 'To fix this threat, Jetpack will be:' ) }
 							<ul>
 								{ threats.map( ( threat ) => (
-									<li key={ threat.id }>{ threat.title }</li>
+									<li key={ threat.id }>{ getThreatFix( threat.fixable ) }</li>
 								) ) }
 							</ul>
 						</div>
