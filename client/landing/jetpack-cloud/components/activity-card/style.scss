@@ -64,6 +64,7 @@
 
 .activity-card__activity-actions,
 .activity-card__activity-actions-reverse {
+	display: flex;
 	position: relative;
 	top: 0.5rem;
 	border-top: 1px solid #e4e4e6;
