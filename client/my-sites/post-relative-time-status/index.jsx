@@ -104,7 +104,7 @@ class PostRelativeTime extends React.PureComponent {
 					<>
 						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
-							{ this.getDisplayedTimeForLabel( false ) }
+							{ this.getDisplayedTimeForLabel( true ) }
 						</time>
 					</>
 				) }
@@ -115,25 +115,15 @@ class PostRelativeTime extends React.PureComponent {
 	/**
 	 * Get status label
 	 *
-	 * @param {boolean} onlySticky sends back the "sticky" label. Special case as is using the same template but for is unrelated to the status
-	 * @param {boolean} onlyPending sends back the "pendign review" label. Special case as is using the same template but for is unrelated to the status
-	 *
 	 */
-	getStatusText( onlySticky = false, onlyPending = false ) {
+	getStatusText() {
 		const status = this.props.post.status;
-		let statusClassName = 'post-relative-time-status__status';
+		let extraStatusClassName;
 		let statusIcon = 'aside';
 		let statusText;
 
-		if ( onlySticky ) {
-			statusText = this.props.translate( 'sticky' );
-			statusClassName += ' is-sticky';
-			statusIcon = 'bookmark-outline';
-		} else if ( onlyPending ) {
-			statusText = this.props.translate( 'pending review' );
-			statusClassName += ' is-pending';
-		} else if ( status === 'trash' ) {
-			statusClassName += ' is-trash';
+		if ( status === 'trash' ) {
+			extraStatusClassName = 'is-trash';
 			statusIcon = 'trash';
 			const displayScheduleTime = this.getDisplayedTimeForLabel();
 			statusText = this.props.translate( 'trashed %(displayScheduleTime)s', {
@@ -143,7 +133,7 @@ class PostRelativeTime extends React.PureComponent {
 				},
 			} );
 		} else if ( status === 'future' ) {
-			statusClassName += ' is-scheduled';
+			extraStatusClassName = 'is-scheduled';
 			statusIcon = 'calendar';
 			const displayTime = this.getDisplayedTimeForLabel();
 			statusText = this.props.translate( 'scheduled %(displayScheduleTime)s', {
@@ -180,7 +170,34 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'Publish immediately' );
 		}
 
+		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
+	 * Get "sticky" label
+	 */
+	getStickyLabel() {
+		return this.getLabel( this.props.translate( 'sticky' ), 'is-sticky', 'bookmark-outline' );
+	}
+
+	/**
+	 * Get "Pending" label
+	 */
+	getPendingLabel() {
+		return this.getLabel( this.props.translate( 'pending review' ), 'is-pending' );
+	}
+
+	/**
+	 * Get Label for the status
+	 *
+	 * @param {*} statusText text status
+	 * @param {*} extraStatusClassName class
+	 * @param {*} statusIcon icon
+	 */
+	getLabel( statusText, extraStatusClassName, statusIcon ) {
 		if ( statusText ) {
+			const statusClassName = 'post-relative-time-status__status ' + extraStatusClassName;
+
 			return (
 				<span className={ statusClassName }>
 					<Gridicon icon={ statusIcon } size={ this.props.gridiconSize || 18 } />
@@ -196,8 +213,8 @@ class PostRelativeTime extends React.PureComponent {
 		let innerText = (
 			<span>
 				{ showPublishedStatus ? this.getStatusText() : timeText }
-				{ post.sticky && this.getStatusText( true ) }
-				{ post.status === 'pending' && this.getStatusText( false, true ) }
+				{ post.sticky && this.getStickyLabel() }
+				{ post.status === 'pending' && this.getPendingLabel() }
 			</span>
 		);
 
