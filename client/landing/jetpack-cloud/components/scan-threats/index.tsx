@@ -14,7 +14,11 @@ import FixAllThreatsDialog from 'landing/jetpack-cloud/components/fix-all-threat
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
-import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
+import {
+	FixableThreat,
+	Threat,
+	ThreatAction,
+} from 'landing/jetpack-cloud/components/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
@@ -55,7 +59,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	);
 	const dispatch = useDispatch();
 
-	const allFixableThreats = threats.filter( ( threat ) => threat.fixable );
+	const allFixableThreats = threats.filter(
+		( threat ): threat is FixableThreat => threat.fixable !== false
+	);
 	const hasFixableThreats = !! allFixableThreats.length;
 
 	const openFixAllThreatsDialog = React.useCallback( () => {
@@ -116,8 +122,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			dispatch( fixThreatAlert( site.ID, threat.id ) );
 		} );
 		setShowFixAllThreatsDialog( false );
-		setFixingThreats( threats );
-	}, [ dispatch, site, threats ] );
+		setFixingThreats( allFixableThreats );
+	}, [ allFixableThreats, dispatch, site ] );
 
 	return (
 		<>

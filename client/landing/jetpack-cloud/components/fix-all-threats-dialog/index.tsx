@@ -11,7 +11,7 @@ import { Button, Dialog } from '@automattic/components';
  */
 import Gridicon from 'components/gridicon';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
-import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
+import { FixableThreat } from 'landing/jetpack-cloud/components/threat-item/types';
 
 /**
  * Style dependencies
@@ -23,7 +23,7 @@ interface Props {
 	onConfirmation: Function;
 	showDialog: boolean;
 	siteId: number;
-	threats: Array< Threat >;
+	threats: Array< FixableThreat >;
 	userHasCredentials: boolean;
 }
 
