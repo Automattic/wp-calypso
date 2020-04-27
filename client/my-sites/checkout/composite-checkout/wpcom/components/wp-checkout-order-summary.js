@@ -14,6 +14,7 @@ import { useTranslate } from 'i18n-calypso';
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
+	const coupons = useLineItemsOfType( 'coupon' );
 	const total = useTotal();
 
 	return (
@@ -35,6 +36,12 @@ export default function WPCheckoutOrderSummary() {
 				</CheckoutSummaryFeaturesList>
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
+				{ coupons.map( ( coupon ) => (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + coupon.id }>
+						<span>{ coupon.label }</span>
+						<span>{ renderDisplayValueMarkdown( coupon.amount.displayValue ) }</span>
+					</CheckoutSummaryLineItem>
+				) ) }
 				{ taxes.map( ( tax ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
 						<span>{ tax.label }</span>
