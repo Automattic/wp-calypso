@@ -185,6 +185,7 @@ export default function CompositeCheckout( {
 		errors,
 		subtotal,
 		isLoading: isLoadingCart,
+		isPendingUpdate: isCartPendingUpdate,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantRequestStatus,
 		variantSelectOverride,
@@ -336,6 +337,7 @@ export default function CompositeCheckout( {
 				isLoading={
 					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 				}
+				isValidating={ isCartPendingUpdate }
 			>
 				<WPCheckout
 					removeItem={ removeItem }
