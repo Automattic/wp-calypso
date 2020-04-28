@@ -26,10 +26,8 @@ then
 elif [[ $1 =~ ^--path= ]]
 then
 	MODE=path
-fi
-
+elif [[ $1 =~ ^--nodemodules ]]
 # try whether user passed --nodemodules
-if [ -n "$npm_config_nodemodules" ]
 then
 	MODE=npm
 fi
