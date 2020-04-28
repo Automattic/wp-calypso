@@ -317,6 +317,8 @@ function convertRequestCartProductToResponseCartProduct(
 		product_slug,
 		product_id,
 		currency: null,
+		item_original_cost_display: null,
+		item_original_cost_integer: null,
 		product_cost_integer: null,
 		product_cost_display: null,
 		item_subtotal_integer: null,
