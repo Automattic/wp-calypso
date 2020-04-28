@@ -374,6 +374,7 @@ export default function CompositeCheckout( {
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
 					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>
