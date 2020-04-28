@@ -26,10 +26,8 @@ then
 elif [[ $1 =~ ^--path= ]]
 then
 	MODE=path
-fi
-
+elif [[ $1 =~ ^--nodemodules ]]
 # try whether user passed --nodemodules
-if [ -n "$npm_config_nodemodules" ]
 then
 	MODE=npm
 fi
@@ -41,6 +39,8 @@ then
     echo
     echo Possible arguments:
     echo --branch=master
+    echo "--nodemodules (to use defined in package.json)"
+    echo "--path=/path/to/newspack-blocks"
     echo --release=1.0.0-alpha.17
     echo
     echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest

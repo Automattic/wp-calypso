@@ -58,7 +58,7 @@
 		"predev": "check-npm-client && yarn run clean",
 		"sync:newspack-blocks": "check-npm-client && ./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "check-npm-client && ./bin/wpcom-watch-and-sync.sh",
-		"prepare": "check-npm-client && npm run sync:newspack-blocks --nodemodules"
+		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "*",
@@ -81,7 +81,7 @@
 		"classnames": "2.2.6",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks",
+		"newspack-blocks": "github:Automattic/newspack-blocks#master",
 		"swiper": "4.5.1"
 	}
 }
