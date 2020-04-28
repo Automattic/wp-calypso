@@ -18,14 +18,14 @@ import temporaryIllustration from 'assets/images/customer-home/illustration--tas
  */
 import './style.scss';
 
-export const WebinarPromotion = () => {
+export const Webinars = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card className="webinar-promotion">
+		<Card className="webinars">
 			<CardHeading>{ translate( 'Get hands-on learning from our experts' ) }</CardHeading>
-			<div className="webinar-promotion__content">
-				<div className="webinar-promotion__text">
+			<div className="webinars__content">
+				<div className="webinars__text">
 					<p>
 						{ translate(
 							'Register for a live video webinar to help you get started or learn advanced features.'
@@ -36,11 +36,11 @@ export const WebinarPromotion = () => {
 					</ExternalLink>
 				</div>
 				{ isDesktop() && (
-					<img src={ temporaryIllustration } className="webinar-promotion__illustration" alt="" />
+					<img src={ temporaryIllustration } className="webinars__illustration" alt="" />
 				) }
 			</div>
 		</Card>
 	);
 };
 
-export default WebinarPromotion;
+export default Webinars;

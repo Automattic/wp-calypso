@@ -1,18 +1,18 @@
-.webinar-promotion {
+.webinars {
 	@include breakpoint( '>960px' ) {
 		.card-heading {
 			margin-bottom: 0;
 		}
 
-		.webinar-promotion__content {
+		.webinars__content {
 			display: flex;
 		}
 
-		.webinar-promotion__text {
+		.webinars__text {
 			margin: auto;
 		}
 
-		.webinar-promotion__illustration {
+		.webinars__illustration {
 			width: 25%;
 		}
 	}
