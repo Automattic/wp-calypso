@@ -13,7 +13,8 @@ import { abtest } from 'lib/abtest';
 
 jest.mock( 'lib/user', () => null );
 jest.mock( 'lib/user/index', () => () => {} );
-jest.mock( 'lib/analytics/index', () => null );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( () => {
 		return 'sidebarUpsells';

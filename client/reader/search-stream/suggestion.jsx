@@ -9,7 +9,7 @@ import { stringify } from 'qs';
  * Internal Dependencies
  */
 import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 export class Suggestion extends Component {
 	static propTypes = {
@@ -21,7 +21,7 @@ export class Suggestion extends Component {
 
 	componentDidMount() {
 		const { railcar } = this.props;
-		analytics.tracks.recordEvent( 'calypso_traintracks_render', railcar );
+		recordTracksEvent( 'calypso_traintracks_render', railcar );
 	}
 
 	handleSuggestionClick = () => {

@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import verticals from './verticals';
 import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
@@ -159,8 +159,8 @@ class SurveyStep extends React.Component {
 	};
 
 	submitStep = ( label, value, otherWriteIn = '' ) => {
-		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
+		recordTracksEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
+		recordTracksEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
 			category_write_in: otherWriteIn,

@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { recordPurchase } from 'lib/analytics/record-purchase';
 import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
@@ -50,7 +50,7 @@ function recordDomainRegistrationAnalytics( { cart, success } ) {
 	for ( const cartItem of getDomainRegistrations( cart ) ) {
 		gaRecordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
 
-		analytics.tracks.recordEvent( 'calypso_domain_registration', {
+		recordTracksEvent( 'calypso_domain_registration', {
 			domain_name: cartItem.meta,
 			domain_tld: getTld( cartItem.meta ),
 			success: success,
@@ -62,12 +62,12 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 	switch ( step.name ) {
 		case INPUT_VALIDATION:
 			if ( step.error ) {
-				analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+				recordTracksEvent( 'calypso_checkout_payment_error', {
 					error_code: step.error.error,
 					reason: step.error.code,
 				} );
 			} else {
-				analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+				recordTracksEvent( 'calypso_checkout_form_submit', {
 					credits: cart.credits,
 					payment_method: paymentMethod,
 				} );
@@ -75,19 +75,19 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 			break;
 
 		case MODAL_AUTHORIZATION:
-			analytics.tracks.recordEvent( 'calypso_checkout_modal_authorization' );
+			recordTracksEvent( 'calypso_checkout_modal_authorization' );
 			break;
 
 		case REDIRECTING_FOR_AUTHORIZATION:
 			// TODO: wire in payment method
-			analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
+			recordTracksEvent( 'calypso_checkout_form_redirect' );
 			break;
 
 		case RECEIVED_AUTHORIZATION_RESPONSE:
 		case RECEIVED_WPCOM_RESPONSE:
 			if ( step.error ) {
 				debug( 'authorization error', step.error );
-				analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+				recordTracksEvent( 'calypso_checkout_payment_error', {
 					error_code: step.error.code || step.error.error,
 					reason: formatError( step.error ),
 				} );
@@ -100,7 +100,7 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 					recordPurchase( { cart, orderId: step.data.receipt_id } );
 				}
 
-				analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
+				recordTracksEvent( 'calypso_checkout_payment_success', {
 					coupon_code: cart.coupon,
 					currency: cart.currency,
 					payment_method: paymentMethod,
@@ -108,10 +108,7 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 				} );
 
 				for ( const product of cart.products ) {
-					analytics.tracks.recordEvent(
-						'calypso_checkout_product_purchase',
-						omit( product, 'extra' )
-					);
+					recordTracksEvent( 'calypso_checkout_product_purchase', omit( product, 'extra' ) );
 				}
 
 				recordDomainRegistrationAnalytics( { cart, success: true } );
@@ -120,7 +117,7 @@ export function recordTransactionAnalytics( cart, step, paymentMethod ) {
 
 		default:
 			if ( step.error ) {
-				analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+				recordTracksEvent( 'calypso_checkout_payment_error', {
 					error_code: step.error.error,
 					reason: formatError( step.error ),
 				} );

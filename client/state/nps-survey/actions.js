@@ -7,7 +7,7 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { bumpStat } from 'lib/analytics/mc';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
@@ -72,7 +72,7 @@ export function submitNpsSurvey( surveyName, score ) {
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
 
 		bumpStat( 'calypso_nps_survey', 'survey_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
+		recordTracksEvent( 'calypso_nps_survey_submitted' );
 
 		return wpcom
 			.undocumented()
@@ -94,7 +94,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
 		bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
+		recordTracksEvent( 'calypso_nps_survey_dismissed' );
 
 		return wpcom
 			.undocumented()
@@ -116,7 +116,7 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
 
 		bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
+		recordTracksEvent( 'calypso_nps_survey_feedback_submitted' );
 
 		return wpcom
 			.undocumented()

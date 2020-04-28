@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
@@ -11,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { isEnabled } from 'config';
@@ -21,7 +19,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
 const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => () =>
-	analytics.tracks.recordEvent( eventName );
+	recordTracksEvent( eventName );
 
 const JetpackConnectHappychatButton = ( {
 	children,

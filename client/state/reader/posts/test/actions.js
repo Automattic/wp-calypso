@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import { tracks } from 'lib/analytics';
+import * as tracks from 'lib/analytics/tracks';
 import { bumpStat } from 'lib/analytics/mc';
 
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
@@ -10,8 +10,8 @@ import wp from 'lib/wp';
 
 jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent: jest.fn() },
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'lib/analytics/mc', () => ( {
@@ -35,7 +35,7 @@ const { pageViewForPost } = require( 'reader/stats' );
 
 describe( 'actions', () => {
 	const dispatchSpy = jest.fn();
-	const trackingSpy = tracks.recordEvent;
+	const trackingSpy = tracks.recordTracksEvent;
 	const readFeedStub = undocumented().readFeedPost;
 	const readSiteStub = undocumented().readSitePost;
 

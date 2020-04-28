@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/route';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { Button, Card, CompactCard, Dialog } from '@automattic/components';
 import config from 'config';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
@@ -69,7 +69,7 @@ class JetpackSsoForm extends Component {
 
 	onApproveSSO = ( event ) => {
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
 		const siteUrl = get( this.props, 'blogDetails.URL' );
@@ -82,23 +82,23 @@ class JetpackSsoForm extends Component {
 
 	onCancelClick = ( event ) => {
 		debug( 'Clicked return to site link' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
 	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
 	onClickSignInDifferentUser = () => {
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
 	onClickSharedDetailsModal = ( event ) => {
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
 			showTermsDialog: true,
 		} );
@@ -114,7 +114,7 @@ class JetpackSsoForm extends Component {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
-			analytics.tracks.recordEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
+			recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
 			event.preventDefault();
 			window.history.back();
 		}

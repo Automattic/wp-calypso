@@ -29,7 +29,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/main', () => 'Main' );
 jest.mock( 'components/section-header', () => 'SectionHeader' );

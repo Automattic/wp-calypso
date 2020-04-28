@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import accept from 'lib/accept';
 import PluginsLog from 'lib/plugins/log-store';
@@ -64,7 +64,7 @@ class PluginRemoveButton extends React.Component {
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_sites_list', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
@@ -75,7 +75,7 @@ class PluginRemoveButton extends React.Component {
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_plugin_info', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );

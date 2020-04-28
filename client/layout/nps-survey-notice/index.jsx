@@ -31,7 +31,7 @@ import {
 import { isSupportSession } from 'state/support/selectors';
 import getSites from 'state/selectors/get-sites';
 import { isBusinessPlan } from 'lib/plans';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { bumpStat } from 'lib/analytics/mc';
 
 /**
@@ -94,7 +94,7 @@ class NpsSurveyNotice extends Component {
 			this.props.markNpsSurveyShownThisSession();
 
 			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
-			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
+			recordTracksEvent( 'calypso_nps_notice_displayed' );
 		}
 	}
 

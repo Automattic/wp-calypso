@@ -46,7 +46,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import {
+	recordTracksEvent as recordTracksEventAction,
+	withAnalytics,
+} from 'state/analytics/actions';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -69,7 +72,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
@@ -169,7 +172,7 @@ class ActivityLog extends Component {
 	};
 
 	changePage = ( pageNumber ) => {
-		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
+		recordTracksEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -624,29 +627,29 @@ export default connect(
 	},
 	{
 		changePeriod: ( { date, direction } ) =>
-			recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+			recordTracksEventAction( 'calypso_activitylog_monthpicker_change', {
 				date: date.utc().toISOString(),
 				direction,
 			} ),
 		createBackup: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
 				rewindBackup( siteId, actionId )
 			),
 		dismissBackup: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_backup_cancel' ),
 				rewindBackupDismiss( siteId )
 			),
 		getRewindRestoreProgress,
 		rewindRequestDismiss: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_restore_cancel' ),
 				rewindRequestDismiss( siteId )
 			),
 		rewindRestore: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
 				rewindRestore( siteId, actionId )
 			),
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),

@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { themeActivated } from 'state/themes/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import WordPressLogo from 'components/wordpress-logo';
 import { Card } from '@automattic/components';
 import ChargebackDetails from './chargeback-details';
@@ -163,7 +163,7 @@ export class CheckoutThankYou extends React.Component {
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+		recordTracksEvent( 'calypso_checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
 	}

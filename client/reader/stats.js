@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 
@@ -124,7 +124,7 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 		}
 	}
 
-	tracks.recordEvent( eventName, eventProperties );
+	recordTracksEvent( eventName, eventProperties );
 }
 
 const tracksRailcarEventWhitelist = new Set();

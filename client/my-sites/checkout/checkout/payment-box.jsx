@@ -15,7 +15,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { paymentMethodName, isPaymentMethodEnabled } from 'lib/cart-values';
 import {
@@ -45,7 +45,7 @@ export class PaymentBox extends PureComponent {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function () {
 			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
+			recordTracksEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
 	};

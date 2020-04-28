@@ -44,8 +44,9 @@ recordTracksEvent( 'calypso_do_thing', { extra: 'info' } );
 `recordTracksEvent( name, properties )` deprecates the following call to the analytics lib method:
 
 ```js
-import analytics from 'lib/analytics';
-analytics.tracks.recordEvent( name, properties );
+import { recordTracksEvent } from 'lib/analytics/tracks';
+
+recordTracksEvent( name, properties );
 ```
 
 ## Naming Conventions

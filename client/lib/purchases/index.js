@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
@@ -12,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import notices from 'notices';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
 	isDomainMapping,
@@ -108,7 +107,7 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	} );
 
 	// Track the renew now submit.
-	analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
+	recordTracksEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
 		...tracksProps,
 	} );

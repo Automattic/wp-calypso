@@ -7,14 +7,14 @@ import moment from 'moment';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat } from 'lib/analytics/mc';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export function trackPageLoad( path, title, readerView ) {
-	analytics.pageView.record( path, title );
+	recordPageView( path, title );
 	bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
 }
 
@@ -34,7 +34,7 @@ export function trackScrollPage( path, title, category, readerView, pageNum ) {
 		page: pageNum,
 		section: readerView,
 	} );
-	analytics.pageView.record( path, title );
+	recordPageView( path, title );
 	bumpStat( {
 		newdash_pageviews: 'scroll',
 		reader_views: readerView + '_scroll',
