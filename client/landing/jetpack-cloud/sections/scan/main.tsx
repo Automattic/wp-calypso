@@ -20,6 +20,7 @@ import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
@@ -197,6 +198,7 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ this.props.site.ID } />
+				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
