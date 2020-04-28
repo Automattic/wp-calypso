@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
@@ -154,7 +155,7 @@ class ScanPage extends Component< Props > {
 	renderScanState() {
 		const { site, scanState } = this.props;
 		if ( ! scanState ) {
-			return <div className="scan__is-loading" />;
+			return <ScanPlaceholder />;
 		}
 
 		const { state, mostRecent, threats } = scanState;
