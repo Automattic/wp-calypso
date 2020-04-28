@@ -269,7 +269,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				path={ domainTransferIn( selectedSite.slug, domain.name, true ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer your domain to WordPress.com' ) }
-				description={ translate( 'You can manage your site and domain in one place' ) }
+				description={ translate( 'Manage your site and domain all in one place' ) }
 			/>
 		);
 	}
