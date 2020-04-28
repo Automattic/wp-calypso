@@ -15,6 +15,7 @@ import {
 	requestActivityActionTypeCounts,
 } from 'state/data-getters';
 import ActivityTypeSelector from './activity-type-selector';
+import DateRangeSelector from './date-range-selector';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -70,6 +71,10 @@ const FilterBar: FunctionComponent< Props > = ( {
 	const toggleIsDateRangeSelectorVisible = () => {
 		setIsActivityTypeSelectorVisible( false );
 		setIsDateRangeSelectorVisible( ! isDateRangeSelectorVisible );
+	};
+
+	const closeDateRangeSelector = () => {
+		setIsDateRangeSelectorVisible( false );
 	};
 
 	const activityTypeButtonRef = useRef< Button >( null );
@@ -141,14 +146,21 @@ const FilterBar: FunctionComponent< Props > = ( {
 				</>
 			) }
 			{ showDateRangeSelector && (
-				<Button
-					className={ getButtonClassName( isDateRangeSelectorVisible, false ) }
-					compact
-					onClick={ toggleIsDateRangeSelectorVisible }
-					ref={ dateRangeButtonRef }
-				>
-					{ translate( 'Date range' ) }
-				</Button>
+				<>
+					<Button
+						className={ getButtonClassName( isDateRangeSelectorVisible, false ) }
+						compact
+						onClick={ toggleIsDateRangeSelectorVisible }
+						ref={ dateRangeButtonRef }
+					>
+						{ translate( 'Date range' ) }
+					</Button>
+					<DateRangeSelector
+						context={ dateRangeButtonRef }
+						isVisible={ isDateRangeSelectorVisible }
+						onClose={ closeDateRangeSelector }
+					/>
+				</>
 			) }
 		</>
 	);
