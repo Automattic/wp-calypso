@@ -16,6 +16,7 @@ import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
 import getWpAdminClassicEditorRedirectionUrl from '../../state/selectors/get-wp-admin-classic-editor-redirection-url';
+import isEditorDeprecationDialogShowing from 'state/selectors/is-editor-deprecation-dialog-showing';
 
 /**
  * We don't support classic editor in Calypso for private atomic sites. This components makes sure
@@ -38,6 +39,10 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 	const optInEnabled = useSelector( ( state ) => isGutenbergOptInEnabled( state, siteId ) );
 	const wpAdminRedirectionUrl = useSelector( ( state ) =>
 		getWpAdminClassicEditorRedirectionUrl( state, siteId )
+	);
+
+	const editorDeprecationDialogShowing = useSelector( ( state ) =>
+		isEditorDeprecationDialogShowing( state )
 	);
 
 	const dispatch = useDispatch();
@@ -75,6 +80,10 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 			wpAdminRedirectionUrl,
 		]
 	);
+
+	if ( editorDeprecationDialogShowing ) {
+		return null;
+	}
 
 	return (
 		<>

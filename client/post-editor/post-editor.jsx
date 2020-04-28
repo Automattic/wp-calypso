@@ -302,7 +302,7 @@ export class PostEditor extends React.Component {
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				{ isEnabled( 'editor/deprecation-notice' ) && <EditorDeprecationDialog /> }
-				{ ! isEnabled( 'editor/deprecation-notice' ) && <EditorGutenbergDialogs /> }
+				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
