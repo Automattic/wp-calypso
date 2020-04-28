@@ -41,7 +41,7 @@ export const connect: PageJS.Callback = ( context, next ) => {
 		// page.redirect( `${ WP_AUTHORIZE_ENDPOINT  }?${ stringify( params ) }` );
 		context.primary = <Connect authUrl={ `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }` } />;
 	} else {
-		context.primary = <p>{ 'Oauth un-enabled!' }</p>;
+		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
 	}
 	next();
 };
