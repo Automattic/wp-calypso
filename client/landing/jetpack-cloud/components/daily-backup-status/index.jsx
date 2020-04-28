@@ -79,7 +79,6 @@ class DailyBackupStatus extends Component {
 		const { allowRestore, hasRealtimeBackups, siteSlug, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
-
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
 		return (

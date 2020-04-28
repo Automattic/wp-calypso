@@ -192,11 +192,18 @@ class BackupDelta extends Component {
 
 		return (
 			<div className="backup-delta__daily">
-				{ hasChanges && (
-					<div className="backup-delta__changes-header">
-						{ translate( 'Changes in this backup' ) }
+				<div className="backup-delta__changes-header">
+					{ translate( 'Changes in this backup' ) }
+				</div>
+
+				{ ! hasChanges && (
+					<div className="backup-delta__daily-no-changes">
+						{ translate(
+							'Looks like there have been no new site changes since your last backup.'
+						) }
 					</div>
 				) }
+
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
 						<div className="backup-delta__section-header">{ translate( 'Media' ) }</div>

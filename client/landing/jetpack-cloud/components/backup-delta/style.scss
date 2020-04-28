@@ -140,14 +140,13 @@
     margin-top: 1rem;
 }
 
-.backup-delta__daily {
-    margin: 0 -16px;
-    padding: 0 16px;
-    background: var( --studio-white );
-}
-
 .backup-delta__daily .backup-delta__changes-header:first-child {
     margin-top: 0;
+}
+
+.backup-delta__daily-no-changes {
+    font-style: italic;
+    padding: 1rem 0;
 }
 
 @media ( max-width: 660px ) {
@@ -158,5 +157,11 @@
 
     .backup-delta__metas {
         margin-top: 0;
+    }
+
+    .backup-delta__daily {
+        margin: 0 -16px;
+        padding: 0 16px;
+        background: var( --studio-white );
     }
 }
