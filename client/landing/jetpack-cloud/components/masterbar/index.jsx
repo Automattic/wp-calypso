@@ -8,22 +8,26 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import Gravatar from 'components/gravatar';
 import Item from 'layout/masterbar/item';
 import JetpackLogo from 'components/jetpack-logo';
 import Masterbar from 'layout/masterbar/masterbar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
-
+import { useBreakpoint } from '@automattic/viewport-react';
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export default function () {
+const JetpackCloudMasterBar = () => {
 	const translate = useTranslate();
-	const user = useSelector( ( state ) => getCurrentUser( state ) );
-	const headerTitle = useSelector( ( state ) => getDocumentHeadTitle( state ) );
+	const user = useSelector( getCurrentUser );
+	const headerTitle = useSelector( getDocumentHeadTitle );
+	const currentRoute = useSelector( getCurrentRoute );
+	const isNarrow = useBreakpoint( '<660px' );
+	const isExteriorPage = /^\/(?:backups|scan)\/[^/]*$/.test( currentRoute );
 	return (
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -35,7 +39,7 @@ export default function () {
 					comment: 'Jetpack Cloud top navigation bar item',
 				} ) }
 			>
-				<JetpackLogo size={ 28 } full />
+				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } />
 			</Item>
 			<Item className="masterbar__item-title">{ headerTitle }</Item>
 			<Item
@@ -52,4 +56,6 @@ export default function () {
 			</Item>
 		</Masterbar>
 	);
-}
+};
+
+export default JetpackCloudMasterBar;
