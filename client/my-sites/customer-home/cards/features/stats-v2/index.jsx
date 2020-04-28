@@ -22,9 +22,13 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'state/sites/selectors';
 import { requestChartCounts } from 'state/stats/chart-tabs/actions';
 import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import {
+	getMostPopularDatetime,
+	getTopPostAndPage,
+	getViewAndVisitors,
+	isRequestingSiteStatsForQuery,
+} from 'state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getMostPopularDatetime, getTopPostAndPage, getViewAndVisitors } from './utils';
 
 /**
  * Style dependencies
