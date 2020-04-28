@@ -127,7 +127,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 
 		// Recalculate free-domain suggestions inside the closure. `getFreeDomainSuggestions()`
-		// always returns a new object so it can't be used in `useEffects()` dependencies list.
+		// always returns a new object so it shouldn't be used in `useEffects()` dependencies list.
 		const latestFreeSuggestion = getFreeDomainSuggestions( allSuggestions );
 
 		if ( latestFreeSuggestion ) {
