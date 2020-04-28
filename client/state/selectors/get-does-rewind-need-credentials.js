@@ -11,5 +11,5 @@ import getRewindState from 'state/selectors/get-rewind-state';
  * @returns {object} Rewind state object
  */
 export default function getDoesRewindNeedCredentials( state, siteId ) {
-	return [ 'awaiting_credentials' ].includes( getRewindState( state, siteId ).state );
+	return [ 'awaitingCredentials' ].includes( getRewindState( state, siteId ).state );
 }

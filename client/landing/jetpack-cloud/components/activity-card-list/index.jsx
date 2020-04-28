@@ -77,7 +77,15 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			pageSize,
+			logs,
+			moment,
+			siteSlug,
+			showDateSeparators,
+		} = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -105,6 +113,7 @@ class ActivityCardList extends Component {
 									showContentLink: isActivityBackup( activity )
 										? dateLogs.length > 1 || hasMore
 										: undefined,
+									doesRewindNeedCredentials,
 									moment,
 									activity,
 									allowRestore,

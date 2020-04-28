@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -23,12 +24,17 @@ import {
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import ExternalLink from 'components/external-link';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
+import QueryRewindState from 'components/data/query-rewind-state';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
+import missingCredentialsIcon from 'landing/jetpack-cloud/components/daily-backup-status/missing-credentials.svg';
 
 class ActivityCard extends Component {
 	static propTypes = {
@@ -38,6 +44,7 @@ class ActivityCard extends Component {
 	};
 
 	static defaultProps = {
+		doesRewindNeedCredentials: false,
 		showActions: true,
 		summarize: false,
 	};
@@ -147,7 +154,7 @@ class ActivityCard extends Component {
 	}
 
 	renderActionButton( isTopToolbar = true ) {
-		const { activity, siteSlug, translate } = this.props;
+		const { activity, doesRewindNeedCredentials, siteSlug, translate } = this.props;
 
 		const context = isTopToolbar ? this.topPopoverContext : this.bottomPopoverContext;
 
@@ -178,9 +185,25 @@ class ActivityCard extends Component {
 					<Button
 						href={ backupRestorePath( siteSlug, activity.rewindId ) }
 						className="activity-card__restore-button"
+						disabled={ doesRewindNeedCredentials }
 					>
 						{ translate( 'Restore to this point' ) }
 					</Button>
+					{ doesRewindNeedCredentials && (
+						<div className="activity-card__credentials-warning">
+							<img src={ missingCredentialsIcon } alt="" role="presentation" />
+							<div className="activity-card__credentials-warning-text">
+								{ translate(
+									'{{a}}Enter your server credentials{{/a}} to enable one-click restores from your backups.',
+									{
+										components: {
+											a: <ExternalLink href="" onClick={ () => {} } />,
+										},
+									}
+								) }
+							</div>
+						</div>
+					) }
 					<Button
 						borderless
 						compact
@@ -225,7 +248,15 @@ class ActivityCard extends Component {
 	}
 
 	render() {
-		const { activity, allowRestore, className, gmtOffset, summarize, timezone } = this.props;
+		const {
+			activity,
+			allowRestore,
+			className,
+			gmtOffset,
+			siteId,
+			summarize,
+			timezone,
+		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -238,6 +269,7 @@ class ActivityCard extends Component {
 
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
+				<QueryRewindState siteId={ siteId } />
 				{ ! summarize && (
 					<div className="activity-card__time">
 						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
@@ -275,4 +307,13 @@ class ActivityCard extends Component {
 	}
 }
 
-export default localize( ActivityCard );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteId,
+		doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( ActivityCard ) );
