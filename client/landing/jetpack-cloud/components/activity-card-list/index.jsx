@@ -10,7 +10,10 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isActivityBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import {
+	isActivityBackup,
+	isSuccessfulDailyBackup,
+} from 'landing/jetpack-cloud/sections/backups/utils';
 import { updateFilter } from 'state/activity-log/actions';
 import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -76,8 +79,12 @@ class ActivityCardList extends Component {
 		return logsByDate;
 	}
 
+	renderActivityCardContent( activity ) {
+		return <div></div>;
+	}
+
 	renderLogs( actualPage ) {
-		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
+		const { allowRestore, pageSize, logs, showDateSeparators } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -102,18 +109,15 @@ class ActivityCardList extends Component {
 							<ActivityCard
 								{ ...{
 									key: activity.activityId,
-									showContentLink: isActivityBackup( activity )
-										? dateLogs.length > 1 || hasMore
-										: true,
-									moment,
 									activity,
 									allowRestore,
-									siteSlug,
 									className: isActivityBackup( activity )
 										? getPrimaryCardClassName( hasMore, dateLogs.length )
 										: getSecondaryCardClassName( hasMore ),
 								} }
-							/>
+							>
+								{ this.renderActivityCardContent( activity ) }
+							</ActivityCard>
 						) ) }
 					</div>
 				</div>
