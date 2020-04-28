@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -12,8 +12,10 @@ import { Card } from '@automattic/components';
 import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelCta from 'components/action-panel/cta';
 import CardHeading from 'components/card-heading';
 import { getTaskList } from 'lib/checklist';
+import Gridicon from 'components/gridicon';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'state/sites/selectors';
@@ -37,11 +39,14 @@ const getTaskCopy = ( task ) => {
 			};
 		case 'blogname_set':
 			return {
+				time: 1,
 				title: translate( 'Name your site' ),
 				description: translate(
 					'Give your new site a title to let people know what your site is about. ' +
 						'A good title introduces your brand and the primary topics of your site.'
 				),
+				actionText: translate( 'Start' ),
+				actionUrl: null,
 			};
 		case 'mobile_app_installed':
 			return {
@@ -84,7 +89,7 @@ const SiteSetupList = ( { tasks } ) => {
 				{ tasks.map( ( task ) => (
 					<NavItem
 						key={ task.id }
-						text={ getTaskCopy( task.id )?.title }
+						text={ getTaskCopy( task.id ).title }
 						isCompleted={ task.isCompleted }
 						isCurrent={ task.id === currentTask }
 						onClick={ () => setCurrentTask( task.id ) }
@@ -93,7 +98,30 @@ const SiteSetupList = ( { tasks } ) => {
 			</div>
 			<ActionPanel className="site-setup-list__task task">
 				<ActionPanelBody>
-					<ActionPanelTitle>{ getTaskCopy( currentTask )?.title }</ActionPanelTitle>
+					<div className="site-setup-list__task task__text">
+						<div className="site-setup-list__task task__timing">
+							<Gridicon icon="time" size={ 18 } />
+							<p>
+								{ translate( '%d minute', '%d minutes', {
+									count: getTaskCopy( currentTask ).time,
+									args: [ getTaskCopy( currentTask ).time ],
+								} ) }
+							</p>
+						</div>
+						<ActionPanelTitle>{ getTaskCopy( currentTask ).title }</ActionPanelTitle>
+						<p className="site-setup-list__task task__description">
+							{ getTaskCopy( currentTask ).description }
+						</p>
+						<ActionPanelCta>
+							<Button
+								className="site-setup-list__task task__action"
+								primary
+								href={ getTaskCopy( currentTask ).actionUrl }
+							>
+								{ getTaskCopy( currentTask ).actionText }
+							</Button>
+						</ActionPanelCta>
+					</div>
 				</ActionPanelBody>
 			</ActionPanel>
 		</Card>
