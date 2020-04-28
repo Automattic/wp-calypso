@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import CardHeading from 'components/card-heading';
 import ExternalLink from 'components/external-link';
-import temporaryIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import webinarIllustration from 'assets/images/customer-home/illustration-webinars.svg';
 
 /**
  * Style dependencies
@@ -23,12 +23,12 @@ export const Webinars = () => {
 
 	return (
 		<Card className="webinars">
-			<CardHeading>{ translate( 'Get hands-on learning from our experts' ) }</CardHeading>
 			<div className="webinars__content">
-				<div className="webinars__text">
+				<div>
+					<CardHeading>{ translate( 'Learn from the pros' ) }</CardHeading>
 					<p>
 						{ translate(
-							'Register for a live video webinar to help you get started or learn advanced features.'
+							'Free webinars with Happiness Engineers teach you to build a website, start a blog, or make money on your site.'
 						) }
 					</p>
 					<ExternalLink href="https://wordpress.com/webinars/" icon>
@@ -36,7 +36,7 @@ export const Webinars = () => {
 					</ExternalLink>
 				</div>
 				{ isDesktop() && (
-					<img src={ temporaryIllustration } className="webinars__illustration" alt="" />
+					<img src={ webinarIllustration } className="webinars__illustration" alt="" />
 				) }
 			</div>
 		</Card>

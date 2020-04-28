@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from '../task';
-import temporaryIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import webinarIllustration from 'assets/images/customer-home/illustration-webinars.svg';
 
 const Webinar = () => {
 	const translate = useTranslate();
@@ -24,7 +24,7 @@ const Webinar = () => {
 			actionOnClick={ () => {
 				window.open( 'https://wordpress.com/webinars/', '_blank' );
 			} }
-			illustration={ temporaryIllustration }
+			illustration={ webinarIllustration }
 			timing={ 2 }
 			taskId="webinar"
 		/>
