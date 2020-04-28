@@ -25,7 +25,6 @@ import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selector
 import {
 	getMostPopularDatetime,
 	getTopPostAndPage,
-	getViewAndVisitors,
 	isRequestingSiteStatsForQuery,
 } from 'state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -54,7 +53,6 @@ export const StatsV2 = ( {
 	topPostsQuery,
 	views,
 	visitors,
-	visitsQuery,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -74,7 +72,6 @@ export const StatsV2 = ( {
 		<div className="stats-v2">
 			{ ! isSiteUnlaunched && (
 				<>
-					<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ visitsQuery } />
 					<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
@@ -104,7 +101,7 @@ export const StatsV2 = ( {
 						{ isLoading ? <Spinner /> : translate( "No traffic this week, but don't give up!" ) }
 					</Chart>
 				) }
-				{ ! isSiteUnlaunched && views === 0 && (
+				{ ! isSiteUnlaunched && ! isLoading && views === 0 && (
 					<div className="stats-v2__empty">
 						<div className="stats-v2__empty-illustration">
 							<img src="/calypso/images/stats/illustration-stats-intro.svg" alt="" />
@@ -213,7 +210,7 @@ const getStatsQueries = ( state, siteId ) => {
 	};
 };
 
-const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ) => {
+const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => {
 	const counts = getCountRecords( state, siteId, chartQuery.period );
 	const chartData = buildChartData(
 		[],
@@ -222,18 +219,22 @@ const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, 
 		chartQuery.period,
 		chartQuery.date
 	);
+	const views = chartData.reduce(
+		( acummulatedViews, { data } ) => acummulatedViews + data.views,
+		0
+	);
+	const visitors = chartData.reduce(
+		( acummulatedVisitors, { data } ) => acummulatedVisitors + data.visitors,
+		0
+	);
 
-	const mostPopularDateTime = getMostPopularDatetime( state, siteId, insightsQuery );
-	const mostPopularDay = mostPopularDateTime.day;
-	const mostPopularTime = mostPopularDateTime?.time;
+	const { day: mostPopularDay, time: mostPopularTime } = getMostPopularDatetime(
+		state,
+		siteId,
+		insightsQuery
+	);
 
-	const topPostAndPage = getTopPostAndPage( state, siteId, topPostsQuery );
-	const topPost = topPostAndPage.post;
-	const topPage = topPostAndPage.page;
-
-	const viewsAndVisitors = getViewAndVisitors( state, siteId, visitsQuery );
-	const views = viewsAndVisitors.views;
-	const visitors = viewsAndVisitors.visitors;
+	const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 	return {
 		chartData,
@@ -246,11 +247,10 @@ const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, 
 	};
 };
 
-const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ) =>
+const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery ) =>
 	getLoadingTabs( state, siteId, chartQuery.period ).includes( chartQuery.chartTab ) ||
 	isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', insightsQuery ) ||
-	isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery ) ||
-	isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', visitsQuery );
+	isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery );
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
@@ -272,19 +272,21 @@ const mapStateToProps = ( state ) => {
 		visitsQuery
 	);
 
+	const canShowStatsData = ! isSiteUnlaunched && ! isLoading;
+	const statsData =
+		canShowStatsData &&
+		getStatsData( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery );
+
 	return {
 		chartQuery,
 		insightsQuery,
-		isLoading,
+		isLoading: canShowStatsData ? statsData.chartData.length === 0 : isLoading,
 		isSiteUnlaunched,
 		siteId,
 		siteSlug,
 		topPostsQuery,
 		visitsQuery,
-		...( ! isSiteUnlaunched &&
-			! isLoading && {
-				...getStatsData( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ),
-			} ),
+		...statsData,
 	};
 };
 

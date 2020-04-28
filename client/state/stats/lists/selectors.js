@@ -251,19 +251,3 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
 	};
 };
-
-export const getViewAndVisitors = ( state, siteId, query ) => {
-	const visits = getSiteStatsNormalizedData( state, siteId, 'statsVisits', query );
-
-	if ( ! visits ) {
-		return {
-			views: null,
-			visitors: null,
-		};
-	}
-
-	return {
-		views: visits.reduce( ( views, dailyVisits ) => views + dailyVisits.views, 0 ),
-		visitors: visits.reduce( ( views, dailyVisits ) => views + dailyVisits.visitors, 0 ),
-	};
-};
