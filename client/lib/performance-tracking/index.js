@@ -8,7 +8,6 @@ export const trackNavigationStart = ( pageName ) => {
 		startNavigation( {
 			label: pageName || 'calypso',
 			metadata: {
-				// Defines if it is a full page load or a SPA load
 				init: context.init || false,
 			},
 		} );

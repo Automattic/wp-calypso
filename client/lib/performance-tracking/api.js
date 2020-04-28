@@ -9,7 +9,15 @@ const getLux = () => {
 	return lux;
 };
 
-export const startNavigation = ( { label, metadata = {} } ) => {
+const addMetadata = ( metadata ) => {
+	const lux = getLux();
+
+	Object.entries( metadata ).forEach( ( [ key, value ] ) => {
+		lux.addData( key, value );
+	} );
+};
+
+export const startNavigation = ( { label, metadata = {} } = {} ) => {
 	const lux = getLux();
 
 	if ( typeof lux.init !== 'function' ) {
@@ -19,18 +27,17 @@ export const startNavigation = ( { label, metadata = {} } ) => {
 
 	lux.init();
 	lux.label = label;
-	Object.entries( metadata ).forEach( ( [ key, value ] ) => {
-		lux.addData( key, value );
-	} );
+	addMetadata( metadata );
 };
 
-export const stopNavigation = () => {
+export const stopNavigation = ( { metadata = {} } = {} ) => {
 	const lux = getLux();
 
-	if ( typeof lux.init !== 'function' ) {
+	if ( typeof lux.send !== 'function' ) {
 		// Not initialized yet, we'll skip this navigation.
 		return;
 	}
 
+	addMetadata( metadata );
 	lux.send();
 };
