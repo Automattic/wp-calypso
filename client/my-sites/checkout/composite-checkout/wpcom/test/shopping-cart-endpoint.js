@@ -88,7 +88,7 @@ describe( 'addItemToResponseCart', function () {
 			item_original_cost_integer: null,
 			product_cost_display: null,
 			product_cost_integer: null,
-			product_name: '…',
+			product_name: '',
 			product_type: null,
 			uuid: 'calypso-shopping-cart-endpoint-uuid-100',
 			volume: 1,

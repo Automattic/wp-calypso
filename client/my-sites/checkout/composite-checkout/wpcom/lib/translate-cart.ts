@@ -139,7 +139,7 @@ function translateReponseCartProductToWPCOMCartItem(
 
 	return {
 		id: uuid,
-		label: product_name || '…',
+		label: product_name || '',
 		sublabel: meta,
 		type: product_slug,
 		amount: {
