@@ -313,7 +313,7 @@ function convertRequestCartProductToResponseCartProduct(
 ): TempResponseCartProduct {
 	const { product_slug, product_id, meta, extra } = product;
 	return {
-		product_name: '…',
+		product_name: '',
 		product_slug,
 		product_id,
 		currency: null,

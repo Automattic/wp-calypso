@@ -274,20 +274,22 @@ export function WPOrderReviewLineItems( {
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( ( item ) => (
-				<WPOrderReviewListItem key={ item.id }>
-					<LineItemUI
-						isSummaryVisible={ isSummaryVisible }
-						item={ item }
-						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-						variantRequestStatus={ variantRequestStatus }
-						variantSelectOverride={ variantSelectOverride }
-						getItemVariants={ getItemVariants }
-						onChangePlanLength={ onChangePlanLength }
-					/>
-				</WPOrderReviewListItem>
-			) ) }
+			{ items
+				.filter( ( item ) => item.label ) // remove items without a label
+				.map( ( item ) => (
+					<WPOrderReviewListItem key={ item.id }>
+						<LineItemUI
+							isSummaryVisible={ isSummaryVisible }
+							item={ item }
+							hasDeleteButton={ canItemBeDeleted( item ) }
+							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							onChangePlanLength={ onChangePlanLength }
+						/>
+					</WPOrderReviewListItem>
+				) ) }
 		</WPOrderReviewList>
 	);
 }

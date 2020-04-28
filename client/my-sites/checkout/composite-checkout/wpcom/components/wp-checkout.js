@@ -76,6 +76,7 @@ export default function WPCheckout( {
 	responseCart,
 	addItemToCart,
 	subtotal,
+	isCartPendingUpdate,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -167,8 +168,12 @@ export default function WPCheckout( {
 						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 						nextStepButtonText={ translate( 'Continue' ) }
 						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={ translate( 'Please wait…' ) }
-						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+						validatingButtonText={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
+						validatingButtonAriaLabel={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
 					/>
 					{ shouldShowContactStep && (
 						<CheckoutStep
@@ -199,8 +204,12 @@ export default function WPCheckout( {
 							editButtonAriaLabel={ translate( 'Edit the contact details' ) }
 							nextStepButtonText={ translate( 'Continue' ) }
 							nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
-							validatingButtonText={ translate( 'Please wait…' ) }
-							validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+							validatingButtonText={
+								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+							}
+							validatingButtonAriaLabel={
+								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+							}
 						/>
 					) }
 					<CheckoutStep
@@ -218,8 +227,12 @@ export default function WPCheckout( {
 						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 						nextStepButtonText={ translate( 'Continue' ) }
 						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={ translate( 'Please wait…' ) }
-						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+						validatingButtonText={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
+						validatingButtonAriaLabel={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
