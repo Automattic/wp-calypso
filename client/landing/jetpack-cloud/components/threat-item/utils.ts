@@ -9,21 +9,23 @@ import { translate } from 'i18n-calypso';
 import { Threat, ThreatFix, ThreatType } from './types';
 
 export function getThreatType( threat: Threat ): ThreatType {
-	if ( threat.hasOwnProperty( 'diff' ) ) {
+	// We can't use `hasOwnProperty` here to test these conditions because
+	// the object might contains those keys with an undefined value
+	if ( threat.diff !== undefined ) {
 		return 'core';
 	}
 
-	if ( threat.hasOwnProperty( 'context' ) ) {
+	if ( threat.context !== undefined ) {
 		return 'file';
 	}
 
-	if ( threat.hasOwnProperty( 'extension' ) ) {
+	if ( threat.extension !== undefined ) {
 		// 'plugin' or 'theme'
 		const { extension = { type: 'unknown' } } = threat;
 		return extension.type;
 	}
 
-	if ( threat.hasOwnProperty( 'rows' ) ) {
+	if ( threat.rows !== undefined ) {
 		return 'database';
 	}
 
