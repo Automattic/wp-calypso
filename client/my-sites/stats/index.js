@@ -12,6 +12,7 @@ import statsController from './controller';
 import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
+import { trackNavigationStart } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -29,6 +30,7 @@ export default function () {
 		// Stat Overview Page
 		page(
 			'/stats/day',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.overview,
@@ -37,6 +39,7 @@ export default function () {
 		);
 		page(
 			'/stats/week',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.overview,
@@ -45,6 +48,7 @@ export default function () {
 		);
 		page(
 			'/stats/month',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.overview,
@@ -53,6 +57,7 @@ export default function () {
 		);
 		page(
 			'/stats/year',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.overview,
@@ -60,11 +65,20 @@ export default function () {
 			clientRender
 		);
 
-		page( '/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender );
+		page(
+			'/stats/insights',
+			trackNavigationStart( 'stats' ),
+			siteSelection,
+			navigation,
+			sites,
+			makeLayout,
+			clientRender
+		);
 
 		// Stat Insights Page
 		page(
 			'/stats/insights/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.insights,
@@ -75,6 +89,7 @@ export default function () {
 		// Stat Site Pages
 		page(
 			'/stats/day/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -83,6 +98,7 @@ export default function () {
 		);
 		page(
 			'/stats/week/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -91,6 +107,7 @@ export default function () {
 		);
 		page(
 			'/stats/month/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -99,6 +116,7 @@ export default function () {
 		);
 		page(
 			'/stats/year/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -129,6 +147,7 @@ export default function () {
 		// Stat Summary Pages
 		page(
 			`/stats/day/:module(${ validModules.join( '|' ) })/:site`,
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -137,6 +156,7 @@ export default function () {
 		);
 		page(
 			`/stats/week/:module(${ validModules.join( '|' ) })/:site`,
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -145,6 +165,7 @@ export default function () {
 		);
 		page(
 			`/stats/month/:module(${ validModules.join( '|' ) })/:site`,
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -153,6 +174,7 @@ export default function () {
 		);
 		page(
 			`/stats/year/:module(${ validModules.join( '|' ) })/:site`,
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -163,6 +185,7 @@ export default function () {
 		// Stat Single Post Page
 		page(
 			'/stats/post/:post_id/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.post,
@@ -171,6 +194,7 @@ export default function () {
 		);
 		page(
 			'/stats/page/:post_id/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.post,
@@ -181,6 +205,7 @@ export default function () {
 		// Stat Follows Page
 		page(
 			'/stats/follows/comment/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.follows,
@@ -189,6 +214,7 @@ export default function () {
 		);
 		page(
 			'/stats/follows/comment/:page_num/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.follows,
@@ -196,10 +222,19 @@ export default function () {
 			clientRender
 		);
 
-		page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
+		page(
+			'/stats/activity',
+			trackNavigationStart( 'stats' ),
+			siteSelection,
+			sites,
+			redirectToAcivity,
+			makeLayout,
+			clientRender
+		);
 
 		page(
 			'/stats/activity/:site',
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			redirectToAcivity,
@@ -209,6 +244,7 @@ export default function () {
 
 		page(
 			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
+			trackNavigationStart( 'stats' ),
 			siteSelection,
 			navigation,
 			statsController.wordAds,
