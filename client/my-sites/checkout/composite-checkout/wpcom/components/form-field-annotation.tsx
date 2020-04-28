@@ -90,7 +90,12 @@ const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
 	}
 `;
 
-function RenderedDescription( { descriptionText, descriptionId, isError, errorMessage } ) {
+function RenderedDescription( {
+	descriptionText,
+	descriptionId,
+	isError,
+	errorMessage,
+}: RenderedDescriptionProps ) {
 	if ( descriptionText || isError ) {
 		return (
 			<Description isError={ isError } id={ descriptionId }>
@@ -101,8 +106,15 @@ function RenderedDescription( { descriptionText, descriptionId, isError, errorMe
 	return null;
 }
 
+type RenderedDescriptionProps = {
+	descriptionText?: string;
+	descriptionId?: string;
+	isError?: boolean;
+	errorMessage?: string;
+};
+
 type DescriptionProps = {
-	isError: boolean;
+	isError?: boolean;
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 

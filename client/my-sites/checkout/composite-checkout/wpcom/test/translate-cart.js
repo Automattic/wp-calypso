@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
+import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
-describe( 'translateWpcomCartToCheckoutCart', function () {
+describe( 'translateResponseCartToWPCOMCart', function () {
 	describe( 'Cart with one plan only (BRL)', function () {
 		const serverResponse = {
 			blog_id: 123,
@@ -70,7 +70,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -253,7 +253,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -501,7 +501,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -666,7 +666,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			is_coupon_applied: true,
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( string, substitution ) => {
+		const clientCart = translateResponseCartToWPCOMCart( ( string, substitution ) => {
 			return substitution ? string.replace( '%s', substitution.args ) : string;
 		}, serverResponse );
 

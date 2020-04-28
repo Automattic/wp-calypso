@@ -4,6 +4,7 @@
 import {
 	ResponseCart,
 	ResponseCartProduct,
+	TempResponseCartProduct,
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
@@ -20,8 +21,8 @@ import {
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart(
-	translate: ( string, any? ) => string,
+export function translateResponseCartToWPCOMCart(
+	translate: ( arg0: string, arg1?: any ) => string, //eslint-disable-line @typescript-eslint/no-explicit-any
 	serverCart: ResponseCart
 ): WPCOMCart {
 	const {
@@ -91,7 +92,7 @@ export function translateWpcomCartToCheckoutCart(
 	};
 
 	return {
-		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
+		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
@@ -114,8 +115,8 @@ export function translateWpcomCartToCheckoutCart(
 }
 
 // Convert a backend cart item to a checkout cart item
-function translateWpcomCartItemToCheckoutCartItem(
-	serverCartItem: ResponseCartProduct
+function translateReponseCartProductToWPCOMCartItem(
+	serverCartItem: ResponseCartProduct | TempResponseCartProduct
 ): WPCOMCartItem {
 	const {
 		product_id,
@@ -138,13 +139,13 @@ function translateWpcomCartItemToCheckoutCartItem(
 
 	return {
 		id: uuid,
-		label: product_name,
+		label: product_name || '…',
 		sublabel: meta,
 		type: product_slug,
 		amount: {
-			currency,
-			value: item_subtotal_integer,
-			displayValue: item_subtotal_display,
+			currency: currency || '',
+			value: item_subtotal_integer || 0,
+			displayValue: item_subtotal_display || '',
 		},
 		wpcom_meta: {
 			uuid: uuid,
@@ -153,12 +154,12 @@ function translateWpcomCartItemToCheckoutCartItem(
 			product_slug,
 			extra,
 			volume,
-			is_domain_registration,
-			is_bundled,
-			item_original_cost_display,
-			item_original_cost_integer,
-			product_cost_integer,
-			product_cost_display,
+			is_domain_registration: is_domain_registration || false,
+			is_bundled: is_bundled || false,
+			item_original_cost_display: item_original_cost_display || '',
+			item_original_cost_integer: item_original_cost_integer || 0,
+			product_cost_integer: product_cost_integer || 0,
+			product_cost_display: product_cost_display || '',
 		},
 	};
 }
