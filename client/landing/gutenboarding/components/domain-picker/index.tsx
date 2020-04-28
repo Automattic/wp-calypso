@@ -106,25 +106,28 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		if ( allSuggestions ) {
 			setRailcarId( getNewRailcarId() );
 		}
-
-		if ( freeSuggestions && recommendedSuggestion && paidSuggestions ) {
-			if (
-				currentDomain?.is_free === true &&
-				currentDomain?.domain_name !== freeSuggestions[ 0 ].domain_name
-			) {
-				onDomainSelect( freeSuggestions[ 0 ] );
-			}
-
-			if (
-				currentDomain?.is_free !== true &&
-				! paidSuggestions.find(
-					( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
-				)
-			) {
-				onDomainSelect( recommendedSuggestion );
-			}
-		}
 	}, [ allSuggestions ] );
+
+	useEffect( () => {
+		if (
+			freeSuggestions &&
+			currentDomain?.is_free === true &&
+			currentDomain?.domain_name !== freeSuggestions[ 0 ].domain_name
+		) {
+			onDomainSelect( freeSuggestions[ 0 ] );
+		}
+
+		if (
+			paidSuggestions &&
+			recommendedSuggestion &&
+			currentDomain?.is_free !== true &&
+			! paidSuggestions.find(
+				( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
+			)
+		) {
+			onDomainSelect( recommendedSuggestion );
+		}
+	}, [ currentDomain, freeSuggestions, onDomainSelect, paidSuggestions, recommendedSuggestion ] );
 
 	useTrackModal( 'DomainPicker' );
 
