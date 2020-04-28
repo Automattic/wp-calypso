@@ -18,7 +18,11 @@ const NavItem = ( { text, isCompleted, isCurrent, onClick } ) => {
 			onClick={ onClick }
 		>
 			<div className="nav-item__status">
-				{ isCompleted && <Gridicon icon="checkmark" size={ 18 } /> }
+				{ isCompleted ? (
+					<Gridicon className="nav-item__complete" icon="checkmark" size={ 18 } />
+				) : (
+					<div className="nav-item__pending" />
+				) }
 			</div>
 			<div className="nav-item__text">
 				<h6>{ text }</h6>
