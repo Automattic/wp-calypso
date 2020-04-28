@@ -69,7 +69,7 @@
 		color: var( --color-text-inverted );
 	}
 
-	.filterbar__selection-close {
+	.filterbar__selection-close.button {
 		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
 		background-color: var( --color-neutral-60 );
@@ -85,7 +85,7 @@
 		}
 	}
 
-	.filterbar__selection-close:hover {
+	.filterbar__selection-close.button:hover {
 		color: var( --color-text-inverted );
 		background-color: var( --color-neutral-60 );
 	}
