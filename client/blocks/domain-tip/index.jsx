@@ -20,11 +20,6 @@ import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {
 		return null;
