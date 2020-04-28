@@ -25,28 +25,43 @@ import NavItem from './nav-item';
  */
 import './style.scss';
 
-const TASKS = {
-	domain_verified: {
-		title: translate( 'Verify the email address for your domains' ),
-	},
-	email_verified: {
-		title: translate( 'Confirm your email address' ),
-	},
-	blogname_set: {
-		title: translate( 'Name your site' ),
-	},
-	mobile_app_installed: {
-		title: translate( 'Get the WordPress app' ),
-	},
-	site_launched: {
-		title: translate( 'Launch your site' ),
-	},
-	front_page_updated: {
-		title: translate( 'Update your Home page' ),
-	},
-	site_menu_updated: {
-		title: translate( 'Create a site menu' ),
-	},
+const getTaskCopy = ( task ) => {
+	switch ( task ) {
+		case 'domain_verified':
+			return {
+				title: translate( 'Verify the email address for your domains' ),
+			};
+		case 'email_verified':
+			return {
+				title: translate( 'Confirm your email address' ),
+			};
+		case 'blogname_set':
+			return {
+				title: translate( 'Name your site' ),
+				description: translate(
+					'Give your new site a title to let people know what your site is about. ' +
+						'A good title introduces your brand and the primary topics of your site.'
+				),
+			};
+		case 'mobile_app_installed':
+			return {
+				title: translate( 'Get the WordPress app' ),
+			};
+		case 'site_launched':
+			return {
+				title: translate( 'Launch your site' ),
+			};
+		case 'front_page_updated':
+			return {
+				title: translate( 'Update your Home page' ),
+			};
+		case 'site_menu_updated':
+			return {
+				title: translate( 'Create a site menu' ),
+			};
+		default:
+			return {};
+	}
 };
 
 const SiteSetupList = ( { tasks } ) => {
@@ -69,7 +84,7 @@ const SiteSetupList = ( { tasks } ) => {
 				{ tasks.map( ( task ) => (
 					<NavItem
 						key={ task.id }
-						text={ TASKS[ task.id ].title }
+						text={ getTaskCopy( task.id )?.title }
 						isCompleted={ task.isCompleted }
 						isCurrent={ task.id === currentTask }
 						onClick={ () => setCurrentTask( task.id ) }
@@ -78,7 +93,7 @@ const SiteSetupList = ( { tasks } ) => {
 			</div>
 			<ActionPanel className="site-setup-list__task task">
 				<ActionPanelBody>
-					<ActionPanelTitle>{ TASKS[ currentTask ].title }</ActionPanelTitle>
+					<ActionPanelTitle>{ getTaskCopy( currentTask )?.title }</ActionPanelTitle>
 				</ActionPanelBody>
 			</ActionPanel>
 		</Card>
