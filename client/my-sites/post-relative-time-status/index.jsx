@@ -48,7 +48,7 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getDisplayedTimeForLabel( prefix = true ) {
+	getDisplayedTimeForLabel() {
 		const moment = this.props.moment;
 		const now = moment();
 		const timestamp = moment( this.getTimestamp() );
@@ -58,35 +58,26 @@ class PostRelativeTime extends React.PureComponent {
 		let displayedTime;
 		if ( isScheduledPost ) {
 			displayedTime = timestamp.calendar( null, {
-				nextDay: this.props.translate( '[for tomorrow at] LT', {
+				nextDay: this.props.translate( '[tomorrow at] LT', {
 					comment: 'LT refers to time (eg. 18:00)',
 				} ),
-				sameElse: this.props.translate( '[for] ll [at] LT', {
+				sameElse: this.props.translate( 'll [at] LT', {
 					comment:
-						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" and "for" is translated',
+						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - and "for" is translated',
 				} ),
 			} );
 		} else {
 			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
-				const time = moment( this.getTimestamp() );
-				return time.fromNow();
+				return timestamp.fromNow();
 			}
 
-			let sameElseTranslation;
-			if ( ! prefix ) {
-				sameElseTranslation = this.props.translate( 'll [at] LT', {
-					comment:
-						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
-				} );
-			} else {
-				sameElseTranslation = this.props.translate( '[on] ll [at] LT', {
-					comment:
-						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" and "on" is translated',
-				} );
-			}
+			const sameElse = this.props.translate( 'll [at] LT', {
+				comment:
+					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+			} );
 
 			displayedTime = timestamp.calendar( null, {
-				sameElse: sameElseTranslation,
+				sameElse,
 			} );
 		}
 
@@ -112,53 +103,78 @@ class PostRelativeTime extends React.PureComponent {
 		);
 	}
 
+	getStatusText() {
+		const status = this.props.post.status;
+		const args = {
+			displayedTime: this.getDisplayedTimeForLabel(),
+		};
+		const moment = this.props.moment;
+		const now = moment();
+		const displayOn = Math.abs( now.diff( this.getTimestamp(), 'days' ) ) >= 7;
+
+		switch ( status ) {
+			case 'trash':
+				if ( displayOn ) {
+					return this.props.translate( 'trashed on %(displayedTime)s', {
+						comment: '%(displayedTime)s is when a post or page was trashed',
+						args,
+					} );
+				}
+				return this.props.translate( 'trashed %(displayedTime)s', {
+					comment: '%(displayedTime)s is when a post or page was trashed',
+					args,
+				} );
+
+			case 'future':
+				return this.props.translate( 'scheduled for %(displayedTime)s', {
+					comment: '%(displayedTime)s is when a scheduled post or page is set to be published',
+					args,
+				} );
+
+			case 'draft':
+			case 'pending':
+				if ( displayOn ) {
+					return this.props.translate( 'draft last modified on %(displayedTime)s', {
+						comment: '%(displayedTime)s is when a draft post or page was last modified',
+						args,
+					} );
+				}
+
+				return this.props.translate( 'draft last modified %(displayedTime)s', {
+					comment: '%(displayedTime)s is when a draft post or page was last modified',
+					args,
+				} );
+
+			case 'publish':
+				if ( displayOn ) {
+					return this.props.translate( 'published on %(displayedTime)s', {
+						comment: '%(displayedTime)s is when a post or page will be published',
+						args,
+					} );
+				}
+
+				return this.props.translate( 'published %(displayedTime)s', {
+					comment: '%(displayedTime)s is when a post or page will be published',
+					args,
+				} );
+		}
+	}
+
 	/**
 	 * Get status label
 	 */
-	getStatusText() {
+	getStatus() {
 		const status = this.props.post.status;
 		let extraStatusClassName;
 		let statusIcon;
-		let statusText;
+		let statusText = this.getStatusText();
 
 		if ( status === 'trash' ) {
 			extraStatusClassName = 'is-trash';
 			statusIcon = 'trash';
-			const displayedTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'trashed %(displayedTime)s', {
-				comment: '%(displayedTime)s is when a post or page was trashed',
-				args: {
-					displayedTime,
-				},
-			} );
 		} else if ( status === 'future' ) {
 			extraStatusClassName = 'is-scheduled';
 			statusIcon = 'calendar';
-			const displayedTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'scheduled %(displayedTime)s', {
-				comment: '%(displayedTime)s is when a scheduled post or page is set to be published',
-				args: {
-					displayedTime,
-				},
-			} );
-		} else if ( status === 'draft' || status === 'pending' ) {
-			const displayedTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft last modified %(displayedTime)s', {
-				comment: '%(displayedTime)s is when a draft post or page was last modified',
-				args: {
-					displayedTime,
-				},
-			} );
-		} else if ( status === 'publish' ) {
-			const displayedTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published %(displayedTime)s', {
-				comment: '%(displayedTime)s is when a post or page was last modified',
-				args: {
-					displayedTime,
-				},
-			} );
-		} else if ( status === 'private' ) {
-			statusText = this.getDisplayedTimeForLabel();
 		} else if ( status === 'new' ) {
 			statusText = this.props.translate( 'Publish immediately' );
 		}
@@ -212,7 +228,7 @@ class PostRelativeTime extends React.PureComponent {
 		const timeText = this.getTimeText();
 		let innerText = (
 			<span>
-				{ showPublishedStatus ? this.getStatusText() : timeText }
+				{ showPublishedStatus ? this.getStatus() : timeText }
 				{ post.status === 'pending' && this.getPendingLabel() }
 				{ post.status === 'private' && this.getPrivateLabel() }
 				{ post.sticky && this.getStickyLabel() }
