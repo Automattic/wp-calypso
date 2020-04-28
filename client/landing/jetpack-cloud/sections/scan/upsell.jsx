@@ -26,7 +26,7 @@ function ScanUpsellPage( props ) {
 			<PageViewTracker
 				path="/scan/:site"
 				title="Scanner Upsell"
-				properties={ { site: this.props.siteSlug } }
+				properties={ { site: props.siteSlug } }
 			/>
 			<div className="scan__content">
 				<SecurityIcon icon="info" />
