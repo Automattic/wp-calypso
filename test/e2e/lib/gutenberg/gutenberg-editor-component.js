@@ -173,7 +173,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			'.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
-		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search' );
+		// @TODO: Remove `input.block-editor-inserter__search` selector in favor of the `input.block-editor-inserter__search-input` selector when Gutenberg 8.0.0 is deployed.
+		const inserterSearchInputSelector = By.css(
+			'input.block-editor-inserter__search, input.block-editor-inserter__search-input'
+		);
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
