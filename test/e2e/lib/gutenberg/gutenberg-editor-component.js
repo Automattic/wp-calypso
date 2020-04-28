@@ -185,8 +185,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, searchTerm );
 	}
 
+	// @TODO: Remove `.block-editor-inserter__results .components-panel__body-title` selector in favor of the `.block-editor-inserter__block-list .block-editor-inserter__panel-title` selector when Gutenberg 8.0.0 is deployed.
 	async isBlockCategoryPresent( name ) {
-		const categorySelector = '.block-editor-inserter__results .components-panel__body-title';
+		const categorySelector =
+			'.block-editor-inserter__results .components-panel__body-title, .block-editor-inserter__block-list .block-editor-inserter__panel-title';
 		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
 		return categoryName === name;
 	}
