@@ -135,7 +135,7 @@
 		opacity: 0;
 
 		& + .acquire-intent__footer {
-			transform: translate(0, -80px);
+			transform: translate( 0, -80px ); // Translate button up when site title is hidden
 		}
 	}
 }
