@@ -3,8 +3,9 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -25,16 +26,33 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { siteVertical, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { siteVertical, siteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
+	const { skipSiteVertical } = useDispatch( STORE_KEY );
 	const makePath = usePath();
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
+
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	const displaySiteTitle = isSiteTitleActive || ! isMobile;
-	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
+	const handleSkip = () => {
+		skipSiteVertical();
+		setIsSiteTitleActive( true );
+	};
 
 	useTrackStep( 'IntentGathering' );
+
+	const siteTitleComponent = (
+		<SiteTitle
+			isVisible={ !! ( siteVertical || siteTitle || wasVerticalSkipped ) }
+			isMobile={ isMobile }
+		/>
+	);
+	const verticalSelectComponent = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
+
+	// translators: Button label for skipping filling an optional input in onboarding
+	const skipLabel = __( 'I donʼt know' );
 
 	return (
 		<div
@@ -42,32 +60,41 @@ const AcquireIntent: React.FunctionComponent = () => {
 				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive && isMobile,
 			} ) }
 		>
-			{ displayVerticalSelect && <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } /> }
-			{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
-			{ displaySiteTitle && (
-				<>
-					{ isMobile && (
+			{ isMobile &&
+				( isSiteTitleActive ? (
+					<>
 						<Arrow
 							className="acquire-intent__mobile-back-arrow"
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
-					) }
-					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } isMobile={ isMobile } />
-					<div
-						className={ classnames( 'acquire-intent__footer', {
-							'acquire-intent__footer--hidden': ! siteVertical,
-						} ) }
-					>
+						{ siteTitleComponent }
+					</>
+				) : (
+					verticalSelectComponent
+				) ) }
+			{ ! isMobile && (
+				<>
+					{ verticalSelectComponent }
+					{ siteTitleComponent }
+				</>
+			) }
+			<div className="acquire-intent__footer">
+				{ siteVertical || wasVerticalSkipped ? (
+					( ! isMobile || isSiteTitleActive ) && (
 						<Link
 							className="acquire-intent__question-skip"
 							isPrimary
-							to={ siteVertical && makePath( Step.DesignSelection ) }
+							to={ makePath( Step.DesignSelection ) }
 						>
-							{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
+							{ siteTitle ? __( 'Choose a design' ) : skipLabel }
 						</Link>
-					</div>
-				</>
-			) }
+					)
+				) : (
+					<Button isLink onClick={ handleSkip } className="acquire-intent__skip-vertical">
+						{ skipLabel }
+					</Button>
+				) }
+			</div>
 		</div>
 	);
 };

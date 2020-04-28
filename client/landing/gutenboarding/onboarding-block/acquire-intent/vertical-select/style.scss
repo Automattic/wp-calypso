@@ -6,6 +6,7 @@
 	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	display: flex;
 	flex-direction: column;
+	margin-top: auto;
 
 	&--with-suggestions {
 		flex-grow: 1;
@@ -13,6 +14,7 @@
 
 	@include break-small {
 		display: block;
+		margin-top: 0;
 	}
 
 	.suggestions__category-heading {
