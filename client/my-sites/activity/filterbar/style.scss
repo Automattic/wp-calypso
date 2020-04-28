@@ -48,6 +48,7 @@
 	}
 
 	.filterbar__selection.is-selected,
+	.filterbar__selection.is-selected:focus,
 	.filterbar__selection.is-selected:hover {
 		margin: 8px;
 		border-radius: 5px;
