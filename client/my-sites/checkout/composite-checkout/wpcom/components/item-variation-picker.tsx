@@ -25,8 +25,8 @@ export type ItemVariationPickerProps = {
 	selectedItem: WPCOMCartItem;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
-	getItemVariants: ( WPCOMProductSlug ) => WPCOMProductVariant[];
-	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void;
+	getItemVariants: ( arg0: WPCOMProductSlug ) => WPCOMProductVariant[];
+	onChangeItemVariant: ( arg0: string, arg1: WPCOMProductSlug, arg2: number ) => void;
 	isDisabled: boolean;
 };
 
@@ -54,7 +54,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 
 function renderProductVariant(
 	selectedItem: WPCOMCartItem,
-	onChangeItemVariant: ( string, WPCOMProductSlug, number ) => void,
+	onChangeItemVariant: ( arg0: string, arg1: WPCOMProductSlug, arg2: number ) => void,
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[],
 	isDisabled: boolean
 ): ( _0: WPCOMProductVariant, _1: number ) => JSX.Element {

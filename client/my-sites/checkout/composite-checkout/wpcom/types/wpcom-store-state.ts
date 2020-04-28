@@ -188,7 +188,7 @@ export function updateManagedContactDetailsShape< A, B >(
 }
 
 export function flattenManagedContactDetailsShape< A, B >(
-	f: ( A ) => B,
+	f: ( arg0: A ) => B,
 	x: ManagedContactDetailsShape< A >
 ): Array< B > {
 	const values = [
