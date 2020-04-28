@@ -59,9 +59,6 @@
 /client/state/data-layer/wpcom/gsuite-users @Automattic/larimar
 /client/state/gsuite-users @Automattic/larimar
 
-# Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/cylon @Automattic/ajax
-
 # Payments
 /client/blocks/credit-card-form/ @Automattic/payments
 /client/blocks/payment-methods/ @Automattic/payments
@@ -118,9 +115,6 @@
 # FSE Workflow Files
 /.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
-
-# WPcom Block Editor
-/apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
 
 # Gutenboarding
 /client/landing/gutenboarding @Automattic/luna
