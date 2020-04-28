@@ -1,7 +1,10 @@
 <?php
 /**
  * File for various functionality which needs to be added to Simple and Atomic
- * sites. The code in this file is always loaded.
+ * sites. The code in this file is always loaded in the block editor.
+ *
+ * Currently, this module may not be the best place if you need to load
+ * front-end assets, but you could always add a separate action for that.
  *
  * @package A8C\FSE
  */
@@ -17,6 +20,41 @@ function is_block_editor_screen() {
 	return is_callable( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor();
 }
 
+
+/**
+ * Detects if the current page is the homepage post editor, and if the homepage
+ * title is hidden.
+ *
+ * @return bool True if the homepage title features should be used. (See above.)
+ */
+function is_homepage_title_hidden() {
+	global $post;
+
+	// Handle the case where we are not rendering a post.
+	if ( ! isset( $post ) ) {
+		return false;
+	}
+
+	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
+	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
+	return (bool) is_block_editor_screen() && $hide_homepage_title && $is_homepage;
+}
+
+/**
+ * Detects if assets for the common module should be loaded.
+ *
+ * It should return true if any of the features added to the common module need
+ * to be loaded. To accomplish this, please create separate functions if you add
+ * other small features to this file. The separate function should detect if your
+ * individual feature ought to be loaded. Then, "or" (||) that together with the
+ * return value here.
+ *
+ * @return bool True if the common module assets should be loaded.
+ */
+function should_load_assets() {
+	return (bool) is_homepage_title_hidden();
+}
+
 /**
  * Adds custom classes to the admin body classes.
  *
@@ -24,17 +62,7 @@ function is_block_editor_screen() {
  * @return string
  */
 function admin_body_classes( $classes ) {
-	global $post;
-
-	// Handle the case where we are not rendering a post.
-	if ( ! isset( $post ) ) {
-		return $classes;
-	}
-
-	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
-	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
-
-	if ( is_block_editor_screen() && $hide_homepage_title && $is_homepage ) {
+	if ( is_homepage_title_hidden() ) {
 		$classes .= ' hide-homepage-title';
 	}
 
@@ -46,6 +74,11 @@ add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_classes' );
  * Enqueue script and style for the common package.
  */
 function enqueue_script_and_style() {
+	// Avoid loading assets if possible.
+	if ( ! should_load_assets() ) {
+		return;
+	}
+
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
 	$script_dependencies = $asset_file['dependencies'];
 	wp_enqueue_script(
@@ -66,4 +99,4 @@ function enqueue_script_and_style() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 	);
 }
-add_action( 'init', __NAMESPACE__ . '\enqueue_script_and_style' );
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
