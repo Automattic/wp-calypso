@@ -158,18 +158,19 @@ class PostRelativeTime extends React.PureComponent {
 				},
 			} );
 		} else if ( status === 'private' ) {
-			const displayedTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'private last modified %(displayedTime)s', {
-				comment: '%(displayedTime)s is when a private post or page was last modified',
-				args: {
-					displayedTime,
-				},
-			} );
+			statusText = this.getDisplayedTimeForLabel();
 		} else if ( status === 'new' ) {
 			statusText = this.props.translate( 'Publish immediately' );
 		}
 
 		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
+	 * Get "private" label
+	 */
+	getPrivateLabel() {
+		return this.getLabel( this.props.translate( 'private' ), 'is-private' );
 	}
 
 	/**
@@ -212,8 +213,9 @@ class PostRelativeTime extends React.PureComponent {
 		let innerText = (
 			<span>
 				{ showPublishedStatus ? this.getStatusText() : timeText }
-				{ post.sticky && this.getStickyLabel() }
 				{ post.status === 'pending' && this.getPendingLabel() }
+				{ post.status === 'private' && this.getPrivateLabel() }
+				{ post.sticky && this.getStickyLabel() }
 			</span>
 		);
 
