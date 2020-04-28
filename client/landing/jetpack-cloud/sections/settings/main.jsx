@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import { Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -35,11 +35,7 @@ class SettingsPage extends Component {
 				<DocumentHead title={ translate( 'Settings' ) } />
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
-				<PageViewTracker
-					path="/settings/:site"
-					title="Settings"
-					properties={ { site: this.props.siteSlug } }
-				/>
+				<PageViewTracker path="/settings/:site" title="Settings" />
 				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
 				{ isConnected && (
 					<Card compact={ true } className="settings__connected">
@@ -82,12 +78,10 @@ class SettingsPage extends Component {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const rewind = getRewindState( state, siteId );
 
 	return {
 		siteId,
-		siteSlug,
 		rewind,
 	};
 } )( localize( SettingsPage ) );

@@ -197,11 +197,7 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ this.props.site.ID } />
-				<PageViewTracker
-					path="/scan/:site"
-					title="Scanner"
-					properties={ { site: this.props.siteSlug } }
-				/>
+				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"

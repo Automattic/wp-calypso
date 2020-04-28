@@ -185,7 +185,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
-				<PageViewTracker path="/backups/:site" title="Backups" properties={ { site: siteSlug } } />
+				<PageViewTracker path="/backups/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
