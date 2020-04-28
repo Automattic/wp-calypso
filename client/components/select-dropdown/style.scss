@@ -199,7 +199,7 @@ $compact-header-height: 35;
 	// hack to set text width in bold weight
 	&::before {
 		content: attr( data-bold-text );
-		font-weight: 700;
+		font-weight: 600;
 		white-space: nowrap;
 		opacity: 0;
 	}
