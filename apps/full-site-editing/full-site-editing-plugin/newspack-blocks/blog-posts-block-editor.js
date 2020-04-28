@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
@@ -8,9 +8,9 @@ import { addFilter } from '@wordpress/hooks';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
- * NHA dependencies
+ * Internal dependencies
  */
-import { settings as blogPostsSettings } from './synced-newspack-blocks/blocks/homepage-articles/index';
+import { settings } from './synced-newspack-blocks/blocks/homepage-articles/index';
 import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
 
 /**
@@ -33,8 +33,8 @@ addFilter(
 );
 
 registerBlockType( blogPostsName, {
-	...blogPostsSettings,
+	...settings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
-	category: 'layout'
+	category: 'layout',
 } );
 registerQueryStore( blogPostsName );

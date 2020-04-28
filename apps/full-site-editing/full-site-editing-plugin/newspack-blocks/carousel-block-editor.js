@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
@@ -8,9 +8,9 @@ import { addFilter } from '@wordpress/hooks';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
- * NHA dependencies
+ * External dependencies
  */
-import { settings as carouselSettings } from './synced-newspack-blocks/blocks/carousel/index';
+import { settings } from './synced-newspack-blocks/blocks/carousel/index';
 
 /**
  * Block name in the A8C\FSE context.
@@ -31,7 +31,7 @@ addFilter(
 );
 
 registerBlockType( postsCarouselName, {
-	...carouselSettings,
+	...settings,
 	title: __( 'Posts Carousel', 'full-site-editing' ),
-	category: 'layout'
+	category: 'layout',
 } );
