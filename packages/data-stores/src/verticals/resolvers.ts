@@ -20,7 +20,7 @@ import { receiveVerticals } from './actions';
  * API response.
  */
 export function* getVerticals() {
-	const url = 'https://public-api.wordpress.com/wpcom/v2/verticals';
+	const url = '/calypso/page-templates/vertical-list.json';
 	const verticals = yield apiFetch( { url } );
 
 	// @TODO: validate and normalize verticals?
