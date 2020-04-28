@@ -61,6 +61,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
+	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
@@ -95,6 +96,24 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 			...props,
 			planTypes: [ TYPE_BUSINESS, TYPE_FREE, TYPE_ECOMMERCE ],
 			hideFreePlan: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the Personal plan when hidePersonalPlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_ECOMMERCE ],
+			hidePersonalPlan: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the Premium plan when hidePremiumPlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_PREMIUM, TYPE_ECOMMERCE ],
+			hidePremiumPlan: true,
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );

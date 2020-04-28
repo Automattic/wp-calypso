@@ -213,6 +213,8 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
 			sitePlanSlug,
 		} = this.props;
 
@@ -267,6 +269,14 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hideFreePlan ) {
 			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+		}
+
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
@@ -556,6 +566,8 @@ PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
+	hidePersonalPlan: PropTypes.bool,
+	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
@@ -578,6 +590,8 @@ PlansFeaturesMain.propTypes = {
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
+	hidePersonalPlan: false,
+	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,
