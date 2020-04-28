@@ -86,7 +86,7 @@ export const StatsV2 = ( {
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
-							{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }&nbsp;
+							{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }
 							<InlineSupportLink
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
@@ -113,7 +113,6 @@ export const StatsV2 = ( {
 							{ translate(
 								'Stats can help you optimize for the right keywords, and feature content your readers are interested in.'
 							) }
-							&nbsp;
 							<InlineSupportLink
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
