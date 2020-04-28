@@ -293,10 +293,6 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 		localize,
 	] );
 
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
@@ -316,9 +312,20 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
+}
+
+function ButtonContents( { formStatus, total } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+	}
+	return localize( 'Please wait…' );
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {

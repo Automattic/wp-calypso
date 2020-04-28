@@ -144,13 +144,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 			items,
 		} );
 	};
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf(
-					localize( 'Pay %s with WordPress.com Credits' ),
-					renderDisplayValueMarkdown( total.amount.displayValue )
-			  );
+
 	return (
 		<Button
 			disabled={ disabled }
@@ -159,9 +153,23 @@ function FullCreditsSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
+}
+
+function ButtonContents( { formStatus, total } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return sprintf(
+			localize( 'Pay %s with WordPress.com Credits' ),
+			renderDisplayValueMarkdown( total.amount.displayValue )
+		);
+	}
+	return localize( 'Please wait…' );
 }
 
 function FullCreditsSummary() {

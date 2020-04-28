@@ -143,13 +143,7 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			items,
 		} );
 	};
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf(
-					localize( 'Complete Checkout' ),
-					renderDisplayValueMarkdown( total.amount.displayValue )
-			  );
+
 	return (
 		<Button
 			disabled={ disabled }
@@ -158,9 +152,23 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
+}
+
+function ButtonContents( { formStatus, total } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return sprintf(
+			localize( 'Complete Checkout' ),
+			renderDisplayValueMarkdown( total.amount.displayValue )
+		);
+	}
+	return localize( 'Please wait…' );
 }
 
 function FreePurchaseSummary() {
