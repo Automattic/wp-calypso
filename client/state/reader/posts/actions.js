@@ -23,7 +23,7 @@ let tracks = { recordEvent: () => {} };
 let pageViewForPost = () => {};
 if ( process.env.NODE_ENV !== 'test' ) {
 	pageViewForPost = require( 'reader/stats' ).pageViewForPost;
-	tracks = require( 'lib/analytics/tracks' ).default;
+	tracks = require( 'lib/analytics/tracks' );
 }
 
 function trackRailcarRender( post ) {
