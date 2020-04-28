@@ -24,6 +24,7 @@ import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
 import { useTrackModal } from '../../hooks/use-track-modal';
+import DomainCategories from '../domain-categories';
 
 /**
  * Style dependencies
@@ -59,23 +60,6 @@ export interface Props {
 	currentDomain?: DomainSuggestion;
 }
 
-const SearchIcon = () => (
-	<Icon
-		icon={ () => (
-			<svg
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
-				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
-			</svg>
-		) }
-	/>
-);
-
 const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
 	showDomainCategories,
@@ -87,8 +71,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
-	const { domainSearch } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const { setDomainSearch } = useDispatch( STORE_KEY );
+	const { domainSearch, domainCategory } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
+	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 
 	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
@@ -149,41 +135,49 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							value={ domainSearch }
 						/>
 					</div>
-					{ showDomainCategories && <div>TODO: Show domain categories.</div> }
-					<div className="domain-picker__suggestion-item-group">
-						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-						{ freeSuggestions &&
-							( freeSuggestions.length ? (
-								<SuggestionItem
-									suggestion={ freeSuggestions[ 0 ] }
-									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-									onSelect={ onDomainSelect }
-									railcarId={ railcarId ? `${ railcarId }0` : undefined }
-									recordAnalytics={ recordAnalytics || undefined }
-									uiPosition={ 0 }
-								/>
-							) : (
-								<SuggestionNone />
-							) ) }
-						{ ! paidSuggestions &&
-							times( PAID_DOMAINS_TO_SHOW - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
-						{ paidSuggestions &&
-							( paidSuggestions?.length ? (
-								paidSuggestions.map( ( suggestion, i ) => (
+					<div className="domain-picker__body">
+						{ showDomainCategories && (
+							<div className="domain-picker__aside">
+								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
+							</div>
+						) }
+						<div className="domain-picker__suggestion-item-group">
+							{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+							{ freeSuggestions &&
+								( freeSuggestions.length ? (
 									<SuggestionItem
-										suggestion={ suggestion }
-										isRecommended={ suggestion === recommendedSuggestion }
-										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
+										suggestion={ freeSuggestions[ 0 ] }
+										isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 										onSelect={ onDomainSelect }
-										key={ suggestion.domain_name }
-										railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
+										railcarId={ railcarId ? `${ railcarId }0` : undefined }
 										recordAnalytics={ recordAnalytics || undefined }
-										uiPosition={ i + 1 }
+										uiPosition={ 0 }
 									/>
-								) )
-							) : (
-								<SuggestionNone />
-							) ) }
+								) : (
+									<SuggestionNone />
+								) ) }
+							{ ! paidSuggestions &&
+								times( PAID_DOMAINS_TO_SHOW - 1, ( i ) => (
+									<SuggestionItemPlaceholder key={ i } />
+								) ) }
+							{ paidSuggestions &&
+								( paidSuggestions?.length ? (
+									paidSuggestions.map( ( suggestion, i ) => (
+										<SuggestionItem
+											suggestion={ suggestion }
+											isRecommended={ suggestion === recommendedSuggestion }
+											isSelected={ currentDomain?.domain_name === suggestion.domain_name }
+											onSelect={ onDomainSelect }
+											key={ suggestion.domain_name }
+											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
+											recordAnalytics={ recordAnalytics || undefined }
+											uiPosition={ i + 1 }
+										/>
+									) )
+								) : (
+									<SuggestionNone />
+								) ) }
+						</div>
 					</div>
 				</PanelRow>
 				<PanelRow className="domain-picker__panel-row-footer">
@@ -195,5 +189,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		</Panel>
 	);
 };
+
+const SearchIcon = () => (
+	<Icon
+		icon={ () => (
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
+				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
+			</svg>
+		) }
+	/>
+);
 
 export default DomainPicker;

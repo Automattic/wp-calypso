@@ -11,11 +11,12 @@ import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
+import type { State } from '.';
+import type { FontPair } from '../../constants';
+import type { DomainCategory } from '../../domains-constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type FontPair = import('../../constants').FontPair;
-type State = import('.').State;
 type Template = VerticalsTemplates.Template;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
@@ -26,6 +27,11 @@ export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 export const setDomainSearch = ( domainSearch: string ) => ( {
 	type: 'SET_DOMAIN_SEARCH_TERM' as const,
 	domainSearch,
+} );
+
+export const setDomainCategory = ( domainCategory: DomainCategory | undefined ) => ( {
+	type: 'SET_DOMAIN_CATEGORY' as const,
+	domainCategory,
 } );
 
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
@@ -122,6 +128,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetSiteVertical
 	| typeof setDomain
 	| typeof setDomainSearch
+	| typeof setDomainCategory
 	| typeof setFonts
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
