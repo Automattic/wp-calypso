@@ -144,6 +144,7 @@ const connectComponent = connect( ( state ) => {
 const getFormSettings = partialRight( pick, [
 	'amp_is_enabled',
 	'amp_is_supported',
+	'instant_search_enabled',
 	'jetpack_search_enabled',
 	'jetpack_search_supported',
 	'lazy-images',
