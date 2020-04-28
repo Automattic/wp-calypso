@@ -21,11 +21,12 @@
 			svg {
 				height: 32px;
 				width: 32px;
+				fill: var( --color-neutral-40 );
 			}
 		}
 
 		h1.current-section__site-title {
-			color: var( --color-neurral-80 );
+			color: var( --color-neutral-70 );
 			font-size: 16px;
 			font-weight: 400;
 			padding-left: 8px;
