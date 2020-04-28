@@ -9,6 +9,7 @@ import React, { FunctionComponent, RefObject } from 'react';
  */
 import { Button } from '@automattic/components';
 import Popover from 'components/popover';
+import DatePicker from 'components/date-picker';
 
 /**
  * Style dependencies
@@ -32,6 +33,7 @@ const ActivityTypeSelector: FunctionComponent< Props > = ( { context, isVisible,
 			position="bottom"
 		>
 			<div>
+				<DatePicker />
 				<Button primary compact>
 					{ translate( 'Apply' ) }
 				</Button>

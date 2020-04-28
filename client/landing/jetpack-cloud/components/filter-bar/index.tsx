@@ -80,10 +80,6 @@ const FilterBar: FunctionComponent< Props > = ( {
 	const activityTypeButtonRef = useRef< Button >( null );
 	const dateRangeButtonRef = useRef< Button >( null );
 
-	// const closeDateRangeSelector = () => {
-	// 	setIsDateRangeSelectorVisible( false );
-	// };
-
 	const getButtonClassName = ( isActive: boolean, hasSelections: boolean ) => {
 		if ( hasSelections ) {
 			return 'filter-bar__button-with-selections';
