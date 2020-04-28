@@ -45,7 +45,7 @@ function blog_posts_block_args( $args, $name ) {
 		return $args;
 	}
 
-	$block_prefix = 'homepage-articles' !== $name
+	$block_prefix = 'homepage-articles' === $name
 		? 'blog-posts-block-'
 		: 'carousel-block-';
 
