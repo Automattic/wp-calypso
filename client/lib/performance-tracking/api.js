@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+
 const getLux = () => {
 	const lux = window.LUX || {};
 	// Reassign it so changes in LUX are picked when Lux starts
@@ -18,6 +23,8 @@ const addMetadata = ( metadata ) => {
 };
 
 export const startNavigation = ( { label, metadata = {} } = {} ) => {
+	if ( ! config.isEnabled( 'rum-tracking/speedcurve' ) ) return;
+
 	const lux = getLux();
 
 	if ( typeof lux.init !== 'function' ) {
@@ -31,6 +38,8 @@ export const startNavigation = ( { label, metadata = {} } = {} ) => {
 };
 
 export const stopNavigation = ( { metadata = {} } = {} ) => {
+	if ( ! config.isEnabled( 'rum-tracking/speedcurve' ) ) return;
+
 	const lux = getLux();
 
 	if ( typeof lux.send !== 'function' ) {
