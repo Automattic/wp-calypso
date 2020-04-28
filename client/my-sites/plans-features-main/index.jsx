@@ -302,6 +302,11 @@ export class PlansFeaturesMain extends Component {
 		}, [] );
 	}
 
+	isPersonalCustomerPlanVisible() {
+		const { hidePersonalPlan, hidePremiumPlan } = this.props;
+		return ! hidePersonalPlan || ! hidePremiumPlan;
+	}
+
 	getVisiblePlansForPlanFeatures( plans ) {
 		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
 
@@ -330,7 +335,7 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( customerType === 'personal' ) {
+		if ( customerType === 'personal' && this.isPersonalCustomerPlanVisible() ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
 			);
@@ -447,13 +452,14 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+
 		if ( this.isDisplayingPlansNeededForFeature() ) {
 			return null;
 		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( withWPPlanTabs && this.isPersonalCustomerPlanVisible() ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
