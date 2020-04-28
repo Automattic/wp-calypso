@@ -75,6 +75,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		select( STORE_KEY ).getState()
 	);
 	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
+	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
 	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
@@ -91,7 +92,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				className="domain-picker__confirm-button"
 				isPrimary
 				disabled={ ! hasSuggestions }
-				onClick={ onClose }
+				onClick={ () => {
+					currentSelection && onDomainSelect( currentSelection );
+					onClose();
+				} }
 				{ ...props }
 			>
 				{ __( 'Confirm' ) }
@@ -111,23 +115,23 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	useEffect( () => {
 		if (
 			freeSuggestions &&
-			currentDomain?.is_free === true &&
-			currentDomain?.domain_name !== freeSuggestions[ 0 ].domain_name
+			currentSelection?.is_free === true &&
+			currentSelection?.domain_name !== freeSuggestions[ 0 ].domain_name
 		) {
-			onDomainSelect( freeSuggestions[ 0 ] );
+			setCurrentSelection( freeSuggestions[ 0 ] );
 		}
 
 		if (
 			paidSuggestions &&
 			recommendedSuggestion &&
-			currentDomain?.is_free !== true &&
+			currentSelection?.is_free !== true &&
 			! paidSuggestions.find(
-				( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
+				( suggestion ) => suggestion.domain_name === currentSelection?.domain_name
 			)
 		) {
-			onDomainSelect( recommendedSuggestion );
+			setCurrentSelection( recommendedSuggestion );
 		}
-	}, [ currentDomain, freeSuggestions, onDomainSelect, paidSuggestions, recommendedSuggestion ] );
+	}, [ currentSelection, freeSuggestions, paidSuggestions, recommendedSuggestion ] );
 
 	useTrackModal( 'DomainPicker' );
 
@@ -168,8 +172,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								( freeSuggestions.length ? (
 									<SuggestionItem
 										suggestion={ freeSuggestions[ 0 ] }
-										isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-										onSelect={ onDomainSelect }
+										isSelected={
+											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
+										}
+										onSelect={ setCurrentSelection }
 										railcarId={ railcarId ? `${ railcarId }0` : undefined }
 										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ 0 }
@@ -187,10 +193,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										<SuggestionItem
 											suggestion={ suggestion }
 											isRecommended={ suggestion === recommendedSuggestion }
-											isSelected={ currentDomain?.domain_name === suggestion.domain_name }
-											onSelect={ onDomainSelect }
+											isSelected={ currentSelection?.domain_name === suggestion.domain_name }
+											onSelect={ setCurrentSelection }
 											key={ suggestion.domain_name }
-											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
+											railcarId={ railcarId ? `${ railcarId }${ i + 1}` : undefined }
 											recordAnalytics={ recordAnalytics || undefined }
 											uiPosition={ i + 1 }
 										/>
