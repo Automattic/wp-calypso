@@ -236,7 +236,7 @@ const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
 `;
 
 const UpsellWrapperUI = styled.div`
-	margin-top: 1.5em;
+	margin-top: 24px;
 	background: ${( props ) => props.theme.colors.surface};
 
 	& > div {
