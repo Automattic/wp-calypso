@@ -18,7 +18,6 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getEligibleGSuiteDomain } from 'lib/gsuite';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -32,7 +31,6 @@ class StatsBanners extends Component {
 		gsuiteDomainName: PropTypes.string,
 		isAllowedToManageSite: PropTypes.bool.isRequired,
 		isGoogleMyBusinessStatsNudgeVisible: PropTypes.bool.isRequired,
-		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
 		isUpworkStatsNudgeVisible: PropTypes.bool.isRequired,
 		planSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -41,7 +39,6 @@ class StatsBanners extends Component {
 
 	shouldComponentUpdate( nextProps ) {
 		return (
-			this.props.isGSuiteStatsNudgeVisible !== nextProps.isGSuiteStatsNudgeVisible ||
 			this.props.isUpworkStatsNudgeVisible !== nextProps.isUpworkStatsNudgeVisible ||
 			this.props.isGoogleMyBusinessStatsNudgeVisible !==
 				nextProps.isGoogleMyBusinessStatsNudgeVisible ||
@@ -53,8 +50,6 @@ class StatsBanners extends Component {
 	renderBanner() {
 		if ( this.showUpworkBanner() ) {
 			return this.renderUpworkBanner();
-		} else if ( this.showGSuiteBanner() ) {
-			return this.renderGSuiteBanner();
 		} else if ( this.showGoogleMyBusinessBanner() ) {
 			return this.renderGoogleMyBusinessBanner();
 		}
@@ -73,19 +68,6 @@ class StatsBanners extends Component {
 		);
 	}
 
-	renderGSuiteBanner() {
-		const { gsuiteDomainName, siteId, slug, primaryButton } = this.props;
-
-		return (
-			<GSuiteStatsNudge
-				siteSlug={ slug }
-				siteId={ siteId }
-				domainSlug={ gsuiteDomainName }
-				primaryButton={ primaryButton }
-			/>
-		);
-	}
-
 	renderUpworkBanner() {
 		const { siteId, slug, primaryButton } = this.props;
 
@@ -96,10 +78,6 @@ class StatsBanners extends Component {
 		return (
 			config.isEnabled( 'google-my-business' ) && this.props.isGoogleMyBusinessStatsNudgeVisible
 		);
-	}
-
-	showGSuiteBanner() {
-		return this.props.isGSuiteStatsNudgeVisible;
 	}
 
 	showUpworkBanner() {
@@ -143,7 +121,6 @@ export default connect( ( state, ownProps ) => {
 			state,
 			ownProps.siteId
 		),
-		isGSuiteStatsNudgeVisible: false,
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
 		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};
