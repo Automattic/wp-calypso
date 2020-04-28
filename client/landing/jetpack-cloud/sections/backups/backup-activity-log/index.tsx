@@ -84,7 +84,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 			<PageViewTracker path="/backups/activity/:site" title="Activity log" />
 			<div className="backup-activity-log__content">
 				<div className="backup-activity-log__header">
-					<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+					<h2>{ translate( 'Find a backup or restore point' ) }</h2>
 					<p>
 						{ translate(
 							'This is the complete event history for your site. Filter by date range and/or activity type.'
