@@ -125,7 +125,7 @@ const FixAllThreatsDialog = ( {
 							</Button>
 						) }
 						<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
-							Fix all threats
+							{ translate( 'Fix all threats' ) }
 						</Button>
 					</div>
 				</>
