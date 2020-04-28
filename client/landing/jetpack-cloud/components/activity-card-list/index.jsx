@@ -77,15 +77,7 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const {
-			allowRestore,
-			doesRewindNeedCredentials,
-			pageSize,
-			logs,
-			moment,
-			siteSlug,
-			showDateSeparators,
-		} = this.props;
+		const { allowRestore, pageSize, logs, moment, siteSlug, showDateSeparators } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
