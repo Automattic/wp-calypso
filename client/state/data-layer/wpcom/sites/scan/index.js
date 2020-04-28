@@ -40,18 +40,17 @@ export const formatScanThreat = ( threat ) => ( {
  * @param {object} scanState Raw Scan state object from Scan endpoint
  * @returns {object} Processed Scan state
  */
-const formatScanStateRawResponse = ( { state, threats, credentials, most_recent } ) => {
-	const mostRecent = most_recent
-		? {
-				...most_recent,
-				timestamp: new Date( most_recent.timestamp ),
-		  }
-		: null;
+const formatScanStateRawResponse = ( { state, threats, credentials, most_recent: mostRecent } ) => {
 	return {
 		state,
 		threats: threats.map( formatScanThreat ),
 		credentials,
-		mostRecent,
+		mostRecent: mostRecent
+			? {
+					...mostRecent,
+					timestamp: new Date( mostRecent.timestamp ),
+			  }
+			: null,
 	};
 };
 
