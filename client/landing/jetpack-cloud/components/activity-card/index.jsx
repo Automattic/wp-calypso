@@ -120,7 +120,10 @@ class ActivityCard extends Component {
 		}
 
 		// todo: handle the rest of cases
-		if ( activity.streams ) {
+		if (
+			activity.streams &&
+			activity.streams.some( ( { activityMedia: { available } } ) => available )
+		) {
 			return (
 				<Button
 					compact
