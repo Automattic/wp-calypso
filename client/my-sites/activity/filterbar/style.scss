@@ -47,7 +47,8 @@
 		white-space: nowrap;
 	}
 
-	.filterbar__selection.is-selected {
+	.filterbar__selection.is-selected,
+	.filterbar__selection.is-selected:hover {
 		margin: 8px;
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-60 );
