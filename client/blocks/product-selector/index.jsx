@@ -604,10 +604,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ selectedSiteSlug &&
-						hasProductPurchase &&
-						isCurrent &&
-						this.renderManageButton( product, purchase ) }
+					{ selectedSiteSlug && hasProductPurchase && this.renderManageButton( product, purchase ) }
 					{ ! selectedSiteSlug && product.id === 'jetpack_search' && (
 						<Fragment>
 							{ product.hasPromo && this.renderPromo() }
