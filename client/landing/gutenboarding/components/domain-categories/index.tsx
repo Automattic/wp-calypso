@@ -34,7 +34,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 				>
 					<Button onClick={ () => onSelect() }>
 						{
-							/* translators: Domain categories filtering. Option to disable the filer and view all categories. */
+							/* translators: Domain categories filtering. Option to disable the filter and view all categories. */
 							__( 'View all' )
 						}
 					</Button>
