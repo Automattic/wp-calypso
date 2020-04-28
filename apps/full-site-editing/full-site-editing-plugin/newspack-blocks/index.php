@@ -46,31 +46,31 @@ function blog_posts_block_args( $args, $name ) {
 	}
 
 	// Editor script.
-	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.asset.php';
+	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-editor.asset.php';
 	wp_register_script(
 		'blog-posts-block-editor',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js', __FILE__ ),
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-editor.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true
 	);
 
 	// Editor style.
-	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
+	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-editor.css', __FILE__ );
 	wp_register_style( 'blog-posts-block-editor', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	// View script.
-	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.asset.php';
+	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-view.asset.php';
 	wp_register_script(
 		'blog-posts-block-view',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.js', __FILE__ ),
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-view.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true
 	);
 
 	// View style.
-	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.css', __FILE__ );
+	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'blog-posts-block-view.css', __FILE__ );
 	wp_register_style( 'blog-posts-block-view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	$args['editor_script'] = 'blog-posts-block-editor';
