@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/signup/init';
 
 export function getSurveyVertical( state ) {
 	return get( state, 'signup.steps.survey.vertical', '' );
