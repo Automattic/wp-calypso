@@ -201,7 +201,7 @@ export function removeItemFromResponseCart(
 		products: cart.products.filter( ( product ) => {
 			return product.uuid !== uuidToRemove;
 		} ),
-	};
+	} as ResponseCart;
 }
 
 export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
@@ -209,7 +209,7 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 		...cart,
 		coupon: couponToAdd,
 		is_coupon_applied: false,
-	};
+	} as ResponseCart;
 }
 
 export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
@@ -217,7 +217,7 @@ export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart
 		...cart,
 		coupon: '',
 		is_coupon_applied: false,
-	};
+	} as ResponseCart;
 }
 
 export function addLocationToResponseCart(
@@ -234,7 +234,7 @@ export function addLocationToResponseCart(
 				subdivision_code: location.subdivisionCode || undefined,
 			},
 		},
-	};
+	} as ResponseCart;
 }
 
 export function doesCartLocationDifferFromResponseCartLocation(
@@ -277,7 +277,7 @@ export function convertRawResponseCartToResponseCart(
 				uuid: index.toString(),
 			};
 		} ),
-	};
+	} as ResponseCart;
 }
 
 export function addItemToResponseCart(
@@ -288,7 +288,7 @@ export function addItemToResponseCart(
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, convertedProduct ],
-	};
+	} as ResponseCart;
 }
 
 export function replaceItemInResponseCart(
@@ -305,7 +305,7 @@ export function replaceItemInResponseCart(
 			}
 			return item;
 		} ),
-	};
+	} as ResponseCart;
 }
 
 function convertRequestCartProductToResponseCartProduct(
