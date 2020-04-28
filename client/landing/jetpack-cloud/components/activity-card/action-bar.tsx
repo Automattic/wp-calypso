@@ -37,13 +37,13 @@ const ActivityCardActionBar: FunctionComponent< Props > = ( {
 	const toggleShowMenu = () => setShowMenu( ! showMenu );
 	const closeMenu = () => setShowMenu( false );
 
-	const renderActions = () => {
+	const renderActions = () => (
 		<>
 			<Button
 				compact
 				borderless
 				className="activity-card__actions-button"
-				onClick={ () => toggleShowMenu }
+				onClick={ toggleShowMenu }
 				ref={ menuRef }
 			>
 				{ translate( 'Actions' ) }
@@ -77,8 +77,8 @@ const ActivityCardActionBar: FunctionComponent< Props > = ( {
 					{ translate( 'Download backup' ) }
 				</Button>
 			</PopoverMenu>
-		</>;
-	};
+		</>
+	);
 
 	return (
 		<div

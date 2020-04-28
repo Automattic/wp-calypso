@@ -19,6 +19,8 @@ import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import ActivityCardActionBar from 'landing/jetpack-cloud/components/activity-card/action-bar';
+import ActivityStreamsPreview from 'landing/jetpack-cloud/components/activity-card/streams-preview';
 import Filterbar from 'my-sites/activity/filterbar';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
@@ -26,6 +28,7 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import Pagination from 'components/pagination';
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import QueryRewindState from 'components/data/query-rewind-state';
+import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
 
 /**
  * Style dependencies
@@ -80,11 +83,39 @@ class ActivityCardList extends Component {
 	}
 
 	renderActivityCardContent( activity ) {
-		return <div></div>;
+		const { allowRestore, siteSlug } = this.props;
+
+		//render streams
+		if ( activity.streams && activity.streams.some( ( { available } ) => available ) ) {
+			return (
+				<ActivityStreamsPreview
+					streams={ activity.streams }
+					showActions
+					siteSlug={ siteSlug }
+					rewindId={ activity.rewindId }
+				/>
+			);
+		}
+		//default case
+		return (
+			<>
+				<div className="activity-card__activity-description">
+					<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
+				</div>
+				<div className="activity-card__activity-title">{ activity.activityTitle }</div>
+				<ActivityCardActionBar
+					showActions={ isActivityBackup( activity ) }
+					siteSlug={ siteSlug }
+					rewindId={ activity.rewindId }
+				>
+					<a>{ 'Expand Content' }</a>
+				</ActivityCardActionBar>
+			</>
+		);
 	}
 
 	renderLogs( actualPage ) {
-		const { allowRestore, pageSize, logs, showDateSeparators } = this.props;
+		const { pageSize, logs, showDateSeparators } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -110,7 +141,6 @@ class ActivityCardList extends Component {
 								{ ...{
 									key: activity.activityId,
 									activity,
-									allowRestore,
 									className: isActivityBackup( activity )
 										? getPrimaryCardClassName( hasMore, dateLogs.length )
 										: getSecondaryCardClassName( hasMore ),
