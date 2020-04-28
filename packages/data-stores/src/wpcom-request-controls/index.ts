@@ -20,8 +20,8 @@ export const wpcomRequest = ( request: WpcomProxyRequestOptions ) =>
  * @param options request options
  */
 export const fetchAndParse = (
-	resource: Parameters< typeof window.fetch >[ 0 ],
-	options: Parameters< typeof window.fetch >[ 1 ]
+	resource: Parameters< Window[ 'fetch' ] >[ 0 ],
+	options: Parameters< Window[ 'fetch' ] >[ 1 ]
 ) =>
 	( {
 		type: 'FETCH_AND_PARSE',

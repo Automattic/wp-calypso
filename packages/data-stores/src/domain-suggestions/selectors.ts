@@ -18,6 +18,10 @@ const createSelectors = ( vendor: string ) => {
 		return state;
 	}
 
+	function isAvailable( state: State, domainName: string ) {
+		return state.availability[ domainName ];
+	}
+
 	function getDomainSuggestions(
 		_state: State,
 		search: string,
@@ -88,9 +92,11 @@ const createSelectors = ( vendor: string ) => {
 	}
 
 	return {
-		getState,
 		getDomainSuggestions,
+		getState,
+		isAvailable,
 		isLoadingDomainSuggestions,
+
 		__internalGetDomainSuggestions,
 	};
 };

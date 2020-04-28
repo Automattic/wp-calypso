@@ -112,3 +112,10 @@ export interface DomainSuggestion {
 	 */
 	is_free?: true;
 }
+
+export interface DomainAvailability {
+	domain_name: string;
+	mappable: string;
+	status: string;
+	supports_privacy: boolean;
+}
