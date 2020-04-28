@@ -10,6 +10,7 @@ import { Button, Dialog } from '@automattic/components';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 import { FixableThreat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
@@ -83,11 +84,16 @@ const FixAllThreatsDialog = ( {
 			{ currentStep === 'confirmation' && (
 				<>
 					<h3 className="fix-all-threats-dialog__threat-title">
-						{ translate( 'Please confirm you want to fix all %(threatCount)d active threats', {
-							args: {
-								threatCount: threats.length,
-							},
-						} ) }
+						{ translate(
+							'Please confirm you want to fix %(numberOfThreats)d active threat',
+							'Please confirm you want to fix all %(numberOfThreats)d active threats',
+							{
+								count: threats.length,
+								args: {
+									numberOfThreats: threats.length,
+								},
+							}
+						) }
 					</h3>
 					<p className="fix-all-threats-dialog__warning-message">
 						{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
@@ -99,10 +105,22 @@ const FixAllThreatsDialog = ( {
 							size={ 36 }
 						/>
 						<div className="fix-all-threats-dialog__warning-message">
-							{ translate( 'To fix this threat, Jetpack will be:' ) }
+							{ translate(
+								'This is the threat Jetpack will fix:',
+								'These are the threats Jetpack will fix:',
+								{
+									count: threats.length,
+								}
+							) }
 							<ul>
 								{ threats.map( ( threat ) => (
-									<li key={ threat.id }>{ getThreatFix( threat.fixable ) }</li>
+									<li key={ threat.id }>
+										<strong>
+											<ThreatItemHeader threat={ threat } isStyled={ false } />
+										</strong>
+										<br />
+										{ getThreatFix( threat.fixable ) }
+									</li>
 								) ) }
 							</ul>
 						</div>
