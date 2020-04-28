@@ -234,8 +234,9 @@ export class ProductSelector extends Component {
 		if ( ! this.props.selectedSiteSlug ) {
 			return (
 				description +
-				`The price of this subscription is based on \
-       the number of records you have on your site.`
+				this.props.translate(
+					'The price of this subscription is based on the number of records you have on your site.'
+				)
 			);
 		}
 
@@ -508,7 +509,7 @@ export class ProductSelector extends Component {
 		return null;
 	}
 
-	getPromo() {
+	renderPromo() {
 		return (
 			<ProductCardPromoNudge
 				badgeText={ this.props.translate( 'Up to %(discount)s off!', {
@@ -609,7 +610,7 @@ export class ProductSelector extends Component {
 						this.renderManageButton( product, purchase ) }
 					{ ! selectedSiteSlug && product.id === 'jetpack_search' && (
 						<Fragment>
-							{ product.hasPromo && this.getPromo() }
+							{ product.hasPromo && this.renderPromo() }
 							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
@@ -617,7 +618,7 @@ export class ProductSelector extends Component {
 						! hasProductPurchase &&
 						! isCurrent && (
 							<Fragment>
-								{ product.hasPromo && this.getPromo() }
+								{ product.hasPromo && this.renderPromo() }
 								<ProductCardOptions
 									optionsLabel={ optionsLabel }
 									options={ this.getProductOptions( product ) }
