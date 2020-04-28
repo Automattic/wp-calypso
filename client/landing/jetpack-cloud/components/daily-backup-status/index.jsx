@@ -19,10 +19,12 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 	backupMainPath,
+	settingsPath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import ExternalLink from 'components/external-link';
 import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
 import BackupChanges from './backup-changes';
 
@@ -31,6 +33,7 @@ import BackupChanges from './backup-changes';
  */
 import './style.scss';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import missingCredentialsIcon from './missing-credentials.svg';
 import backupErrorIcon from './backup-error.svg';
 
 class DailyBackupStatus extends Component {
@@ -78,8 +81,15 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, hasRealtimeBackups, siteSlug, deltas, metaDiff, translate } = this.props;
-
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			hasRealtimeBackups,
+			siteSlug,
+			deltas,
+			metaDiff,
+			translate,
+		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
@@ -99,6 +109,7 @@ class DailyBackupStatus extends Component {
 					rewindId={ backup.rewindId }
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
+					doesRewindNeedCredentials={ doesRewindNeedCredentials }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
 				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
@@ -297,7 +308,14 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderBackupDetails( backup ) {
-		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
+		const {
+			moment,
+			allowRestore,
+			doesRewindNeedCredentials,
+			timezone,
+			gmtOffset,
+			siteSlug,
+		} = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
 				<div className="daily-backup-status__realtime-details-card">
@@ -305,6 +323,7 @@ class DailyBackupStatus extends Component {
 						{ ...{
 							moment,
 							activity: backup,
+							doesRewindNeedCredentials,
 							allowRestore,
 							timezone,
 							gmtOffset,
@@ -365,7 +384,13 @@ class DailyBackupStatus extends Component {
 	}
 }
 
-const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug } ) => {
+const ActionButtons = ( {
+	disabledDownload,
+	disabledRestore,
+	doesRewindNeedCredentials,
+	rewindId,
+	siteSlug,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -384,19 +409,56 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 			<Button
 				className="daily-backup-status__restore-button"
 				href={ backupRestorePath( siteSlug, rewindId ) }
-				disabled={ disabledRestore }
+				disabled={ disabledRestore || doesRewindNeedCredentials }
 				onClick={ ( event ) => {
-					disabledRestore && event.preventDefault();
+					( disabledRestore || doesRewindNeedCredentials ) && event.preventDefault();
 				} }
 			>
-				{ translate( 'Restore to this point' ) }
+				<div className="daily-backup-status__restore-button-icon">
+					{ doesRewindNeedCredentials && (
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+					) }
+					<div>{ translate( 'Restore to this point' ) }</div>
+				</div>
 			</Button>
+			{ doesRewindNeedCredentials && (
+				<div className="daily-backup-status__credentials-warning">
+					<div className="daily-backup-status__credentials-warning-top">
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+						<div>{ translate( 'Restore points have not been enabled for your account' ) }</div>
+					</div>
+					<div className="daily-backup-status__credentials-warning-bottom">
+						{ translate(
+							'A backup of your data has been made, but you must enter your server credentials to enable one-click restores. {{a}}Find your server credentials{{/a}}',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon
+											href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/"
+											onClick={ () => {} }
+										/>
+									),
+								},
+							}
+						) }
+						<Button
+							className="daily-backup-status__activate-restores-button"
+							href={ settingsPath( siteSlug ) }
+							isPrimary={ false }
+						>
+							{ translate( 'Activate restores' ) }
+						</Button>
+					</div>
+				</div>
+			) }
 		</>
 	);
 };
 ActionButtons.defaultProps = {
 	disabledDownload: false,
 	disabledRestore: false,
+	doesRewindNeedCredentials: false,
 };
 
 export default localize( withLocalizedMoment( DailyBackupStatus ) );

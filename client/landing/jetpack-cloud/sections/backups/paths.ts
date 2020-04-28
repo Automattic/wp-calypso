@@ -23,3 +23,6 @@ export const backupRestorePath = ( siteName: string, rewindId: string ) =>
 
 export const backupDownloadPath = ( siteName: string, rewindId: string ) =>
 	backupSubSectionPath( siteName, 'download', rewindId );
+
+export const settingsPath = ( siteName: string ) =>
+	siteName ? `/settings/${ siteName }` : '/settings';
