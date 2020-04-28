@@ -168,7 +168,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.block-editor-writing-flow' ),
 			'start'
 		);
-		const inserterToggleSelector = By.css( '.edit-post-header .block-editor-inserter__toggle' );
+		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
+		const inserterToggleSelector = By.css(
+			'.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
+		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search' );
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
@@ -186,10 +189,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeBlockInserter() {
+		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
 		const inserterCloseSelector = By.css(
 			driverManager.currentScreenSize() === 'mobile'
 				? '.block-editor-inserter__popover .components-popover__close'
-				: '.edit-post-header .block-editor-inserter__toggle'
+				: '.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.clickWhenClickable( this.driver, inserterCloseSelector );
