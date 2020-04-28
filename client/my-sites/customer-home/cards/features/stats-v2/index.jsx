@@ -280,7 +280,7 @@ const mapStateToProps = ( state ) => {
 	return {
 		chartQuery,
 		insightsQuery,
-		isLoading: canShowStatsData ? statsData.chartData.length === 0 : isLoading,
+		isLoading: canShowStatsData ? statsData.chartData.length !== chartQuery.quantity : isLoading,
 		isSiteUnlaunched,
 		siteId,
 		siteSlug,
