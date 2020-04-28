@@ -113,25 +113,27 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	}, [ allSuggestions ] );
 
 	useEffect( () => {
-		if (
-			freeSuggestions &&
-			currentSelection?.is_free === true &&
-			currentSelection?.domain_name !== freeSuggestions[ 0 ].domain_name
-		) {
-			setCurrentSelection( freeSuggestions[ 0 ] );
-		}
+		// Auto-select one of the domains when the search results change. If the currently
+		// confirmed domain is in the search results then select it. The user probably
+		// re-ran their previous query. Otherwise select the free domain suggestion.
 
 		if (
-			paidSuggestions &&
-			recommendedSuggestion &&
-			currentSelection?.is_free !== true &&
-			! paidSuggestions.find(
-				( suggestion ) => suggestion.domain_name === currentSelection?.domain_name
+			allSuggestions?.find(
+				( suggestion ) => currentDomain?.domain_name === suggestion.domain_name
 			)
 		) {
-			setCurrentSelection( recommendedSuggestion );
+			setCurrentSelection( currentDomain );
+			return;
 		}
-	}, [ currentSelection, freeSuggestions, paidSuggestions, recommendedSuggestion ] );
+
+		// Recalculate free-domain suggestions inside the closure. `getFreeDomainSuggestions()`
+		// always returns a new object so it can't be used in `useEffects()` dependencies list.
+		const latestFreeSuggestion = getFreeDomainSuggestions( allSuggestions );
+
+		if ( latestFreeSuggestion ) {
+			setCurrentSelection( latestFreeSuggestion[ 0 ] );
+		}
+	}, [ allSuggestions, currentDomain ] );
 
 	useTrackModal( 'DomainPicker' );
 
