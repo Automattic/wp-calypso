@@ -11,6 +11,7 @@ import {
 	getTranslationChunkFile,
 	switchWebpackCSS,
 } from '../../lib/i18n-utils/switch-locale';
+import { getUrlParts } from '../../lib/url/url-parts';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
@@ -49,7 +50,7 @@ function generateGetSuperProps() {
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: string =
 	config.isEnabled( 'use-translation-chunks' ) ||
-	/[?,&]useTranslationChunks(=.*)?$/.test( document.location.search );
+	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 type User = import('@automattic/data-stores').User.CurrentUser;
 

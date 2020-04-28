@@ -10,7 +10,7 @@ import { forEach, includes } from 'lodash';
  */
 import config from 'config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from 'lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -260,7 +260,7 @@ export default function switchLocale( localeSlug ) {
 
 	const useTranslationChunks =
 		config.isEnabled( 'use-translation-chunks' ) ||
-		/[?,&]useTranslationChunks(=.*)?$/.test( document.location.search );
+		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
