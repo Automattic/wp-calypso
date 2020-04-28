@@ -224,7 +224,7 @@ export function getTranslationChunkFile( chunkId, localeSlug, buildTarget = 'eve
 		localeSlug,
 		fileType: 'json',
 		buildTarget,
-		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
+		hash: window?.languageRevisions?.[ localeSlug ] || null,
 	} );
 
 	return getFile( url );

@@ -181,7 +181,7 @@ export function attachI18n( context ) {
 					localeSlug: context.lang,
 					fileType: 'js',
 					buildTarget: context.target,
-					hash: context?.languageRevisions?.hashes?.[ context.lang ],
+					hash: context?.languageRevisions?.[ context.lang ],
 				} )
 			);
 	}

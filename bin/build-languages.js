@@ -278,8 +278,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					locale: _.pick( languageTranslations, [ '' ] ),
 					translatedChunks: translatedChunksKeys,
 				};
-				const manifestJsonDataFingerprint =
-					JSON.stringify( manifestJsonDataRaw ) + languageRevisions[ langSlug ];
+				const manifestJsonDataFingerprint = JSON.stringify( manifestJsonDataRaw );
 
 				manifestJsonDataRaw.hash = crypto
 					.createHash( 'sha1' )
