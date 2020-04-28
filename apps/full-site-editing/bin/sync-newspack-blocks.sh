@@ -92,7 +92,7 @@ then
 		exit 1
 	fi
 elif [ "$MODE" = "path" ] ; then
-	CODE="${npm_config_path}"
+	CODE=${key_value}
 elif [ "$MODE" = "npm" ] ; then
 	# Way back to wp-calypso root:
 	CODE="../../node_modules/newspack-blocks"
