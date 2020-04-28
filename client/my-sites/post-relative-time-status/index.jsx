@@ -114,12 +114,11 @@ class PostRelativeTime extends React.PureComponent {
 
 	/**
 	 * Get status label
-	 *
 	 */
 	getStatusText() {
 		const status = this.props.post.status;
 		let extraStatusClassName;
-		let statusIcon = 'aside';
+		let statusIcon;
 		let statusText;
 
 		if ( status === 'trash' ) {
@@ -190,11 +189,11 @@ class PostRelativeTime extends React.PureComponent {
 	/**
 	 * Get Label for the status
 	 *
-	 * @param {*} statusText text status
-	 * @param {*} extraStatusClassName class
-	 * @param {*} statusIcon icon
+	 * @param {string} statusText text status
+	 * @param {string} extraStatusClassName extra CSS class to be added to the label
+	 * @param {string} [statusIcon="aside"] icon for the label
 	 */
-	getLabel( statusText, extraStatusClassName, statusIcon ) {
+	getLabel( statusText, extraStatusClassName, statusIcon = 'aside' ) {
 		if ( statusText ) {
 			const statusClassName = 'post-relative-time-status__status ' + extraStatusClassName;
 
