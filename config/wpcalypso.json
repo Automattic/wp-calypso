@@ -145,6 +145,7 @@
 		"signup/ecommerce-flow": false,
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
+		"site-indicator": true,
 		"support-user": true,
 		"tools/migrate": true,
 		"try/preconnect": true,

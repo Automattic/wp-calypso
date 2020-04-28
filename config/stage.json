@@ -134,6 +134,7 @@
 		"signup/social-management": true,
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
+		"site-indicator": true,
 		"support-user": true,
 		"tools/migrate": true,
 		"2fa/keys-support": true,
