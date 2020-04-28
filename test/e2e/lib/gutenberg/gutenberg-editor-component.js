@@ -190,7 +190,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const categorySelector =
 			'.block-editor-inserter__results .components-panel__body-title, .block-editor-inserter__block-list .block-editor-inserter__panel-title';
 		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
-		return categoryName === name;
+		return categoryName.toLowerCase() === name.toLowerCase();
 	}
 
 	async closeBlockInserter() {
