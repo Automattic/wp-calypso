@@ -29,7 +29,7 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
@@ -190,16 +190,23 @@ class AdsWrapper extends Component {
 	}
 
 	renderUpsell() {
-		const { translate } = this.props;
+		const { siteSlug, translate } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/premium`;
 		return (
-			<UpgradeNudgeExpanded
+			<UpsellNudge
+				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
-				subtitle={ translate(
+				description={ translate(
 					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
 				) }
-				highlightedFeature={ FEATURE_WORDADS_INSTANT }
-				benefits={ [
+				feature={ FEATURE_WORDADS_INSTANT }
+				href={ bannerURL }
+				showIcon
+				event="calypso_upgrade_nudge_impression"
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksClickName="calypso_upgrade_nudge_click"
+				list={ [
 					translate( 'Instantly enroll into the WordAds network.' ),
 					translate( 'Earn money from your content and traffic.' ),
 				] }
@@ -208,16 +215,23 @@ class AdsWrapper extends Component {
 	}
 
 	renderjetpackUpsell() {
-		const { translate } = this.props;
+		const { siteSlug, translate } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/premium`;
 		return (
-			<UpgradeNudgeExpanded
+			<UpsellNudge
+				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_JETPACK_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
-				subtitle={ translate(
+				description={ translate(
 					"By upgrading to the Premium plan, you'll be able to monetize your site through the Jetpack Ads program."
 				) }
-				highlightedFeature={ FEATURE_WORDADS_INSTANT }
-				benefits={ [
+				href={ bannerURL }
+				feature={ FEATURE_WORDADS_INSTANT }
+				showIcon
+				event="calypso_upgrade_nudge_impression"
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksClickName="calypso_upgrade_nudge_click"
+				list={ [
 					translate( 'Instantly enroll into the Jetpack Ads network.' ),
 					translate( 'Earn money from your content and traffic.' ),
 				] }
