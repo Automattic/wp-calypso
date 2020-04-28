@@ -12,6 +12,7 @@
 		display: inline-flex;
 	}
 	// Normally visible on desktops, make it always hidden
+	.editor-post-preview__dropdown,
 	.block-editor-post-preview__dropdown {
 		display: none;
 	}
