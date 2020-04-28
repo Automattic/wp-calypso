@@ -136,25 +136,25 @@ class PostRelativeTime extends React.PureComponent {
 			statusIcon = 'calendar';
 			const displayedTime = this.getDisplayedTimeForLabel();
 			statusText = this.props.translate( 'scheduled %(displayedTime)s', {
-				comment: '%(displayTime)s is when a scheduled post or page is set to be published',
+				comment: '%(displayedTime)s is when a scheduled post or page is set to be published',
 				args: {
 					displayedTime,
 				},
 			} );
 		} else if ( status === 'draft' || status === 'pending' ) {
-			const displayTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'draft last modified %(displayTime)s', {
-				comment: '%(displayTime)s is when a draft post or page was last modified',
+			const displayedTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'draft last modified %(displayedTime)s', {
+				comment: '%(displayedTime)s is when a draft post or page was last modified',
 				args: {
-					displayTime,
+					displayedTime,
 				},
 			} );
 		} else if ( status === 'publish' ) {
-			const displayTime = this.getDisplayedTimeForLabel();
-			statusText = this.props.translate( 'published %(displayTime)s', {
-				comment: '%(displayTime)s is when a post or page was last modified',
+			const displayedTime = this.getDisplayedTimeForLabel();
+			statusText = this.props.translate( 'published %(displayedTime)s', {
+				comment: '%(displayedTime)s is when a post or page was last modified',
 				args: {
-					displayTime,
+					displayedTime,
 				},
 			} );
 		} else if ( status === 'private' ) {
