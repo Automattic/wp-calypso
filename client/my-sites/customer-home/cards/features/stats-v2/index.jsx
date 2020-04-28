@@ -21,14 +21,10 @@ import { buildChartData } from 'my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'state/sites/selectors';
 import { requestChartCounts } from 'state/stats/chart-tabs/actions';
-import { getCountRecords } from 'state/stats/chart-tabs/selectors';
+import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
+import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getMostPopularDatetime,
-	getTopPostAndPage,
-	getViewAndVisitors,
-	isLoadingStats,
-} from './utils';
+import { getMostPopularDatetime, getTopPostAndPage, getViewAndVisitors } from './utils';
 
 /**
  * Style dependencies
@@ -173,91 +169,118 @@ export const StatsV2 = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+const getStatsQueries = ( state, siteId ) => {
+	const period = 'day';
+	const quantity = 7;
+
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
 	const date = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const period = 'day';
-	const quantity = 7;
 
-	const chartTab = 'views';
 	const chartQuery = {
-		chartTab,
+		chartTab: 'views',
 		date,
 		period,
 		quantity,
 		siteId,
-		statFields: [ chartTab ],
+		statFields: [ 'views' ],
 	};
-	let chartData;
 
-	let topPost;
-	let topPage;
+	const insightsQuery = {};
+
 	const topPostsQuery = {
 		date,
 		num: quantity,
 		period,
 	};
 
-	let views;
-	let visitors;
 	const visitsQuery = {
 		unit: period,
 		quantity: quantity,
 		stat_fields: 'views,visitors',
 	};
 
-	let mostPopularDay;
-	let mostPopularTime;
-	const insightsQuery = {};
+	return {
+		chartQuery,
+		insightsQuery,
+		topPostsQuery,
+		visitsQuery,
+	};
+};
+
+const getStatsData = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ) => {
+	const counts = getCountRecords( state, siteId, chartQuery.period );
+	const chartData = buildChartData(
+		[],
+		chartQuery.chartTab,
+		counts,
+		chartQuery.period,
+		chartQuery.date
+	);
+
+	const mostPopularDateTime = getMostPopularDatetime( state, siteId, insightsQuery );
+	const mostPopularDay = mostPopularDateTime.day;
+	const mostPopularTime = mostPopularDateTime?.time;
+
+	const topPostAndPage = getTopPostAndPage( state, siteId, topPostsQuery );
+	const topPost = topPostAndPage.post;
+	const topPage = topPostAndPage.page;
+
+	const viewsAndVisitors = getViewAndVisitors( state, siteId, visitsQuery );
+	const views = viewsAndVisitors.views;
+	const visitors = viewsAndVisitors.visitors;
+
+	return {
+		chartData,
+		mostPopularDay,
+		mostPopularTime,
+		topPost,
+		topPage,
+		views,
+		visitors,
+	};
+};
+
+const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ) =>
+	getLoadingTabs( state, siteId, chartQuery.period ).includes( chartQuery.chartTab ) ||
+	isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', insightsQuery ) ||
+	isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery ) ||
+	isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', visitsQuery );
+
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
+	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+
+	const { chartQuery, insightsQuery, topPostsQuery, visitsQuery } = getStatsQueries(
+		state,
+		siteId
+	);
 
 	const isLoading = isLoadingStats(
 		state,
 		siteId,
-		chartTab,
-		period,
+		chartQuery.chartTab,
+		chartQuery.period,
 		insightsQuery,
 		topPostsQuery,
 		visitsQuery
 	);
 
-	if ( ! isSiteUnlaunched && ! isLoading ) {
-		const counts = getCountRecords( state, siteId, period );
-		chartData = buildChartData( [], chartTab, counts, period, date );
-
-		const mostPopularDateTime = getMostPopularDatetime( state, siteId, insightsQuery );
-		mostPopularDay = mostPopularDateTime.day ?? '-';
-		mostPopularTime = mostPopularDateTime?.time ?? '-';
-
-		const topPostAndPage = getTopPostAndPage( state, siteId, topPostsQuery );
-		topPost = topPostAndPage.post;
-		topPage = topPostAndPage.page;
-
-		const viewsAndVisitors = getViewAndVisitors( state, siteId, visitsQuery );
-		views = viewsAndVisitors.views;
-		visitors = viewsAndVisitors.visitors;
-	}
-
 	return {
-		chartData,
 		chartQuery,
 		insightsQuery,
 		isLoading,
 		isSiteUnlaunched,
-		mostPopularDay,
-		mostPopularTime,
 		siteId,
 		siteSlug,
-		topPage,
-		topPost,
 		topPostsQuery,
-		views,
-		visitors,
 		visitsQuery,
+		...( ! isSiteUnlaunched &&
+			! isLoading && {
+				...getStatsData( state, siteId, chartQuery, insightsQuery, topPostsQuery, visitsQuery ),
+			} ),
 	};
 };
 
