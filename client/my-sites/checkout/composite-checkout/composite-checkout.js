@@ -257,6 +257,7 @@ export default function CompositeCheckout( {
 		stripe,
 		credits,
 		items,
+		couponItem,
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
