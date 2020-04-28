@@ -13,6 +13,7 @@ import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
+import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import config from 'config';
 
 const cardComponents = {
@@ -21,7 +22,7 @@ const cardComponents = {
 	'home-primary-quick-links': QuickLinks,
 	'home-education-mastering-gutenberg': MasteringGutenberg,
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
-	'home-task-site-setup-checklist': ChecklistSiteSetup,
+	'home-task-site-setup-checklist': SiteSetupList,
 	'home-task-connect-accounts': ConnectAccounts,
 	'home-task-find-domain': FindDomain,
 };
