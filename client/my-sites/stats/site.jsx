@@ -39,7 +39,6 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import EmptyContent from 'components/empty-content';
 import { activateModule } from 'state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -261,7 +260,6 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				<JetpackColophon />
-				<PerformanceTrackerStop />
 			</>
 		);
 	}
