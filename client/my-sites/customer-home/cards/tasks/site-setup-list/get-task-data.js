@@ -55,6 +55,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 				),
 				actionText: translate( 'Verify email' ),
 				actionDispatch: verifyEmail,
+				actionDispatchArgs: [],
 			};
 			break;
 		case 'blogname_set':
