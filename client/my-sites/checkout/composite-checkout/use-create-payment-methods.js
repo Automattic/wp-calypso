@@ -38,7 +38,7 @@ import {
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
 const { select, dispatch } = defaultRegistry;
 
-function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems } ) {
+function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems, getCouponItem } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'paypal' )
 		: true;
@@ -73,7 +73,7 @@ function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems } )
 					cancelUrl,
 					siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
 					domainDetails: getDomainDetails( select ),
-					couponId: null, // TODO: get couponId
+					couponId: getCouponItem()?.wpcom_meta?.couponCode,
 					country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
 					postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
 					subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
@@ -323,6 +323,7 @@ export default function useCreatePaymentMethods( {
 	stripe,
 	credits,
 	items,
+	couponItem,
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
@@ -331,6 +332,7 @@ export default function useCreatePaymentMethods( {
 		onlyLoadPaymentMethods,
 		getThankYouUrl,
 		getItems: () => items,
+		getCouponItem: () => couponItem,
 	} );
 
 	const stripeMethod = useCreateStripe( {
