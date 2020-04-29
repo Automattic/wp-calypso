@@ -79,7 +79,7 @@ export class PaypalPaymentBox extends React.Component {
 		let cancelUrl = origin + '/checkout/';
 
 		if ( this.props.selectedSite ) {
-			cancelUrl += this.props.selectedSite.slug;
+			cancelUrl += this.props.selectedSite.slug + '?type=white-glove';
 		} else {
 			cancelUrl += 'no-site';
 		}
@@ -90,6 +90,7 @@ export class PaypalPaymentBox extends React.Component {
 			cart,
 			domainDetails: transaction.domainDetails,
 			'postal-code': getTaxPostalCode( cart ),
+			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		} );
 
 		// get PayPal Express URL from rest endpoint

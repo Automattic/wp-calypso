@@ -732,6 +732,7 @@ export class Checkout extends React.Component {
 			productsList,
 			setHeaderText,
 			userCountryCode,
+			isWhiteGloveOffer,
 		} = this.props;
 
 		if ( this.isLoading() ) {
@@ -764,6 +765,7 @@ export class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
+				isWhiteGloveOffer={ isWhiteGloveOffer }
 			>
 				{ this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>

@@ -172,6 +172,7 @@ export class RedirectPaymentBox extends PureComponent {
 			} ),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
+			is_white_glove_offer: this.props.isWhiteGloveOffer,
 		};
 
 		// get the redirect URL from rest endpoint

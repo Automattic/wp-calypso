@@ -32,6 +32,7 @@ import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {
@@ -292,7 +293,7 @@ export class CartItem extends React.Component {
 	}
 
 	getProductName() {
-		const { cartItem, translate } = this.props;
+		const { cartItem, translate, isWhiteGloveOffer } = this.props;
 		const options = {
 			count: cartItem.volume,
 			args: {
@@ -312,6 +313,9 @@ export class CartItem extends React.Component {
 							productName: cartItem.product_name,
 						},
 					} );
+
+				case PLAN_BUSINESS:
+					return isWhiteGloveOffer ? 'White Glove' : cartItem.product_name;
 
 				default:
 					return cartItem.product_name;
