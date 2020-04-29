@@ -43,16 +43,31 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	useTrackStep( 'IntentGathering' );
 
-	const siteTitleComponent = (
+	// translators: Button label for skipping filling an optional input in onboarding
+	const skipLabel = __( 'I donʼt know' );
+
+	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
+	const siteTitleInput = (
 		<SiteTitle
 			isVisible={ !! ( siteVertical || siteTitle || wasVerticalSkipped ) }
 			isMobile={ isMobile }
 		/>
 	);
-	const verticalSelectComponent = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
-
-	// translators: Button label for skipping filling an optional input in onboarding
-	const skipLabel = __( 'I donʼt know' );
+	const verticalSelect = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
+	const nextStepButton = (
+		<Link
+			className="acquire-intent__question-skip"
+			isPrimary
+			to={ makePath( Step.DesignSelection ) }
+		>
+			{ siteTitle ? __( 'Choose a design' ) : skipLabel }
+		</Link>
+	);
+	const skipButton = (
+		<Button isLink onClick={ handleSkip } className="acquire-intent__skip-vertical">
+			{ skipLabel }
+		</Button>
+	);
 
 	return (
 		<div
@@ -67,33 +82,25 @@ const AcquireIntent: React.FunctionComponent = () => {
 							className="acquire-intent__mobile-back-arrow"
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
-						{ siteTitleComponent }
+						{ siteTitleInput }
 					</>
 				) : (
-					verticalSelectComponent
+					verticalSelect
 				) ) }
 			{ ! isMobile && (
 				<>
-					{ verticalSelectComponent }
-					{ siteTitleComponent }
+					{ verticalSelect }
+					{ siteTitleInput }
 				</>
 			) }
 			<div className="acquire-intent__footer">
-				{ siteVertical || wasVerticalSkipped ? (
-					( ! isMobile || isSiteTitleActive ) && (
-						<Link
-							className="acquire-intent__question-skip"
-							isPrimary
-							to={ makePath( Step.DesignSelection ) }
-						>
-							{ siteTitle ? __( 'Choose a design' ) : skipLabel }
-						</Link>
-					)
-				) : (
-					<Button isLink onClick={ handleSkip } className="acquire-intent__skip-vertical">
-						{ skipLabel }
-					</Button>
-				) }
+				{ /* On mobile we render skipButton on vertical step when there is no vertical selected.
+				On site title step we always render nextStepButton */ }
+				{ isMobile && ( isSiteTitleActive ? nextStepButton : ! siteVertical && skipButton ) }
+
+				{ /* On desktop we render skipButton when there isn't a vertical selected and the user didn't skipped vertical selection.
+				For other cases we always render nextStepButton */ }
+				{ ! isMobile && ( siteVertical || wasVerticalSkipped ? nextStepButton : skipButton ) }
 			</div>
 		</div>
 	);
