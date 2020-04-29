@@ -170,6 +170,7 @@
 		"signup/social-management": true,
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
+		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
 		"tools/migrate": true,
