@@ -974,6 +974,18 @@ export const FEATURES_LIST = {
 				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
 			),
 	},
+
+	[ constants.FEATURE_MEMBERSHIPS ]: {
+		getSlug: () => constants.FEATURE_MEMBERSHIPS,
+		getTitle: () => i18n.translate( 'Recurring Payments' ),
+		getDescription: () => i18n.translate( 'Accept monthly or annual payments on your website.' ),
+	},
+
+	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
+		getSlug: () => constants.FEATURE_PREMIUM_CONTENT_BLOCK,
+		getTitle: () => i18n.translate( 'Premium Content Block' ),
+		getDescription: () => i18n.translate( 'Limit content to subscribers only.' ),
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
