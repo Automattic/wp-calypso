@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-
 # sed -i behaves differently between macos and linux platforms.
 # See https://stackoverflow.com/a/51060063
 # To use this, do `sed "${sedi[@]}" -e $sed_expression`
 sedi=(-i)
-case "$(uname)" in
+# macOS version of sed doesn't support `--version` param and exits with code 1
+sed --version > /dev/null 2>&1
+if [ $? -eq 1 ]
+then
 	# For macOS, use two parameters
-	Darwin*) sedi=(-i "")
-esac
+	sedi=(-i "")
+fi
 
 # pick up value considering that the argument
 # has the --key=value shape.
