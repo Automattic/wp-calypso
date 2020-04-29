@@ -450,7 +450,7 @@ export class PluginsBrowser extends Component {
 		return (
 			<Button className="plugins-browser__button" compact href={ '/plugins/manage' + site }>
 				<Gridicon icon="cog" />
-				<span className="plugins-browser__button-text">{ translate( 'Manage Plugins' ) }</span>
+				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
 	}

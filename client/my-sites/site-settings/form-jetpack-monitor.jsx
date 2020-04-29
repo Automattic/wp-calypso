@@ -132,7 +132,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo

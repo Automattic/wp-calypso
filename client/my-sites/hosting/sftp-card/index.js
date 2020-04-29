@@ -138,7 +138,7 @@ export const SftpCard = ( {
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
-			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
+			<CardHeading>{ translate( 'SFTP credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
 				<p>
 					{ username

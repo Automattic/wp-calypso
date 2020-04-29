@@ -64,7 +64,7 @@ const StatsInsights = ( props ) => {
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
-				<SectionHeader label={ translate( 'All Time Views' ) } />
+				<SectionHeader label={ translate( 'All-time views' ) } />
 				<StatsViews />
 				{ siteId && (
 					<DomainTip

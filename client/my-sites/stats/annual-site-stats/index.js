@@ -177,7 +177,7 @@ class AnnualSiteStats extends Component {
 				{ isWidget && (
 					<SectionHeader
 						href={ viewAllLink }
-						label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) }
+						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
 					/>
 				) }
 				<Card className="stats-module">
@@ -190,7 +190,7 @@ class AnnualSiteStats extends Component {
 					{ isWidget && years && years.length !== 0 && (
 						<div className="module-expand">
 							<a href={ viewAllLink }>
-								{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
+								{ translate( 'View all', { context: 'Stats: Button label to expand a panel' } ) }
 								<span className="right" />
 							</a>
 						</div>

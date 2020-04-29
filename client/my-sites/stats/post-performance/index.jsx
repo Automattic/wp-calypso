@@ -105,7 +105,7 @@ class StatsPostPerformance extends Component {
 				{ siteId && post && (
 					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
 				) }
-				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
+				<SectionHeader label={ translate( 'Latest post summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />
 					{ post ? (
