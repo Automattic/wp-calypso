@@ -6,6 +6,8 @@ use A8C\FSE\Earn\PremiumContent\SubscriptionService\Subscription_Service;
 
 use function rest_url;
 
+require_once __DIR__ . '/class-paywall-response.php';
+
 /**
  * Registers an endpoint to display a button to push to subcribe.
  *

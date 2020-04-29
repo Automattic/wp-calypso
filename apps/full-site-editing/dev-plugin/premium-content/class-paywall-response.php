@@ -24,6 +24,7 @@ final class Paywall_Response extends WP_REST_Response {
 		$redirect_with_token = add_query_arg( Mock_SubscriptionService::TOKEN_QUERY_NAME, 'subscriber', $redirect_uri );
 		$subscribed_url      = esc_attr( $redirect_with_token );
 		$abort_url           = esc_attr( $redirect_uri );
+		$redirect_token_uri  = esc_html__( $redirect_with_token );
 		return new self(
 			<<<HTML
 			<!DOCTYPE html>
@@ -69,12 +70,14 @@ final class Paywall_Response extends WP_REST_Response {
 					<table>
 						<tr>
 							<th>Redirect URI</th>
-							<td>${ esc_html__( redirect_with_token ) }</td>
+							<td>
+								$redirect_token_uri
+							</td>
 						</tr>
 					</table>
 				</body>
 			</html>
-    			HTML
+			HTML
 		);
 	}
 
