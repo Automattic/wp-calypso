@@ -111,6 +111,7 @@ const DomainPicker: FunctionComponent = () => {
 							placeholder={ label }
 							onChange={ setDomainSearch }
 							value={ domainSearch }
+							autoComplete="off"
 						/>
 					</div>
 					<div className="domain-picker__body">
