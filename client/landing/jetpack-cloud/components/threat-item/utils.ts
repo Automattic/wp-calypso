@@ -70,11 +70,14 @@ export const getThreatFix = ( fixable: ThreatFix ): i18nCalypso.TranslateResult 
 		case 'delete':
 			return translate( 'Jetpack Scan will delete the affected file or directory.' );
 		case 'update':
-			return translate( 'Jetpack Scan can update to a newer version (%(version)s).', {
-				args: {
-					version: fixable.target || 'unknown',
-				},
-			} );
+			if ( fixable.target ) {
+				return translate( 'Jetpack Scan will update to a newer version (%(version)s).', {
+					args: {
+						version: fixable.target,
+					},
+				} );
+			}
+			return translate( 'Jetpack Scan will update to a newer version.' );
 		default:
 			return translate( 'Jetpack Scan will resolve the threat.' );
 	}
