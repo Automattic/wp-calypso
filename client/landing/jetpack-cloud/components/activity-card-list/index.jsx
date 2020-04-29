@@ -104,7 +104,7 @@ class ActivityCardList extends Component {
 									key: activity.activityId,
 									showContentLink: isActivityBackup( activity )
 										? dateLogs.length > 1 || hasMore
-										: true,
+										: undefined,
 									moment,
 									activity,
 									allowRestore,
