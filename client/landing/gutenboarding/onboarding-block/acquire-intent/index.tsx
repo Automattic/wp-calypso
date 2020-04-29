@@ -94,13 +94,17 @@ const AcquireIntent: React.FunctionComponent = () => {
 				</>
 			) }
 			<div className="acquire-intent__footer">
-				{ /* On mobile we render skipButton on vertical step when there is no vertical selected.
-				On site title step we always render nextStepButton */ }
-				{ isMobile && ( isSiteTitleActive ? nextStepButton : ! siteVertical && skipButton ) }
+				{ /* On mobile we render skipButton on vertical step when there is no vertical with more than 2 characters selected which is the
+				case when we render the Next arrow button next to the input. On site title step we always render nextStepButton */ }
+				{ isMobile &&
+					( isSiteTitleActive
+						? nextStepButton
+						: ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) }
 
-				{ /* On desktop we render skipButton when there isn't a vertical selected and the user didn't skipped vertical selection.
+				{ /* On desktop we render skipButton when vertical and site title inputs are empty and the user didn't skipped vertical selection.
 				For other cases we always render nextStepButton */ }
-				{ ! isMobile && ( siteVertical || wasVerticalSkipped ? nextStepButton : skipButton ) }
+				{ ! isMobile &&
+					( siteVertical || siteTitle || wasVerticalSkipped ? nextStepButton : skipButton ) }
 			</div>
 		</div>
 	);
