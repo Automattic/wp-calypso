@@ -6,6 +6,7 @@
 	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	display: flex;
 	flex-direction: column;
+
 	&--with-suggestions {
 		flex-grow: 1;
 	}
@@ -40,12 +41,10 @@
 .vertical-select__suggestions-wrapper {
 	position: relative;
 	display: block;
-	padding-right: 20px; // prevent arrow overflow on mobile
 	flex: 1;
 
 	@include break-small {
 		display: inline;
-		padding-right: 0;
 	}
 }
 
@@ -65,16 +64,21 @@
 
 .vertical-select__input-wrapper {
 	position: relative;
+
+	&--with-arrow {
+		margin-right: 40px; // make space for absolute positioned arrow
+	}
 }
 
 .vertical-select__placeholder {
+	display: inline-block;
+	width: 400px;
 	color: var( --studio-gray-5 );
-	position: absolute;
-	left: 0;
+}
 
-	@include break-small {
-		width: 400px;
-	}
+/* hide the placeholder when input is not empty */
+.madlib__input:not( :empty ) ~ .vertical-select__placeholder {
+	display: none;
 }
 
 .vertical-select__arrow {

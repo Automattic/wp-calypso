@@ -60,6 +60,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 		{
 			Input: (
 				<span className="site-title__input-wrapper">
+					{ ! isMobile && ' ' }
 					<span
 						contentEditable
 						tabIndex={ 0 }
@@ -78,11 +79,13 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'site-title', {
-				'site-title--without-value': ! siteTitle.length,
 				'site-title--hidden': ! isVisible,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or next to it
 		>
 			{ madlib }
 		</form>

@@ -201,7 +201,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
-					<span className="vertical-select__input-wrapper">
+					{ ! isMobile && ' ' }
+					<span
+						className={ classnames( 'vertical-select__input-wrapper', {
+							'vertical-select__input-wrapper--with-arrow': showArrow,
+						} ) }
+					>
 						<span
 							contentEditable
 							tabIndex={ 0 }
@@ -238,10 +243,13 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'vertical-select', {
 				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or placeholder
 		>
 			{ madlib }
 		</form>
