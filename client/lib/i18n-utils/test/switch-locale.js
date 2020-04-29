@@ -89,11 +89,10 @@ describe( 'getLanguageManifestFileUrl()', () => {
 	} );
 
 	test( 'should append a revision cache buster.', () => {
-		const expected = getLanguagesInternalBasePath() + '/zh-language-manifest.json?v=123';
+		const hash = '123';
+		const expected = `${ getLanguagesInternalBasePath() }/zh-language-manifest.json?v=${ hash }`;
 
-		expect(
-			getLanguageManifestFileUrl( { localeSlug: 'zh', languageRevisions: { zh: 123 } } )
-		).toEqual( expected );
+		expect( getLanguageManifestFileUrl( { localeSlug: 'zh', hash } ) ).toEqual( expected );
 	} );
 
 	test( 'should not append a revision cache buster for an unknown locale.', () => {
@@ -130,11 +129,10 @@ describe( 'getTranslationChunkFileUrl()', () => {
 	test( 'should append a revision cache buster.', () => {
 		const localeSlug = 'zh';
 		const chunkId = 'chunk-abc.min';
-		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json?v=123`;
+		const hash = '123';
+		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json?v=${ hash }`;
 
-		expect(
-			getTranslationChunkFileUrl( { chunkId, localeSlug, languageRevisions: { zh: 123 } } )
-		).toEqual( expected );
+		expect( getTranslationChunkFileUrl( { chunkId, localeSlug, hash } ) ).toEqual( expected );
 	} );
 
 	test( 'should not append a revision cache buster for an unknown locale.', () => {

@@ -3,6 +3,7 @@ const fs = require( 'fs' );
 const glob = require( 'glob' );
 const path = require( 'path' );
 const https = require( 'https' );
+const crypto = require( 'crypto' );
 const mkdirp = require( 'mkdirp' );
 const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
@@ -161,6 +162,11 @@ function downloadLanguagesRevions() {
 
 		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, ( response ) => {
 			files.forEach( ( file ) => response.pipe( file ) );
+
+			let languageRevisions = '';
+			response.on( 'data', ( chunk ) => {
+				languageRevisions += chunk;
+			} );
 			response.on( 'end', () => {
 				if ( response.statusCode !== 200 ) {
 					log( 'failed' );
@@ -169,7 +175,7 @@ function downloadLanguagesRevions() {
 				}
 
 				log( 'completed' );
-				resolve( true );
+				resolve( JSON.parse( languageRevisions ) );
 			} );
 		} );
 	} );
@@ -225,7 +231,7 @@ async function downloadLanguages() {
 }
 
 // Split language translations into chunks
-function buildLanguageChunks( downloadedLanguages ) {
+function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 	logUpdate( 'Building language chunks...' );
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
@@ -244,6 +250,8 @@ function buildLanguageChunks( downloadedLanguages ) {
 			},
 			{}
 		);
+
+		const languageRevisionsHashes = {};
 
 		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
 			const chunksMap = require( path.join( '..', chunksMapPath ) );
@@ -266,10 +274,19 @@ function buildLanguageChunks( downloadedLanguages ) {
 				const translatedChunksKeys = Object.keys( languageChunks ).map(
 					( chunk ) => path.parse( chunk ).name
 				);
-				const manifestJsonData = JSON.stringify( {
+				const manifestJsonDataRaw = {
 					locale: _.pick( languageTranslations, [ '' ] ),
 					translatedChunks: translatedChunksKeys,
-				} );
+				};
+				const manifestJsonDataFingerprint = JSON.stringify( manifestJsonDataRaw );
+
+				manifestJsonDataRaw.hash = crypto
+					.createHash( 'sha1' )
+					.update( manifestJsonDataFingerprint )
+					.digest( 'hex' );
+				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash;
+
+				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
 				const manifestFilepathJson = path.join(
 					publicPath,
 					`${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }`
@@ -305,6 +322,20 @@ function buildLanguageChunks( downloadedLanguages ) {
 				} );
 			} );
 		} );
+
+		logUpdate( 'Updating language revisions...\n' );
+
+		const updatedLanguageRevisions = JSON.stringify( {
+			...languageRevisions,
+			hashes: languageRevisionsHashes,
+		} );
+
+		languagesPaths.forEach( ( { publicPath } ) =>
+			fs.writeFileSync(
+				`${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }`,
+				updatedLanguageRevisions
+			)
+		);
 	}
 
 	logUpdate( 'Building language chunks completed.\n' );
@@ -312,9 +343,9 @@ function buildLanguageChunks( downloadedLanguages ) {
 
 async function run() {
 	createLanguagesDir();
-	await downloadLanguagesRevions();
+	const languageRevisions = await downloadLanguagesRevions();
 	const downloadedLanguages = await downloadLanguages();
-	buildLanguageChunks( downloadedLanguages );
+	buildLanguageChunks( downloadedLanguages, languageRevisions );
 }
 
 run();
