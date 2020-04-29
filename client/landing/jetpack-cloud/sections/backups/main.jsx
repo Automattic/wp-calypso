@@ -130,12 +130,6 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
-	TO_REMOVE_getSelectedDateString = () => {
-		const { moment } = this.props;
-
-		return moment.parseZone( this.getSelectedDate() ).toISOString( true );
-	};
-
 	renderMain() {
 		const {
 			allowRestore,
@@ -158,7 +152,7 @@ class BackupsPage extends Component {
 		const lastBackup = backupsFromSelectedDate.lastBackup;
 		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
 
-		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
+		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
