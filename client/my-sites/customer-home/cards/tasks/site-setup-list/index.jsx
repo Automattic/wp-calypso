@@ -108,77 +108,52 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls } ) => {
 		<Card className="site-setup-list">
 			<div className="site-setup-list__nav">
 				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
-				{ tasks.map( ( task ) => {
-					const taskData = getTask( task );
-					return (
-						<NavItem
-							key={ task.id }
-							text={ task.isCompleted ? taskData.completed.title : taskData.todo.title }
-							isCompleted={ task.isCompleted }
-							isCurrent={ task.id === currentTask.id }
-							onClick={ () => setCurrentTask( taskData ) }
-						/>
-					);
-				} ) }
+				{ tasks.map( ( task ) => (
+					<NavItem
+						key={ task.id }
+						text={ getTask( task ).title }
+						isCompleted={ task.isCompleted }
+						isCurrent={ task.id === currentTask.id }
+						onClick={ () => setCurrentTask( getTask( task ) ) }
+					/>
+				) ) }
 			</div>
-			{ ! currentTask.isCompleted ? (
-				<ActionPanel className="site-setup-list__task task">
-					<ActionPanelBody>
-						<div className="site-setup-list__task-text task__text">
-							<div className="site-setup-list__task-timing task__timing">
-								<Gridicon icon="time" size={ 18 } />
-								<p>
-									{ translate( '%d minute', '%d minutes', {
-										count: currentTask.todo.timing,
-										args: [ currentTask.todo.timing ],
-									} ) }
-								</p>
-							</div>
-							<ActionPanelTitle>{ currentTask.todo.title }</ActionPanelTitle>
-							<p className="site-setup-list__task-description task__description">
-								{ currentTask.todo.description }
+			<ActionPanel className="site-setup-list__task task">
+				<ActionPanelBody>
+					<div className="site-setup-list__task-text task__text">
+						<div className="site-setup-list__task-timing task__timing">
+							<Gridicon icon="time" size={ 18 } />
+							<p>
+								{ translate( '%d minute', '%d minutes', {
+									count: currentTask.timing,
+									args: [ currentTask.timing ],
+								} ) }
 							</p>
-							<ActionPanelCta>
-								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								>
-									{ currentTask.todo.actionText }
-								</Button>
-								{ currentTask.todo.isSkippable && (
-									<Button
-										className="site-setup-list__task-skip task__skip is-link"
-										onClick={ () => skipTask( dispatch, currentTask.todo, siteId ) }
-									>
-										{ translate( 'Skip for now' ) }
-									</Button>
-								) }
-							</ActionPanelCta>
 						</div>
-					</ActionPanelBody>
-				</ActionPanel>
-			) : (
-				<ActionPanel className="site-setup-list__task task">
-					<ActionPanelBody>
-						<div className="site-setup-list__task-text task__text">
-							<ActionPanelTitle>{ currentTask.completed.title }</ActionPanelTitle>
-							<p className="site-setup-list__task-description task__description">
-								{ currentTask.completed.description }
-							</p>
-							<ActionPanelCta>
+						<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
+						<p className="site-setup-list__task-description task__description">
+							{ currentTask.description }
+						</p>
+						<ActionPanelCta>
+							<Button
+								className="site-setup-list__task-action task__action"
+								primary
+								onClick={ () => startTask( dispatch, currentTask, siteId ) }
+							>
+								{ currentTask.actionText }
+							</Button>
+							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () => startTask( dispatch, currentTask, siteId ) }
+									className="site-setup-list__task-skip task__skip is-link"
+									onClick={ () => skipTask( dispatch, currentTask, siteId ) }
 								>
-									{ currentTask.completed.actionText }
+									{ translate( 'Skip for now' ) }
 								</Button>
-							</ActionPanelCta>
-						</div>
-					</ActionPanelBody>
-				</ActionPanel>
-			) }
+							) }
+						</ActionPanelCta>
+					</div>
+				</ActionPanelBody>
+			</ActionPanel>
 		</Card>
 	);
 };
