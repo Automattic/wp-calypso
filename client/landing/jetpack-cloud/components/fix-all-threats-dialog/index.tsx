@@ -112,7 +112,7 @@ const FixAllThreatsDialog = ( {
 									count: threats.length,
 								}
 							) }
-							<ul>
+							<ul className="fix-all-threats-dialog__list">
 								{ threats.map( ( threat ) => (
 									<li key={ threat.id }>
 										<strong>

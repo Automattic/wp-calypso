@@ -11,7 +11,7 @@
 		}
 
 		&__threat-title {
-			font-weight: bold;
+			font-weight: 600;
 			margin: 8px 0;
 		}
 
@@ -31,6 +31,11 @@
 
 		&__icon--confirmation {
 			fill: var( --color-primary-40 );
+		}
+
+		&__list {
+			margin-left: 12px;
+			margin-top: 8px;
 		}
 
 		&__warning-message {
