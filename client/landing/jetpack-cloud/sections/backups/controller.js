@@ -12,7 +12,7 @@ import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
 import UpsellSwitch from 'landing/jetpack-cloud/components/upsell-switch';
-import BackupsUpsell from './components/upsell';
+import BackupsUpsell from './backup-upsell';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 
