@@ -13,7 +13,11 @@ import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
 import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
-import { getThreatType } from './threat';
+import {
+	getThreatType,
+	getThreatFix,
+	getThreatVulnerability,
+} from 'landing/jetpack-cloud/components/threat-item/utils';
 
 /**
  * Style dependencies
@@ -53,28 +57,14 @@ class ThreatItem extends Component< Props > {
 	getThreatSubHeader(): string | i18nCalypso.TranslateResult {
 		const { threat } = this.props;
 		switch ( getThreatType( threat ) ) {
-			case 'core':
-				return translate( 'Vulnerability found in WordPress' );
-
 			case 'file':
-				return translate( 'Threat found ({{signature/}})', {
-					components: {
+				return translate( 'Threat found %(signature)s', {
+					args: {
 						signature: <span className="threat-item__alert-signature">{ threat.signature }</span>,
 					},
 				} );
-
-			case 'plugin':
-				return translate( 'Vulnerability found in plugin' );
-
-			case 'theme':
-				return translate( 'Vulnerability found in theme' );
-
-			case 'database':
-				return '';
-
-			case 'none':
 			default:
-				return translate( 'Miscellaneous vulnerability' );
+				return getThreatVulnerability( threat );
 		}
 	}
 
@@ -90,20 +80,8 @@ class ThreatItem extends Component< Props > {
 				}
 			);
 		}
-		switch ( threat.fixable.fixer ) {
-			case 'replace':
-				return translate( 'Jetpack Scan will replace the affected file or directory.' );
-			case 'delete':
-				return translate( 'Jetpack Scan will delete the affected file or directory.' );
-			case 'update':
-				return translate( 'Jetpack Scan can update to a newer version (%(version)s).', {
-					args: {
-						version: threat.fixable.target || 'unknown',
-					},
-				} );
-			default:
-				return translate( 'Jetpack Scan will resolve the threat.' );
-		}
+
+		return getThreatFix( threat.fixable );
 	}
 
 	render() {

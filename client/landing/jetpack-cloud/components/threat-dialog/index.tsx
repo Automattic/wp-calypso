@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactNode } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 
@@ -15,10 +15,12 @@ import Gridicon from 'components/gridicon';
  * Style dependencies
  */
 import './style.scss';
+import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
+import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
+import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 
 interface Props {
-	threatTitle: string;
-	threatDescription: string | ReactNode;
+	threat: Threat;
 	action: 'fix' | 'ignore';
 	siteName: string;
 	showDialog: boolean;
@@ -28,15 +30,7 @@ interface Props {
 
 class ThreatDialog extends React.PureComponent< Props > {
 	render() {
-		const {
-			action,
-			onCloseDialog,
-			onConfirmation,
-			siteName,
-			showDialog,
-			threatDescription,
-			threatTitle,
-		} = this.props;
+		const { action, onCloseDialog, onConfirmation, siteName, showDialog, threat } = this.props;
 		const isScary = action !== 'fix';
 		const buttons = [
 			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
@@ -64,8 +58,8 @@ class ThreatDialog extends React.PureComponent< Props > {
 						? translate( 'Fix threat' )
 						: translate( 'Do you really want to ignore this threat?' ) }
 				</h1>
-				<h3 className="threat-dialog__threat-title">{ threatTitle }</h3>
-				<div className="threat-dialog__threat-description">{ threatDescription }</div>
+				<h3 className="threat-dialog__threat-title">{ <ThreatItemHeader threat={ threat } /> }</h3>
+				<div className="threat-dialog__threat-description">{ threat.description }</div>
 				<div className="threat-dialog__warning">
 					<Gridicon
 						className={ classnames(
@@ -77,9 +71,7 @@ class ThreatDialog extends React.PureComponent< Props > {
 					/>
 					<p className="threat-dialog__warning-message">
 						{ action === 'fix'
-							? translate(
-									'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.'
-							  )
+							? getThreatFix( threat.fixable )
 							: translate(
 									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}%s{{/strong}}.',
 									{
