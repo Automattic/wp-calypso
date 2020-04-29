@@ -54,7 +54,6 @@
 /client/my-sites/domains/components/domain-warnings @Automattic/cobalt
 /client/my-sites/domains/controller.jsx @Automattic/cobalt
 /client/my-sites/email @Automattic/cobalt
-/client/my-sites/stats/stats-banners/index.jsx @Automattic/cobalt
 /client/state/data-layer/wpcom/gsuite-users @Automattic/cobalt
 /client/state/gsuite-users @Automattic/cobalt
 
