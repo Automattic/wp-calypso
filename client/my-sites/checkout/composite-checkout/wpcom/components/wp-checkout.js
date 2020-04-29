@@ -252,11 +252,29 @@ const UpsellWrapperUI = styled.div`
 	margin-top: 24px;
 	background: ${( props ) => props.theme.colors.surface};
 
-	& > div {
+	.cart__upsell-wrapper {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	}
-	& .card.cart__header {
-		border: none;
+
+	.cart__upsell-header {
+		border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-top: none;
+		box-shadow: none;
+		padding-left: 20px;
+		padding-right: 20px;
+
+		.section-header__label {
+			color: ${( props ) => props.theme.colors.textColor};
+			font-size: 16px;
+		}
+	}
+
+	.cart__upsell-body {
+		padding: 20px;
+
+		p {
+			margin-bottom: 1.2em;
+		}
 	}
 `;
 
