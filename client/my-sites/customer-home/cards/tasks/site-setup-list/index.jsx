@@ -22,6 +22,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import { getCurrentUser } from 'state/current-user/selectors';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
@@ -71,7 +72,7 @@ const skipTask = ( dispatch, task, siteId ) => {
 	);
 };
 
-const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls } ) => {
+const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls, userEmail } ) => {
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const dispatch = useDispatch();
 
@@ -81,6 +82,7 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls } ) => {
 			siteId,
 			siteSlug,
 			taskUrls,
+			userEmail,
 		} );
 
 	useEffect( () => {
@@ -169,6 +171,7 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls } ) => {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = siteChecklist?.segment;
@@ -189,5 +192,6 @@ export default connect( ( state ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
+		userEmail: user?.email,
 	};
 } )( SiteSetupList );
