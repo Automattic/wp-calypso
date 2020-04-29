@@ -61,6 +61,8 @@
 		"prepare": "check-npm-client && npm run sync:blog-posts-block --nodemodules"
 	},
 	"dependencies": {
+		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
@@ -75,6 +77,7 @@
 		"@wordpress/hooks": "*",
 		"@wordpress/html-entities": "*",
 		"@wordpress/i18n": "*",
+		"@wordpress/icons": "^1.2.0",
 		"@wordpress/keycodes": "*",
 		"@wordpress/plugins": "*",
 		"@wordpress/url": "*",

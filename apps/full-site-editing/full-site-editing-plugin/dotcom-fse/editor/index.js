@@ -8,3 +8,4 @@ import './style.scss';
 import './suppress-trash-action';
 import './suppress-draft-action';
 import './remove-editor-panels';
+import './domain-panel';
