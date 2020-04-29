@@ -10,7 +10,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -465,12 +464,12 @@ export class LoginForm extends Component {
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = {
+			const oauth2Params = new globalThis.URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			};
+				oauth2_redirect: redirectTo || '',
+			} );
 
-			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
 		}
 
 		if ( isGutenboarding ) {
