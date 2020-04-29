@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getDomainTypeText, isSubdomain } from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
@@ -339,6 +340,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		} );
 	};
 
+	handleDomainSecurityClick = () => {
+		const { domain } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_domain_management_security_click', {
+			section: domain.type,
+		} );
+	};
+
 	getPickCustomDomain() {
 		const { selectedSite, translate } = this.props;
 
@@ -396,6 +405,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getSecurity() {
 		const { selectedSite, domain, translate } = this.props;
 
+		const shouldRenderDomainSecurity = config.isEnabled(
+			'domains/new-status-design/security-option'
+		);
+
+		if ( ! shouldRenderDomainSecurity ) {
+			return null;
+		}
+
 		const { pointsToWpcom } = domain;
 
 		if ( ! pointsToWpcom ) {
@@ -406,7 +423,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementSecurity( selectedSite.slug, domain.name ) }
-				onClick={ this.handlePickCustomDomainClick }
+				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
 				description={ 'HTTPS encryption: on' }
