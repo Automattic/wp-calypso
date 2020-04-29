@@ -116,18 +116,21 @@ class PostRelativeTime extends React.PureComponent {
 			case 'trash':
 				if ( displayOn ) {
 					return this.props.translate( 'trashed on %(displayedTime)s', {
-						comment: '%(displayedTime)s is when a post or page was trashed',
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM) when a post or page was trashed',
 						args,
 					} );
 				}
 				return this.props.translate( 'trashed %(displayedTime)s', {
-					comment: '%(displayedTime)s is when a post or page was trashed',
+					comment:
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a post or page was trashed',
 					args,
 				} );
 
 			case 'future':
 				return this.props.translate( 'scheduled for %(displayedTime)s', {
-					comment: '%(displayedTime)s is when a scheduled post or page is set to be published',
+					comment:
+						'%(displayedTime)s is when a scheduled post or page is set to be published. It can be either "tomorrow at 16H", or an absoltute date (ie. Apr 21, at 10:07 PM)',
 					args,
 				} );
 
@@ -135,13 +138,15 @@ class PostRelativeTime extends React.PureComponent {
 			case 'pending':
 				if ( displayOn ) {
 					return this.props.translate( 'draft last modified on %(displayedTime)s', {
-						comment: '%(displayedTime)s is when a draft post or page was last modified',
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM) when a draft post or page was last modified',
 						args,
 					} );
 				}
 
 				return this.props.translate( 'draft last modified %(displayedTime)s', {
-					comment: '%(displayedTime)s is when a draft post or page was last modified',
+					comment:
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a draft post or page was last modified',
 					args,
 				} );
 
@@ -149,13 +154,15 @@ class PostRelativeTime extends React.PureComponent {
 			case 'publish':
 				if ( displayOn ) {
 					return this.props.translate( 'published on %(displayedTime)s', {
-						comment: '%(displayedTime)s is when a post or page will be published',
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM ) when a post or page was published',
 						args,
 					} );
 				}
 
 				return this.props.translate( 'published %(displayedTime)s', {
-					comment: '%(displayedTime)s is when a post or page will be published',
+					comment:
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a post or page was published',
 					args,
 				} );
 		}
