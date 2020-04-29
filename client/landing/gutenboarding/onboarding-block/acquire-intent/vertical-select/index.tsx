@@ -170,7 +170,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			input.length && ! suggestions.length && handleSelect( { label: input } );
 			return;
 		}
-		if ( e.keyCode === TAB ) {
+		if ( e.keyCode === TAB && input.length ) {
 			e.preventDefault();
 			selectLastInputValue();
 		}
