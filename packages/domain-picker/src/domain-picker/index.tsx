@@ -30,6 +30,7 @@ import DomainCategories from '../domain-categories';
  * Style dependencies
  */
 import './style.scss';
+import { DomainCategory } from '../domains-constants';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
@@ -58,6 +59,11 @@ export interface Props {
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
+
+	domainCategory: ( category: DomainCategory ) => void;
+	domainSearch: string;
+	setDomainCategory: DomainCategory;
+	setDomainSearch: ( search: string ) => void;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -67,14 +73,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onClose,
 	currentDomain,
 	recordAnalytics,
+
+	// No onboarding store
+	domainCategory,
+	domainSearch,
+	setDomainCategory,
+	setDomainSearch,
 } ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
-	const { domainSearch, domainCategory } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
-	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
 	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );

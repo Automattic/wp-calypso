@@ -12,8 +12,10 @@ import classnames from 'classnames';
 import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
-import { FLOW_ID } from '../../constants';
-import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
+
+// @TODO Analytics
+// import { FLOW_ID } from '../../constants';
+// import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
 
 /**
  * Style dependencies
@@ -56,8 +58,12 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setDomainModalVisibility( true );
 	};
 
-	const recordAnalytics = ( event: RecordTrainTracksEventProps ) => {
-		recordTrainTracksEvent( `/${ FLOW_ID }/domain-popover`, event );
+	// @TODO Analytics
+	// const recordAnalytics = ( event: RecordTrainTracksEventProps ) => {
+	// 	recordTrainTracksEvent( `/${ FLOW_ID }/domain-popover`, event );
+	// };
+	const recordAnalytics = () => {
+		return;
 	};
 
 	return (

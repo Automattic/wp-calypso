@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { Button, Popover } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
-import config from 'config';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 import { useViewportMatch } from '@wordpress/compose';
 
 /**
@@ -52,15 +53,13 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( {
 			>
 				<DomainPicker { ...props } />
 				<div className="domain-picker-popover__addons">
-					{ config.isEnabled( 'gutenboarding/domain-picker-modal' ) && (
-						<Button
-							className="domain-picker-popover__more-button"
-							isTertiary
-							onClick={ onMoreOptions }
-						>
-							{ __( 'More Options' ) }
-						</Button>
-					) }
+					<Button
+						className="domain-picker-popover__more-button"
+						isTertiary
+						onClick={ onMoreOptions }
+					>
+						{ __( 'More Options' ) }
+					</Button>
 					<CloseButton className="domain-picker-popover__close-button" onClick={ onClose } />
 				</div>
 			</Popover>

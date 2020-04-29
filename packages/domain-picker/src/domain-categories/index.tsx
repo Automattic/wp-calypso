@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 
-import { domainCategories, DomainCategory } from '../../domains-constants';
+import { domainCategories, DomainCategory } from '../domains-constants';
 
 /**
  * Style dependencies
