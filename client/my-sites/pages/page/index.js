@@ -497,6 +497,8 @@ class Page extends Component {
 			</EllipsisMenu>
 		);
 
+		const isTrashed = page.status === 'trash';
+
 		const shadowNotice = shadowStatus && (
 			<ShadowNotice shadowStatus={ shadowStatus } onUndoClick={ this.undoPostStatus } />
 		);
@@ -521,34 +523,45 @@ class Page extends Component {
 			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
+		const innerPageTitle = (
+			<>
+				{ depthIndicator }
+				{ title }
+				{ ! isTrashed && latestPostsPage && (
+					<InfoPopover position="right">
+						{ translate(
+							'The content of your latest posts page is automatically generated and cannot be edited.'
+						) }
+					</InfoPopover>
+				) }
+			</>
+		);
+
 		return (
 			<CompactCard className={ classNames( cardClasses ) }>
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
-					<a
-						className="page__title"
-						href={ canEdit ? editorUrl : page.URL }
-						title={
-							canEdit
-								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
-								: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
-						}
-						onClick={ this.props.recordPageTitle }
-						onMouseOver={ preloadEditor }
-						onFocus={ preloadEditor }
-						data-tip-target={ 'page-' + page.slug }
-					>
-						{ depthIndicator }
-						{ title }
-						{ latestPostsPage && (
-							<InfoPopover position="right">
-								{ translate(
-									'The content of your latest posts page is automatically generated and cannot be edited.'
-								) }
-							</InfoPopover>
-						) }
-					</a>
+					{ ! isTrashed && (
+						<a
+							className="page__title"
+							href={ canEdit ? editorUrl : page.URL }
+							title={
+								canEdit
+									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
+									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
+							}
+							onClick={ this.props.recordPageTitle }
+							onMouseOver={ preloadEditor }
+							onFocus={ preloadEditor }
+							data-tip-target={ 'page-' + page.slug }
+						>
+							{ innerPageTitle }
+						</a>
+					) }
+
+					{ isTrashed && <span className="page__title">{ innerPageTitle }</span> }
+
 					<PageCardInfo
 						page={ page }
 						showTimestamp
