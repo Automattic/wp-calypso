@@ -228,7 +228,7 @@
 
 	.button.is-borderless {
 		color: var( --color-link );
-		font-weight: initial;
+		font-weight: 600;
 	}
 }
 
@@ -429,6 +429,10 @@ div.popover-cart__popover {
 		max-height: 100%;
 		position: relative;
 		top: 0;
+	}
+
+	.cart__upsell-body {
+		padding: 16px;
 	}
 }
 
