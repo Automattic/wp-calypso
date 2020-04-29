@@ -39,7 +39,7 @@ const UpsellNudgeExample = () => (
 			forceDisplay
 			href="#"
 			callToAction="Upgrade"
-			title="Free domain with a plan! This is a dismissible nudge with a description."
+			title="Free domain with a plan! This is a dismissible nudge with a description and the horizontal layout."
 			showIcon={ true }
 			horizontal
 		/>
@@ -54,7 +54,7 @@ const UpsellNudgeExample = () => (
 				'Extra customization options',
 			] }
 			callToAction="Upgrade"
-			title="Free domain with a plan! This is a dismissible nudge with a description."
+			title="Free domain with a plan! This is a dismissible nudge with a description, prices, and a list of features."
 			showIcon={ true }
 			price={ [ 48, 50 ] }
 		/>
