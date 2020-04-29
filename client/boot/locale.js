@@ -14,6 +14,7 @@ import {
 	getLanguageManifestFile,
 	getTranslationChunkFile,
 } from 'lib/i18n-utils/switch-locale';
+import { getUrlParts } from 'lib/url/url-parts';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
 const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
@@ -66,7 +67,11 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
-	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
+
+	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
 		const userLocaleSlug = currentUser && currentUser.localeSlug;
 		const lastPathSegment = window.location.pathname.substr(
 			window.location.pathname.lastIndexOf( '/' ) + 1

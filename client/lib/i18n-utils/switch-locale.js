@@ -10,7 +10,7 @@ import { forEach, includes } from 'lodash';
  */
 import config from 'config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from 'lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -258,10 +258,14 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
+
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
-	} else if ( config.isEnabled( 'use-translation-chunks' ) ) {
+	} else if ( useTranslationChunks ) {
 		// If requested locale is same as current locale, we don't need to
 		// re-fetch the manifest and translation chunks.
 		if ( localeSlug === i18n.getLocaleSlug() ) {
