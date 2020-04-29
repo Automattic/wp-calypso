@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
-import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 
@@ -13,9 +12,6 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../stores/onboard';
-import { DOMAIN_SUGGESTION_VENDOR, FLOW_ID } from '../../constants';
-import { RecordTrainTracksEventProps } from '../../lib/analytics';
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -23,7 +19,6 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 	uiPosition: number;
 }
 
@@ -32,9 +27,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	isRecommended = false,
 	isSelected = false,
 	onSelect,
-	railcarId,
-	recordAnalytics,
-	uiPosition,
 } ) => {
 	const { __ } = useI18n();
 
@@ -43,54 +35,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const { domainSearch } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const fetchAlgo = `/domains/search/${ DOMAIN_SUGGESTION_VENDOR }/${ FLOW_ID }`;
-	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
-	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
-
 	const labelId = uuid();
 
-	useEffect( () => {
-		// Only record TrainTracks render event when the domain name and railcarId change.
-		// This effectively records the render event only once for each set of search results.
-		if (
-			domain !== previousDomain &&
-			previousRailcarId !== railcarId &&
-			railcarId &&
-			recordAnalytics
-		) {
-			recordAnalytics( {
-				trainTracksType: 'render',
-				fetchAlgo,
-				query: domainSearch,
-				railcarId,
-				result: isRecommended ? domain + '#recommended' : domain,
-				uiPosition,
-			} );
-			setPreviousDomain( domain );
-			setPreviousRailcarId( railcarId );
-		}
-	}, [
-		domain,
-		domainSearch,
-		fetchAlgo,
-		isRecommended,
-		previousDomain,
-		previousRailcarId,
-		railcarId,
-		uiPosition,
-		recordAnalytics,
-	] );
-
 	const onDomainSelect = () => {
-		// Use previousRailcarId to make sure the select action matches the last rendered railcarId.
-		if ( previousRailcarId && recordAnalytics ) {
-			recordAnalytics( {
-				trainTracksType: 'interact',
-				action: 'domain_selected',
-				railcarId: previousRailcarId,
-			} );
-		}
 		onSelect( suggestion );
 	};
 
