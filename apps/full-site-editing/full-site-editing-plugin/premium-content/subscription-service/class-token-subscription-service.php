@@ -7,7 +7,7 @@
  */
 namespace A8C\FSE\Earn\PremiumContent\SubscriptionService;
 
-use A8C\FSE\Earn\PreimumContent\JWT;
+use A8C\FSE\Earn\PremiumContent\JWT;
 
 // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 abstract class Token_Subscription_Service implements Subscription_Service {
