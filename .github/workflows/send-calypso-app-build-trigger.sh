@@ -12,8 +12,6 @@ workflow_data="{
 	\"trigger_payload\": $trigger_payload
 }"
 
-echo $workflow_data
-
 # cd here so that the parent directories are not included in the zip file.
 cd apps/full-site-editing/full-site-editing-plugin
 
@@ -22,13 +20,11 @@ build_archive=plugin-archive.zip
 zip -r $build_archive ./*
 
 # Send metadata and build zip file to the endpoint.
-response=`curl -v -s \
+response=`curl -s \
 	-w "HTTPSTATUS:%{http_code}" \
 	-F "meta=$workflow_data" \
 	-F "build_archive=@$build_archive;type=application/zip" \
 	"$TRIGGER_CALYPSO_APP_BUILD_ENDPOINT?calypso_app=$CALYPSO_APP"`
-
-echo $response
 
 # Echo the output given by the server. (Like error messages.)
 output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
