@@ -37,7 +37,7 @@ const ProductCardOptions = ( {
 					{ optionsLabel }
 					<InfoPopover position="right">
 						{ translate(
-							'Records are all posts, pages, custom post types and other types of content indexed by Jetpack Search.'
+							'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
 						) }
 					</InfoPopover>
 				</h4>
