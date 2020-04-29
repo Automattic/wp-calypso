@@ -12,6 +12,7 @@ import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { verifyEmail } from 'state/current-user/email-verification/actions';
 
 export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userEmail } = {} ) => {
 	let taskData = {};
@@ -52,8 +53,8 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 						},
 					}
 				),
-				//TODO: looks like there's some more complicated text states here
 				actionText: translate( 'Verify email' ),
+				actionDispatch: verifyEmail,
 			};
 			break;
 		case 'blogname_set':
