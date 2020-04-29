@@ -60,6 +60,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 		{
 			Input: (
 				<span className="site-title__input-wrapper">
+					{ ! isMobile && ' ' }
 					<span
 						contentEditable
 						tabIndex={ 0 }
@@ -80,7 +81,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	return (
 		<form
 			className={ classnames( 'site-title', {
-				'site-title--without-value': ! siteTitle.length,
 				'site-title--hidden': ! isVisible,
 			} ) }
 		>

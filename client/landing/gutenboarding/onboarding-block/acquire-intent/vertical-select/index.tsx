@@ -201,7 +201,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
-					<span className="vertical-select__input-wrapper">
+					{ ! isMobile && ' ' }
+					<span
+						className={ classnames( 'vertical-select__input-wrapper', {
+							'vertical-select__input-wrapper--with-arrow': showArrow,
+						} ) }
+					>
 						<span
 							contentEditable
 							tabIndex={ 0 }
