@@ -48,6 +48,11 @@ const UpsellNudgeExample = () => (
 			dismissPreferenceName="calypso_upsell_nudge_devdocs_dismiss"
 			forceDisplay
 			href="#"
+			list={ [
+				'24/7 live chat support',
+				'Free domain with your plan purchase',
+				'Extra customization options',
+			] }
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description."
 			showIcon={ true }
