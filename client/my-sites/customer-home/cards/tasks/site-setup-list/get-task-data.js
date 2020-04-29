@@ -36,12 +36,20 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					actionText: translate( 'Verify' ),
 				},
 				completed: {
-					title: translate( 'You verified your email for your doamins.' ),
+					title:
+						task.unverifiedDomains.length === 1
+							? translate( 'Verify the email address for %(domainName)s', {
+									args: { domainName: task.unverifiedDomains[ 0 ] },
+							  } )
+							: translate( 'Verify the email address for your domains' ),
 					description: translate(
-						'You can always update your domain information on the Domains page.'
+						'We need to check your contact information to make sure you can be reached. Please verify your details using the email we sent you, or your domain will stop working.'
 					),
-					actionUrl: `/domains/manage/${ siteSlug }`,
-					actionText: translate( 'Manage domains' ),
+					actionUrl:
+						task.unverifiedDomains.length === 1
+							? domainManagementEdit( siteSlug, task.unverifiedDomains[ 0 ] )
+							: domainManagementList( siteSlug ),
+					actionText: translate( 'Verify' ),
 				},
 			};
 			break;
@@ -66,14 +74,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					//TODO: looks like there's some more complicated text states here
 					actionText: translate( 'Verify email' ),
 				},
-				completed: {
-					title: translate( 'You validated your email address' ),
-					description: translate(
-						'Need to change something? You can update your email at any time.'
-					),
-					actionUrl: '/me/account',
-					actionText: translate( 'Manage email' ),
-				},
+				completed: {},
 			};
 			break;
 		case 'blogname_set':
@@ -88,12 +89,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					actionUrl: `/settings/general/${ siteSlug }`,
 					tour: 'checklistSiteTitle',
 				},
-				completed: {
-					title: translate( 'You updated your site title' ),
-					description: translate( 'You can edit your site title whenever you like.' ),
-					actionText: translate( 'Edit' ),
-					actionUrl: `/settings/general/${ siteSlug }`,
-				},
+				completed: {},
 			};
 			break;
 		case 'mobile_app_installed':
@@ -117,6 +113,10 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					description: translate( 'You can re-download the app at any time.' ),
 					actionText: translate( 'Re-download mobile app' ),
 					actionUrl: '/me/get-apps',
+					...( ! task.isCompleted && {
+						actionDispatch: requestSiteChecklistTaskUpdate,
+						actionDispatchArgs: [ siteId, task.id ],
+					} ),
 				},
 			};
 			break;
@@ -132,12 +132,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
 					actionDispatchArgs: [ siteId ],
 				},
-				completed: {
-					title: translate( 'You launched your site' ),
-					description: translate( 'Your site is is now public! Good work.' ),
-					actionText: translate( 'View site' ),
-					actionUrl: '/',
-				},
+				completed: {},
 			};
 			break;
 		case 'front_page_updated':
@@ -150,11 +145,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 					),
 					actionText: translate( 'Edit homepage' ),
 				},
-				completed: {
-					title: translate( 'You updated your homepage' ),
-					description: translate( 'Edit your page anytime you want to change the text or images.' ),
-					actionText: translate( 'Edit homepage' ),
-				},
+				completed: {},
 			};
 			break;
 		case 'site_menu_updated':
@@ -177,20 +168,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 						},
 					],
 				},
-				completed: {
-					title: translate( 'You created a site menu' ),
-					description: translate( 'You can edit your site menu whenever you like.' ),
-					actionText: translate( 'View tutorial' ),
-					actionDispatch: openSupportArticleDialog,
-					actionDispatchArgs: [
-						{
-							postId: 59580,
-							postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
-							actionLabel: translate( 'Go to the Customizer' ),
-							actionUrl: menusUrl,
-						},
-					],
-				},
+				completed: {},
 			};
 			break;
 	}
