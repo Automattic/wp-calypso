@@ -145,6 +145,10 @@ export function getLanguageManifestFileUrl( {
 		fileType = 'json';
 	}
 
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
+	}
+
 	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
 	const fileUrl = `${ fileBasePath }/${ localeSlug }-language-manifest.${ fileType }`;
 
@@ -196,6 +200,10 @@ export function getTranslationChunkFileUrl( {
 } = {} ) {
 	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
 		fileType = 'json';
+	}
+
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
 	}
 
 	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
