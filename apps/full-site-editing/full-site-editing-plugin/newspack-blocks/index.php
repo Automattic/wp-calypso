@@ -41,44 +41,48 @@ add_filter( 'newspack_blocks_block_name', __NAMESPACE__ . '\blog_posts_block_nam
  * @return array
  */
 function blog_posts_block_args( $args, $name ) {
-	if ( 'homepage-articles' !== $name ) {
+	if ( 'homepage-articles' !== $name && 'carousel' !== $name ) {
 		return $args;
 	}
 
+	$block_prefix = 'homepage-articles' === $name
+		? 'blog-posts-block-'
+		: 'carousel-block-';
+
 	// Editor script.
-	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.asset.php';
+	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.asset.php';
 	wp_register_script(
-		'blog-posts-block-editor',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js', __FILE__ ),
+		$block_prefix . 'editor',
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true
 	);
 
 	// Editor style.
-	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
-	wp_register_style( 'blog-posts-block-editor', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
+	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.css', __FILE__ );
+	wp_register_style( $block_prefix . 'editor', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	// View script.
-	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.asset.php';
+	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.asset.php';
 	wp_register_script(
-		'blog-posts-block-view',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.js', __FILE__ ),
+		$block_prefix . 'view',
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true
 	);
 
 	// View style.
-	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'view.css', __FILE__ );
-	wp_register_style( 'blog-posts-block-view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
+	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.css', __FILE__ );
+	wp_register_style( $block_prefix . 'view', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
-	$args['editor_script'] = 'blog-posts-block-editor';
-	$args['editor_style']  = 'blog-posts-block-editor';
-	$args['script']        = 'blog-posts-block-view';
-	$args['style']         = 'blog-posts-block-view';
+	$args['editor_script'] = $block_prefix . 'editor';
+	$args['editor_style']  = $block_prefix . 'editor';
+	$args['script']        = $block_prefix . 'view';
+	$args['style']         = $block_prefix . 'view';
 
-	wp_set_script_translations( 'blog-posts-block-editor', 'full-site-editing' );
+	wp_set_script_translations( $block_prefix . 'editor', 'full-site-editing' );
 
 	return $args;
 }
