@@ -233,7 +233,7 @@ class ThemeShowcase extends React.Component {
 
 		const headerIcons = [
 			{
-				label: 'new',
+				label: translate( 'New' ),
 				uri: this.constructUrl( { vertical: '' } ),
 				icon: 'star',
 			},
@@ -242,7 +242,7 @@ class ThemeShowcase extends React.Component {
 				.map(
 					( subject ) =>
 						subjectsMeta[ subject ] && {
-							label: subject,
+							label: this.props.subjects?.[ subject ]?.name || subject,
 							uri: this.constructUrl( { vertical: subject } ),
 							icon: subjectsMeta[ subject ].icon,
 							order: subjectsMeta[ subject ].order,
