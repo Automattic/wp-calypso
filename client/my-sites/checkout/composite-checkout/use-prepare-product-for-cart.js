@@ -125,6 +125,11 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 			product_id: plan.product_id,
 			isJetpackNotAtomic,
 		} );
+		if ( ! cartProduct ) {
+			debug( 'there is a request to add a plan but creating an item failed', planSlug );
+			setState( { canInitializeCart: true } );
+			return;
+		}
 		debug(
 			'preparing plan that was requested in url',
 			{ planSlug, plan, isJetpackNotAtomic },
@@ -173,6 +178,11 @@ function useAddProductFromSlug( {
 			product_id: product.product_id,
 			isJetpackNotAtomic,
 		} );
+		if ( ! cartProduct ) {
+			debug( 'there is a request to add a product but creating an item failed', productAlias );
+			setState( { canInitializeCart: true } );
+			return;
+		}
 		debug(
 			'preparing product that was requested in url',
 			{ productAlias, isJetpackNotAtomic },
