@@ -191,7 +191,7 @@
 
 		.reader-post-card__post-details .reader-excerpt {
 			font-size: 15px;
-			font-weight: 100;
+			font-weight: 400;
 			margin-top: 4px;
 			max-height: 16px * 1.4;
 			overflow: hidden;
@@ -281,7 +281,7 @@
 
 .reader-post-card__byline-author-site {
 	font-family: $sans;
-	font-weight: 500;
+	font-weight: 600;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -429,7 +429,7 @@
 	color: var( --color-neutral-70 );
 	cursor: pointer;
 	font-size: 19px;
-	font-weight: 700;
+	font-weight: 600;
 	display: block;
 
 	&:hover {
@@ -444,7 +444,7 @@
 .reader-post-card .reader-excerpt {
 	font-size: 16px;
 	line-height: 1.55;
-	font-weight: 100;
+	font-weight: 400;
 	margin-top: 9px;
 	word-break: break-word;
 	position: relative;
