@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, startsWith } from 'lodash';
+import { get, startsWith, pickBy } from 'lodash';
 import config from 'config';
 
 /**
@@ -54,6 +54,7 @@ import ReaderFullPostUnavailable from './unavailable';
 import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import { keyForPost } from 'reader/post-key';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
@@ -62,8 +63,7 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
-import { getReaderFullViewPostKey } from 'state/reader/full-view/selectors/get-reader-full-view-post-key';
-import { setReaderFullViewPostKey } from 'state/reader/full-view/actions';
+import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 
 /**
@@ -126,7 +126,7 @@ export class FullPostView extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.setReaderFullViewPostKey( null );
+		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
@@ -253,6 +253,9 @@ export class FullPostView extends React.Component {
 		) {
 			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
+
+			// mark post as currently viewing
+			this.props.setViewingFullPostKey( keyForPost( post ) );
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
@@ -480,7 +483,8 @@ export class FullPostView extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const postKey = getReaderFullViewPostKey( state );
+		const { feedId, blogId, postId } = ownProps;
+		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
 
 		const { site_ID: siteId, is_external: isExternal } = post;
@@ -494,8 +498,8 @@ export default connect(
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
 		}
-		if ( ownProps.feedId ) {
-			props.feed = getFeed( state, ownProps.feedId );
+		if ( feedId ) {
+			props.feed = getFeed( state, feedId );
 		}
 		if ( ownProps.referral ) {
 			props.referralPost = getPostByKey( state, ownProps.referral );
@@ -509,5 +513,5 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen, setReaderFullViewPostKey, likePost, unlikePost }
+	{ markPostSeen, setViewingFullPostKey, unsetViewingFullPostKey, likePost, unlikePost }
 )( FullPostView );

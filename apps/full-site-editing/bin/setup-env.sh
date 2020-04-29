@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 # Make sure we run the script from the wp-calypso root so the paths work correctly.
 dir_path=`pwd`
-cur_dir=`basename $dir_path`
+cur_dir=`basename "$dir_path"`
 if [[ $cur_dir != "wp-calypso" ]] ; then
 	echo "Please run this script from the wp-calypso root."
 	exit 1

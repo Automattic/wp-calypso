@@ -156,11 +156,11 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
+		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
-		const quantity = 'year' === period ? 10 : 30;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

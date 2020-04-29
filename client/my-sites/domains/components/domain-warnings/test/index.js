@@ -18,7 +18,7 @@ import { DomainWarnings } from '../';
 import { type as domainTypes } from 'lib/domains/constants';
 import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'lib/url/support';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
 describe( 'index', () => {
 	describe( 'rules', () => {

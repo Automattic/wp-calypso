@@ -1,13 +1,29 @@
 /**
+ * External Dependencies
+ */
+import Lasagna from '@automattic/lasagna';
+
+/**
  * Internal dependencies
  */
-import { getCurrentUserLasagnaJwt } from 'state/current-user/selectors';
-import { socket, socketConnect, socketDisconnect } from './socket';
-import privatePostChannelMiddleware from './private-post-channel/actions-to-events';
-import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
-import userChannelMiddleware from './user-channel/actions-to-events';
+import config from 'config';
+import wpcom from 'lib/wp';
+import connectMiddleware from './connect/middleware';
+import postChannelMiddleware from './post-channel/middleware';
+import userChannelMiddleware from './user-channel/middleware';
 
-let socketConnecting = false;
+const jwtFetcher = ( jwtType, { params } ) => {
+	return wpcom
+		.request( {
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			path: '/lasagna/jwt/sign',
+			body: { payload: params },
+		} )
+		.then( ( { jwt } ) => jwt );
+};
+
+export const lasagna = new Lasagna( jwtFetcher, config( 'lasagna_url' ) );
 
 /**
  * Compose a list of middleware into one middleware
@@ -22,39 +38,4 @@ const combineMiddleware = ( ...m ) => {
 	};
 };
 
-/**
- * Connection management middleware
- *
- * @param store middleware store
- */
-const connectMiddleware = ( store ) => ( next ) => ( action ) => {
-	// bail unless this is a route set
-	if ( action.type !== 'ROUTE_SET' ) {
-		return next( action );
-	}
-
-	// we match the ROUTE_SET path because SECTION_SET can fire all over
-	// the place on hard loads of full post views and conversations
-	const readerPathRegex = new RegExp( '^/read$|^/read/' );
-
-	// connect if we are going to the reader without a socket
-	if ( ! socket && ! socketConnecting && readerPathRegex.test( action.path ) ) {
-		socketConnecting = true;
-		socketConnect( store, getCurrentUserLasagnaJwt( store.getState() ) );
-		socketConnecting = false;
-	}
-
-	// disconnect if we are leaving the reader with a socket
-	else if ( socket && ! readerPathRegex.test( action.path ) ) {
-		socketDisconnect( store );
-	}
-
-	return next( action );
-};
-
-export default combineMiddleware(
-	connectMiddleware,
-	userChannelMiddleware,
-	privatePostChannelMiddleware,
-	publicPostChannelMiddleware
-);
+export default combineMiddleware( connectMiddleware, userChannelMiddleware, postChannelMiddleware );

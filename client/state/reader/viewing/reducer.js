@@ -1,7 +1,10 @@
 /**
  * Internal dependencies
  */
-import { READER_FULL_VIEW_POST_KEY_SET } from 'state/reader/action-types';
+import {
+	READER_VIEWING_FULL_POST_SET,
+	READER_VIEWING_FULL_POST_UNSET,
+} from 'state/reader/action-types';
 import { SERIALIZE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -12,10 +15,14 @@ import { combineReducers } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function fullViewPostKey( state = null, action ) {
+export function fullPost( state = null, action ) {
 	switch ( action.type ) {
-		case READER_FULL_VIEW_POST_KEY_SET:
+		case READER_VIEWING_FULL_POST_SET:
 			return action.postKey;
+
+		case READER_VIEWING_FULL_POST_UNSET: {
+			return null;
+		}
 
 		case SERIALIZE:
 			return null;
@@ -24,5 +31,5 @@ export function fullViewPostKey( state = null, action ) {
 }
 
 export default combineReducers( {
-	fullViewPostKey,
+	fullPost,
 } );

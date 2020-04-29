@@ -4,6 +4,7 @@
 import {
 	ResponseCart,
 	ResponseCartProduct,
+	TempResponseCartProduct,
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
@@ -20,8 +21,8 @@ import {
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateWpcomCartToCheckoutCart(
-	translate: ( string, any? ) => string,
+export function translateResponseCartToWPCOMCart(
+	translate: ( arg0: string, arg1?: any ) => string, //eslint-disable-line @typescript-eslint/no-explicit-any
 	serverCart: ResponseCart
 ): WPCOMCart {
 	const {
@@ -30,6 +31,8 @@ export function translateWpcomCartToCheckoutCart(
 		total_tax_display,
 		total_cost_integer,
 		total_cost_display,
+		savings_total_display,
+		savings_total_integer,
 		currency,
 		credits_integer,
 		credits_display,
@@ -37,7 +40,6 @@ export function translateWpcomCartToCheckoutCart(
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		coupon_discounts_integer,
 		is_coupon_applied,
 		tax,
 	} = serverCart;
@@ -53,22 +55,14 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-	// TODO: watch out for minimal currency units while localizing this
-	const couponValueRaw = products
-		.map( ( product ) => coupon_discounts_integer[ product.product_id ] )
-		.filter( Boolean )
-		.reduce( ( accum, current ) => accum + current, 0 );
-	const couponValue = Math.round( couponValueRaw );
-	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
-
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
 		label: translate( 'Coupon: %s', { args: coupon } ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
-			value: couponValue,
-			displayValue: couponDisplayValue,
+			value: savings_total_integer,
+			displayValue: savings_total_display,
 		},
 		wpcom_meta: {
 			couponCode: coupon,
@@ -97,24 +91,8 @@ export function translateWpcomCartToCheckoutCart(
 		},
 	};
 
-	// TODO: inject a real currency localization function
-	function localizeCurrency( currencyCode: string, amount: number ): string {
-		switch ( currencyCode ) {
-			case 'BRL':
-				return 'R$' + amount / 100;
-			default:
-				return '$' + amount / 100;
-		}
-	}
-
 	return {
-		items: products.map(
-			translateWpcomCartItemToCheckoutCartItem(
-				is_coupon_applied,
-				coupon_discounts_integer,
-				localizeCurrency
-			)
-		),
+		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
@@ -137,60 +115,52 @@ export function translateWpcomCartToCheckoutCart(
 }
 
 // Convert a backend cart item to a checkout cart item
-function translateWpcomCartItemToCheckoutCartItem(
-	is_coupon_applied: boolean,
-	coupon_discounts_integer: number[],
-	localizeCurrency: ( string, number ) => string
-): ( ResponseCartProduct ) => WPCOMCartItem {
-	return ( serverCartItem: ResponseCartProduct ) => {
-		const {
-			product_id,
-			product_name,
-			product_slug,
-			currency,
-			item_subtotal_integer,
-			is_domain_registration,
-			is_bundled,
+function translateReponseCartProductToWPCOMCartItem(
+	serverCartItem: ResponseCartProduct | TempResponseCartProduct
+): WPCOMCartItem {
+	const {
+		product_id,
+		product_name,
+		product_slug,
+		currency,
+		item_original_cost_display,
+		item_original_cost_integer,
+		item_subtotal_display,
+		item_subtotal_integer,
+		is_domain_registration,
+		is_bundled,
+		meta,
+		extra,
+		volume,
+		uuid,
+		product_cost_integer,
+		product_cost_display,
+	} = serverCartItem;
+
+	return {
+		id: uuid,
+		label: product_name || '',
+		sublabel: meta,
+		type: product_slug,
+		amount: {
+			currency: currency || '',
+			value: item_subtotal_integer || 0,
+			displayValue: item_subtotal_display || '',
+		},
+		wpcom_meta: {
+			uuid: uuid,
 			meta,
+			product_id,
+			product_slug,
 			extra,
 			volume,
-			uuid,
-			product_cost_integer,
-			product_cost_display,
-		} = serverCartItem;
-
-		// Sublabel is the domain name for registrations
-		const sublabel = meta;
-
-		// TODO: watch out for this when localizing
-		const value = is_coupon_applied
-			? item_subtotal_integer + ( coupon_discounts_integer[ product_id ] ?? 0 )
-			: item_subtotal_integer;
-		const displayValue = localizeCurrency( currency, value );
-
-		return {
-			id: uuid,
-			label: product_name,
-			sublabel: sublabel,
-			type: product_slug,
-			amount: {
-				currency,
-				value,
-				displayValue,
-			},
-			wpcom_meta: {
-				uuid: uuid,
-				meta: typeof meta === 'string' ? meta : undefined,
-				product_id,
-				product_slug,
-				extra,
-				volume,
-				is_domain_registration,
-				is_bundled,
-				product_cost_integer,
-				product_cost_display,
-			},
-		};
+			is_domain_registration: is_domain_registration || false,
+			is_bundled: is_bundled || false,
+			item_original_cost_display: item_original_cost_display || '',
+			item_original_cost_integer: item_original_cost_integer || 0,
+			product_cost_integer: product_cost_integer || 0,
+			product_cost_display: product_cost_display || '',
+		},
 	};
 }
 

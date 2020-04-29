@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import {
+	CheckoutSummaryCard,
 	useLineItems,
 	useLineItemsOfType,
 	useTotal,
@@ -67,7 +68,7 @@ export function CheckoutOrderSummary() {
 	const total = useTotal();
 
 	return (
-		<>
+		<CheckoutSummaryCard>
 			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ taxes.map( ( tax ) => (
@@ -81,7 +82,7 @@ export function CheckoutOrderSummary() {
 					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</>
+		</CheckoutSummaryCard>
 	);
 }
 

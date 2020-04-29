@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
+import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
-describe( 'translateWpcomCartToCheckoutCart', function () {
+describe( 'translateResponseCartToWPCOMCart', function () {
 	describe( 'Cart with one plan only (BRL)', function () {
 		const serverResponse = {
 			blog_id: 123,
@@ -29,6 +29,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
+					item_original_cost: 144,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: 'R$144',
 					item_subtotal: 144,
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
@@ -42,6 +45,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			savings_total: 0,
+			savings_total_display: 'R$0',
+			savings_total_integer: 0,
 			sub_total: '144',
 			sub_total_display: 'R$144',
 			sub_total_integer: 14400,
@@ -64,7 +70,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -174,6 +180,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
+					item_original_cost: 144,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: 'R$144',
 					item_subtotal: 144,
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
@@ -207,6 +216,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: true,
 					time_added_to_cart: 1572551402,
 					is_bundled: true,
+					item_original_cost: 88,
+					item_original_cost_integer: 8800,
+					item_original_cost_display: 'R$88',
 					item_subtotal: 0,
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
@@ -220,6 +232,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			savings_total: -88,
+			savings_total_display: '-R$88',
+			savings_total_integer: -8800,
 			sub_total: '144',
 			sub_total_display: 'R$144',
 			sub_total_integer: 14400,
@@ -238,7 +253,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -370,6 +385,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
+					item_original_cost: 144,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: 'R$144',
 					item_subtotal: 144,
 					item_subtotal_integer: 14400,
 					item_subtotal_display: '$144',
@@ -403,6 +421,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: true,
 					time_added_to_cart: 1572551402,
 					is_bundled: true,
+					item_original_cost: 88,
+					item_original_cost_integer: 8800,
+					item_original_cost_display: 'R$88',
 					item_subtotal: 0,
 					item_subtotal_integer: 0,
 					item_subtotal_display: '$0',
@@ -443,6 +464,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
+					item_original_cost: 72,
+					item_original_cost_integer: 7200,
+					item_original_cost_display: 'R$72',
 					item_subtotal: 72,
 					item_subtotal_integer: 7200,
 					item_subtotal_display: '$72',
@@ -456,6 +480,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			savings_total: -88,
+			savings_total_display: '-R$88',
+			savings_total_integer: -8800,
 			sub_total: '216',
 			sub_total_display: '$216',
 			sub_total_integer: 21600,
@@ -474,7 +501,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -597,6 +624,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 					is_domain_registration: false,
 					time_added_to_cart: 1572551402,
 					is_bundled: false,
+					item_original_cost: 144,
+					item_original_cost_integer: 14400,
+					item_original_cost_display: '$144',
 					item_subtotal: 127,
 					item_subtotal_integer: 12700,
 					item_subtotal_display: '$127',
@@ -610,6 +640,9 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				location: {},
 				display_taxes: true,
 			},
+			savings_total: -17,
+			savings_total_display: '-$17',
+			savings_total_integer: -1700,
 			sub_total: '127',
 			sub_total_display: '$127',
 			sub_total_integer: 12700,
@@ -633,7 +666,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			is_coupon_applied: true,
 		};
 
-		const clientCart = translateWpcomCartToCheckoutCart( ( string, substitution ) => {
+		const clientCart = translateResponseCartToWPCOMCart( ( string, substitution ) => {
 			return substitution ? string.replace( '%s', substitution.args ) : string;
 		}, serverResponse );
 
@@ -680,11 +713,17 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
 			} );
+			it( 'has the expected original cost value', function () {
+				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_integer ).toBe( 14400 );
+			} );
+			it( 'has the expected original cost display value', function () {
+				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_display ).toBe( '$144' );
+			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
+				expect( clientCart.items[ 0 ].amount.value ).toBe( 12700 );
 			} );
 			it( 'has the expected display value', function () {
-				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$144' );
+				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$127' );
 			} );
 		} );
 
@@ -723,7 +762,7 @@ describe( 'translateWpcomCartToCheckoutCart', function () {
 				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
 			} );
 			it( 'has the expected value', function () {
-				expect( clientCart.coupon.amount.value ).toBe( 1700 );
+				expect( clientCart.coupon.amount.value ).toBe( -1700 );
 			} );
 			it( 'has the expected display value', function () {
 				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );

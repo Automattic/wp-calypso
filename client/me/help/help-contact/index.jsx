@@ -22,7 +22,7 @@ import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import hasHappychatLocalizedSupport from 'state/happychat/selectors/has-happychat-localized-support';
@@ -56,7 +56,7 @@ import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
 import getInlineHelpSupportVariation, {
@@ -122,7 +122,7 @@ class HelpContact extends React.Component {
 		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
-		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+		recordTracksEvent( 'calypso_help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
@@ -207,7 +207,7 @@ class HelpContact extends React.Component {
 					},
 				} );
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
+				recordTracksEvent( 'calypso_help_contact_submit', {
 					ticket_type: 'kayako',
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
@@ -254,7 +254,7 @@ class HelpContact extends React.Component {
 					},
 				} );
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
+				recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
 			}
 		);
 
@@ -278,7 +278,7 @@ class HelpContact extends React.Component {
 
 	recordCompactSubmit = ( variation ) => {
 		if ( this.props.compact ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+			this.props.recordTracksEventAction( 'calypso_inlinehelp_contact_submit', {
 				support_variation: variation,
 			} );
 		}
@@ -302,9 +302,12 @@ class HelpContact extends React.Component {
 					// make sure we only record the track once
 					if ( ! this.state.wasAdditionalSupportOptionShown ) {
 						// track that additional support option is shown
-						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown', {
-							locale: currentUserLocale,
-						} );
+						this.props.recordTracksEventAction(
+							'calypso_happychat_a_b_additional_support_option_shown',
+							{
+								locale: currentUserLocale,
+							}
+						);
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
@@ -622,7 +625,7 @@ export default connect(
 		askDirectlyQuestion,
 		initializeDirectly,
 		openHappychat,
-		recordTracksEvent,
+		recordTracksEventAction,
 		sendHappychatMessage,
 		sendUserInfo,
 	}

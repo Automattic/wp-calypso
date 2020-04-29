@@ -43,7 +43,6 @@ export default function usePrepareProductsForCart( {
 		productsForCart: [],
 	} );
 
-	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
 	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } );
@@ -198,7 +197,7 @@ function useAddProductFromSlug( {
 	] );
 }
 
-function useFetchProductsIfNotLoaded() {
+export function useFetchProductsIfNotLoaded() {
 	const reduxDispatch = useDispatch();
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );

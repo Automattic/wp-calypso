@@ -26,6 +26,6 @@
 		"webpack": "^4.29.6"
 	},
 	"dependencies": {
-		"semver": "^6.1.1"
+		"semver": "^7.0.0"
 	}
 }

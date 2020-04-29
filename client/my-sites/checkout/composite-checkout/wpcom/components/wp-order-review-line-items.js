@@ -160,9 +160,10 @@ function LineItemDomainTitle( { item, id } ) {
 function LineItemPrice( { lineItem } ) {
 	return (
 		<LineItemPriceUI>
-			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+			{ lineItem.amount.value < lineItem.wpcom_meta?.item_original_cost_integer ? (
 				<>
-					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+					<s>{ lineItem.wpcom_meta?.item_original_cost_display }</s>{ ' ' }
+					{ lineItem.amount.displayValue }
 				</>
 			) : (
 				renderDisplayValueMarkdown( lineItem.amount.displayValue )
@@ -273,20 +274,22 @@ export function WPOrderReviewLineItems( {
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( ( item ) => (
-				<WPOrderReviewListItem key={ item.id }>
-					<LineItemUI
-						isSummaryVisible={ isSummaryVisible }
-						item={ item }
-						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
-						variantRequestStatus={ variantRequestStatus }
-						variantSelectOverride={ variantSelectOverride }
-						getItemVariants={ getItemVariants }
-						onChangePlanLength={ onChangePlanLength }
-					/>
-				</WPOrderReviewListItem>
-			) ) }
+			{ items
+				.filter( ( item ) => item.label ) // remove items without a label
+				.map( ( item ) => (
+					<WPOrderReviewListItem key={ item.id }>
+						<LineItemUI
+							isSummaryVisible={ isSummaryVisible }
+							item={ item }
+							hasDeleteButton={ canItemBeDeleted( item ) }
+							removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							onChangePlanLength={ onChangePlanLength }
+						/>
+					</WPOrderReviewListItem>
+				) ) }
 		</WPOrderReviewList>
 	);
 }

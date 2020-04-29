@@ -19,7 +19,7 @@ import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/acti
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -54,14 +54,14 @@ class JetpackSyncPanel extends React.Component {
 	onSyncRequestButtonClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
+		recordTracksEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
 
 	onTryAgainClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
 			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
 			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
 		} );
@@ -70,7 +70,7 @@ class JetpackSyncPanel extends React.Component {
 
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
 			error_code: get( this.props, 'syncStatus.error.error', '' ),
 			error_msg: get( this.props, 'syncStatus.error.message', '' ),
 		} );

@@ -17,17 +17,17 @@ import { bumpStat } from 'lib/analytics/mc';
 
 import 'state/reader/init';
 
-// TODO: make underlying lib/analytics and reader/stats capable of existing in test code without mocks
+// TODO: make underlying lib/analytics/tracks and reader/stats capable of existing in test code without mocks
 // OR switch to analytics middleware
-let analytics = { tracks: { recordEvent: () => {} } };
+let tracks = { recordEvent: () => {} };
 let pageViewForPost = () => {};
 if ( process.env.NODE_ENV !== 'test' ) {
 	pageViewForPost = require( 'reader/stats' ).pageViewForPost;
-	analytics = require( 'lib/analytics' ).default;
+	tracks = require( 'lib/analytics/tracks' );
 }
 
 function trackRailcarRender( post ) {
-	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
+	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
 function fetchForKey( postKey ) {

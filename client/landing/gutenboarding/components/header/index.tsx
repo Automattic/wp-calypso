@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
 import classnames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
+import PlansButton from '../plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import {
@@ -63,7 +64,7 @@ interface Cart {
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
-const Header: FunctionComponent = () => {
+const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
 
 	const currentStep = useCurrentStep();
@@ -87,21 +88,21 @@ const Header: FunctionComponent = () => {
 	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
 	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		if ( ! siteTitle ) {
 			setDomain( undefined );
 		}
 	}, [ siteTitle, setDomain ] );
 
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
-	const [ isRedirecting, setIsRedirecting ] = useState( false );
+	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
+	const [ isRedirecting, setIsRedirecting ] = React.useState( false );
 
 	const {
 		location: { pathname, search },
 		push,
 	} = useHistory();
 
-	useEffect( () => {
+	React.useEffect( () => {
 		// This handles opening the signup modal when there is a ?signup query parameter
 		// then removes the parameter.
 		// The use case is a user clicking "Create account" from login
@@ -116,7 +117,7 @@ const Header: FunctionComponent = () => {
 			// explicitly hide the dialog.
 			setShowSignupDialog( false );
 		}
-	}, [ pathname, setShowSignupDialog ] );
+	}, [ pathname, setShowSignupDialog ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
@@ -138,9 +139,7 @@ const Header: FunctionComponent = () => {
 		</span>
 	);
 
-	const currentDomain = domain ?? freeDomainSuggestion;
-
-	const handleCreateSite = useCallback(
+	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string ) => {
 			createSite( username, freeDomainSuggestion, bearerToken );
 		},
@@ -151,13 +150,13 @@ const Header: FunctionComponent = () => {
 		setShowSignupDialog( false );
 	};
 
-	useEffect( () => {
+	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username ) {
 			handleCreateSite( newUser.username, newUser.bearerToken );
 		}
 	}, [ newUser, handleCreateSite ] );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
 			if ( hasPaidDomain ) {
@@ -198,7 +197,7 @@ const Header: FunctionComponent = () => {
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
-	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting ] );
+	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting, hasPaidDomain ] );
 
 	return (
 		<div
@@ -221,19 +220,21 @@ const Header: FunctionComponent = () => {
 				<div className="gutenboarding__header-section-item">
 					{
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
-						//   unless we're still at the IntentGathering step. In that case, we only
-						//   show it comes from a site title (but hide it if it comes from a vertical).
-						currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
+						// unless we're still at the IntentGathering step. In that case, we only
+						// show it comes from a site title (but hide it if it comes from a vertical).
+						domainElement && ( siteTitle || currentStep !== 'IntentGathering' ) && (
 							<DomainPickerButton
 								className="gutenboarding__header-domain-picker-button"
-								disabled={ ! currentDomain }
-								currentDomain={ currentDomain }
+								currentDomain={ domain }
 								onDomainSelect={ setDomain }
 							>
 								{ domainElement }
 							</DomainPickerButton>
 						)
 					}
+				</div>
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
+					{ currentStep !== 'IntentGathering' && <PlansButton /> }
 				</div>
 			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }

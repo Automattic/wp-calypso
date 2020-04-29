@@ -109,14 +109,7 @@ export class ThankYouCard extends Component {
 								href={ siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search' }
 								onClick={ () => recordThankYouClick( 'customizer' ) }
 							>
-								{ translate( 'Customize Search now' ) }
-							</Button>
-
-							<Button
-								href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }
-								onClick={ () => recordThankYouClick( 'my_site' ) }
-							>
-								{ translate( 'Go back to my site' ) }
+								{ translate( 'Try Search and customize it now' ) }
 							</Button>
 						</p>
 					) }

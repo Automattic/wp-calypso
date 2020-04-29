@@ -12,12 +12,11 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { updateFilter } from 'state/activity-log/actions';
+import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,
-	getRealtimeBackups,
 	getMetaDiffForDailyBackup,
 } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -28,6 +27,7 @@ import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
@@ -44,6 +44,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
+import { emptyFilter } from 'state/activity-log/reducer';
 
 /**
  * Style dependencies
@@ -52,15 +53,12 @@ import './style.scss';
 
 export const INDEX_FORMAT = 'YYYYMMDD';
 
-const backupStatusNames = [
-	'rewind__backup_complete_full',
-	'rewind__backup_complete_initial',
-	'rewind__backup_error',
-];
-
 class BackupsPage extends Component {
 	componentDidMount() {
-		const { queryDate, moment } = this.props;
+		const { queryDate, moment, clearFilter, siteId } = this.props;
+
+		// filters in the global state are modified by other pages, we want to enter this page with the filter empty
+		clearFilter( siteId );
 
 		// On first load, check if we have a selected date from the URL
 		if ( queryDate ) {
@@ -100,48 +98,36 @@ class BackupsPage extends Component {
 	}
 
 	/**
-	 *  Return an object with the last backup from the date and the rest of the activities
-	 *
-	 * @param date {Date} The current selected date
+	 *  Return an object with the last backup and the rest of the activities from the selected date
 	 */
-	getBackupLogsFor = ( date ) => {
+	backupsFromSelectedDate = () => {
 		const { moment } = this.props;
 
+		const date = this.getSelectedDate();
 		const index = moment( date ).format( INDEX_FORMAT );
 
 		const backupsOnSelectedDate = {
 			lastBackup: null,
-			activities: [],
+			rewindableActivities: [],
 		};
 
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
 			this.props.indexedLog[ index ].forEach( ( log ) => {
-				// Looking for the last backup on the date
-				if (
-					! backupsOnSelectedDate.lastBackup &&
-					includes( backupStatusNames, log.activityName )
-				) {
+				// Discard log if it's not activity rewindable, failed backup or with streams
+				if ( ! isActivityBackup( log ) && ! log.activityIsRewindable && ! log.streams ) {
+					return;
+				}
+
+				// Looking for the last backup on the date (any activity rewindable)
+				if ( ! backupsOnSelectedDate.lastBackup ) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
-					backupsOnSelectedDate.activities.push( log );
+					backupsOnSelectedDate.rewindableActivities.push( log );
 				}
 			} );
 		}
 
 		return backupsOnSelectedDate;
-	};
-
-	isEmptyFilter = ( filter ) => {
-		if ( ! filter ) {
-			return true;
-		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
-			return false;
-		}
-		if ( filter.page !== 1 ) {
-			return false;
-		}
-		return true;
 	};
 
 	TO_REMOVE_getSelectedDateString = () => {
@@ -168,15 +154,14 @@ class BackupsPage extends Component {
 			gmtOffset,
 		} = this.props;
 
-		const backupsOnSelectedDate = this.getBackupLogsFor( this.getSelectedDate() );
+		const backupsFromSelectedDate = this.backupsFromSelectedDate();
+		const lastBackup = backupsFromSelectedDate.lastBackup;
+		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
+
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeBackups = getRealtimeBackups(
-			logs,
-			applySiteOffset( moment( selectedDateString ), { timezone, gmtOffset } )
-		);
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
@@ -184,6 +169,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
+				<PageViewTracker path="/backups/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
@@ -209,14 +195,13 @@ class BackupsPage extends Component {
 									allowRestore,
 									siteUrl,
 									siteSlug,
-									dailyBackup: backupsOnSelectedDate.lastBackup,
+									backup: lastBackup,
 									lastDateAvailable,
 									selectedDate: this.getSelectedDate(),
 									timezone,
 									gmtOffset,
-									onDateChange: this.onDateChange,
 									hasRealtimeBackups,
-									realtimeBackups,
+									onDateChange: this.onDateChange,
 								} }
 							/>
 							{ doesRewindNeedCredentials && (
@@ -266,11 +251,10 @@ class BackupsPage extends Component {
 	}
 
 	render() {
-		const { filter } = this.props;
-
+		const { isEmptyFilter } = this.props;
 		return (
 			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
+				{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 			</div>
 		);
 	}
@@ -308,7 +292,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 			}
 
 			// Check for the oldest and the last backup dates
-			if ( isActivityBackup( log ) ) {
+			if ( isActivityBackup( log ) || log.activityIsRewindable ) {
 				if ( backupDate < oldestDateAvailable ) {
 					oldestDateAvailable = backupDate;
 				}
@@ -326,6 +310,19 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 		oldestDateAvailable,
 		lastDateAvailable,
 	};
+};
+
+const getIsEmptyFilter = ( filter ) => {
+	if ( ! filter ) {
+		return true;
+	}
+	if ( filter.group || filter.on || filter.before || filter.after ) {
+		return false;
+	}
+	if ( filter.page !== 1 ) {
+		return false;
+	}
+	return true;
 };
 
 const mapStateToProps = ( state ) => {
@@ -354,6 +351,7 @@ const mapStateToProps = ( state ) => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
+		isEmptyFilter: getIsEmptyFilter( filter ),
 		siteCapabilities,
 		logs: logs?.data ?? [],
 		rewind,
@@ -371,6 +369,9 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
+	clearFilter: ( siteId ) =>
+		// skipUrlUpdate prevents this action from trigger a redirect back to backups/activity in state/navigation/middleware.js
+		dispatch( { ...setFilter( siteId, emptyFilter ), meta: { skipUrlUpdate: true } } ),
 } );
 
 export default connect(

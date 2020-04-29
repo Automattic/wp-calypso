@@ -6,14 +6,16 @@ import { useEvents } from '@automattic/composite-checkout';
 
 export type CouponFieldStateProps = {
 	couponFieldValue: string;
-	setCouponFieldValue: ( string ) => void;
+	setCouponFieldValue: ( arg0: string ) => void;
 	isApplyButtonActive: boolean;
 	isFreshOrEdited: boolean;
-	setIsFreshOrEdited: ( boolean ) => void;
+	setIsFreshOrEdited: ( arg0: boolean ) => void;
 	handleCouponSubmit: () => void;
 };
 
-export default function useCouponFieldState( submitCoupon ): CouponFieldStateProps {
+export default function useCouponFieldState(
+	submitCoupon: ( arg0: string ) => void
+): CouponFieldStateProps {
 	const onEvent = useEvents();
 	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
 
@@ -61,7 +63,7 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 	};
 }
 
-function isCouponValid( coupon ) {
+function isCouponValid( coupon: string ) {
 	// TODO: figure out some basic validation here
 	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
 }

@@ -130,7 +130,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 	addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
-		addItem( planCartItem );
+		this.props.addItemToCart( planCartItem );
 		this.props.clickUpsellAddToCart();
 	};
 
@@ -154,7 +154,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { cart } ) => {
+const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
@@ -175,6 +175,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		showPlanUpsell: getCurrentUser( state )
 			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
+		addItemToCart: addItemToCart || addItem,
 	};
 };
 

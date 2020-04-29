@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
@@ -19,6 +20,7 @@ import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
@@ -154,7 +156,7 @@ class ScanPage extends Component< Props > {
 	renderScanState() {
 		const { site, scanState } = this.props;
 		if ( ! scanState ) {
-			return <div className="scan__is-loading" />;
+			return <ScanPlaceholder />;
 		}
 
 		const { state, mostRecent, threats } = scanState;
@@ -196,14 +198,10 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ this.props.site.ID } />
+				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
-					stats={ [
-						{ name: 'Files', number: 1201 },
-						{ name: 'Plugins', number: 4 },
-						{ name: 'Themes', number: 3 },
-					] }
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
 					noticeLink="https://jetpack.com/upgrade/backup"
 				/>

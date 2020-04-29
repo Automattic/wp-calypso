@@ -29,7 +29,8 @@ import { checkFormHandler } from 'lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
-import analytics from 'lib/analytics';
+import { tracksEvents } from 'lib/analytics/tracks';
+import { initializeAnalytics } from 'lib/analytics/init';
 import { bumpStat } from 'lib/analytics/mc';
 import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
@@ -231,7 +232,7 @@ function setupErrorLogger( reduxStore ) {
 
 	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
 
-	analytics.on( 'record-event', ( eventName, lastTracksEvent ) =>
+	tracksEvents.on( 'record-event', ( eventName, lastTracksEvent ) =>
 		errorLogger.saveExtraData( { lastTracksEvent } )
 	);
 
@@ -255,7 +256,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 

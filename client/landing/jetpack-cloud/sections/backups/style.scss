@@ -16,6 +16,7 @@
 	margin-right: -16px;
 	padding-left: 16px;
 	padding-right: 16px;
+	padding-top: 24px;
 
 	@include breakpoint( '>660px' ) {
 		background: var( --color-surface-backdrop );
@@ -25,18 +26,18 @@
 }
 
 .backups__search {
-    padding: 0 1rem;
+	padding: 0 1rem;
 }
 
 .backups__search-header {
-    font-size: 1.3rem;
-    font-weight: 400;
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
+	font-size: 1.3rem;
+	font-weight: 400;
+	margin-top: 2rem;
+	margin-bottom: 0.5rem;
 }
 
 .backups__search-description {
-    margin-bottom: 2rem;
+	margin-bottom: 2rem;
 }
 
 .backups__is-loading {
@@ -44,4 +45,3 @@
 	height: 245px;
 	@include placeholder( --color-neutral-10 );
 }
-

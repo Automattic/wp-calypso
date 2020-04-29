@@ -85,9 +85,9 @@ function DefaultCheckoutSteps() {
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
 		<React.Fragment>
-			<CheckoutSummary className={ orderSummary.className }>
-				{ orderSummary.summaryContent }
-			</CheckoutSummary>
+			<CheckoutSummaryArea className={ orderSummary.className }>
+				<CheckoutSummaryCard>{ orderSummary.summaryContent }</CheckoutSummaryCard>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }
@@ -123,13 +123,27 @@ function DefaultCheckoutSteps() {
 	);
 }
 
-export function CheckoutSummary( { children, className } ) {
+export function CheckoutSummaryArea( { children, className } ) {
 	return (
-		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-wrapper' ] ) }>
+		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
 		</CheckoutSummaryUI>
 	);
 }
+
+export const CheckoutSummaryCard = styled.div`
+	background: ${( props ) => props.theme.colors.surface};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-bottom: none 0;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	}
+`;
 
 export function CheckoutStepArea( { children, className } ) {
 	const localize = useLocalize();
@@ -426,20 +440,15 @@ const MainContentUI = styled.div`
 `;
 
 const CheckoutSummaryUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
 	margin: 0 auto;
 	width: 100%;
 
 	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		border-bottom: none 0;
 		max-width: 556px;
 	}
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		margin-left: 24px;
 		margin-right: 0;
 		order: 2;

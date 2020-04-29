@@ -159,7 +159,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				},
 			} );
 		} else {
-			description = translate( 'Destination: external to WordPress.com' );
+			description = translate( 'Destination: external service' );
 		}
 
 		return (

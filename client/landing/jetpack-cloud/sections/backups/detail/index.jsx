@@ -13,6 +13,7 @@ import { get } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
@@ -73,6 +74,11 @@ class BackupDetailPage extends Component {
 			<Main>
 				<DocumentHead title="Backup Details" />
 				<SidebarNavigation />
+				<PageViewTracker
+					path="/backups/:site/detail/:backup_id"
+					title="Backup Details"
+					properties={ { backup_id: backupId } }
+				/>
 				<div>
 					<Gridicon icon="cloud-upload" />
 					{ thisBackup && moment( thisBackup.activityDate ).format( 'YYYY-MM-DD' ) }

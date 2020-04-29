@@ -921,20 +921,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_SEARCH ]: {
-		getSlug: () => constants.FEATURE_SEARCH,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Enhanced{{/strong}} Site-wide Search', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
-			),
-	},
-
 	[ constants.FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => constants.FEATURE_ACCEPT_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),

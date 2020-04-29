@@ -95,6 +95,7 @@ class DailyBackupStatus extends Component {
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
 				/>
+				{ this.renderBackupDetails( backup ) }
 			</>
 		);
 	}
@@ -286,7 +287,7 @@ class DailyBackupStatus extends Component {
 		);
 	}
 
-	renderRealtimeDetails( backup ) {
+	renderBackupDetails( backup ) {
 		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
@@ -337,7 +338,7 @@ class DailyBackupStatus extends Component {
 			gmtOffset: gmtOffset,
 		} );
 
-		const isToday = today.isSame( selectedDate, 'day' );
+		const isToday = selectedDate.isSame( today, 'day' );
 		if ( isToday ) {
 			return this.renderNoBackupToday( lastDateAvailable );
 		}
@@ -346,15 +347,11 @@ class DailyBackupStatus extends Component {
 	}
 
 	render() {
-		const { dailyBackup, hasRealtimeBackups, realtimeBackups } = this.props;
-		const backup = hasRealtimeBackups ? realtimeBackups[ 0 ] : dailyBackup;
+		const { backup } = this.props;
 
 		return (
 			<div className="daily-backup-status">
-				<Card className="daily-backup-status__success">
-					{ this.renderBackupStatus( backup ) }
-					{ hasRealtimeBackups && backup && this.renderRealtimeDetails( backup ) }
-				</Card>
+				<Card className="daily-backup-status__success">{ this.renderBackupStatus( backup ) }</Card>
 			</div>
 		);
 	}

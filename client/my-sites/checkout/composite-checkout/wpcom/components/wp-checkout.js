@@ -9,7 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
-	CheckoutSummary,
+	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
 	useIsStepComplete,
@@ -30,6 +30,7 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
+import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -73,7 +74,9 @@ export default function WPCheckout( {
 	getItemVariants,
 	domainContactValidationCallback,
 	responseCart,
+	addItemToCart,
 	subtotal,
+	isCartPendingUpdate,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -129,10 +132,17 @@ export default function WPCheckout( {
 		setActiveStepNumber( 1 );
 	};
 
+	// By this point we have definitely loaded the cart using useShoppingCart
+	// so we mock the loaded property the CartStore would inject.
+	const mockCart = { ...responseCart, hasLoadedFromServer: true };
+
 	return (
 		<Checkout>
 			<CheckoutSummaryUI>
 				<WPCheckoutOrderSummary />
+				<UpsellWrapperUI>
+					<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+				</UpsellWrapperUI>
 			</CheckoutSummaryUI>
 			<CheckoutStepArea>
 				<CheckoutSteps>
@@ -158,8 +168,12 @@ export default function WPCheckout( {
 						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 						nextStepButtonText={ translate( 'Continue' ) }
 						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={ translate( 'Please wait…' ) }
-						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+						validatingButtonText={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
+						validatingButtonAriaLabel={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
 					/>
 					{ shouldShowContactStep && (
 						<CheckoutStep
@@ -190,8 +204,12 @@ export default function WPCheckout( {
 							editButtonAriaLabel={ translate( 'Edit the contact details' ) }
 							nextStepButtonText={ translate( 'Continue' ) }
 							nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
-							validatingButtonText={ translate( 'Please wait…' ) }
-							validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+							validatingButtonText={
+								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+							}
+							validatingButtonAriaLabel={
+								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+							}
 						/>
 					) }
 					<CheckoutStep
@@ -209,8 +227,12 @@ export default function WPCheckout( {
 						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 						nextStepButtonText={ translate( 'Continue' ) }
 						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={ translate( 'Please wait…' ) }
-						validatingButtonAriaLabel={ translate( 'Please wait…' ) }
+						validatingButtonText={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
+						validatingButtonAriaLabel={
+							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
+						}
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
@@ -218,11 +240,23 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryUI = styled( CheckoutSummary )`
+const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
 	display: none;
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		display: block;
+	}
+`;
+
+const UpsellWrapperUI = styled.div`
+	margin-top: 24px;
+	background: ${( props ) => props.theme.colors.surface};
+
+	& > div {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	}
+	& .card.cart__header {
+		border: none;
 	}
 `;
 

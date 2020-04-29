@@ -17,6 +17,7 @@ import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-lis
 import DocumentHead from 'components/data/document-head';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
@@ -80,9 +81,10 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 		<Main className="backup-activity-log">
 			<DocumentHead title="Activity log" />
 			<SidebarNavigation />
+			<PageViewTracker path="/backups/activity/:site" title="Activity log" />
 			<div className="backup-activity-log__content">
 				<div className="backup-activity-log__header">
-					<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+					<h2>{ translate( 'Find a backup or restore point' ) }</h2>
 					<p>
 						{ translate(
 							'This is the complete event history for your site. Filter by date range and/or activity type.'

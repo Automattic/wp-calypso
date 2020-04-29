@@ -6,7 +6,8 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { identifyUser } from 'lib/analytics/identify-user';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import { addToQueue } from 'lib/analytics/queue';
 import {
@@ -19,7 +20,7 @@ const signupDebug = debug( 'calypso:analytics:signup' );
 
 export function recordSignupStart( flow, ref ) {
 	// Tracks
-	analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
+	recordTracksEvent( 'calypso_signup_start', { flow, ref } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
@@ -46,7 +47,7 @@ export function recordSignupComplete(
 	// Note that Tracks expects blog_id to differntiate sites, hence using
 	// blog_id instead of site_id here. We keep using "siteId" otherwise since
 	// all the other fields still refer with "site". e.g. isNewSite
-	analytics.tracks.recordEvent( 'calypso_signup_complete', {
+	recordTracksEvent( 'calypso_signup_complete', {
 		flow,
 		blog_id: siteId,
 		is_new_user: isNewUser,
@@ -65,7 +66,7 @@ export function recordSignupComplete(
 
 	if ( isNew7DUserSite ) {
 		// Tracks
-		analytics.tracks.recordEvent( 'calypso_new_user_site_creation', { flow } );
+		recordTracksEvent( 'calypso_new_user_site_creation', { flow } );
 
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
@@ -75,11 +76,11 @@ export function recordSignupComplete(
 }
 
 export function recordSignupStep( flow, step ) {
-	analytics.tracks.recordEvent( 'calypso_signup_step_start', { flow, step } );
+	recordTracksEvent( 'calypso_signup_step_start', { flow, step } );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
-	analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', { flow, step } );
+	recordTracksEvent( 'calypso_signup_goto_invalid_step', { flow, step } );
 }
 
 /**
@@ -97,9 +98,9 @@ export function recordRegistration( { userData, flow, type } ) {
 	signupDebug( 'recordRegistration:', { userData, flow, type } );
 
 	// Tracks user identification
-	analytics.identifyUser( userData );
+	identifyUser( userData );
 	// Tracks
-	analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
+	recordTracksEvent( 'calypso_user_registration_complete', { flow, type } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
 	// Marketing

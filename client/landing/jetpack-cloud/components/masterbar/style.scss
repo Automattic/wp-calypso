@@ -2,24 +2,25 @@
 	justify-content: space-between;
 
 	.masterbar__item-home {
-		width: 200px;
-		padding: 0;
 		border-right: 1px solid var( --color-masterbar-border );
+		flex: 0 0 auto;
+		padding: 0;
+		width: auto;
 
 		@include breakpoint( '>660px' ) {
-			width: $sidebar-width-min;
+			min-width: $sidebar-width-min;
 		}
 
 		@include breakpoint( '>960px' ) {
-			width: $sidebar-width-max;
+			min-width: $sidebar-width-max;
 		}
 
 		.masterbar__item-content {
+			color: var( --color-masterbar-text );
 			display: flex;
 			justify-content: center;
-			width: 100%;
 			padding: 0 16px;
-			color: var( --color-masterbar-text );
+			width: 100%;
 
 			svg {
 				fill: var( --color-black );
@@ -28,15 +29,21 @@
 	}
 
 	.masterbar__item-title {
-		padding-left: 32px;
-		font-size: 18px;
-		color: var( --color-gray-70 );
-		flex: 1 0 auto;
+		flex: 1 1 auto;
+		padding-left: 16px;
+		font-size: 16px;
+
 		text-transform: none;
-		font-weight: 500;
+		font-weight: 400;
 
 		.masterbar__item-content {
 			margin-top: 2px;
+			color: var( --color-neutral-80 );
 		}
+	}
+
+	.masterbar__item-me {
+		min-width: 18px;
+		flex: 0 0 auto;
 	}
 }

@@ -5,7 +5,8 @@ jest.mock( 'lib/abtest', () => ( {
 jest.mock( 'react-redux', () => ( {
 	connect: () => ( component ) => component,
 } ) );
-jest.mock( 'lib/analytics/index', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'config', () => {
 	const fn = () => {

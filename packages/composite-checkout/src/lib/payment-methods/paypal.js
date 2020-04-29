@@ -90,7 +90,6 @@ export function PaypalLabel() {
 }
 
 export function PaypalSubmitButton( { disabled } ) {
-	const localize = useLocalize();
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
@@ -109,9 +108,20 @@ export function PaypalSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ formStatus === 'submitting' ? localize( 'Processing...' ) : <ButtonPayPalIcon /> }
+			<PayPalButtonContents formStatus={ formStatus } />
 		</Button>
 	);
+}
+
+function PayPalButtonContents( { formStatus } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return <ButtonPayPalIcon />;
+	}
+	return localize( 'Please wait…' );
 }
 
 function useTransactionStatusHandler() {

@@ -19,20 +19,20 @@
 	}
 }
 
+.security-icon {
+	display: block;
+	margin: 0 auto;
+	width: 48px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0;
+		padding: 0;
+	}
+}
+
 .scan__content {
 	padding-top: 40px;
 	flex: 1 0 auto;
-
-	.security-icon {
-		display: block;
-		margin: 0 auto;
-		width: 48px;
-
-		@include breakpoint( '>660px' ) {
-			margin: 0;
-			padding: 0;
-		}
-	}
 
 	.progress-bar {
 		margin-bottom: 24px;
@@ -42,11 +42,6 @@
 		background-color: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
 	}
-}
-
-.scan__is-loading {
-	height: 300px;
-	@include placeholder( --color-neutral-10 );
 }
 
 .scan__header {
@@ -60,6 +55,16 @@
 		font-weight: 600;
 		margin: 32px 0 24px;
 	}
+	&.is-placeholder {
+		display: block;
+		max-width: 60%;
+		@include placeholder( --color-neutral-10 );
+	}
+}
+.scan__content.is-placeholder {
+	display: block;
+	max-width: 80%;
+	@include placeholder( --color-neutral-10 );
 }
 
 .scan__button {

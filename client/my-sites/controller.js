@@ -25,7 +25,8 @@ import NavigationComponent from 'my-sites/navigation';
 import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -272,7 +273,7 @@ function createSitesComponent( context ) {
 	// This path sets the URL to be visited once a site is selected
 	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
-	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
+	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
 	return (
 		<SitesComponent
@@ -299,12 +300,9 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 				href: `${ currentUser.primary_blog_url }/wp-admin`,
 			} )
 		);
-		analytics.tracks.recordEvent(
-			'calypso_mysites_single_site_jetpack_connection_error',
-			tracksPayload
-		);
+		recordTracksEvent( 'calypso_mysites_single_site_jetpack_connection_error', tracksPayload );
 	} else {
-		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+		recordTracksEvent( 'calypso_mysites_single_site_error', tracksPayload );
 	}
 }
 
@@ -327,7 +325,7 @@ export function siteSelection( context, next ) {
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+		return recordPageView( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
 			base_path: basePath,
 		} );
 	}
@@ -335,11 +333,9 @@ export function siteSelection( context, next ) {
 	// The user has all sites set as hidden: render help message with how to make them visible
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
-		return analytics.pageView.record(
-			'/no-sites',
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
-			{ base_path: basePath }
-		);
+		return recordPageView( '/no-sites', `${ sitesPageTitleForAnalytics } > All Sites Hidden`, {
+			base_path: basePath,
+		} );
 	}
 
 	/*

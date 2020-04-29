@@ -345,12 +345,12 @@ export function generateFlows( {
 
 	if ( isEnabled( 'gutenboarding' ) ) {
 		flows.frankenflow = {
-			steps: [ 'plans-launch', 'launch' ],
+			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 			destination: getLaunchDestination,
 			description: 'Frankenflow launch for a site created from Gutenboarding',
 			lastModified: '2020-01-22',
 			pageTitle: translate( 'Launch your site' ),
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'source' ],
 		};
 	}
 

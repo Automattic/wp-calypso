@@ -11,9 +11,10 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { DOMAIN_SUGGESTION_VENDOR, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
+import { domainTldsByCategory } from '../domains-constants';
 
 export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
-	const { siteTitle, siteVertical, domainSearch } = useSelect( ( select ) =>
+	const { siteTitle, siteVertical, domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const currentStep = useCurrentStep();
@@ -28,6 +29,8 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 
 	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
 
+	const tlds = domainCategory && domainTldsByCategory[ domainCategory ];
+
 	return useSelect(
 		( select ) => {
 			if ( ! searchTerm ) {
@@ -39,9 +42,10 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 				include_dotblogsubdomain: false,
 				locale,
 				vendor: DOMAIN_SUGGESTION_VENDOR,
-				...{ vertical: siteVertical?.id },
+				...( siteVertical && { vertical: siteVertical?.id } ),
+				...( tlds && { tlds } ),
 			} );
 		},
-		[ searchTerm, siteVertical ]
+		[ searchTerm, siteVertical, tlds ]
 	);
 }

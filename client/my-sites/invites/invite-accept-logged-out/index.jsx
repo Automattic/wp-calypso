@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -20,7 +19,7 @@ import { createAccount, acceptInvite } from 'lib/invites/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { errorNotice } from 'state/notices/actions';
 import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
@@ -47,7 +46,7 @@ class InviteAcceptLoggedOut extends React.Component {
 
 	clickSignInLink = () => {
 		const signInLink = login( { redirectTo: window.location.href } );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
 	};
 
@@ -107,7 +106,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					invite.authKey;
 			}
 		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
 	};
 
 	renderFooterLink = () => {
