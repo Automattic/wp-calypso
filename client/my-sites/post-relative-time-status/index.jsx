@@ -145,6 +145,7 @@ class PostRelativeTime extends React.PureComponent {
 					args,
 				} );
 
+			case 'private':
 			case 'publish':
 				if ( displayOn ) {
 					return this.props.translate( 'published on %(displayedTime)s', {
