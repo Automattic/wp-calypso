@@ -227,12 +227,19 @@ function useFetchPlansIfNotLoaded() {
 	}, [ isFetchingPlans, plans, reduxDispatch ] );
 }
 
+/**
+ * @param {string | null} productAlias - A fake slug like 'theme:ovation'
+ * @returns {string | null} A real slug like 'premium_theme'
+ */
 function getProductSlugFromAlias( productAlias ) {
 	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
 		return 'domain_map';
 	}
 	if ( productAlias?.startsWith?.( 'theme:' ) ) {
 		return 'premium_theme';
+	}
+	if ( productAlias === 'concierge-session' ) {
+		return 'concierge-session';
 	}
 	return null;
 }

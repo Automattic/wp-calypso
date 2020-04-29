@@ -196,6 +196,12 @@ describe( 'CompositeCheckout', () => {
 							product_slug: 'premium_theme',
 							prices: {},
 						},
+						'concierge-session': {
+							product_id: 371,
+							product_name: 'Product',
+							product_slug: 'concierge-session',
+							prices: {},
+						},
 					},
 				},
 				countries: { payments: countryList, domains: countryList },
@@ -493,6 +499,37 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
+	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'concierge-session' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { product: 'concierge-session' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Support Session' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$49' )
+		);
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { product: 'theme:ovation' };
@@ -780,6 +817,22 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$69',
 					item_subtotal_integer: 69,
 					item_subtotal_display: 'R$69',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 371:
+				return {
+					product_id: 371,
+					product_name: 'Support Session',
+					product_slug: 'concierge-session',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 49,
+					item_original_cost_display: 'R$49',
+					item_subtotal_integer: 49,
+					item_subtotal_display: 'R$49',
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
