@@ -17,6 +17,8 @@ import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+import 'state/signup/init';
+
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
 		return step;

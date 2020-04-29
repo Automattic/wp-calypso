@@ -4,6 +4,11 @@
 import { SIGNUP_SITE_PREVIEW_SHOW, SIGNUP_SITE_PREVIEW_HIDE } from 'state/action-types';
 
 /**
+ * Internal dependencies
+ */
+import 'state/signup/init';
+
+/**
  * Action creator: Hide signup site preview
  *
  * @returns {object} The action object.
