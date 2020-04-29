@@ -133,7 +133,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		setSuggestions( [] );
 	};
 
-	const handleBlur = () => {
+	const selectLastInputValue = () => {
 		const lastQuery = inputText.trim();
 		if ( isFocused && lastQuery.length ) {
 			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
@@ -142,7 +142,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	};
 
 	const handleArrowClick = () => {
-		handleBlur();
+		selectLastInputValue();
 		onNext();
 	};
 
@@ -170,9 +170,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			input.length && ! suggestions.length && handleSelect( { label: input } );
 			return;
 		}
-		if ( e.keyCode === TAB ) {
+		if ( e.keyCode === TAB && input.length ) {
 			e.preventDefault();
-			handleBlur();
+			selectLastInputValue();
 		}
 	};
 
@@ -219,15 +219,15 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onKeyDown={ handleInputKeyDownEvent }
 							onKeyUp={ handleInputKeyUpEvent }
 							onFocus={ () => setIsFocused( true ) }
-							onBlur={ handleBlur }
+							onBlur={ selectLastInputValue }
 						/>
 						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
 						{ showArrow && (
 							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
 						) }
 					</span>
-					<div className="vertical-select__suggestions">
-						{ !! verticals.length && (
+					{ !! suggestions.length && (
+						<div className="vertical-select__suggestions">
 							<Suggestions
 								ref={ suggestionRef }
 								query={ inputText }
@@ -235,8 +235,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 								suggest={ handleSuggestAction }
 								title={ __( 'Suggestions' ) }
 							/>
-						) }
-					</div>
+						</div>
+					) }
 				</span>
 			),
 		}

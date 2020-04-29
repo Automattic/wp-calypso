@@ -78,6 +78,16 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	return state;
 };
 
+const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
+		return true;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
 		const layout = action.pageLayout;
@@ -126,6 +136,7 @@ const reducer = combineReducers( {
 	selectedDesign,
 	siteTitle,
 	siteVertical,
+	wasVerticalSkipped,
 	pageLayouts,
 	selectedSite,
 } );

@@ -22,7 +22,9 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) => {
 	const { __ } = useI18n();
-	const { siteTitle, siteVertical } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
 	const makePath = usePath();
@@ -46,10 +48,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		if ( siteVertical?.label && isVisible ) {
+		if ( ( siteVertical?.label && isVisible ) || wasVerticalSkipped ) {
 			inputRef.current.focus();
 		}
-	}, [ siteVertical, isVisible, inputRef ] );
+	}, [ siteVertical, isVisible, inputRef, wasVerticalSkipped ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
