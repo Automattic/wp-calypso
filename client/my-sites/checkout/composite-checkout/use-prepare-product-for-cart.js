@@ -9,14 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	conciergeSessionItem,
-	domainMapping,
-	planItem,
-	themeItem,
-	jetpackProductItem,
-	getRenewalItemFromCartItem,
-} from 'lib/cart-values/cart-items';
+import { getRenewalItemFromCartItem } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import {
@@ -26,6 +19,7 @@ import {
 } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { createItemToAddToCart } from './add-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
 
@@ -231,69 +225,6 @@ function getProductSlugFromAlias( productAlias ) {
 		return 'premium_theme';
 	}
 	return null;
-}
-
-/**
- * Create and return an object to be added to the cart
- *
- * @returns RequestCartProduct | null
- */
-function createItemToAddToCart( {
-	planSlug = null,
-	productAlias = '',
-	product_id = null,
-	isJetpackNotAtomic = false,
-} ) {
-	let cartItem, cartMeta;
-
-	if ( planSlug && product_id ) {
-		debug( 'creating plan product' );
-		cartItem = planItem( planSlug );
-		cartItem.product_id = product_id;
-	}
-
-	if ( productAlias.startsWith( 'theme:' ) && product_id ) {
-		debug( 'creating theme product' );
-		cartMeta = productAlias.split( ':' )[ 1 ];
-		cartItem = themeItem( cartMeta );
-		cartItem.product_id = product_id;
-	}
-
-	if ( productAlias.startsWith( 'domain-mapping:' ) && product_id ) {
-		debug( 'creating domain mapping product' );
-		cartMeta = productAlias.split( ':' )[ 1 ];
-		cartItem = domainMapping( { domain: cartMeta } );
-		cartItem.product_id = product_id;
-	}
-
-	if ( productAlias.startsWith( 'concierge-session' ) && product_id ) {
-		// TODO: prevent adding a conciergeSessionItem if one already exists
-		debug( 'creating concierge product' );
-		cartItem = conciergeSessionItem();
-		cartItem.product_id = product_id;
-	}
-
-	if (
-		( productAlias.startsWith( 'jetpack_backup' ) ||
-			productAlias.startsWith( 'jetpack_search' ) ) &&
-		isJetpackNotAtomic &&
-		product_id
-	) {
-		debug( 'creating jetpack product' );
-		cartItem = jetpackProductItem( productAlias );
-		cartItem.product_id = product_id;
-	}
-
-	if ( ! cartItem ) {
-		debug( 'no product created' );
-		return null;
-	}
-
-	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
-
-	cartItem.uuid = 'unknown'; // This must be filled-in later
-
-	return cartItem;
 }
 
 function createRenewalItemToAddToCart( productAlias, productId, purchaseId, selectedSiteSlug ) {
