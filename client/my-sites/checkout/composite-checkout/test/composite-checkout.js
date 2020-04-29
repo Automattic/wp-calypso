@@ -190,6 +190,12 @@ describe( 'CompositeCheckout', () => {
 							product_slug: 'domain_reg',
 							prices: {},
 						},
+						premium_theme: {
+							product_id: 39,
+							product_name: 'Product',
+							product_slug: 'premium_theme',
+							prices: {},
+						},
 					},
 				},
 				countries: { payments: countryList, domains: countryList },
@@ -487,6 +493,37 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
+	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'theme:ovation' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { product: 'theme:ovation' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Premium Theme: Ovation' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$69' )
+		);
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { product: 'domain-mapping:bar.com' };
@@ -727,6 +764,22 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 39:
+				return {
+					product_id: 39,
+					product_name: 'Premium Theme: Ovation',
+					product_slug: 'premium_theme',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 69,
+					item_original_cost_display: 'R$69',
+					item_subtotal_integer: 69,
+					item_subtotal_display: 'R$69',
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
