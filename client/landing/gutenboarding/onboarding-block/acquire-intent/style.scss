@@ -129,6 +129,7 @@
 
 .site-title__input-wrapper {
 	display: block;
+	min-height: 40px; // make sure there is a tappable area on mobile when the input is empty
 
 	@include break-small {
 		display: inline;
