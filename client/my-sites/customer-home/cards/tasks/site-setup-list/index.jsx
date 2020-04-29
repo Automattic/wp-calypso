@@ -114,6 +114,7 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls, userEmail
 				{ tasks.map( ( task ) => (
 					<NavItem
 						key={ task.id }
+						taskId={ task.id }
 						text={ getTask( task ).title }
 						isCompleted={ task.isCompleted }
 						isCurrent={ task.id === currentTask.id }
