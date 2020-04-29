@@ -243,10 +243,13 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'vertical-select', {
 				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or placeholder
 		>
 			{ madlib }
 		</form>

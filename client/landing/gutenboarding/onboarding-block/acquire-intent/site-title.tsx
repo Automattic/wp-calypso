@@ -79,10 +79,13 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'site-title', {
 				'site-title--hidden': ! isVisible,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or next to it
 		>
 			{ madlib }
 		</form>
