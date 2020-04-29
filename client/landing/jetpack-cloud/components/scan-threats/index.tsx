@@ -192,8 +192,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
 					siteName={ site.name }
-					threatTitle={ selectedThreat.signature }
-					threatDescription={ selectedThreat.description }
+					threat={ selectedThreat }
 					action={ actionToPerform }
 				/>
 			) }
