@@ -16,7 +16,5 @@ $markup = '
 return array(
 	'__file'  => 'wp_block',
 	'title'   => esc_html__( 'Recent Posts', 'full-site-editing' ),
-	'content' => sprintf(
-		$markup
-	),
+	'content' => $markup,
 );
