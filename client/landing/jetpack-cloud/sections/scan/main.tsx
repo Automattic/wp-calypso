@@ -110,7 +110,9 @@ class ScanPage extends Component< Props > {
 		return (
 			<>
 				<SecurityIcon icon="in-progress" />
-				<h1 className="scan__header">{ translate( 'Preparing to scan' ) }</h1>
+				<h1 className="scan__header">
+					{ scanProgress === 0 ? translate( 'Preparing to scan' ) : translate( 'Scanning files' ) }
+				</h1>
 				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 				<p>
 					Welcome to Jetpack Scan, we are taking a first look at your site now and the results will
