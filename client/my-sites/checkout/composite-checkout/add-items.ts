@@ -57,7 +57,6 @@ export function createItemToAddToCart( {
 	}
 
 	if ( productAlias === 'concierge-session' && product_id ) {
-		// TODO: prevent adding a conciergeSessionItem if one already exists
 		debug( 'creating concierge product' );
 		cartItem = conciergeSessionItem();
 		if ( cartItem ) {
