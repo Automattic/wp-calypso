@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -15,6 +16,14 @@ import { domainManagementEdit } from 'my-sites/domains/paths';
 import { CompactCard } from '@automattic/components';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedDomain } from 'lib/domains';
+import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { getProductBySlug } from 'state/products-list/selectors';
+import {
+	getByPurchaseId,
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'state/purchases/selectors';
 
 import './style.scss';
 
@@ -34,10 +43,6 @@ class Security extends React.Component {
 	back = () => {
 		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
-
-	isLoading() {
-		return this.props.isRequestingSiteDomains;
-	}
 
 	getSSLStatus( domain ) {
 		const { expired, sslProvisioning } = domain;
@@ -83,9 +88,67 @@ class Security extends React.Component {
 		);
 	}
 
+	getStatusDescription( domain ) {
+		const { selectedSite, purchase, translate } = this.props;
+		const sslStatus = this.getSSLStatus( domain );
+
+		if ( SSL_PROVISIONING === sslStatus ) {
+			return (
+				<p>
+					{ translate(
+						'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most so if you’re running into delays please let us know so we can help you out.'
+					) }
+				</p>
+			);
+		}
+
+		if ( SSL_DISABLED === sslStatus ) {
+			return (
+				<React.Fragment>
+					<p>
+						{ translate(
+							'We have disabled HTTPS encryption because your domain has expired and is no longer active. Renew your domain to reactivate it and turn on HTTPS encryption.'
+						) }
+					</p>
+					{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+					<RenewButton
+						primary={ true }
+						purchase={ purchase }
+						selectedSite={ selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
+						reactivate={ ! domain.isRenewable && domain.isRedeemable }
+						tracksProps={ { source: 'security-status', domain_status: 'expired' } }
+					/>
+				</React.Fragment>
+			);
+		}
+
+		return (
+			<React.Fragment>
+				<p>
+					{ translate(
+						'Strong encryption is critical to ensure the privacy and security of your site. This is what you get with HTTPS encryption on WordPress.com:'
+					) }
+				</p>
+				<ul>
+					{ [
+						translate( 'Trust indicators that reassure your visitors your site is safe ' ),
+						translate( 'Secure data transmission of data sent through forms' ),
+						translate( 'Safe shopping experience with secure payments' ),
+						translate( 'Protection against hackers trying to mimic your site' ),
+						translate( 'Improved Google search rankings' ),
+						translate( '301 redirects for all HTTP requests to HTTPS' ),
+					].map( ( feature, index ) => (
+						<li key={ index }>{ feature }</li>
+					) ) }
+				</ul>
+			</React.Fragment>
+		);
+	}
+
 	getContent() {
-		const { translate } = this.props;
-		const domain = this.props.domains && getSelectedDomain( this.props );
+		const { domain, translate } = this.props;
 
 		if ( ! domain ) {
 			return null;
@@ -98,35 +161,15 @@ class Security extends React.Component {
 					{ this.getSSLStatusIcon( domain ) }
 				</CompactCard>
 				<CompactCard className="security__content">
-					<p>
-						{ translate(
-							'Strong encryption is critical to ensure the privacy and security of your site. This is what you get with HTTPS encryption on WordPress.com:'
-						) }
-					</p>
-					<ul>
-						{ [
-							translate( 'Trust indicators that reassure your visitors your site is safe ' ),
-							translate( 'Secure data transmissoin of data sent through forms' ),
-							translate( 'Safe shopping experience with secure payments' ),
-							translate( 'Protection against hackers trying to mimic your site' ),
-							translate( 'Improved Google search rankings' ),
-							translate( '301 redirects for all HTTP requests to HTTPS' ),
-						].map( ( feature, index ) => (
-							<li key={ index }>{ feature }</li>
-						) ) }
-					</ul>
+					{ this.getStatusDescription( domain ) }
 				</CompactCard>
 			</React.Fragment>
 		);
 	}
 
 	render() {
-		const classes = classNames( 'security', {
-			'is-placeholder': this.isLoading(),
-		} );
-
 		return (
-			<Main className={ classes }>
+			<Main className="security">
 				{ this.header() }
 				{ this.getContent() }
 			</Main>
@@ -134,4 +177,15 @@ class Security extends React.Component {
 	}
 }
 
-export default localize( Security );
+export default connect( ( state, ownProps ) => {
+	const domain = ownProps.domains && getSelectedDomain( ownProps );
+	const { subscriptionId } = domain;
+
+	return {
+		domain,
+		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+		redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
+	};
+} )( localize( Security ) );
