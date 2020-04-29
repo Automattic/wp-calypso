@@ -39,7 +39,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 			<h2>{ headerText }</h2>
 			<p>{ bodyText }</p>
 			<Button
-				className="upsell__buttton"
+				className="upsell__button"
 				href={ buttonLink }
 				onClick={ onClick }
 				primary
