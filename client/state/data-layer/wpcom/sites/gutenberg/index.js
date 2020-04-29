@@ -70,6 +70,10 @@ const setSelectedEditorAndRedirect = (
 	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
 		return window.location.replace( redirectUrl );
 	}
+	if ( has( window, 'location.replace' ) && 'classic' === editor ) {
+		return window.location.replace( redirectUrl );
+	}
+
 	dispatch( replaceHistory( redirectUrl ) );
 };
 

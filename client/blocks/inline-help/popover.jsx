@@ -40,6 +40,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -279,7 +280,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicRoute = currentRoute.replace( '/block-editor/', '' );
+	const classicUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
@@ -293,7 +294,7 @@ function mapStateToProps( state ) {
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		classicUrl: `/${ classicRoute }`,
+		classicUrl,
 		siteId,
 		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
