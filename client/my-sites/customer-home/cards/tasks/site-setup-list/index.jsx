@@ -29,6 +29,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import NavItem from './nav-item';
 import { getTaskData } from './get-task-data';
+import Badge from 'components/badge';
 
 /**
  * Style dependencies
@@ -122,13 +123,21 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls } ) => {
 				<ActionPanelBody>
 					<div className="site-setup-list__task-text task__text">
 						<div className="site-setup-list__task-timing task__timing">
-							<Gridicon icon="time" size={ 18 } />
-							<p>
-								{ translate( '%d minute', '%d minutes', {
-									count: currentTask.timing,
-									args: [ currentTask.timing ],
-								} ) }
-							</p>
+							{ currentTask.isCompleted ? (
+								<Badge className="site-setup-list__badge" type="info">
+									{ translate( 'Complete' ) }
+								</Badge>
+							) : (
+								<>
+									<Gridicon icon="time" size={ 18 } />
+									<p>
+										{ translate( '%d minute', '%d minutes', {
+											count: currentTask.timing,
+											args: [ currentTask.timing ],
+										} ) }
+									</p>
+								</>
+							) }
 						</div>
 						<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
 						<p className="site-setup-list__task-description task__description">
