@@ -49,6 +49,7 @@ const formatScanStateRawResponse = ( { state, threats, credentials, most_recent:
 			? {
 					...mostRecent,
 					timestamp: new Date( mostRecent.timestamp ),
+					isInitial: mostRecent.is_initial,
 			  }
 			: null,
 	};
