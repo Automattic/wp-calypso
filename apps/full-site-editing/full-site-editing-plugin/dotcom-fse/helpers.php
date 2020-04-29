@@ -38,6 +38,7 @@ function dangerously_load_full_site_editing_files() {
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
+	return true;
 	/**
 	 * There are times when this function is called from the WordPress.com public
 	 * API context. In this case, we need to switch to the correct blog so that
