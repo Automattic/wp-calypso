@@ -13,8 +13,14 @@
 			padding-bottom: 0;
 			font-weight: 600;
 			svg {
-				fill: var( --studio-green-40 );
 				margin-right: 5px;
+			}
+
+			&.disabled svg {
+				fill: var( --studio-pink-50 );
+			}
+			&.active svg {
+				fill: var( --studio-green-40 );
 			}
 		}
 	}

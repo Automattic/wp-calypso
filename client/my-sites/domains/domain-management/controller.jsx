@@ -215,6 +215,7 @@ export default {
 				component={ DomainManagement.Security }
 				context={ pageContext }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				needsDomains
 			/>
 		);
 		next();

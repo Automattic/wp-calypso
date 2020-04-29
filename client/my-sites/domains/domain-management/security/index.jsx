@@ -14,8 +14,13 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { CompactCard } from '@automattic/components';
 import MaterialIcon from 'components/material-icon';
+import { getSelectedDomain } from 'lib/domains';
 
 import './style.scss';
+
+const SSL_DISABLED = 'disabled';
+const SSL_PROVISIONING = 'provisioning';
+const SSL_ACTIVE = 'active';
 
 class Security extends React.Component {
 	header() {
@@ -34,17 +39,63 @@ class Security extends React.Component {
 		return this.props.isRequestingSiteDomains;
 	}
 
+	getSSLStatus( domain ) {
+		const { expired, sslProvisioning } = domain;
+
+		if ( expired ) {
+			return SSL_DISABLED;
+		}
+
+		if ( sslProvisioning ) {
+			return SSL_PROVISIONING;
+		}
+
+		return SSL_ACTIVE;
+	}
+
+	getSSLStatusIcon( domain ) {
+		const { translate } = this.props;
+
+		const sslStatus = this.getSSLStatus( domain );
+		let icon, text;
+
+		switch ( sslStatus ) {
+			case SSL_PROVISIONING:
+				text = translate( 'Provisioning' );
+				break;
+			case SSL_ACTIVE:
+				icon = 'check_circle';
+				text = translate( 'Enabled' );
+				break;
+			case SSL_DISABLED:
+				icon = 'info';
+				text = translate( 'Disabled' );
+				break;
+		}
+
+		const statusClassNames = classNames( 'security__status', sslStatus );
+
+		return (
+			<span className={ statusClassNames }>
+				{ icon && <MaterialIcon icon={ icon } /> }
+				{ text }
+			</span>
+		);
+	}
+
 	getContent() {
 		const { translate } = this.props;
+		const domain = this.props.domains && getSelectedDomain( this.props );
+
+		if ( ! domain ) {
+			return null;
+		}
 
 		return (
 			<React.Fragment>
 				<CompactCard className="security__header">
 					<span>{ translate( 'HTTPS encryption' ) }</span>
-					<span className="security__status">
-						<MaterialIcon icon="check_circle" />
-						{ translate( 'Enabled' ) }
-					</span>
+					{ this.getSSLStatusIcon( domain ) }
 				</CompactCard>
 				<CompactCard className="security__content">
 					<p>
@@ -60,8 +111,8 @@ class Security extends React.Component {
 							translate( 'Protection against hackers trying to mimic your site' ),
 							translate( 'Improved Google search rankings' ),
 							translate( '301 redirects for all HTTP requests to HTTPS' ),
-						].map( ( feature ) => (
-							<li>{ feature }</li>
+						].map( ( feature, index ) => (
+							<li key={ index }>{ feature }</li>
 						) ) }
 					</ul>
 				</CompactCard>
