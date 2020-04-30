@@ -4,7 +4,7 @@
 import React, { useRef, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
-import { Button, Badge } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 
@@ -19,6 +19,7 @@ import ActionPanelCta from 'components/action-panel/cta';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Badge from 'components/badge';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -120,7 +121,11 @@ const Task = ( {
 							<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
 						</div>
 					) }
-					{ badgeText && <Badge className="task__badge">{ badgeText }</Badge> }
+					{ badgeText && (
+						<Badge type="info" className="task__badge">
+							{ badgeText }
+						</Badge>
+					) }
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
