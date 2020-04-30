@@ -24,7 +24,8 @@
 	// On fullscreen mode, #wpadminbar is visible on tablet & mobile voew because
 	// fullscreen mode actually don't exists on tablet & mobile view.
 	// See: https://github.com/WordPress/gutenberg/pull/13425
-	body.is-iframed.is-fullscreen-mode .block-editor-editor-skeleton {
+	body.is-iframed.is-fullscreen-mode .block-editor-editor-skeleton, // Gutenberg >= 7.7 && < 8.0.0
+	body.is-iframed.is-fullscreen-mode .interface-interface-skeleton { // Gutenberg >= 8.0.0
 		top: 0;
 	}
 }
