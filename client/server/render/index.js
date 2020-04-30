@@ -180,7 +180,7 @@ export function attachI18n( context ) {
 					chunkId,
 					localeSlug: context.lang,
 					fileType: 'js',
-					buildTarget: context.target,
+					targetBuild: context.target,
 					hash: context?.languageRevisions?.[ context.lang ],
 				} )
 			);
