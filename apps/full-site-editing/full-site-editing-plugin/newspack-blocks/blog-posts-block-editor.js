@@ -16,14 +16,10 @@ import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-art
 /**
  * Block name in the A8C\FSE context.
  */
-const blogPostsName = 'a8c/blog-posts';
+const blockName = 'a8c/blog-posts';
 
 function setBlockTransformationName( name ) {
-	if ( name === 'newspack-blocks/homepage-articles' ) {
-		return blogPostsName;
-	}
-
-	return name;
+	return name !== 'newspack-blocks/homepage-articles' ? name : blockName;
 }
 
 addFilter(
@@ -32,9 +28,9 @@ addFilter(
 	setBlockTransformationName
 );
 
-registerBlockType( blogPostsName, {
+registerBlockType( blockName, {
 	...settings,
 	title: __( 'Blog Posts', 'full-site-editing' ),
 	category: 'layout',
 } );
-registerQueryStore( blogPostsName );
+registerQueryStore( blockName );

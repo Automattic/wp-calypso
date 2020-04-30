@@ -15,13 +15,10 @@ import { settings } from './synced-newspack-blocks/blocks/carousel/index';
 /**
  * Block name in the A8C\FSE context.
  */
-const postsCarouselName = 'a8c/posts-carousel';
+const blockName = 'a8c/posts-carousel';
 
 function setBlockTransformationName( name ) {
-	if ( name === 'newspack-blocks/carousel' ) {
-		return postsCarouselName;
-	}
-	return name;
+	return name !== 'newspack-blocks/carousel' ? name : blockName;
 }
 
 addFilter(
@@ -30,7 +27,7 @@ addFilter(
 	setBlockTransformationName
 );
 
-registerBlockType( postsCarouselName, {
+registerBlockType( blockName, {
 	...settings,
 	title: __( 'Posts Carousel', 'full-site-editing' ),
 	category: 'layout',
