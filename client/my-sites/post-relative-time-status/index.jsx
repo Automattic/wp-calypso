@@ -95,7 +95,7 @@ class PostRelativeTime extends React.PureComponent {
 					<>
 						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
-							{ this.getDisplayedTimeForLabel( true ) }
+							{ this.getDisplayedTimeForLabel() }
 						</time>
 					</>
 				) }
