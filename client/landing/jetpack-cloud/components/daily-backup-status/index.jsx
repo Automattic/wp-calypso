@@ -81,6 +81,10 @@ class DailyBackupStatus extends Component {
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
+		// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
+		const showBackupDetails =
+			hasRealtimeBackups && 'rewind__backup_complete_full' !== backup.activityName;
+
 		return (
 			<>
 				<div className="daily-backup-status__icon-section">
@@ -94,7 +98,7 @@ class DailyBackupStatus extends Component {
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
 				/>
-				{ hasRealtimeBackups && this.renderBackupDetails( backup ) }
+				{ showBackupDetails && this.renderBackupDetails( backup ) }
 			</>
 		);
 	}
