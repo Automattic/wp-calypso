@@ -1,3 +1,8 @@
+.backup-delta {
+    text-align: left;
+    margin-top: 1rem;
+}
+
 .backup-delta__view-all-button {
     float: none;
 }
@@ -115,10 +120,6 @@
     margin-bottom: -0.5rem;
 }
 
-.backup-delta__metas {
-    margin: 1rem 0;
-}
-
 .backup-delta__extension-block-text {
     display: inline-block;
     position: relative;
@@ -146,6 +147,7 @@
 
 .backup-delta__daily-no-changes {
     font-style: italic;
+    color: var( --studio-gray );
     padding: 1rem 0;
 }
 

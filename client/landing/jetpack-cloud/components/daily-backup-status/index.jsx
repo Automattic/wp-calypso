@@ -38,7 +38,7 @@ class DailyBackupStatus extends Component {
 		return hasRealtimeBackups ? realtimeBackup.rewindId : dailyBackup.rewindId;
 	};
 
-	getDisplayDate = ( date, withLatest = true ) => {
+	getDisplayDate = ( date ) => {
 		const { translate, moment, timezone, gmtOffset } = this.props;
 
 		//Apply the time offset
@@ -54,19 +54,10 @@ class DailyBackupStatus extends Component {
 
 		let displayableDate;
 
-		if ( isToday && withLatest ) {
-			displayableDate = translate( 'Latest: Today %s', {
-				args: [ displayBackupTime ],
-				comment: '%s is the time of the last backup from today',
-			} );
-		} else if ( isToday ) {
+		if ( isToday ) {
 			displayableDate = translate( 'Today %s', {
 				args: [ displayBackupTime ],
 				comment: '%s is the time of the last backup from today',
-			} );
-		} else if ( withLatest ) {
-			displayableDate = translate( 'Latest: %s', {
-				args: [ backupDate.format( dateFormat + ', LT' ) ],
 			} );
 		} else {
 			displayableDate = backupDate.format( dateFormat + ', LT' );
@@ -76,7 +67,7 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, hasRealtimeBackups, siteSlug, translate } = this.props;
+		const { allowRestore, backupDelta, hasRealtimeBackups, siteSlug, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
@@ -99,6 +90,7 @@ class DailyBackupStatus extends Component {
 					disabledRestore={ ! allowRestore }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
+				{ ! hasRealtimeBackups && backupDelta }
 			</>
 		);
 	}
@@ -106,7 +98,7 @@ class DailyBackupStatus extends Component {
 	renderFailedBackup( backup ) {
 		const { translate, timezone, gmtOffset, siteUrl } = this.props;
 
-		const backupTitleDate = this.getDisplayDate( backup.activityTs, false );
+		const backupTitleDate = this.getDisplayDate( backup.activityTs );
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
 
 		const displayDate = backupDate.format( 'L' );

@@ -159,6 +159,21 @@ class BackupsPage extends Component {
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
+		const backupDelta = (
+			<BackupDelta
+				{ ...{
+					deltas,
+					backupAttempts,
+					hasRealtimeBackups,
+					realtimeBackups,
+					allowRestore,
+					moment,
+					siteSlug,
+					metaDiff,
+				} }
+			/>
+		);
+
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Latest Backups' ) } />
@@ -196,6 +211,7 @@ class BackupsPage extends Component {
 									gmtOffset,
 									hasRealtimeBackups,
 									onDateChange: this.onDateChange,
+									backupDelta,
 								} }
 							/>
 							{ doesRewindNeedCredentials && (
@@ -205,20 +221,7 @@ class BackupsPage extends Component {
 					) }
 				</div>
 
-				{ ! isLoadingBackups && (
-					<BackupDelta
-						{ ...{
-							deltas,
-							backupAttempts,
-							hasRealtimeBackups,
-							realtimeBackups,
-							allowRestore,
-							moment,
-							siteSlug,
-							metaDiff,
-						} }
-					/>
-				) }
+				{ ! isLoadingBackups && hasRealtimeBackups && backupDelta }
 			</Main>
 		);
 	}
