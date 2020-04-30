@@ -30,9 +30,7 @@ export function showUpsellIfNoBackup( context, next ) {
 			display={ context.primary }
 			getStateForSite={ getRewindState }
 			QueryComponent={ QueryRewindState }
-		>
-			<p>{ '...' }</p>
-		</UpsellSwitch>
+		/>
 	);
 	next();
 }
