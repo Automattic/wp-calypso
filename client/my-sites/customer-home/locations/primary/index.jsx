@@ -18,7 +18,7 @@ const cardComponents = {
 	'home-task-connect-accounts': ConnectAccounts,
 	'home-task-find-domain': FindDomain,
 	'home-task-webinars': Webinars,
-	'home-editor-deprectation-notice': DeprecateEditor,
+	'home-task-editor-deprecation': DeprecateEditor,
 };
 
 const Primary = ( { checklistMode, cards } ) => {

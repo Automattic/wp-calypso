@@ -31,13 +31,17 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 		<Task
 			title={ translate( 'The Block Editor is coming' ) }
 			description={ preventWidows(
-				translate( 'Try the Block Editor now before it is enabled for everyone on May 22.' )
+				translate(
+					'The Block Editor will be enabled for everyone on May 22, but you can switch now if you want.'
+				)
 			) }
-			actionText={ translate( 'Try it now' ) }
+			actionText={ translate( 'Switch now' ) }
 			actionCallback={ actionCallback }
 			illustration="/calypso/images/illustrations/gutenberg-mini.svg"
-			timing={ 5 }
+			chipText={ translate( "What's new?" ) }
 			taskId="deprecate-editor"
+			skippable={ false }
+			dismissable={ true }
 		/>
 	);
 };
