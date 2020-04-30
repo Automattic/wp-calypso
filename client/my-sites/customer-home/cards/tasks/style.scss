@@ -66,3 +66,12 @@
 .task__skip-popover .popover__menu {
 	min-width: 130px;
 }
+
+.task__chip {
+	background-color: var( --color-text );
+	width: fit-content;
+	border-radius: 12px;
+	padding: 2px 8px;
+	color: var( --color-text-inverted );
+	margin-bottom: 16px;
+}

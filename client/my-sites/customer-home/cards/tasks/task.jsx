@@ -37,8 +37,11 @@ const Task = ( {
 	actionOnClick,
 	actionText,
 	actionUrl,
+	chipText,
 	description,
 	illustration,
+	dismissable,
+	skippable = true,
 	siteId,
 	taskId,
 	timing,
@@ -111,27 +114,33 @@ const Task = ( {
 					</ActionPanelFigure>
 				) }
 				<div className="task__text">
-					<div className="task__timing">
-						<Gridicon icon="time" size={ 18 } />
-						<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
-					</div>
+					{ timing && (
+						<div className="task__timing">
+							<Gridicon icon="time" size={ 18 } />
+							<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
+						</div>
+					) }
+					{ chipText && <div className="task__chip">{ chipText }</div> }
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
 						<Button className="task__action" primary onClick={ actionOnClick } href={ actionUrl }>
 							{ actionText }
 						</Button>
-						<Button
-							className="task__skip is-link"
-							ref={ skipButtonRef }
-							onClick={ () => {
-								setSkipOptionsVisible( true );
-							} }
-						>
-							{ translate( 'Remind me' ) }
-							<Gridicon icon="dropdown" size={ 18 } />
-						</Button>
-						{ areSkipOptionsVisible && (
+
+						{ skippable && (
+							<Button
+								className="task__skip is-link"
+								ref={ skipButtonRef }
+								onClick={ () => {
+									setSkipOptionsVisible( true );
+								} }
+							>
+								{ translate( 'Remind me' ) }
+								<Gridicon icon="dropdown" size={ 18 } />
+							</Button>
+						) }
+						{ skippable && areSkipOptionsVisible && (
 							<PopoverMenu
 								context={ skipButtonRef.current }
 								isVisible={ areSkipOptionsVisible }
@@ -149,6 +158,11 @@ const Task = ( {
 									{ translate( 'Never' ) }
 								</PopoverMenuItem>
 							</PopoverMenu>
+						) }
+						{ dismissable && (
+							<Button className="task__dismiss is-link" onClick={ () => skipTask( 'never' ) }>
+								{ translate( 'Dismiss' ) }
+							</Button>
 						) }
 					</ActionPanelCta>
 				</div>
