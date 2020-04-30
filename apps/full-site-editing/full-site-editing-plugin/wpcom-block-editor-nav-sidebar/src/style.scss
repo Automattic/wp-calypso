@@ -1,9 +1,10 @@
 $sidebarWidth: 272px;
 $headerHeight: 56px;
 $border: 1px solid #e2e4e7;
+$transitionPeriod: 500ms;
 
 .is-wpcom-block-editor-nav-sidebar-attached {
-	transition: margin-left 500ms;
+	transition: margin-left $transitionPeriod;
 }
 
 .is-wpcom-block-editor-nav-sidebar-opened {
@@ -17,11 +18,34 @@ $border: 1px solid #e2e4e7;
 	bottom: 0;
 	width: $sidebarWidth;
 	border-right: $border;
-	transition: left 500ms;
+	transition: left $transitionPeriod;
 }
 
 .wpcom-block-editor-nav-sidebar__container:not( [aria-hidden=true] ) {
 	left: 0;
+}
+
+.wpcom-block-editor-nav-sidebar__header {
+	top: 0;
+	left: 0;
+	position: fixed;
+	height: $headerHeight;
+
+	.components-button {
+		height: $headerHeight;
+		width: $headerHeight;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0;
+		background: #32373d !important;
+		color: #fff !important;
+		box-shadow: none !important;
+
+		&.wpcom-block-editor-nav-sidebar__is-shrinking {
+			animation: wpcom-block-editor-nav-sidebar__button-shrink $transitionPeriod normal forwards;
+		}
+	}
 }
 
 .wpcom-block-editor-nav-sidebar__header-space {
@@ -52,4 +76,13 @@ $border: 1px solid #e2e4e7;
 .wpcom-block-editor-nav-sidebar__page-list li:hover {
 	background: black;
 	color: white;
+}
+
+@keyframes wpcom-block-editor-nav-sidebar__button-shrink {
+	0% {
+		scale: 100%;
+	}
+	100% {
+		scale: 55%;
+	}
 }

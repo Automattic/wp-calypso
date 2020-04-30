@@ -3,9 +3,9 @@
  * External dependencies
  */
 import React from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
-import { chevronLeft } from '@wordpress/icons';
+import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
@@ -16,7 +16,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { STORE_KEY } from './constants';
 import type { Page } from './store';
 
-const Button = ( { children, ...rest }: OriginalButton.Props & { icon: any } ) => (
+const Button = ( {
+	children,
+	...rest
+}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
@@ -32,8 +35,20 @@ export default function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
+	const { toggleSidebar } = useDispatch( STORE_KEY );
+
 	return (
 		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
+			{ isOpen && (
+				<div className="wpcom-block-editor-nav-sidebar__header">
+					<Button
+						icon={ wordpress }
+						iconSize={ 36 }
+						className="wpcom-block-editor-nav-sidebar__is-shrinking"
+						onClick={ toggleSidebar }
+					/>
+				</div>
+			) }
 			<div className="wpcom-block-editor-nav-sidebar__header-space" />
 			<div className="wpcom-block-editor-nav-sidebar__home-button-container">
 				<Button
