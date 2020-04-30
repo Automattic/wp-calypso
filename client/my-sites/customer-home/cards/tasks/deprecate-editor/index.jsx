@@ -32,7 +32,15 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 		<Task
 			title={ translate( 'The Block Editor is coming' ) }
 			description={ preventWidows(
-				translate( 'Try the Block Editor now before it is enabled for everyone on May 22.' )
+				translate(
+					'Try the Block Editor now before it is enabled for everyone on {{strong}}May 22{{/strong}}. {{a}}Read more{{/a}}',
+					{
+						components: {
+							a: <a href="#link-yet-to-be-decided" />,
+							strong: <strong />,
+						},
+					}
+				)
 			) }
 			actionText={ translate( 'Try it now' ) }
 			actionCallback={ actionCallback }
