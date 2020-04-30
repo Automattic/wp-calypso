@@ -29,7 +29,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const makePath = usePath();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const onboardingStore = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const getDesignUrl = ( design: Design ) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
@@ -49,7 +49,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	};
 
 	useTrackStep( 'DesignSelection', () => ( {
-		selected_design: onboardingStore.getSelectedDesign()?.slug,
+		selected_design: getSelectedDesign()?.slug,
 	} ) );
 
 	return (

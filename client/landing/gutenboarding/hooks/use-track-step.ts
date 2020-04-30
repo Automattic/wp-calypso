@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, DependencyList } from 'react';
+import { useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -17,17 +17,15 @@ import { TracksEventProperties } from '../lib/analytics/types';
  *
  * @param stepName The name of the signup step to track
  * @param getEventProperties Returns additional properties to be recorded on completing the step
- * @param deps Dependencies as will be passeed into react's useEffect
  */
 export function useTrackStep(
 	stepName: StepNameType,
-	getEventProperties?: () => TracksEventProperties,
-	deps?: DependencyList
+	getEventProperties?: () => TracksEventProperties
 ) {
 	useOnUnmount( () => {
 		recordLeaveStep( stepName, getEventProperties && getEventProperties() );
-	}, deps || [] );
+	} );
 	useEffect( () => {
 		recordEnterStep( stepName );
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 }

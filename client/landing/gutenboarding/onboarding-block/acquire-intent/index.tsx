@@ -26,9 +26,13 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const onboardingStore = useSelect( ( select ) => select( STORE_KEY ) );
+	const { getSelectedVertical, getSelectedSiteTitle } = useSelect( ( select ) =>
+		select( STORE_KEY )
+	);
 
-	const { siteVertical, siteTitle, wasVerticalSkipped } = onboardingStore.getState();
+	const { siteVertical, siteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
@@ -44,8 +48,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical: onboardingStore.getSelectedVertical()?.slug,
-		selected_site_title: onboardingStore.getSelectedSiteTitle(),
+		selected_vertical: getSelectedVertical()?.slug,
+		selected_site_title: getSelectedSiteTitle(),
 	} ) );
 
 	// translators: Button label for skipping filling an optional input in onboarding
