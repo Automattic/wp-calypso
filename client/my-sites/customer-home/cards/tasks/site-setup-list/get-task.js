@@ -70,7 +70,7 @@ const isTaskDisabled = (
 ) => {
 	switch ( task.id ) {
 		case 'email_verified':
-			return 'requesting' === emailVerificationStatus;
+			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case 'site_launched':
 			return isDomainUnverified || isEmailUnverified;
 		default:
@@ -78,7 +78,7 @@ const isTaskDisabled = (
 	}
 };
 
-export const getTaskData = (
+export const getTask = (
 	task,
 	{
 		emailVerificationStatus,
@@ -89,7 +89,7 @@ export const getTaskData = (
 		siteSlug,
 		taskUrls,
 		userEmail,
-	}
+	} = {}
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
@@ -182,7 +182,7 @@ export const getTaskData = (
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
 				actionText: translate( 'Edit homepage' ),
-				actionUrl: taskUrls.front_page_updated,
+				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;
 		case 'site_menu_updated':

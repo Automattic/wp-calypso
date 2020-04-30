@@ -31,7 +31,7 @@ import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import NavItem from './nav-item';
-import { getTaskData } from './get-task-data';
+import { getTask } from './get-task';
 
 /**
  * Style dependencies
@@ -84,52 +84,55 @@ const SiteSetupList = ( {
 	userEmail,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
+	const [ currentTask, setCurrentTask ] = useState( null );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
 		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
-
-	const getTask = ( task ) =>
-		getTaskData( task, {
-			emailVerificationStatus,
-			isDomainUnverified,
-			isEmailUnverified,
-			menusUrl,
-			siteId,
-			siteSlug,
-			taskUrls,
-			userEmail,
-		} );
-
-	const currentTask = currentTaskId
-		? getTask( tasks.find( ( task ) => task.id === currentTaskId ) )
-		: null;
 
 	useEffect( () => {
 		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
 			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
 			setCurrentTaskId( initialTaskId );
-
-			// Reset verification email state on first load.
-			if ( isEmailUnverified ) {
-				dispatch( resetVerifyEmailState() );
-			}
 		}
 
-		// Move to next task after after completing current one.
-		if ( currentTaskId && currentTaskId === currentTask.id ) {
-			const wasCurrentTaskCompleted = currentTask.isCompleted;
-			const isCurrentTaskCompleted = tasks.find( ( task ) => task.id === currentTaskId )
-				.isCompleted;
-			if ( isCurrentTaskCompleted && ! wasCurrentTaskCompleted ) {
+		// Reset verification email state on first load.
+		if ( isEmailUnverified ) {
+			dispatch( resetVerifyEmailState() );
+		}
+	}, [ currentTaskId, isEmailUnverified, tasks ] );
+
+	// Move to next task after completing current one.
+	useEffect( () => {
+		if ( currentTaskId && currentTask && tasks.length ) {
+			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
+			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTaskId, currentTask, isEmailUnverified, getTask, tasks ] );
+	}, [ tasks ] );
 
-	if ( ! tasks.length || ! currentTaskId ) {
+	// Update current task.
+	useEffect( () => {
+		if ( currentTaskId && tasks.length ) {
+			const rawTask = tasks.find( ( task ) => task.id === currentTaskId );
+			const newCurrentTask = getTask( rawTask, {
+				emailVerificationStatus,
+				isDomainUnverified,
+				isEmailUnverified,
+				menusUrl,
+				siteId,
+				siteSlug,
+				taskUrls,
+				userEmail,
+			} );
+			setCurrentTask( newCurrentTask );
+		}
+	}, [ currentTaskId ] );
+
+	if ( ! currentTask ) {
 		return null;
 	}
 
