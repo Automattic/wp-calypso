@@ -5,6 +5,7 @@ import * as plans from 'lib/plans/constants';
 import { getPlan, getPlanPath } from 'lib/plans';
 
 const supportedPlans = [
+	plans.PLAN_FREE,
 	plans.PLAN_PERSONAL,
 	plans.PLAN_PREMIUM,
 	plans.PLAN_BUSINESS,
