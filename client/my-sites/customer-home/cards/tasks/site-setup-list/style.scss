@@ -2,16 +2,30 @@
 	padding: 0;
 	display: flex;
 
+	@include breakpoint( '<960px' ) {
+		display: block;
+	}
+
 	.site-setup-list__nav {
 		width: 328px;
 		flex-shrink: 0;
 		border-right: 1px solid var( --color-border-subtle );
+
+		@include breakpoint( '<1280px' ) {
+			width: 260px;
+		}
+
+		@include breakpoint( '<960px' ) {
+			width: 100%;
+		}
 	}
 
 	.card-heading {
 		padding: 16px 24px;
 		margin-bottom: 0;
 		border-bottom: 1px solid var( --color-border-subtle );
+		display: flex;
+		align-items: center;
 	}
 
 	.nav-item {
@@ -29,11 +43,19 @@
 
 		&:hover {
 			background-color: var( --color-neutral-0 );
+
+			@include breakpoint( '<960px' ) {
+				background-color: transparent;
+			}
 		}
 
 		&.is-current {
 			background-color: var( --color-primary-0 );
 			font-weight: 600;
+
+			@include breakpoint( '<960px' ) {
+				background-color: transparent;
+			}
 		}
 	}
 
@@ -65,16 +87,28 @@
 		line-height: 20px;
 	}
 
+	.nav-item__chevron {
+		margin-left: auto;
+	}
+
 	.site-setup-list__task {
 		box-shadow: none;
 		margin: 0;
 		padding: 40px;
-		width: calc( 100% - 328px );
+
+		@include breakpoint( '<1040px' ) {
+			padding: 24px;
+		}
 	}
 
 	.site-setup-list__badge {
 		background-color: var( --color-neutral );
 		color: var( --color-text-inverted );
+	}
+
+	.site-setup-list__nav-back {
+		padding: 2px 4px;
+		margin: 0 4px 0 -8px;
 	}
 }
 

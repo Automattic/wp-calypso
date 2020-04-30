@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
+import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -97,6 +97,8 @@ const SiteSetupList = ( {
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
+	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
+	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
@@ -145,72 +147,100 @@ const SiteSetupList = ( {
 		}
 	}, [ currentTaskId ] );
 
+	useEffect( () => {
+		if ( isWithinBreakpoint( '<960px' ) ) {
+			setUseDrillLayout( true );
+		}
+		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
+	}, [] );
+
 	if ( ! currentTask ) {
 		return null;
 	}
 
 	return (
 		<Card className="site-setup-list">
-			<div className="site-setup-list__nav">
-				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
-				{ tasks.map( ( task ) => (
-					<NavItem
-						key={ task.id }
-						taskId={ task.id }
-						text={ getTask( task ).title }
-						isCompleted={ task.isCompleted }
-						isCurrent={ task.id === currentTask.id }
-						onClick={ () => {
-							setCurrentTaskId( task.id );
-						} }
-					/>
-				) ) }
-			</div>
-			<ActionPanel className="site-setup-list__task task">
-				<ActionPanelBody>
-					<div className="site-setup-list__task-text task__text">
-						<div className="site-setup-list__task-timing task__timing">
-							{ currentTask.isCompleted ? (
-								<Badge className="site-setup-list__badge" type="info">
-									{ translate( 'Complete' ) }
-								</Badge>
-							) : (
-								<>
-									<Gridicon icon="time" size={ 18 } />
-									<p>
-										{ translate( '%d minute', '%d minutes', {
-											count: currentTask.timing,
-											args: [ currentTask.timing ],
-										} ) }
-									</p>
-								</>
-							) }
-						</div>
-						<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
-						<p className="site-setup-list__task-description task__description">
-							{ currentTask.description }
-						</p>
-						<ActionPanelCta>
-							<Button
-								className="site-setup-list__task-action task__action"
-								primary
-								onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								disabled={ currentTask.isDisabled }
-							>
-								{ currentTask.actionText }
-							</Button>
-							{ currentTask.isSkippable && ! currentTask.isCompleted && (
+			{ useDrillLayout && (
+				<CardHeading>
+					<>
+						{ currentDrillLayoutView === 'task' && (
+							<Gridicon
+								icon="chevron-left"
+								size={ 18 }
+								className="site-setup-list__nav-back"
+								onClick={ () => setCurrentDrillLayoutView( 'nav' ) }
+							/>
+						) }
+						{ translate( 'Site setup' ) }
+					</>
+				</CardHeading>
+			) }
+			{ ( ! useDrillLayout || currentDrillLayoutView === 'nav' ) && (
+				<div className="site-setup-list__nav">
+					{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
+					{ tasks.map( ( task ) => (
+						<NavItem
+							key={ task.id }
+							taskId={ task.id }
+							text={ getTask( task ).title }
+							isCompleted={ task.isCompleted }
+							isCurrent={ task.id === currentTask.id }
+							onClick={ () => {
+								setCurrentTaskId( task.id );
+								setCurrentDrillLayoutView( 'task' );
+							} }
+							showChevron={ useDrillLayout }
+						/>
+					) ) }
+				</div>
+			) }
+			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
+				<ActionPanel className="site-setup-list__task task">
+					<ActionPanelBody>
+						<div className="site-setup-list__task-text task__text">
+							<div className="site-setup-list__task-timing task__timing">
+								{ currentTask.isCompleted ? (
+									<Badge className="site-setup-list__badge" type="info">
+										{ translate( 'Complete' ) }
+									</Badge>
+								) : (
+									<>
+										<Gridicon icon="time" size={ 18 } />
+										<p>
+											{ translate( '%d minute', '%d minutes', {
+												count: currentTask.timing,
+												args: [ currentTask.timing ],
+											} ) }
+										</p>
+									</>
+								) }
+							</div>
+							<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
+							<p className="site-setup-list__task-description task__description">
+								{ currentTask.description }
+							</p>
+							<ActionPanelCta>
 								<Button
-									className="site-setup-list__task-skip task__skip is-link"
-									onClick={ () => skipTask( dispatch, currentTask, siteId ) }
+									className="site-setup-list__task-action task__action"
+									primary
+									onClick={ () => startTask( dispatch, currentTask, siteId ) }
+									disabled={ currentTask.isDisabled }
 								>
-									{ translate( 'Skip for now' ) }
+									{ currentTask.actionText }
 								</Button>
-							) }
-						</ActionPanelCta>
-					</div>
-				</ActionPanelBody>
-			</ActionPanel>
+								{ currentTask.isSkippable && ! currentTask.isCompleted && (
+									<Button
+										className="site-setup-list__task-skip task__skip is-link"
+										onClick={ () => skipTask( dispatch, currentTask, siteId ) }
+									>
+										{ translate( 'Skip for now' ) }
+									</Button>
+								) }
+							</ActionPanelCta>
+						</div>
+					</ActionPanelBody>
+				</ActionPanel>
+			) }
 		</Card>
 	);
 };
