@@ -1,4 +1,5 @@
 $sidebarWidth: 272px;
+$headerHeight: 56px;
 
 .is-wpcom-block-editor-nav-sidebar-opened {
 	margin-left: $sidebarWidth;
@@ -10,4 +11,19 @@ $sidebarWidth: 272px;
 	left: 0;
 	bottom: 0;
 	width: $sidebarWidth;
+	border-right: 1px solid #e2e4e7;
+}
+
+.wpcom-block-editor-nav-sidebar__header-space {
+	height: $headerHeight;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.wpcom-block-editor-nav-sidebar__page-list {
+	margin: 10px;
+}
+
+.wpcom-block-editor-nav-sidebar__page-list li:hover {
+	background: black;
+	color: white;
 }

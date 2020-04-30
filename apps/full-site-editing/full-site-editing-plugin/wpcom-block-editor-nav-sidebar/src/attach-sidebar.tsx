@@ -1,11 +1,13 @@
 /**
  * External dependencies
  */
+import { select } from '@wordpress/data';
 import React, { render, unmountComponentAtNode } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
+import { STORE_KEY } from './constants';
 import WpcomBlockEditorNavSidebar from './wpcom-block-editor-nav-sidebar';
 import './style.scss';
 
@@ -55,6 +57,9 @@ async function attachSidebar() {
 		ev.preventDefault();
 		toggleSidebar( editorLayoutContainer );
 	} );
+
+	// Start resolving page data
+	select( STORE_KEY ).getPages();
 }
 
 let sidebarExpanded = false;
