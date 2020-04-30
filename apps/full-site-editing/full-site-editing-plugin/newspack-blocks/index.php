@@ -40,7 +40,7 @@ add_filter( 'newspack_blocks_block_name', __NAMESPACE__ . '\blog_posts_block_nam
  * @param string $name Block name.
  * @return array
  */
-function blog_posts_block_args( $args, $name ) {
+function newspack_blocks_block_args( $args, $name ) {
 	if ( 'homepage-articles' !== $name && 'carousel' !== $name ) {
 		return $args;
 	}
@@ -86,7 +86,7 @@ function blog_posts_block_args( $args, $name ) {
 
 	return $args;
 }
-add_filter( 'newspack_blocks_block_args', __NAMESPACE__ . '\blog_posts_block_args', 10, 2 );
+add_filter( 'newspack_blocks_block_args', __NAMESPACE__ . '\newspack_blocks_block_args', 10, 2 );
 
 require_once __DIR__ . '/synced-newspack-blocks/class-newspack-blocks.php';
 require_once __DIR__ . '/synced-newspack-blocks/class-newspack-blocks-api.php';
