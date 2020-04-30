@@ -2,22 +2,35 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-const NavItem = ( { text, isCompleted, isCurrent, onClickAndTrack } ) => {
+const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick } ) => {
+	const dispatch = useDispatch();
+
+	const trackExpand = () =>
+		dispatch(
+			recordTracksEvent( 'calypso_checklist_task_expand', {
+				step_name: taskId,
+				product: 'WordPress.com',
+			} )
+		);
+
 	return (
 		<button
 			className={ classnames( 'nav-item', {
 				'is-current': isCurrent,
 			} ) }
-			onClick={ onClickAndTrack }
+			onClick={ () => {
+				trackExpand();
+				onClick();
+			} }
 		>
 			<div className="nav-item__status">
 				{ isCompleted ? (
@@ -33,26 +46,4 @@ const NavItem = ( { text, isCompleted, isCurrent, onClickAndTrack } ) => {
 	);
 };
 
-export default connect(
-	null,
-	( dispatch ) => ( {
-		trackAction: ( taskId ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_checklist_task_expand', {
-						step_name: taskId,
-						product: 'WordPress.com',
-					} ),
-					bumpStat( 'calypso_customer_home', 'checklist_task_expand' )
-				)
-			),
-	} ),
-	( stateProps, dispatchProps, ownProps ) => ( {
-		...ownProps,
-		...stateProps,
-		onClickAndTrack: () => {
-			ownProps.onClick();
-			dispatchProps.trackAction( ownProps.taskId );
-		},
-	} )
-)( NavItem );
+export default NavItem;
