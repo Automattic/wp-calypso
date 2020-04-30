@@ -64,14 +64,16 @@ function newspack_blocks_block_args( $args, $name ) {
 	wp_register_style( $block_prefix . 'editor', $editor_style, array(), NEWSPACK_BLOCKS__VERSION );
 
 	// View script.
-	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.asset.php';
-	wp_register_script(
-		$block_prefix . 'view',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.js', __FILE__ ),
-		$script_data['dependencies'],
-		$script_data['version'],
-		true
-	);
+	if ( 'carousel' !== $name ) {
+		$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.asset.php';
+		wp_register_script(
+			$block_prefix . 'view',
+			plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.js', __FILE__ ),
+			$script_data['dependencies'],
+			$script_data['version'],
+			true
+		);
+	}
 
 	// View style.
 	$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.css', __FILE__ );
