@@ -21,6 +21,7 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import blockEditorImage from 'assets/images/illustrations/block-editor.svg';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
@@ -31,13 +32,11 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 		<Task
 			title={ translate( 'The Block Editor is coming' ) }
 			description={ preventWidows(
-				translate(
-					'The Block Editor will be enabled for everyone on May 22, but you can switch now if you want.'
-				)
+				translate( 'Try the Block Editor now before it is enabled for everyone on May 22.' )
 			) }
-			actionText={ translate( 'Switch now' ) }
+			actionText={ translate( 'Try it now' ) }
 			actionCallback={ actionCallback }
-			illustration="/calypso/images/illustrations/gutenberg-mini.svg"
+			illustration={ blockEditorImage }
 			chipText={ translate( "What's new?" ) }
 			taskId="deprecate-editor"
 			skippable={ false }
