@@ -106,15 +106,17 @@ const ThreatItem: FunctionComponent< Props > = ( {
 
 			<div className="threat-item__buttons">
 				{ isFixable && renderFixThreatButton( 'is-details' ) }
-				<Button
-					scary
-					compact
-					className="threat-item__ignore-button"
-					onClick={ onIgnoreThreat }
-					disabled={ isFixing }
-				>
-					{ translate( 'Ignore threat' ) }
-				</Button>
+				{ threat.status === 'current' && (
+					<Button
+						scary
+						compact
+						className="threat-item__ignore-button"
+						onClick={ onIgnoreThreat }
+						disabled={ isFixing }
+					>
+						{ translate( 'Ignore threat' ) }
+					</Button>
+				) }
 			</div>
 		</LogItem>
 	);
