@@ -237,6 +237,11 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__more-button {
+	visibility: hidden; // @TODO: remove this once mobile layout is ready
+
+	@include break-mobile {
+		visibility: visible;
+	}
 
 	&.components-button {
 		@include onboarding-medium-text;
