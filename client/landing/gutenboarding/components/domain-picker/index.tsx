@@ -152,9 +152,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						<div className="domain-picker__header-group">
 							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
 							{ showDomainConnectButton ? (
-								<p>TODO: Show domain connect text.</p>
+								<p>{ __( 'Free for the first year with any paid plan.' ) }</p>
 							) : (
-								<p>{ __( 'Free for the first year with any paid plan or connect a domain.' ) }</p>
+								<p>{ __( 'Free for the first year with any paid plan.' ) }</p>
 							) }
 						</div>
 						<ConfirmButton />
