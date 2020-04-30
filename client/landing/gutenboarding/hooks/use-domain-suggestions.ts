@@ -11,11 +11,15 @@ import { useI18n } from '@automattic/react-i18n';
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { DOMAIN_SUGGESTION_VENDOR, selectorDebounce } from '../constants';
+import { DOMAIN_SUGGESTION_VENDOR, PAID_DOMAINS_TO_SHOW, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
 import { domainTldsByCategory } from '../domains-constants';
 
-export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
+export function useDomainSuggestions( {
+	searchOverride = '',
+	locale = 'en',
+	quantity = PAID_DOMAINS_TO_SHOW,
+} ) {
 	const { __ } = useI18n();
 	const { siteTitle, siteVertical, domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
@@ -48,12 +52,13 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				include_dotblogsubdomain: false,
+				quantity,
 				locale,
 				vendor: DOMAIN_SUGGESTION_VENDOR,
 				...( siteVertical && { vertical: siteVertical?.id } ),
 				...( tlds && { tlds } ),
 			} );
 		},
-		[ searchTerm, siteVertical, tlds ]
+		[ searchTerm, siteVertical, tlds, quantity ]
 	);
 }

@@ -61,6 +61,8 @@ export interface Props {
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
+
+	quantity?: number;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -69,6 +71,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	onClose,
 	onMoreOptions,
+	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
 	recordAnalytics,
 } ) => {
@@ -82,12 +85,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
-	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
+	const allSuggestions = useDomainSuggestions( { locale: i18nLocale, quantity } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
-		0,
-		PAID_DOMAINS_TO_SHOW
-	);
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
 
@@ -198,9 +198,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									<SuggestionNone />
 								) ) }
 							{ ! paidSuggestions &&
-								times( PAID_DOMAINS_TO_SHOW - 1, ( i ) => (
-									<SuggestionItemPlaceholder key={ i } />
-								) ) }
+								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 							{ paidSuggestions &&
 								( paidSuggestions?.length ? (
 									paidSuggestions.map( ( suggestion, i ) => (
