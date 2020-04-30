@@ -51,6 +51,7 @@ export default function CheckoutSystemDecider( {
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'CheckoutSystemDecider saw productSlug to add',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
 						productSlug: product,
 					},
