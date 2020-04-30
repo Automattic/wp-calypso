@@ -36,28 +36,26 @@
 /docs/testing @Automattic/team-calypso
 
 # G Suite
-/client/blocks/gsuite-stats-nudge @Automattic/larimar
-/client/components/data/query-gsuite-users @Automattic/larimar
-/client/components/domains/contact-details-form-fields/index.jsx @Automattic/larimar
-/client/components/gsuite @Automattic/larimar
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/larimar
-/client/components/upgrades/gsuite @Automattic/larimar
-/client/lib/domains/email-forwarding @Automattic/larimar
-/client/lib/domains/google-apps-users @Automattic/larimar
-/client/lib/gsuite @Automattic/larimar
-/client/me/purchases/remove-purchase/index.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout/index.jsx @Automattic/larimar
-/client/my-sites/checkout/controller.jsx @Automattic/larimar
-/client/my-sites/checkout/gsuite-nudge @Automattic/larimar
-/client/my-sites/domains/components/domain-warnings @Automattic/larimar
-/client/my-sites/domains/controller.jsx @Automattic/larimar
-/client/my-sites/email @Automattic/larimar
-/client/my-sites/stats/stats-banners/index.jsx @Automattic/larimar
-/client/state/data-layer/wpcom/gsuite-users @Automattic/larimar
-/client/state/gsuite-users @Automattic/larimar
+/client/components/data/query-gsuite-users @Automattic/cobalt
+/client/components/domains/contact-details-form-fields/index.jsx @Automattic/cobalt
+/client/components/gsuite @Automattic/cobalt
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
+/client/components/upgrades/gsuite @Automattic/cobalt
+/client/lib/domains/email-forwarding @Automattic/cobalt
+/client/lib/domains/google-apps-users @Automattic/cobalt
+/client/lib/gsuite @Automattic/cobalt
+/client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/controller.jsx @Automattic/cobalt
+/client/my-sites/checkout/gsuite-nudge @Automattic/cobalt
+/client/my-sites/domains/components/domain-warnings @Automattic/cobalt
+/client/my-sites/domains/controller.jsx @Automattic/cobalt
+/client/my-sites/email @Automattic/cobalt
+/client/state/data-layer/wpcom/gsuite-users @Automattic/cobalt
+/client/state/gsuite-users @Automattic/cobalt
 
 # Gutenberg editor (Gutenframe)
 /client/gutenberg @Automattic/cylon @Automattic/ajax
