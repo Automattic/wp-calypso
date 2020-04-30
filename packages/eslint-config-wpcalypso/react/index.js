@@ -9,7 +9,7 @@ module.exports = {
 	},
 	plugins: [ 'react', 'react-hooks', 'wpcalypso' ],
 	rules: {
-		'react/jsx-boolean-value': [ 2 'never' ],
+		'react/jsx-boolean-value': [ 2, 'never' ],
 		'react/jsx-curly-spacing': [ 2, 'always' ],
 		'react/jsx-no-duplicate-props': 2,
 		'react/jsx-no-target-blank': 2,
