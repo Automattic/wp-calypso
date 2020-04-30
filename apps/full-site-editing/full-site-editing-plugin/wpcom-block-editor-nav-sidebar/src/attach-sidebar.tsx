@@ -9,8 +9,6 @@ import React, { render, unmountComponentAtNode } from '@wordpress/element';
 import WpcomBlockEditorNavSidebar from './wpcom-block-editor-nav-sidebar';
 import './style.scss';
 
-const SIDEBAR_WIDTH = 272;
-
 async function findElement( selector: string, timeoutMs = 5000 ) {
 	let pendingQuery;
 	const pollForLoadedFlag = new Promise< HTMLElement >( ( resolve ) => {
@@ -64,11 +62,11 @@ let sidebarContainer: HTMLDivElement;
 
 function toggleSidebar( editorLayoutContainer: HTMLElement ) {
 	if ( sidebarExpanded ) {
-		editorLayoutContainer.style.marginLeft = '';
+		editorLayoutContainer.classList.remove( 'is-wpcom-block-editor-nav-sidebar-opened' );
 		unmountComponentAtNode( sidebarContainer );
 		sidebarContainer.parentNode?.removeChild( sidebarContainer );
 	} else {
-		editorLayoutContainer.style.marginLeft = `${ SIDEBAR_WIDTH }px`;
+		editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-opened' );
 		sidebarContainer = document.createElement( 'div' );
 		document.body.appendChild( sidebarContainer );
 
