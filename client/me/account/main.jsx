@@ -552,7 +552,7 @@ const Account = createReactClass( {
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
@@ -570,12 +570,12 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary Site' ) }</FormLabel>
+					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
 					{ this.renderPrimarySite() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() }
 						id="user_URL"
@@ -591,7 +591,7 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
+					<FormLabel htmlFor="language">{ translate( 'Interface language' ) }</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
 						languages={ languages }
@@ -615,7 +615,7 @@ const Account = createReactClass( {
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard Color Scheme' ) }</FormLabel>
+						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard color scheme' ) }</FormLabel>
 						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 					</FormFieldset>
 				) }

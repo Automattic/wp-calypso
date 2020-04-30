@@ -75,7 +75,7 @@ const Profile = createReactClass( {
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.props.translate( 'First Name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{ this.props.translate( 'First name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="first_name"
@@ -87,7 +87,7 @@ const Profile = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last Name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="last_name"
@@ -100,7 +100,7 @@ const Profile = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="display_name">
-								{ this.props.translate( 'Public Display Name' ) }
+								{ this.props.translate( 'Public display name' ) }
 							</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
@@ -113,7 +113,7 @@ const Profile = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.props.translate( 'About Me' ) }</FormLabel>
+							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
 							<FormTextarea
 								disabled={ this.getDisabledState() }
 								id="description"

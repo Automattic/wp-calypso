@@ -87,7 +87,7 @@ const NotificationSubscriptions = createReactClass( {
 						onSubmit={ this.submitForm }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Subscriptions Delivery' ) }
+							{ this.props.translate( 'Subscriptions delivery' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
@@ -107,7 +107,7 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_email_default">
-								{ this.props.translate( 'Default Email Delivery' ) }
+								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
@@ -127,7 +127,7 @@ const NotificationSubscriptions = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.getSetting( 'subscription_delivery_jabber_default' ) }
@@ -135,7 +135,7 @@ const NotificationSubscriptions = createReactClass( {
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onChange={ this.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Notification Delivery by Jabber' ) }
+									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
 								/>
 								<span>
 									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
@@ -145,14 +145,14 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_mail_option">
-								{ this.props.translate( 'Email Delivery Format' ) }
+								{ this.props.translate( 'Email delivery format' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
 								onChange={ this.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email Delivery Format' ) }
+								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.getSetting( 'subscription_delivery_mail_option' ) }
 							>
 								<option value="html">{ this.props.translate( 'HTML' ) }</option>
@@ -162,7 +162,7 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_day">
-								{ this.props.translate( 'Email Delivery Window' ) }
+								{ this.props.translate( 'Email delivery window' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
@@ -170,7 +170,7 @@ const NotificationSubscriptions = createReactClass( {
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
 								onChange={ this.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email Delivery Window Day' ) }
+								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.getSetting( 'subscription_delivery_day' ) }
 							>
 								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
@@ -212,7 +212,7 @@ const NotificationSubscriptions = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Block Emails' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Block emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.getSetting( 'subscription_delivery_email_blocked' ) }

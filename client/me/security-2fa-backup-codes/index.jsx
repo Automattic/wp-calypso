@@ -139,7 +139,7 @@ class Security2faBackupCodes extends React.Component {
 	render() {
 		return (
 			<div className="security-2fa-backup-codes">
-				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+				<SectionHeader label={ this.props.translate( 'Backup codes' ) }>
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }

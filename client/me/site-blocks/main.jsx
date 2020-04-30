@@ -68,7 +68,7 @@ class SiteBlockList extends Component {
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
 				<MeSidebarNavigation />
-				<SectionHeader label={ translate( 'Blocked Sites' ) } />
+				<SectionHeader label={ translate( 'Blocked sites' ) } />
 				<Card className="site-blocks__intro">
 					<p>
 						{ translate(

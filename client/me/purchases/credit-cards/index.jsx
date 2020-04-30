@@ -72,7 +72,7 @@ class CreditCards extends Component {
 		return (
 			<div className="credit-cards">
 				<QueryStoredCards />
-				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
+				<SectionHeader label={ this.props.translate( 'Manage your credit cards' ) }>
 					{ this.renderAddCreditCardButton() }
 				</SectionHeader>
 				<Card>
