@@ -389,7 +389,8 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	const target = getBuildTargetFromRequest( req );
+	const targetFromRequest = getBuildTargetFromRequest( req );
+	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join(
 		rootPath,

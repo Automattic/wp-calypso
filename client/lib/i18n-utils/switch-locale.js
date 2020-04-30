@@ -221,11 +221,11 @@ export function getTranslationChunkFileUrl( {
  *
  * @param {string} chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} buildTarget The build target. e.g. fallback, evergreen, etc.
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  *
  * @returns {Promise} Translation chunk json content
  */
-export function getTranslationChunkFile( chunkId, localeSlug, buildTarget = 'evergreen' ) {
+export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
 	if ( window?.i18nTranslationChunks?.[ chunkId ] ) {
 		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
 	}
@@ -234,7 +234,7 @@ export function getTranslationChunkFile( chunkId, localeSlug, buildTarget = 'eve
 		chunkId,
 		localeSlug,
 		fileType: 'json',
-		buildTarget,
+		targetBuild,
 		hash: window?.languageRevisions?.[ localeSlug ] || null,
 	} );
 
