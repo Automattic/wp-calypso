@@ -310,7 +310,15 @@ function InactiveOrderReview() {
 		<SummaryContent>
 			<ProductList>
 				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
-					return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
+					return (
+						<ProductListItem key={ product.id }>
+							{ isLineItemADomain( product ) ? (
+								<strong>{ product.sublabel }</strong>
+							) : (
+								product.label
+							) }
+						</ProductListItem>
+					);
 				} ) }
 			</ProductList>
 		</SummaryContent>
