@@ -127,11 +127,6 @@ function shouldShowCompositeCheckout(
 		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
 		return false;
 	}
-	// Disable for GSuite plans
-	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'gapps' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains GSuite' );
-		return false;
-	}
 	// Disable for jetpack plans
 	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
 		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
