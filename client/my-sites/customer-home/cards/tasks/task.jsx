@@ -58,7 +58,9 @@ const Task = ( {
 	const successNoticeId = `task_remind_later_success-${ taskId }`;
 
 	const startTask = () => {
-		actionOnClick();
+		if ( actionOnClick instanceof Function ) {
+			actionOnClick();
+		}
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_customer_home_task_start', {
