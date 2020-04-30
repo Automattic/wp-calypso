@@ -32,7 +32,7 @@ import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/membershi
 import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
@@ -432,15 +432,18 @@ class MembershipsDialog extends Component {
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
 					action={
-						<UpgradeNudge
+						<UpsellNudge
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
-							message={ translate(
+							description={ translate(
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
 							shouldDisplay={ this.returnTrue }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon
 						/>
 					}
 					secondaryAction={
