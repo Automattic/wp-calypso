@@ -67,6 +67,12 @@
 			height: 44px;
 		}
 
+		svg {
+			top: 9px;
+			right: 12px;
+		}
+	}
+
 	// Don't show close button & more button when inside a modal.
 	.domain-picker__close-button,
 	.domain-picker__more-button {
