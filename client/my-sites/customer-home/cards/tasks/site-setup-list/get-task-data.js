@@ -41,7 +41,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 				timing: 1,
 				title: translate( 'Confirm your email address' ),
 				description: translate(
-					'Please click the link in the email we sent to %(email)s.' +
+					'Please click the link in the email we sent to %(email)s. ' +
 						'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
 					{
 						args: {
@@ -53,7 +53,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 						},
 					}
 				),
-				actionText: translate( 'Verify email' ),
+				actionText: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,
 				actionDispatchArgs: [],
 			};
