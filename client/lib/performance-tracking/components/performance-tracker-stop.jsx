@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -14,36 +14,35 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import isSiteStore from 'state/selectors/is-site-store';
 import { stopNavigation } from '../api';
 
-class PerformanceTrackerStop extends React.Component {
-	static propTypes = {
-		// Indicates if the site is a Single site
-		single: PropTypes.bool,
-
-		// Indicates if the site is Atomic
-		at: PropTypes.bool,
-
-		// Indicates if the site has Jetpack
-		jetpack: PropTypes.bool,
-
-		// Indicates if the site has WooCommerce
-		store: PropTypes.bool,
-	};
-
-	componentDidMount() {
+const PerformanceTrackerStop = ( { single, at, jetpack, store } ) => {
+	useEffect( () => {
 		stopNavigation( {
 			metadata: {
-				single: this.props.single,
-				at: this.props.at,
-				jetpack: this.props.jetpack,
-				store: this.props.store,
+				single,
+				at,
+				jetpack,
+				store,
 			},
 		} );
-	}
+	} );
 
-	render() {
-		return null;
-	}
-}
+	// Nothing to render, this component is all about side effects
+	return null;
+};
+
+PerformanceTrackerStop.propTypes = {
+	// Indicates if the site is a Single site
+	single: PropTypes.bool,
+
+	// Indicates if the site is Atomic
+	at: PropTypes.bool,
+
+	// Indicates if the site has Jetpack
+	jetpack: PropTypes.bool,
+
+	// Indicates if the site has WooCommerce
+	store: PropTypes.bool,
+};
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
