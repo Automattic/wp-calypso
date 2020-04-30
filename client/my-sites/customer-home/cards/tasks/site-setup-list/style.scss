@@ -1,0 +1,117 @@
+.site-setup-list {
+	padding: 0;
+	display: flex;
+
+	@include breakpoint( '<960px' ) {
+		display: block;
+	}
+
+	.site-setup-list__nav {
+		width: 328px;
+		flex-shrink: 0;
+		border-right: 1px solid var( --color-border-subtle );
+
+		@include breakpoint( '<1280px' ) {
+			width: 260px;
+		}
+
+		@include breakpoint( '<960px' ) {
+			width: 100%;
+		}
+	}
+
+	.card-heading {
+		padding: 16px 24px;
+		margin-bottom: 0;
+		border-bottom: 1px solid var( --color-border-subtle );
+		display: flex;
+		align-items: center;
+	}
+
+	.nav-item {
+		display: flex;
+		align-items: center;
+		padding: 16px 24px;
+		border-bottom: 1px solid var( --color-border-subtle );
+		transition: all 0.1s;
+		cursor: pointer;
+		width: 100%;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:hover {
+			background-color: var( --color-neutral-0 );
+
+			@include breakpoint( '<960px' ) {
+				background-color: transparent;
+			}
+		}
+
+		&.is-current {
+			background-color: var( --color-primary-0 );
+			font-weight: 600;
+
+			@include breakpoint( '<960px' ) {
+				background-color: transparent;
+			}
+		}
+	}
+
+	.nav-item__status {
+		margin-right: 8px;
+	}
+
+	.nav-item__pending {
+		display: block;
+		width: 8px;
+		height: 8px;
+		background-color: var( --color-neutral-20 );
+		border-radius: 50%;
+		margin: 5px;
+		transition: all 0.1s;
+	}
+
+	.nav-item.is-current .nav-item__pending {
+		background-color: var( --color-neutral-80 );
+	}
+
+	.nav-item__complete {
+		fill: var( --color-success );
+		vertical-align: text-bottom;
+	}
+
+	.nav-item__text {
+		text-align: left;
+		line-height: 20px;
+	}
+
+	.nav-item__chevron {
+		margin-left: auto;
+	}
+
+	.site-setup-list__task {
+		box-shadow: none;
+		margin: 0;
+		padding: 40px;
+
+		@include breakpoint( '<1040px' ) {
+			padding: 24px;
+		}
+	}
+
+	.site-setup-list__badge {
+		background-color: var( --color-neutral-dark );
+		color: var( --color-text-inverted );
+	}
+
+	.site-setup-list__nav-back {
+		padding: 2px 4px;
+		margin: 0 4px 0 -8px;
+	}
+}
+
+.customer-home__main.is-experimental .site-setup-list .card-heading {
+	margin-bottom: 0;
+}

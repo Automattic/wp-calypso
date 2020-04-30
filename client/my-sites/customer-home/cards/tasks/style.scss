@@ -7,14 +7,13 @@
 
 	.action-panel__body {
 		display: flex;
-		align-items: center;
 	}
 
 	.action-panel__title {
 		font-family: 'Recoleta', serif;
 		font-size: 32px;
 		line-height: 40px;
-		margin-bottom: 0;
+		margin-bottom: 4px;
 
 		@include breakpoint( '>800px' ) {
 			font-size: 40px;
@@ -26,37 +25,41 @@
 		max-width: 33.3333%;
 		margin-bottom: 0;
 		order: 1;
+		align-self: center;
+	}
+
+	.action-panel__body p.task__description {
+		margin-bottom: 32px;
+		font-size: 16px;
+		line-height: 24px;
+		color: var( --color-text );
+
+		@include breakpoint( '>800px' ) {
+			font-size: 20px;
+			line-height: 32px;
+		}
+	}
+
+	.action-panel__body .task__timing {
+		display: flex;
+		margin-bottom: 8px;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+
+		p {
+			margin-bottom: 0;
+		}
 	}
 
 	.action-panel__cta {
 		display: flex;
+		padding-top: 0;
 
 		.task__skip {
 			margin: auto 16px;
 		}
-	}
-}
-
-.task__timing {
-	display: flex;
-
-	.gridicon {
-		margin-right: 4px;
-	}
-
-	p {
-		margin-bottom: 8px;
-	}
-}
-
-.task__description {
-	font-size: 16px;
-	line-height: 24px;
-	color: var( --color-text );
-
-	@include breakpoint( '>800px' ) {
-		font-size: 20px;
-		line-height: 32px;
 	}
 }
 
