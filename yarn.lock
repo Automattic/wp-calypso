@@ -2394,16 +2394,17 @@
   integrity sha512-vTCdPp/T/Q3oSqwHmZ5Kpa9oI7iLtGl3RQaA/NyLHikvcrPxACkkKVr/XzkSPJWXHRhKGzVvb0urJsbMlRxi1Q==
 
 "@signal-noise/stylelint-scales@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@signal-noise/stylelint-scales/-/stylelint-scales-1.2.0.tgz#3487a5bfd7d06d0ff275cc75cd8dd7595b03d4a7"
-  integrity sha512-Q3b7ZKbYn2h1Mj1tink4FAy7UD91LXWKcs/fzrz6A5UySsrniPK+j/zttmEqr36cX+iamV5iZ4Z0+3gdWAd6KA==
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@signal-noise/stylelint-scales/-/stylelint-scales-1.3.0.tgz#720dd30d330e1332de343527a02d7f00490667bd"
+  integrity sha512-Be/XUwYnVmN3gjZOJBds8GCjJmx/o/CghXelbPgh9ytiNvTt8Ruq79bYX+0zfUYP1yKeOJGSazp2YW0Wb2rYxw==
   dependencies:
     camelcase "^5.3.1"
     css-border-property "^1.1.0"
+    css-global-keywords "^1.0.1"
     font-family "^0.2.0"
     lodash "^4.17.15"
     parse-css-font "^4.0.0"
-    postcss-values-parser "^3.0.5"
+    postcss-values-parser "^3.1.1"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -7549,6 +7550,11 @@ css-font-weight-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-font-weight-keywords/-/css-font-weight-keywords-1.0.0.tgz#9bc04671ac85bc724b574ef5d3ac96b0d604fd97"
   integrity sha1-m8BGcayFvHJLV07106yWsNYE/Zc=
+
+css-global-keywords@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/css-global-keywords/-/css-global-keywords-1.0.1.tgz#72a9aea72796d019b1d2a3252de4e5aaa37e4a69"
+  integrity sha1-cqmupyeW0Bmx0qMlLeTlqqN+Smk=
 
 css-list-helpers@^2.0.0:
   version "2.0.0"
@@ -16908,13 +16914,12 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.0.2:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.0.3.tgz#651ff4593aa9eda8d5d0d66593a2417aeaeb325d"
   integrity sha512-N7h4pG+Nnu5BEIzyeaaIYWs0LI5XC40OrRh5L60z0QjFsqGWcHcbkBvpe1WYpcIS9yQ8sOi/vIPt1ejQCrMVrg==
 
-postcss-values-parser@^3.0.5:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/postcss-values-parser/-/postcss-values-parser-3.1.1.tgz#487111a0446117d3463d2d429a380788f1365f69"
-  integrity sha512-p56/Cu9wb8+lck/iOTeuFeSHKEUH1bbWQ03T6N3jDkw+15pV65rMY5pK+OWhVpRn5TIrByS6UVpO3mSqvlhZYA==
+postcss-values-parser@^3.0.5, postcss-values-parser@^3.1.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/postcss-values-parser/-/postcss-values-parser-3.2.1.tgz#55114607de6631338ba8728d3e9c15785adcc027"
+  integrity sha512-SQ7/88VE9LhJh9gc27/hqnSU/aZaREVJcRVccXBmajgP2RkjdJzNyH/a9GCVMI5nsRhT0jC5HpUMwfkz81DVVg==
   dependencies:
     color-name "^1.1.4"
-    is-number "^7.0.0"
     is-url-superb "^3.0.0"
     postcss "^7.0.5"
     url-regex "^5.0.0"
