@@ -24,7 +24,7 @@ import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 import BackupDelta from '../../components/backup-delta';
 import DailyBackupStatus from '../../components/daily-backup-status';
-import BackupDatePicker from '../../components/date-picker';
+import BackupDatePicker from '../../components/backup-date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
