@@ -284,7 +284,9 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					.createHash( 'sha1' )
 					.update( manifestJsonDataFingerprint )
 					.digest( 'hex' );
-				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash;
+
+				// Trim hash in language revisions to 5 characters to reduce file size
+				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
 
 				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
 				const manifestFilepathJson = path.join(
