@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactElement } from 'react';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
@@ -11,7 +11,6 @@ import { Button } from '@automattic/components';
  */
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
-import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import {
 	getThreatType,
@@ -30,6 +29,7 @@ interface Props {
 	onIgnoreThreat?: Function;
 	isFixing: boolean;
 	contactSupportUrl?: string;
+	header: string | ReactElement | i18nCalypso.TranslateResult;
 }
 
 const ThreatItem: FunctionComponent< Props > = ( {
@@ -38,6 +38,7 @@ const ThreatItem: FunctionComponent< Props > = ( {
 	onIgnoreThreat,
 	isFixing,
 	contactSupportUrl,
+	header,
 } ) => {
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
@@ -102,7 +103,7 @@ const ThreatItem: FunctionComponent< Props > = ( {
 	return (
 		<LogItem
 			className="threat-item"
-			header={ <ThreatItemHeader threat={ threat } /> }
+			header={ header }
 			subheader={ getSubHeader() }
 			{ ...( isFixable ? { summary: renderFixThreatButton( 'is-summary' ) } : {} ) }
 			{ ...( isFixable ? { expandedSummary: renderFixThreatButton( 'is-summary' ) } : {} ) }
