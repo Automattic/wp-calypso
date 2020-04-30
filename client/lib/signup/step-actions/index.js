@@ -2,7 +2,19 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import {
+	assign,
+	defer,
+	difference,
+	get,
+	has,
+	includes,
+	isEmpty,
+	isNull,
+	omitBy,
+	pick,
+	startsWith,
+} from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -738,5 +750,30 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
+	}
+}
+
+export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nextProps ) {
+	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
+	const hasCartItemInDependencyStore = has( nextProps, 'signupDependencies.cartItem' );
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+	const hasAddedFreePlanFreeDomain =
+		hasCartItemInDependencyStore &&
+		! cartItem &&
+		hasdDomainItemInDependencyStore &&
+		isEmpty( domainItem );
+
+	// Don't show the upsell offer if paid plan is selected or free plan + free domain selected.
+	if ( cartItem || hasAddedFreePlanFreeDomain ) {
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
+
+		nextProps.submitSignupStep( { stepName }, {} );
+		flows.excludeStep( stepName );
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		flows.resetExcludedStep( stepName );
+		nextProps.removeStep( { stepName } );
 	}
 }

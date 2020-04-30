@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
 	assign,
+	clone,
 	defer,
 	find,
 	get,
@@ -50,7 +51,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -162,7 +163,9 @@ class Signup extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
-		this.removeFulfilledSteps( nextProps );
+		if ( this.props.stepName !== stepName ) {
+			this.removeFulfilledSteps( nextProps );
+		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
@@ -258,10 +261,6 @@ class Signup extends React.Component {
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			return;
-		}
-
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
 		const defaultDependencies = steps[ stepName ].defaultDependencies;
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
@@ -270,6 +269,8 @@ class Signup extends React.Component {
 	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
+		const excludedSteps = clone( flows.excludedSteps );
+		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
@@ -477,6 +478,7 @@ class Signup extends React.Component {
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
 			this.props.domainsWithPlansOnly &&
+			domainItem &&
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
@@ -615,6 +617,7 @@ export default connect(
 		submitSiteType,
 		submitSiteVertical,
 		submitSignupStep,
+		removeStep,
 		loadTrackingTool,
 		showSitePreview,
 		hideSitePreview,

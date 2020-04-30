@@ -117,6 +117,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-plan-first': {
+			steps: [ 'user', 'plans', 'domains', 'upsell-plan', 'plans-plan-only' ],
+			destination: getSignupDestination,
+			description:
+				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
+			lastModified: '2020-04-22',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

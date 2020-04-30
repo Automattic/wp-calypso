@@ -152,7 +152,10 @@ function getFixedDomainSearch( domainName ) {
 }
 
 function isSubdomain( domainName ) {
-	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+	return (
+		domainName &&
+		domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ )
+	);
 }
 
 function isHstsRequired( productSlug, productsList ) {

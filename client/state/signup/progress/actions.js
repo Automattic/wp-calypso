@@ -12,6 +12,7 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
+	SIGNUP_PROGRESS_REMOVE_STEP,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -128,5 +129,12 @@ export function invalidateStep( step, errors ) {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 		step: { ...step, lastUpdated },
 		errors,
+	};
+}
+
+export function removeStep( step ) {
+	return {
+		type: SIGNUP_PROGRESS_REMOVE_STEP,
+		step,
 	};
 }
