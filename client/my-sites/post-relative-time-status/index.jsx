@@ -63,7 +63,7 @@ class PostRelativeTime extends React.PureComponent {
 				} ),
 				sameElse: this.props.translate( 'll [at] LT', {
 					comment:
-						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - and "for" is translated',
+						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
 				} ),
 			} );
 		} else {
