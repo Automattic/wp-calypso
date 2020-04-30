@@ -41,6 +41,7 @@ export const UpsellNudge = ( {
 	icon,
 	isJetpackDevDocs,
 	jetpack,
+	horizontal,
 	isVip,
 	list,
 	onClick,
@@ -92,6 +93,7 @@ export const UpsellNudge = ( {
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
+			horizontal={ horizontal }
 			href={ href }
 			icon={ icon }
 			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
