@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { HELP_CONTACT_FORM_SITE_SELECT, HELP_LINKS_RECEIVE } from 'state/action-types';
+import {
+	HELP_CONTACT_FORM_SITE_SELECT,
+	HELP_LINKS_RECEIVE,
+	SUPPORT_HISTORY_SET,
+} from 'state/action-types';
 import courses from './courses/reducer';
 import { combineReducers } from 'state/utils';
 import directly from './directly/reducer';
@@ -39,10 +43,27 @@ export const links = ( state = {}, action ) => {
 	}
 };
 
+/**
+ * Responsible for the help search results links
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export const supportHistory = ( state = [], { type, items } ) => {
+	switch ( type ) {
+		case SUPPORT_HISTORY_SET:
+			return items;
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	courses,
 	directly,
 	links,
 	ticket,
 	selectedSiteId,
+	supportHistory,
 } );

@@ -32,6 +32,7 @@ import {
 } from 'state/help/ticket/selectors';
 import HappychatConnection from 'components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
+import QuerySupportHistory from 'components/data/query-support-history';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
 	sendMessage as sendHappychatMessage,
@@ -53,6 +54,7 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
+import getActiveSupportTickets from 'state/selectors/get-active-support-tickets';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
@@ -127,6 +129,13 @@ class HelpContact extends React.Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
+		if ( this.props.activeSupportTickets.length > 0 ) {
+			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
+				support_type: 'chat',
+				active_ticket_count: this.props.activeSupportTickets.length,
+			} );
+		}
+
 		this.setState( {
 			isSubmitting: false,
 			confirmation: {
@@ -164,6 +173,13 @@ class HelpContact extends React.Component {
 
 		if ( ! this.props.compact ) {
 			page( '/help' );
+		}
+
+		if ( this.props.activeSupportTickets.length > 0 ) {
+			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
+				support_type: 'directly',
+				active_ticket_count: this.props.activeSupportTickets.length,
+			} );
 		}
 	};
 
@@ -212,6 +228,13 @@ class HelpContact extends React.Component {
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
+
+				if ( this.props.activeSupportTickets.length > 0 ) {
+					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
+						support_type: 'email',
+						active_ticket_count: this.props.activeSupportTickets.length,
+					} );
+				}
 			}
 		);
 
@@ -255,6 +278,13 @@ class HelpContact extends React.Component {
 				} );
 
 				recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
+
+				if ( this.props.activeSupportTickets.length > 0 ) {
+					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
+						support_type: 'forum',
+						active_ticket_count: this.props.activeSupportTickets.length,
+					} );
+				}
 			}
 		);
 
@@ -587,6 +617,7 @@ class HelpContact extends React.Component {
 				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
+				{ ! this.props.compact && <QuerySupportHistory email={ this.props.currentUser.email } /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 				<QueryLanguageNames />
@@ -619,6 +650,7 @@ export default connect(
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
+			activeSupportTickets: getActiveSupportTickets( state ),
 		};
 	},
 	{

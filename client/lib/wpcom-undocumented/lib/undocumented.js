@@ -2077,6 +2077,23 @@ Undocumented.prototype.getOlarkConfiguration = function ( client, fn ) {
 	);
 };
 
+/**
+ * Get the support ticket history for the given email
+ *
+ * @param {object} email - Email address you want support history for
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.getSupportHistory = function ( email, fn ) {
+	return this.wpcom.req.get(
+		{
+			apiVersion: '2',
+			path: '/support-history',
+			body: { email },
+		},
+		fn
+	);
+};
+
 Undocumented.prototype.submitSupportForumsTopic = function (
 	subject,
 	message,
