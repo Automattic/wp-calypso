@@ -21,7 +21,7 @@
 	}
 	.dismissible-card__close-icon {
 		fill: var( --color-text-inverted );
-		margin-left: 0.75em;
+		margin-right: -6px;
 	}
 	.banner__content {
 		color: var( --color-text-inverted );
@@ -52,6 +52,9 @@
 	}
 }
 
+.upsell-nudge.is-dismissible.is-horizontal.is-compact .banner__action {
+	margin-right: 28px;
+}
 .upsell-nudge.banner.card.is-compact.is-card-link {
 	padding-right: 12px;
 
