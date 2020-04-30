@@ -7,7 +7,7 @@
 
 	.components-modal__content {
 		@include breakpoint( '>660px' ) {
-			width: 50%;
+			width: 60%;
 			padding: 32px;
 		}
 	}
@@ -25,6 +25,10 @@
 			height: auto;
 			line-height: 1.2;
 			font-family: $serif;
+
+			@include breakpoint( '<660px' ) {
+				margin-top: 260px;
+			}
 
 			@include breakpoint( '>660px' ) {
 				font-size: 32px;
@@ -68,21 +72,23 @@
 
 .editor-deprecation-dialog__illustration {
 	background: url( '/calypso/images/illustrations/block-library.svg' ) no-repeat;
-	background-position: 50%;
-	background-size: 320px;
-	height: 180px;
-	width: calc( 100% + 24px + 24px );
-	margin: 0 -24px 24px;
-	position: relative;
+	margin: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+
+	@include breakpoint( '<660px' ) {
+		height: 250px;
+		width: 100%;
+		background-size: 100%;
+	}
 
 	@include breakpoint( '>660px' ) {
-		background-size: cover;
+		background-size: 100% auto;
+		background-position: bottom;
+		background-color: #1381d8;
 		height: auto;
-		width: 50%;
-		margin: 0;
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
+		width: 40%;
 	}
 }
