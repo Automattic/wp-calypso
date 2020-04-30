@@ -9,12 +9,24 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { preventWidows } from 'lib/formatting';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Task from '../task';
 
-const DeprecateEditor = ( { siteSlug } ) => {
-	const translate = useTranslate();
+import { setSelectedEditor } from 'state/selected-editor/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+	bumpStat,
+} from 'state/analytics/actions';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
+const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
+	const translate = useTranslate();
+	const actionCallback = () => {
+		optIn( siteId, gutenbergUrl );
+	};
 	return (
 		<Task
 			title={ translate( 'The Block Editor is coming' ) }
@@ -22,7 +34,7 @@ const DeprecateEditor = ( { siteSlug } ) => {
 				translate( 'Try the Block Editor now before it is enabled for everyone on May 22.' )
 			) }
 			actionText={ translate( 'Try it now' ) }
-			actionUrl={ `/block-editor/post/${ siteSlug }` }
+			actionCallback={ actionCallback }
 			illustration="/calypso/images/illustrations/gutenberg-mini.svg"
 			timing={ 5 }
 			taskId="deprecate-editor"
@@ -30,10 +42,34 @@ const DeprecateEditor = ( { siteSlug } ) => {
 	);
 };
 
+const optIn = ( siteId, gutenbergUrl ) => {
+	return withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Gutenberg Opt-In',
+				'Clicked "Switch to Block editor" in editor deprecation notice.',
+				'Opt-In',
+				true
+			),
+			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+				opt_in: true,
+			} ),
+			bumpStat( 'gutenberg-opt-in', 'Calypso Editor Deprecation Notice Opt In' )
+		),
+		setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+	);
+};
+
 const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
 	return {
-		siteSlug: getSelectedSiteSlug( state ),
+		siteId,
+		gutenbergUrl: getGutenbergEditorUrl( state, siteId ),
 	};
 };
 
-export default connect( mapStateToProps )( DeprecateEditor );
+const mapDispatchToProps = {
+	optIn,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( DeprecateEditor );
