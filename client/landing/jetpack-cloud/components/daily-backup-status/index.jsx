@@ -30,6 +30,7 @@ import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
  */
 import './style.scss';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import backupErrorIcon from './backup-error.svg';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -106,7 +107,6 @@ class DailyBackupStatus extends Component {
 	renderFailedBackup( backup ) {
 		const { translate, timezone, gmtOffset, siteUrl } = this.props;
 
-		const backupTitleDate = this.getDisplayDate( backup.activityTs, false );
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
 
 		const displayDate = backupDate.format( 'L' );
@@ -114,11 +114,12 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
+				<div className="daily-backup-status__failed-message-head">
+					<img src={ backupErrorIcon } alt="" role="presentation" />
+					<div>{ translate( 'Backup failed' ) }</div>
+				</div>
 				<div className="daily-backup-status__failed-message">
-					{ translate( 'Backup failed: %(backupDate)s', {
-						args: { backupDate: backupTitleDate },
-					} ) }
+					{ this.getDisplayDate( backup.activityTs, false ) }
 				</div>
 				<div className="daily-backup-status__label">
 					<p>
