@@ -161,10 +161,9 @@ class BackupsPage extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={
-					hasRealtimeBackups
-						? translate( 'Real-time Backups' )
-						: translate( 'Daily Backups' ) 
+				<DocumentHead
+					title={
+						hasRealtimeBackups ? translate( 'Real-time Backups' ) : translate( 'Daily Backups' )
 					}
 				/>
 				<SidebarNavigation />
