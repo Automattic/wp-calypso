@@ -73,8 +73,8 @@ const skipTask = ( dispatch, task, siteId ) => {
 	);
 };
 
-const getActionText = ( currentTask, emailVerificationStatus ) => {
-	if ( currentTask.id === 'email_verified' ) {
+const getActionText = ( task, { emailVerificationStatus } ) => {
+	if ( task.id === 'email_verified' ) {
 		if ( emailVerificationStatus === 'requesting' ) {
 			return translate( 'Sending…' );
 		}
@@ -87,8 +87,11 @@ const getActionText = ( currentTask, emailVerificationStatus ) => {
 			return translate( 'Email sent' );
 		}
 	}
-	return currentTask.actionText;
+	return task.actionText;
 };
+
+const isTaskDisabled = ( task, { emailVerificationStatus } ) =>
+	task.id === 'email_verified' && 'requesting' === emailVerificationStatus;
 
 const SiteSetupList = ( {
 	menusUrl,
@@ -180,11 +183,9 @@ const SiteSetupList = ( {
 								className="site-setup-list__task-action task__action"
 								primary
 								onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								disabled={
-									currentTask.id === 'email_verified' && 'requesting' === emailVerificationStatus
-								}
+								disabled={ isTaskDisabled( currentTask, { emailVerificationStatus } ) }
 							>
-								{ getActionText( currentTask, emailVerificationStatus ) }
+								{ getActionText( currentTask, { emailVerificationStatus } ) }
 							</Button>
 							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
