@@ -26,7 +26,7 @@ const Webinars = () => {
 			} }
 			illustration={ webinarsIllustration }
 			timing={ 2 }
-			taskId="webinar"
+			taskId="webinars"
 		/>
 	);
 };
