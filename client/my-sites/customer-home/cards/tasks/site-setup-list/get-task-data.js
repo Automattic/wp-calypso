@@ -19,6 +19,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 	switch ( task.id ) {
 		case 'domain_verified':
 			taskData = {
+				id: 'domain_verified',
 				timing: 2,
 				title:
 					task.unverifiedDomains.length === 1
@@ -38,6 +39,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'email_verified':
 			taskData = {
+				id: 'email_verified',
 				timing: 1,
 				title: translate( 'Confirm your email address' ),
 				description: translate(
@@ -60,6 +62,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'blogname_set':
 			taskData = {
+				id: 'blogname_set',
 				timing: 1,
 				title: translate( 'Name your site' ),
 				description: translate(
@@ -72,6 +75,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'mobile_app_installed':
 			taskData = {
+				id: 'mobile_app_installed',
 				timing: 3,
 				title: translate( 'Get the WordPress app' ),
 				description: translate(
@@ -88,6 +92,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'site_launched':
 			taskData = {
+				id: 'site_launched',
 				timing: 1,
 				title: translate( 'Launch your site' ),
 				description: translate(
@@ -100,6 +105,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'front_page_updated':
 			taskData = {
+				id: 'front_page_updated',
 				timing: 20,
 				title: translate( 'Update your Home page' ),
 				description: translate(
@@ -110,6 +116,7 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'site_menu_updated':
 			taskData = {
+				id: 'site_menu_updated',
 				timing: 10,
 				title: translate( 'Create a site menu' ),
 				description: translate(

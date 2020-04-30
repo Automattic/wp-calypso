@@ -31,6 +31,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import NavItem from './nav-item';
 import { getTaskData } from './get-task-data';
 import Badge from 'components/badge';
+import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
 
 /**
  * Style dependencies
@@ -72,7 +73,32 @@ const skipTask = ( dispatch, task, siteId ) => {
 	);
 };
 
-const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls, userEmail } ) => {
+const getActionText = ( currentTask, emailVerificationStatus ) => {
+	if ( currentTask.id === 'email_verified' ) {
+		if ( emailVerificationStatus === 'requesting' ) {
+			return translate( 'Sending…' );
+		}
+
+		if ( emailVerificationStatus === 'error' ) {
+			return translate( 'Error' );
+		}
+
+		if ( emailVerificationStatus === 'sent' ) {
+			return translate( 'Email sent' );
+		}
+	}
+	return currentTask.actionText;
+};
+
+const SiteSetupList = ( {
+	menusUrl,
+	siteId,
+	siteSlug,
+	tasks,
+	taskUrls,
+	userEmail,
+	emailVerificationStatus,
+} ) => {
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const dispatch = useDispatch();
 
@@ -86,6 +112,9 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls, userEmail
 		} );
 
 	useEffect( () => {
+		//Reset Email State
+		dispatch( resetVerifyEmailState() );
+
 		// Initial task.
 		if ( ! currentTask && tasks.length ) {
 			const initialTask = getTask( tasks.find( ( task ) => ! task.isCompleted ) );
@@ -151,8 +180,11 @@ const SiteSetupList = ( { menusUrl, siteId, siteSlug, tasks, taskUrls, userEmail
 								className="site-setup-list__task-action task__action"
 								primary
 								onClick={ () => startTask( dispatch, currentTask, siteId ) }
+								disabled={
+									currentTask.id === 'email_verified' && 'requesting' === emailVerificationStatus
+								}
 							>
-								{ currentTask.actionText }
+								{ getActionText( currentTask, emailVerificationStatus ) }
 							</Button>
 							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
@@ -187,6 +219,9 @@ export default connect( ( state ) => {
 		siteVerticals,
 	} );
 
+	//existing usage didn't have a global selctor, we can tidy this in a follow up.
+	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
+
 	return {
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
@@ -194,5 +229,6 @@ export default connect( ( state ) => {
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
+		emailVerificationStatus,
 	};
 } )( SiteSetupList );
