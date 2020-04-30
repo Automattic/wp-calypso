@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,121 +20,208 @@ class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
 		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,
-		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
 		target: PropTypes.string,
 		gridiconSize: PropTypes.number,
 	};
 
 	static defaultProps = {
-		includeNonDraftStatuses: false,
 		link: null,
 		target: null,
 	};
 
+	/**
+	 * Get the date to be displayed depending on the status of the post
+	 */
 	getTimestamp() {
 		switch ( this.props.post.status ) {
 			case 'new':
 				return null;
+
 			case 'draft':
-			case 'future':
+			case 'trash':
 			case 'pending':
 				return this.props.post.modified;
+
 			default:
 				return this.props.post.date;
 		}
 	}
 
-	getDisplayedTimeFromPost( post ) {
+	getDisplayedTimeForLabel() {
 		const moment = this.props.moment;
-
 		const now = moment();
+		const timestamp = moment( this.getTimestamp() );
 
-		if ( ! post ) {
-			// Placeholder text: "a few seconds ago" in English locale
-			return now.fromNow();
+		const isScheduledPost = this.props.post.status === 'future';
+
+		let displayedTime;
+		if ( isScheduledPost ) {
+			displayedTime = timestamp.calendar( null, {
+				nextDay: this.props.translate( '[tomorrow at] LT', {
+					comment: 'LT refers to time (eg. 18:00)',
+				} ),
+				sameElse: this.props.translate( 'll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
+				} ),
+			} );
+		} else {
+			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
+				return timestamp.fromNow();
+			}
+
+			const sameElse = this.props.translate( 'll [at] LT', {
+				comment:
+					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+			} );
+
+			displayedTime = timestamp.calendar( null, {
+				sameElse,
+			} );
 		}
 
-		const { status, modified, date } = post;
-		const time = moment( includes( [ 'draft', 'pending', 'future' ], status ) ? modified : date );
-		if ( now.diff( time, 'days' ) >= 7 ) {
-			// Like "Mar 15, 2013 6:23 PM" in English locale
-			return time.format( 'lll' );
-		}
-
-		// Like "3 days ago" in English locale
-		return time.fromNow();
+		// If the content is scheduled to be release within a year, do not display the year at the end
+		return timestamp.diff( now, 'years' ) > 0
+			? displayedTime
+			: displayedTime.replace( timestamp.format( 'Y' ), '' );
 	}
 
 	getTimeText() {
 		const time = this.getTimestamp();
-		if ( ! time ) {
-			return null;
-		}
-
 		return (
 			<span className="post-relative-time-status__time">
-				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
-				<time className="post-relative-time-status__time-text" dateTime={ time }>
-					{ this.getDisplayedTimeFromPost( this.props.post ) }
-				</time>
+				{ time && (
+					<>
+						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						<time className="post-relative-time-status__time-text" dateTime={ time }>
+							{ this.getDisplayedTimeForLabel() }
+						</time>
+					</>
+				) }
 			</span>
 		);
 	}
 
 	getStatusText() {
 		const status = this.props.post.status;
-		let statusClassName = 'post-relative-time-status__status';
-		let statusIcon = 'aside';
-		let statusText;
+		const args = {
+			displayedTime: this.getDisplayedTimeForLabel(),
+		};
+		const moment = this.props.moment;
+		const now = moment();
+		const displayOn = Math.abs( now.diff( this.getTimestamp(), 'days' ) ) >= 7;
 
-		if ( this.props.post.sticky ) {
-			statusText = this.props.translate( 'sticky' );
-			statusClassName += ' is-sticky';
-			statusIcon = 'bookmark-outline';
-		} else if ( status === 'pending' ) {
-			statusText = this.props.translate( 'pending review' );
-			statusClassName += ' is-pending';
-		} else if ( status === 'future' ) {
-			const moment = this.props.moment;
-			const now = moment();
-			const scheduledDate = moment( this.props.post.date );
-			// If the content is scheduled to be release within a year, do not display the year at the end
-			const scheduledTime = scheduledDate.calendar( null, {
-				sameElse: this.props.translate( 'll [at] LT', {
+		switch ( status ) {
+			case 'trash':
+				if ( displayOn ) {
+					return this.props.translate( 'trashed on %(displayedTime)s', {
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM) when a post or page was trashed',
+						args,
+					} );
+				}
+				return this.props.translate( 'trashed %(displayedTime)s', {
 					comment:
-						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
-				} ),
-			} );
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a post or page was trashed',
+					args,
+				} );
 
-			const displayScheduleTime =
-				scheduledDate.diff( now, 'years' ) > 0
-					? scheduledTime
-					: scheduledTime.replace( scheduledDate.format( 'Y' ), '' );
+			case 'future':
+				return this.props.translate( 'scheduled for %(displayedTime)s', {
+					comment:
+						'%(displayedTime)s is when a scheduled post or page is set to be published. It can be either "tomorrow at 16H", or an absoltute date (ie. Apr 21, at 10:07 PM)',
+					args,
+				} );
 
-			statusText = this.props.translate( 'scheduled for %(displayScheduleTime)s', {
-				comment: '%(displayScheduleTime)s is when a scheduled post is set to be published',
-				args: {
-					displayScheduleTime,
-				},
-			} );
-			statusClassName += ' is-scheduled';
-			statusIcon = 'calendar';
-		} else if ( status === 'trash' ) {
-			statusText = this.props.translate( 'trashed' );
-			statusClassName += ' is-trash';
+			case 'draft':
+			case 'pending':
+				if ( displayOn ) {
+					return this.props.translate( 'draft last modified on %(displayedTime)s', {
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM) when a draft post or page was last modified',
+						args,
+					} );
+				}
+
+				return this.props.translate( 'draft last modified %(displayedTime)s', {
+					comment:
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a draft post or page was last modified',
+					args,
+				} );
+
+			case 'private':
+			case 'publish':
+				if ( displayOn ) {
+					return this.props.translate( 'published on %(displayedTime)s', {
+						comment:
+							'%(displayedTime)s is the absolute date (ie. Apr 21, at 10:07 PM ) when a post or page was published',
+						args,
+					} );
+				}
+
+				return this.props.translate( 'published %(displayedTime)s', {
+					comment:
+						'%(displayedTime)s is the relative date (ie. 3 days ago) when a post or page was published',
+					args,
+				} );
+		}
+	}
+
+	/**
+	 * Get status label
+	 */
+	getStatus() {
+		const status = this.props.post.status;
+		let extraStatusClassName;
+		let statusIcon;
+		let statusText = this.getStatusText();
+
+		if ( status === 'trash' ) {
+			extraStatusClassName = 'is-trash';
 			statusIcon = 'trash';
-		} else if ( this.props.includeBasicStatus ) {
-			if ( status === 'draft' ) {
-				statusText = this.props.translate( 'draft' );
-			} else if ( status === 'publish' ) {
-				statusText = this.props.translate( 'published' );
-			} else if ( status === 'new' ) {
-				statusText = this.props.translate( 'Publish immediately' );
-			}
+		} else if ( status === 'future' ) {
+			extraStatusClassName = 'is-scheduled';
+			statusIcon = 'calendar';
+		} else if ( status === 'new' ) {
+			statusText = this.props.translate( 'Publish immediately' );
 		}
 
+		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
+	 * Get "private" label
+	 */
+	getPrivateLabel() {
+		return this.getLabel( this.props.translate( 'private' ), 'is-private' );
+	}
+
+	/**
+	 * Get "sticky" label
+	 */
+	getStickyLabel() {
+		return this.getLabel( this.props.translate( 'sticky' ), 'is-sticky', 'bookmark-outline' );
+	}
+
+	/**
+	 * Get "Pending" label
+	 */
+	getPendingLabel() {
+		return this.getLabel( this.props.translate( 'pending review' ), 'is-pending' );
+	}
+
+	/**
+	 * Get Label for the status
+	 *
+	 * @param {string} statusText text status
+	 * @param {string} extraStatusClassName extra CSS class to be added to the label
+	 * @param {string} [statusIcon="aside"] icon for the label
+	 */
+	getLabel( statusText, extraStatusClassName, statusIcon = 'aside' ) {
 		if ( statusText ) {
+			const statusClassName = 'post-relative-time-status__status ' + extraStatusClassName;
+
 			return (
 				<span className={ statusClassName }>
 					<Gridicon icon={ statusIcon } size={ this.props.gridiconSize || 18 } />
@@ -146,16 +232,14 @@ class PostRelativeTime extends React.PureComponent {
 	}
 
 	render() {
-		const { post, showPublishedStatus } = this.props;
+		const { showPublishedStatus, post } = this.props;
 		const timeText = this.getTimeText();
-		const statusText = this.getStatusText();
-		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
-		const time = this.getTimestamp();
-
 		let innerText = (
 			<span>
-				{ timeText }
-				{ ( post.status === 'future' || showPublishedStatus ) && statusText }
+				{ showPublishedStatus ? this.getStatus() : timeText }
+				{ post.status === 'pending' && this.getPendingLabel() }
+				{ post.status === 'private' && this.getPrivateLabel() }
+				{ post.sticky && this.getStickyLabel() }
 			</span>
 		);
 
@@ -174,6 +258,8 @@ class PostRelativeTime extends React.PureComponent {
 			);
 		}
 
+		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
+		const time = this.getTimestamp();
 		return (
 			<div className={ relativeTimeClass } title={ time }>
 				{ innerText }
