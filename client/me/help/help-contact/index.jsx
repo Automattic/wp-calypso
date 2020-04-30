@@ -17,6 +17,7 @@ import Main from 'components/main';
 import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
+import ActiveTicketsNotice from 'me/help/active-tickets-notice';
 import LimitedChatAvailabilityNotice from 'me/help/contact-form-notice/limited-chat-availability';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
@@ -525,7 +526,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { compact, supportVariation, translate } = this.props;
+		const { activeSupportTickets, compact, supportVariation, translate } = this.props;
 
 		debug( { supportVariation } );
 
@@ -579,8 +580,14 @@ class HelpContact extends React.Component {
 		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
+		const activeTicketCount = activeSupportTickets.length;
+
 		return (
 			<div>
+				{ activeTicketCount > 0 && (
+					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
+				) }
+
 				{ isUserAffectedByLiveChatClosure && (
 					<>
 						<LimitedChatAvailabilityNotice
@@ -590,6 +597,7 @@ class HelpContact extends React.Component {
 						/>
 					</>
 				) }
+
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice
 						status="is-warning"
