@@ -14,6 +14,15 @@ const getLux = () => {
 	return lux;
 };
 
+/**
+ * Adds metadata to LUX request.
+ *
+ * WARNING: please double check you don't send any Private Personal Information. A good rule of thumb is to only send booleans or numbers.
+ *
+ * LUX has a limit of 255 bytes of all metadata concatenated, so you may want to keep they names short.
+ *
+ * @param {object} metadata Object with key:values to add as metadata
+ */
 const addMetadata = ( metadata ) => {
 	const lux = getLux();
 
