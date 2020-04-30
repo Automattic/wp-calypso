@@ -56,9 +56,12 @@ class ScanPage extends Component< Props > {
 				<SecurityIcon icon="in-progress" />
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
-					Lorem ipsum. We need to change this text. The scan was unable to process the themes
-					directory and did not completed successfully. In order to complete the scan you will need
-					to speak to support who can help determine what went wrong.
+					{ translate(
+						'Lorem ipsum. We need to change this text. The scan was unable to process ' +
+							'the themes directory and did not completed successfully. In order to ' +
+							'complete the scan you will need to speak to support who can help ' +
+							'determine what went wrong.'
+					) }
 				</p>
 				{ this.renderContactSupportButton() }
 			</>
@@ -100,9 +103,11 @@ class ScanPage extends Component< Props > {
 				<SecurityIcon icon="scan-error" />
 				{ this.renderHeader( 'Scan is unavailable' ) }
 				<p>
-					The scan was unable to process the themes directory and did not completed successfully. In
-					order to complete the scan you will need to speak to support who can help determine what
-					went wrong.
+					{ translate(
+						'The scan was unable to process the themes directory and did not completed ' +
+							'successfully. In order to complete the scan you will need to speak to support ' +
+							'who can help determine what went wrong.'
+					) }
 				</p>
 				{ this.renderContactSupportButton() }
 			</>
@@ -117,10 +122,20 @@ class ScanPage extends Component< Props > {
 				<SecurityIcon />
 				{ this.renderHeader( translate( 'Don’t worry about a thing' ) ) }
 				<p>
-					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
-					everything looked great.
-					<br />
-					Run a manual scan now or wait for Jetpack to scan your site later today.
+					{ translate(
+						/* translators: %s is a time string relative to now */
+						'The last Jetpack scan ran {{strong}}%s{{/strong}} and everything ' +
+							'looked great.' +
+							'{{br/}}' +
+							'Run a manual scan now or wait for Jetpack to scan your site later today.',
+						{
+							args: [ moment( lastScanTimestamp ).fromNow() ],
+							components: {
+								strong: <strong />,
+								br: <br />,
+							},
+						}
+					) }
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
@@ -153,13 +168,18 @@ class ScanPage extends Component< Props > {
 				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 				{ isInitialScan && (
 					<p>
-						Welcome to Jetpack Scan, we are taking a first look at your site now and the results
-						will be with you soon.
+						{ translate(
+							'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
+								'and the results will be with you soon.'
+						) }
 					</p>
 				) }
 				<p>
-					We will send you an email once the scan completes, in the meantime feel free to continue
-					to use your site as normal, you can check back on progress at any time.
+					{ translate(
+						'We will send you an email once the scan completes, in the meantime feel ' +
+							'free to continue to use your site as normal, you can check back on ' +
+							'progress at any time.'
+					) }
 				</p>
 			</>
 		);
@@ -171,9 +191,11 @@ class ScanPage extends Component< Props > {
 				<SecurityIcon icon="scan-error" />
 				{ this.renderHeader( translate( 'Something went wrong' ) ) }
 				<p>
-					The scan was unable to process the themes directory and did not completed successfully. In
-					order to complete the scan you will need to speak to support who can help determine what
-					went wrong.
+					{ translate(
+						'The scan was unable to process the themes directory and did not complete ' +
+							'successfully. In order to complete the scan you will need ' +
+							'to speak to support who can help determine what went wrong.'
+					) }
 				</p>
 				{ this.renderContactSupportButton() }
 			</>
@@ -233,7 +255,10 @@ class ScanPage extends Component< Props > {
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
-					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
+					noticeText={ translate(
+						'Failing to plan is planning to fail. Regular backups ensure that should ' +
+							'the worst happen, you are prepared. Jetpack Backup has you covered.'
+					) }
 					noticeLink="https://jetpack.com/upgrade/backup"
 				/>
 			</Main>
