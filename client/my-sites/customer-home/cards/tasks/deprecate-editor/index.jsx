@@ -21,7 +21,7 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import blockEditorImage from 'assets/images/illustrations/block-editor.svg';
+import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
