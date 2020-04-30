@@ -43,11 +43,11 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 				)
 			) }
 			actionText={ translate( 'Try it now' ) }
-			actionCallback={ actionCallback }
+			actionOnClick={ actionCallback }
 			illustration={ blockEditorImage }
-			chipText={ translate( "What's new?" ) }
+			badgeText={ translate( "What's new" ) }
 			taskId="deprecate-editor"
-			skippable={ false }
+			areSkipOptionsEnabled={ false }
 			dismissable={ true }
 		/>
 	);
