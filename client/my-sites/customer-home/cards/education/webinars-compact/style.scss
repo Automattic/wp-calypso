@@ -1,14 +1,14 @@
-.webinars {
+.webinars-compact {
 	@include breakpoint( '>960px' ) {
 		.card-heading {
 			margin-bottom: 0;
 		}
 
-		.webinars__content {
+		.webinars-compact__content {
 			display: flex;
 		}
 
-		.webinars__illustration {
+		.webinars-compact__illustration {
 			margin-left: 12px;
 			width: 25%;
 		}
