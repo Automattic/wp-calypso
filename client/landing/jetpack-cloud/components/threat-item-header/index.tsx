@@ -18,7 +18,7 @@ interface Props {
 
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
-const ThreatItemHeader = ( { threat, isStyled = true }: Props ) => {
+const ThreatItemHeader = ( { threat, isStyled = true }: Props ): i18nCalypso.TranslateResult => {
 	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
 
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';

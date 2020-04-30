@@ -14,6 +14,8 @@ import FixAllThreatsDialog from 'landing/jetpack-cloud/components/fix-all-threat
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
+import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
+import ThreatItemSubheader from 'landing/jetpack-cloud/components/threat-item-subheader';
 import {
 	FixableThreat,
 	Threat,
@@ -183,6 +185,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
 						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
+						header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
+						subheader={ <ThreatItemSubheader threat={ threat } /> }
 					/>
 				) ) }
 			</div>

@@ -12,11 +12,7 @@ import { Button } from '@automattic/components';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
-import {
-	getThreatType,
-	getThreatFix,
-	getThreatVulnerability,
-} from 'landing/jetpack-cloud/components/threat-item/utils';
+import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 
 /**
  * Style dependencies
@@ -30,6 +26,7 @@ interface Props {
 	isFixing: boolean;
 	contactSupportUrl?: string;
 	header: string | ReactElement | i18nCalypso.TranslateResult;
+	subheader: string | ReactElement | i18nCalypso.TranslateResult;
 }
 
 const ThreatItem: FunctionComponent< Props > = ( {
@@ -39,6 +36,7 @@ const ThreatItem: FunctionComponent< Props > = ( {
 	isFixing,
 	contactSupportUrl,
 	header,
+	subheader,
 } ) => {
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
@@ -62,19 +60,6 @@ const ThreatItem: FunctionComponent< Props > = ( {
 		},
 		[ isFixing, onFixThreat ]
 	);
-
-	const getSubHeader = React.useCallback( (): string | i18nCalypso.TranslateResult => {
-		switch ( getThreatType( threat ) ) {
-			case 'file':
-				return translate( 'Threat found %(signature)s', {
-					args: {
-						signature: <span className="threat-item__alert-signature">{ threat.signature }</span>,
-					},
-				} );
-			default:
-				return getThreatVulnerability( threat );
-		}
-	}, [ threat ] );
 
 	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
@@ -104,7 +89,7 @@ const ThreatItem: FunctionComponent< Props > = ( {
 		<LogItem
 			className="threat-item"
 			header={ header }
-			subheader={ getSubHeader() }
+			subheader={ subheader }
 			{ ...( isFixable ? { summary: renderFixThreatButton( 'is-summary' ) } : {} ) }
 			{ ...( isFixable ? { expandedSummary: renderFixThreatButton( 'is-summary' ) } : {} ) }
 			key={ threat.id }
