@@ -66,6 +66,11 @@
 		input[type='text'].components-text-control__input {
 			height: 44px;
 		}
+
+	// Don't show close button & more button when inside a modal.
+	.domain-picker__close-button,
+	.domain-picker__more-button {
+		display: none;
 	}
 
 	// Increase specificity

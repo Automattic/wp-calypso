@@ -25,6 +25,7 @@ import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import DomainCategories from '../domain-categories';
+import CloseButton from '../close-button';
 
 /**
  * Style dependencies
@@ -50,6 +51,8 @@ export interface Props {
 	 */
 	onClose: () => void;
 
+	onMoreOptions?: () => void;
+
 	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 
 	/**
@@ -65,6 +68,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onClose,
+	onMoreOptions,
 	currentDomain,
 	recordAnalytics,
 } ) => {
@@ -154,6 +158,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 						</div>
 						<ConfirmButton />
+						<CloseButton
+							className="domain-picker__close-button"
+							onClick={ onClose }
+							tabIndex={ -1 }
+						/>
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
@@ -214,6 +223,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				</PanelRow>
 				<PanelRow className="domain-picker__panel-row-footer">
 					<div className="domain-picker__footer">
+						<Button className="domain-picker__more-button" isTertiary onClick={ onMoreOptions }>
+							{ __( 'More Options' ) }
+						</Button>
 						<ConfirmButton />
 					</div>
 				</PanelRow>
