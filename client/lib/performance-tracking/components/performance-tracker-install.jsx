@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import config from 'config';
 
-const performanceTrackerInstall = ( { nonce } ) => {
+const PerformanceTrackerInstall = ( { nonce } ) => {
 	const serviceId = config( 'speedcurve_id' );
 	if ( ! config.isEnabled( 'rum-tracking/speedcurve' ) || ! serviceId ) return null;
 
@@ -36,8 +35,8 @@ const performanceTrackerInstall = ( { nonce } ) => {
 	);
 };
 
-performanceTrackerInstall.propTypes = {
-	nonce: PropTypes.string,
+PerformanceTrackerInstall.propTypes = {
+	nonce: PropTypes.string.isRequired,
 };
 
-export default performanceTrackerInstall;
+export default PerformanceTrackerInstall;
