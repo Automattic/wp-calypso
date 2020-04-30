@@ -73,6 +73,18 @@ const skipTask = ( dispatch, task, siteId ) => {
 	);
 };
 
+const trackTaskDisplay = ( dispatch, task, siteId ) => {
+	dispatch(
+		recordTracksEvent( 'calypso_checklist_task_display', {
+			checklist_name: 'new_blog',
+			site_id: siteId,
+			step_name: task.id,
+			completed: task.isCompleted,
+			location: 'home',
+		} )
+	);
+};
+
 const SiteSetupList = ( {
 	emailVerificationStatus,
 	isEmailUnverified,
@@ -129,6 +141,7 @@ const SiteSetupList = ( {
 				userEmail,
 			} );
 			setCurrentTask( newCurrentTask );
+			trackTaskDisplay( dispatch, newCurrentTask, siteId );
 		}
 	}, [ currentTaskId ] );
 
@@ -147,7 +160,9 @@ const SiteSetupList = ( {
 						text={ getTask( task ).title }
 						isCompleted={ task.isCompleted }
 						isCurrent={ task.id === currentTask.id }
-						onClick={ () => setCurrentTaskId( task.id ) }
+						onClick={ () => {
+							setCurrentTaskId( task.id );
+						} }
 					/>
 				) ) }
 			</div>
