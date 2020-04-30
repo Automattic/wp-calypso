@@ -19,6 +19,18 @@ import { trackNavigationStart } from 'lib/performance-tracking';
  */
 import './style.scss';
 
+const trackedPage = ( url, controller ) => {
+	page(
+		url,
+		trackNavigationStart( 'stats' ),
+		siteSelection,
+		navigation,
+		controller,
+		makeLayout,
+		clientRender
+	);
+};
+
 export default function () {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
@@ -28,101 +40,21 @@ export default function () {
 		page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
 
 		// Stat Overview Page
-		page(
-			'/stats/day',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/week',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/month',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/year',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/day', statsController.overview );
+		trackedPage( '/stats/week', statsController.overview );
+		trackedPage( '/stats/month', statsController.overview );
+		trackedPage( '/stats/year', statsController.overview );
 
-		page(
-			'/stats/insights',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			sites,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/insights', sites );
 
 		// Stat Insights Page
-		page(
-			'/stats/insights/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.insights,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/insights/:site', statsController.insights );
 
 		// Stat Site Pages
-		page(
-			'/stats/day/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/week/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/month/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/year/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/day/:site', statsController.site );
+		trackedPage( '/stats/week/:site', statsController.site );
+		trackedPage( '/stats/month/:site', statsController.site );
+		trackedPage( '/stats/year/:site', statsController.site );
 
 		const validModules = [
 			'posts',
@@ -145,83 +77,32 @@ export default function () {
 		);
 
 		// Stat Summary Pages
-		page(
+		trackedPage(
 			`/stats/day/:module(${ validModules.join( '|' ) })/:site`,
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
+			statsController.summary
 		);
-		page(
+		trackedPage(
 			`/stats/week/:module(${ validModules.join( '|' ) })/:site`,
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
+			statsController.summary
 		);
-		page(
+		trackedPage(
 			`/stats/month/:module(${ validModules.join( '|' ) })/:site`,
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
+			statsController.summary
 		);
-		page(
+		trackedPage(
 			`/stats/year/:module(${ validModules.join( '|' ) })/:site`,
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
+			statsController.summary
 		);
 
 		// Stat Single Post Page
-		page(
-			'/stats/post/:post_id/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.post,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/page/:post_id/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.post,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/post/:post_id/:site', statsController.post );
+		trackedPage( '/stats/page/:post_id/:site', statsController.post );
 
 		// Stat Follows Page
-		page(
-			'/stats/follows/comment/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.follows,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/follows/comment/:page_num/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.follows,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/follows/comment/:site', statsController.follows );
+		trackedPage( '/stats/follows/comment/:page_num/:site', statsController.follows );
 
+		// Can't convert to trackedPage because it uses `sites` instead of `navigation`
 		page(
 			'/stats/activity',
 			trackNavigationStart( 'stats' ),
@@ -232,24 +113,11 @@ export default function () {
 			clientRender
 		);
 
-		page(
-			'/stats/activity/:site',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			redirectToAcivity,
-			makeLayout,
-			clientRender
-		);
+		trackedPage( '/stats/activity/:site', redirectToAcivity );
 
-		page(
+		trackedPage(
 			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			navigation,
-			statsController.wordAds,
-			makeLayout,
-			clientRender
+			statsController.wordAds
 		);
 
 		// Anything else should redirect to default WordAds stats page
