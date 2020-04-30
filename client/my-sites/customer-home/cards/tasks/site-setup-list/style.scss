@@ -69,11 +69,12 @@
 		box-shadow: none;
 		margin: 0;
 		padding: 40px;
+		width: calc( 100% - 328px );
 	}
 
 	.site-setup-list__badge {
 		background-color: var( --color-neutral );
-		color: var( --color-text-inverted );	
+		color: var( --color-text-inverted );
 	}
 }
 
