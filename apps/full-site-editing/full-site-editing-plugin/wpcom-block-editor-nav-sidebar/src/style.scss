@@ -1,5 +1,6 @@
 $sidebarWidth: 272px;
 $headerHeight: 56px;
+$border: 1px solid #e2e4e7;
 
 .is-wpcom-block-editor-nav-sidebar-attached {
 	transition: margin-left 500ms;
@@ -15,7 +16,7 @@ $headerHeight: 56px;
 	left: -$sidebarWidth;
 	bottom: 0;
 	width: $sidebarWidth;
-	border-right: 1px solid #e2e4e7;
+	border-right: $border;
 	transition: left 500ms;
 }
 
@@ -25,7 +26,23 @@ $headerHeight: 56px;
 
 .wpcom-block-editor-nav-sidebar__header-space {
 	height: $headerHeight;
-	border-bottom: 1px solid #e2e4e7;
+	border-bottom: $border;
+}
+
+.wpcom-block-editor-nav-sidebar__home-button-container {
+	border-bottom: $border;
+}
+
+.wpcom-block-editor-nav-sidebar__home-button {
+	height: 46px;
+	width: 100%;
+	font-weight: 600;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.wpcom-block-editor-nav-sidebar__home-button:hover {
+	text-decoration: underline;
 }
 
 .wpcom-block-editor-nav-sidebar__page-list {
