@@ -53,6 +53,8 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { localizeUrl } from 'lib/i18n-utils';
 
+import 'state/form/init';
+
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = ( a ) => Array.isArray( a ) && a.length === 0;
 

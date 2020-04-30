@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import requestExternalAccess from 'lib/sharing';
 import { listMembershipsConnectedAccounts } from '../actions';
 import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'state/action-types';
 import { change } from 'redux-form';
+
+import 'state/form/init';
 
 export function authorizeStripeAccount() {
 	return ( dispatch ) => {
