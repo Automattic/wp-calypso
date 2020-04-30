@@ -4,7 +4,7 @@
 import React, { useRef, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
-import { Button } from '@automattic/components';
+import { Button, Badge } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 
@@ -38,11 +38,10 @@ const Task = ( {
 	actionOnClick,
 	actionText,
 	actionUrl,
-	chipText,
+	badgeText,
 	description,
 	illustration,
-	dismissable,
-	skippable = true,
+	areSkipOptionsEnabled = true,
 	siteId,
 	taskId,
 	timing,
@@ -121,7 +120,7 @@ const Task = ( {
 							<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
 						</div>
 					) }
-					{ chipText && <div className="task__chip">{ chipText }</div> }
+					{ badgeText && <Badge className="task__badge">{ badgeText }</Badge> }
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
@@ -129,19 +128,18 @@ const Task = ( {
 							{ actionText }
 						</Button>
 
-						{ skippable && (
-							<Button
-								className="task__skip is-link"
-								ref={ skipButtonRef }
-								onClick={ () => {
-									setSkipOptionsVisible( true );
-								} }
-							>
-								{ translate( 'Remind me' ) }
-								<Gridicon icon="dropdown" size={ 18 } />
-							</Button>
-						) }
-						{ skippable && areSkipOptionsVisible && (
+						<Button
+							className="task__skip is-link"
+							ref={ skipButtonRef }
+							onClick={ () =>
+								areSkipOptionsEnabled ? setSkipOptionsVisible( true ) : skipTask( 'never' )
+							}
+						>
+							{ areSkipOptionsEnabled ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
+							{ areSkipOptionsEnabled && <Gridicon icon="dropdown" size={ 18 } /> }
+						</Button>
+
+						{ areSkipOptionsEnabled && areSkipOptionsVisible && (
 							<PopoverMenu
 								context={ skipButtonRef.current }
 								isVisible={ areSkipOptionsVisible }
@@ -159,11 +157,6 @@ const Task = ( {
 									{ translate( 'Never' ) }
 								</PopoverMenuItem>
 							</PopoverMenu>
-						) }
-						{ dismissable && (
-							<Button className="task__dismiss is-link" onClick={ () => skipTask( 'never' ) }>
-								{ translate( 'Dismiss' ) }
-							</Button>
 						) }
 					</ActionPanelCta>
 				</div>

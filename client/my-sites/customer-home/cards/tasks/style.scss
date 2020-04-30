@@ -68,10 +68,6 @@
 }
 
 .task__chip {
-	background-color: var( --color-neutral-80 );
-	width: fit-content;
-	border-radius: 12px;
-	padding: 2px 8px;
+	background-color: var( --studio-gray-8 );
 	color: var( --color-text-inverted );
-	margin-bottom: 16px;
 }
