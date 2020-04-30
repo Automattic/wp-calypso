@@ -8,9 +8,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from '../task';
-import webinarIllustration from 'assets/images/customer-home/illustration-webinars.svg';
+import webinarsIllustration from 'assets/images/customer-home/illustration-webinars.svg';
 
-const Webinar = () => {
+const Webinars = () => {
 	const translate = useTranslate();
 
 	return (
@@ -24,11 +24,11 @@ const Webinar = () => {
 			actionOnClick={ () => {
 				window.open( 'https://wordpress.com/webinars/', '_blank' );
 			} }
-			illustration={ webinarIllustration }
+			illustration={ webinarsIllustration }
 			timing={ 2 }
 			taskId="webinar"
 		/>
 	);
 };
 
-export default Webinar;
+export default Webinars;
