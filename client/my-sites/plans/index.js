@@ -12,87 +12,21 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { trackNavigationStart } from 'lib/performance-tracking';
 
+const trackedPage = ( url, ...rest ) => {
+	page( url, trackNavigationStart( 'plans' ), ...rest, makeLayout, clientRender );
+};
+
 export default function () {
-	page( '/plans', trackNavigationStart( 'plans' ), siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/plans/compare',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/compare/:domain',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/features',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/features/:domain',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/features/:feature/:domain',
-		trackNavigationStart( 'plans' ),
-		features,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/my-plan',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		sites,
-		navigation,
-		currentPlan,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/my-plan/:site',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		currentPlan,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/select/:plan/:domain',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		redirectToCheckout,
-		makeLayout,
-		clientRender
-	);
+	trackedPage( '/plans', siteSelection, sites );
+	trackedPage( '/plans/compare', siteSelection, navigation, redirectToPlans );
+	trackedPage( '/plans/compare/:domain', siteSelection, navigation, redirectToPlans );
+	trackedPage( '/plans/features', siteSelection, navigation, redirectToPlans );
+	trackedPage( '/plans/features/:domain', siteSelection, navigation, redirectToPlans );
+	trackedPage( '/plans/features/:feature/:domain', features );
+	trackedPage( '/plans/my-plan', siteSelection, sites, navigation, currentPlan );
+	trackedPage( '/plans/my-plan/:site', siteSelection, navigation, currentPlan );
+	trackedPage( '/plans/select/:plan/:domain', siteSelection, redirectToCheckout );
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
-	page(
-		'/plans/:intervalType?/:site',
-		trackNavigationStart( 'plans' ),
-		siteSelection,
-		navigation,
-		plans,
-		makeLayout,
-		clientRender
-	);
+	trackedPage( '/plans/:intervalType?/:site', siteSelection, navigation, plans );
 }
