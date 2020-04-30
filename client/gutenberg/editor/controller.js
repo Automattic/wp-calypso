@@ -153,7 +153,9 @@ export const redirect = async ( context, next ) => {
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
 
-	if ( shouldLoadGutenberg( state, siteId ) ) {
+	const trialBlockEditor = get( context.query, 'trial-editor' );
+
+	if ( shouldLoadGutenberg( state, siteId ) || parseInt( trialBlockEditor ) === 1 ) {
 		return next();
 	}
 

@@ -184,7 +184,9 @@ async function redirectIfBlockEditor( context, next ) {
 		return next();
 	}
 
-	if ( ! shouldLoadGutenberg( state, siteId ) ) {
+	const trialBlockEditor = get( context.query, 'trial-editor' );
+
+	if ( ! shouldLoadGutenberg( state, siteId ) && parseInt( trialBlockEditor ) !== 1 ) {
 		return next();
 	}
 
