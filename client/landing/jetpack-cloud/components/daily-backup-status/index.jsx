@@ -255,17 +255,20 @@ class DailyBackupStatus extends Component {
 		const hoursForNextBackup =
 			parseInt( lastBackupDate.format( 'H' ) ) - parseInt( today.format( 'H' ) ) + 3;
 
+		const nextBackupHoursText =
+			hoursForNextBackup === 1
+				? translate( 'In the next hour' )
+				: translate( 'In the next %d hour', 'In the next %d hours', {
+						args: [ hoursForNextBackup ],
+						count: hoursForNextBackup,
+				  } );
+
 		return (
 			<>
 				<Gridicon className="daily-backup-status__gridicon-backup-scheduled" icon="cloud-upload" />
 				<div className="daily-backup-status__static-title">
 					{ translate( 'Backup Scheduled:' ) }
-					<div>
-						{ translate( 'In the next %d hour', 'In the next %d hours', {
-							args: [ hoursForNextBackup ],
-							count: hoursForNextBackup,
-						} ) }
-					</div>
+					<div>{ nextBackupHoursText }</div>
 				</div>
 				<div className="daily-backup-status__no-backup-last-backup">
 					{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
