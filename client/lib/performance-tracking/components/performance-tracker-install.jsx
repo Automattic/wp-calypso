@@ -36,7 +36,7 @@ const PerformanceTrackerInstall = ( { nonce } ) => {
 };
 
 PerformanceTrackerInstall.propTypes = {
-	nonce: PropTypes.string.isRequired,
+	nonce: PropTypes.string,
 };
 
 export default PerformanceTrackerInstall;
