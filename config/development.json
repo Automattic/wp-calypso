@@ -70,6 +70,7 @@
 		"gutenboarding/domain-picker-modal": true,
 		"help": true,
 		"help/courses": true,
+		"home/experimental-layout": true,
 		"inline-help": true,
 		"i18n/community-translator": false,
 		"i18n/translation-scanner": true,
