@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # sed -i behaves differently between macos and linux platforms.
 # See https://stackoverflow.com/a/51060063
 # To use this, do `sed "${sedi[@]}" -e $sed_expression`

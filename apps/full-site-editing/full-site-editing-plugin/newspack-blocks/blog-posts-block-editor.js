@@ -33,4 +33,5 @@ registerBlockType( blockName, {
 	title: __( 'Blog Posts', 'full-site-editing' ),
 	category: 'layout',
 } );
+
 registerQueryStore( blockName );
