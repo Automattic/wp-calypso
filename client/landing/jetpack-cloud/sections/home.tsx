@@ -14,6 +14,8 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getPrimarySiteIsJetpack from 'state/selectors/get-primary-site-is-jetpack';
 import config from 'config';
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
+import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
+import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
 
 type Props = {
 	siteId?: number | null;
@@ -59,18 +61,21 @@ function Home( props: Props ) {
 }
 
 export default connect( ( state ) => {
-	if ( ! getPrimarySiteIsJetpack( state ) ) {
+	const siteId = getPrimarySiteId( state );
+	if (
+		! siteId ||
+		! getPrimarySiteIsJetpack( state ) ||
+		isSiteAtomic( state, siteId ) ||
+		isJetpackSiteMultiSite( state, siteId ) // TODO: Remove once multisites become Rewind compatible.
+	) {
 		return {
 			siteId: null,
 		};
 	}
-	const siteId = getPrimarySiteId( state );
-	const siteSlug = getPrimarySiteSlug( state );
-	const siteCapabilities = getRewindCapabilities( state, siteId );
 
 	return {
 		siteId,
-		siteSlug,
-		siteCapabilities,
+		siteSlug: getPrimarySiteSlug( state ),
+		siteCapabilities: getRewindCapabilities( state, siteId ),
 	};
 } )( Home );
