@@ -106,6 +106,7 @@ export class Checkout extends React.Component {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
 		isJetpackNotAtomic: PropTypes.bool,
+		returnToBlockEditor: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 		loadTrackingTool: PropTypes.func.isRequired,
 	};
@@ -312,7 +313,7 @@ export class Checkout extends React.Component {
 	}
 
 	redirectIfEmptyCart() {
-		const { selectedSiteSlug, transaction } = this.props;
+		const { selectedSiteSlug, transaction, returnToBlockEditor } = this.props;
 
 		if ( ! transaction ) {
 			return true;
@@ -342,6 +343,11 @@ export class Checkout extends React.Component {
 		}
 
 		let redirectTo = '/plans/';
+
+		if ( returnToBlockEditor ) {
+			page.redirect( `/block-editor/page/${ selectedSiteSlug }/home` );
+			return true;
+		}
 
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl(
