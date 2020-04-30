@@ -70,6 +70,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 } ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
+	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const { domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
@@ -135,7 +136,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ allSuggestions, currentDomain ] );
 
-	useTrackModal( 'DomainPicker' );
+	useTrackModal( 'DomainPicker', () => ( {
+		selected_domain: getSelectedDomain()?.domain_name,
+	} ) );
 
 	return (
 		<Panel className="domain-picker">

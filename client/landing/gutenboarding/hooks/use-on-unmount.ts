@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, DependencyList } from 'react';
+import { useEffect } from 'react';
 
 /**
  * The user can either leave the page by navigating within the react app, or with browser navigation
@@ -9,9 +9,8 @@ import { useEffect, DependencyList } from 'react';
  * https://angelos.dev/2019/05/custom-react-hook-to-prevent-window-unload/
  *
  * @param onUnmount The function to be called when the component is unmounted
- * @param deps The react dependencies to be passed in to useEffect
  **/
-export const useOnUnmount = ( onUnmount: () => void, deps?: DependencyList ) => {
+export const useOnUnmount = ( onUnmount: () => void ) => {
 	const onUnload = () => {
 		onUnmount();
 	};
@@ -24,5 +23,5 @@ export const useOnUnmount = ( onUnmount: () => void, deps?: DependencyList ) => 
 			onUnload();
 			window.removeEventListener( 'beforeunload', onUnload );
 		};
-	}, deps );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 };

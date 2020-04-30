@@ -26,10 +26,16 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+	const { getSelectedVertical, getSelectedSiteTitle } = useSelect( ( select ) =>
+		select( STORE_KEY )
+	);
+
 	const { siteVertical, siteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
+
 	const makePath = usePath();
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
@@ -41,7 +47,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 		setIsSiteTitleActive( true );
 	};
 
-	useTrackStep( 'IntentGathering' );
+	useTrackStep( 'IntentGathering', () => ( {
+		selected_vertical: getSelectedVertical()?.slug,
+		selected_site_title: getSelectedSiteTitle(),
+	} ) );
 
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'I donʼt know' );
