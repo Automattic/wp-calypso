@@ -1,9 +1,14 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
 import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
 import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
-import debugFactory from 'debug';
+import type { CartItemExtra } from 'lib/cart-values/types';
 
 const debug = debugFactory( 'calypso:transaction-endpoint' );
 
@@ -43,7 +48,7 @@ export type WPCOMTransactionEndpointCart = {
 		meta?: string;
 		currency: string;
 		volume: number;
-		extra?: object;
+		extra?: CartItemExtra;
 	}[];
 	tax: {
 		location: {
