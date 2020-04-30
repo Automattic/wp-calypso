@@ -11,10 +11,13 @@ import { STORE_KEY } from './constants';
 import type { Page } from './store';
 
 export default function WpcomBlockEditorNavSidebar() {
-	const pages = useSelect( ( select ) => select( STORE_KEY ).getPages() );
+	const [ pages, isOpen ] = useSelect( ( select ) => [
+		select( STORE_KEY ).getPages(),
+		select( STORE_KEY ).isSidebarOpened(),
+	] );
 
 	return (
-		<div className="wpcom-block-editor-nav-sidebar__container">
+		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
 			<div className="wpcom-block-editor-nav-sidebar__header-space" />
 			<ul className="wpcom-block-editor-nav-sidebar__page-list">
 				{ pages.map( ( page ) => (

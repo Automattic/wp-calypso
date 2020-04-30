@@ -1,6 +1,10 @@
 $sidebarWidth: 272px;
 $headerHeight: 56px;
 
+.is-wpcom-block-editor-nav-sidebar-attached {
+	transition: margin-left 500ms;
+}
+
 .is-wpcom-block-editor-nav-sidebar-opened {
 	margin-left: $sidebarWidth;
 }
@@ -8,10 +12,15 @@ $headerHeight: 56px;
 .wpcom-block-editor-nav-sidebar__container {
 	position: fixed;
 	top: 0;
-	left: 0;
+	left: -$sidebarWidth;
 	bottom: 0;
 	width: $sidebarWidth;
 	border-right: 1px solid #e2e4e7;
+	transition: left 500ms;
+}
+
+.wpcom-block-editor-nav-sidebar__container:not( [aria-hidden=true] ) {
+	left: 0;
 }
 
 .wpcom-block-editor-nav-sidebar__header-space {

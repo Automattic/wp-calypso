@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { select } from '@wordpress/data';
-import React, { render, unmountComponentAtNode } from '@wordpress/element';
+import { dispatch, select, subscribe } from '@wordpress/data';
+import React, { render } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -53,32 +53,35 @@ async function attachSidebar() {
 		return;
 	}
 
+	editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-attached' );
+
 	closePostButton.addEventListener( 'click', ( ev ) => {
 		ev.preventDefault();
-		toggleSidebar( editorLayoutContainer );
+		dispatch( STORE_KEY ).toggleSidebar();
 	} );
+
+	let sidebarExpanded = false;
+	subscribe( () => {
+		const newSidebarState = select( STORE_KEY ).isSidebarOpened();
+		if ( sidebarExpanded === newSidebarState ) {
+			return;
+		}
+
+		sidebarExpanded = newSidebarState;
+
+		if ( sidebarExpanded ) {
+			editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-opened' );
+		} else {
+			editorLayoutContainer.classList.remove( 'is-wpcom-block-editor-nav-sidebar-opened' );
+		}
+	} );
+
+	const sidebarContainer = document.createElement( 'div' );
+	document.body.appendChild( sidebarContainer );
+	render( <WpcomBlockEditorNavSidebar />, sidebarContainer );
 
 	// Start resolving page data
 	select( STORE_KEY ).getPages();
-}
-
-let sidebarExpanded = false;
-let sidebarContainer: HTMLDivElement;
-
-function toggleSidebar( editorLayoutContainer: HTMLElement ) {
-	if ( sidebarExpanded ) {
-		editorLayoutContainer.classList.remove( 'is-wpcom-block-editor-nav-sidebar-opened' );
-		unmountComponentAtNode( sidebarContainer );
-		sidebarContainer.parentNode?.removeChild( sidebarContainer );
-	} else {
-		editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-opened' );
-		sidebarContainer = document.createElement( 'div' );
-		document.body.appendChild( sidebarContainer );
-
-		render( <WpcomBlockEditorNavSidebar />, sidebarContainer );
-	}
-
-	sidebarExpanded = ! sidebarExpanded;
 }
 
 attachSidebar();

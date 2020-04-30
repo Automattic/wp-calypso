@@ -10,9 +10,17 @@ const receivePageListFailed = ( error: object ) =>
 		error,
 	} as const );
 
+const toggleSidebar = () =>
+	( {
+		type: 'TOGGLE_SIDEBAR',
+	} as const );
+
 export const actions = {
 	receivePageList,
 	receivePageListFailed,
+	toggleSidebar,
 };
 
-export type Action = ReturnType< typeof receivePageList | typeof receivePageListFailed >;
+export type Action = ReturnType<
+	typeof receivePageList | typeof receivePageListFailed | typeof toggleSidebar
+>;

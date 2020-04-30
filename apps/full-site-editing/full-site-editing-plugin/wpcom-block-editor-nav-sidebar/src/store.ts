@@ -21,6 +21,16 @@ export interface Page {
 	title: string;
 }
 
+const opened: Reducer< boolean, Action > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'TOGGLE_SIDEBAR':
+			return ! state;
+
+		default:
+			return state;
+	}
+};
+
 const pages: Reducer< Page[], Action > = ( state = [], action ) => {
 	switch ( action.type ) {
 		case 'RECEIVE_PAGE_LIST':
@@ -36,7 +46,7 @@ const pages: Reducer< Page[], Action > = ( state = [], action ) => {
 	}
 };
 
-const reducer = combineReducers( { pages } );
+const reducer = combineReducers( { opened, pages } );
 
 type State = ReturnType< typeof reducer >;
 
@@ -58,6 +68,7 @@ const resolvers = {
 
 const selectors = {
 	getPages: ( state: State ) => state.pages,
+	isSidebarOpened: ( state: State ) => state.opened,
 };
 
 registerStore( STORE_KEY, {
