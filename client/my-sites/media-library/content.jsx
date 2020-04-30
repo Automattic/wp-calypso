@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
@@ -269,7 +269,7 @@ export class MediaLibraryContent extends React.Component {
 
 	recordPlansNavigation( tracksEvent, tracksData ) {
 		gaRecordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( tracksEvent, tracksData );
+		recordTracksEvent( tracksEvent, tracksData );
 	}
 
 	goToSharing = ( ev ) => {

@@ -20,8 +20,30 @@ class FreeDomainExplainer extends React.Component {
 
 		this.props.onSkip( undefined, hideFreePlan );
 	};
+
+	renderCustomDomainExplainer() {
+		return (
+			<div className="free-domain-explainer card is-compact">
+				<header>
+					<h1 className="free-domain-explainer__title">All our custom domains need a paid plan.</h1>
+					<p className="free-domain-explainer__subtitle">
+						That's why we'll pay the registration fees for your new domain when you choose a paid
+						plan during the next step.
+					</p>
+					<p className="free-domain-explainer__subtitle">
+						You can always claim your free custom domain later if you aren't ready yet.
+					</p>
+				</header>
+			</div>
+		);
+	}
+
 	render() {
-		const { translate } = this.props;
+		const { showFreeDomainExplainerForFreePlan, translate } = this.props;
+
+		if ( showFreeDomainExplainerForFreePlan ) {
+			return this.renderCustomDomainExplainer();
+		}
 
 		return (
 			<div className="free-domain-explainer card is-compact">

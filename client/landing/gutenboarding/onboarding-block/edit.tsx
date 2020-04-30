@@ -23,7 +23,7 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( ( select ) =>
+	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
@@ -48,7 +48,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
-					{ ! siteVertical ? (
+					{ ! siteVertical && ! siteTitle && ! wasVerticalSkipped ? (
 						<Redirect to={ makePath( Step.IntentGathering ) } />
 					) : (
 						<DesignSelector />

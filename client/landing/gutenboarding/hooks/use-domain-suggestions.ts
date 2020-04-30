@@ -1,32 +1,43 @@
 /**
  * External dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
+import { useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { USER_STORE } from '../stores/user';
 import { DOMAIN_SUGGESTION_VENDOR, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
+import { domainTldsByCategory } from '../domains-constants';
 
 export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
-	const { siteTitle, siteVertical, domainSearch } = useSelect( ( select ) =>
+	const { __ } = useI18n();
+	const { siteTitle, siteVertical, domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const currentStep = useCurrentStep();
 	const prioritisedSearch = searchOverride.trim() || domainSearch.trim() || siteTitle;
 	let searchVal;
 
 	if ( currentStep !== 'IntentGathering' ) {
-		searchVal = prioritisedSearch || siteVertical?.label.trim() || '';
+		searchVal =
+			prioritisedSearch ||
+			siteVertical?.label.trim() ||
+			currentUser?.username ||
+			__( 'My new site' );
 	} else {
 		searchVal = prioritisedSearch || '';
 	}
 
 	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
+
+	const tlds = domainCategory && domainTldsByCategory[ domainCategory ];
 
 	return useSelect(
 		( select ) => {
@@ -39,9 +50,10 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 				include_dotblogsubdomain: false,
 				locale,
 				vendor: DOMAIN_SUGGESTION_VENDOR,
-				...{ vertical: siteVertical?.id },
+				...( siteVertical && { vertical: siteVertical?.id } ),
+				...( tlds && { tlds } ),
 			} );
 		},
-		[ searchTerm, siteVertical ]
+		[ searchTerm, siteVertical, tlds ]
 	);
 }

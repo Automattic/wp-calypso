@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,16 +12,16 @@ import Badge from 'components/badge';
 
 interface Props {
 	numberOfThreatsFound: number;
-	progress: number;
+	progress?: number;
 }
 
 const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress } ) => {
 	const translate = useTranslate();
-	if ( ! numberOfThreatsFound && ! progress ) {
+	if ( ! numberOfThreatsFound && ! isNumber( progress ) ) {
 		return null;
 	}
 
-	if ( progress ) {
+	if ( isNumber( progress ) ) {
 		return (
 			<Badge type="success">
 				{ translate( '%(number)d %', {

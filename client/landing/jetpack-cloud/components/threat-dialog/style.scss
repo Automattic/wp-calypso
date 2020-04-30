@@ -22,7 +22,7 @@
 		}
 
 		&__threat-title {
-			font-weight: bold;
+			font-weight: 600;
 			margin: 8px 0;
 		}
 
@@ -33,6 +33,7 @@
 
 		&__warning {
 			display: flex;
+			margin-top: 26px;
 		}
 
 		&__warning-icon {

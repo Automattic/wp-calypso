@@ -12,6 +12,7 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
 import ScanHistoryItem from 'landing/jetpack-cloud/components/scan-history-item';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -67,9 +68,10 @@ class ScanHistoryPage extends Component {
 		const { value: filter } = this.getCurrentFilter();
 		return (
 			<Main className="history">
-				<QueryJetpackScanHistory siteId={ this.props.siteId } />
 				<DocumentHead title={ translate( 'History' ) } />
 				<SidebarNavigation />
+				<QueryJetpackScanHistory siteId={ this.props.siteId } />
+				<PageViewTracker path="/scan/history/:site" title="Scan History" />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
 				<p className="history__description">
 					{ translate(

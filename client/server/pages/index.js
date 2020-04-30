@@ -328,7 +328,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
-			config.isEnabled( 'use-translation-chunks' ) || flags.includes( 'use-translation-chunks' ),
+			config.isEnabled( 'use-translation-chunks' ) ||
+			flags.includes( 'use-translation-chunks' ) ||
+			request.query.hasOwnProperty( 'useTranslationChunks' ),
 	} );
 
 	context.app = {
@@ -386,12 +388,46 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+function setUpLocalLanguageRevisions( req ) {
+	const target = getBuildTargetFromRequest( req );
+	const rootPath = path.join( __dirname, '..', '..', '..' );
+	const langRevisionsPath = path.join(
+		rootPath,
+		'public',
+		target,
+		'languages',
+		'lang-revisions.json'
+	);
+	const langPromise = fs.promises
+		.readFile( langRevisionsPath, 'utf8' )
+		.then( ( languageRevisions ) => {
+			req.context.languageRevisions = JSON.parse( languageRevisions );
+
+			return languageRevisions;
+		} )
+		.catch( ( error ) => {
+			console.error( 'Failed to read the language revision files.', error );
+
+			throw error;
+		} );
+
+	return langPromise;
+}
+
 function setUpLoggedOutRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	next();
+	const setupRequests = [];
+
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	}
+
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( ( error ) => next( error ) );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
@@ -403,30 +439,8 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const setupRequests = [];
 
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		const target = getBuildTargetFromRequest( req );
-		const rootPath = path.join( __dirname, '..', '..', '..' );
-		const langRevisionsPath = path.join(
-			rootPath,
-			'public',
-			target,
-			'languages',
-			'lang-revisions.json'
-		);
-		const langPromise = fs.promises
-			.readFile( langRevisionsPath, 'utf8' )
-			.then( ( languageRevisions ) => {
-				req.context.languageRevisions = languageRevisions;
-
-				return languageRevisions;
-			} )
-			.catch( ( error ) => {
-				console.error( 'Failed to read the language revision files.', error );
-
-				throw error;
-			} );
-
-		setupRequests.push( langPromise );
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	} else {
 		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
 		const langPromise = superagent

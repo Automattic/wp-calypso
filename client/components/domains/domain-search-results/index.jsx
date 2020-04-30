@@ -257,6 +257,7 @@ class DomainSearchResults extends React.Component {
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 				/>
 			);
 
@@ -282,6 +283,7 @@ class DomainSearchResults extends React.Component {
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 					/>
 				);
 			} );

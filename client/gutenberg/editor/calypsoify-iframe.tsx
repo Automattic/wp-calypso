@@ -302,7 +302,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
+				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteId }&source=editor`,
 			} );
 		}
 

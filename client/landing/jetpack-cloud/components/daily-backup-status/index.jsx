@@ -76,10 +76,9 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, siteSlug, translate } = this.props;
+		const { allowRestore, hasRealtimeBackups, siteSlug, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
-
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
 		return (
@@ -95,7 +94,7 @@ class DailyBackupStatus extends Component {
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
 				/>
-				{ this.renderBackupDetails( backup ) }
+				{ hasRealtimeBackups && this.renderBackupDetails( backup ) }
 			</>
 		);
 	}

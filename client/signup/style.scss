@@ -298,7 +298,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 }
 
 // Background color and plans grid overrides for new flow
-body.is-section-signup.is-frankenflow {
+body.is-section-signup.is-new-launch-flow {
 	background: var( --color-white );
 
 	.signup-header {
@@ -321,7 +321,7 @@ body.is-section-signup.is-frankenflow {
 		}
 	}
 
-	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+	.flow-progress-indicator.flow-progress-indicator__new-launch {
 		color: var( --color-text );
 	}
 
@@ -371,7 +371,7 @@ body.is-section-signup.is-frankenflow {
 }
 
 // Text and heading color override for new flow
-body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
 	&.gravatar .formatted-header, .formatted-header {
 		.formatted-header__title {
 			color: var( --color-text );

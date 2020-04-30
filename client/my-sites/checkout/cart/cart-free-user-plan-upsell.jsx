@@ -130,7 +130,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 	addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
-		addItem( planCartItem );
+		this.props.addItemToCart( planCartItem );
 		this.props.clickUpsellAddToCart();
 	};
 
@@ -142,9 +142,12 @@ class CartFreeUserPlanUpsell extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<SectionHeader className="cart__header" label={ translate( 'Upgrade and save' ) } />
-				<div style={ { padding: '16px' } }>
+			<div className="cart__upsell-wrapper">
+				<SectionHeader
+					className="cart__header cart__upsell-header"
+					label={ translate( 'Upgrade and save' ) }
+				/>
+				<div className="cart__upsell-body">
 					<p>{ this.getUpgradeText() }</p>
 					<Button onClick={ this.addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
 				</div>
@@ -154,7 +157,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { cart } ) => {
+const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
@@ -175,6 +178,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		showPlanUpsell: getCurrentUser( state )
 			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
+		addItemToCart: addItemToCart || addItem,
 	};
 };
 

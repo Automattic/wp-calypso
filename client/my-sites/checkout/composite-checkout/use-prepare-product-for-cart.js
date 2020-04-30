@@ -9,14 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	conciergeSessionItem,
-	domainMapping,
-	planItem,
-	themeItem,
-	jetpackProductItem,
-	getRenewalItemFromCartItem,
-} from 'lib/cart-values/cart-items';
+import { getRenewalItemFromCartItem } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import {
@@ -26,6 +19,7 @@ import {
 } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { createItemToAddToCart } from './add-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
 
@@ -43,7 +37,6 @@ export default function usePrepareProductsForCart( {
 		productsForCart: [],
 	} );
 
-	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
 	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } );
@@ -132,6 +125,11 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 			product_id: plan.product_id,
 			isJetpackNotAtomic,
 		} );
+		if ( ! cartProduct ) {
+			debug( 'there is a request to add a plan but creating an item failed', planSlug );
+			setState( { canInitializeCart: true } );
+			return;
+		}
 		debug(
 			'preparing plan that was requested in url',
 			{ planSlug, plan, isJetpackNotAtomic },
@@ -180,6 +178,11 @@ function useAddProductFromSlug( {
 			product_id: product.product_id,
 			isJetpackNotAtomic,
 		} );
+		if ( ! cartProduct ) {
+			debug( 'there is a request to add a product but creating an item failed', productAlias );
+			setState( { canInitializeCart: true } );
+			return;
+		}
 		debug(
 			'preparing product that was requested in url',
 			{ productAlias, isJetpackNotAtomic },
@@ -198,7 +201,7 @@ function useAddProductFromSlug( {
 	] );
 }
 
-function useFetchProductsIfNotLoaded() {
+export function useFetchProductsIfNotLoaded() {
 	const reduxDispatch = useDispatch();
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
@@ -224,70 +227,21 @@ function useFetchPlansIfNotLoaded() {
 	}, [ isFetchingPlans, plans, reduxDispatch ] );
 }
 
+/**
+ * @param {string | null} productAlias - A fake slug like 'theme:ovation'
+ * @returns {string | null} A real slug like 'premium_theme'
+ */
 function getProductSlugFromAlias( productAlias ) {
 	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
 		return 'domain_map';
 	}
+	if ( productAlias?.startsWith?.( 'theme:' ) ) {
+		return 'premium_theme';
+	}
+	if ( productAlias === 'concierge-session' ) {
+		return 'concierge-session';
+	}
 	return null;
-}
-
-/**
- * Create and return an object to be added to the cart
- *
- * @returns ResponseCartProduct | null
- */
-function createItemToAddToCart( {
-	planSlug = null,
-	productAlias = '',
-	product_id = null,
-	isJetpackNotAtomic = false,
-} ) {
-	let cartItem, cartMeta;
-
-	if ( planSlug && product_id ) {
-		debug( 'creating plan product' );
-		cartItem = planItem( planSlug );
-		cartItem.product_id = product_id;
-	}
-
-	if ( productAlias.startsWith( 'theme:' ) ) {
-		debug( 'creating theme product' );
-		cartMeta = productAlias.split( ':' )[ 1 ];
-		cartItem = themeItem( cartMeta );
-	}
-
-	if ( productAlias.startsWith( 'domain-mapping:' ) && product_id ) {
-		debug( 'creating domain mapping product' );
-		cartMeta = productAlias.split( ':' )[ 1 ];
-		cartItem = domainMapping( { domain: cartMeta } );
-		cartItem.product_id = product_id;
-	}
-
-	if ( productAlias.startsWith( 'concierge-session' ) ) {
-		// TODO: prevent adding a conciergeSessionItem if one already exists
-		debug( 'creating concierge product' );
-		cartItem = conciergeSessionItem();
-	}
-
-	if (
-		( productAlias.startsWith( 'jetpack_backup' ) ||
-			productAlias.startsWith( 'jetpack_search' ) ) &&
-		isJetpackNotAtomic
-	) {
-		debug( 'creating jetpack product' );
-		cartItem = jetpackProductItem( productAlias );
-	}
-
-	if ( ! cartItem ) {
-		debug( 'no product created' );
-		return null;
-	}
-
-	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
-
-	cartItem.uuid = 'unknown'; // This must be filled-in later
-
-	return cartItem;
 }
 
 function createRenewalItemToAddToCart( productAlias, productId, purchaseId, selectedSiteSlug ) {

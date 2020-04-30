@@ -26,13 +26,19 @@ import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkou
  * Internal dependencies
  */
 import { requestPlans } from 'state/plans/actions';
-import { computeProductsWithPrices } from 'state/products-list/selectors';
+import {
+	computeProductsWithPrices,
+	getProductsList,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
-import usePrepareProductsForCart from './use-prepare-product-for-cart';
+import usePrepareProductsForCart, {
+	useFetchProductsIfNotLoaded,
+} from './use-prepare-product-for-cart';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -57,6 +63,7 @@ import useCreatePaymentMethods from './use-create-payment-methods';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import createContactValidationCallback from './contact-validation';
+import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -165,6 +172,9 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 	} );
 
+	useFetchProductsIfNotLoaded();
+	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+
 	const {
 		items,
 		tax,
@@ -180,13 +190,15 @@ export default function CompositeCheckout( {
 		errors,
 		subtotal,
 		isLoading: isLoadingCart,
+		isPendingUpdate: isCartPendingUpdate,
 		allowedPaymentMethods: serverAllowedPaymentMethods,
 		variantRequestStatus,
 		variantSelectOverride,
 		responseCart,
+		addItem,
 	} = useShoppingCart(
 		siteSlug,
-		canInitializeCart && ! isLoadingCartSynchronizer,
+		canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsForCart,
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
@@ -245,6 +257,7 @@ export default function CompositeCheckout( {
 		stripe,
 		credits,
 		items,
+		couponItem,
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
@@ -314,6 +327,15 @@ export default function CompositeCheckout( {
 		plan
 	);
 
+	const products = useSelector( ( state ) => getProductsList( state ) );
+
+	// Often products are added using just the product_slug but missing the
+	// product_id; this adds it.
+	const addItemWithEssentialProperties = useCallback(
+		( cartItem ) => addItem( fillInSingleCartItemAttributes( cartItem, products ) ),
+		[ addItem, products ]
+	);
+
 	return (
 		<React.Fragment>
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
@@ -331,6 +353,7 @@ export default function CompositeCheckout( {
 				isLoading={
 					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 				}
+				isValidating={ isCartPendingUpdate }
 			>
 				<WPCheckout
 					removeItem={ removeItem }
@@ -350,7 +373,9 @@ export default function CompositeCheckout( {
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
 					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
 					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>

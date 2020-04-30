@@ -6,12 +6,15 @@
 	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	display: flex;
 	flex-direction: column;
+	margin-top: auto;
+
 	&--with-suggestions {
 		flex-grow: 1;
 	}
 
 	@include break-small {
 		display: block;
+		margin-top: 0;
 	}
 
 	.suggestions__category-heading {
@@ -40,12 +43,10 @@
 .vertical-select__suggestions-wrapper {
 	position: relative;
 	display: block;
-	padding-right: 20px; // prevent arrow overflow on mobile
 	flex: 1;
 
 	@include break-small {
 		display: inline;
-		padding-right: 0;
 	}
 }
 
@@ -65,16 +66,35 @@
 
 .vertical-select__input-wrapper {
 	position: relative;
+
+	&--with-arrow {
+		margin-right: 40px; // make space for absolute positioned arrow
+	}
 }
 
 .vertical-select__placeholder {
+	display: inline-block;
+	width: 100%;
 	color: var( --studio-gray-5 );
-	position: absolute;
-	left: 0;
 
 	@include break-small {
 		width: 400px;
 	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -2px;
+		height: 2px;
+		background-image: linear-gradient( to right, rgba( 238, 238, 238, 1 ), rgba( 238, 238, 238, 0.4 ) );
+	}
+}
+
+/* hide the placeholder when input is not empty */
+.madlib__input:not( :empty ) ~ .vertical-select__placeholder {
+	display: none;
 }
 
 .vertical-select__arrow {

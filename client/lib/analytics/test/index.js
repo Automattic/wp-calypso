@@ -11,7 +11,7 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent, tracksEvents } from 'lib/analytics/tracks';
 import { identifyUser } from 'lib/analytics/identify-user';
 import { initializeAnalytics } from 'lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
@@ -182,12 +182,12 @@ describe( 'Analytics', () => {
 			} );
 
 			test( 'should log error if event name does not match regex', () => {
-				analytics.tracks.recordEvent( 'calypso_!!!' );
+				recordTracksEvent( 'calypso_!!!' );
 				expect( global.console.error ).toHaveBeenCalledWith( expect.any( String ), 'calypso_!!!' );
 			} );
 
 			test( 'should log error if nested property', () => {
-				analytics.tracks.recordEvent( 'calypso_abc_def', {
+				recordTracksEvent( 'calypso_abc_def', {
 					nested: {},
 				} );
 				expect( global.console.error ).not.toHaveBeenCalledWith(
@@ -198,7 +198,7 @@ describe( 'Analytics', () => {
 			} );
 
 			test( 'should log error if property names do not match regex', () => {
-				analytics.tracks.recordEvent( 'calypso_abc_def', {
+				recordTracksEvent( 'calypso_abc_def', {
 					'incorrect!': 'property',
 				} );
 				expect( global.console.error ).toHaveBeenCalledWith(
@@ -209,7 +209,7 @@ describe( 'Analytics', () => {
 			} );
 
 			test( 'should log error if using a special reserved property name', () => {
-				analytics.tracks.recordEvent( 'calypso_abc_def', {
+				recordTracksEvent( 'calypso_abc_def', {
 					geo: 'property',
 				} );
 				expect( global.console.error ).toHaveBeenCalledWith(
@@ -223,7 +223,7 @@ describe( 'Analytics', () => {
 				initializeAnalytics( {}, () => {
 					return { super: 'prop' };
 				} );
-				analytics.tracks.recordEvent( 'calypso_abc_def' );
+				recordTracksEvent( 'calypso_abc_def' );
 
 				expect( window._tkq.push ).toHaveBeenCalledWith( [
 					'recordEvent',
@@ -234,10 +234,10 @@ describe( 'Analytics', () => {
 
 			test( 'should notify listeners when event is recorded', () => {
 				let numCalled = 0;
-				analytics.addListener( 'record-event', () => {
+				tracksEvents.addListener( 'record-event', () => {
 					numCalled++;
 				} );
-				analytics.tracks.recordEvent( 'calypso_abc_def' );
+				recordTracksEvent( 'calypso_abc_def' );
 				expect( numCalled ).toEqual( 1 );
 			} );
 		} );

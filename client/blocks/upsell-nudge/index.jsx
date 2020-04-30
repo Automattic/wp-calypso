@@ -47,6 +47,7 @@ export const UpsellNudge = ( {
 	onDismissClick,
 	plan,
 	planHasFeature,
+	price,
 	showIcon = false,
 	site,
 	title,
@@ -98,6 +99,7 @@ export const UpsellNudge = ( {
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
 			plan={ plan }
+			price={ price }
 			showIcon={ showIcon }
 			title={ title }
 			tracksClickName={ tracksClickName }

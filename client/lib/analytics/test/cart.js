@@ -1,18 +1,14 @@
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { recordAddToCart } from 'lib/analytics/record-add-to-cart';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { recordEvents } from 'lib/analytics/cart';
 
-jest.mock( 'lib/analytics', () => ( {
+jest.mock( 'lib/analytics/tracks', () => ( {
 	__esModule: true,
-	default: {
-		tracks: {
-			recordEvent: jest.fn(),
-		},
-	},
+	recordTracksEvent: jest.fn(),
 } ) );
 jest.mock( 'lib/analytics/record-add-to-cart', () => ( {
 	__esModule: true,
@@ -61,7 +57,7 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		expect( recordAddToCart ).not.toHaveBeenCalled();
 	} );
 
@@ -70,8 +66,8 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			domainRegNoExtra
 		);
@@ -84,8 +80,8 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
@@ -97,12 +93,12 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 2 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			privateRegNoExtra
 		);

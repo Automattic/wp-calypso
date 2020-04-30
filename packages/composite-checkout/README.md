@@ -48,7 +48,8 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
  - [useTotal](#useTotal)
 
 The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
- - [CheckoutSummary](#CheckoutSummary) (optional) can be used to render a summary that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
  - [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
  - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
  - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
@@ -138,7 +139,8 @@ It has the following props.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
-- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder.
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
+- `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
@@ -199,11 +201,15 @@ A component that looks like a checkout step. Normally you don't need to use this
 
 A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
 
-### CheckoutSummary
+### CheckoutSummaryArea
 
 Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
+
+### CheckoutSummaryCard
+
+Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
 
 ### OrderReviewLineItems
 
@@ -335,7 +341,7 @@ A React Hook that will return an object with the following properties:
 - `setFormSubmitting: () => void`. Function to change the form status to 'submitting'.
 - `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider).
 
-Only works within [CheckoutProvider](#CheckoutProvider).
+Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
 ### useIsStepActive
 

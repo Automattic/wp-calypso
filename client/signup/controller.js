@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
  */
 import config from 'config';
 import { sectionify } from 'lib/route';
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -154,11 +154,9 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		analytics.pageView.record(
-			basePath,
-			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName,
-			{ flow: flowName }
-		);
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+			flow: flowName,
+		} );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );

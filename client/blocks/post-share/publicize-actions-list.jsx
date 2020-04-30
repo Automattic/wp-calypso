@@ -24,7 +24,7 @@ import NavItem from 'components/section-nav/item';
 import { isEnabled } from 'config';
 import { Dialog } from '@automattic/components';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import SharingPreviewModal from './sharing-preview-modal';
 import Notice from 'components/notice';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -47,7 +47,7 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	setFooterSection = ( selectedShareTab ) => () => {
-		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
+		recordTracksEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
 		this.setState( { selectedShareTab } );
 	};
 
@@ -151,7 +151,7 @@ class PublicizeActionsList extends PureComponent {
 	closeDeleteDialog = ( dialogAction ) => {
 		if ( dialogAction === 'delete' ) {
 			const { siteId, postId } = this.props;
-			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
+			recordTracksEvent( 'calypso_publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
 		}
 

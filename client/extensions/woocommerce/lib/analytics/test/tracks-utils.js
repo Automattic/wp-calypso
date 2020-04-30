@@ -17,7 +17,7 @@ describe( 'recordTrack', () => {
 
 	it( 'should curry the tracks object', () => {
 		const tracksSpy = {
-			recordEvent: spy(),
+			recordTracksEvent: spy(),
 		};
 
 		expect( recordTrack( tracksSpy, noop ) ).to.be.a( 'function' );
@@ -25,7 +25,7 @@ describe( 'recordTrack', () => {
 
 	it( 'should call tracks to record an event with properties', () => {
 		const tracksSpy = {
-			recordEvent: spy(),
+			recordTracksEvent: spy(),
 		};
 
 		const eventProps = {
@@ -46,7 +46,7 @@ describe( 'recordTrack', () => {
 			tracksStore
 		)( 'calypso_woocommerce_tracks_utils_test', eventProps );
 
-		expect( tracksSpy.recordEvent ).to.have.been.calledWith(
+		expect( tracksSpy.recordTracksEvent ).to.have.been.calledWith(
 			'calypso_woocommerce_tracks_utils_test',
 			eventProps
 		);
@@ -64,7 +64,7 @@ describe( 'recordTrack', () => {
 		};
 
 		recordTrack(
-			{ recordEvent: noop },
+			{ recordTracksEvent: noop },
 			debugSpy,
 			tracksStore
 		)( 'calypso_woocommerce_tracks_utils_test', eventProps );
@@ -77,13 +77,13 @@ describe( 'recordTrack', () => {
 
 	it( 'should ignore and debug log tracks with an improper event name', () => {
 		const tracksSpy = {
-			recordEvent: spy(),
+			recordTracksEvent: spy(),
 		};
 		const debugSpy = spy();
 
 		recordTrack( tracksSpy, debugSpy )( 'calypso_somethingelse_invalid_name', { a: 1 } );
 
-		expect( tracksSpy.recordEvent ).to.not.have.been.called;
+		expect( tracksSpy.recordTracksEvent ).to.not.have.been.called;
 		expect( debugSpy ).to.have.been.calledWith(
 			"invalid store track name: 'calypso_somethingelse_invalid_name', must start with 'calypso_woocommerce_'"
 		);
@@ -91,7 +91,7 @@ describe( 'recordTrack', () => {
 
 	it( 'should ignore and debug log tracks for test sites', () => {
 		const tracksSpy = {
-			recordEvent: spy(),
+			recordTracksEvent: spy(),
 		};
 		const debugSpy = spy();
 
@@ -109,7 +109,7 @@ describe( 'recordTrack', () => {
 			a: 1,
 		} );
 
-		expect( tracksSpy.recordEvent ).to.not.have.been.called;
+		expect( tracksSpy.recordTracksEvent ).to.not.have.been.called;
 		expect( debugSpy ).to.have.been.calledWith(
 			'track request discarded. this site is flagged with `dotcom-store-test-site`'
 		);

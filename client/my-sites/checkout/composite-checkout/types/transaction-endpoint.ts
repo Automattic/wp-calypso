@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	WPCOMCartItem,
-	getNonProductWPCOMCartItemTypes,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
+import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:transaction-endpoint' );

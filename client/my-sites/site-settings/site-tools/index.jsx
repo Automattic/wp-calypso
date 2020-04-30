@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { localize } from 'i18n-calypso';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SiteToolsLink from './link';
@@ -29,7 +29,7 @@ import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purc
 import './style.scss';
 
 const trackDeleteSiteOption = ( option ) => {
-	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+	recordTracksEvent( 'calypso_settings_delete_site_options', {
 		option: option,
 	} );
 };

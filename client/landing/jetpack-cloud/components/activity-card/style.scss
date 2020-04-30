@@ -45,15 +45,26 @@
 }
 
 .activity-card__activity-title {
+	margin: 16px 0;
 	font-style: italic;
 }
 
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
+	font-size: 16px;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 18px;
+	}
+}
+
+.activity-card__activity-media {
+	margin-bottom: 16px;
 }
 
 .activity-card__activity-actions,
 .activity-card__activity-actions-reverse {
+	display: flex;
 	position: relative;
 	top: 0.5rem;
 	border-top: 1px solid #e4e4e6;
@@ -90,7 +101,7 @@
 	}
 }
 
-.activity-card__see-content-link {
+.button.activity-card__see-content-link {
 	font-size: 12px;
 	margin-left: 0;
 	color: var( --studio-jetpack-green-40 );
@@ -100,7 +111,7 @@
 	}
 }
 
-.button.is-borderless.is-primary.activity-card__see-content-link:focus {
+.button.is-borderless.is-primary:focus {
 	box-shadow: none;
 }
 

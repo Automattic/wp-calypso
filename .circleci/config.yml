@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:12.16.1-browsers
+    - image: circleci/node:12.16.2-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts

@@ -39,19 +39,28 @@ class ActivityCard extends Component {
 
 	static defaultProps = {
 		showActions: true,
-		showContentLink: true,
 		summarize: false,
 	};
 
-	popoverContext = React.createRef();
+	topPopoverContext = React.createRef();
+	bottomPopoverContext = React.createRef();
 
 	state = {
-		showPopoverMenu: false,
+		showTopPopoverMenu: false,
+		showBottomPopoverMenu: false,
 		showContent: false,
 	};
 
-	togglePopoverMenu = () => this.setState( { showPopoverMenu: ! this.state.showPopoverMenu } );
-	closePopoverMenu = () => this.setState( { showPopoverMenu: false } );
+	togglePopoverMenu = ( topPopoverMenu = true ) => {
+		if ( topPopoverMenu ) {
+			this.setState( { showTopPopoverMenu: ! this.state.showTopPopoverMenu } );
+		} else {
+			this.setState( { showBottomPopoverMenu: ! this.state.showBottomPopoverMenu } );
+		}
+	};
+
+	closePopoverMenu = () =>
+		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
 	toggleSeeContent = () => this.setState( { showContent: ! this.state.showContent } );
 
 	onSpace = ( evt, fn ) => {
@@ -69,15 +78,13 @@ class ActivityCard extends Component {
 			return (
 				activityMedia &&
 				activityMedia.available && (
-					<>
-						<div className="activity-card__streams-item" key={ item.activityId }>
-							<div className="activity-card__streams-item-title">{ activityMedia.name }</div>
-							<ActivityMedia
-								name={ activityMedia.name }
-								fullImage={ activityMedia.medium_url || activityMedia.thumbnail_url }
-							/>
-						</div>
-					</>
+					<div key={ item.rewindId } className="activity-card__streams-item">
+						<div className="activity-card__streams-item-title">{ activityMedia.name }</div>
+						<ActivityMedia
+							name={ activityMedia.name }
+							fullImage={ activityMedia.medium_url || activityMedia.thumbnail_url }
+						/>
+					</div>
 				)
 			);
 		} );
@@ -91,25 +98,21 @@ class ActivityCard extends Component {
 			<div className="activity-card__content">
 				{ !! activity.streams && [
 					...this.renderStreams( activity.streams ),
-					this.renderToolbar(),
+					this.renderBottomToolbar(),
 				] }
 			</div>
 		);
 	}
 
+	shouldRenderContentLink() {
+		const { activity, showContentLink } = this.props;
+		return showContentLink !== undefined
+			? showContentLink
+			: !! activity.streams || isSuccessfulDailyBackup( activity );
+	}
+
 	renderContentLink() {
 		const { activity, siteSlug, translate } = this.props;
-
-		if ( isSuccessfulDailyBackup( activity ) ) {
-			return (
-				<a
-					className="activity-card__detail-link"
-					href={ backupDetailPath( siteSlug, activity.rewindId ) }
-				>
-					{ translate( 'Changes in this backup' ) }
-				</a>
-			);
-		}
 
 		// todo: handle the rest of cases
 		if ( activity.streams ) {
@@ -121,7 +124,7 @@ class ActivityCard extends Component {
 					onClick={ this.toggleSeeContent }
 					onKeyDown={ this.onSpace( this.toggleSeeContent ) }
 				>
-					{ translate( 'See content' ) }
+					{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
 					<Gridicon
 						size={ 18 }
 						icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
@@ -130,10 +133,24 @@ class ActivityCard extends Component {
 				</Button>
 			);
 		}
+		return (
+			<a
+				className="activity-card__detail-link"
+				href={ backupDetailPath( siteSlug, activity.rewindId ) }
+			>
+				{ translate( 'Changes in this backup' ) }
+			</a>
+		);
 	}
 
-	renderActionButton() {
+	renderActionButton( isTopToolbar = true ) {
 		const { activity, siteSlug, translate } = this.props;
+
+		const context = isTopToolbar ? this.topPopoverContext : this.bottomPopoverContext;
+
+		const showPopoverMenu = isTopToolbar
+			? this.state.showTopPopoverMenu
+			: this.state.showBottomPopoverMenu;
 
 		return (
 			<>
@@ -141,15 +158,17 @@ class ActivityCard extends Component {
 					compact
 					borderless
 					className="activity-card__actions-button"
-					onClick={ this.togglePopoverMenu }
-					ref={ this.popoverContext }
+					onClick={ () => {
+						return this.togglePopoverMenu( isTopToolbar );
+					} }
+					ref={ context }
 				>
 					{ translate( 'Actions' ) }
 					<Gridicon icon="add" className="activity-card__actions-icon" />
 				</Button>
 				<PopoverMenu
-					context={ this.popoverContext.current }
-					isVisible={ this.state.showPopoverMenu }
+					context={ context.current }
+					isVisible={ showPopoverMenu }
 					onClose={ this.closePopoverMenu }
 					className="activity-card__popover"
 				>
@@ -179,21 +198,24 @@ class ActivityCard extends Component {
 		);
 	}
 
-	renderToolbar() {
-		const { showActions, showContentLink } = this.props;
+	renderTopToolbar = () => this.renderToolbar( true );
+	renderBottomToolbar = () => this.renderToolbar( false );
+
+	renderToolbar( isTopToolbar = true ) {
+		const { showActions } = this.props;
 
 		return (
 			<>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! showContentLink && showActions
+						! this.shouldRenderContentLink() && showActions
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ showContentLink && this.renderContentLink() }
-					{ showActions && this.renderActionButton() }
+					{ this.shouldRenderContentLink() && this.renderContentLink() }
+					{ showActions && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</>
 		);
@@ -231,6 +253,7 @@ class ActivityCard extends Component {
 					<div className="activity-card__activity-description">
 						{ activityMedia && activityMedia.available && (
 							<ActivityMedia
+								className="activity-card__activity-media"
 								name={ activityMedia.name }
 								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
 								fullImage={ false }
@@ -240,7 +263,7 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
-					{ ! summarize && this.renderToolbar() }
+					{ ! summarize && this.renderTopToolbar() }
 
 					{ showActivityContent && this.renderActivityContent() }
 				</Card>

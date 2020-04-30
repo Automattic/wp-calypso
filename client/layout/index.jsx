@@ -105,30 +105,13 @@ class Layout extends Component {
 			return false;
 		}
 
-		if (
-			'jetpack-connect' === this.props.sectionName &&
-			'/jetpack/new' !== this.props.currentRoute
-		) {
-			return false;
-		}
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
+		const exemptedRoutes = [ '/jetpack/new', '/log-in/jetpack', '/me/account/closed' ];
 
-		if ( '/log-in/jetpack' === this.props.currentRoute ) {
-			return false;
-		}
-
-		if ( '/me/account/closed' === this.props.currentRoute ) {
-			return false;
-		}
-
-		if ( 'happychat' === this.props.sectionName ) {
-			return false;
-		}
-
-		if ( 'devdocs' === this.props.sectionName ) {
-			return false;
-		}
-
-		return true;
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute )
+		);
 	}
 
 	renderMasterbar() {
@@ -171,8 +154,8 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-frankenflow';
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				optionalProps.bodyClass = 'is-new-launch-flow';
 			}
 
 			return optionalProps;
@@ -277,8 +260,8 @@ export default connect( ( state ) => {
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isFrankenflow =
-		startsWith( currentRoute, '/start/frankenflow' ) ||
+	const isNewLaunchFlow =
+		startsWith( currentRoute, '/start/new-launch' ) ||
 		startsWith( currentRoute, '/start/prelaunch' );
 
 	return {
@@ -308,7 +291,7 @@ export default connect( ( state ) => {
 		authorization, it would remove the newly connected site that has been fetched separately.
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-		isFrankenflow,
+		isNewLaunchFlow,
 		isCheckoutFromGutenboarding,
 	};
 } )( Layout );

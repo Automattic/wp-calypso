@@ -60,6 +60,9 @@ function getSignupDestination( dependencies ) {
 }
 
 function getLaunchDestination( dependencies ) {
+	if ( dependencies.source === 'editor' ) {
+		return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	}
 	return `/home/${ dependencies.siteSlug }?d=launched`;
 }
 
@@ -158,7 +161,7 @@ const Flows = {
 	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -173,6 +176,14 @@ const Flows = {
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
+	},
+
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
 	},
 
 	getFlows() {

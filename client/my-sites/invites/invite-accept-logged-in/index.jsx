@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -19,7 +18,7 @@ import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -40,18 +39,18 @@ class InviteAcceptLoggedIn extends React.Component {
 				page( this.props.redirectTo );
 			}
 		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	};
 
 	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
-			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
+			recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
 		}
 	};
 
 	signInLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
 	};
 
 	getButtonText = () => {

@@ -10,7 +10,7 @@ import { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import activeTests from 'lib/abtest/active-tests';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
@@ -203,7 +203,7 @@ ABTest.prototype.getVariation = function () {
 };
 
 export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
-	const client = typeof navigator !== 'undefined' ? navigator : {};
+	const client = typeof navigator !== 'undefined' ? window.navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
@@ -335,7 +335,7 @@ ABTest.prototype.assignVariation = function () {
 };
 
 ABTest.prototype.recordVariation = function ( variation ) {
-	analytics.tracks.recordEvent( 'calypso_abtest_start', {
+	recordTracksEvent( 'calypso_abtest_start', {
 		abtest_name: this.experimentId,
 		abtest_variation: variation,
 	} );

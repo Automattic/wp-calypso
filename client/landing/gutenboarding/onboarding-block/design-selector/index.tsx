@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
@@ -24,12 +24,12 @@ type Design = import('../../stores/onboard/types').Design;
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
-	useTrackStep( 'DesignSelection' );
-
 	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
+
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const getDesignUrl = ( design: Design ) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
@@ -47,6 +47,10 @@ const DesignSelector: React.FunctionComponent = () => {
 		} );
 		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
+
+	useTrackStep( 'DesignSelection', () => ( {
+		selected_design: getSelectedDesign()?.slug,
+	} ) );
 
 	return (
 		<div className="gutenboarding-page design-selector">

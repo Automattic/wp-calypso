@@ -20,10 +20,8 @@ import FormButton from 'components/forms/form-button';
 jest.mock( 'lib/oauth-store/actions', () => ( {
 	login: require( 'sinon' ).stub(),
 } ) );
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {},
-	},
+jest.mock( 'lib/analytics/ga', () => ( {
+	gaRecordEvent: () => {},
 } ) );
 
 describe( 'LoginTest', () => {

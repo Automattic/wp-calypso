@@ -9,6 +9,7 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 	return {
@@ -25,7 +26,16 @@ export const ticketSupportConfigurationRequestFailure = ( error ) => {
 };
 
 export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
-	dispatch( { type: HELP_TICKET_CONFIGURATION_REQUEST } );
+	const requestAction = {
+		type: HELP_TICKET_CONFIGURATION_REQUEST,
+	};
+
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_ticket_support_configuration_requested' ),
+			requestAction
+		)
+	);
 
 	return wpcom
 		.undocumented()

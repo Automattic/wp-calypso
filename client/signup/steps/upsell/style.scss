@@ -1,0 +1,90 @@
+.upsell {
+	display: flex;
+	flex-direction: column;
+
+	.card {
+		width: 100%;
+	}
+
+	&__card-header,
+	&__card-footer {
+        width: 100%;
+        text-align: center;
+	}
+
+	&__card-body {
+		overflow: auto;
+		flex: 1;
+	}
+
+	&__column-pane {
+		display: flex;
+		flex-flow: row;
+	}
+
+	&__column-content {
+		padding-right: 10px;
+		@include breakpoint( '<480px' ) {
+			padding-right: 0;
+		}
+    }
+    
+    &__section-title {
+        font-size: 18px;
+		font-weight: 700;
+		line-height: 1.4;
+    }
+
+	&__column-doodle {
+		width: 120px;
+		flex-shrink: 0;
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
+	}
+
+	&__doodle {
+		margin-top: 85px;
+	}
+
+	&__small-header {
+		font-style: italic;
+		text-align: center;
+	}
+
+	&__header {
+		font-size: 23px;
+		font-weight: 700;
+		text-align: center;
+		line-height: 1.4;
+		margin-top: 0.5em;
+		margin-bottom: 1.4em;
+
+		@include breakpoint( '<660px' ) {
+			font-size: 21px;
+		}
+    }
+
+	&__footer &__decline-offer-button {
+		color: var( --color-primary );
+
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: left;
+		}
+	}
+
+	&__footer &__accept-offer-button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: right;
+		}
+	}
+}

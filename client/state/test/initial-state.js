@@ -18,6 +18,7 @@ import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
+import signupReducer from 'state/signup/reducer';
 import {
 	getInitialState,
 	persistOnChange,
@@ -429,7 +430,7 @@ describe( 'initial-state', () => {
 						.mockResolvedValue( storedState );
 
 					await loadAllState();
-					state = getInitialState( initialReducer );
+					state = getInitialState( combineReducers( { signup: signupReducer } ) );
 				} );
 
 				afterAll( () => {
@@ -500,7 +501,7 @@ describe( 'initial-state', () => {
 						.mockResolvedValue( storedState );
 
 					await loadAllState();
-					state = getInitialState( initialReducer );
+					state = getInitialState( combineReducers( { signup: signupReducer } ) );
 				} );
 
 				afterAll( () => {

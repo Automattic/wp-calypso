@@ -13,7 +13,7 @@ import {
 	CheckoutStep,
 	CheckoutStepBody,
 	CheckoutSteps,
-	CheckoutSummary,
+	CheckoutSummaryArea,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
@@ -398,9 +398,9 @@ function MyCheckoutBody() {
 
 	return (
 		<Checkout>
-			<CheckoutSummary className={ orderSummary.className }>
+			<CheckoutSummaryArea className={ orderSummary.className }>
 				{ orderSummary.summaryContent }
-			</CheckoutSummary>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }

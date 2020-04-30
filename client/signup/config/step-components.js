@@ -25,6 +25,7 @@ const stepNameToModuleName = {
 	'plans-ecommerce': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
+	'plans-plan-only': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
@@ -63,6 +64,7 @@ const stepNameToModuleName = {
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
 	'team-site': 'wp-for-teams-site',
+	'upsell-plan': 'upsell',
 };
 
 export async function getStepComponent( stepName ) {

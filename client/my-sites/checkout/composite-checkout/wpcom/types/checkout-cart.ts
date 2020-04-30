@@ -42,8 +42,8 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		is_bundled?: boolean;
 		is_domain_registration?: boolean;
 		couponCode?: string;
-		product_cost_integer: number;
-		product_cost_display: string;
+		product_cost_integer?: number;
+		product_cost_display?: string;
 	};
 };
 

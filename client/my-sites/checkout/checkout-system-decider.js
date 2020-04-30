@@ -159,8 +159,15 @@ function shouldShowCompositeCheckout(
 	// products via URL, so we list those slugs here. Renewals use actual slugs,
 	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
-	const pseudoSlugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
-	const slugPrefixesToAllow = [ 'domain-mapping:' ];
+	const pseudoSlugsToAllow = [
+		'personal',
+		'premium',
+		'blogger',
+		'ecommerce',
+		'business',
+		'concierge-session',
+	];
+	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
 	if (
 		! isRenewal &&
 		productSlug &&

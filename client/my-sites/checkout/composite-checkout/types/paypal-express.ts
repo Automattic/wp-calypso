@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	WPCOMCartItem,
-	getNonProductWPCOMCartItemTypes,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
+import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
 
 /**
  * Internal dependencies
@@ -29,7 +27,6 @@ export type PayPalExpressEndpointRequestPayload = {
 };
 
 export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
-	debug,
 	successUrl,
 	cancelUrl,
 	siteId,
@@ -40,7 +37,6 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails,
 	items,
 }: {
-	debug: ( _0: string, _1: any ) => void;
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string;
@@ -55,7 +51,6 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		successUrl,
 		cancelUrl,
 		cart: createTransactionEndpointCartFromLineItems( {
-			debug,
 			siteId,
 			couponId,
 			country,

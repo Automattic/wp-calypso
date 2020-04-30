@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
+import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
@@ -19,8 +20,11 @@ import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
+import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
+import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
@@ -36,6 +40,8 @@ interface Props {
 	siteSlug: string | null;
 	siteUrl: string | null;
 	scanState: Scan | null;
+	scanProgress?: number;
+	isInitialScan: boolean;
 	lastScanTimestamp: number;
 	nextScanTimestamp: number;
 	moment: Function;
@@ -102,15 +108,20 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanning() {
+		const { scanProgress = 0, isInitialScan } = this.props;
 		return (
 			<>
 				<SecurityIcon icon="in-progress" />
-				<h1 className="scan__header">{ translate( 'Preparing to scan' ) }</h1>
-				<ProgressBar value={ 1 } total={ 100 } color="#069E08" />
-				<p>
-					Welcome to Jetpack Scan, we are taking a first look at your site now and the results will
-					be with you soon.
-				</p>
+				<h1 className="scan__header">
+					{ scanProgress === 0 ? translate( 'Preparing to scan' ) : translate( 'Scanning files' ) }
+				</h1>
+				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
+				{ isInitialScan && (
+					<p>
+						Welcome to Jetpack Scan, we are taking a first look at your site now and the results
+						will be with you soon.
+					</p>
+				) }
 				<p>
 					We will send you an email once the scan completes, in the meantime feel free to continue
 					to use your site as normal, you can check back on progress at any time.
@@ -154,7 +165,7 @@ class ScanPage extends Component< Props > {
 	renderScanState() {
 		const { site, scanState } = this.props;
 		if ( ! scanState ) {
-			return <div className="scan__is-loading" />;
+			return <ScanPlaceholder />;
 		}
 
 		const { state, mostRecent, threats } = scanState;
@@ -196,6 +207,7 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ this.props.site.ID } />
+				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
@@ -215,12 +227,16 @@ export default connect(
 		const scanState = getSiteScanState( state, site.ID );
 		const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
 		const nextScanTimestamp = Date.now() + 5700000;
+		const scanProgress = getSiteScanProgress( state, site.ID );
+		const isInitialScan = getSiteScanIsInitial( state, site.ID );
 
 		return {
 			site,
 			siteUrl,
 			siteSlug,
 			scanState,
+			scanProgress,
+			isInitialScan,
 			lastScanTimestamp,
 			nextScanTimestamp,
 		};

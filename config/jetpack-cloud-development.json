@@ -26,7 +26,8 @@
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/support-article-dialog": false,
-		"layout/query-selected-editor": false
+		"layout/query-selected-editor": false,
+		"site-indicator": false
 	},
 	"enable_all_sections": false,
 	"sections": {

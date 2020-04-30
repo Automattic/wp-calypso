@@ -12,7 +12,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { updateFilter } from 'state/activity-log/actions';
+import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
 	isActivityBackup,
 	getBackupAttemptsForDate,
@@ -27,6 +27,7 @@ import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
@@ -43,6 +44,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
+import { emptyFilter } from 'state/activity-log/reducer';
 
 /**
  * Style dependencies
@@ -53,7 +55,10 @@ export const INDEX_FORMAT = 'YYYYMMDD';
 
 class BackupsPage extends Component {
 	componentDidMount() {
-		const { queryDate, moment } = this.props;
+		const { queryDate, moment, clearFilter, siteId } = this.props;
+
+		// filters in the global state are modified by other pages, we want to enter this page with the filter empty
+		clearFilter( siteId );
 
 		// On first load, check if we have a selected date from the URL
 		if ( queryDate ) {
@@ -125,25 +130,6 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
-	isEmptyFilter = ( filter ) => {
-		if ( ! filter ) {
-			return true;
-		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
-			return false;
-		}
-		if ( filter.page !== 1 ) {
-			return false;
-		}
-		return true;
-	};
-
-	TO_REMOVE_getSelectedDateString = () => {
-		const { moment } = this.props;
-
-		return moment.parseZone( this.getSelectedDate() ).toISOString( true );
-	};
-
 	renderMain() {
 		const {
 			allowRestore,
@@ -166,7 +152,7 @@ class BackupsPage extends Component {
 		const lastBackup = backupsFromSelectedDate.lastBackup;
 		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
 
-		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
+		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
@@ -177,6 +163,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
+				<PageViewTracker path="/backups/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
@@ -258,11 +245,10 @@ class BackupsPage extends Component {
 	}
 
 	render() {
-		const { filter } = this.props;
-
+		const { isEmptyFilter } = this.props;
 		return (
 			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
+				{ isEmptyFilter ? this.renderMain() : this.renderBackupSearch() }
 			</div>
 		);
 	}
@@ -320,6 +306,19 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	};
 };
 
+const getIsEmptyFilter = ( filter ) => {
+	if ( ! filter ) {
+		return true;
+	}
+	if ( filter.group || filter.on || filter.before || filter.after ) {
+		return false;
+	}
+	if ( filter.page !== 1 ) {
+		return false;
+	}
+	return true;
+};
+
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
@@ -346,6 +345,7 @@ const mapStateToProps = ( state ) => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
+		isEmptyFilter: getIsEmptyFilter( filter ),
 		siteCapabilities,
 		logs: logs?.data ?? [],
 		rewind,
@@ -363,6 +363,9 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
+	clearFilter: ( siteId ) =>
+		// skipUrlUpdate prevents this action from trigger a redirect back to backups/activity in state/navigation/middleware.js
+		dispatch( { ...setFilter( siteId, emptyFilter ), meta: { skipUrlUpdate: true } } ),
 } );
 
 export default connect(
