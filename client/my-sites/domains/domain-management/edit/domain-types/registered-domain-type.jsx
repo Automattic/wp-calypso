@@ -212,7 +212,7 @@ class RegisteredDomainType extends React.Component {
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
-		if ( ! recentlyRegistered || domain.pendingTransfer ) {
+		if ( ! recentlyRegistered || domain.pendingTransfer || domain.isPendingIcannVerification ) {
 			return null;
 		}
 
