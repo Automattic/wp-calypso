@@ -67,7 +67,8 @@
 	min-width: 130px;
 }
 
-.task__chip {
-	background-color: var( --studio-gray-8 );
+.badge--info.task__badge {
+	background-color: var( --studio-gray-80 );
 	color: var( --color-text-inverted );
+	margin-bottom: 16px;
 }
