@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -106,7 +107,7 @@ const Task = ( {
 	};
 
 	return (
-		<ActionPanel className="task">
+		<ActionPanel className={ classNames( 'task', taskId ) }>
 			<ActionPanelBody>
 				{ isDesktop() && (
 					<ActionPanelFigure align="right">
