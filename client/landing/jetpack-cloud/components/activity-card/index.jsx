@@ -115,7 +115,10 @@ class ActivityCard extends Component {
 		const { activity, siteSlug, translate } = this.props;
 
 		// todo: handle the rest of cases
-		if ( activity.streams ) {
+		if (
+			activity.streams &&
+			activity.streams.some( ( stream ) => stream.activityMedia && stream.activityMedia.available )
+		) {
 			return (
 				<Button
 					compact
