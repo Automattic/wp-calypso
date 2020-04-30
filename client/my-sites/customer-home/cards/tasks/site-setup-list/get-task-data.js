@@ -14,7 +14,83 @@ import { localizeUrl } from 'lib/i18n-utils';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { verifyEmail } from 'state/current-user/email-verification/actions';
 
-export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userEmail } = {} ) => {
+const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
+	switch ( task.id ) {
+		case 'site_launched':
+			if ( isDomainUnverified ) {
+				return (
+					<>
+						{ task.description }
+						<br />
+						<br />
+						{ translate( 'Verify the email address for your domain before launching your site.' ) }
+					</>
+				);
+			}
+			if ( isEmailUnverified ) {
+				return (
+					<>
+						{ task.description }
+						<br />
+						<br />
+						{ translate( 'Confirm your email address before launching your site.' ) }
+					</>
+				);
+			}
+			return task.description;
+		default:
+			return task.description;
+	}
+};
+
+const getTaskActionText = ( task, { emailVerificationStatus } ) => {
+	switch ( task.id ) {
+		case 'email_verified':
+			if ( emailVerificationStatus === 'requesting' ) {
+				return translate( 'Sending…' );
+			}
+
+			if ( emailVerificationStatus === 'error' ) {
+				return translate( 'Error' );
+			}
+
+			if ( emailVerificationStatus === 'sent' ) {
+				return translate( 'Email sent' );
+			}
+
+			return task.actionText;
+		default:
+			return task.actionText;
+	}
+};
+
+const isTaskDisabled = (
+	task,
+	{ emailVerificationStatus, isDomainUnverified, isEmailUnverified }
+) => {
+	switch ( task.id ) {
+		case 'email_verified':
+			return 'requesting' === emailVerificationStatus;
+		case 'site_launched':
+			return isDomainUnverified || isEmailUnverified;
+		default:
+			return false;
+	}
+};
+
+export const getTaskData = (
+	task,
+	{
+		emailVerificationStatus,
+		isDomainUnverified,
+		isEmailUnverified,
+		menusUrl,
+		siteId,
+		siteSlug,
+		taskUrls,
+		userEmail,
+	}
+) => {
 	let taskData = {};
 	switch ( task.id ) {
 		case 'domain_verified':
@@ -100,13 +176,13 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			break;
 		case 'front_page_updated':
 			taskData = {
-				id: 'front_page_updated',
 				timing: 20,
 				title: translate( 'Update your Home page' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
 				actionText: translate( 'Edit homepage' ),
+				actionUrl: taskUrls.front_page_updated,
 			};
 			break;
 		case 'site_menu_updated':
@@ -130,9 +206,19 @@ export const getTaskData = ( task, { menusUrl, siteId, siteSlug, taskUrls, userE
 			};
 			break;
 	}
-	return {
+
+	const enhancedTask = {
 		...task,
-		actionUrl: taskUrls[ task.id ],
 		...taskData,
+	};
+	return {
+		...enhancedTask,
+		description: getTaskDescription( enhancedTask, { isDomainUnverified, isEmailUnverified } ),
+		actionText: getTaskActionText( enhancedTask, { emailVerificationStatus } ),
+		isDisabled: isTaskDisabled( enhancedTask, {
+			emailVerificationStatus,
+			isDomainUnverified,
+			isEmailUnverified,
+		} ),
 	};
 };

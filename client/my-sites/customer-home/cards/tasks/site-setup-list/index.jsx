@@ -15,14 +15,16 @@ import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelCta from 'components/action-panel/cta';
+import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
 import { getTaskList } from 'lib/checklist';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
+import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getCurrentUser } from 'state/current-user/selectors';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
@@ -30,8 +32,6 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import NavItem from './nav-item';
 import { getTaskData } from './get-task-data';
-import Badge from 'components/badge';
-import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
 
 /**
  * Style dependencies
@@ -73,40 +73,27 @@ const skipTask = ( dispatch, task, siteId ) => {
 	);
 };
 
-const getActionText = ( task, { emailVerificationStatus } ) => {
-	if ( task.id === 'email_verified' ) {
-		if ( emailVerificationStatus === 'requesting' ) {
-			return translate( 'Sending…' );
-		}
-
-		if ( emailVerificationStatus === 'error' ) {
-			return translate( 'Error' );
-		}
-
-		if ( emailVerificationStatus === 'sent' ) {
-			return translate( 'Email sent' );
-		}
-	}
-	return task.actionText;
-};
-
-const isTaskDisabled = ( task, { emailVerificationStatus } ) =>
-	task.id === 'email_verified' && 'requesting' === emailVerificationStatus;
-
 const SiteSetupList = ( {
+	emailVerificationStatus,
+	isEmailUnverified,
 	menusUrl,
 	siteId,
 	siteSlug,
 	tasks,
 	taskUrls,
 	userEmail,
-	emailVerificationStatus,
 } ) => {
-	const [ currentTask, setCurrentTask ] = useState( null );
+	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const dispatch = useDispatch();
+
+	const isDomainUnverified =
+		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
 
 	const getTask = ( task ) =>
 		getTaskData( task, {
+			emailVerificationStatus,
+			isDomainUnverified,
+			isEmailUnverified,
 			menusUrl,
 			siteId,
 			siteSlug,
@@ -114,28 +101,35 @@ const SiteSetupList = ( {
 			userEmail,
 		} );
 
-	useEffect( () => {
-		//Reset Email State
-		dispatch( resetVerifyEmailState() );
+	const currentTask = currentTaskId
+		? getTask( tasks.find( ( task ) => task.id === currentTaskId ) )
+		: null;
 
-		// Initial task.
-		if ( ! currentTask && tasks.length ) {
-			const initialTask = getTask( tasks.find( ( task ) => ! task.isCompleted ) );
-			setCurrentTask( initialTask );
+	useEffect( () => {
+		// Initial task (first incomplete).
+		if ( ! currentTaskId && tasks.length ) {
+			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
+			setCurrentTaskId( initialTaskId );
+
+			// Reset verification email state on first load.
+			if ( isEmailUnverified ) {
+				dispatch( resetVerifyEmailState() );
+			}
 		}
 
 		// Move to next task after after completing current one.
-		if ( currentTask && tasks.length ) {
-			const isCurrentTaskCompleted = tasks.find( ( task ) => task.id === currentTask.id )
+		if ( currentTaskId && currentTaskId === currentTask.id ) {
+			const wasCurrentTaskCompleted = currentTask.isCompleted;
+			const isCurrentTaskCompleted = tasks.find( ( task ) => task.id === currentTaskId )
 				.isCompleted;
-			if ( isCurrentTaskCompleted && ! currentTask.isCompleted ) {
-				const nextTask = getTask( tasks.find( ( task ) => ! task.isCompleted ) );
-				setCurrentTask( nextTask );
+			if ( isCurrentTaskCompleted && ! wasCurrentTaskCompleted ) {
+				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
+				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTask, tasks ] );
+	}, [ currentTaskId, currentTask, isEmailUnverified, getTask, tasks ] );
 
-	if ( ! tasks.length || ! currentTask ) {
+	if ( ! tasks.length || ! currentTaskId ) {
 		return null;
 	}
 
@@ -150,7 +144,7 @@ const SiteSetupList = ( {
 						text={ getTask( task ).title }
 						isCompleted={ task.isCompleted }
 						isCurrent={ task.id === currentTask.id }
-						onClick={ () => setCurrentTask( getTask( task ) ) }
+						onClick={ () => setCurrentTaskId( task.id ) }
 					/>
 				) ) }
 			</div>
@@ -183,9 +177,9 @@ const SiteSetupList = ( {
 								className="site-setup-list__task-action task__action"
 								primary
 								onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								disabled={ isTaskDisabled( currentTask, { emailVerificationStatus } ) }
+								disabled={ currentTask.isDisabled }
 							>
-								{ getActionText( currentTask, { emailVerificationStatus } ) }
+								{ currentTask.actionText }
 							</Button>
 							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
@@ -220,16 +214,17 @@ export default connect( ( state ) => {
 		siteVerticals,
 	} );
 
-	//existing usage didn't have a global selctor, we can tidy this in a follow up.
+	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
 
 	return {
+		emailVerificationStatus,
+		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
-		emailVerificationStatus,
 	};
 } )( SiteSetupList );
