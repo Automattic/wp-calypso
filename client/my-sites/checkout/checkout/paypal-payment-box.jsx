@@ -202,7 +202,7 @@ export class PaypalPaymentBox extends React.Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 

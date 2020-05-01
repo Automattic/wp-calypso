@@ -352,7 +352,7 @@ export class RedirectPaymentBox extends PureComponent {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ this.props.translate( 'Secure payment' ) }
 								</div>
 							</div>
 
