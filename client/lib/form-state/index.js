@@ -284,7 +284,7 @@ function createInitialFormState( fieldValues ) {
 }
 
 function getField( formState, fieldName ) {
-	return formState[ camelCase( fieldName ) ];
+	return formState[ camelCase( fieldName ) ] ?? {};
 }
 
 function getFieldValue( formState, fieldName ) {
