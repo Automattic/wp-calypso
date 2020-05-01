@@ -113,7 +113,7 @@ export class ContactDetailsFormFields extends Component {
 		super( props );
 		this.state = {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
-			form: null,
+			form: {},
 			submissionCount: 0,
 		};
 
@@ -141,7 +141,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.isManaged ) {
 			this.formStateController = formState.Controller( {
 				debounceWait: 500,
@@ -338,14 +338,14 @@ export class ContactDetailsFormFields extends Component {
 		}
 
 		if ( name === 'country-code' ) {
-			this.formStateController.handleFieldChange( {
+			this.formStateController?.handleFieldChange( {
 				name: 'state',
 				value: '',
 				hideError: true,
 			} );
 		}
 
-		this.formStateController.handleFieldChange( {
+		this.formStateController?.handleFieldChange( {
 			name,
 			value,
 		} );
@@ -364,7 +364,7 @@ export class ContactDetailsFormFields extends Component {
 			return;
 		}
 
-		this.formStateController.handleFieldChange( {
+		this.formStateController?.handleFieldChange( {
 			name: 'phone',
 			value,
 		} );
