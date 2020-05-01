@@ -1,5 +1,47 @@
 @import '../../mixins';
 
+.domain-categories {
+
+	@media ( max-width: $break-medium ) {
+		margin-bottom: 20px;
+
+		.domain-categories__dropdown-button.components-button {
+			display: block;
+		}
+
+		.domain-categories__item-group {
+			display: none;
+		}
+
+		&.is-open {
+			.domain-categories__item-group {
+				display: block;
+			}
+		}
+	}
+}
+
+.domain-categories__dropdown-button.components-button {
+	width: 100%;
+	text-align: center;
+	margin-bottom: 8px;
+	height: 40px;
+	border: 1px solid var( --studio-gray-5 );
+	display: none;
+
+	svg {
+		margin-left: 5px;
+	}
+}
+
+.domain-categories__item-group {
+	@media ( max-width: $break-medium ) {
+		text-align: center;
+		border: 1px solid var( --studio-gray-5 );
+		border-top: 0;
+	}
+}
+
 .domain-categories__item {
 	.components-button {
 		color: var( --studio-gray-100 );
@@ -18,6 +60,13 @@
 		.components-button {
 			font-weight: 600;
 			text-decoration: underline;
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		.components-button {
+			display: block;
+			text-align: center;
 		}
 	}
 }

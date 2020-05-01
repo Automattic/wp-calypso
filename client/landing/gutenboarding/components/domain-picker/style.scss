@@ -225,16 +225,22 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__body {
 	display: flex;
+
+	// When in mobile, domain categories appear above
+	// the list of domain suggestions.
+	@media ( max-width: $break-medium ) {
+		display: block;
+
+		.domain-picker__aside {
+			width: 100%;
+			padding: 0;
+		}
+	}
 }
 
 .domain-picker__aside {
 	width: 220px;
 	padding-right: 30px;
-}
-
-.domain-picker__confirm-button {
-	position: relative;
-	top: 5px;
 }
 
 .domain-picker__more-button {
@@ -244,8 +250,9 @@ $domain-picker__suggestion-item-height: 24px;
 		visibility: visible;
 	}
 
-	&.components-button {
+	&.components-button.is-tertiary {
 		@include onboarding-medium-text;
 		color: var( --color-neutral-100 );
+		align-items: center;
 	}
 }
