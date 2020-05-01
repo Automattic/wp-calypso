@@ -50,10 +50,10 @@ export default class ChecklistPage extends AsyncBaseContainer {
 					mochaTimeOut / 2
 				)
 			) {
-				const updateHomePageButton = await this.driver.findElement(
+				return await driverHelper.clickWhenClickable(
+					this.driver,
 					this.updateHomepageButtonSelector
 				);
-				return this.driver.executeScript( 'arguments[0].click()', updateHomePageButton );
 			}
 		}
 	}
