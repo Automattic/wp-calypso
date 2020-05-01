@@ -61,6 +61,20 @@ const Task = ( {
 	const dismissalPreferenceKey = `dismissible-card-home-task-${ taskId }-${ siteId }`;
 	const successNoticeId = `task_remind_later_success-${ taskId }`;
 
+	const startTask = () => {
+		if ( actionOnClick instanceof Function ) {
+			actionOnClick();
+		}
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_customer_home_task_start', {
+					task: taskId,
+				} ),
+				bumpStat( 'calypso_customer_home', 'task_start' )
+			)
+		);
+	};
+
 	const restoreTask = () => {
 		setIsTaskVisible( true );
 
@@ -89,6 +103,7 @@ const Task = ( {
 				composeAnalytics(
 					recordTracksEvent( 'calypso_customer_home_task_skip', {
 						task: taskId,
+						reminder,
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
@@ -129,7 +144,7 @@ const Task = ( {
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
-						<Button className="task__action" primary onClick={ actionOnClick } href={ actionUrl }>
+						<Button className="task__action" primary onClick={ startTask } href={ actionUrl }>
 							{ actionText }
 						</Button>
 
