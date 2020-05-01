@@ -302,11 +302,11 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has an id', function () {
 				expect( clientCart.items[ 1 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 1 ].label ).toBe( '.cash Domain Registration' );
+			it( 'has the expected label (the domain name)', function () {
+				expect( clientCart.items[ 1 ].label ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected sublabel (the domain name)', function () {
-				expect( clientCart.items[ 1 ].sublabel ).toBe( 'foo.cash' );
+			it( 'has the expected sublabel', function () {
+				expect( clientCart.items[ 1 ].sublabel ).toBe( '.cash Domain Registration' );
 			} );
 			it( 'has the expected meta (the domain name)', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
@@ -530,7 +530,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 2 ].id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
+				expect( clientCart.items[ 2 ].sublabel ).toBe( 'G Suite' );
 			} );
 			it( 'has the expected product_id', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.product_id ).toBe( 69 );
