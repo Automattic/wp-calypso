@@ -24,6 +24,9 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/url';
+import InlineSupportLink from 'components/inline-support-link';
+import { localizeUrl } from 'lib/i18n-utils';
+import FormattedDate from 'components/formatted-date';
 
 /**
  * Style dependencies
@@ -76,11 +79,27 @@ class EditorDeprecationDialog extends Component {
 
 				<p className="editor-deprecation-dialog__subhead">
 					{ translate(
-						'Try the Block Editor now before we enable it for everyone on {{date/}}. {{a}}Read more here{{/a}}.',
+						'Try the Block Editor now before we enable it for everyone on {{date/}}. {{support/}}.',
 						{
 							components: {
-								a: <a href="https://DOCS/" target="_blank" rel="noopener noreferrer" />,
-								date: <strong>{ translate( 'June 15' ) }</strong>,
+								date: (
+									<strong>
+										<FormattedDate date="2020-06-01" format="MMMM D" />
+									</strong>
+								),
+								support: (
+									<InlineSupportLink
+										supportPostId={ 165338 }
+										supportLink={ localizeUrl(
+											'https://wordpress.com/support/block-editor-is-coming'
+										) }
+										showIcon={ false }
+										text={ translate( 'Read more' ) }
+										tracksEvent="calypso_editor_deprecate_support_page_view"
+										statsGroup="calypso_editor"
+										statsName="editor_deprecate_learn_more"
+									/>
+								),
 							},
 						}
 					) }
