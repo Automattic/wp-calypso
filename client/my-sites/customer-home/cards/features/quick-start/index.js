@@ -23,6 +23,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import { withLocalizedMoment } from 'components/localized-moment';
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -30,7 +31,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import './style.scss';
 
 const QuickStart = ( {
-	bookASession,
 	moment,
 	nextSession,
 	reschedule,
@@ -39,47 +39,43 @@ const QuickStart = ( {
 	translate,
 	viewDetails,
 } ) => {
-	return nextSession ? (
-		<Card className="quick-start next-session">
-			<HappinessEngineersTray />
-			<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
-			<table>
-				<thead>
-					<tr>
-						<th>{ translate( 'Date' ) }</th>
-						<th>{ translate( 'Time' ) }</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{ moment( nextSession.beginTimestamp ).format( 'LL' ) }</td>
-						<td>{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }</td>
-					</tr>
-				</tbody>
-			</table>
-			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
-			<Button
-				className={ 'quick-start__reschedule' }
-				onClick={ () => reschedule( siteSlug, nextSession.id ) }
-				borderless
-			>
-				{ translate( 'Reschedule' ) }
-			</Button>
-		</Card>
-	) : (
+	return (
 		<>
 			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-			<Card className="quick-start book-session">
+			<Card className="quick-start next-session">
 				<HappinessEngineersTray />
-				<CardHeading>{ translate( 'Schedule time with an expert' ) }</CardHeading>
-				<p>
-					{ translate(
-						'Need help with your site? Set up a video call to get hands-on 1-on-1 support.'
-					) }
-				</p>
-				<Button onClick={ () => bookASession( siteSlug ) }>
-					{ translate( 'Book a session' ) }
-				</Button>
+				<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
+				{ nextSession && (
+					<>
+						<table>
+							<thead>
+								<tr>
+									<th>{ translate( 'Date' ) }</th>
+									<th>{ translate( 'Time' ) }</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{ moment( nextSession.beginTimestamp ).format( 'LL' ) }</td>
+									<td>
+										{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<Button onClick={ () => viewDetails( siteSlug ) }>
+							{ translate( 'View details' ) }
+						</Button>
+						<Button
+							className={ 'quick-start__reschedule' }
+							onClick={ () => reschedule( siteSlug, nextSession.id ) }
+							borderless
+						>
+							{ translate( 'Reschedule' ) }
+						</Button>
+					</>
+				) }
+				{ ! nextSession && <Spinner /> }
 			</Card>
 		</>
 	);
@@ -92,18 +88,6 @@ export default connect(
 		nextSession: getConciergeNextAppointment( state ),
 	} ),
 	( dispatch ) => ( {
-		bookASession: ( siteSlug ) =>
-			dispatch(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_customer_home_quick_start_book_a_session_click', {
-							siteSlug: siteSlug,
-						} ),
-						bumpStat( 'calypso_customer_home', 'book_quick_start_session' )
-					),
-					navigate( `/me/concierge/${ siteSlug }/book` )
-				)
-			),
 		viewDetails: ( siteSlug ) =>
 			dispatch(
 				withAnalytics(
