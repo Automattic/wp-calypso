@@ -14,7 +14,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { translate } from 'i18n-calypso';
 import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
 
-const infoNoticeId = 'email-verification-sending';
+const infoNoticeId = 'email-verification-info-notice';
 
 /**
  * Creates an action for request for email verification
@@ -23,7 +23,7 @@ const infoNoticeId = 'email-verification-sending';
  * @returns {object} Redux action
  */
 export const requestEmailVerification = ( action ) => [
-	...( action.showGlobalNotices
+	...( action?.showGlobalNotices
 		? [ infoNotice( translate( 'Sending email…' ), { id: infoNoticeId, duration: 4000 } ) ]
 		: [] ),
 	http(
@@ -48,10 +48,11 @@ export const handleError = ( action, rawError ) => [
 		type: EMAIL_VERIFY_REQUEST_FAILURE,
 		message: rawError.message,
 	},
-	...( action.showGlobalNotices
+	...( action?.showGlobalNotices
 		? [
 				removeNotice( infoNoticeId ),
 				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
+					id: 'email-verification-error-notice',
 					duration: 4000,
 				} ),
 		  ]
@@ -66,10 +67,11 @@ export const handleError = ( action, rawError ) => [
  */
 export const handleSuccess = ( action ) => [
 	{ type: EMAIL_VERIFY_REQUEST_SUCCESS },
-	...( action.showGlobalNotices
+	...( action?.showGlobalNotices
 		? [
 				removeNotice( infoNoticeId ),
 				successNotice( translate( 'Email sent' ), {
+					id: 'email-verification-success-notice',
 					duration: 4000,
 				} ),
 		  ]
