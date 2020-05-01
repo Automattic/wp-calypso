@@ -97,10 +97,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to Premium' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
-						trackUpgrade( 'premium', 'simple-payments' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
+						trackUpgrade( 'plans', 'simple-payments' );
+						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  };
 		const learnMoreLink = hasSimplePayments
@@ -108,14 +108,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
-			body: translate(
-				'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. {{em}}Available to any site with a Premium plan{{/em}}.',
-				{
-					components: {
-						em: <em />,
-					},
-				}
-			),
+			body: hasSimplePayments
+				? translate(
+						'Accept PayPal payments for physical products, digital goods, services, or donations.'
+				  )
+				: translate(
+						'Accept PayPal payments for physical products, digital goods, services, or donations. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  ),
 			image: {
 				path: simplePaymentsImage,
 			},
@@ -134,7 +138,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getRecurringPaymentsCard = () => {
 		const cta = isFreePlan
 			? {
-					text: translate( 'Upgrade' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
 						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
 						page( `/plans/${ selectedSiteSlug }` );
@@ -155,13 +159,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
 			  )
 			: translate(
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
+					'Charge for and automate recurring service payments, membership dues, or donations. {{em}}Available with a subscription to any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/recurring-payments/',
@@ -259,10 +264,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 				  }
 				: {
-						text: translate( 'Upgrade to Premium' ),
+						text: translate( 'Unlock this feature' ),
 						action: () => {
-							trackUpgrade( 'premium', 'ads' );
-							page( `/checkout/${ selectedSiteSlug }/premium/` );
+							trackUpgrade( 'plans', 'ads' );
+							page( `/plans/${ selectedSiteSlug }` );
 						},
 				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
@@ -271,13 +276,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
 			  )
 			: translate(
-					'Publish as you normally would, display advertisements on all your posts and pages, and make money each time someone visits your site. {{em}}Available to sites with a Premium plan{{/em}}.',
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
@@ -300,7 +306,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: earnSectionImage,
 			},
-			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
+			body: translate( 'Turn your website into a reliable source of income.' ),
 		},
 		promos: compact( [
 			getSimplePaymentsCard(),

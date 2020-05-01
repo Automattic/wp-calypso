@@ -21,6 +21,9 @@
 	.is-trash {
 		color: var( --color-error );
 	}
+	.is-private {
+		color: var( --color-primary-dark );
+	}
 }
 
 a.post-relative-time-status__link {

@@ -13,7 +13,7 @@
 
 .backup-delta__changes-header {
     margin-top: 2rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .backup-delta__section-header {
@@ -132,7 +132,7 @@
 
 .backup-delta__realtime-header {
     font-size: 1.3rem;
-    font-weight: 500;
+    font-weight: 400;
     margin: 2rem 0 0.5rem;
 }
 
@@ -140,9 +140,28 @@
     margin-top: 1rem;
 }
 
+.backup-delta__daily .backup-delta__changes-header:first-child {
+    margin-top: 0;
+}
+
+.backup-delta__daily-no-changes {
+    font-style: italic;
+    padding: 1rem 0;
+}
+
 @media ( max-width: 660px ) {
     .backup-delta__view-all-button {
         display: block;
         text-align: center;
+    }
+
+    .backup-delta__metas {
+        margin-top: 0;
+    }
+
+    .backup-delta__daily {
+        margin: 0 -16px;
+        padding: 0 16px;
+        background: var( --studio-white );
     }
 }

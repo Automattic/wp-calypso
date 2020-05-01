@@ -15,5 +15,6 @@ export type Scan = {
 		duration: number;
 		// @todo: complete the error prop when we know what the shape will it have
 		error: string | object;
+		isInitial: boolean;
 	};
 };

@@ -48,7 +48,8 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== 'ready';
 
-	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
+	// Show the variation picker when this is not a renewal
+	const shouldShowVariantSelector = item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>

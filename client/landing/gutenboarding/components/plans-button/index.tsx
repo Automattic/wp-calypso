@@ -28,12 +28,11 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
-	const planLabel =
+	const planLabel = sprintf(
 		/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
-		sprintf(
-			__( '%s Plan' ),
-			getPlan( hasPaidDomain ? plans.PLAN_PERSONAL : plans.PLAN_FREE ).getTitle()
-		);
+		__( '%s Plan' ),
+		getPlan( hasPaidDomain ? plans.PLAN_PREMIUM : plans.PLAN_FREE ).getTitle()
+	);
 
 	return (
 		<Button disabled label={ __( planLabel ) } className="plans-button" { ...buttonProps }>

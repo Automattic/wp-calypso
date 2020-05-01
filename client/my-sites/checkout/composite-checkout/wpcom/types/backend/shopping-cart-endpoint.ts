@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import type { CartItemExtra } from 'lib/cart-values/types';
+
+/**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
  *
  *     1. The response format of the cart endpoint (GET)
@@ -45,7 +50,7 @@ export interface RequestCartProduct {
 	product_slug: string;
 	product_id: number;
 	meta: string;
-	extra: object;
+	extra: CartItemExtra;
 }
 
 /**

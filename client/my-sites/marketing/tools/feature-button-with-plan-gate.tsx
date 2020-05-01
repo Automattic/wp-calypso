@@ -41,6 +41,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 	hasPlanFeature,
 	onDefaultButtonClick,
 	onUpgradeButtonClick,
+	feature,
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
@@ -52,7 +53,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 			onUpgradeButtonClick();
 		}
 
-		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page( addQueryArgs( { feature, plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {

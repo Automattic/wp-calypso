@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import ActionPanelCta from 'components/action-panel/cta';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Badge from 'components/badge';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -34,10 +36,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import './style.scss';
 
 const Task = ( {
+	actionOnClick,
 	actionText,
 	actionUrl,
+	badgeText,
 	description,
 	illustration,
+	enableSkipOptions = true,
 	siteId,
 	taskId,
 	timing,
@@ -55,6 +60,20 @@ const Task = ( {
 
 	const dismissalPreferenceKey = `dismissible-card-home-task-${ taskId }-${ siteId }`;
 	const successNoticeId = `task_remind_later_success-${ taskId }`;
+
+	const startTask = () => {
+		if ( actionOnClick instanceof Function ) {
+			actionOnClick();
+		}
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_customer_home_task_start', {
+					task: taskId,
+				} ),
+				bumpStat( 'calypso_customer_home', 'task_start' )
+			)
+		);
+	};
 
 	const restoreTask = () => {
 		setIsTaskVisible( true );
@@ -84,6 +103,7 @@ const Task = ( {
 				composeAnalytics(
 					recordTracksEvent( 'calypso_customer_home_task_skip', {
 						task: taskId,
+						reminder,
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
@@ -102,7 +122,7 @@ const Task = ( {
 	};
 
 	return (
-		<ActionPanel className="task">
+		<ActionPanel className={ classNames( 'task', taskId ) }>
 			<ActionPanelBody>
 				{ isDesktop() && (
 					<ActionPanelFigure align="right">
@@ -110,27 +130,36 @@ const Task = ( {
 					</ActionPanelFigure>
 				) }
 				<div className="task__text">
-					<div className="task__timing">
-						<Gridicon icon="time" size={ 18 } />
-						<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
-					</div>
+					{ timing && (
+						<div className="task__timing">
+							<Gridicon icon="time" size={ 18 } />
+							<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
+						</div>
+					) }
+					{ badgeText && (
+						<Badge type="info" className="task__badge">
+							{ badgeText }
+						</Badge>
+					) }
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
-						<Button className="task__action" primary href={ actionUrl }>
+						<Button className="task__action" primary onClick={ startTask } href={ actionUrl }>
 							{ actionText }
 						</Button>
+
 						<Button
 							className="task__skip is-link"
 							ref={ skipButtonRef }
-							onClick={ () => {
-								setSkipOptionsVisible( true );
-							} }
+							onClick={ () =>
+								enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask( 'never' )
+							}
 						>
-							{ translate( 'Remind me' ) }
-							<Gridicon icon="dropdown" size={ 18 } />
+							{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
+							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 						</Button>
-						{ areSkipOptionsVisible && (
+
+						{ enableSkipOptions && areSkipOptionsVisible && (
 							<PopoverMenu
 								context={ skipButtonRef.current }
 								isVisible={ areSkipOptionsVisible }

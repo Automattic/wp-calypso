@@ -63,7 +63,10 @@
 		}
 	}
 
-	.filterbar__selection.is-active {
+	.filterbar__selection.is-active,
+	.filterbar__selection.is-active:focus,
+	.filterbar__selection.is-active:hover,
+	.date-range.toggle-visible .filterbar__selection.button:not( .is-selected ) {
 		margin: 8px;
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-60 );

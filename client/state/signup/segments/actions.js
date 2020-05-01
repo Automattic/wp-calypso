@@ -4,6 +4,7 @@
 import { SIGNUP_SEGMENTS_REQUEST, SIGNUP_SEGMENTS_SET } from 'state/action-types';
 
 import 'state/data-layer/wpcom/signup/segments';
+import 'state/signup/init';
 
 /**
  * Action creator: Request segments data.

@@ -100,8 +100,8 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 90,
-			control: 10,
+			variantShowUpdates: 100,
+			control: 0,
 		},
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
@@ -114,5 +114,23 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+	},
+	domainStepPlanStepSwap: {
+		datestamp: '20200415',
+		variations: {
+			variantShowSwapped: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	showActiveTicketsNotice: {
+		datestamp: '20200430',
+		variations: {
+			showNotice: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

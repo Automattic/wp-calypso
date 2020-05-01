@@ -44,6 +44,10 @@ export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	siteVertical,
 } );
 
+export const skipSiteVertical = () => ( {
+	type: 'SKIP_SITE_VERTICAL' as const,
+} );
+
 export const resetSiteVertical = () => ( {
 	type: 'RESET_SITE_VERTICAL' as const,
 } );
@@ -134,5 +138,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
+	| typeof skipSiteVertical
 	| typeof togglePageLayout
 >;

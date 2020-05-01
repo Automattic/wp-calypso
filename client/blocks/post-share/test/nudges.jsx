@@ -5,7 +5,7 @@ jest.mock( 'lib/abtest', () => ( {
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( Comp ) => ( props ) => (
@@ -60,7 +60,7 @@ const props = {
 describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 	test( 'should not blow up', () => {
 		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
-		expect( comp.find( 'Banner' ).length ).toBe( 1 );
+		expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 	} );
 
 	test( 'hide when user cannot upgrade', () => {
@@ -69,7 +69,7 @@ describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 			canUserUpgrade: false,
 		};
 		const comp = shallow( <UpgradeToPremiumNudgePure { ...localProps } /> );
-		expect( comp.find( 'Banner' ).length ).toBe( 0 );
+		expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
 	} );
 } );
 
@@ -99,7 +99,7 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 			const comp = shallow(
 				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } />
 			);
-			expect( comp.find( 'Banner' ).props().plan ).toBe( plan );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( plan );
 		} );
 	} );
 } );

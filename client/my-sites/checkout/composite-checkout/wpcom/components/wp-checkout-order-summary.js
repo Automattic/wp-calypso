@@ -104,6 +104,7 @@ const CheckoutSummaryLineItem = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+	margin-bottom: 4px;
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`

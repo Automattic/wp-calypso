@@ -39,7 +39,6 @@ class ActivityCard extends Component {
 
 	static defaultProps = {
 		showActions: true,
-		showContentLink: true,
 		summarize: false,
 	};
 
@@ -105,22 +104,21 @@ class ActivityCard extends Component {
 		);
 	}
 
+	shouldRenderContentLink() {
+		const { activity, showContentLink } = this.props;
+		return showContentLink !== undefined
+			? showContentLink
+			: !! activity.streams || isSuccessfulDailyBackup( activity );
+	}
+
 	renderContentLink() {
 		const { activity, siteSlug, translate } = this.props;
 
-		if ( isSuccessfulDailyBackup( activity ) ) {
-			return (
-				<a
-					className="activity-card__detail-link"
-					href={ backupDetailPath( siteSlug, activity.rewindId ) }
-				>
-					{ translate( 'Changes in this backup' ) }
-				</a>
-			);
-		}
-
 		// todo: handle the rest of cases
-		if ( activity.streams ) {
+		if (
+			activity.streams &&
+			activity.streams.some( ( stream ) => stream.activityMedia && stream.activityMedia.available )
+		) {
 			return (
 				<Button
 					compact
@@ -138,6 +136,14 @@ class ActivityCard extends Component {
 				</Button>
 			);
 		}
+		return (
+			<a
+				className="activity-card__detail-link"
+				href={ backupDetailPath( siteSlug, activity.rewindId ) }
+			>
+				{ translate( 'Changes in this backup' ) }
+			</a>
+		);
 	}
 
 	renderActionButton( isTopToolbar = true ) {
@@ -199,19 +205,19 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const { showActions, showContentLink } = this.props;
+		const { showActions } = this.props;
 
 		return (
 			<>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! showContentLink && showActions
+						! this.shouldRenderContentLink() && showActions
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ showContentLink && this.renderContentLink() }
+					{ this.shouldRenderContentLink() && this.renderContentLink() }
 					{ showActions && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</>

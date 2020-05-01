@@ -189,6 +189,7 @@ export class SiteNotice extends React.Component {
 				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
 				event="calypso_upgrade_nudge_impression"
 				forceDisplay={ true }
+				horizontal={ true }
 				title={ preventWidows( noticeText ) }
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }

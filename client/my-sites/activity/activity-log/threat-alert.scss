@@ -67,7 +67,7 @@
 
 .activity-log__threat-alert-title {
 	padding-right: 16px;
-	font-weight: 500;
+	font-weight: 600;
 	color: var( --color-neutral-70 );
 
 	.activity-log__threat-alert-filename {
@@ -78,17 +78,17 @@
 }
 
 .activity-log__threat-alert-slug {
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .activity-log__threat-alert-signature {
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .activity-log__threat-alert-filename {
 	padding: 4px;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 600;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 14px;

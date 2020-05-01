@@ -73,7 +73,6 @@
 	margin: 1rem 0;
 }
 
-.daily-backup-status__meta,
 .daily-backup-status__title {
 	display: none;
 }
@@ -115,6 +114,14 @@
 	width: 30px;
 }
 
+.daily-backup-status__meta {
+	margin-bottom: 1.6rem;
+	margin-top: -0.3rem;
+	color: var( --studio-gray-40 );
+	font-weight: 400;
+	font-size: 0.9rem;
+}
+
 @include breakpoint( '>660px' ) {
 	.daily-backup-status__meta,
 	.daily-backup-status__title {
@@ -150,6 +157,7 @@
 
 	.daily-backup-status__meta {
 		margin-bottom: 1rem;
+		margin-top: 0;
 		color: var( --studio-gray-40 );
 		font-weight: 400;
     	font-size: 0.9rem;

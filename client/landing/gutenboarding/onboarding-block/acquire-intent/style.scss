@@ -22,6 +22,10 @@
 
 	&--mobile-vertical-step {
 		justify-content: center;
+
+		.acquire-intent__footer {
+			margin-top: auto;
+		}
 	}
 
 	@include break-small {
@@ -39,7 +43,7 @@
 }
 
 .acquire-intent__footer {
-	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	transition: opacity, transform $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&--hidden {
 		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
@@ -82,21 +86,10 @@
 }
 
 .madlib__input:empty {
-	width: 100%;
-	display: inline-block;
 	border-bottom: 2px solid transparent;
 	position: relative;
-	z-index: 2;
+	z-index: 1;
 	vertical-align: middle;
-
-	@include break-small {
-		width: 400px;
-	}
-}
-
-/* hide the placeholder when input is not empty */
-.madlib__input:not( :empty ) ~ .vertical-select__placeholder {
-	visibility: hidden;
 }
 
 // Themed core button component
@@ -107,6 +100,7 @@
 	box-shadow: none;
 	color: var( --contrastColor );
 	font-size: 14px;
+	// stylelint-disable-next-line scales/font-weight
 	font-weight: 500;
 	letter-spacing: 0;
 	padding: 20px 32px;
@@ -128,17 +122,27 @@
 	}
 }
 
+.components-button.is-link.acquire-intent__skip-vertical {
+	@include onboarding-medium-text;
+	color: var( --studio-gray-40 );
+}
+
 .site-title {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&--hidden {
 		visibility: hidden;
 		opacity: 0;
+
+		& + .acquire-intent__footer {
+			transform: translate( 0, -80px ); // Translate button up when site title is hidden
+		}
 	}
 }
 
 .site-title__input-wrapper {
 	display: block;
+	min-height: 40px; // make sure there is a tappable area on mobile when the input is empty
 
 	@include break-small {
 		display: inline;

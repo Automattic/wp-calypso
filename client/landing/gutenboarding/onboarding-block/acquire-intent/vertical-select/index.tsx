@@ -133,7 +133,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		setSuggestions( [] );
 	};
 
-	const handleBlur = () => {
+	const selectLastInputValue = () => {
 		const lastQuery = inputText.trim();
 		if ( isFocused && lastQuery.length ) {
 			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
@@ -142,7 +142,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	};
 
 	const handleArrowClick = () => {
-		handleBlur();
+		selectLastInputValue();
 		onNext();
 	};
 
@@ -170,9 +170,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			input.length && ! suggestions.length && handleSelect( { label: input } );
 			return;
 		}
-		if ( e.keyCode === TAB ) {
+		if ( e.keyCode === TAB && input.length ) {
 			e.preventDefault();
-			handleBlur();
+			selectLastInputValue();
 		}
 	};
 
@@ -201,7 +201,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
-					<span className="vertical-select__input-wrapper">
+					{ ! isMobile && ' ' }
+					<span
+						className={ classnames( 'vertical-select__input-wrapper', {
+							'vertical-select__input-wrapper--with-arrow': showArrow,
+						} ) }
+					>
 						<span
 							contentEditable
 							tabIndex={ 0 }
@@ -214,15 +219,15 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onKeyDown={ handleInputKeyDownEvent }
 							onKeyUp={ handleInputKeyUpEvent }
 							onFocus={ () => setIsFocused( true ) }
-							onBlur={ handleBlur }
+							onBlur={ selectLastInputValue }
 						/>
 						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
 						{ showArrow && (
 							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
 						) }
 					</span>
-					<div className="vertical-select__suggestions">
-						{ !! verticals.length && (
+					{ !! suggestions.length && (
+						<div className="vertical-select__suggestions">
 							<Suggestions
 								ref={ suggestionRef }
 								query={ inputText }
@@ -230,18 +235,21 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 								suggest={ handleSuggestAction }
 								title={ __( 'Suggestions' ) }
 							/>
-						) }
-					</div>
+						</div>
+					) }
 				</span>
 			),
 		}
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'vertical-select', {
 				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or placeholder
 		>
 			{ madlib }
 		</form>

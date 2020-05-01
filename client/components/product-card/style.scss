@@ -198,6 +198,11 @@
 	@include breakpoint( '>960px' ) {
 		flex: 0 0 100%;
 	}
+
+	.info-popover {
+		margin-left: 4px;
+		vertical-align: middle;
+	}
 }
 
 // We need a higher specificity here to override .form-label styles

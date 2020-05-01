@@ -22,7 +22,9 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) => {
 	const { __ } = useI18n();
-	const { siteTitle, siteVertical } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
 	const makePath = usePath();
@@ -46,10 +48,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		if ( siteVertical?.label && isVisible ) {
+		if ( ( siteVertical?.label && isVisible ) || wasVerticalSkipped ) {
 			inputRef.current.focus();
 		}
-	}, [ siteVertical, isVisible, inputRef ] );
+	}, [ siteVertical, isVisible, inputRef, wasVerticalSkipped ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
@@ -60,6 +62,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 		{
 			Input: (
 				<span className="site-title__input-wrapper">
+					{ ! isMobile && ' ' }
 					<span
 						contentEditable
 						tabIndex={ 0 }
@@ -78,11 +81,13 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 	);
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'site-title', {
-				'site-title--without-value': ! siteTitle.length,
 				'site-title--hidden': ! isVisible,
 			} ) }
+			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or next to it
 		>
 			{ madlib }
 		</form>

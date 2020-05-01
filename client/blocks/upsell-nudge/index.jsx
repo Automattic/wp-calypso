@@ -41,12 +41,14 @@ export const UpsellNudge = ( {
 	icon,
 	isJetpackDevDocs,
 	jetpack,
+	horizontal,
 	isVip,
 	list,
 	onClick,
 	onDismissClick,
 	plan,
 	planHasFeature,
+	price,
 	showIcon = false,
 	site,
 	title,
@@ -91,6 +93,7 @@ export const UpsellNudge = ( {
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
+			horizontal={ horizontal }
 			href={ href }
 			icon={ icon }
 			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
@@ -98,6 +101,7 @@ export const UpsellNudge = ( {
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
 			plan={ plan }
+			price={ price }
 			showIcon={ showIcon }
 			title={ title }
 			tracksClickName={ tracksClickName }

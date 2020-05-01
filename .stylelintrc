@@ -1,7 +1,7 @@
 {
 	"plugins": ["@signal-noise/stylelint-scales"],
 	"rules": {
-		"scales/font-weight": [[ 400, 600 ]],
+		"scales/font-weight": [[ 400, 600, "normal", "bold" ]],
 
 		"color-hex-case": "lower",
 		"color-no-invalid-hex": true,
