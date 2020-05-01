@@ -32,7 +32,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props
 			overlayClassName="domain-picker-modal-overlay"
 			bodyOpenClassName="has-domain-picker-modal"
 		>
-			<DomainPicker showDomainConnectButton showDomainCategories { ...props } />
+			<DomainPicker showDomainConnectButton showDomainCategories quantity={ 10 } { ...props } />
 		</Modal>
 	);
 };
