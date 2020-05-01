@@ -126,6 +126,9 @@ export class ContactDetailsFormFields extends Component {
 	// `formState` forces multiple updates to `this.state`
 	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
+		if ( nextProps.isManaged ) {
+			return true;
+		}
 		return (
 			nextProps.shouldForceRenderOnPropChange === true ||
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
@@ -399,7 +402,7 @@ export class ContactDetailsFormFields extends Component {
 
 	createField = ( name, componentClass, additionalProps, fieldPropOptions = {} ) => {
 		return createElement( componentClass, {
-			...this.getFieldProps( name, { ...fieldPropOptions } ),
+			...this.getFieldProps( name, fieldPropOptions ),
 			...additionalProps,
 		} );
 	};
