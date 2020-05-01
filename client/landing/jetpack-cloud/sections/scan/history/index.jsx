@@ -12,8 +12,6 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
-import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
-import ThreatItemSubheader from 'landing/jetpack-cloud/components/threat-item-subheader';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -102,8 +100,6 @@ class ScanHistoryPage extends Component {
 							onFixThreat={ () => console.log( 'fix', threat ) }
 							isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
 							contactSupportUrl={ contactSupportUrl( siteSlug ) }
-							header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-							subheader={ <ThreatItemSubheader threat={ threat } /> }
 							isPlaceholder={ this.props.isRequestingHistory }
 						/>
 					) ) }
