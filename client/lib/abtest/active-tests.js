@@ -124,4 +124,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	showActiveTicketsNotice: {
+		datestamp: '20200430',
+		variations: {
+			showNotice: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
