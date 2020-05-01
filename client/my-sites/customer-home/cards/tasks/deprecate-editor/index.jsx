@@ -23,6 +23,8 @@ import {
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg';
 import FormattedDate from 'components/formatted-date';
+import { localizeUrl } from 'lib/i18n-utils';
+import InlineSupportLink from 'components/inline-support-link';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
@@ -34,12 +36,24 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 			title={ translate( 'The Block Editor is coming.' ) }
 			description={ preventWidows(
 				translate(
-					'Get a head start before we enable it for everyone on {{strong}}{{date}}{{/date}}{{/strong}}. {{a}}Read more{{/a}}',
+					'Get a head start before we enable it for everyone on {{strong}}{{date}}{{/date}}{{/strong}}. {{support}}{{/support}}',
 					{
 						components: {
-							a: <a href="#link-yet-to-be-decided" />,
 							strong: <strong />,
 							date: <FormattedDate date="2020-06-01" format="MMMM D" />,
+							support: (
+								<InlineSupportLink
+									supportPostId={ 165338 }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/block-editor-is-coming'
+									) }
+									showIcon={ false }
+									text={ translate( 'Read more' ) }
+									tracksEvent="calypso_customer_home_editor_deprecate_support_page_view"
+									statsGroup="calypso_customer_home"
+									statsName="editor_deprecate_learn_more"
+								/>
+							),
 						},
 					}
 				)
