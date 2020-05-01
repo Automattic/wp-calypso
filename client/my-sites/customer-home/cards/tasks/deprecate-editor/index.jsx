@@ -47,7 +47,7 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 			illustration={ blockEditorImage }
 			badgeText={ translate( "What's new" ) }
 			taskId="deprecate-editor"
-			areSkipOptionsEnabled={ false }
+			enableSkipOptions={ false }
 		/>
 	);
 };
