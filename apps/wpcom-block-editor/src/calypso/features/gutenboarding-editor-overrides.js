@@ -60,6 +60,11 @@ function updateSettingsBar() {
 }
 
 function showFirstTimeNotice() {
+	// Skip on older atomic sites.
+	if ( typeof createInterpolateElement !== 'function' ) {
+		return;
+	}
+
 	const getPreviewButton = () => document.querySelector( '.editor-post-preview' );
 
 	const awaitPreviewButton = setInterval( () => {
