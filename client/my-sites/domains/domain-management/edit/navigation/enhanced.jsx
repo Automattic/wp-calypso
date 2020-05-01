@@ -309,6 +309,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Pick a custom domain' ) }
+				description={ translate( 'Matches available' ) }
 			/>
 		);
 	}
@@ -327,6 +328,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }
+				description={ domain.name }
 			/>
 		);
 	}
