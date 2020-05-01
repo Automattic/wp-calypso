@@ -312,17 +312,25 @@ function InactiveOrderReview() {
 				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
 					return (
 						<ProductListItem key={ product.id }>
-							{ isLineItemADomain( product ) ? (
-								<strong>{ product.sublabel }</strong>
-							) : (
-								product.label
-							) }
+							<ProductListItemLabel>{ product.label }</ProductListItemLabel>
+							<ProductListItemSublabel product={ product } />
 						</ProductListItem>
 					);
 				} ) }
 			</ProductList>
 		</SummaryContent>
 	);
+}
+
+function ProductListItemSublabel( { product } ) {
+	if ( isLineItemADomain( product ) ) {
+		return (
+			<ProductListItemSublabelUI>
+				<strong>{ product.sublabel }</strong>
+			</ProductListItemSublabelUI>
+		);
+	}
+	return <ProductListItemSublabelUI>{ product.sublabel }</ProductListItemSublabelUI>;
 }
 
 function shouldItemBeInSummary( item ) {
@@ -385,4 +393,18 @@ const ProductListItem = styled.li`
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
+
+	&:first-of-type {
+		margin-bottom: 8px;
+	}
+`;
+
+const ProductListItemLabel = styled.div`
+	color: ${( props ) => props.theme.colors.textColorLight};
+	font-size: 13px;
+`;
+
+const ProductListItemSublabelUI = styled.div`
+	color: ${( props ) => props.theme.colors.textColor};
+	font-size: 15px;
 `;
