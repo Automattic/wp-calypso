@@ -23,7 +23,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import { withLocalizedMoment } from 'components/localized-moment';
-import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -45,37 +44,41 @@ const QuickStart = ( {
 			<Card className="quick-start next-session">
 				<HappinessEngineersTray />
 				<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
-				{ nextSession && (
-					<>
-						<table>
-							<thead>
-								<tr>
-									<th>{ translate( 'Date' ) }</th>
-									<th>{ translate( 'Time' ) }</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>{ moment( nextSession.beginTimestamp ).format( 'LL' ) }</td>
-									<td>
-										{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<Button onClick={ () => viewDetails( siteSlug ) }>
-							{ translate( 'View details' ) }
-						</Button>
-						<Button
-							className={ 'quick-start__reschedule' }
-							onClick={ () => reschedule( siteSlug, nextSession.id ) }
-							borderless
-						>
-							{ translate( 'Reschedule' ) }
-						</Button>
-					</>
-				) }
-				{ ! nextSession && <Spinner /> }
+				<table>
+					<thead>
+						<tr>
+							<th>{ translate( 'Date' ) }</th>
+							<th>{ translate( 'Time' ) }</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								{ nextSession
+									? moment( nextSession.beginTimestamp ).format( 'LL' )
+									: translate( 'Loading…' ) }
+							</td>
+							<td>
+								{ nextSession
+									? moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' )
+									: translate( 'Loading…' ) }
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div className="quick-start__buttons">
+					<Button disabled={ ! nextSession } onClick={ () => viewDetails( siteSlug ) }>
+						{ translate( 'View details' ) }
+					</Button>
+					<Button
+						className={ 'quick-start__reschedule' }
+						onClick={ () => reschedule( siteSlug, nextSession.id ) }
+						borderless
+						disabled={ ! nextSession }
+					>
+						{ translate( 'Reschedule' ) }
+					</Button>
+				</div>
 			</Card>
 		</>
 	);
