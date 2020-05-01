@@ -325,7 +325,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' !== queryFor ) {
 					// pricing page is outside of Calypso, needs a full page load
-					window.location = 'https://wordpress.com/pricing';
+					window.location = `https://wordpress.com/pricing/${ context.querystring }`;
 				}
 				return;
 			}
