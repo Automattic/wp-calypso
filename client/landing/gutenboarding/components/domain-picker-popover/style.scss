@@ -16,12 +16,8 @@
 		border: 1px solid var( --studio-gray-5 );
 		box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
 		border-radius: 4px;
-
-		// Increase specificity
-		> div.domain-picker-popover__addons {
-			height: 0;
-			overflow: visible;
-		}
+		overflow: hidden;
+		overflow-y: auto;
 	}
 
 	// Popover component adds a .is-expanded class under mobile view.
@@ -45,20 +41,13 @@
 		}
 	}
 
-	.domain-picker-popover__close-button {
-		position: absolute;
-		top: 36px;
-		right: 36px;
+	.domain-picker__close-button {
+		position: relative;
+		right: -8px;
 	}
 
-	.domain-picker-popover__more-button {
-		position: relative;
-		left: 36px;
-		top: -60px; // 24px padding - 36px button height 
-
-		&.components-button {
-			@include onboarding-medium-text;
-			color: var( --color-neutral-100 );
-		}
+	// Don't show cancel button when in popover.
+	.domain-picker__cancel-button {
+		display: none;
 	}
 }

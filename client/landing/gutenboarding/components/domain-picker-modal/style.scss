@@ -66,12 +66,23 @@
 		input[type='text'].components-text-control__input {
 			height: 44px;
 		}
+
+		svg {
+			top: 9px;
+			right: 12px;
+		}
+	}
+
+	// Don't show close button & more button when inside a modal.
+	.domain-picker__close-button,
+	.domain-picker__more-button {
+		display: none;
 	}
 
 	// Increase specificity
 	.components-panel__row {
 
-		label.domain-picker__suggestion-item {
+		.domain-picker__suggestion-item {
 			border: 1px solid var( --studio-gray-5 );
 			padding: 14px;
 			margin-bottom: 0;
