@@ -33,8 +33,10 @@
 	&__buttons {
 		display: flex;
 		justify-content: space-evenly;
-		align-items: flex-end;
-		height: 50px;
+
+		> button {
+			margin-top: 20px;
+		}
 	}
 
 	&__fix-button.is-summary {
