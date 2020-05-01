@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
+import RewindCredentialsForm from './components/rewind-credentials-form';
 import { Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
