@@ -21,6 +21,7 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
+	isPlaceholder: boolean;
 	onFixThreat?: Function;
 	onIgnoreThreat?: Function;
 	isFixing: boolean;
@@ -31,6 +32,7 @@ interface Props {
 
 const ThreatItem: FunctionComponent< Props > = ( {
 	threat,
+	isPlaceholder,
 	onFixThreat,
 	onIgnoreThreat,
 	isFixing,
@@ -85,15 +87,29 @@ const ThreatItem: FunctionComponent< Props > = ( {
 		[ threat ]
 	);
 
+	if ( isPlaceholder ) {
+		return (
+			<LogItem
+				className={ classnames( 'threat-item', 'is-placeholder' ) }
+				header="Placeholder threat"
+				subheader="Placeholder sub header"
+			></LogItem>
+		);
+	}
+
 	return (
 		<LogItem
-			className="threat-item"
+			key={ threat.id }
+			className={ classnames( 'threat-item', {
+				'is-fixed': threat.status === 'fixed',
+				'is-ignored': threat.status === 'ignored',
+				'is-current': threat.status === 'current',
+			} ) }
 			header={ header }
 			subheader={ subheader }
 			{ ...( isFixable ? { summary: renderFixThreatButton( 'is-summary' ) } : {} ) }
 			{ ...( isFixable ? { expandedSummary: renderFixThreatButton( 'is-summary' ) } : {} ) }
-			key={ threat.id }
-			highlight="error"
+			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 		>
 			<ThreatDescription
 				status={ threat.status }
@@ -104,20 +120,22 @@ const ThreatItem: FunctionComponent< Props > = ( {
 				filename={ threat.filename }
 			/>
 
-			<div className="threat-item__buttons">
-				{ isFixable && renderFixThreatButton( 'is-details' ) }
-				{ threat.status === 'current' && (
-					<Button
-						scary
-						compact
-						className="threat-item__ignore-button"
-						onClick={ onIgnoreThreat }
-						disabled={ isFixing }
-					>
-						{ translate( 'Ignore threat' ) }
-					</Button>
-				) }
-			</div>
+			{ ( isFixable || threat.status === 'current' ) && (
+				<div className="threat-item__buttons">
+					{ isFixable && renderFixThreatButton( 'is-details' ) }
+					{ threat.status === 'current' && (
+						<Button
+							scary
+							compact
+							className="threat-item__ignore-button"
+							onClick={ onIgnoreThreat }
+							disabled={ isFixing }
+						>
+							{ translate( 'Ignore threat' ) }
+						</Button>
+					) }
+				</div>
+			) }
 		</LogItem>
 	);
 };

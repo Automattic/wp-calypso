@@ -2,6 +2,12 @@
 	// Override the error color to a slightly different red.
 	--color-error-20: var( --color-threat-found );
 
+	&.is-placeholder .card-heading,
+	&.is-placeholder .log-item__subheader {
+		margin-bottom: 2px;
+		@include placeholder( --color-neutral-10 );
+	}
+
 	.card-heading {
 		font-size: 18px;
 		line-height: 24px;
@@ -10,7 +16,18 @@
 	.log-item__subheader {
 		color: var( --studio-gray-60 );
 		font-size: 14px;
-		margin-top: 2px;
+	}
+
+	&.is-current {
+		border-left: 3px solid var( --color-threat-found );
+	}
+
+	&.is-fixed {
+		border-left: 3px solid var( --studio-jetpack-green-40 );
+	}
+
+	&.is-ignored {
+		border-left: 3px solid var( --studio-gray-50 );
 	}
 
 	&__buttons {

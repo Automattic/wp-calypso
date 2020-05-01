@@ -1,22 +1,4 @@
-.scan-history-item {
-	&.is-placeholder .card-heading,
-	&.is-placeholder .log-item__subheader {
-		margin-bottom: 2px;
-		@include placeholder( --color-neutral-10 );
-	}
-	&.is-fixed {
-		border-left: 3px solid var( --studio-jetpack-green-40 );
-	}
-
-	&.is-ignored {
-		border-left: 3px solid var( --studio-gray-50 );
-	}
-
-	.card-heading {
-		font-size: 18px;
-		line-height: 24px;
-	}
-
+.threat-item-subheader-history {
 	&__subheader {
 		color: var( --color-threat-ignored );
 		font-size: 14px;
@@ -25,7 +7,7 @@
 		align-items: flex-start;
 		margin-top: 4px;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>1280px' ) {
 			flex-direction: row;
 			align-items: center;
 		}
@@ -42,7 +24,7 @@
 	&__date-separator {
 		display: none;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>1280px' ) {
 			display: inline-block;
 			background: var( --color-threat-ignored );
 			margin: 0 12px;
@@ -53,7 +35,7 @@
 	}
 
 	&__badge.badge {
-	line-height: 14px;
+		line-height: 14px;
 		width: 60px;
 		margin-top: 10px;
 		letter-spacing: 1px;

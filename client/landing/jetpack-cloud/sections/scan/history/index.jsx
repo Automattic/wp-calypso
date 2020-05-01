@@ -11,15 +11,19 @@ import page from 'page';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import ScanHistoryItem from 'landing/jetpack-cloud/components/scan-history-item';
+import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
+import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
+import ThreatItemSubheaderHistory from 'landing/jetpack-cloud/components/threat-item-subheader-history';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpack-scan-history';
 import getSiteScanHistory from 'state/selectors/get-site-scan-history';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import { withLocalizedMoment } from 'components/localized-moment';
 /**
  * Style dependencies
  */
@@ -64,8 +68,11 @@ class ScanHistoryPage extends Component {
 	}
 
 	render() {
+		const { siteSlug } = this.props;
 		const logEntries = this.filteredEntries();
+		const fixingThreats = [];
 		const { value: filter } = this.getCurrentFilter();
+
 		return (
 			<Main className="history">
 				<DocumentHead title={ translate( 'History' ) } />
@@ -87,10 +94,16 @@ class ScanHistoryPage extends Component {
 					/>
 				</div>
 				<div className="history__entries">
-					{ logEntries.map( ( entry ) => (
-						<ScanHistoryItem
-							threat={ entry }
-							key={ entry.id }
+					{ logEntries.map( ( threat ) => (
+						<ThreatItem
+							key={ threat.id }
+							threat={ threat }
+							// eslint-disable-next-line no-console
+							onFixThreat={ () => console.log( 'fix', threat ) }
+							isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
+							contactSupportUrl={ contactSupportUrl( siteSlug ) }
+							header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
+							subheader={ <ThreatItemSubheaderHistory threat={ threat } /> }
 							isPlaceholder={ this.props.isRequestingHistory }
 						/>
 					) ) }
@@ -102,7 +115,9 @@ class ScanHistoryPage extends Component {
 
 export default connect(
 	( state ) => {
-		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+		const siteId = site.ID;
+		const siteSlug = getSelectedSiteSlug( state );
 		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
 
 		const logEntries = isRequestingHistory
@@ -116,10 +131,10 @@ export default connect(
 
 		return {
 			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug,
 			isRequestingHistory,
 			logEntries,
 		};
 	},
 	{ dispatchRecordTracksEvent: recordTracksEvent }
-)( ScanHistoryPage );
+)( withLocalizedMoment( ScanHistoryPage ) );

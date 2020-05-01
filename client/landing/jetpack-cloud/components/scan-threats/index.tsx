@@ -187,6 +187,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
 						header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
 						subheader={ <ThreatItemSubheader threat={ threat } /> }
+						isPlaceholder={ false }
 					/>
 				) ) }
 			</div>
