@@ -22,6 +22,7 @@ import {
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg';
+import FormattedDate from 'components/formatted-date';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();
@@ -30,19 +31,20 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	};
 	return (
 		<Task
-			title={ translate( 'The Block Editor is coming' ) }
+			title={ translate( 'The Block Editor is coming.' ) }
 			description={ preventWidows(
 				translate(
-					'Try the Block Editor now before it is enabled for everyone on {{strong}}May 22{{/strong}}. {{a}}Read more{{/a}}',
+					'Get a head start before we enable it for everyone on {{strong}}{{date}}{{/date}}{{/strong}}. {{a}}Read more{{/a}}',
 					{
 						components: {
 							a: <a href="#link-yet-to-be-decided" />,
 							strong: <strong />,
+							date: <FormattedDate date="2020-06-01" format="MMMM D" />,
 						},
 					}
 				)
 			) }
-			actionText={ translate( 'Try it now' ) }
+			actionText={ translate( 'Switch to the Block Editor' ) }
 			actionOnClick={ actionCallback }
 			illustration={ blockEditorImage }
 			badgeText={ translate( "What's new" ) }
