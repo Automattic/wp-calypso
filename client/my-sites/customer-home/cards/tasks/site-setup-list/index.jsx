@@ -85,23 +85,6 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 	);
 };
 
-const getActionText = ( currentTask, emailVerificationStatus ) => {
-	if ( currentTask.id === 'email_verified' ) {
-		if ( emailVerificationStatus === 'requesting' ) {
-			return translate( 'Sending…' );
-		}
-
-		if ( emailVerificationStatus === 'error' ) {
-			return translate( 'Error' );
-		}
-
-		if ( emailVerificationStatus === 'sent' ) {
-			return translate( 'Email sent' );
-		}
-	}
-	return currentTask.actionText;
-};
-
 const SiteSetupList = ( {
 	emailVerificationStatus,
 	isEmailUnverified,
@@ -162,7 +145,17 @@ const SiteSetupList = ( {
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId );
 		}
-	}, [ currentTaskId ] );
+	}, [
+		currentTaskId,
+		emailVerificationStatus,
+		isDomainUnverified,
+		isEmailUnverified,
+		menusUrl,
+		siteId,
+		siteSlug,
+		taskUrls,
+		userEmail,
+	] );
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<960px' ) ) {
@@ -215,23 +208,21 @@ const SiteSetupList = ( {
 				<ActionPanel className="site-setup-list__task task">
 					<ActionPanelBody>
 						<div className="site-setup-list__task-text task__text">
-							<div className="site-setup-list__task-timing task__timing">
-								{ currentTask.isCompleted ? (
-									<Badge className="site-setup-list__badge" type="info">
-										{ translate( 'Complete' ) }
-									</Badge>
-								) : (
-									<>
-										<Gridicon icon="time" size={ 18 } />
-										<p>
-											{ translate( '%d minute', '%d minutes', {
-												count: currentTask.timing,
-												args: [ currentTask.timing ],
-											} ) }
-										</p>
-									</>
-								) }
-							</div>
+							{ currentTask.isCompleted ? (
+								<Badge type="info" className="site-setup-list__task-badge task__badge">
+									{ translate( 'Complete' ) }
+								</Badge>
+							) : (
+								<div className="site-setup-list__task-timing task__timing">
+									<Gridicon icon="time" size={ 18 } />
+									<p>
+										{ translate( '%d minute', '%d minutes', {
+											count: currentTask.timing,
+											args: [ currentTask.timing ],
+										} ) }
+									</p>
+								</div>
+							) }
 							<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
 							<p className="site-setup-list__task-description task__description">
 								{ currentTask.description }
@@ -243,7 +234,7 @@ const SiteSetupList = ( {
 									onClick={ () => startTask( dispatch, currentTask, siteId ) }
 									disabled={ currentTask.isDisabled }
 								>
-									{ getActionText( currentTask, emailVerificationStatus ) }
+									{ currentTask.actionText }
 								</Button>
 								{ currentTask.isSkippable && ! currentTask.isCompleted && (
 									<Button
