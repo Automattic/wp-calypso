@@ -83,7 +83,10 @@ export function processItem( item ) {
 }
 
 const activityLogSchema = makeJsonSchemaParser( apiResponseSchema, transformer );
-const activitySchema = makeJsonSchemaParser( apiResponseSchema.definitions.activity, processItem );
+const activitySchema = makeJsonSchemaParser(
+	apiResponseSchema.definitions.singleActivityRequest,
+	processItem
+);
 
 // fromApi default export
 export { activityLogSchema as default, activitySchema as fromActivityApi };

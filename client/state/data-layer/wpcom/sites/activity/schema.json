@@ -97,6 +97,9 @@
 				},
 				"type": { "type": "string" }
 			}
+		},
+		"singleActivityRequest": {
+			"$ref": "#/definitions/activity"
 		}
 	}
 }
