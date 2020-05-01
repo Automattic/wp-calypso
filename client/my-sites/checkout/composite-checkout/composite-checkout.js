@@ -51,7 +51,7 @@ import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
@@ -301,8 +301,7 @@ export default function CompositeCheckout( {
 	) => {
 		const getIsFieldDisabled = () => isDisabled;
 		return (
-			<ContactDetailsFormFields
-				countriesList={ countriesList }
+			<ManagedContactDetailsFormFields
 				contactDetails={ contactDetails }
 				contactDetailsErrors={
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
