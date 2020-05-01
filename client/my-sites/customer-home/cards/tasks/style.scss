@@ -66,3 +66,9 @@
 .task__skip-popover .popover__menu {
 	min-width: 130px;
 }
+
+.badge--info.task__badge {
+	background-color: var( --studio-gray-80 );
+	color: var( --color-text-inverted );
+	margin-bottom: 16px;
+}
