@@ -60,7 +60,6 @@ const QuickStart = ( {
 			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
 			<Button
 				className={ 'quick-start__reschedule' }
-				href={ `/me/concierge/${ siteSlug }/book` }
 				onClick={ () => reschedule( siteSlug, nextSession.id ) }
 				borderless
 			>
