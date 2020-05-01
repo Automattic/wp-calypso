@@ -21,8 +21,8 @@ import {
 } from 'landing/jetpack-cloud/components/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
-import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
 
 /**
  * Style dependencies
@@ -47,53 +47,6 @@ const ScanError = () => (
 		Despite this error, we can inform you we have found threats in your site.
 	</Card>
 );
-
-const useThreats = ( siteId: number, threats: Threat[] ) => {
-	const [ updatingThreats, setUpdatingThreats ] = React.useState< Array< Threat > >( [] );
-	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >( threats[ 0 ] );
-	const dispatch = useDispatch();
-
-	const updateThreat = React.useCallback(
-		( action: 'fix' | 'ignore' ) => {
-			const eventName = action === 'fix' ? 'calypso_scan_threat_fix' : 'calypso_scan_threat_ignore';
-			dispatch(
-				recordTracksEvent( eventName, {
-					site_id: siteId,
-					threat_signature: selectedThreat.signature,
-				} )
-			);
-			setUpdatingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
-			const actionCreator = action === 'fix' ? fixThreatAlert : ignoreThreatAlert;
-			dispatch( actionCreator( siteId, selectedThreat.id, true ) );
-		},
-		[ dispatch, selectedThreat, siteId ]
-	);
-
-	const fixThreats = React.useCallback(
-		( fixableThreats: FixableThreat[] ) => {
-			dispatch(
-				recordTracksEvent( `calypso_scan_all_threats_fix`, {
-					site_id: siteId,
-					threats_number: fixableThreats.length,
-				} )
-			);
-			fixableThreats.forEach( ( threat ) => {
-				dispatch( fixThreatAlert( siteId, threat.id ) );
-			} );
-			setUpdatingThreats( fixableThreats );
-		},
-		[ dispatch, siteId ]
-	);
-
-	return {
-		updatingThreats,
-		setUpdatingThreats,
-		selectedThreat,
-		setSelectedThreat,
-		fixThreats,
-		updateThreat,
-	};
-};
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
 	const {
