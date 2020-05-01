@@ -324,7 +324,7 @@ class InvitePeople extends React.Component {
 					<form onSubmit={ this.submitForm }>
 						<div role="group" className="invite-people__token-field-wrapper">
 							<FormLabel htmlFor="usernamesOrEmails">
-								{ translate( 'Usernames or Emails' ) }
+								{ translate( 'Usernames or emails' ) }
 							</FormLabel>
 							<TokenField
 								id="usernamesOrEmails"
@@ -367,7 +367,7 @@ class InvitePeople extends React.Component {
 						) }
 
 						<FormFieldset>
-							<FormLabel htmlFor="message">{ translate( 'Custom Message' ) }</FormLabel>
+							<FormLabel htmlFor="message">{ translate( 'Custom message' ) }</FormLabel>
 							<CountedTextarea
 								name="message"
 								id="message"

@@ -334,7 +334,7 @@ class WordAdsEarnings extends Component {
 					</div>
 				</Card>
 				{ earnings && this.checkSize( earnings.wordads )
-					? this.earningsTable( earnings.wordads, translate( 'Earnings History' ), 'wordads' )
+					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }
 				{ earnings && this.checkSize( earnings.sponsored )
 					? this.earningsTable(

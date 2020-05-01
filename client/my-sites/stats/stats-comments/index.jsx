@@ -123,8 +123,8 @@ class StatsComments extends Component {
 		const commentsPosts = get( commentsStatsData, 'posts' );
 		const noData = ! commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments By authors' ) },
-			{ value: 'top-content', label: translate( 'Comments By posts & pages' ) },
+			{ value: 'top-authors', label: translate( 'Comments by authors' ) },
+			{ value: 'top-content', label: translate( 'Comments by posts & pages' ) },
 		];
 
 		const classes = classNames( 'stats-module', {

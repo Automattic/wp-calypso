@@ -61,7 +61,7 @@ export class RecommendedSites extends React.PureComponent {
 			<div className="reader-recommended-sites">
 				<h2 className="reader-recommended-sites__header text-subtitle">
 					<Gridicon icon="thumbs-up" size={ 18 } />
-					{ this.props.translate( 'Recommended Sites' ) }
+					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {

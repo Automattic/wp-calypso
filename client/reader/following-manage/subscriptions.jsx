@@ -93,7 +93,7 @@ class FollowingManageSubscriptions extends Component {
 				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
-						{ translate( '%(num)s Followed Sites', {
+						{ translate( '%(num)s Followed sites', {
 							args: { num: followsCount },
 						} ) }
 					</h1>

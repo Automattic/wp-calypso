@@ -116,7 +116,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'First Name' ) }
+							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }
 							isError={ hasFirstNameError }
@@ -132,7 +132,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					</div>
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'Last Name' ) }
+							placeholder={ translate( 'Last name' ) }
 							value={ lastName }
 							maxLength={ 60 }
 							isError={ hasLastNameError }
@@ -152,7 +152,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onClick={ onUserRemove }
 						>
 							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove User' ) }</span>
+							<span>{ translate( 'Remove user' ) }</span>
 						</Button>
 					</div>
 				</div>
