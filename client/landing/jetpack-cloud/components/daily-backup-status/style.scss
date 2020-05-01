@@ -69,19 +69,19 @@
 	margin-left: 0;
 }
 
-.form-button.daily-backup-status__restore-button {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-}
-
 .form-button.daily-backup-status__restore-button img {
 	width: 1rem;
 	height: 1rem;
 	filter: grayscale( 100% ) contrast( 70% );
 }
 
-.form-button.daily-backup-status__restore-button div {
+.daily-backup-status__restore-button-icon {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.daily-backup-status__restore-button-icon div {
 	position: relative;
 	margin: auto;
 	left: -0.5rem;
@@ -218,5 +218,13 @@
 		margin-right: 1rem;
 		padding-left: 2rem;
 		padding-right: 2rem;
+	}
+
+	.form-button.daily-backup-status__restore-button img {
+		margin-right: 1rem;
+	}
+
+	.daily-backup-status__credentials-warning {
+		padding: 0;
 	}
 }

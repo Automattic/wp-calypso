@@ -79,7 +79,13 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, doesRewindNeedCredentials, hasRealtimeBackups, siteSlug, translate } = this.props;
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			hasRealtimeBackups,
+			siteSlug,
+			translate,
+		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
@@ -394,13 +400,15 @@ const ActionButtons = ( {
 				href={ backupRestorePath( siteSlug, rewindId ) }
 				disabled={ disabledRestore || doesRewindNeedCredentials }
 				onClick={ ( event ) => {
-					disabledRestore || ( doesRewindNeedCredentials && event.preventDefault() );
+					( disabledRestore || doesRewindNeedCredentials ) && event.preventDefault();
 				} }
 			>
-				{ doesRewindNeedCredentials && (
-					<img src={ missingCredentialsIcon } alt="" role="presentation" />
-				) }
-				<div>{ translate( 'Restore to this point' ) }</div>
+				<div className="daily-backup-status__restore-button-icon">
+					{ doesRewindNeedCredentials && (
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+					) }
+					<div>{ translate( 'Restore to this point' ) }</div>
+				</div>
 			</Button>
 			{ doesRewindNeedCredentials && (
 				<div className="daily-backup-status__credentials-warning">

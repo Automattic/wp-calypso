@@ -22,6 +22,7 @@ import {
 	backupDetailPath,
 	backupDownloadPath,
 	backupRestorePath,
+	settingsPath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import ExternalLink from 'components/external-link';
@@ -183,7 +184,7 @@ class ActivityCard extends Component {
 					className="activity-card__popover"
 				>
 					<Button
-						href={ backupRestorePath( siteSlug, activity.rewindId ) }
+						href={ ! doesRewindNeedCredentials && backupRestorePath( siteSlug, activity.rewindId ) }
 						className="activity-card__restore-button"
 						disabled={ doesRewindNeedCredentials }
 					>
@@ -197,7 +198,7 @@ class ActivityCard extends Component {
 									'{{a}}Enter your server credentials{{/a}} to enable one-click restores from your backups.',
 									{
 										components: {
-											a: <ExternalLink href="" onClick={ () => {} } />,
+											a: <ExternalLink href={ settingsPath( siteSlug ) } onClick={ () => {} } />,
 										},
 									}
 								) }
