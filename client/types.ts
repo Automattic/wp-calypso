@@ -53,7 +53,7 @@ export type AppState = __TodoAny__;
  *
  * **Please, use sparingly!**
  */
-export type __TodoAny__ = any;
+export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 
 // Properties added to the `window` object:
 declare global {
