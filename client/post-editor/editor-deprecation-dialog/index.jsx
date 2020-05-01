@@ -79,7 +79,7 @@ class EditorDeprecationDialog extends Component {
 
 				<p className="editor-deprecation-dialog__subhead">
 					{ translate(
-						'Try the Block Editor now before we enable it for everyone on {{date/}}. {{support/}}.',
+						'Try the Block Editor now before we enable it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
 						{
 							components: {
 								date: (
@@ -94,7 +94,6 @@ class EditorDeprecationDialog extends Component {
 											'https://wordpress.com/support/block-editor-is-coming'
 										) }
 										showIcon={ false }
-										text={ translate( 'Read more' ) }
 										tracksEvent="calypso_editor_deprecate_support_page_view"
 										statsGroup="calypso_editor"
 										statsName="editor_deprecate_learn_more"
