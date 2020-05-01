@@ -107,11 +107,11 @@ class JetpackCloudSidebar extends Component {
 							<ul>
 								<SidebarItem
 									expandSection={ this.expandBackupSection }
-									label={ translate( 'Status', {
-										comment: 'Jetpack Cloud / Backup status sidebar navigation item',
+									label={ translate( 'Latest backups', {
+										comment: 'Jetpack Cloud / Backup sidebar navigation item',
 									} ) }
 									link={ backupMainPath( selectedSiteSlug ) }
-									onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Status' ) }
+									onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Latest backups' ) }
 									selected={
 										itemLinkMatches( backupMainPath(), this.props.path ) &&
 										! itemLinkMatches( backupActivityPath(), this.props.path )
