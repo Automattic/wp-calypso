@@ -55,7 +55,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		setSelectedThreat,
 		fixThreats,
 		updateThreat,
-	} = useThreats( site.ID, threats );
+	} = useThreats( site.ID );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );

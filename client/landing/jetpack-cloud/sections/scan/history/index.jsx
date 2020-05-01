@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 
@@ -11,6 +11,7 @@ import page from 'page';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
+import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
@@ -22,6 +23,8 @@ import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpac
 import getSiteScanHistory from 'state/selectors/get-site-scan-history';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
+
 /**
  * Style dependencies
  */
@@ -33,86 +36,126 @@ const filterOptions = [
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
-class ScanHistoryPage extends Component {
-	getCurrentFilter = () => {
-		const { filter } = this.props;
+const ScanHistoryPage = ( {
+	siteId,
+	siteName,
+	siteSlug,
+	isRequestingHistory,
+	threats,
+	filter,
+	dispatchRecordTracksEvent,
+} ) => {
+	const { selectedThreat, setSelectedThreat, updateThreat } = useThreats( siteId );
+	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const dispatch = useDispatch();
+	const handleOnFilterChange = React.useCallback(
+		( filterEntry ) => {
+			let filterValue = filterEntry.value;
+			if ( 'all' === filterValue ) {
+				filterValue = '';
+			}
+			dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
+				site_id: siteId,
+				filter: filterValue,
+			} );
+			page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
+		},
+		[ dispatchRecordTracksEvent, siteId, siteSlug ]
+	);
 
+	const openDialog = React.useCallback(
+		( threat ) => {
+			const eventName = 'calypso_scan_fix_threat_dialog_open';
+			dispatch(
+				recordTracksEvent( eventName, {
+					site_id: siteId,
+					threat_signature: threat.signature,
+				} )
+			);
+			setSelectedThreat( threat );
+			setShowThreatDialog( true );
+		},
+		[ dispatch, setSelectedThreat, siteId ]
+	);
+
+	const closeDialog = React.useCallback( () => {
+		setShowThreatDialog( false );
+	}, [ setShowThreatDialog ] );
+
+	const fixThreat = React.useCallback( () => {
+		closeDialog();
+		updateThreat( 'fix' );
+	}, [ closeDialog, updateThreat ] );
+
+	const currentFilter = React.useMemo( () => {
 		if ( filter ) {
 			return filterOptions.find( ( { value } ) => value === filter ) || filterOptions[ 0 ];
 		}
 		return filterOptions[ 0 ];
-	};
+	}, [ filter ] );
 
-	handleOnFilterChange = ( filter ) => {
-		const { siteSlug, siteId, dispatchRecordTracksEvent } = this.props;
-		let filterValue = filter.value;
-		if ( 'all' === filterValue ) {
-			filterValue = '';
+	const filteredEntries = React.useMemo( () => {
+		const { value: filterValue } = currentFilter;
+		if ( filterValue === 'all' ) {
+			return threats;
 		}
-		dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
-			site_id: siteId,
-			filter: filterValue,
-		} );
-		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
-	};
+		return threats.filter( ( entry ) => entry.status === filterValue );
+	}, [ currentFilter, threats ] );
 
-	filteredEntries() {
-		const { logEntries } = this.props;
-		const { value: filter } = this.getCurrentFilter();
-		if ( filter === 'all' ) {
-			return logEntries;
-		}
-		return logEntries.filter( ( entry ) => entry.status === filter );
-	}
+	// @todo: make this work
+	const fixingThreats = [];
 
-	render() {
-		const { siteSlug } = this.props;
-		const logEntries = this.filteredEntries();
-		const fixingThreats = [];
-		const { value: filter } = this.getCurrentFilter();
-
-		return (
-			<Main className="history">
-				<DocumentHead title={ translate( 'History' ) } />
-				<SidebarNavigation />
-				<QueryJetpackScanHistory siteId={ this.props.siteId } />
-				<PageViewTracker path="/scan/history/:site" title="Scan History" />
-				<h1 className="history__header">{ translate( 'History' ) }</h1>
-				<p className="history__description">
-					{ translate(
-						'The scanning history contains a record of all previously active threats on your site.'
-					) }
-				</p>
-				<div className="history__filters-wrapper">
-					<SimplifiedSegmentedControl
-						className="history__filters"
-						options={ filterOptions }
-						onSelect={ this.handleOnFilterChange }
-						initialSelected={ filter }
+	return (
+		<Main className="history">
+			<DocumentHead title={ translate( 'History' ) } />
+			<SidebarNavigation />
+			<QueryJetpackScanHistory siteId={ siteId } />
+			<PageViewTracker path="/scan/history/:site" title="Scan History" />
+			<h1 className="history__header">{ translate( 'History' ) }</h1>
+			<p className="history__description">
+				{ translate(
+					'The scanning history contains a record of all previously active threats on your site.'
+				) }
+			</p>
+			<div className="history__filters-wrapper">
+				<SimplifiedSegmentedControl
+					className="history__filters"
+					options={ filterOptions }
+					onSelect={ handleOnFilterChange }
+					initialSelected={ currentFilter.value }
+				/>
+			</div>
+			<div className="history__entries">
+				{ filteredEntries.map( ( threat ) => (
+					<ThreatItem
+						key={ threat.id }
+						threat={ threat }
+						onFixThreat={ () => openDialog( threat ) }
+						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
+						contactSupportUrl={ contactSupportUrl( siteSlug ) }
+						isPlaceholder={ isRequestingHistory }
 					/>
-				</div>
-				<div className="history__entries">
-					{ logEntries.map( ( threat ) => (
-						<ThreatItem
-							key={ threat.id }
-							threat={ threat }
-							// eslint-disable-next-line no-console
-							onFixThreat={ () => console.log( 'fix', threat ) }
-							isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
-							contactSupportUrl={ contactSupportUrl( siteSlug ) }
-							isPlaceholder={ this.props.isRequestingHistory }
-						/>
-					) ) }
-				</div>
-			</Main>
-		);
-	}
-}
+				) ) }
+				{ selectedThreat && (
+					<ThreatDialog
+						showDialog={ showThreatDialog }
+						onCloseDialog={ closeDialog }
+						onConfirmation={ fixThreat }
+						siteName={ siteName }
+						threat={ selectedThreat }
+						action={ 'fix' }
+					/>
+				) }
+			</div>
+		</Main>
+	);
+};
 
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = site.ID;
+		const siteName = site.name;
 		const siteSlug = getSelectedSiteSlug( state );
 		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
 
@@ -127,9 +170,10 @@ export default connect(
 
 		return {
 			siteId,
+			siteName,
 			siteSlug,
 			isRequestingHistory,
-			logEntries,
+			threats: logEntries,
 		};
 	},
 	{ dispatchRecordTracksEvent: recordTracksEvent }
