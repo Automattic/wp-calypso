@@ -54,14 +54,18 @@ const QuickStart = ( {
 					<tbody>
 						<tr>
 							<td>
-								{ nextSession
-									? moment( nextSession.beginTimestamp ).format( 'LL' )
-									: translate( 'Loading…' ) }
+								{ nextSession ? (
+									moment( nextSession.beginTimestamp ).format( 'LL' )
+								) : (
+									<div className="quick-start__placeholder"></div>
+								) }
 							</td>
 							<td>
-								{ nextSession
-									? moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' )
-									: translate( 'Loading…' ) }
+								{ nextSession ? (
+									moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' )
+								) : (
+									<div className="quick-start__placeholder"></div>
+								) }
 							</td>
 						</tr>
 					</tbody>
