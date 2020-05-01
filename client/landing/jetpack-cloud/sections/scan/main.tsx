@@ -29,7 +29,10 @@ import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { requestJetpackScanEnqueue } from 'state/jetpack-scan/enqueue/actions';
+import {
+	requestJetpackScanEnqueue,
+	startScanOptimistically,
+} from 'state/jetpack-scan/enqueue/actions';
 
 /**
  * Style dependencies
@@ -48,7 +51,8 @@ interface Props {
 	nextScanTimestamp: number;
 	moment: Function;
 	dispatchRecordTracksEvent: Function;
-	requestScanNow: Function;
+	dispatchRequestScanEnqueue: Function;
+	dispatchStartScanOptimistically: Function;
 }
 
 class ScanPage extends Component< Props > {
@@ -151,13 +155,19 @@ class ScanPage extends Component< Props > {
 	}
 
 	handleOnScanNow = () => {
-		const { dispatchRecordTracksEvent, site, requestScanNow } = this.props;
+		const {
+			dispatchRecordTracksEvent,
+			site,
+			dispatchRequestScanEnqueue,
+			dispatchStartScanOptimistically,
+		} = this.props;
 
 		dispatchRecordTracksEvent( 'calypso_scan_run', {
 			site_id: site.ID,
 		} );
 
-		requestScanNow( site.ID );
+		dispatchRequestScanEnqueue( site.ID );
+		dispatchStartScanOptimistically( site.ID );
 	};
 
 	renderScanning() {
@@ -295,5 +305,9 @@ export default connect(
 			nextScanTimestamp,
 		};
 	},
-	{ dispatchRecordTracksEvent: recordTracksEvent, requestScanNow: requestJetpackScanEnqueue }
+	{
+		dispatchRecordTracksEvent: recordTracksEvent,
+		dispatchRequestScanEnqueue: requestJetpackScanEnqueue,
+		dispatchStartScanOptimistically: startScanOptimistically,
+	}
 )( withLocalizedMoment( ScanPage ) );
