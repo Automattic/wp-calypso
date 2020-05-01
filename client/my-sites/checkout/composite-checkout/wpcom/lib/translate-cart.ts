@@ -139,10 +139,10 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
-	const label = isPlan( serverCartItem )
+	const label = isPlan( serverCartItem ) ? product_name || '' : meta;
+	const sublabel = isPlan( serverCartItem )
 		? String( translate( 'Plan Subscription' ) )
 		: product_name || '';
-	const sublabel = isPlan( serverCartItem ) ? product_name || '' : meta;
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
 	return {

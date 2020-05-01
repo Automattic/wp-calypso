@@ -53,14 +53,16 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemTitle id={ itemSpanId }>{ item.sublabel }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
 			<LineItemPrice item={ item } aria-labelledby={ itemSpanId } />
-			<LineItemMeta>
-				{ item.label }: { translate( 'billed yearly' ) }
-				{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-					<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
-				) }
-			</LineItemMeta>
+			{ item.sublabel && (
+				<LineItemMeta>
+					{ item.sublabel }: { translate( 'billed yearly' ) }
+					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
+						<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
+					) }
+				</LineItemMeta>
+			) }
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -188,7 +190,7 @@ const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 8px;
+	top: 7px;
 
 	:hover rect {
 		fill: ${( props ) => props.theme.colors.error};
