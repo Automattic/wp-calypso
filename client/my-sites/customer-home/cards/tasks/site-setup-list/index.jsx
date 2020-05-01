@@ -85,23 +85,6 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 	);
 };
 
-const getActionText = ( currentTask, emailVerificationStatus ) => {
-	if ( currentTask.id === 'email_verified' ) {
-		if ( emailVerificationStatus === 'requesting' ) {
-			return translate( 'Sending…' );
-		}
-
-		if ( emailVerificationStatus === 'error' ) {
-			return translate( 'Error' );
-		}
-
-		if ( emailVerificationStatus === 'sent' ) {
-			return translate( 'Email sent' );
-		}
-	}
-	return currentTask.actionText;
-};
-
 const SiteSetupList = ( {
 	emailVerificationStatus,
 	isEmailUnverified,
@@ -162,7 +145,17 @@ const SiteSetupList = ( {
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId );
 		}
-	}, [ currentTaskId ] );
+	}, [
+		currentTaskId,
+		emailVerificationStatus,
+		isDomainUnverified,
+		isEmailUnverified,
+		menusUrl,
+		siteId,
+		siteSlug,
+		taskUrls,
+		userEmail,
+	] );
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<960px' ) ) {
@@ -241,7 +234,7 @@ const SiteSetupList = ( {
 									onClick={ () => startTask( dispatch, currentTask, siteId ) }
 									disabled={ currentTask.isDisabled }
 								>
-									{ getActionText( currentTask, emailVerificationStatus ) }
+									{ currentTask.actionText }
 								</Button>
 								{ currentTask.isSkippable && ! currentTask.isCompleted && (
 									<Button
