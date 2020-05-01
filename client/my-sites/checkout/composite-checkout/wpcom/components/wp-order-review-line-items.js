@@ -17,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
-import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -53,10 +53,11 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
+			<LineItemHeader>
+				{ item.label }: <LineItemMessage item={ item } />
+			</LineItemHeader>
 			<LineItemTitle id={ itemSpanId } item={ item } />
-			<span aria-labelledby={ itemSpanId }>
-				<LineItemPrice lineItem={ item } />
-			</span>
+			<LineItemPrice item={ item } aria-labelledby={ itemSpanId } />
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -130,44 +131,35 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
-function LineItemTitle( { item, id } ) {
-	if ( isLineItemADomain( item ) ) {
-		return <LineItemDomainTitle item={ item } id={ id } />;
-	}
-	if ( item.type === 'domain_map' || item.type === 'offsite_redirect' ) {
-		return <LineItemDomainTitle item={ item } id={ id } />;
-	}
-	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
-		</LineItemTitleUI>
-	);
-}
-
-function LineItemDomainTitle( { item, id } ) {
+function LineItemMessage( { item } ) {
 	const translate = useTranslate();
 	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>
-				{ item.label }: { item.sublabel }
-			</ProductTitleUI>
+		<LineItemMessageUI>
+			{ 'plan' === item.type && translate( 'Billed yearly' ) }
 			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
+				<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
 			) }
+		</LineItemMessageUI>
+	);
+}
+
+function LineItemTitle( { item, id } ) {
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>{ item.sublabel }</ProductTitleUI>
 		</LineItemTitleUI>
 	);
 }
 
-function LineItemPrice( { lineItem } ) {
+function LineItemPrice( { item } ) {
 	return (
 		<LineItemPriceUI>
-			{ lineItem.amount.value < lineItem.wpcom_meta?.item_original_cost_integer ? (
+			{ item.amount.value < item.wpcom_meta?.item_original_cost_integer ? (
 				<>
-					<s>{ lineItem.wpcom_meta?.item_original_cost_display }</s>{ ' ' }
-					{ lineItem.amount.displayValue }
+					<s>{ item.wpcom_meta?.item_original_cost_display }</s> { item.amount.displayValue }
 				</>
 			) : (
-				renderDisplayValueMarkdown( lineItem.amount.displayValue )
+				renderDisplayValueMarkdown( item.amount.displayValue )
 			) }
 		</LineItemPriceUI>
 	);
@@ -179,12 +171,28 @@ export const LineItemUI = styled( WPLineItem )`
 	justify-content: space-between;
 	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
 	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor) };
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
+	font-size: ${( { total } ) => ( total ? '1.2em' : '1.1em') };
 	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
 		isSummaryVisible || total || subtotal || tax ? '10px 0' : '20px 0'};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
+`;
+
+const LineItemHeader = styled.div`
+	color: ${( props ) => props.theme.colors.textColorLight};
+	display: flex;
+	font-size: 13px;
+	justify-content: space-between;
+	width: 100%;
+`;
+
+const LineItemMessageUI = styled.span`
+	text-align: right;
+`;
+
+const BundledDomainFreeUI = styled.div`
+	color: ${( props ) => props.theme.colors.success};
 `;
 
 const LineItemTitleUI = styled.div`
@@ -196,10 +204,6 @@ const LineItemPriceUI = styled.span`
 	margin-left: 12px;
 `;
 
-const BundledDomainFreeUI = styled.div`
-	color: ${( props ) => props.theme.colors.success};
-`;
-
 const ProductTitleUI = styled.div`
 	flex: 1;
 `;
@@ -208,7 +212,7 @@ const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 8px;
+	top: 26px;
 
 	:hover rect {
 		fill: ${( props ) => props.theme.colors.error};
