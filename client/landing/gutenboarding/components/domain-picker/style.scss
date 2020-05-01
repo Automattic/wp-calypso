@@ -19,6 +19,7 @@ $domain-picker__suggestion-item-height: 24px;
 	.components-panel__row {
 		flex-direction: column;
 		align-items: stretch;
+		justify-content: flex-start;
 		margin: 0;
 
 		label {
