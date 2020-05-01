@@ -67,12 +67,12 @@ const QuickStart = ( {
 					</tbody>
 				</table>
 				<div className="quick-start__buttons">
-					<Button disabled={ ! nextSession } onClick={ () => viewDetails( siteSlug ) }>
+					<Button disabled={ ! nextSession } onClick={ () => viewDetails( siteId, siteSlug ) }>
 						{ translate( 'View details' ) }
 					</Button>
 					<Button
 						className={ 'quick-start__reschedule' }
-						onClick={ () => reschedule( siteSlug, nextSession.id ) }
+						onClick={ () => reschedule( siteId, siteSlug, nextSession.id ) }
 						borderless
 						disabled={ ! nextSession }
 					>
@@ -91,24 +91,24 @@ export default connect(
 		nextSession: getConciergeNextAppointment( state ),
 	} ),
 	( dispatch ) => ( {
-		viewDetails: ( siteSlug ) =>
+		viewDetails: ( siteId, siteSlug ) =>
 			dispatch(
 				withAnalytics(
 					composeAnalytics(
 						recordTracksEvent( 'calypso_customer_home_quick_start_view_details_click', {
-							siteSlug: siteSlug,
+							site_id: siteId,
 						} ),
 						bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
 					),
 					navigate( `/me/concierge/${ siteSlug }/book` )
 				)
 			),
-		reschedule: ( siteSlug, sessionId ) =>
+		reschedule: ( siteId, siteSlug, sessionId ) =>
 			dispatch(
 				withAnalytics(
 					composeAnalytics(
 						recordTracksEvent( 'calypso_customer_home_quick_start_reschedule_click', {
-							siteSlug: siteSlug,
+							site_id: siteId,
 						} ),
 						bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 					),
