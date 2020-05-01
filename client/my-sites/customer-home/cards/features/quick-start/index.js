@@ -42,7 +42,7 @@ const QuickStart = ( {
 	return nextSession ? (
 		<Card className="quick-start next-session">
 			<HappinessEngineersTray />
-			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
+			<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
 			<table>
 				<thead>
 					<tr>
