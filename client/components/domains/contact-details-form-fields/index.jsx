@@ -172,8 +172,8 @@ export class ContactDetailsFormFields extends Component {
 			pick( this.props.contactDetails, CONTACT_DETAILS_FORM_FIELDS )
 		);
 
-	getMainFieldValues() {
-		const mainFieldValues = formState.getAllFieldValues( this.state.form );
+	getMainFieldValues( form ) {
+		const mainFieldValues = formState.getAllFieldValues( form );
 		const { needsFax } = this.props;
 		const { countryCode } = mainFieldValues;
 		let state = mainFieldValues.state;
@@ -205,8 +205,11 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
-	setFormState = ( form ) =>
-		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
+	setFormState = ( form ) => {
+		this.setState( { form }, () => {
+			this.props.onContactDetailsChange( this.getMainFieldValues( form ) );
+		} );
+	};
 
 	handleFormControllerError = ( error ) => {
 		throw error;
@@ -244,7 +247,8 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	validate = ( fieldValues, onComplete ) =>
-		this.props.onValidate && this.props.onValidate( this.getMainFieldValues(), onComplete );
+		this.props.onValidate &&
+		this.props.onValidate( this.getMainFieldValues( this.state.form ), onComplete );
 
 	getRefCallback( name ) {
 		if ( ! this.inputRefCallbacks[ name ] ) {
@@ -304,12 +308,12 @@ export class ContactDetailsFormFields extends Component {
 					this.focusFirstError();
 					return;
 				}
-				this.props.onSubmit( this.getMainFieldValues() );
+				this.props.onSubmit( this.getMainFieldValues( this.state.form ) );
 			} );
 			return;
 		}
 		this.recordSubmit();
-		this.props.onSubmit( this.getMainFieldValues() );
+		this.props.onSubmit( this.getMainFieldValues( this.state.form ) );
 	};
 
 	handleFieldChange = ( event ) => {
@@ -327,13 +331,12 @@ export class ContactDetailsFormFields extends Component {
 		if ( this.props.isManaged ) {
 			let form = updateFormWithContactChange( this.state.form, name, value );
 			if ( name === 'country-code' ) {
-				form = updateFormWithContactChange( this.state.form, 'state', '', {
+				form = updateFormWithContactChange( form, 'state', '', {
 					isShowingErrors: false,
 				} );
 			}
 
 			this.setFormState( form );
-
 			return;
 		}
 
@@ -641,18 +644,16 @@ function getStateFromContactDetails( contactDetails, contactDetailsErrors ) {
 	return { form };
 }
 
-function updateFormWithContactChange( state, key, value, additionalProperties ) {
+function updateFormWithContactChange( form, key, value, additionalProperties ) {
 	return {
-		...state,
-		form: {
-			[ key ]: {
-				value,
-				errors: [],
-				isShowingErrors: true,
-				isPendingValidation: false,
-				isValidating: false,
-				...( additionalProperties ?? {} ),
-			},
+		...form,
+		[ camelCase( key ) ]: {
+			value,
+			errors: [],
+			isShowingErrors: true,
+			isPendingValidation: false,
+			isValidating: false,
+			...( additionalProperties ?? {} ),
 		},
 	};
 }
