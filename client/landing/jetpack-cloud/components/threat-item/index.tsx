@@ -105,8 +105,12 @@ const ThreatItem: React.FC< Props > = ( {
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
 			subheader={ <ThreatItemSubheader threat={ threat } /> }
-			{ ...( isFixable ? { summary: renderFixThreatButton( 'is-summary' ) } : {} ) }
-			{ ...( isFixable ? { expandedSummary: renderFixThreatButton( 'is-summary' ) } : {} ) }
+			{ ...( isFixable
+				? {
+						summary: renderFixThreatButton( 'is-summary' ),
+						expandedSummary: renderFixThreatButton( 'is-summary' ),
+				  }
+				: {} ) }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 		>
 			<ThreatDescription
@@ -118,22 +122,20 @@ const ThreatItem: React.FC< Props > = ( {
 				filename={ threat.filename }
 			/>
 
-			{ ( isFixable || threat.status === 'current' ) && (
-				<div className="threat-item__buttons">
-					{ isFixable && renderFixThreatButton( 'is-details' ) }
-					{ threat.status === 'current' && (
-						<Button
-							scary
-							compact
-							className="threat-item__ignore-button"
-							onClick={ onIgnoreThreat }
-							disabled={ isFixing }
-						>
-							{ translate( 'Ignore threat' ) }
-						</Button>
-					) }
-				</div>
-			) }
+			<div className="threat-item__buttons">
+				{ isFixable && renderFixThreatButton( 'is-details' ) }
+				{ threat.status === 'current' && (
+					<Button
+						scary
+						compact
+						className="threat-item__ignore-button"
+						onClick={ onIgnoreThreat }
+						disabled={ isFixing }
+					>
+						{ translate( 'Ignore threat' ) }
+					</Button>
+				) }
+			</div>
 		</LogItem>
 	);
 };
