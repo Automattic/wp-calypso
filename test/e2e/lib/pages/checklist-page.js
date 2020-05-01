@@ -16,13 +16,11 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 
 export default class ChecklistPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, By.css( '.customer-home__layout .checklist' ), url );
-		this.headerSelector = By.css( '.customer-home__layout .checklist-site-setup__heading' );
-		this.updateHomepageTaskSelector = By.css(
-			'.customer-home__layout .checklist__task button.checklist__task-title-button'
-		);
+		super( driver, By.css( '.customer-home__main .site-setup-list' ), url );
+		this.headerSelector = By.css( '.customer-home__main .site-setup-list .card-heading' );
+		this.taskNavItemSelector = By.css( '.customer-home__main .site-setup-list__nav .nav-item' );
 		this.updateHomepageButtonSelector = By.css(
-			'.customer-home__layout button[data-e2e-action="update-homepage"]'
+			'.customer-home__main button[data-task="front_page_updated"]'
 		);
 	}
 
@@ -42,7 +40,7 @@ export default class ChecklistPage extends AsyncBaseContainer {
 	}
 
 	async updateHomepage() {
-		const items = await this.driver.findElements( this.updateHomepageTaskSelector );
+		const items = await this.driver.findElements( this.taskNavItemSelector );
 		for ( let i = 0; i < items.length; i++ ) {
 			await items[ i ].click();
 			if (
@@ -52,10 +50,10 @@ export default class ChecklistPage extends AsyncBaseContainer {
 					mochaTimeOut / 2
 				)
 			) {
-				return await driverHelper.clickWhenClickable(
-					this.driver,
+				const updateHomePageButton = await this.driver.findElement(
 					this.updateHomepageButtonSelector
 				);
+				return this.driver.executeScript( 'arguments[0].click()', updateHomePageButton );
 			}
 		}
 	}
