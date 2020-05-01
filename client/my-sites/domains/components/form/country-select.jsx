@@ -42,13 +42,13 @@ class CountrySelect extends React.PureComponent {
 			] );
 
 			options = options.concat(
-				countriesList.map( ( country, index ) => {
+				countriesList.map( ( country ) => {
 					if ( isEmpty( country.code ) ) {
-						return { key: index, label: '', disabled: 'disabled', value: '-' };
+						return { key: country.code, label: '', disabled: 'disabled', value: '-' };
 					}
 
 					return {
-						key: index,
+						key: country.code,
 						label: country.name,
 						value: country.code,
 					};
