@@ -1,20 +1,21 @@
-.settings__page-title {
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01rem;
-    margin-bottom: 1rem;
-}
-
 .card.is-compact.settings__connected,
 .card.is-compact.settings__disconnected {
-    margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+    margin-bottom: 32px;
 }
 
 .settings__connected .gridicon {
     display: inline-block;
-    fill: green;
+    fill: var( --studio-jetpack-green-40 );
     width: 4rem;
     height: 4rem;
+}
+
+.settings__is-uninitialized {
+	height: 100px;
+	margin-bottom: 32px;
+	@include placeholder( --color-neutral-10 );
 }
 
 .settings__disconnected .gridicon {
@@ -24,11 +25,27 @@
     height: 4rem;
 }
 
+.settings__title {
+	font-size: 22px;
+	font-weight: 600;
+	margin: 16px 0 24px;
+
+	@include breakpoint('>660px') {
+		font-size: 36px;
+		margin: 32px 0;
+	}
+}
+
 .settings__details {
     display: inline-block;
     vertical-align: top;
     margin-left: 1rem;
     margin-top: 0.5rem;
+}
+
+.settings__icon {
+	width: 50px;
+	height: 50px;
 }
 
 .settings__details-head {
