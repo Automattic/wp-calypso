@@ -53,11 +53,14 @@ function WPLineItem( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<LineItemHeader>
-				{ item.label }: <LineItemMessage item={ item } />
-			</LineItemHeader>
-			<LineItemTitle id={ itemSpanId } item={ item } />
+			<LineItemTitle id={ itemSpanId }>{ item.sublabel }</LineItemTitle>
 			<LineItemPrice item={ item } aria-labelledby={ itemSpanId } />
+			<LineItemMeta>
+				{ item.label }: { translate( 'billed yearly' ) }
+				{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
+					<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
+				) }
+			</LineItemMeta>
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -131,26 +134,6 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
-function LineItemMessage( { item } ) {
-	const translate = useTranslate();
-	return (
-		<LineItemMessageUI>
-			{ 'plan' === item.type && translate( 'Billed yearly' ) }
-			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-				<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
-			) }
-		</LineItemMessageUI>
-	);
-}
-
-function LineItemTitle( { item, id } ) {
-	return (
-		<LineItemTitleUI>
-			<ProductTitleUI id={ id }>{ item.sublabel }</ProductTitleUI>
-		</LineItemTitleUI>
-	);
-}
-
 function LineItemPrice( { item } ) {
 	return (
 		<LineItemPriceUI>
@@ -179,7 +162,7 @@ export const LineItemUI = styled( WPLineItem )`
 	position: relative;
 `;
 
-const LineItemHeader = styled.div`
+const LineItemMeta = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
 	display: flex;
 	font-size: 13px;
@@ -187,15 +170,12 @@ const LineItemHeader = styled.div`
 	width: 100%;
 `;
 
-const LineItemMessageUI = styled.span`
+const BundledDomainFreeUI = styled.div`
+	color: ${( props ) => props.theme.colors.success};
 	text-align: right;
 `;
 
-const BundledDomainFreeUI = styled.div`
-	color: ${( props ) => props.theme.colors.success};
-`;
-
-const LineItemTitleUI = styled.div`
+const LineItemTitle = styled.div`
 	flex: 1;
 	word-break: break-word;
 `;
@@ -204,15 +184,11 @@ const LineItemPriceUI = styled.span`
 	margin-left: 12px;
 `;
 
-const ProductTitleUI = styled.div`
-	flex: 1;
-`;
-
 const DeleteButton = styled( Button )`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 26px;
+	top: 8px;
 
 	:hover rect {
 		fill: ${( props ) => props.theme.colors.error};
