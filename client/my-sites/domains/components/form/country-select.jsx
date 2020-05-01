@@ -15,7 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSelect from 'components/forms/form-select';
 
-class CountrySelect extends React.Component {
+class CountrySelect extends React.PureComponent {
 	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
 			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );

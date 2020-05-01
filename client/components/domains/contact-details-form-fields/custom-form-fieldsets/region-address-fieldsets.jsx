@@ -3,7 +3,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { identity, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -21,7 +21,7 @@ import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
 
-export class RegionAddressFieldsets extends Component {
+export class RegionAddressFieldsets extends PureComponent {
 	static propTypes = {
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
