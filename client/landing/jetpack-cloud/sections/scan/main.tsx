@@ -56,12 +56,9 @@ class ScanPage extends Component< Props > {
 				<SecurityIcon icon="in-progress" />
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
-					{ translate(
-						'Lorem ipsum. We need to change this text. The scan was unable to process ' +
-							'the themes directory and did not completed successfully. In order to ' +
-							'complete the scan you will need to speak to support who can help ' +
-							'determine what went wrong.'
-					) }
+					Lorem ipsum. We need to change this text. The scan was unable to process the themes
+					directory and did not completed successfully. In order to complete the scan you will need
+					to speak to support who can help determine what went wrong.
 				</p>
 				{ this.renderContactSupportButton() }
 			</>
