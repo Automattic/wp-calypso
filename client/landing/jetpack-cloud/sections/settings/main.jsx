@@ -27,9 +27,9 @@ import disconnectedIcon from './images/server-disconnected.svg';
 
 class SettingsPage extends Component {
 	renderServerConnectionStatus() {
-		const { translate } = this.props;
+		const { translate, rewind } = this.props;
 
-		const isConnected = false; // ( 'active' === rewind.state );
+		const isConnected = 'active' === rewind.state;
 
 		const iconPath = isConnected ? connectedIcon : disconnectedIcon;
 		const myClassName = isConnected ? 'settings__connected' : 'settings__disconnected';
