@@ -215,23 +215,21 @@ const SiteSetupList = ( {
 				<ActionPanel className="site-setup-list__task task">
 					<ActionPanelBody>
 						<div className="site-setup-list__task-text task__text">
-							<div className="site-setup-list__task-timing task__timing">
-								{ currentTask.isCompleted ? (
-									<Badge className="site-setup-list__badge" type="info">
-										{ translate( 'Complete' ) }
-									</Badge>
-								) : (
-									<>
-										<Gridicon icon="time" size={ 18 } />
-										<p>
-											{ translate( '%d minute', '%d minutes', {
-												count: currentTask.timing,
-												args: [ currentTask.timing ],
-											} ) }
-										</p>
-									</>
-								) }
-							</div>
+							{ currentTask.isCompleted ? (
+								<Badge type="info" className="site-setup-list__task-badge task__badge">
+									{ translate( 'Complete' ) }
+								</Badge>
+							) : (
+								<div className="site-setup-list__task-timing task__timing">
+									<Gridicon icon="time" size={ 18 } />
+									<p>
+										{ translate( '%d minute', '%d minutes', {
+											count: currentTask.timing,
+											args: [ currentTask.timing ],
+										} ) }
+									</p>
+								</div>
+							) }
 							<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
 							<p className="site-setup-list__task-description task__description">
 								{ currentTask.description }

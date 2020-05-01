@@ -42,7 +42,7 @@
 
 	.action-panel__body .task__timing {
 		display: flex;
-		margin-bottom: 8px;
+		margin-bottom: 10px;
 
 		.gridicon {
 			margin-right: 4px;
@@ -70,5 +70,5 @@
 .badge--info.task__badge {
 	background-color: var( --studio-gray-80 );
 	color: var( --color-text-inverted );
-	margin-bottom: 16px;
+	margin-bottom: 8px;
 }
