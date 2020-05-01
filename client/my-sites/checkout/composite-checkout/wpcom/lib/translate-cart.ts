@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import {
@@ -12,19 +17,16 @@ import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
+import { isPlan } from 'lib/products-values';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
  * the format required by the composite checkout component.
  *
- * @param translate Localization function
  * @param serverCart Cart object returned by the WPCOM cart endpoint
  * @returns Cart object suitable for passing to the checkout component
  */
-export function translateResponseCartToWPCOMCart(
-	translate: ( arg0: string, arg1?: any ) => string, //eslint-disable-line @typescript-eslint/no-explicit-any
-	serverCart: ResponseCart
-): WPCOMCart {
+export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
 		total_tax_integer,
@@ -46,7 +48,7 @@ export function translateResponseCartToWPCOMCart(
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
-		label: translate( 'Tax' ),
+		label: String( translate( 'Tax' ) ),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
 		amount: {
 			currency: currency,
@@ -57,7 +59,7 @@ export function translateResponseCartToWPCOMCart(
 
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
-		label: translate( 'Coupon: %s', { args: coupon } ),
+		label: String( translate( 'Coupon: %s', { args: coupon } ) ),
 		type: 'coupon',
 		amount: {
 			currency: currency,
@@ -72,7 +74,7 @@ export function translateResponseCartToWPCOMCart(
 	const totalItem: CheckoutCartItem = {
 		id: 'total',
 		type: 'total',
-		label: translate( 'Total' ),
+		label: String( translate( 'Total' ) ),
 		amount: {
 			currency: currency,
 			value: total_cost_integer,
@@ -83,7 +85,7 @@ export function translateResponseCartToWPCOMCart(
 	const subtotalItem: CheckoutCartItem = {
 		id: 'subtotal',
 		type: 'subtotal',
-		label: translate( 'Subtotal' ),
+		label: String( translate( 'Subtotal' ) ),
 		amount: {
 			currency: currency,
 			value: sub_total_integer,
@@ -100,7 +102,7 @@ export function translateResponseCartToWPCOMCart(
 		credits: {
 			id: 'credits',
 			type: 'credits',
-			label: translate( 'Credits' ),
+			label: String( translate( 'Credits' ) ),
 			amount: { value: credits_integer, displayValue: credits_display, currency },
 		},
 		allowedPaymentMethods: allowed_payment_methods
@@ -137,11 +139,17 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
+	const label = isPlan( serverCartItem )
+		? String( translate( 'Plan Subscription' ) )
+		: product_name || '';
+	const sublabel = isPlan( serverCartItem ) ? product_name || '' : meta;
+	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
+
 	return {
 		id: uuid,
-		label: product_name || '',
-		sublabel: meta,
-		type: product_slug,
+		label,
+		sublabel,
+		type,
 		amount: {
 			currency: currency || '',
 			value: item_subtotal_integer || 0,

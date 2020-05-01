@@ -443,10 +443,10 @@ export function useShoppingCart(
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
 
 	// Translate the responseCart into the format needed in checkout.
-	const cart: WPCOMCart = useMemo(
-		() => translateResponseCartToWPCOMCart( translate, responseCart ),
-		[ translate, responseCart ]
-	);
+	const cart: WPCOMCart = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [
+		translate,
+		responseCart,
+	] );
 
 	useShowAddCouponSuccessMessage(
 		shouldShowNotification.didAddCoupon,
