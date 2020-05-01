@@ -33,7 +33,8 @@
 	&__buttons {
 		display: flex;
 		justify-content: space-evenly;
-		padding: 20px 0;
+		align-items: flex-end;
+		height: 50px;
 	}
 
 	&__fix-button.is-summary {
