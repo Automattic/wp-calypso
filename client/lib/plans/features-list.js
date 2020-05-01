@@ -977,14 +977,14 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_MEMBERSHIPS ]: {
 		getSlug: () => constants.FEATURE_MEMBERSHIPS,
-		getTitle: () => i18n.translate( 'Recurring Payments' ),
+		getTitle: () => i18n.translate( 'Sell Subscriptions' ),
 		getDescription: () => i18n.translate( 'Accept monthly or annual payments on your website.' ),
 	},
 
 	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_CONTENT_BLOCK,
-		getTitle: () => i18n.translate( 'Premium Content Block' ),
-		getDescription: () => i18n.translate( 'Limit content to subscribers only.' ),
+		getTitle: () => i18n.translate( 'Subscriber-only Content' ),
+		getDescription: () => i18n.translate( 'Limit content to paying subscribers.' ),
 	},
 };
 
