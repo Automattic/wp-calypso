@@ -66,12 +66,6 @@ const QuickStart = ( {
 			>
 				{ translate( 'Reschedule' ) }
 			</Button>
-			{ /* <a
-				
-				onClick={ () => reschedule( siteSlug, nextSession.id ) }
-			>
-				{ translate( 'Reschedule' ) }
-			</a> */ }
 		</Card>
 	) : (
 		<>
