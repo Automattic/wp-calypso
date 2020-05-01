@@ -99,6 +99,7 @@ const Task = ( {
 				composeAnalytics(
 					recordTracksEvent( 'calypso_customer_home_task_skip', {
 						task: taskId,
+						reminder,
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
