@@ -42,7 +42,7 @@ const Task = ( {
 	badgeText,
 	description,
 	illustration,
-	areSkipOptionsEnabled = true,
+	enableSkipOptions = true,
 	siteId,
 	taskId,
 	timing,
@@ -137,14 +137,14 @@ const Task = ( {
 							className="task__skip is-link"
 							ref={ skipButtonRef }
 							onClick={ () =>
-								areSkipOptionsEnabled ? setSkipOptionsVisible( true ) : skipTask( 'never' )
+								enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask( 'never' )
 							}
 						>
-							{ areSkipOptionsEnabled ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
-							{ areSkipOptionsEnabled && <Gridicon icon="dropdown" size={ 18 } /> }
+							{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
+							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 						</Button>
 
-						{ areSkipOptionsEnabled && areSkipOptionsVisible && (
+						{ enableSkipOptions && areSkipOptionsVisible && (
 							<PopoverMenu
 								context={ skipButtonRef.current }
 								isVisible={ areSkipOptionsVisible }
