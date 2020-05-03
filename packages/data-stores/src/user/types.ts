@@ -55,7 +55,7 @@ export interface CreateAccountParams {
 	extra?: {
 		first_name?: string;
 		last_name?: string;
-		username_hint?: string;
+		username_hint: string | null | undefined;
 	};
 }
 
