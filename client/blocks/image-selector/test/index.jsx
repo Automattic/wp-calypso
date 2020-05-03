@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -121,10 +120,7 @@ describe( 'ImageSelector', () => {
 				</Provider>
 			);
 
-			wrapper
-				.find( '.image-selector__uploader-wrapper' )
-				.hostNodes()
-				.simulate( 'click' );
+			wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes().simulate( 'click' );
 			expect( wrapper.find( 'ImageSelector' ).instance().state.isSelecting ).to.be.true;
 		} );
 
@@ -140,10 +136,7 @@ describe( 'ImageSelector', () => {
 				</Provider>
 			);
 
-			wrapper
-				.find( '.image-selector__remove' )
-				.hostNodes()
-				.simulate( 'click' );
+			wrapper.find( '.image-selector__remove' ).hostNodes().simulate( 'click' );
 			expect( mockOnRemoveImage ).to.have.been.calledWith(
 				require( './fixtures' ).DUMMY_MEDIA[ 100 ]
 			);

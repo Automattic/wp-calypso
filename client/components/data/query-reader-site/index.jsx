@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,13 +14,13 @@ import { shouldSiteBeFetched } from 'state/reader/sites/selectors';
 import { requestSite } from 'state/reader/sites/actions';
 
 class QueryReaderSite extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.shouldSiteBeFetched ) {
 			this.props.requestSite( this.props.siteId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldSiteBeFetched || this.props.siteId === nextProps.siteId ) {
 			return;
 		}
@@ -52,7 +50,7 @@ export default connect(
 			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestSite,

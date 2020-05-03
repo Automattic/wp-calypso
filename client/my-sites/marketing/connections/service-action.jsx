@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
@@ -35,7 +33,7 @@ const SharingServiceAction = ( {
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.stopPropagation();
 		onAction();
 	};

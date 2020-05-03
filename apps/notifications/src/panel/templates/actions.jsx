@@ -15,7 +15,7 @@ import TrashButton from './button-trash';
 
 import { getActions, getReferenceId } from '../helpers/notes';
 
-const getType = note => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
+const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment') ;
 
 const getInitialReplyValue = ( note, translate ) => {
 	let ranges, username;
@@ -43,7 +43,8 @@ const getInitialReplyValue = ( note, translate ) => {
 
 const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 	const actions = getActions( note );
-	const hasAction = types => [].concat( types ).some( type => actions.hasOwnProperty( type ) );
+	const hasAction = ( types ) =>
+		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
 
 	return (
 		<div className="wpnc__note-actions">

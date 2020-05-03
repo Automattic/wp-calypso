@@ -1,0 +1,15 @@
+.backup-upsell__content {
+	padding-top: 40px;
+}
+
+.backup-upsell__icon-header {
+	display: flex;
+	justify-content: center;
+	@include breakpoint( '>660px' ) {
+		justify-content: flex-start;
+	}
+
+	img {
+		width: 72px;
+	}
+}

@@ -1,0 +1,112 @@
+.timeline {
+	margin-top: 1em;
+	margin-bottom: 1em;
+
+	.timeline-event {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+		justify-content: space-between;
+
+		.timeline-event__column {
+			margin-left: 1em;
+		}
+
+		&:first-child .timeline-event__icon-wrapper::before {
+			margin-top: 26px;
+		}
+
+		&:last-child .timeline-event__icon-wrapper::before {
+			height: 65%;
+		}
+
+		.timeline-event__main-message {
+			order: 3;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.timeline-event__action-button-wrapper {
+			order: 3;
+			align-self: flex-end;
+			text-align: right;
+		}
+
+		.timeline-event__icon-wrapper {
+			order: 1;
+			position: relative;
+			margin: 0;
+
+			&::before {
+				content: '';
+				display: block;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 16px;
+				border-left: 1px solid var( --color-neutral-10 );
+				z-index: 1;
+				margin: -32px 0;
+			}
+
+			.timeline-event__icon {
+				z-index: 100;
+				position: relative;
+				background-color: var( --color-primary );
+				width: 32px;
+				height: 32px;
+				text-align: center;
+				color: var( --color-surface );
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				&.success {
+					background-color: var( --color-success );
+				}
+
+				&.info {
+					background-color: var( --color-primary );
+				}
+
+				&.warning {
+					background-color: var( --color-warning-20 );
+				}
+
+				&.error {
+					background-color: var( --color-error );
+				}
+
+				.gridicons-notice-outline,
+				.gridicons-time {
+					transform: translate( -1px, -1px );
+				}
+			}
+		}
+
+		&.is-disabled {
+			.timeline-event__icon-wrapper .timeline-event__icon {
+				background-color: var( --color-neutral-5 );
+
+				.gridicon {
+					fill: var( --color-neutral-30 );
+				}
+			}
+		}
+
+		.timeline-event__title {
+			font-size: 16px;
+			margin-top: 4px;
+		}
+
+		.timeline-event__detail {
+			width: 100%;
+			font-size: 14px;
+			color: var( --color-text-subtle );
+		}
+	}
+}

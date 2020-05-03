@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ const TextField = ( {
 	error,
 	className,
 } ) => {
-	const handleChangeEvent = event => updateValue( event.target.value );
+	const handleChangeEvent = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>

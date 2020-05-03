@@ -9,5 +9,6 @@
 @import 'shared/animation'; // all UI animation
 @import 'shared/forms'; // form styling
 
-// Main
-@import 'main'; // global layout and responsive styles
+// WordPress.com main styles for global layout and responsive styles
+@import './shared/loading';
+@import 'main';

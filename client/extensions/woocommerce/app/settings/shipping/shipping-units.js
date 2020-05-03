@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ const ShippingUnits = ( {
 	changeSetting,
 	onChange,
 } ) => {
-	const weightLabels = unit => {
+	const weightLabels = ( unit ) => {
 		const labels = {
 			oz: translate( 'Ounces' ),
 			lbs: translate( 'Pounds' ),
@@ -44,7 +42,7 @@ const ShippingUnits = ( {
 		return labels[ unit ] || '';
 	};
 
-	const renderWeightOption = option => {
+	const renderWeightOption = ( option ) => {
 		return (
 			<option key={ option } value={ option }>
 				{ `${ option } - ${ weightLabels( option ) }` }
@@ -52,7 +50,7 @@ const ShippingUnits = ( {
 		);
 	};
 
-	const dimensionsLabels = unit => {
+	const dimensionsLabels = ( unit ) => {
 		const labels = {
 			m: translate( 'Meters' ),
 			cm: translate( 'Centimeters' ),
@@ -63,7 +61,7 @@ const ShippingUnits = ( {
 		return labels[ unit ] || '';
 	};
 
-	const renderDimensionsOption = option => {
+	const renderDimensionsOption = ( option ) => {
 		return (
 			<option key={ option } value={ option }>
 				{ `${ option } - ${ dimensionsLabels( option ) }` }
@@ -71,13 +69,13 @@ const ShippingUnits = ( {
 		);
 	};
 
-	const onChangeWeight = e => {
+	const onChangeWeight = ( e ) => {
 		const setting = Object.assign( {}, weight, { value: e.target.value } );
 		onChange();
 		changeSetting( siteId, setting );
 	};
 
-	const onChangeDimensions = e => {
+	const onChangeDimensions = ( e ) => {
 		const setting = Object.assign( {}, dimensions, { value: e.target.value } );
 		onChange();
 		changeSetting( siteId, setting );
@@ -134,7 +132,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ShippingUnits ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingUnits ) );

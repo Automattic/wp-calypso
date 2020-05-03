@@ -38,3 +38,143 @@
 		}
 	}
 }
+
+@mixin domain_status_color( $color ) {
+	border-top: 5px solid $color;
+	> div.domain-status__icon {
+		color: $color;
+		> svg {
+			fill: $color;
+		}
+	}
+}
+
+.domain-types__container {
+	.status-success {
+		@include domain_status_color( #008a20 );
+	}
+	.status-pending {
+		@include domain_status_color( #3582C4 );
+	}
+	.status-warning {
+		@include domain_status_color( #B69000 );
+	}
+	.status-error {
+		@include domain_status_color( #C9356E );
+	}
+
+	.domain-status__card {
+		h2 {
+			font-size: 32px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			@include breakpoint( '<480px' ) {
+				&.mobile-m {
+					font-size: 28px;
+				}
+				&.mobile-l {
+					font-size: 24px;
+				}
+				&.mobile-xl {
+					font-size: 20px;
+				}
+				&.mobile-xxl {
+					font-size: 16px;
+				}
+			}
+
+			@include breakpoint( '>480px' ) {
+				&.desktop-m {
+					font-size: 28px;
+				}
+				&.desktop-l {
+					font-size: 24px;
+				}
+				&.desktop-xl {
+					font-size: 20px;
+				}
+				&.desktop-xxl {
+					font-size: 16px;
+				}
+			}
+		}
+
+		> .domain-status__icon {
+			font-size: 16px;
+			display: flex;
+			align-items: center;
+			border-bottom: 0;
+			padding-bottom: 0;
+			> svg {
+				margin-right: 5px;
+			}
+		}
+
+		.mapped-domain-type__name-server-list {
+			margin-bottom: 0.5em;
+		}
+
+		.mapped-domain-type__small-message {
+			font-size: 14px;
+		}
+
+
+		> div {
+			margin-bottom: 1.5em;
+			border-bottom: 1px solid var( --color-border-subtle );
+			padding-bottom: 1.5em;
+			> p:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		> div:last-child {
+			margin-bottom: 0;
+			border-bottom: 0;
+			padding-bottom: 0.5em;
+		}
+	}
+
+	.domain-types__expiration-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		padding: 0;
+		> div {
+			margin: 16px 0 16px 24px;
+		}
+		> div:nth-last-child( 2 ) {
+			margin-right: auto;
+		}
+		> div:last-child {
+			margin-right: 24px;
+		}
+
+		@include breakpoint( '<800px' ) {
+			.domain-types__break {
+				flex-basis: 100%;
+				height: 0;
+				margin: 0;
+			}
+			> div.domain-types__wrap-me {
+				border-top: 1px solid var( --color-neutral-5 );
+				flex-basis: 100%;
+				margin: 0;
+				padding: 16px 24px;
+			}
+		}
+	}
+
+	.subscription-settings {
+		margin-top: 0;
+	}
+
+	.domain-types__auto-renew-placeholder {
+		width: 20%;
+		p {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+		}
+	}
+}

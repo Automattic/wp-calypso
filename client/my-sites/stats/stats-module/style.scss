@@ -1,5 +1,5 @@
 .stats-module {
-	.upgrade-nudge.card {
+	.upsell-nudge.card {
 		margin: 16px;
 	}
 }
@@ -31,7 +31,6 @@
 .stats-insights__nonperiodic {
 	&.has-no-recent {
 		color: var( --color-neutral-70 );
-		font-weight: 300;
 
 		p {
 			@include breakpoint( '<660px' ) {
@@ -256,7 +255,7 @@ ul.module-header-actions {
 	}
 }
 
-.module-content .upgrade-nudge.card {
+.module-content .upsell-nudge.card {
 	margin: 16px;
 }
 

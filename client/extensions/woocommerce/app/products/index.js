@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -52,7 +50,7 @@ class Products extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -62,7 +60,7 @@ class Products extends Component {
 		}
 	}
 
-	switchPage = page => {
+	switchPage = ( page ) => {
 		const { site } = this.props;
 		if ( trim( this.state.query ) !== '' ) {
 			this.props.fetchProducts( site.ID, { page, search: this.state.query } );
@@ -71,7 +69,7 @@ class Products extends Component {
 		}
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -153,7 +151,4 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Products ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

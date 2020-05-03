@@ -1,17 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { deleteApplicationPassword } from 'state/application-passwords/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -54,11 +53,8 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		deleteApplicationPassword,
-		errorNotice,
-		recordGoogleEvent,
-	}
-)( localize( ApplicationPasswordsItem ) );
+export default connect( null, {
+	deleteApplicationPassword,
+	errorNotice,
+	recordGoogleEvent,
+} )( localize( withLocalizedMoment( ApplicationPasswordsItem ) ) );

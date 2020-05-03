@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -29,7 +28,7 @@ describe( 'EditGravatar', () => {
 		email_verified: false,
 	};
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		global.URL = {
 			revokeObjectURL: sandbox.stub(),
@@ -37,7 +36,7 @@ describe( 'EditGravatar', () => {
 		};
 	} );
 
-	beforeAll( function() {
+	beforeAll( function () {
 		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;

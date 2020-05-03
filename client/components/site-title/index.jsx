@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,13 +32,13 @@ class SiteTitleControl extends React.Component {
 		disabled: false,
 	};
 
-	onChangeSiteTitle = event => {
+	onChangeSiteTitle = ( event ) => {
 		const blogdescription = this.props.blogdescription;
 		const blogname = event.target.value;
 		this.props.onChange( { blogname, blogdescription } );
 	};
 
-	onChangeDescription = event => {
+	onChangeDescription = ( event ) => {
 		const blogname = this.props.blogname;
 		const blogdescription = event.target.value;
 		this.props.onChange( { blogname, blogdescription } );

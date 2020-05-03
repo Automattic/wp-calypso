@@ -3,11 +3,12 @@
 	--color-accent: var( --studio-jetpack-green-30 );
 	--color-accent-light: var( --studio-jetpack-green-20 );
 	--color-accent-dark: var( --studio-jetpack-green-50 );
+	--color-accent-60: var( --studio-jetpack-green-40 );
 
 	// Override global colors with accent variables
 	--color-primary: var( --color-accent-dark );
 	--color-primary-light: var( --color-accent-light );
-	--color-accent-60: var( --color-accent-dark );
+	--color-primary-dark: var( --color-accent-dark );
 
 	::selection {
 		color: var( --color-text-inverted );

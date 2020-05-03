@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,7 +12,7 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DisplayTypes from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
 import ReaderPostActions from 'blocks/reader-post-actions';
@@ -69,7 +68,7 @@ class ReaderPostCard extends React.Component {
 		this.props.onClick( postToOpen );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 
@@ -82,7 +81,7 @@ class ReaderPostCard extends React.Component {
 		}
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}

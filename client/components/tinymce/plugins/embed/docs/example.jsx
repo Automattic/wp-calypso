@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import EmbedDialog from '../dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -32,7 +29,7 @@ class EmbedDialogExample extends PureComponent {
 		this.setState( { showDialog: false } );
 	};
 
-	onUpdate = newUrl => {
+	onUpdate = ( newUrl ) => {
 		this.setState( {
 			embedUrl: newUrl,
 			showDialog: false,
@@ -56,7 +53,7 @@ class EmbedDialogExample extends PureComponent {
 	}
 }
 
-const connectedEmbedDialogExample = connect( state => {
+const connectedEmbedDialogExample = connect( ( state ) => {
 	return {
 		siteId: get( getCurrentUser( state ), 'primary_blog' ),
 	};

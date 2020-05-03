@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -21,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import { isJetpackSite, isJetpackMinimumVersion, getSiteAdminUrl } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
@@ -32,7 +29,6 @@ class SharingButtonsOptions extends Component {
 		buttons: PropTypes.array,
 		initialized: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isTwitterButtonAllowed: PropTypes.bool,
 		onChange: PropTypes.func,
 		postTypes: PropTypes.array,
 		recordGoogleEvent: PropTypes.func,
@@ -81,14 +77,14 @@ class SharingButtonsOptions extends Component {
 		}
 	};
 
-	handleTwitterViaChange = event => {
+	handleTwitterViaChange = ( event ) => {
 		this.props.onChange(
 			event.target.name,
 			this.getSanitizedTwitterUsername( event.target.value )
 		);
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { path } = this.props;
 
 		let value;
@@ -121,20 +117,22 @@ class SharingButtonsOptions extends Component {
 		switch ( postType.name ) {
 			case 'index':
 				label = this.props.translate( 'Front Page, Archive Pages, and Search Results', {
-					context: 'jetpack',
+					context: 'Show like and sharing buttons on',
 				} );
 				break;
 			case 'post':
-				label = this.props.translate( 'Posts' );
+				label = this.props.translate( 'Posts', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'page':
-				label = this.props.translate( 'Pages' );
+				label = this.props.translate( 'Pages', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'attachment':
-				label = this.props.translate( 'Media' );
+				label = this.props.translate( 'Media', { context: 'Show like and sharing buttons on' } );
 				break;
 			case 'portfolio':
-				label = this.props.translate( 'Portfolio Items' );
+				label = this.props.translate( 'Portfolio Items', {
+					context: 'Show like and sharing buttons on',
+				} );
 				break;
 			default:
 				label = postType.label;
@@ -144,7 +142,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getDisplayOptions() {
-		return [ { name: 'index' } ].concat( this.props.postTypes ).map( postType => ( {
+		return [ { name: 'index' } ].concat( this.props.postTypes ).map( ( postType ) => ( {
 			value: postType.name,
 			label: this.getPostTypeLabel( postType ),
 		} ) );
@@ -155,8 +153,8 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getTwitterViaOptionElement() {
-		const { isJetpack, initialized, isTwitterButtonAllowed, settings, translate } = this.props;
-		if ( ! this.isTwitterButtonEnabled() || ! isTwitterButtonAllowed ) {
+		const { isJetpack, initialized, settings, translate } = this.props;
+		if ( ! this.isTwitterButtonEnabled() ) {
 			return;
 		}
 
@@ -214,7 +212,7 @@ class SharingButtonsOptions extends Component {
 						text={ translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
 						) }
-						link="https://support.wordpress.com/comment-likes/"
+						link="https://wordpress.com/support/comment-likes/"
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>
@@ -224,11 +222,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getSharingShowOptionsElement = () => {
-		const { initialized, isSharingShowAllowed, settings, translate } = this.props;
-
-		if ( ! isSharingShowAllowed ) {
-			return;
-		}
+		const { initialized, settings, translate } = this.props;
 
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 		return (
@@ -251,20 +245,6 @@ class SharingButtonsOptions extends Component {
 		);
 	};
 
-	getWpAdminBanner = () => {
-		const { isSharingShowAllowed, siteAdminUrl, translate } = this.props;
-		if ( isSharingShowAllowed ) {
-			return;
-		}
-		return (
-			<Banner
-				className="sharing-buttons__banner"
-				href={ `${ siteAdminUrl }options-general.php?page=sharing` }
-				title={ translate( 'Visit WP Admin for more sharing buttons options.' ) }
-			/>
-		);
-	};
-
 	render() {
 		const { initialized, saving, siteId, translate } = this.props;
 
@@ -284,22 +264,17 @@ class SharingButtonsOptions extends Component {
 						className="button sharing-buttons__submit"
 						disabled={ saving || ! initialized }
 					>
-						{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
+						{ saving ? translate( 'Saving…' ) : translate( 'Save changes' ) }
 					</button>
 				</div>
-				{ this.getWpAdminBanner() }
 			</Fragment>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isTwitterButtonAllowed =
-			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
-		const isSharingShowAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '7.3' );
 		const path = getCurrentRouteParameterized( state, siteId );
 
 		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
@@ -307,19 +282,13 @@ const connectComponent = connect(
 		return {
 			buttons: getSharingButtons( state, siteId ),
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
-			isJetpack,
-			isSharingShowAllowed,
-			isTwitterButtonAllowed,
+			isJetpack: isJetpackSite( state, siteId ),
 			path,
 			postTypes,
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteId,
 		};
 	},
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsOptions );
+export default flowRight( connectComponent, localize )( SharingButtonsOptions );

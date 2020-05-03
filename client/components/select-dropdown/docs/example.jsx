@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -222,7 +220,7 @@ class SelectDropdownExample extends React.PureComponent {
 	}
 
 	getSelectItemHandler = ( name, count, icon ) => {
-		return event => {
+		return ( event ) => {
 			event.preventDefault();
 			this.selectItem( name, count, icon );
 		};

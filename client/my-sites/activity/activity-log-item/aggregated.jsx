@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -18,14 +19,13 @@ import FoldableCard from 'components/foldable-card';
 import { getSiteSlug } from 'state/sites/selectors';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import Button from '../../../components/button';
+import { Button } from '@automattic/components';
 import { getActivityLogFilter } from 'state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
-import analytics from 'lib/analytics';
-import { withDesktopBreakpoint } from 'lib/viewport/react';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
@@ -38,12 +38,8 @@ class ActivityLogAggregatedItem extends Component {
 			timezone,
 		} = this.props;
 		const newFilter = Object.assign( {}, omit( filter, [ 'dateRange', 'on' ] ), {
-			before: applySiteOffset( firstPublishedDate, { timezone } )
-				.add( 1, 'second' )
-				.format(),
-			after: applySiteOffset( lastPublishedDate, { timezone } )
-				.subtract( 1, 'second' )
-				.format(),
+			before: applySiteOffset( firstPublishedDate, { timezone } ).add( 1, 'second' ).format(),
+			after: applySiteOffset( lastPublishedDate, { timezone } ).subtract( 1, 'second' ).format(),
 			aggregate: false,
 			backButton: true,
 		} );
@@ -52,10 +48,10 @@ class ActivityLogAggregatedItem extends Component {
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
 
-	trackClick = intent => {
+	trackClick = ( intent ) => {
 		const { activity } = this.props;
 		const section = activity.activityGroup;
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
+		recordTracksEvent( 'calypso_activitylog_item_click', {
 			activity: activity.activityName,
 			section,
 			intent: intent,
@@ -130,7 +126,6 @@ class ActivityLogAggregatedItem extends Component {
 			disableRestore,
 			gmtOffset,
 			moment,
-			rewindState,
 			siteId,
 			timezone,
 			translate,
@@ -151,14 +146,13 @@ class ActivityLogAggregatedItem extends Component {
 					header={ this.renderHeader() }
 					onClick={ this.trackAggregateExpandToggle }
 				>
-					{ activity.streams.map( log => (
+					{ activity.streams.map( ( log ) => (
 						<Fragment key={ log.activityId }>
 							<ActivityLogItem
 								key={ log.activityId }
 								activity={ log }
 								disableRestore={ disableRestore }
 								disableBackup={ disableBackup }
-								hideRestore={ 'active' !== rewindState }
 								siteId={ siteId }
 							/>
 						</Fragment>

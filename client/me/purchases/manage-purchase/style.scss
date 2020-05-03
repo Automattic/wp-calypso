@@ -115,6 +115,10 @@
 	.is-business & {
 		border-bottom: 2px solid var( --color-plan-business );
 	}
+
+	.is-jetpack-product & {
+		border-bottom: 2px solid var( --studio-jetpack-green-30 );
+	}
 }
 
 .manage-purchase__plan-icon {
@@ -153,9 +157,18 @@
 	clear: none;
 }
 
+.manage-purchase__contact-partner {
+	font-weight: bold;
+	display: block;
+}
+
 .manage-purchase__description {
 	color: var( --color-text-subtle );
 	display: block;
+
+	.plan-features__targeted-description-heading {
+		display: inline;
+	}
 }
 
 .manage-purchase__settings-link {
@@ -201,7 +214,7 @@
 			}
 			&:first-child:nth-last-child( 4 ),
 			&:first-child:nth-last-child( 4 ) ~ li {
-				  max-width: 25%;
+				max-width: 25%;
 			}
 		}
 
@@ -281,7 +294,7 @@
 	}
 }
 
-.manage-purchase__contact-support {
+.manage-purchase__footnotes {
 	color: var( --color-text-subtle );
 	border-top: solid 1px var( --color-neutral-0 );
 	margin: 0 auto;

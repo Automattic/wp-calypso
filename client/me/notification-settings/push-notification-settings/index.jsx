@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,16 +7,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
 import {
 	getStatus,
 	isApiReady,
@@ -811,7 +806,7 @@ class PushNotificationSettings extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			apiReady: isApiReady( state ),
 			isEnabled: isEnabled( state ),

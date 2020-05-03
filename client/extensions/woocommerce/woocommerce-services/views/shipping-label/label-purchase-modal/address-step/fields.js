@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,7 +38,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getCountryName } from 'woocommerce/state/sites/data/locations/selectors';
 
-const AddressFields = props => {
+const AddressFields = ( props ) => {
 	const {
 		siteId,
 		orderId,
@@ -69,7 +67,7 @@ const AddressFields = props => {
 		// so even if the origin address was correctly normalized, the form needs to be displayed again
 		if ( normalized && ! isEqual( normalized, values ) ) {
 			const editAddressHandler = () => props.editAddress( orderId, siteId, group );
-			const selectNormalizedAddressHandler = select =>
+			const selectNormalizedAddressHandler = ( select ) =>
 				props.selectNormalizedAddress( orderId, siteId, group, select );
 
 			return (
@@ -102,10 +100,10 @@ const AddressFields = props => {
 	}
 
 	const generalErrorOnly = fieldErrors.general && size( fieldErrors ) === 1;
-	const getId = fieldName => group + '_' + fieldName;
-	const getValue = fieldName =>
+	const getId = ( fieldName ) => group + '_' + fieldName;
+	const getValue = ( fieldName ) =>
 		values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
-	const updateValue = fieldName => newValue =>
+	const updateValue = ( fieldName ) => ( newValue ) =>
 		props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const submitAddressForNormalizationHandler = () =>
 		props.submitAddressForNormalization( orderId, siteId, group );
@@ -268,7 +266,7 @@ const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators(
 		{
 			selectNormalizedAddress,
@@ -282,7 +280,4 @@ const mapDispatchToProps = dispatch => {
 	);
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddressFields ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressFields ) );

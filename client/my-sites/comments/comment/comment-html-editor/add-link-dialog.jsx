@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -35,7 +34,7 @@ export class AddLinkDialog extends Component {
 		linkUrl: '',
 	};
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.setState( {
 			linkUrl: this.inferUrl( newProps.selectedText ),
 			linkText: newProps.selectedText,
@@ -62,11 +61,11 @@ export class AddLinkDialog extends Component {
 		return '';
 	}
 
-	setLinkUrl = event => this.setState( { linkUrl: event.target.value } );
+	setLinkUrl = ( event ) => this.setState( { linkUrl: event.target.value } );
 
-	setLinkText = event => this.setState( { linkText: event.target.value } );
+	setLinkText = ( event ) => this.setState( { linkText: event.target.value } );
 
-	setLinkNewTab = event => this.setState( { linkNewTab: event.target.checked } );
+	setLinkNewTab = ( event ) => this.setState( { linkNewTab: event.target.checked } );
 
 	closeDialog = () =>
 		this.setState(

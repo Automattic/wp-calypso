@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -11,9 +9,9 @@ import { combineReducers } from 'state/utils';
  * Returns the updated editor last draft site ID state after an action has been
  * dispatched.
  *
- * @param  {?Number} state  Current state
- * @param  {Object}  action Action payload
- * @return {?Number}        Updated state
+ * @param  {?number} state  Current state
+ * @param  {object}  action Action payload
+ * @returns {?number}        Updated state
  */
 export function siteId( state = null, action ) {
 	switch ( action.type ) {
@@ -28,9 +26,9 @@ export function siteId( state = null, action ) {
  * Returns the updated editor last draft post ID state after an action has been
  * dispatched.
  *
- * @param  {?Number} state  Current state
- * @param  {Object}  action Action payload
- * @return {?Number}        Updated state
+ * @param  {?number} state  Current state
+ * @param  {object}  action Action payload
+ * @returns {?number}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {

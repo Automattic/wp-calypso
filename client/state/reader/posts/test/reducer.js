@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,10 +6,10 @@
  * Internal dependencies
  */
 import { items, seen } from '../reducer';
-import { READER_POST_SEEN, READER_POSTS_RECEIVE } from 'state/action-types';
+import { READER_POST_SEEN, READER_POSTS_RECEIVE } from 'state/reader/action-types';
 
-const receivePosts = posts => ( { type: READER_POSTS_RECEIVE, posts } );
-const see = post => ( { type: READER_POST_SEEN, payload: { post } } );
+const receivePosts = ( posts ) => ( { type: READER_POSTS_RECEIVE, posts } );
+const see = ( post ) => ( { type: READER_POST_SEEN, payload: { post } } );
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

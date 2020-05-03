@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-nodejs-modules */
 const path = require( 'path' );
 const semver = require( 'semver' );
 
@@ -104,9 +102,7 @@ class ExtensiveLodashReplacementPlugin {
 			// Output compilation warning.
 			this.compilation.warnings.push(
 				new Error(
-					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${
-						this.baseLodashESVersion
-					}`
+					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${ this.baseLodashESVersion }`
 				)
 			);
 		}
@@ -145,7 +141,7 @@ class ExtensiveLodashReplacementPlugin {
 				// Normalize module names.
 				// This avoids code duplication due to module name case differences
 				// (e.g. 'camelcase' vs 'camelCase').
-				LODASH_MODULE_NAMES.forEach( casedModule => {
+				LODASH_MODULE_NAMES.forEach( ( casedModule ) => {
 					if ( subModule === casedModule.toLowerCase() ) {
 						subModule = casedModule;
 					}
@@ -171,6 +167,7 @@ class ExtensiveLodashReplacementPlugin {
 		// Replace plain 'lodash' with 'lodash-es'.
 		if ( /^lodash$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+				// eslint-disable-next-line require-atomic-updates
 				result.request = 'lodash-es';
 				return;
 			}
@@ -179,6 +176,7 @@ class ExtensiveLodashReplacementPlugin {
 		// Replace 'lodash/foo' with 'lodash-es/foo'.
 		if ( /^lodash\/(.*)$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+				// eslint-disable-next-line require-atomic-updates
 				result.request = request.replace( 'lodash/', 'lodash-es/' );
 				return;
 			}
@@ -193,12 +191,13 @@ class ExtensiveLodashReplacementPlugin {
 				// Normalize module names.
 				// This avoids code duplication due to module name case differences
 				// (e.g. 'camelcase' vs 'camelCase').
-				LODASH_MODULE_NAMES.forEach( casedModule => {
+				LODASH_MODULE_NAMES.forEach( ( casedModule ) => {
 					if ( subModule === casedModule.toLowerCase() ) {
 						subModule = casedModule;
 					}
 				} );
 
+				// eslint-disable-next-line require-atomic-updates
 				result.request = `lodash-es/${ subModule }`;
 				return;
 			}
@@ -208,11 +207,11 @@ class ExtensiveLodashReplacementPlugin {
 	}
 
 	apply( compiler ) {
-		compiler.hooks.thisCompilation.tap( 'LodashReplacementPlugin', compilation => {
+		compiler.hooks.thisCompilation.tap( 'LodashReplacementPlugin', ( compilation ) => {
 			this.compilation = compilation;
 		} );
 
-		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', nmf => {
+		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', ( nmf ) => {
 			this.moduleResolver = this.moduleResolver || nmf.getResolver( 'normal' );
 			this.init = this.init || this.initBaseLodashData();
 

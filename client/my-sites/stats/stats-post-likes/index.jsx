@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,12 +7,12 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Count from 'components/count';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostLikes from 'components/data/query-post-likes';
@@ -28,7 +26,7 @@ import PostLikes from 'blocks/post-likes';
  */
 import './style.scss';
 
-export const StatsPostLikes = props => {
+export const StatsPostLikes = ( props ) => {
 	const { countLikes, opened, postId, postType, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = countLikes === null;
@@ -98,8 +96,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	toggleInfo,
-	localize
-)( StatsPostLikes );
+export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,13 +6,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get, findLast, findIndex } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
@@ -49,14 +48,17 @@ export class NavigationLink extends Component {
 	 * Returns the previous step , skipping over steps with the
 	 * `wasSkipped` property.
 	 *
-	 * @return {Object} The previous step object
+	 * @returns {object} The previous step object
 	 */
 	getPreviousStep() {
 		const { flowName, signupProgress, stepName } = this.props;
 
 		let steps = getFilteredSteps( flowName, signupProgress );
-		steps = steps.slice( 0, findIndex( steps, step => step.stepName === stepName ) );
-		const previousStep = findLast( steps, step => ! step.wasSkipped );
+		steps = steps.slice(
+			0,
+			findIndex( steps, ( step ) => step.stepName === stepName )
+		);
+		const previousStep = findLast( steps, ( step ) => ! step.wasSkipped );
 
 		return previousStep || { stepName: null };
 	}
@@ -160,7 +162,7 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ recordTracksEvent, submitSignupStep }

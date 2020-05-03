@@ -17,7 +17,10 @@ import MultiCheckbox from '../';
 let container;
 
 describe( 'index', () => {
-	const options = [ { value: 1, label: 'One' }, { value: 2, label: 'Two' } ];
+	const options = [
+		{ value: 1, label: 'One' },
+		{ value: 2, label: 'Two' },
+	];
 
 	beforeEach( () => {
 		container = document.createElement( 'div' );
@@ -82,8 +85,8 @@ describe( 'index', () => {
 			expect( labels[ 1 ].querySelector( 'input' ).checked ).toBe( false );
 		} );
 
-		test( 'should accept an onChange event handler', done => {
-			const finishTest = event => {
+		test( 'should accept an onChange event handler', ( done ) => {
+			const finishTest = ( event ) => {
 				expect( event.value ).toEqual( [ options[ 0 ].value ] );
 				done();
 			};

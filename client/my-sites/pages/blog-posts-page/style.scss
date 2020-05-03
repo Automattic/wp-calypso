@@ -10,7 +10,9 @@
 
 .blog-posts-page__front-page-icon,
 .blog-posts-page__not-used-icon {
+	margin-top: -1px;
 	margin-right: 6px;
+	vertical-align: middle;
 }
 
 .blog-posts-page__details {
@@ -39,5 +41,9 @@
 
 	&.is-disabled {
 		color: var( --color-neutral-20 );
+	}
+
+	.blog-posts-page__info-icon {
+		margin: 0 4px -4px 0;
 	}
 }

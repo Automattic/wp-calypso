@@ -20,7 +20,7 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -43,7 +43,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
- * @return {object}                                webpack config
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -71,6 +71,12 @@ function getWebpackConfig(
 		babelConfig = undefined;
 	}
 
+	let postCssConfigPath = process.cwd();
+	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
+		// Default to this package's PostCSS config
+		postCssConfigPath = __dirname;
+	}
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry,
@@ -90,6 +96,7 @@ function getWebpackConfig(
 					: 'docker' !== process.env.CONTAINER,
 				parallel: workerCount,
 				sourceMap: Boolean( process.env.SOURCEMAP ),
+				extractComments: false,
 				terserOptions: {
 					ecma: 5,
 					safari10: true,
@@ -106,10 +113,13 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
+				TranspileConfig.loader( {
+					cacheDirectory: true,
+					include: shouldTranspileDependency,
+					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					workerCount,
 				} ),
+				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
 				FileConfig.loader(),
 			],
 		},

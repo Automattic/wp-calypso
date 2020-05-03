@@ -14,7 +14,7 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import {
@@ -60,7 +60,7 @@ class WPCOMNotifications extends React.Component {
 		this.props.fetchSettings();
 	}
 
-	toggleSetting = setting => {
+	toggleSetting = ( setting ) => {
 		this.props.toggleWPcomEmailSetting( setting );
 	};
 
@@ -203,7 +203,7 @@ class WPCOMNotifications extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		settings: getNotificationSettings( state, 'wpcom' ),
 		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'wpcom' ),
 		hasJetpackSites: hasJetpackSites( state ),

@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -42,7 +40,6 @@ export default class InfoPopover extends Component {
 			'left',
 			'top left',
 		] ),
-		rootClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -56,7 +53,7 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
-	handleClick = e => {
+	handleClick = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
 		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
@@ -69,7 +66,7 @@ export default class InfoPopover extends Component {
 
 		if ( gaEventCategory && popoverName ) {
 			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
-			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
+			gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
 	};
 
@@ -83,11 +80,9 @@ export default class InfoPopover extends Component {
 					aria-label={ translate( 'More information' ) }
 					onClick={ this.handleClick }
 					ref={ this.iconRef }
-					className={ classNames(
-						'info-popover',
-						{ 'is-active': this.state.showPopover },
-						this.props.className
-					) }
+					className={ classNames( 'info-popover', this.props.className, {
+						'is-active': this.state.showPopover,
+					} ) }
 				>
 					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
 				</button>
@@ -101,7 +96,6 @@ export default class InfoPopover extends Component {
 						position={ this.props.position }
 						onClose={ this.handleClose }
 						className={ classNames( 'info-popover__tooltip', this.props.className ) }
-						rootClassName={ this.props.rootClassName }
 					>
 						{ this.props.children }
 					</Popover>

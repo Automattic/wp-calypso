@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ export class FormPhoneInput extends React.Component {
 		phoneNumber: this.props.initialPhoneNumber || '',
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.maybeSetCountryStateFromList();
 	}
 
@@ -95,11 +93,11 @@ export class FormPhoneInput extends React.Component {
 		} );
 	}
 
-	handleCountryChange = event => {
+	handleCountryChange = ( event ) => {
 		this.setState( { countryCode: event.target.value }, this.triggerOnChange );
 	};
 
-	handlePhoneChange = event => {
+	handlePhoneChange = ( event ) => {
 		this.setState( { phoneNumber: event.target.value }, this.triggerOnChange );
 	};
 

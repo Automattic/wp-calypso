@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
 function renderDeleteButton( onDelete, label ) {
@@ -62,8 +60,8 @@ const ProductCategoryHeader = ( { onDelete, onSave, translate, site, category, i
 	const breadcrumbs = [
 		<a href={ getLink( '/store/products/:site/', site ) }> { translate( 'Products' ) } </a>,
 		<a href={ getLink( '/store/products/categories/:site/', site ) }>
-			{' '}
-			{ translate( 'Categories' ) }{' '}
+			{ ' ' }
+			{ translate( 'Categories' ) }{ ' ' }
 		</a>,
 		currentCrumb,
 	];

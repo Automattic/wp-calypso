@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,6 +13,8 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { CreditsPaymentBox } from '../credits-payment-box';
+import PaymentChatButton from '../payment-chat-button';
+import CheckoutTerms from '../checkout-terms';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -45,23 +46,6 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
-} ) );
-
-jest.mock( '../terms-of-service', () => {
-	const react = require( 'react' );
-	return class TermsOfService extends react.Component {};
-} );
-jest.mock( '../payment-chat-button', () => {
-	const react = require( 'react' );
-	return class PaymentChatButton extends react.Component {};
-} );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
-
 const defaultProps = {
 	cart: {},
 	translate: identity,
@@ -72,7 +56,7 @@ describe( 'CreditsPaymentBox', () => {
 		const wrapper = shallow( <CreditsPaymentBox { ...defaultProps } /> );
 		expect( wrapper.find( '.payment-box-section' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
+		expect( wrapper.find( CheckoutTerms ) ).toHaveLength( 1 );
 	} );
 
 	const eligiblePlans = [
@@ -83,7 +67,7 @@ describe( 'CreditsPaymentBox', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	];
 
-	eligiblePlans.forEach( product_slug => {
+	eligiblePlans.forEach( ( product_slug ) => {
 		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
@@ -93,11 +77,11 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 1 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 1 );
 		} );
 	} );
 
-	eligiblePlans.forEach( product_slug => {
+	eligiblePlans.forEach( ( product_slug ) => {
 		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
@@ -107,7 +91,7 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -128,7 +112,7 @@ describe( 'CreditsPaymentBox', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	];
 
-	otherPlans.forEach( product_slug => {
+	otherPlans.forEach( ( product_slug ) => {
 		test( 'should not render PaymentChatButton if only non-business plan products are in the cart', () => {
 			const props = {
 				...defaultProps,
@@ -137,7 +121,7 @@ describe( 'CreditsPaymentBox', () => {
 				},
 			};
 			const wrapper = shallow( <CreditsPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

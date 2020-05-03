@@ -192,7 +192,7 @@
 		// Low state ('disabled')
 		.is-low,
 		&.is-low a .value {
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 		}
 
 		// Individual tab loading state

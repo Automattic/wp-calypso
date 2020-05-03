@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,6 +50,6 @@ const ErrorNotice = localize( ( { translate, errorCode } ) => {
 	);
 } );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	errorCode: getGuidedTransferError( state, getSelectedSiteId( state ) ),
 } ) )( ErrorNotice );

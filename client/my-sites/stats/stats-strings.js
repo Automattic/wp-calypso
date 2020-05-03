@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { translate } from 'i18n-calypso';
 
-export default function() {
+export default function () {
 	const statsStrings = {};
 
 	statsStrings.posts = {

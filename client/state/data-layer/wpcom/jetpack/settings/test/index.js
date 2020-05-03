@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -82,39 +80,6 @@ describe( 'announceRequestFailure()', () => {
 	const siteId = 12345678;
 	const siteUrl = 'http://yourgroovydomain.com';
 
-	test( 'should trigger an error notice with an action button when request fails for an unconnected site', () => {
-		const getState = () => ( {
-			jetpack: {
-				onboarding: {
-					credentials: {
-						[ siteId ]: {
-							siteUrl,
-							token: 'abcd1234',
-							userEmail: 'example@yourgroovydomain.com',
-						},
-					},
-				},
-			},
-			sites: {
-				items: {},
-			},
-		} );
-
-		announceRequestFailure( { siteId } )( dispatch, getState );
-
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					button: 'Visit site admin',
-					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
-					noticeId: `jpo-communication-error-${ siteId }`,
-					status: 'is-error',
-					text: 'Something went wrong.',
-				} ),
-			} )
-		);
-	} );
-
 	test( 'should trigger an error notice with an action button when request fails for a connected site', () => {
 		const getState = () => ( {
 			jetpack: {
@@ -139,7 +104,7 @@ describe( 'announceRequestFailure()', () => {
 				notice: expect.objectContaining( {
 					button: 'Visit site admin',
 					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
-					noticeId: `jpo-communication-error-${ siteId }`,
+					noticeId: `jps-communication-error-${ siteId }`,
 					status: 'is-error',
 					text: 'Something went wrong.',
 				} ),
@@ -169,7 +134,7 @@ describe( 'announceRequestFailure()', () => {
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
-					noticeId: `jpo-communication-error-${ siteId }`,
+					noticeId: `jps-communication-error-${ siteId }`,
 					status: 'is-error',
 					text: 'Something went wrong.',
 				} ),
@@ -212,7 +177,7 @@ describe( 'saveJetpackSettings()', () => {
 		settings,
 	};
 
-	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
+	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting legacy Jetpack Onboarding credentials', () => {
 		saveJetpackSettings( action )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -276,7 +241,7 @@ describe( 'handleSaveFailure()', () => {
 			notice: {
 				status: 'is-error',
 				text: 'An unexpected error occurred. Please try again later.',
-				noticeId: `jpo-notice-error-${ siteId }`,
+				noticeId: `jps-notice-error-${ siteId }`,
 				duration: 5000,
 			},
 		} );
@@ -341,7 +306,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			notice: {
 				status: 'is-error',
 				text: 'An unexpected error occurred. Please try again later.',
-				noticeId: `jpo-notice-error-${ siteId }`,
+				noticeId: `jps-notice-error-${ siteId }`,
 				duration: 5000,
 			},
 		} );

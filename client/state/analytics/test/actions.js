@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,7 @@ import {
 	recordTracksEventWithClientId,
 	recordPageView,
 	recordPageViewWithClientId,
-} from '../actions.js';
+} from '../actions';
 
 import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'state/action-types';
 
@@ -34,7 +33,7 @@ describe( 'middleware', () => {
 
 		test( 'should trigger analytics and run passed thunks', () => {
 			const dispatch = spy();
-			const testAction = dispatcher => dispatcher( { type: 'test' } );
+			const testAction = ( dispatcher ) => dispatcher( { type: 'test' } );
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 
 			withAnalytics( statBump, testAction )( dispatch );
@@ -98,7 +97,7 @@ describe( 'middleware', () => {
 			const thunk = recordTracksEventWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = createdAction => ( dispatchedEvent = createdAction );
+			const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {
@@ -124,7 +123,7 @@ describe( 'middleware', () => {
 			const thunk = recordPageViewWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = createdAction => ( dispatchedEvent = createdAction );
+			const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {

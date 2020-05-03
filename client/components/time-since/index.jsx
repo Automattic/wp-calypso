@@ -14,15 +14,15 @@ import smartSetState from 'lib/react-smart-set-state';
 export default class TimeSince extends PureComponent {
 	smartSetState = smartSetState;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.update();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.update( nextProps.date );
 	}
 
-	update = date => {
+	update = ( date ) => {
 		const { dateFormat } = this.props;
 		date = date || this.props.date;
 

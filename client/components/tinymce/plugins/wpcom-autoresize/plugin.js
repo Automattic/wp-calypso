@@ -4,9 +4,7 @@
  * Adapted from WordPress.
  *
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
  */
 
 /**
@@ -15,28 +13,27 @@
 import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
-	let settings = editor.settings,
-		oldSize = 0;
+	const settings = { ...editor.settings };
+	let oldSize = 0;
 
 	function isFullscreen() {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
 	}
 
-	// do not autoreize on iOS
-	if ( editor.settings.inline || tinymce.Env.iOS ) {
+	if ( editor.settings.inline ) {
 		return;
 	}
 
 	function isEndOfEditor() {
-		let range, start, body, element, child;
-		range = editor.selection.getRng();
+		let element, child;
+		const range = editor.selection.getRng();
 
 		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
 			return false;
 		}
 
-		start = range.startContainer;
-		body = editor.getBody();
+		const start = range.startContainer;
+		const body = editor.getBody();
 		element = start;
 		do {
 			child = element;
@@ -49,27 +46,15 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function resize( e ) {
-		let deltaSize,
-			doc,
-			body,
-			docElm,
-			DOM = tinymce.DOM,
-			resizeHeight,
-			myHeight,
-			marginTop,
-			marginBottom,
-			paddingTop,
-			paddingBottom,
-			borderTop,
-			borderBottom;
+		let deltaSize, resizeHeight, myHeight;
+		const DOM = tinymce.DOM;
+		const doc = editor.getDoc();
+		const { body, documentElement: docElm } = doc;
 
-		doc = editor.getDoc();
 		if ( ! doc ) {
 			return;
 		}
 
-		body = doc.body;
-		docElm = doc.documentElement;
 		resizeHeight = settings.autoresize_min_height;
 
 		if ( ! body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
@@ -82,14 +67,14 @@ function wcpomAutoResize( editor ) {
 		}
 
 		// Calculate outer height of the body element using CSS styles
-		marginTop = editor.dom.getStyle( body, 'margin-top', true );
-		marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
-		paddingTop = editor.dom.getStyle( body, 'padding-top', true );
-		borderTop = editor.dom.getStyle( body, 'border-top-width', true );
-		borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
+		const marginTop = editor.dom.getStyle( body, 'margin-top', true );
+		const marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
+		const paddingTop = editor.dom.getStyle( body, 'padding-top', true );
+		const borderTop = editor.dom.getStyle( body, 'border-top-width', true );
+		const borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
 		// paddingBottom seems to get reset to 1 somewhere, so grab
 		// autoresize_bottom_margin directly here
-		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
+		const paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
 
 		myHeight =
 			body.offsetHeight +
@@ -157,7 +142,7 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function wait( times, interval, callback ) {
-		setTimeout( function() {
+		setTimeout( function () {
 			resize( {} );
 
 			if ( times-- ) {
@@ -178,11 +163,9 @@ function wcpomAutoResize( editor ) {
 	settings.autoresize_max_height = parseInt( editor.getParam( 'autoresize_max_height', 0 ), 10 );
 
 	// Add padding at the bottom for better UX
-	editor.on( 'init', function() {
-		let overflowPadding, bottomMargin;
-
-		overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
-		bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
+	editor.on( 'init', function () {
+		const overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
+		const bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
 
 		if ( overflowPadding !== false ) {
 			editor.dom.setStyles( editor.getBody(), {
@@ -202,11 +185,11 @@ function wcpomAutoResize( editor ) {
 	editor.on( 'nodechange setcontent keyup FullscreenStateChanged', resize );
 
 	if ( editor.getParam( 'autoresize_on_init', true ) ) {
-		editor.on( 'init', function() {
+		editor.on( 'init', function () {
 			editor.dom.addClass( editor.getBody(), 'wp-autoresize' );
 
 			// Hit it 20 times in 100 ms intervals
-			wait( 20, 100, function() {
+			wait( 20, 100, function () {
 				// Hit it 5 times in 1 sec intervals
 				wait( 5, 1000 );
 			} );
@@ -217,6 +200,6 @@ function wcpomAutoResize( editor ) {
 	editor.addCommand( 'wpcomAutoResize', resize );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/autoresize', wcpomAutoResize );
 }

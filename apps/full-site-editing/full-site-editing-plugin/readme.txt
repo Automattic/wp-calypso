@@ -1,20 +1,20 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nrqsnchz, nosolosw, obenland, okenobi, owolski, themeshaper, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.2
-Stable tag: 0.6
+Tested up to: 5.3
+Stable tag: 1.1
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
 
+
 == Description ==
 
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
-to give you a head start on creating new pages for your site.
-
+to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
 
 == Installation ==
 
@@ -38,7 +38,109 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
+
 == Changelog ==
+
+= 1.1 =
+* New block patterns.
+* Performance and style improvements.
+
+= 1.0 =
+* Fix for site editor option override.
+* Hide post title in Gutenberg depending on theme mod.
+* Fix post list block sync script compatibility.
+* Remove hook for enqueueing site editor assets.
+* Move site editor item to top level menu in wp-admin.
+
+= 0.26 =
+* SPT IE bug fix.
+
+= 0.25 =
+* G2 and Gutenberg 7.7.1 compatibility fixes.
+* Update to blog posts block v1.2.
+* Add custom WordPress.com block patterns.
+* SPT and NUX compatibility improvements.
+
+= 0.24 =
+
+* Starter Page Templates: fix overflow issue with feature image in blog posts.
+* Global Styles: add new font (Raleway).
+
+= 0.23 =
+* Dotcom Block Editor NUX: disable by default
+
+= 0.22 =
+* Starter Page Templates: Improved previews with many visual glitches fixed
+* Starter Page Templates: Make page title visibility depend on theme setting
+* Starter Page Templates: Hide templates using unavailable blocks
+* Starter Page Templates: Track template insertion on Dotcom sites
+* Site Editor: initialize core FSE on Dotcom sites
+* Enable Gutenberg NUX with Gutenberg copy
+* Improved unit testing commands
+
+= 0.21 =
+* Linting fixes and page layout selector improvements.
+
+= 0.20 =
+* Fix text domain for i18n for Event Countdown and Timeline
+
+= 0.19 =
+* Starter Page Templates: Added more than twenty new block editor page templates.
+* Starter Page Templates: Fix issues with full width blocks in the preview.
+* General: Fix style compatibility with the latest versions of the block editor.
+
+= 0.18.2 =
+* Address core/nux package deprecation.
+
+= 0.18 =
+* Blog Posts Block: Tag Exclusion feature
+* Blog Posts Block: Image orientation issues resolved.
+* Blog Posts Block: Full width alignment issue resolved.
+
+= 0.17 =
+* Introduces Blog Posts block, a better version of Posts List.
+
+= 0.16.2 =
+* Fix for Global Styles. Logged out users weren't getting the fonts properly.
+
+= 0.16.1 =
+* Improve style of the template part preview.
+* Consistent back button styles.
+
+= 0.16 =
+* Delegate FSE support detection to themes by leveraging the theme tags.
+* Enable Global Styles for all template-first themes.
+* Fix back button navigation issues.
+* Keep the sidebar layout selector open by default.
+* Fix editor styles with new Gutenberg version.
+* Click anywhere on header/footer block to Navigate to editor.
+
+= 0.15.1 =
+* Always open the layout selector if the `?new-homepage` query argument exists.
+
+= 0.15 =
+* Add ability to change page layout for existing pages.
+* Expose Homepage layouts from other themes in page layout picker.
+
+= 0.14 =
+* Stop using theme classes for template parts to improve support for FSE blocks' style attributes.
+
+= 0.13 =
+* Incorporate Global Styles plugin functionality.
+* Side-load images on template insertion.
+* Remove widgets menu from wp-admin.
+
+= 0.12 =
+* Change menu order of default pages that FSE creates to 1.
+
+= 0.11 =
+* Add color, background color, font size, and text alignment support to the Site Title, Site Description, and Navigation Menu blocks.
+
+= 0.10 =
+* Update page template selector with template preview.
+
+= 0.9 =
+* Rename wp_template CPT to wp_template_part.
 
 = 0.7 =
 * Change theme support to Maywood instead of Modern Business.

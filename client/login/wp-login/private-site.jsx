@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
+
+/**
+ * Image dependencies
+ */
+import privateImage from 'assets/images/illustrations/private.svg';
 
 export default function PrivateSite() {
 	const translate = useTranslate();
@@ -19,7 +21,7 @@ export default function PrivateSite() {
 	return (
 		<Card className="wp-login__private-site">
 			<div className="wp-login__private-site-image">
-				<img src="/calypso/images/private/private.svg" alt="" />
+				<img src={ privateImage } alt="" />
 			</div>
 
 			<h2 className="wp-login__private-site-header">

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import CustomsStep from './customs-step';
@@ -27,7 +25,7 @@ import {
 	isCustomsFormRequired,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const PurchaseDialog = props => {
+const PurchaseDialog = ( props ) => {
 	const { loaded, translate } = props;
 
 	if ( ! loaded ) {
@@ -99,16 +97,13 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	return {
 		loaded,
 		form: loaded && shippingLabel.form,
-		showPurchaseDialog: shippingLabel.showPurchaseDialog,
+		showPurchaseDialog: shippingLabel && shippingLabel.showPurchaseDialog,
 		isCustomsFormRequired: isCustomsFormRequired( state, orderId, siteId ),
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { exitPrintingFlow }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PurchaseDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseDialog ) );

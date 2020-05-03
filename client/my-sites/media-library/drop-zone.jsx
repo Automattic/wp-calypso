@@ -1,19 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
@@ -34,7 +31,7 @@ class MediaLibraryDropZone extends React.Component {
 		trackStats: true,
 	};
 
-	uploadFiles = files => {
+	uploadFiles = ( files ) => {
 		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return;
 		}
@@ -44,11 +41,11 @@ class MediaLibraryDropZone extends React.Component {
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
-			analytics.mc.bumpStat( 'editor_upload_via', 'drop' );
+			bumpStat( 'editor_upload_via', 'drop' );
 		}
 	};
 
-	isValidTransfer = transfer => {
+	isValidTransfer = ( transfer ) => {
 		if ( ! transfer ) {
 			return false;
 		}

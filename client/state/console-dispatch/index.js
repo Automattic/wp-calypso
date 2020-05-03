@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Console dispatcher Redux store enhancer
  *
@@ -13,7 +12,7 @@
  * @param {Function} next next store enhancer in chain
  * @returns {Function} console dispatcher store enhancer
  */
-export const consoleDispatcher = next => ( ...args ) => {
+export const consoleDispatcher = ( next ) => ( ...args ) => {
 	const store = next( ...args );
 
 	if ( 'undefined' !== typeof window ) {

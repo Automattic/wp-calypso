@@ -1,35 +1,48 @@
 /**
  * External dependencies
  */
-
-/**
- * Internal dependencies
- */
+/* eslint-disable import/no-extraneous-dependencies */
+import { isNil, isEmpty } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-import BlockPreview from './block-template-preview';
+/* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
+/* eslint-enable import/no-extraneous-dependencies */
 
-const TemplateSelectorItem = props => {
+/**
+ * Internal dependencies
+ */
+import BlockIframePreview from './block-iframe-preview';
+
+const TemplateSelectorItem = ( props ) => {
 	const {
 		id,
 		value,
-		help,
-		onFocus,
 		onSelect,
 		label,
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
 		blocks = [],
+		isSelected,
 	} = props;
+
+	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
+		return null;
+	}
+
+	if ( useDynamicPreview && ( isNil( blocks ) || isEmpty( blocks ) ) ) {
+		return null;
+	}
 
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
+			<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
@@ -39,18 +52,23 @@ const TemplateSelectorItem = props => {
 		/>
 	);
 
+	const labelId = `label-${ id }-${ value }`;
+
+	const handleLabelClick = () => {
+		onSelect( value );
+	};
+
 	return (
 		<button
 			type="button"
-			id={ `${ id }-${ value }` }
-			className="template-selector-item__label"
+			className={ classnames( 'template-selector-item__label', {
+				'is-selected': isSelected,
+			} ) }
 			value={ value }
-			onMouseEnter={ () => onFocus( value, label ) }
-			onClick={ () => onSelect( value, label ) }
-			aria-describedby={ help ? `${ id }__help` : undefined }
+			onClick={ handleLabelClick }
+			aria-labelledby={ `${ id } ${ labelId }` }
 		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			{ label }
+			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
 		</button>
 	);
 };

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -15,8 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
@@ -39,13 +36,13 @@ export class MediaLibraryDataSource extends Component {
 
 	state = { popover: false };
 
-	storeButtonRef = ref => ( this.buttonRef = ref );
+	storeButtonRef = ( ref ) => ( this.buttonRef = ref );
 
 	togglePopover = () => {
 		this.setState( { popover: ! this.state.popover } );
 	};
 
-	changeSource = newSource => () => {
+	changeSource = ( newSource ) => () => {
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
 		}
@@ -94,7 +91,7 @@ export class MediaLibraryDataSource extends Component {
 	render() {
 		const { translate, source } = this.props;
 		const sources = this.getSources();
-		const currentSelected = find( sources, item => item.value === source );
+		const currentSelected = find( sources, ( item ) => item.value === source );
 		const classes = classnames( 'media-library__datasource', {
 			'is-single-source': 1 === sources.length,
 		} );
@@ -135,7 +132,7 @@ export class MediaLibraryDataSource extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
 } );
 

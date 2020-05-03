@@ -1,4 +1,4 @@
-/** @format */
+
 @import '~@wordpress/edit-post/build-style/style';
 
 .is-group-gutenberg.layout {
@@ -50,6 +50,10 @@
 			margin-left: 0;
 			@media ( min-width: 600px ) {
 				top: 56px;
+			}
+			// Fixes a color consistency issue.
+			.edit-post-visual-editor {
+				background-color: transparent;
 			}
 		}
 

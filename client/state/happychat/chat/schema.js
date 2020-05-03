@@ -1,5 +1,3 @@
-/** @format */
-
 export const eventSchema = {
 	type: 'object',
 	additionalProperties: false,

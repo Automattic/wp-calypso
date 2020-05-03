@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -13,14 +12,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -32,7 +30,7 @@ class InviteAcceptLoggedIn extends React.Component {
 
 	accept = () => {
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( this.props.invite, error => {
+		this.props.acceptInvite( this.props.invite, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			} else if ( get( this.props, 'invite.site.is_vip' ) ) {
@@ -41,18 +39,18 @@ class InviteAcceptLoggedIn extends React.Component {
 				page( this.props.redirectTo );
 			}
 		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	};
 
 	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
-			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
+			recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
 		}
 	};
 
 	signInLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
 	};
 
 	getButtonText = () => {
@@ -155,7 +153,6 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( localize( InviteAcceptLoggedIn ) );
+export default connect( null, ( dispatch ) => bindActionCreators( { acceptInvite }, dispatch ) )(
+	localize( InviteAcceptLoggedIn )
+);

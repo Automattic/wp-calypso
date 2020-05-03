@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -49,12 +48,12 @@ function getMediaContentInstance( props ) {
 describe( 'MediaLibraryContent', () => {
 	let beforeWindow;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		beforeWindow = global.window;
 		global.window = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		global.window = beforeWindow;
 	} );
 

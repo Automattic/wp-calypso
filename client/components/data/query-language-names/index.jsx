@@ -1,42 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { requestLanguageNames } from 'state/i18n/language-names/actions';
 
-class QueryLanguageNames extends Component {
-	static propTypes = {
-		languageNames: PropTypes.object,
-		requestLanguageNames: PropTypes.func,
-	};
+export default function QueryLanguageNames() {
+	const dispatch = useDispatch();
+	const { localeSlug } = useTranslate();
 
-	static defaultProps = {
-		requestLanguageNames: () => {},
-	};
+	useEffect( () => {
+		dispatch( requestLanguageNames() );
+	}, [ dispatch, localeSlug ] );
 
-	componentWillMount() {
-		if ( ! this.props.languageNames ) {
-			this.props.requestLanguageNames();
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
-
-export default connect(
-	state => ( {
-		languageNames: getLocalizedLanguageNames( state ),
-	} ),
-	{ requestLanguageNames }
-)( QueryLanguageNames );

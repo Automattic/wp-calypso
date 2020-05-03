@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SettingsNavigation from '../navigation';

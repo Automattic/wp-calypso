@@ -194,24 +194,3 @@
 		margin-left: 24px;
 	}
 }
-
-.get-apps__app-badge {
-	display: inline-block;
-	img {
-		max-height: 41px;
-		margin: 9px 0;
-		width: auto;
-	}
-
-	&.android-app-badge {
-		img {
-			max-height: 59px;
-			margin-top: 0;
-			margin-bottom: 0;
-			margin-right: 0;
-		}
-		& + .ios-app-badge img {
-			margin-left: 0;
-		}
-	}
-}

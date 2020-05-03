@@ -1,14 +1,19 @@
 .gsuite-upsell-card__product-details {
+	margin-bottom: 1.5em;
+}
+
+.gsuite-upsell-card__product-intro {
+	@include breakpoint( '<960px' ) {
+		margin-bottom: 1em;
+	}
+
 	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
 
-.gsuite-upsell-card__product-intro {
-	@include breakpoint( '>960px' ) {
-		max-width: 350px;
-		margin-right: 50px;
-	}
+.gsuite-upsell-card__product-presentation {
+	flex-basis: 55%;
 }
 
 .gsuite-upsell-card__product-name {

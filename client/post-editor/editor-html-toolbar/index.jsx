@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, map, reduce, throttle } from 'lodash';
+import { get, isEmpty, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { Env } from 'tinymce/tinymce';
 
 /**
@@ -21,8 +19,6 @@ import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
-import MediaValidationStore from 'lib/media/validation-store';
-import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -35,13 +31,15 @@ import {
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
+import getMediaErrors from 'state/selectors/get-media-errors';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -108,11 +106,11 @@ export class EditorHtmlToolbar extends Component {
 		document.removeEventListener( 'click', this.clickOutsideInsertContentMenu );
 	}
 
-	bindButtonsRef = div => {
+	bindButtonsRef = ( div ) => {
 		this.buttons = div;
 	};
 
-	bindInsertContentButtonsRef = div => {
+	bindInsertContentButtonsRef = ( div ) => {
 		this.insertContentButtons = div;
 	};
 
@@ -149,7 +147,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	hideToolbarFadeOnFullScroll = event => {
+	hideToolbarFadeOnFullScroll = ( event ) => {
 		const { scrollLeft, scrollWidth, clientWidth } = event.target;
 		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
 		const isScrolledFull = scrollLeft >= scrollWidth - clientWidth - 10;
@@ -159,7 +157,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	clickOutsideInsertContentMenu = event => {
+	clickOutsideInsertContentMenu = ( event ) => {
 		if (
 			this.state.showInsertContentMenu &&
 			! this.insertContentButtons.contains( event.target )
@@ -267,7 +265,7 @@ export class EditorHtmlToolbar extends Component {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
 		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
+		this.setState( { openTags: openTags.filter( ( openTag ) => openTag !== tag.name ) } );
 	}
 
 	insertHtmlTagOpenClose( tag ) {
@@ -345,7 +343,7 @@ export class EditorHtmlToolbar extends Component {
 		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
 	};
 
-	onClickImage = attributes => {
+	onClickImage = ( attributes ) => {
 		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
 	};
 
@@ -379,7 +377,7 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { openTags: [] } );
 	};
 
-	onInsertMedia = media => {
+	onInsertMedia = ( media ) => {
 		this.insertCustomContent( media );
 	};
 
@@ -470,26 +468,26 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showSimplePaymentsDialog: false } );
 	};
 
-	changeSimplePaymentsDialogTab = tab => {
+	changeSimplePaymentsDialogTab = ( tab ) => {
 		this.setState( {
 			simplePaymentsDialogTab: tab,
 		} );
 	};
 
-	insertSimplePayment = productData => {
+	insertSimplePayment = ( productData ) => {
 		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
 		this.closeSimplePaymentsDialog();
 	};
 
 	onFilesDrop = () => {
-		const { site } = this.props;
+		const { mediaValidationErrors, site } = this.props;
 		// Find selected images. Non-images will still be uploaded, but not
 		// inserted directly into the post contents.
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
 		const isSingleImage =
 			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
-		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
+		if ( isSingleImage && isEmpty( mediaValidationErrors ) ) {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
@@ -504,7 +502,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = ( tag ) => -1 !== this.state.openTags.indexOf( tag );
 
 	renderAddEverythingDropdown = () => {
 		const { translate, canUserUploadFiles } = this.props;
@@ -709,12 +707,17 @@ export class EditorHtmlToolbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	contactForm: get( state, 'ui.editor.contactForm', {} ),
-	isDropZoneVisible: isDropZoneVisible( state ),
-	site: getSelectedSite( state ),
-	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
-} );
+const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+
+	return {
+		contactForm: get( state, 'ui.editor.contactForm', {} ),
+		isDropZoneVisible: isDropZoneVisible( state ),
+		site,
+		canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
+		mediaValidationErrors: getMediaErrors( state, site?.ID ),
+	};
+};
 
 const mapDispatchToProps = {
 	blockSave,
@@ -727,4 +730,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( EditorHtmlToolbar ) );
+)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );

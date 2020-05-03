@@ -59,9 +59,9 @@ function KeyboardShortcuts( keyBindings ) {
 	}
 }
 
-KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
+KeyboardShortcuts.prototype.bindShortcuts = function ( keyBindings ) {
 	// bind keys from the key bindings to their named events
-	keyBindings.forEach( keyBinding => {
+	keyBindings.forEach( ( keyBinding ) => {
 		this.bindShortcut(
 			keyBinding.eventName,
 			keyBinding.keys,
@@ -74,7 +74,7 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 	window.addEventListener( 'keydown', this.boundKeyHandler, false );
 };
 
-KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
+KeyboardShortcuts.prototype.bindShortcut = function ( eventName, keys, type, checkKeys ) {
 	let keyCombinations = [],
 		matches;
 
@@ -86,7 +86,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		keyCombinations = keys;
 	}
 
-	keyCombinations.forEach( combo => {
+	keyCombinations.forEach( ( combo ) => {
 		if ( 'sequence' === type ) {
 			keymaster( combo[ 1 ], ( event, handler ) => {
 				// if the notifications panel is open, do not handle any sequences
@@ -108,10 +108,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			combo = combo.join( '+' );
 			keymaster( combo, ( event, handler ) => {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
-				if (
-					this.isNotificationsOpen &&
-					( this._getKey( event ) !== 'n' && event.keyCode !== 27 )
-				) {
+				if ( this.isNotificationsOpen && this._getKey( event ) !== 'n' && event.keyCode !== 27 ) {
 					return;
 				}
 
@@ -126,7 +123,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 				if ( checkKeys && checkKeys.length > 0 ) {
 					keyValue = this._getKey( event );
 					// TODO: Could this be replaced by Array#some ?
-					matches = checkKeys.filter( function( key ) {
+					matches = checkKeys.filter( function ( key ) {
 						return key === keyValue;
 					} );
 					if ( matches.length === 1 ) {
@@ -145,11 +142,12 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * event, we transform the unicode value of KeyboardEvent.keyIdentifier to what
  * it should be. Note that Windows/Webkit may return incorrect values for
  * keyIdentifier.
+ *
  * @param {object} event - KeyboardEvent
  * @returns {string} - key
  * @private
  */
-KeyboardShortcuts.prototype._getKey = function( event ) {
+KeyboardShortcuts.prototype._getKey = function ( event ) {
 	let key;
 	if ( event.key ) {
 		return event.key;
@@ -159,11 +157,11 @@ KeyboardShortcuts.prototype._getKey = function( event ) {
 	return String.fromCharCode( parseInt( key, 16 ) );
 };
 
-KeyboardShortcuts.prototype.emitEvent = function() {
+KeyboardShortcuts.prototype.emitEvent = function () {
 	this.emit.apply( this, arguments );
 };
 
-KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
+KeyboardShortcuts.prototype.handleKeyPress = function ( event ) {
 	// make sure this key press is not targeted at an input/select/textarea with keymaster's filter
 	if ( keymaster.filter( event ) ) {
 		this.lastKey = String.fromCharCode( event.keyCode ).toLowerCase();
@@ -171,7 +169,7 @@ KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
 	}
 };
 
-KeyboardShortcuts.prototype.setNotificationsOpen = function( isOpen ) {
+KeyboardShortcuts.prototype.setNotificationsOpen = function ( isOpen ) {
 	this.isNotificationsOpen = isOpen;
 };
 

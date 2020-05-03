@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,6 +15,7 @@ import { abtest } from 'lib/abtest';
 import * as steps from './steps';
 
 const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
 const PERSONAL_PREMIUM_PLANS = []
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );
@@ -30,18 +29,22 @@ export default function stepsForProductAndSurvey(
 	survey,
 	product,
 	canChat,
-	precancellationChatAvailable
+	precancellationChatAvailable,
+	downgradePossible
 ) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) && abtest( 'ATPromptOnCancel' ) === 'show' ) {
 			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 		}
 
-		if (
-			includesProduct( PERSONAL_PREMIUM_PLANS, product ) &&
-			abtest( 'ATUpgradeOnCancel' ) === 'show'
-		) {
+		if ( includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) {
 			return [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
+		}
+	}
+
+	if ( survey && survey.questionOneRadio === 'onlyNeedFree' ) {
+		if ( includesProduct( PREMIUM_PLANS, product ) && downgradePossible ) {
+			return [ steps.INITIAL_STEP, steps.DOWNGRADE_STEP, steps.FINAL_STEP ];
 		}
 	}
 

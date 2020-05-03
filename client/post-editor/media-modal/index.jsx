@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -28,7 +25,8 @@ import {
  * Internal dependencies
  */
 import MediaLibrary from 'my-sites/media-library';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat as mcBumpStat } from 'lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
@@ -58,7 +56,7 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 		! isParentReady( mediaItems ) ||
 		some(
 			mediaItems,
-			item =>
+			( item ) =>
 				MediaUtils.isItemBeingUploaded( item ) &&
 				// Transients can't be handled by the editor if they are being
 				// uploaded via an external URL
@@ -118,7 +116,7 @@ export class EditorMediaModal extends Component {
 		this.state = this.getDefaultState( props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
@@ -143,7 +141,7 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { view, mediaLibrarySelectedItems, site, single } = this.props;
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
@@ -216,21 +214,10 @@ export class EditorMediaModal extends Component {
 		}
 
 		if ( mediaLibrarySelectedItems.length && this.state.source !== '' ) {
-			const itemsWithTransientId = mediaLibrarySelectedItems.map( item =>
+			const itemsWithTransientId = mediaLibrarySelectedItems.map( ( item ) =>
 				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
 			);
-			if (
-				itemsWithTransientId.length === 1 &&
-				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
-			) {
-				this.copyExternal( itemsWithTransientId, this.state.source );
-				this.props.onClose( {
-					type: 'media',
-					items: itemsWithTransientId,
-				} );
-			} else {
-				this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
-			}
+			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {
 			const value = mediaLibrarySelectedItems.length
 				? {
@@ -243,7 +230,11 @@ export class EditorMediaModal extends Component {
 		}
 	};
 
-	setDetailSelectedIndex = index => {
+	isTransientSelected = () => {
+		return this.props.mediaLibrarySelectedItems.some( ( item ) => item.transient );
+	};
+
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( {
 			detailSelectedIndex: index,
 		} );
@@ -262,7 +253,7 @@ export class EditorMediaModal extends Component {
 		}
 	}
 
-	confirmDeleteMedia = accepted => {
+	confirmDeleteMedia = ( accepted ) => {
 		const { site, mediaLibrarySelectedItems } = this.props;
 
 		if ( ! site || ! accepted ) {
@@ -276,7 +267,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		MediaActions.delete( site.ID, toDelete );
-		analytics.mc.bumpStat( 'editor_media_actions', 'delete_media' );
+		mcBumpStat( 'editor_media_actions', 'delete_media' );
 		this.props.deleteMedia( site.ID, map( toDelete, 'ID' ) );
 	};
 
@@ -391,7 +382,7 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
 
 		this.handleCancel();
@@ -407,9 +398,9 @@ export class EditorMediaModal extends Component {
 		return detailSelectedIndex;
 	}
 
-	onFilterChange = filter => {
+	onFilterChange = ( filter ) => {
 		if ( filter !== this.state.filter ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
+			mcBumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
 		}
 
 		this.setState( { filter } );
@@ -417,23 +408,23 @@ export class EditorMediaModal extends Component {
 
 	onScaleChange = () => {
 		if ( ! this.statsTracking.scale ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'scale' );
+			mcBumpStat( 'editor_media_actions', 'scale' );
 			this.statsTracking.scale = true;
 		}
 	};
 
-	onSearch = search => {
+	onSearch = ( search ) => {
 		this.setState( {
 			search: search || undefined,
 		} );
 
 		if ( ! this.statsTracking.search ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'search' );
+			mcBumpStat( 'editor_media_actions', 'search' );
 			this.statsTracking.search = true;
 		}
 	};
 
-	onSourceChange = source => {
+	onSourceChange = ( source ) => {
 		MediaActions.sourceChanged( this.props.site.ID );
 		this.setState( {
 			source,
@@ -446,7 +437,7 @@ export class EditorMediaModal extends Component {
 		this.props.onClose();
 	};
 
-	editItem = item => {
+	editItem = ( item ) => {
 		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
@@ -454,7 +445,7 @@ export class EditorMediaModal extends Component {
 
 		// Append item to set of selected items if not already selected.
 		let items = mediaLibrarySelectedItems;
-		if ( ! items.some( selected => selected.ID === item.ID ) ) {
+		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
 			if ( single ) {
 				items = [ item ];
 			} else {
@@ -466,8 +457,8 @@ export class EditorMediaModal extends Component {
 		// Find and set detail selected index for the edited item
 		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
 
-		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_contextual' );
-		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
+		mcBumpStat( 'editor_media_actions', 'edit_button_contextual' );
+		gaRecordEvent( 'Media', 'Clicked Contextual Edit Button' );
 
 		this.props.setView( ModalViews.DETAIL );
 	};
@@ -497,21 +488,10 @@ export class EditorMediaModal extends Component {
 			},
 		];
 
-		const getConfirmButtonLabelForExternal = () => {
-			let label = this.props.translate( 'Insert' );
-			if (
-				selectedItems.length > 1 ||
-				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
-			) {
-				label = this.props.translate( 'Copy to media library' );
-			}
-			return label;
-		};
-
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || getConfirmButtonLabelForExternal(),
+				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection,
@@ -520,7 +500,7 @@ export class EditorMediaModal extends Component {
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
 			galleryViewEnabled &&
-			! some( selectedItems, item => MediaUtils.getMimePrefix( item ) !== 'image' )
+			! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
 				action: 'confirm',
@@ -534,7 +514,7 @@ export class EditorMediaModal extends Component {
 				action: 'confirm',
 				label: this.props.labels.confirm || this.props.translate( 'Insert' ),
 				isPrimary: true,
-				disabled: isDisabled || 0 === selectedItems.length,
+				disabled: isDisabled || 0 === selectedItems.length || this.isTransientSelected(),
 				onClick: this.confirmSelection,
 			} );
 		}
@@ -546,7 +526,7 @@ export class EditorMediaModal extends Component {
 		return ! includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view );
 	}
 
-	updateSettings = gallerySettings => {
+	updateSettings = ( gallerySettings ) => {
 		this.setState( { gallerySettings } );
 	};
 

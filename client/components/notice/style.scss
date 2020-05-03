@@ -11,13 +11,17 @@
 	display: flex;
 	position: relative;
 	width: 100%;
-	margin-bottom: 24px;
+	margin-bottom: 12px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 	background: var( --color-neutral-80 );
 	color: var( --color-text-inverted );
 	border-radius: 3px;
 	line-height: 1.5;
+
+	@include breakpoint( '>660px' ) {
+		margin-bottom: 24px;
+	}
 
 	// Success!
 	&.is-success {
@@ -123,6 +127,7 @@
 		button.is-link {
 			text-decoration: underline;
 			color: var( --color-text-inverted );
+			line-height: inherit;
 
 			&:hover {
 				color: var( --color-text-inverted );

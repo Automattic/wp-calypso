@@ -1,0 +1,69 @@
+.post-content-block__selector {
+	width: 300px;
+	a {
+		font-family: sans-serif;
+		font-size: 13px;
+		padding-left: 8px;
+	}
+}
+
+.post-content-block__preview {
+	pointer-events: none;
+	&::after {
+		content: '';
+		clear: both;
+		display: table;
+	}
+}
+
+.post-content-block .editor-post-title {
+	display: none;
+}
+
+.show-post-title-before-content {
+	.editor-post-title {
+		display: none;
+	}
+
+	.post-content-block .editor-post-title {
+		display: block;
+	}
+}
+
+/**
+ * Hide the content slot block UI
+ *
+ * @TODO: Remove this once Gutenberg gets support for hiding block UI.
+ *
+ * @see https://github.com/WordPress/gutenberg/issues/7469
+ * @see https://github.com/WordPress/gutenberg/pull/18173
+ */
+.block-editor-block-list__layout {
+	.post-content__block {
+		&.is-selected {
+			.block-editor-block-contextual-toolbar {
+				display: none;
+			}
+		}
+
+		&.block-editor-block-list__block {
+			// Need to get super specific to override the core css selectors:
+			&,
+			&.has-child-selected,
+			&.is-navigate-mode,
+			&.is-hovered {
+				> .block-editor-block-list__block-edit {
+					&::before {
+						transition: none;
+						border: none;
+						outline: none;
+						box-shadow: none;
+					}
+					> .block-editor-block-list__breadcrumb {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,13 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import page from 'page';
-import { parse } from 'qs';
 import React from 'react';
 import { includes } from 'lodash';
-import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -16,41 +12,52 @@ import config from 'config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
+import { getUrlParts } from 'lib/url';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getLanguageSlugs } from 'lib/i18n-utils';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
-const enhanceContextWithLogin = context => {
+const enhanceContextWithLogin = ( context ) => {
 	const {
-		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
 	} = context;
 
+	const previousHash = context.state || {};
+	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const socialServiceResponse = client_id
+		? { client_id, user_email, user_name, id_token, state }
+		: null;
+
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
+			isGutenboarding={ isGutenboarding === GUTENBOARDING_BASE_NAME }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
-			socialServiceResponse={ context.hash }
+			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
+			signupUrl={ ( query && query.signup_url ) || null }
 		/>
 	);
 };
 
-// Defining this here so it can be used by both ./index.node.js and ./index.web.js
-// We cannot export it from either of those (to import it from the other) because of
-// the way that `server/bundler/loader` expects only a default export and nothing else.
-export const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
-
-export function login( context, next ) {
+export async function login( context, next ) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
+
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {
@@ -59,10 +66,9 @@ export function login( context, next ) {
 			return next( error );
 		}
 
-		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = parse( parsedRedirectUrl.query );
+		const { searchParams: redirectParams } = getUrlParts( redirect_to );
 
-		if ( client_id !== redirectQueryString.client_id ) {
+		if ( client_id !== redirectParams.get( 'client_id' ) ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
@@ -70,19 +76,16 @@ export function login( context, next ) {
 			return next( error );
 		}
 
-		context.store
-			.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
-			.then( () => {
-				enhanceContextWithLogin( context );
-
-				next();
-			} )
-			.catch( error => next( error ) );
-	} else {
-		enhanceContextWithLogin( context );
-
-		next();
+		try {
+			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+		} catch ( error ) {
+			return next( error );
+		}
 	}
+
+	enhanceContextWithLogin( context );
+
+	next();
 }
 
 export function magicLogin( context, next ) {

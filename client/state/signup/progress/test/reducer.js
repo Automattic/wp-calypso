@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -9,7 +7,6 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
-	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
@@ -352,18 +349,6 @@ describe( 'reducer', () => {
 				};
 				expect( reducer( initialState, action ) ).toEqual( finalState );
 			} );
-		} );
-	} );
-
-	describe( 'resuming a step', () => {
-		test( 'should update the step with an "in-progress" status', () => {
-			const initialState = { example: { stepName: 'example', status: 'completed' } };
-			const action = {
-				type: SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
-				resumeStep: { stepName: 'example' },
-			};
-			const finalState = { example: { stepName: 'example', status: 'in-progress' } };
-			expect( reducer( initialState, action ) ).toEqual( finalState );
 		} );
 	} );
 } );

@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +16,6 @@ import * as PostUtils from 'state/posts/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
-import { isMobile } from 'lib/viewport';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
@@ -66,7 +63,7 @@ class EditorTitle extends Component {
 		}
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { siteId, editedPostId } = this.props;
 		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
 		this.props.editPost( siteId, editedPostId, {
@@ -75,7 +72,7 @@ class EditorTitle extends Component {
 		this.props.onChange( newTitle );
 	};
 
-	resizeAfterNewlineInput = event => {
+	resizeAfterNewlineInput = ( event ) => {
 		const title = event.target.value;
 		if ( REGEXP_NEWLINES.test( title ) ) {
 			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
@@ -125,7 +122,7 @@ class EditorTitle extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
 		const editedPostId = getEditorPostId( state );

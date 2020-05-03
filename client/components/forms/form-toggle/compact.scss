@@ -17,4 +17,18 @@
 			}
 		}
 	}
+	&.is-toggling {
+		+ .form-toggle__label .form-toggle__switch {
+			&::after {
+				left: 8px;
+			}
+		}
+		&:checked {
+			+ .form-toggle__label .form-toggle__switch {
+				&::after {
+					left: 0;
+				}
+			}
+		}
+	}
 }

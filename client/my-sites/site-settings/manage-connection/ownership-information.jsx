@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -67,7 +65,7 @@ const OwnershipInformation = ( { isChatActive, isChatAvailable, translate } ) =>
 	</FormFieldset>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	isChatActive: hasActiveHappychatSession( state ),
 } ) )( localize( OwnershipInformation ) );

@@ -1,18 +1,16 @@
-/** @format */
-
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import titlecase from 'to-title-case';
 
 class StatsInfoPanel extends React.PureComponent {
@@ -23,7 +21,7 @@ class StatsInfoPanel extends React.PureComponent {
 	};
 
 	recordEvent = () => {
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Stats',
 			'Clicked More Panel Information Help Link',
 			titlecase( this.props.module )
@@ -49,7 +47,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/stats/#marking-spam-referrers"
+									href="http://wordpress.com/support/stats/#marking-spam-referrers"
 								>
 									<Gridicon icon="help-outline" />
 									{ this.props.translate( 'How do I mark a referrer as spam?' ) }
@@ -60,7 +58,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/stats/#referrers"
+									href="http://wordpress.com/support/stats/#referrers"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Referrers' ) }
@@ -85,7 +83,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/stats/#clicks"
+									href="http://wordpress.com/support/stats/#clicks"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Clicks' ) }
@@ -111,7 +109,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/stats/#search-engine-terms"
+									href="http://wordpress.com/support/stats/#search-engine-terms"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Search Terms', {
@@ -138,7 +136,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/getting-more-views-and-traffic/#use-appropriate-tags"
+									href="http://wordpress.com/support/getting-more-views-and-traffic/#use-appropriate-tags"
 								>
 									<Gridicon icon="help-outline" />
 									{ this.props.translate( 'How do I tag content effectively?' ) }
@@ -149,7 +147,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/posts/categories-vs-tags/"
+									href="http://wordpress.com/support/posts/categories-vs-tags/"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Tags & Categories' ) }
@@ -186,7 +184,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/getting-more-views-and-traffic/"
+									href="http://wordpress.com/support/getting-more-views-and-traffic/"
 								>
 									<Gridicon icon="help-outline" />
 									{ this.props.translate( 'How do I get more visitors?', {
@@ -199,7 +197,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/stats/#top-posts-pages"
+									href="http://wordpress.com/support/stats/#top-posts-pages"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Posts & Pages', {
@@ -226,7 +224,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/adding-users/"
+									href="http://wordpress.com/support/adding-users/"
 								>
 									<Gridicon icon="help-outline" />
 									{ this.props.translate( 'How do I invite someone to my website?' ) }
@@ -237,7 +235,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/category/users/"
+									href="http://wordpress.com/support/category/users/"
 								>
 									<Gridicon icon="folder" />
 									{ this.props.translate( 'About Users' ) }
@@ -262,7 +260,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/videos/"
+									href="http://wordpress.com/support/videos/"
 								>
 									<Gridicon icon="folder" />
 									{ this.props.translate( 'About Videos on WordPress.com' ) }
@@ -287,7 +285,7 @@ class StatsInfoPanel extends React.PureComponent {
 									onClick={ this.recordEvent }
 									target="_blank"
 									rel="noopener noreferrer"
-									href="http://en.support.wordpress.com/publicize/"
+									href="http://wordpress.com/support/publicize/"
 								>
 									<Gridicon icon="info-outline" />
 									{ this.props.translate( 'About Publicize' ) }

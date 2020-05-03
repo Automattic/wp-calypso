@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -90,7 +89,7 @@ class ShareWidget extends Component {
 
 		return (
 			<ul className="share-widget__services">
-				{ services.map( service => {
+				{ services.map( ( service ) => {
 					const link = url.format( service.urlProperties );
 					return (
 						<li className="share-widget__service" key={ service.icon }>

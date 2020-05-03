@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import { getSite } from 'state/sites/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
@@ -26,7 +24,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 		onClose: PropTypes.func.isRequired,
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = ( closeDialog ) => {
 		this.props.onConfirmTransfer( this.props.targetSite, closeDialog );
 	};
 
@@ -46,7 +44,8 @@ class TransferConfirmationDialog extends React.PureComponent {
 				isPrimary: true,
 			},
 		];
-		const targetSiteName = get( this.props.targetSite, 'name', '' );
+
+		const targetSiteTitle = get( this.props.targetSite, 'title', '' );
 
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
@@ -54,9 +53,9 @@ class TransferConfirmationDialog extends React.PureComponent {
 				<p>
 					{ translate(
 						'Do you want to transfer {{strong}}%(domainName)s{{/strong}} ' +
-							'to site {{strong}}%(targetSiteName)s{{/strong}}?',
+							'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
 						{
-							args: { domainName, targetSiteName },
+							args: { domainName, targetSiteTitle },
 							components: { strong: <strong /> },
 						}
 					) }

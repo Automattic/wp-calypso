@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -16,10 +14,10 @@ import wp from 'lib/wp';
  * Request the Jetpack connection status for a certain site.
  *
  * @param  {Int}       siteId  ID of the site.
- * @return {Function}          Action thunk to request the Jetpack connection status when called.
+ * @returns {Function}          Action thunk to request the Jetpack connection status when called.
  */
-export const requestConnectionStatus = siteId => {
-	return dispatch => {
+export const requestConnectionStatus = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_CONNECTION_STATUS_REQUEST,
 			siteId,
@@ -28,7 +26,7 @@ export const requestConnectionStatus = siteId => {
 		return wp
 			.undocumented()
 			.testConnectionJetpack( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: SITE_CONNECTION_STATUS_RECEIVE,
 					siteId,
@@ -40,7 +38,7 @@ export const requestConnectionStatus = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 					siteId,

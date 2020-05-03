@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -141,7 +139,7 @@ class SiteOrDomain extends Component {
 		goToStep( 'user' );
 	}
 
-	handleClickChoice = designType => {
+	handleClickChoice = ( designType ) => {
 		const { goToStep, goToNextStep } = this.props;
 
 		this.submitDomain( designType );
@@ -197,7 +195,7 @@ class SiteOrDomain extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 

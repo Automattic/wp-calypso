@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -41,8 +41,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
 	const wasValidated =
-		[ firstName, lastName, mailBox ].some( value => '' !== value ) ||
-		[ firstNameError, lastNameError, mailBoxError, domainError ].some( value => null !== value );
+		[ firstName, lastName, mailBox ].some( ( value ) => '' !== value ) ||
+		[ firstNameError, lastNameError, mailBoxError, domainError ].some(
+			( value ) => null !== value
+		);
 
 	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
 	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
@@ -92,7 +94,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				/>
 				<GSuiteDomainsSelect
 					domains={ domains }
-					onChange={ event => {
+					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
 					value={ domain }

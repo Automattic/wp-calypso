@@ -18,10 +18,7 @@ function useSite( siteSlug ) {
 	const [ site, setSite ] = useState( null );
 
 	useEffect( () => {
-		wpcom
-			.site( siteSlug )
-			.get( { apiVersion: '1.2' } )
-			.then( setSite );
+		wpcom.site( siteSlug ).get( { apiVersion: '1.2' } ).then( setSite );
 	}, [ siteSlug ] );
 
 	return site;

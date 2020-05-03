@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
@@ -27,7 +25,7 @@ import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
 const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
@@ -47,7 +45,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
-					'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
+					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }

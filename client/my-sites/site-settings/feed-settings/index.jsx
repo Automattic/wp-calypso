@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,13 +9,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -75,7 +74,7 @@ class FeedSettings extends Component {
 								"The number of posts to include in your site's feed. {{link}}Learn more about feeds{{/link}}",
 								{
 									components: {
-										link: <a href="https://en.support.wordpress.com/feeds/" />,
+										link: <a href={ localizeUrl( 'https://wordpress.com/support/feeds/' ) } />,
 									},
 								}
 							) }
@@ -100,7 +99,7 @@ class FeedSettings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

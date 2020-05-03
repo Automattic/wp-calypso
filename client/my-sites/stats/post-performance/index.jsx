@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,8 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -23,6 +19,7 @@ import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -74,7 +71,7 @@ class StatsPostPerformance extends Component {
 			},
 		];
 
-		return tabs.map( function( tabOptions ) {
+		return tabs.map( function ( tabOptions ) {
 			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
 		} );
 	}
@@ -152,7 +149,7 @@ class StatsPostPerformance extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const query = { status: 'publish', number: 1 };
 		const posts = siteId ? getPostsForQuery( state, siteId, query ) : null;
@@ -172,7 +169,4 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostPerformance );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostPerformance );

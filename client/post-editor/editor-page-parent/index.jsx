@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -43,13 +41,13 @@ class EditorPageParent extends Component {
 		isTopLevel: ! this.props.parentId,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.parentId !== nextProps.parentId ) {
 			this.setState( { isTopLevel: ! nextProps.parentId } );
 		}
 	}
 
-	updatePageParent = item => {
+	updatePageParent = ( item ) => {
 		const { siteId, postId } = this.props;
 		const parentId = get( item, 'ID' );
 
@@ -115,7 +113,7 @@ class EditorPageParent extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );

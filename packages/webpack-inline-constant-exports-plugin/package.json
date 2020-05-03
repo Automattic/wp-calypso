@@ -1,12 +1,13 @@
 {
 	"name": "@automattic/webpack-inline-constant-exports-plugin",
 	"version": "0.0.1",
+	"author": "Automattic Inc.",
 	"description": "Webpack plugin to inline constant exports from modules",
+	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"Webpack"
 	],
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-inline-constant-exports-plugin",
-	"license": "GPL-2.0-or-later",
 	"publishConfig": {
 		"access": "public"
 	},

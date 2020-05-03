@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PropTypes from 'prop-types';
-import Card from 'components/card';
-import Gridicon from 'gridicons';
+import { Card } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
 import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
@@ -41,14 +39,14 @@ class WordAdsEarnings extends Component {
 		}
 	}
 
-	handleEarningsNoticeToggle = event => {
+	handleEarningsNoticeToggle = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			showEarningsNotice: ! this.state.showEarningsNotice,
 		} );
 	};
 
-	handleInfoToggle = type => event => {
+	handleInfoToggle = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -358,7 +356,7 @@ class WordAdsEarnings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

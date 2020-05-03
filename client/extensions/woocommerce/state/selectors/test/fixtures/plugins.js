@@ -1,4 +1,3 @@
-/** @format */
 const woocommerce = {
 	id: 'woocommerce/woocommerce',
 	slug: 'woocommerce',

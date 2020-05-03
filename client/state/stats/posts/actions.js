@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	POST_STATS_RECEIVE,
@@ -12,14 +9,16 @@ import {
 	POST_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/stats/init';
+
 /**
  * Returns an action object to be used in signalling that post stat for a site,
  * post and stat have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post Id
+ * @param  {number} siteId Site ID
+ * @param  {number} postId Post Id
  * @param  {Array}  stats  The received stats
- * @return {Object}        Action object
+ * @returns {object}        Action object
  */
 export function receivePostStats( siteId, postId, stats ) {
 	return {
@@ -34,13 +33,13 @@ export function receivePostStats( siteId, postId, stats ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post stat for a site and a post.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post Id
- * @param  {String} fields Stat Fields to fetch
- * @return {Function}      Action thunk
+ * @param  {number} siteId Site ID
+ * @param  {number} postId Post Id
+ * @param  {string} fields Stat Fields to fetch
+ * @returns {Function}      Action thunk
  */
 export function requestPostStats( siteId, postId, fields = [] ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_STATS_REQUEST,
 			postId,
@@ -51,7 +50,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 		return wpcom
 			.site( siteId )
 			.statsPostViews( postId, { fields: fields.join() } )
-			.then( stats => {
+			.then( ( stats ) => {
 				dispatch( receivePostStats( siteId, postId, stats ) );
 				dispatch( {
 					type: POST_STATS_REQUEST_SUCCESS,
@@ -60,7 +59,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 					fields,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId,

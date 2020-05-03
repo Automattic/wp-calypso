@@ -1,0 +1,16 @@
+.webinars-compact {
+	@include breakpoint( '>960px' ) {
+		.card-heading {
+			margin-bottom: 0;
+		}
+
+		.webinars-compact__content {
+			display: flex;
+		}
+
+		.webinars-compact__illustration {
+			margin-left: 12px;
+			width: 25%;
+		}
+	}
+}

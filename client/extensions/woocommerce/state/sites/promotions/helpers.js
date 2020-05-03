@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -179,11 +177,11 @@ function calculateCouponAppliesTo( coupon ) {
 }
 
 export function isCategoryExplicitlySelected( promotion, category ) {
-	return Boolean( find( promotion.appliesTo.productCategoryIds, id => id === category.id ) );
+	return Boolean( find( promotion.appliesTo.productCategoryIds, ( id ) => id === category.id ) );
 }
 
 export function isProductExplicitlySelected( promotion, product ) {
-	return Boolean( find( promotion.appliesTo.productIds, id => id === product.id ) );
+	return Boolean( find( promotion.appliesTo.productIds, ( id ) => id === product.id ) );
 }
 
 export function isCategorySelected( promotion, category ) {

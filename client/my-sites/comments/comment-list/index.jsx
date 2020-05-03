@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,11 +22,11 @@ import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import getCommentsPage from 'state/selectors/get-comments-page';
-import getSiteCommentCounts from 'state/selectors/get-site-comment-counts';
+import { getSiteCommentCounts } from 'state/comments/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
-const CommentTransition = props => (
+const CommentTransition = ( props ) => (
 	<CSSTransition { ...props } classNames="comment-list__transition" timeout={ 150 } />
 );
 
@@ -52,7 +50,7 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
@@ -70,7 +68,7 @@ export class CommentList extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = page => {
+	changePage = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -100,7 +98,7 @@ export class CommentList extends Component {
 
 	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
 
-	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+	isCommentSelected = ( commentId ) => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
@@ -112,7 +110,7 @@ export class CommentList extends Component {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
 
-	toggleCommentSelected = comment => {
+	toggleCommentSelected = ( comment ) => {
 		if ( ! comment.can_moderate ) {
 			return;
 		}
@@ -129,7 +127,7 @@ export class CommentList extends Component {
 		} ) );
 	};
 
-	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
+	toggleSelectAll = ( selectedComments ) => this.setState( { selectedComments } );
 
 	render() {
 		const {
@@ -192,7 +190,7 @@ export class CommentList extends Component {
 				/>
 
 				<TransitionGroup className="comment-list__transition-wrapper">
-					{ map( comments, commentId => (
+					{ map( comments, ( commentId ) => (
 						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
 							<Comment
 								commentId={ commentId }
@@ -252,7 +250,7 @@ const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	recordChangePage: ( page, total ) =>
 		dispatch(
 			composeAnalytics(
@@ -262,7 +260,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,9 +21,9 @@ import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib
  * 3. Other Cart Items
  * 4. Credits Cart Item
  *
- * @param {Object[]} products
+ * @param {object[]} products
  *
- * @returns {Object[]} the sorted list of items in the shopping cart
+ * @returns {object[]} the sorted list of items in the shopping cart
  */
 
 function sortProducts( products ) {
@@ -38,13 +36,13 @@ function sortProducts( products ) {
 	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
 	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
-	domainItems = sortBy( domainItems, function( pair ) {
+	domainItems = sortBy( domainItems, function ( pair ) {
 		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
 			return -1;
 		}
 		return pair[ 0 ];
 	} );
-	domainItems = domainItems.map( function( pair ) {
+	domainItems = domainItems.map( function ( pair ) {
 		return sortBy( pair[ 1 ], getDomainProductRanking );
 	} );
 	domainItems = flatten( domainItems );

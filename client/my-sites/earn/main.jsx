@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,7 @@ import NavItem from 'components/section-nav/item';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -28,6 +27,7 @@ import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
+import ReferAFriendSection from './refer-a-friend';
 import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
@@ -85,6 +85,10 @@ class EarningsMain extends Component {
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
+
+			case 'refer-a-friend':
+				return <ReferAFriendSection />;
+
 			default:
 				return <Home />;
 		}
@@ -99,7 +103,7 @@ class EarningsMain extends Component {
 	 * Remove any query parameters from the path before using it to
 	 * identify which screen the user is seeing.
 	 *
-	 * @returns {String} Path to current screen.
+	 * @returns {string} Path to current screen.
 	 */
 	getCurrentPath = () => {
 		let currentPath = this.props.path;
@@ -113,7 +117,7 @@ class EarningsMain extends Component {
 	/**
 	 * Check the current path and returns an appropriate title.
 	 *
-	 * @returns {String} Header text for current screen.
+	 * @returns {string} Header text for current screen.
 	 */
 	getHeaderText = () => {
 		const { translate } = this.props;
@@ -126,6 +130,9 @@ class EarningsMain extends Component {
 			case 'ads-settings':
 				return translate( 'Ads' );
 
+			case 'refer-a-friend':
+				return translate( 'Refer-a-Friend Program' );
+
 			default:
 				return '';
 		}
@@ -136,21 +143,22 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '') ;
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
 		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
 	};
 
-	getSectionNav = section => {
+	getSectionNav = ( section ) => {
 		const currentPath = this.getCurrentPath();
 
 		return (
-			! section.startsWith( 'payments' ) && (
+			! section.startsWith( 'payments' ) &&
+			! section.startsWith( 'refer-a-friend' ) && (
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( filterItem => {
+						{ this.getFilters().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -176,6 +184,7 @@ class EarningsMain extends Component {
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 			payments: translate( 'Recurring Payments' ),
 			'payments-plans': translate( 'Recurring Payments plans' ),
+			'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 		};
 
 		return (
@@ -186,6 +195,11 @@ class EarningsMain extends Component {
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="earn__page-header"
+					headerText={ translate( 'Earn' ) }
+					align="left"
+				/>
 				{ this.getHeaderCake() }
 				{ section && this.getSectionNav( section ) }
 				{ component }
@@ -194,7 +208,7 @@ class EarningsMain extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),

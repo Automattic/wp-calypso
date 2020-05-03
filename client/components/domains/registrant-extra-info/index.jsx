@@ -1,7 +1,6 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -26,7 +25,7 @@ const tldSpecificForms = {
 	uk,
 };
 
-const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
+const enabledTldForms = filter( keys( tldSpecificForms ), ( tld ) =>
 	config.isEnabled( `domains/cctlds/${ tld }` )
 );
 

@@ -30,7 +30,7 @@ let _lastFetchedPagePerCategory = {};
 let _totalPagesPerCategory = {};
 
 const PluginsDataActions = {
-	fetchPluginsList: debounce( function( category, page, searchTerm ) {
+	fetchPluginsList: debounce( function ( category, page, searchTerm ) {
 		// We need to debounce this method to avoid mixing diferent dispatch batches (and get an invariant violation from react)
 		// Since the infinite scroll mixin is launching a bunch of fetch requests at the same time, without debounce is too easy
 		// to get two of those requests running at (almost) the same time and getting react to freak out.
@@ -71,7 +71,7 @@ const PluginsDataActions = {
 				category: category,
 				search: searchTerm,
 			},
-			function( error, data ) {
+			function ( error, data ) {
 				if ( ! searchTerm || searchTerm === _currentSearchTerm ) {
 					debug( 'plugin list fetched from .org', category, error, data );
 					_fetchingLists[ category ] = null;
@@ -90,14 +90,14 @@ const PluginsDataActions = {
 		);
 	}, 25 ),
 
-	fetchCuratedList: function() {
+	fetchCuratedList: function () {
 		_fetchingLists.featured = null;
 		_lastFetchedPagePerCategory.featured = 1;
 		_totalPagesPerCategory.featured = 1;
 		wpcom
 			.undocumented()
 			.getFeaturedPlugins()
-			.then( data => {
+			.then( ( data ) => {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_WPORG_PLUGINS_LIST',
 					action: 'FETCH_WPORG_PLUGINS_LIST',
@@ -120,7 +120,7 @@ const PluginsDataActions = {
 			} );
 	},
 
-	fetchNextCategoryPage: function( category, searchTerm ) {
+	fetchNextCategoryPage: function ( category, searchTerm ) {
 		let lastPage = _DEFAULT_FIRST_PAGE - 1;
 		if ( typeof _lastFetchedPagePerCategory[ category ] !== 'undefined' ) {
 			lastPage = _lastFetchedPagePerCategory[ category ];
@@ -133,7 +133,7 @@ const PluginsDataActions = {
 		}
 	},
 
-	canFetchList: function( category, page, searchTerm ) {
+	canFetchList: function ( category, page, searchTerm ) {
 		if ( searchTerm && _fetchingLists.search ) {
 			return false;
 		}
@@ -144,7 +144,7 @@ const PluginsDataActions = {
 		return true;
 	},
 
-	reset: function() {
+	reset: function () {
 		_fetchingLists = {};
 		_lastFetchedPagePerCategory = {};
 		_totalPagesPerCategory = {};

@@ -1,7 +1,7 @@
 .importer__uploading-pane {
 	position: relative;
 	height: 150px;
-	margin-bottom: 24px;
+	margin-bottom: 1.5em;
 
 	border: 5px solid var( --color-neutral-0 );
 	fill: var( --color-neutral-20 );
@@ -19,6 +19,10 @@
 	}
 }
 
+.importer__uploading-pane-description {
+	font-size: 14px;
+}
+
 .importer__upload-content {
 	position: absolute;
 	top: 50%;
@@ -26,6 +30,14 @@
 	right: 0;
 	text-align: center;
 	transform: translateY( -50% );
+
+	&.importer-upload-success {
+		color: var( --color-success );
+	}
+
+	&.importer-upload-failure {
+		color: var( --color-error );
+	}
 }
 
 .importer__upload-progress {

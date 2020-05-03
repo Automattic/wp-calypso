@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
+ * @file Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -16,7 +15,7 @@ const path = require( 'path' );
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	const rootFiles = ( context.options[ 0 ] || {} ).rootFiles || rule.DEFAULT_ROOT_FILES;
 
 	function isRenderCallExpression( node ) {
@@ -49,7 +48,7 @@ const rule = ( module.exports = function( context ) {
 	}
 
 	return {
-		JSXAttribute: function( node ) {
+		JSXAttribute: function ( node ) {
 			if ( 'className' !== node.name.name ) {
 				return;
 			}
@@ -78,19 +77,20 @@ const rule = ( module.exports = function( context ) {
 			}
 
 			const prefixPatterns = namespaces.map(
-				namespace => new RegExp( `^${ namespace }(__[a-z0-9-]+)?$` )
+				( namespace ) => new RegExp( `^${ namespace }(__[a-z0-9-]+)?$` )
 			);
 
 			const classNames = rawClassName.value.split( ' ' );
-			const isError = ! classNames.some( className =>
-				prefixPatterns.some( prefixPattern => prefixPattern.test( className ) )
+			const isError = ! classNames.some( ( className ) =>
+				prefixPatterns.some( ( prefixPattern ) => prefixPattern.test( className ) )
 			);
 
 			if ( ! isError ) {
 				return;
 			}
 
-			const expected = namespaces.map( namespace => namespace + '__' ).join( ' or ' ) + ' prefix';
+			const expected =
+				namespaces.map( ( namespace ) => namespace + '__' ).join( ' or ' ) + ' prefix';
 
 			context.report( {
 				node,
@@ -102,7 +102,15 @@ const rule = ( module.exports = function( context ) {
 } );
 
 rule.ERROR_MESSAGE = 'className should follow CSS namespace guidelines (expected {{expected}})';
-rule.DEFAULT_ROOT_FILES = [ 'index.js', 'index.jsx', 'index.ts', 'index.tsx' ];
+rule.DEFAULT_ROOT_FILES = [
+	'index.js',
+	'index.jsx',
+	'index.ts',
+	'index.tsx',
+	// Storybook files
+	'index.stories.js',
+	'index.stories.jsx',
+];
 
 rule.schema = [
 	{

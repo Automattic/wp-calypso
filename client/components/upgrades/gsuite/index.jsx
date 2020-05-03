@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,17 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
 import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
-	const handleAddEmailClick = cartItems => {
+	const handleAddEmailClick = ( cartItems ) => {
 		addItems( cartItems );
+
 		page( `/checkout/${ selectedSiteSlug }` );
 	};
 
@@ -48,7 +48,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 
 			<GSuiteUpsellCard
 				domain={ domain }
-				gSuiteProductSlug={ 'gapps' }
+				productSlug={ GSUITE_BASIC_SLUG }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>
@@ -56,6 +56,6 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 } ) )( GSuiteUpgrade );

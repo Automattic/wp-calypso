@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ module.exports = ( { types: t } ) => {
 	 * assigned here as a shared reference for optimized path traversal.
 	 *
 	 * @see https://github.com/thejameskyle/babel-handbook/blob/master/translations/en/plugin-handbook.md#optimizing-nested-visitors
-	 * @type {Object}
+	 * @type {object}
 	 */
 	const asyncAttributeVisitor = {
 		FunctionExpression( path ) {

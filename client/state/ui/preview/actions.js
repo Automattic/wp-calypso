@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -28,7 +26,7 @@ export function setAllSitesPreviewSiteId( siteId ) {
 }
 
 export function closePreview() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( clearPreviewUrl() );
 		dispatch( setLayoutFocus( 'content' ) );
 	};

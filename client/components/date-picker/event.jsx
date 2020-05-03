@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 /**
@@ -13,7 +11,7 @@ import classNames from 'classnames';
  */
 import SocialLogo from 'components/social-logo';
 
-const renderIcon = icon =>
+const renderIcon = ( icon ) =>
 	icon && (
 		<span className={ `date-picker__icon-wrapper date-picker__icon-wrapper-${ icon }` }>
 			<Gridicon icon={ icon } size={ 18 } />

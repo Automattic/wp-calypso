@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import {
 	NAMESERVERS_FETCH_COMPLETED,
 	NAMESERVERS_FETCH_FAILED,
 	NAMESERVERS_UPDATE_COMPLETED,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 
 const initialDomainState = {
 	isFetching: false,
@@ -24,12 +22,12 @@ const initialDomainState = {
 };
 
 /**
- * @desc Updates name servers entry for given domain.
+ * @description Updates name servers entry for given domain.
  *
- * @param {Object} [state] Current state.
+ * @param {object} [state] Current state.
  * @param {string} [domainName] Domain name.
- * @param {Object} [data] Domain name servers data.
- * @return {Object} New state
+ * @param {object} [data] Domain name servers data.
+ * @returns {object} New state
  */
 function updateState( state, domainName, data ) {
 	const command = {

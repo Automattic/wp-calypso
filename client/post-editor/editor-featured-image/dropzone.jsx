@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { head, uniqueId } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -27,7 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { userCan } from 'lib/site/utils';
 
 class FeaturedImageDropZone extends Component {
-	onFilesDrop = files => {
+	onFilesDrop = ( files ) => {
 		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return false;
 		}
@@ -104,7 +102,7 @@ class FeaturedImageDropZone extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		postId: getEditorPostId( state ),
 		site: getSelectedSite( state ),

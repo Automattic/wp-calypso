@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { camelCase } from 'lodash';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,9 +15,6 @@ function createPurchaseObject( purchase ) {
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		mostRecentRenewDate: purchase.most_recent_renew_date,
-		mostRecentRenewMoment: purchase.most_recent_renew_date
-			? i18n.moment( purchase.most_recent_renew_date )
-			: null,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		costToUnbundle: purchase.cost_to_unbundle
@@ -36,8 +29,8 @@ function createPurchaseObject( purchase ) {
 		domain: purchase.domain,
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		error: null,
+		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryMoment: purchase.expiry_date ? i18n.moment( purchase.expiry_date ) : null,
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -49,6 +42,9 @@ function createPurchaseObject( purchase ) {
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
+		partnerName: purchase.partner_name,
+		partnerSlug: purchase.partner_slug,
+		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
@@ -60,12 +56,10 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
+		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
-		// only generate a moment if `renewDate` is present and positive
-		renewMoment:
-			purchase.renew_date && purchase.renew_date > '0' ? i18n.moment( purchase.renew_date ) : null,
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
@@ -78,26 +72,17 @@ function createPurchaseObject( purchase ) {
 	};
 
 	if ( 'credit_card' === purchase.payment_type ) {
-		const payment = Object.assign( {}, object.payment, {
-			creditCard: {
-				id: Number( purchase.payment_card_id ),
-				type: purchase.payment_card_type,
-				processor: purchase.payment_card_processor,
-				number: purchase.payment_details,
-				expiryDate: purchase.payment_expiry,
-				expiryMoment: purchase.payment_expiry
-					? i18n.moment( purchase.payment_expiry, 'MM/YY' )
-					: null,
-			},
-		} );
-
-		return Object.assign( {}, object, { payment } );
+		object.payment.creditCard = {
+			id: Number( purchase.payment_card_id ),
+			type: purchase.payment_card_type,
+			processor: purchase.payment_card_processor,
+			number: purchase.payment_details,
+			expiryDate: purchase.payment_expiry,
+		};
 	}
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
-		object.payment.expiryMoment = purchase.payment_expiry
-			? i18n.moment( purchase.payment_expiry, 'MM/YY' )
-			: null;
+		object.payment.expiryDate = purchase.payment_expiry;
 	}
 
 	return object;

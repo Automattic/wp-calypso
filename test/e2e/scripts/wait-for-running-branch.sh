@@ -1,11 +1,21 @@
 #!/bin/bash
 
-sha=$CIRCLE_SHA1
+if [ "" == "$sha" ]; then
+  echo "sha envvar not set";
+  sha=$CIRCLE_SHA1
+fi
+
+if [[ "$calypsoSha" != "" ]] && [[ "$sha" != "$calypsoSha" ]]; then
+    echo "Using calypsoSha envvar"
+    sha=$calypsoSha
+fi
 
 COUNT=0
-RESETCOUNT=60 # 5sec retry = Reset the branch after 5 minutes
-MAXCOUNT=120  # 5sec retry = Cancel after 10 minutes
+RESETATTEMPTS=0
+RESETCOUNT=240 # 5sec retry = Reset the branch after 20 minutes
+MAXCOUNT=360  # 5sec retry = Cancel after 30 minutes
 SITEWAITCOUNT=30 # 5sec retry = Stop waiting after 2.5 minutes
+MAXRESETATTEMPTS=1 # Limit reset attempts to one
 
 STATUS=$(curl https://hash-$sha.calypso.live/status 2>/dev/null)
 
@@ -24,6 +34,14 @@ until $(echo $STATUS | grep -wqe "Ready\|NeedsPriming" ); do
   elif [ $COUNT == $RESETCOUNT ]; then
     echo "Reached reset timeout, attempting to reset the branch"
     curl https://hash-$sha.calypso.live/?reset=true >/dev/null 2>&1
+  elif [[ "$STATUS" == "FAIL" ]] && [[ $RESETATTEMPTS < $MAXRESETATTEMPTS ]]; then
+    echo "Build Failed, attempting to reset the branch"
+    curl https://hash-$sha.calypso.live/?reset=true >/dev/null 2>&1
+    ((RESETATTEMPTS++))
+    sleep 20
+  elif [[ "$STATUS" == "FAIL" ]] && [[ $RESETATTEMPTS == $MAXRESETATTEMPTS ]]; then
+    echo "Build Failed, and has already been reset the maximimum number of times. Failing script."
+    exit 1
   fi
 
   # If it's still showing NotBuilt, then curl the branch directly rather than the status endpoint

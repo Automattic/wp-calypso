@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -119,7 +117,7 @@ class PreviewToolbar extends Component {
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
 						ref={ this.setDropdown }
 					>
-						{ devicesToShow.map( device => (
+						{ devicesToShow.map( ( device ) => (
 							<SelectDropdown.Item
 								key={ device }
 								selected={ device === currentDevice }
@@ -168,9 +166,6 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PreviewToolbar ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PreviewToolbar ) );

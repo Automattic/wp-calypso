@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,18 +34,18 @@ class PostCommentForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		this.submit();
 	};
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -69,7 +67,7 @@ class PostCommentForm extends Component {
 
 	handleFocus = () => this.setState( { haveFocus: true } );
 
-	handleTextChange = event => {
+	handleTextChange = ( event ) => {
 		const commentText = event.target.value;
 
 		this.setState( { commentText } );
@@ -198,9 +196,6 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { editComment }, dispatch );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( PostCommentForm );
+export default connect( null, mapDispatchToProps )( PostCommentForm );

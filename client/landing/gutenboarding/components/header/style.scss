@@ -1,0 +1,61 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+@import '../../variables.scss';
+
+$margin-left--gutenboarding__header-section-item: 13px; // matches design
+$padding--gutenboarding__header: $grid-unit-10;
+
+// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
+.gutenboarding__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid $light-gray-500;
+	height: $gutenboarding-header-height;
+	background: $white;
+	z-index: z-index( '.block-editor-editor-skeleton__header' );
+	left: 0;
+	right: 0;
+	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
+	top: 0;
+	position: sticky;
+	padding: $padding--gutenboarding__header;
+
+	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
+	@include break-small {
+		position: fixed;
+	}
+}
+
+.gutenboarding__header-section {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	font-size: 14px;
+}
+
+.gutenboarding__header-section-item {
+	margin-left: $margin-left--gutenboarding__header-section-item;
+
+	&--right {
+		margin-left: auto;
+	}
+}
+
+.gutenboarding__header-wp-logo {
+	margin-left: 24px - $padding--gutenboarding__header -
+		$margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	color: var( --studio-black );
+	display: flex;
+}
+
+.gutenboarding__header-domain-picker-button {
+	padding: 0.3em 0.5em;
+}
+
+.gutenboarding__header-domain-picker-button-domain {
+	&.placeholder {
+		@include placeholder();
+	}
+}

@@ -1,5 +1,19 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
+@import 'landing/gutenboarding/mixins.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+@font-face {
+	font-display: swap;
+	font-family: 'Recoleta';
+	font-weight: 400;
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
+}
 
 $image-height: 47px;
 
@@ -44,9 +58,9 @@ $image-height: 47px;
 .wp-login__links,
 .wp-login__footer {
 	a,
+	a:visited,
 	button {
 		color: var( --color-neutral-50 );
-		text-decoration: none;
 
 		body.is-section-signup & {
 			color: var( --color-text-inverted );
@@ -75,10 +89,6 @@ $image-height: 47px;
 
 		&:last-child {
 			border-bottom: none;
-		}
-
-		body.is-section-signup & {
-			color: var( --color-text-inverted );
 		}
 	}
 
@@ -157,14 +167,16 @@ $image-height: 47px;
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow, .layout.is-wccom-oauth-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	@include woocommerce-colors();
 }
 
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
-	.login__form-header {
+	.login__form-header,
+	.magic-login__form-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
 
@@ -179,7 +191,9 @@ $image-height: 47px;
 	}
 
 	.login__form-terms a,
-	.form-input-validation a {
+	.login__social-tos a,
+	.form-input-validation a,
+	.login__form-change-username {
 		color: var( --color-accent-dark );
 
 		&:hover,
@@ -189,9 +203,11 @@ $image-height: 47px;
 	}
 
 	.wp-login__links a,
+	.wp-login__links button,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.translator-invite__content a {
+	.translator-invite__content a,
+	.magic-login__footer a {
 		color: var( --color-neutral-20 );
 		border-bottom-color: var( --color-neutral-70 );
 
@@ -212,8 +228,8 @@ $image-height: 47px;
 	.wp-login__site-return-link::after {
 		background: linear-gradient(
 			to right,
-			rgba( var( --color-jetpack-onboarding-background ), 0 ),
-			rgba( var( --color-jetpack-onboarding-background ), 1 ) 90%
+			rgba( var( --color-jetpack-onboarding-background-rgb ), 0 ),
+			var( --color-jetpack-onboarding-background ) 90%
 		);
 	}
 }
@@ -244,7 +260,7 @@ $image-height: 47px;
 	}
 
 	.login__form {
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 		padding-bottom: 0;
 		padding-top: 8px;
 	}
@@ -292,6 +308,14 @@ $image-height: 47px;
 		}
 	}
 
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+	}
+
+	.wp-login__site-return-link::after {
+		background: none;
+	}
+
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
 		border-color: var( --color-neutral-20 );
@@ -319,5 +343,96 @@ $image-height: 47px;
 				border: 0;
 			}
 		}
+	}
+}
+
+.layout.is-gutenboarding-login {
+	background-color: #fff;
+
+	.layout__primary {
+		padding-top: 10%;
+	}
+
+	.login__form-header {
+		@include onboarding-heading-text-mobile;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.wp-login__container .card {
+		box-shadow: none;
+	}
+
+	.login .button.is-primary {
+		// Match primary button color in Gutenboarding and
+		// change border color to remove 3D effect
+		background-color: #007cba;
+		border-color: #007cba;
+		color: #fff;
+		width: auto;
+		min-width: 100%;
+		text-align: center;
+		font-size: 14px;
+		line-height: 24px;
+		height: 42px;
+		display: block;
+		margin: 13px auto;
+		float: none;
+		font-weight: 500;
+		letter-spacing: 0;
+		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+		border-radius: 4px;
+		box-shadow: none;
+
+		&:hover,
+		&:active {
+			background: #72aee6;
+			border-color: #72aee6;
+			color: #fff;
+			outline-color: transparent;
+			box-shadow: none;
+		}
+
+		@include break-mobile {
+			min-width: 170px;
+		}
+	}
+
+	.two-factor-authentication__verification-code-form > p,
+	.login__form .login__form-userdata label,
+	.login__form-terms,
+	.login__social-tos {
+		color: var( --studio-gray-40 );
+	}
+
+	.login__form-terms a,
+	.login__social-tos a {
+		color: var( --studio-gray-80 );
+	}
+
+	.two-factor-authentication__verification-code-form input,
+	.login__form input {
+		padding: 18px 14px;
+		font-size: 14px;
+	}
+
+	.wp-login__main {
+		max-width: 540px;
+
+		form {
+			max-width: 440px;
+			margin: 0 auto;
+		}
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 17px;
+	}
+
+	.wp-login__links a:hover, .wp-login__links a:active, .wp-login__links button:hover, .wp-login__links button:active {
+		color: #00a0d2;
 	}
 }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import classNames from 'classnames';
 import { assign, some, startsWith } from 'lodash';
 
 const exported = {
-	itemLinkClass: function( path, currentPath, additionalClasses ) {
+	itemLinkClass: function ( path, currentPath, additionalClasses ) {
 		const basePathLowerCase = decodeURIComponent( currentPath )
 				.split( '?' )[ 0 ]
 				.replace( /\/manage$/, '' )
@@ -37,13 +36,13 @@ const exported = {
 		);
 	},
 
-	itemLinkClassStartsWithOneOf: function( paths, currentPath, additionalClasses ) {
+	itemLinkClassStartsWithOneOf: function ( paths, currentPath, additionalClasses ) {
 		const selected = this.pathStartsWithOneOf( paths, currentPath );
 		return classNames( assign( { selected }, additionalClasses ) );
 	},
 
-	pathStartsWithOneOf: function( paths, currentPath ) {
-		return some( paths, function( path ) {
+	pathStartsWithOneOf: function ( paths, currentPath ) {
+		return some( paths, function ( path ) {
 			return startsWith( currentPath.toLowerCase(), path.toLowerCase() );
 		} );
 	},

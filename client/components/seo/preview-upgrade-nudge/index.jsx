@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,9 +18,9 @@ import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import FeatureExample from 'components/feature-example';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { findFirstSimilarPlanKey } from 'lib/plans';
-import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
+import { TERM_ANNUALLY, TYPE_BUSINESS, FEATURE_SEO_PREVIEW_TOOLS } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -30,13 +28,19 @@ import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
 import './style.scss';
 import upgradeNudgeImage from './preview-upgrade-nudge.png';
 
-export const SeoPreviewNudge = ( { canCurrentUserUpgrade, translate, site, isJetpack = false } ) => {
+export const SeoPreviewNudge = ( {
+	canCurrentUserUpgrade,
+	translate,
+	site,
+	isJetpack = false,
+} ) => {
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
-			<Banner
+			<UpsellNudge
+				showIcon
 				plan={
 					site &&
 					findFirstSimilarPlanKey( site.plan.product_slug, {
@@ -44,11 +48,18 @@ export const SeoPreviewNudge = ( { canCurrentUserUpgrade, translate, site, isJet
 						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
 					} )
 				}
-				title={ canCurrentUserUpgrade ? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' ) 
-						: translate ( "Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan." ) 
-					  }
+				title={
+					canCurrentUserUpgrade
+						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						: translate(
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+						  )
+				}
+				forceDisplay
+				disableHref={ ! canCurrentUserUpgrade }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
+				feature={ FEATURE_SEO_PREVIEW_TOOLS }
 			/>
 
 			<div className="preview-upgrade-nudge__features">

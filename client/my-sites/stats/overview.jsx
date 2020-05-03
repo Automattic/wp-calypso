@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,7 @@ import StatsNavigation from 'blocks/stats-navigation';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
 import JetpackColophon from 'components/jetpack-colophon';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUser } from 'state/current-user/selectors';
 import getVisibleSites from 'state/selectors/get-visible-sites';
 
@@ -36,7 +35,7 @@ class StatsOverview extends Component {
 	render() {
 		const { moment, path, period, sites, translate } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
-		const sitesSorted = sites.map( site => {
+		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
 			const gmtOffset = get( site, 'options.gmt_offset' );
 			if ( Number.isFinite( gmtOffset ) ) {
@@ -112,6 +111,7 @@ class StatsOverview extends Component {
 
 		// TODO: a separate StatsSectionTitle component should be created
 		items.push(
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<h3 key="header-placeholder" className="stats-section-title">
 				&nbsp;
 			</h3>
@@ -125,9 +125,9 @@ class StatsOverview extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),
 	};
-} )( localize( StatsOverview ) );
+} )( localize( withLocalizedMoment( StatsOverview ) ) );

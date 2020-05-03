@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/viewport-react",
+	"version": "1.0.0",
+	"description": "React helpers for tracking viewport changes",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/viewport-react"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport-react#readme",
+	"dependencies": {
+		"@babel/runtime": "^7.8.4",
+		"@automattic/viewport": "^1.0.0",
+		"@wordpress/compose": "^3.7.0"
+	},
+	"peerDependencies": {
+		"react": "^16.0.0"
+	},
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && yarn run clean",
+		"prepare": "check-npm-client && transpile"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

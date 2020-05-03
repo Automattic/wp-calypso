@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -27,14 +25,14 @@ import { SCALE_CHOICES } from 'lib/media/constants';
 /**
  * Number of steps on the rendered input range
  *
- * @type {Number}
+ * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
  *
- * @type {Number}
+ * @type {number}
  */
 const SCALE_TOUCH_GRID = 0.32;
 
@@ -146,7 +144,7 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	{

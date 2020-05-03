@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,13 +12,15 @@ import {
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
 	READER_SITE_UPDATE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { receivePosts } from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
+import 'state/reader/init';
+
 export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
-	return function( dispatch ) {
+	return function ( dispatch ) {
 		dispatch( {
 			type: READER_RELATED_POSTS_REQUEST,
 			payload: {
@@ -47,7 +48,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			.undocumented()
 			.readSitePostRelated( query )
 			.then(
-				response => {
+				( response ) => {
 					dispatch( {
 						type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 						payload: { siteId, postId, scope },
@@ -72,7 +73,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 						} );
 					} );
 				},
-				err => {
+				( err ) => {
 					dispatch( {
 						type: READER_RELATED_POSTS_REQUEST_FAILURE,
 						payload: { siteId, postId, scope, error: err },

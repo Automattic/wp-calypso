@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -31,11 +29,11 @@ class ContactFormDialogFormSettings extends React.Component {
 		onUpdate: PropTypes.func.isRequired,
 	};
 
-	onToChange = event => {
+	onToChange = ( event ) => {
 		this.props.onUpdate( { to: event.target.value } );
 	};
 
-	onSubjectChange = event => {
+	onSubjectChange = ( event ) => {
 		this.props.onUpdate( { subject: event.target.value } );
 	};
 

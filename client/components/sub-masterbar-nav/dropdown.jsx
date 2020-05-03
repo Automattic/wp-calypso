@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import Item from './item';
 
 const OptionShape = PropTypes.shape( {
@@ -75,7 +73,7 @@ export default class Dropdown extends Component {
 	};
 
 	toggle = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			collapsed: ! state.collapsed,
 		} ) );
 	};

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import FollowButton from './button';
-import isFollowing from 'state/selectors/is-following';
+import { isFollowing } from 'state/reader/follows/selectors';
 import { follow, unfollow } from 'state/reader/follows/actions';
 
 class FollowButtonContainer extends Component {
@@ -30,7 +28,7 @@ class FollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = following => {
+	handleFollowToggle = ( following ) => {
 		if ( following ) {
 			const followData = omitBy(
 				{

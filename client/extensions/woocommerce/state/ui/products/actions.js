@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -23,8 +21,8 @@ export function editProduct( siteId, product, data ) {
 /**
  * Action Creator: Clear All Product Edits
  *
- * @param {Number} siteId The site for which to clear all product edits.
- * @return {Object} action
+ * @param {number} siteId The site for which to clear all product edits.
+ * @returns {object} action
  */
 export function clearProductEdits( siteId ) {
 	return {
@@ -50,7 +48,7 @@ export function editProductAddCategory( siteId, product, categoryId ) {
 }
 
 export function editProductRemoveCategory( siteId, product, categoryId ) {
-	const categories = product.categories.filter( c => categoryId !== c.id );
+	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
 
 	return editProduct( siteId, product, { categories } );
 }
@@ -59,9 +57,10 @@ export function editProductRemoveCategory( siteId, product, categoryId ) {
  * Creates an action list to save product-related edits.
  *
  * Saves products, variations, and product categories.
- * @param {Object} [successAction] Action to be dispatched upon successful completion.
- * @param {Object} [failureAction] Action to be dispatched upon failure of execution.
- * @return {Function} action
+ *
+ * @param {object} [successAction] Action to be dispatched upon successful completion.
+ * @param {object} [failureAction] Action to be dispatched upon failure of execution.
+ * @returns {Function} action
  */
 export function createProductActionList( successAction, failureAction ) {
 	return {

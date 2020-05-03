@@ -10,9 +10,11 @@ import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
+import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
@@ -30,9 +32,7 @@ import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/u
 import { getSiteTitle } from 'state/sites/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
-import ExternalLink from 'components/external-link';
 import canCurrentUser from 'state/selectors/can-current-user';
 import EmptyContent from 'components/empty-content';
 import memoizeLast from 'lib/memoize-last';
@@ -48,7 +48,7 @@ import './section-import.scss';
  * The key is the engine, and the value is the component. To add new importers,
  * add it here and add its configuration to lib/importer/importer-config.
  *
- * @type {Object}
+ * @type {object}
  */
 const importerComponents = {
 	blogger: BloggerImporter,
@@ -60,10 +60,10 @@ const importerComponents = {
 };
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
+	return filter( imports, ( importItem ) => importItem.site.ID === siteID );
 };
 
-const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
+const getImporterTypeForEngine = memoize( ( engine ) => `importer-type-${ engine }` );
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -96,7 +96,7 @@ class SectionImport extends Component {
 		const { site } = this.props;
 		const { importers: imports } = this.state;
 
-		filterImportsForSite( site.ID, imports ).map( importItem => {
+		filterImportsForSite( site.ID, imports ).map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
 			this.trackImporterStateChange( importerState, importerId );
 		} );
@@ -105,7 +105,7 @@ class SectionImport extends Component {
 	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
-			[ appStates.UPLOAD_PROCESSING ]: 'calypso_importer_upload_start',
+			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
 			[ appStates.UPLOAD_SUCCESS ]: 'calypso_importer_upload_success',
 			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_fail',
 			[ appStates.MAP_AUTHORS ]: 'calypso_importer_map_authors_view',
@@ -149,7 +149,20 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
-		const importerElements = getImporters().map( importer => {
+		const {
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
+
+		const importerElementsAll = getImporters();
+
+		/**
+		 * Filter out all importers except the WordPress ones for Atomic sites.
+		 */
+		const importerElementsFiltered = isAtomic
+			? importerElementsAll.filter( ( importer ) => importer.engine === 'wordpress' )
+			: importerElementsAll;
+
+		const importerElements = importerElementsFiltered.map( ( importer ) => {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
@@ -183,7 +196,7 @@ class SectionImport extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ this.props.translate( 'Other importers' ) }
+				{ this.props.translate( 'Choose from full list' ) }
 			</CompactCard>
 		);
 
@@ -206,14 +219,43 @@ class SectionImport extends Component {
 
 			const ImporterComponent = importerComponents[ importer.engine ];
 
+			/**
+			 * Ugly hack™
+			 *
+			 * Sometimes due to the convoluted voodoo sorcery that is the Import Red(fl)ux store
+			 * the `site` object that gets passed in `importItem` contains only `{ ID: <site_id> }`.
+			 *
+			 * This makes the components down the chain fail as they expect to have the full `site` object
+			 * with all it's properties.
+			 *
+			 * That usually happens when you land on an import directly, such as when coming from a
+			 * `/?engine=wordpress` URL. In those cases a slew of artifacts occur - the upload reports issues,
+			 * the author mapping screen doesn't show any authors to choose from, etc.
+			 *
+			 * This hack makes sure to overwrite the the `site` object if it's the same as the current site.
+			 * Ideally this should always be the case, but if there's an instance where the current site is different
+			 * than what's stored in the import data, let it fail as it does now.
+			 */
+			const importItemId = get( importItem, 'site.ID', null );
+			const currentSiteId = get( this.props, 'site.ID', null );
+
+			if ( importItemId && importItemId === currentSiteId ) {
+				importItem.site = this.props.site;
+			}
+
+			const siteTitle = importItem.siteTitle || this.props.siteTitle;
+
 			return (
 				ImporterComponent && (
 					<ImporterComponent
 						key={ importItem.type + idx }
 						site={ importItem.site }
-						siteTitle={ importItem.siteTitle || this.props.siteTitle }
 						fromSite={ this.props.fromSite }
-						importerStatus={ importItem }
+						siteTitle={ siteTitle }
+						importerStatus={ {
+							...importItem,
+							siteTitle: siteTitle,
+						} }
 					/>
 				)
 			);
@@ -242,7 +284,7 @@ class SectionImport extends Component {
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+			.map( ( item ) => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
@@ -261,9 +303,21 @@ class SectionImport extends Component {
 	};
 
 	renderImportersList() {
+		const { translate } = this.props;
+		const isSpecificImporter = ! isEmpty( this.state.importers );
+		const sectionHeaderLabel = isSpecificImporter
+			? translate( 'Importing content from:', {
+					comment:
+						"This text appears above the icon of another service (e.g. Wix, Squarespace) indicating that the process of importing the user's data from that service is ongoing",
+			  } )
+			: translate( 'I want to import content from:', {
+					comment:
+						'This text appears above a list of service icons (e.g. Wix, Squarespace) asking the user to choose one.',
+			  } );
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
 				{ this.renderImporters() }
 			</>
 		);
@@ -284,29 +338,22 @@ class SectionImport extends Component {
 			);
 		}
 
-		const { jetpack: isJetpack } = site;
-		const headerText = translate( 'Import your content' );
-		const subHeaderText = translate(
-			'Bring content hosted elsewhere over to WordPress.com. ' +
-				'{{a}}Find out what we currently support.{{/a}}',
-			{
-				components: {
-					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
-				},
-			}
-		);
+		const {
+			jetpack: isJetpack,
+			options: { is_wpcom_atomic: isAtomic },
+		} = site;
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import' ) } />
+				<DocumentHead title={ translate( 'Import Your Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
-					className="importer__section-header"
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
+					className="importer__page-heading"
+					headerText={ translate( 'Import Your Content' ) }
+					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
 		);
@@ -315,7 +362,7 @@ class SectionImport extends Component {
 
 export default flow(
 	connect(
-		state => {
+		( state ) => {
 			const siteID = getSelectedSiteId( state );
 			return {
 				engine: getSelectedImportEngine( state ),

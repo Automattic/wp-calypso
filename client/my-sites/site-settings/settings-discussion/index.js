@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { siteSettings } from 'my-sites/site-settings/settings-controller';
 
-export default function() {
+export default function () {
 	page(
 		'/settings/discussion/:site_id',
 		siteSelection,

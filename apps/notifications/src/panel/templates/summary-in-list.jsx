@@ -15,7 +15,7 @@ var debug = require( 'debug' )( 'notifications:summary-in-list' );
 var { recordTracksEvent } = require( '../helpers/stats' );
 
 export class SummaryInList extends React.Component {
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -53,7 +53,7 @@ export class SummaryInList extends React.Component {
 						}
 					/>
 					<span className="wpnc__gridicon">
-						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 16 } />
+						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 12 } />
 					</span>
 				</div>
 				<div className="wpnc__text-summary">
@@ -65,20 +65,9 @@ export class SummaryInList extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	selectNote: compose(
-		dispatch,
-		actions.ui.selectNote
-	),
-	unselectNote: compose(
-		dispatch,
-		actions.ui.unselectNote
-	),
+const mapDispatchToProps = ( dispatch ) => ( {
+	selectNote: compose( dispatch, actions.ui.selectNote ),
+	unselectNote: compose( dispatch, actions.ui.unselectNote ),
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-)( SummaryInList );
+export default connect( null, mapDispatchToProps, null, { pure: false } )( SummaryInList );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -18,15 +16,13 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const cancelConciergeAppointment = action => {
+export const cancelConciergeAppointment = ( action ) => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ),
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${
-					action.appointmentId
-				}/cancel`,
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/cancel`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},

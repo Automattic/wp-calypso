@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -203,11 +201,11 @@ class MapDomainStep extends React.Component {
 		);
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
@@ -223,6 +221,7 @@ class MapDomainStep extends React.Component {
 					AVAILABLE,
 					AVAILABILITY_CHECK_ERROR,
 					MAPPABLE,
+					MAPPED,
 					NOT_REGISTRABLE,
 					UNKNOWN,
 				} = domainAvailability;
@@ -245,8 +244,10 @@ class MapDomainStep extends React.Component {
 					site = get( this.props, 'selectedSite.slug', null );
 				}
 
+				const availabilityStatus = MAPPED === mappableStatus ? mappableStatus : status;
+
 				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
-				const { message, severity } = getAvailabilityNotice( domain, status, {
+				const { message, severity } = getAvailabilityNotice( domain, availabilityStatus, {
 					site,
 					maintenanceEndTime,
 				} );
@@ -257,7 +258,7 @@ class MapDomainStep extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		selectedSite: getSelectedSite( state ),
 	} ),

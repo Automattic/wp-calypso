@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -37,7 +34,7 @@ class SimplePaymentsDialogExample extends PureComponent {
 	}
 }
 
-const ConnectedSimplePaymentsDialogExample = connect( state => ( {
+const ConnectedSimplePaymentsDialogExample = connect( ( state ) => ( {
 	siteId: get( getCurrentUser( state ), 'primary_blog' ),
 } ) )( SimplePaymentsDialogExample );
 

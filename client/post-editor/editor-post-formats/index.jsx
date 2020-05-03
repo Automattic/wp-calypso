@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { get, map } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -76,7 +74,7 @@ class EditorPostFormats extends React.Component {
 		return formats;
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const format = event.target.value;
 
 		this.props.editPost( this.props.siteId, this.props.postId, { format } );
@@ -121,7 +119,7 @@ class EditorPostFormats extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postFormats = getPostFormats( state, siteId );

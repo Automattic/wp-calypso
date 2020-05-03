@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,7 +38,7 @@ export default class PromotionForm extends React.PureComponent {
 		showEmptyValidationErrors: PropTypes.bool,
 	};
 
-	calculatePromotionName = promotion => {
+	calculatePromotionName = ( promotion ) => {
 		const { products } = this.props;
 
 		switch ( promotion.type ) {
@@ -73,7 +71,7 @@ export default class PromotionForm extends React.PureComponent {
 			return null;
 		}
 
-		return Object.keys( model ).map( key => {
+		return Object.keys( model ).map( ( key ) => {
 			const cardModel = model[ key ];
 			return (
 				<PromotionFormCard

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,7 @@ import { find, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
-import Dialog from 'components/dialog';
+import { Button, Card, Dialog } from '@automattic/components';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import {
 	areLocationsLoaded,
@@ -39,7 +35,7 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		this.setState( { address: newProps.address } );
 	};
 
@@ -51,7 +47,7 @@ class StoreAddress extends Component {
 		};
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
@@ -78,7 +74,7 @@ class StoreAddress extends Component {
 		} );
 	};
 
-	onCloseDialog = action => {
+	onCloseDialog = ( action ) => {
 		const { translate, siteId, onSetAddress } = this.props;
 		if ( 'save' === action ) {
 			const onFailure = () => {
@@ -204,9 +200,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( StoreAddress )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( StoreAddress ) );

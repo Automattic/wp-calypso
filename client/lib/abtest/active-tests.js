@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -27,13 +26,13 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	ATUpgradeOnCancel: {
-		datestamp: '20170515',
+	showCompositeCheckout: {
+		datestamp: '20200326',
 		variations: {
-			hide: 20,
-			show: 80,
+			composite: 50,
+			regular: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -62,14 +61,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -81,21 +72,13 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
-	},
-	popularPlanBy: {
-		datestamp: '20190529',
-		variations: {
-			siteType: 0,
-			customerType: 100,
-		},
-		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
 		datestamp: '20290717',
@@ -106,66 +89,48 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellGSuite: {
-		datestamp: '20190805',
+	passwordlessSignup: {
+		datestamp: '20291029',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			passwordless: 0,
+			default: 100,
 		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
+		defaultVariation: 'default',
 	},
-	showPlanUpsellConcierge: {
-		datestamp: '20190805',
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
 		variations: {
-			variantShowPlanBump: 100,
+			variantShowUpdates: 100,
 			control: 0,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	privateByDefault: {
-		datestamp: '20190730',
+	ATPrivacy: {
+		datestamp: '20200331',
 		variations: {
-			selected: 90,
-			control: 10,
+			variant: 5,
+			control: 95,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 	},
-	removeBlogFlow: {
-		datestamp: '20190813',
+	domainStepPlanStepSwap: {
+		datestamp: '20200415',
 		variations: {
-			remove: 50,
+			variantShowSwapped: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	customerHomePage: {
-		datestamp: '20190903',
+	showActiveTicketsNotice: {
+		datestamp: '20200430',
 		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		assignmentMethod: 'userId',
-	},
-	signupEscapeHatch: {
-		datestamp: '20190826',
-		variations: {
-			variant: 50,
+			showNotice: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-	},
-	placesApiInCheckout: {
-		datestamp: '20190923',
-		variations: {
-			original: 50,
-			placesApi: 50,
-		},
-		defaultVariation: 'original',
 	},
 };

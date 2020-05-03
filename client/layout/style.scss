@@ -28,11 +28,6 @@
 	box-sizing: border-box;
 	overflow: hidden;
 
-	// I guess we dont want links to look like links.
-	a {
-		text-decoration: none;
-	}
-
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
 		padding-left: 32px;
@@ -84,6 +79,16 @@
 		.is-section-preview & {
 			padding: 47px 0 0;
 		}
+	}
+}
+
+// Add extra bottom padding for smaller screens to prevent
+// floating inline help from overlapping content.
+.layout__primary .main {
+	padding-bottom: 88px;
+
+	@include breakpoint( '>1400px' ) {
+		padding-bottom: 0;
 	}
 }
 
@@ -151,32 +156,28 @@
 	.site__title {
 		color: var( --color-sidebar-text );
 	}
-	
+
 	.site__domain {
 		color: var( --color-sidebar-text-alternative );
 	}
-	
+
 	.site__title::after,
 	.site__domain::after {
 		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
 	}
-	
-	.site__badge {
-		color: var( --color-sidebar-gridicon-fill );
-	}
-	
+
 	.site-selector {
 		&.is-large .site-selector__sites {
 			border-color: var( --color-sidebar-border );
 		}
-		
+
 		&__sites {
 			background: var( --color-sidebar-background );
 		}
-	
+
 		&__add-new-site {
 			border-color: var( --color-sidebar-border );
-		
+
 			.button {
 				color: var( --color-sidebar-text-alternative );
 				&:hover {
@@ -184,30 +185,30 @@
 				}
 			}
 		}
-		
+
 		&__recent {
 			border-color: var( --color-sidebar-border );
 		}
-		
+
 		&__no-results {
 			color: var( --color-sidebar-text-alternative );
 		}
-		
+
 		&__hidden-sites-message,
 		&__manage-hidden-sites {
 			color: var( --color-sidebar-text );
 		}
-		
+
 		.all-sites {
 			border-color: var( --color-sidebar-border );
 		}
 	}
-	
+
 	.all-sites .count {
 		color: var( --color-sidebar-text );
 		border-color: var( --color-sidebar-text );
 	}
-	
+
 	.app-promo .app-promo__link {
 		box-shadow: 0 0 0 1px var( --color-sidebar-border ),
 			0 1px 2px var( --color-sidebar-border );

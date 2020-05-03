@@ -23,7 +23,7 @@ interface Props {
 	onError?: ImageEventHandler;
 }
 
-type ImgProps = Omit< React.ComponentProps< 'img' >, 'src' >;
+type ImgProps = Omit< React.ComponentPropsWithoutRef< 'img' >, 'src' >;
 
 export default function ImagePreloader( props: Props & ImgProps ) {
 	const { children, src, placeholder, onLoad, onError, ...imageProps } = props;

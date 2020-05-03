@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -154,7 +152,7 @@ describe( 'middleware', () => {
 				HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 				HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 				HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-			].forEach( connectionStatus => {
+			].forEach( ( connectionStatus ) => {
 				store.getState.mockReturnValue(
 					Object.assign( state, { happychat: { connection: { status: connectionStatus } } } )
 				);
@@ -175,7 +173,7 @@ describe( 'middleware', () => {
 				HAPPYCHAT_CHAT_STATUS_NEW,
 				HAPPYCHAT_CHAT_STATUS_MISSED,
 				HAPPYCHAT_CHAT_STATUS_PENDING,
-			].forEach( chatStatus => {
+			].forEach( ( chatStatus ) => {
 				store.getState.mockReturnValue(
 					Object.assign( state, { happychat: { chat: { status: chatStatus } } } )
 				);

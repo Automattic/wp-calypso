@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop, map } from 'lodash';
+/* eslint-disable import/no-extraneous-dependencies */
+import { isEmpty, isArray, noop, map } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
@@ -17,19 +21,23 @@ import { memo } from '@wordpress/element';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 
-const TemplateSelectorControl = ( {
+export const TemplateSelectorControl = ( {
 	label,
 	className,
 	help,
 	instanceId,
-	templates = {},
+	templates = [],
 	blocksByTemplates = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
-	onTemplateFocus = noop,
 	siteInformation = {},
+	selectedTemplate,
 } ) => {
-	if ( isEmpty( templates ) ) {
+	if ( isEmpty( templates ) || ! isArray( templates ) ) {
+		return null;
+	}
+
+	if ( true === useDynamicPreview && isEmpty( blocksByTemplates ) ) {
 		return null;
 	}
 
@@ -42,7 +50,10 @@ const TemplateSelectorControl = ( {
 			help={ help }
 			className={ classnames( className, 'template-selector-control' ) }
 		>
-			<ul className="template-selector-control__options">
+			<ul
+				className="template-selector-control__options"
+				data-testid="template-selector-control-options"
+			>
 				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
 					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem
@@ -51,11 +62,11 @@ const TemplateSelectorControl = ( {
 							label={ replacePlaceholders( title, siteInformation ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
-							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
 							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
+							isSelected={ slug === selectedTemplate }
 						/>
 					</li>
 				) ) }
@@ -64,7 +75,4 @@ const TemplateSelectorControl = ( {
 	);
 };
 
-export default compose(
-	memo,
-	withInstanceId
-)( TemplateSelectorControl );
+export default compose( memo, withInstanceId )( TemplateSelectorControl );

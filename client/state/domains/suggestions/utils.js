@@ -3,9 +3,8 @@
  * `state.domains.suggestions` state object.
  *
  *
- * @format
- * @param {Object} queryObject   DomainsSuggestions query
- * @return {?String}              Serialized DomainsSuggestions query
+ * @param {object} queryObject   DomainsSuggestions query
+ * @returns {?string}              Serialized DomainsSuggestions query
  */
 
 export function getSerializedDomainsSuggestionsQuery( queryObject ) {
@@ -16,8 +15,10 @@ export function getSerializedDomainsSuggestionsQuery( queryObject ) {
 	if (
 		! query ||
 		query.length === 0 ||
-		( ! quantity || quantity <= 0 ) ||
-		( ! vendor || vendor.length === 0 )
+		! quantity ||
+		quantity <= 0 ||
+		! vendor ||
+		vendor.length === 0
 	) {
 		return null;
 	}

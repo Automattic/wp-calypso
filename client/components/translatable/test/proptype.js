@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -51,7 +50,7 @@ describe( 'translatable proptype', () => {
 	} );
 
 	test( 'should fail on unexpected functions', () =>
-		assertFails( translatableString, <legend translatableString={ function() {} } /> ) );
+		assertFails( translatableString, <legend translatableString={ function () {} } /> ) );
 
 	test( 'should fail on unexpected objects', () =>
 		assertFails( translatableString, <legend translatableString={ {} } /> ) );

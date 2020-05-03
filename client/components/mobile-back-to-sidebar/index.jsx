@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -25,7 +25,6 @@ function MobileBackToSidebar( { children, toggleSidebar } ) {
 	);
 }
 
-export default connect(
-	null,
-	{ toggleSidebar: () => setLayoutFocus( 'sidebar' ) }
-)( MobileBackToSidebar );
+export default connect( null, { toggleSidebar: () => setLayoutFocus( 'sidebar' ) } )(
+	MobileBackToSidebar
+);

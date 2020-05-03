@@ -26,7 +26,7 @@ const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
 // This function is a Redux action creator, hence the two arrows.
 const waitForJetpackToggle = () => async () => {
 	while ( ! document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-		await new Promise( resolve => setTimeout( resolve, 125 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 125 ) );
 	}
 };
 
@@ -34,7 +34,7 @@ const waitForJetpackToggle = () => async () => {
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
 		{ ...meta }
-		when={ state => {
+		when={ ( state ) => {
 			const site = getSelectedSite( state );
 			const res =
 				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
@@ -57,7 +57,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					<p>
 						{ translate(
 							"Let's activate autoupdates for Jetpack to ensure you're always " +
-								'up-to-date with the latest features and security fixes.'
+								'up to date with the latest features and security fixes.'
 						) }
 					</p>
 					<ButtonRow>

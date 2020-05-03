@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
@@ -117,7 +115,7 @@ class ThemesUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="types" size={ 48 } /> }
 							title="Access our Entire Library of Premium Themes"
-							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
+							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of premium themes for no additional fee."
 						/>
 					</div>
 
@@ -276,7 +274,7 @@ class ThemesUpsellComponent extends Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
 
@@ -287,15 +285,12 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ), '/themes' )

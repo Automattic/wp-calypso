@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ import {
 	createAccount,
 	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import {
 	getError,
@@ -49,7 +47,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 		};
 	}
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		this.props.clearError();
 	};
 
@@ -200,8 +198,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodStripeSetupDialog )
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeSetupDialog )
 );

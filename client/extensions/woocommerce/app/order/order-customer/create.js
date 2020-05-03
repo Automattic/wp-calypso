@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CustomerAddressDialog from './dialog';
 import {
 	areLocationsLoaded,
@@ -72,7 +70,7 @@ class OrderCustomerInfo extends Component {
 
 	updateAddress = ( type = 'billing' ) => {
 		const { siteId, order } = this.props;
-		return address => {
+		return ( address ) => {
 			const { copyToShipping = false, ...newAddress } = address;
 			if ( siteId ) {
 				this.props.editOrder( siteId, { id: order.id, [ type ]: newAddress } );
@@ -83,7 +81,7 @@ class OrderCustomerInfo extends Component {
 		};
 	};
 
-	toggleDialog = type => {
+	toggleDialog = ( type ) => {
 		return () => {
 			this.setState( { showDialog: type } );
 		};
@@ -211,7 +209,7 @@ class OrderCustomerInfo extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const order = getOrderWithEdits( state );
 
@@ -225,5 +223,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder, fetchLocations }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder, fetchLocations }, dispatch )
 )( localize( OrderCustomerInfo ) );

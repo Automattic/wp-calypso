@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { debounce, filter, first, flow, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,14 +18,14 @@ import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-vi
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
+const getCenterOffset = ( node ) =>
+	get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
 class EditorDiffViewer extends PureComponent {
 	static propTypes = {
@@ -74,7 +72,7 @@ class EditorDiffViewer extends PureComponent {
 		this.tryScrollingToFirstChangeOrTop();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
 			this.setState( { changeOffsets: [] } );
 		}
@@ -101,7 +99,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	recomputeChanges = callback => {
+	recomputeChanges = ( callback ) => {
 		let selectors = '.text-diff__additions, .text-diff__deletions';
 		if ( this.isBigViewport && this.props.diffView === 'split' ) {
 			selectors =
@@ -139,7 +137,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	handleScroll = e => {
+	handleScroll = ( e ) => {
 		this.setState( {
 			scrollTop: get( e.target, 'scrollTop', 0 ),
 		} );
@@ -147,7 +145,7 @@ class EditorDiffViewer extends PureComponent {
 
 	throttledScrollHandler = throttle( this.handleScroll, 100 );
 
-	handleScrollableRef = node => {
+	handleScrollableRef = ( node ) => {
 		if ( node ) {
 			this.node = node;
 			this.node.addEventListener( 'scroll', this.throttledScrollHandler );
@@ -183,11 +181,11 @@ class EditorDiffViewer extends PureComponent {
 		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
 		this.changesAboveViewport = filter(
 			this.state.changeOffsets,
-			offset => offset < this.state.scrollTop
+			( offset ) => offset < this.state.scrollTop
 		);
 		this.changesBelowViewport = filter(
 			this.state.changeOffsets,
-			offset => offset > bottomBoundary
+			( offset ) => offset > bottomBoundary
 		);
 
 		const showHints = this.state.viewportHeight > 470;

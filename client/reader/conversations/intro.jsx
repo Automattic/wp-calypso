@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -17,11 +16,16 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
 /**
+ * Image dependencies
+ */
+import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
+
+/**
  * Style dependencies
  */
 import './intro.scss';
 
-const getPreferenceName = isInternal =>
+const getPreferenceName = ( isInternal ) =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 
 class ConversationsIntro extends React.Component {
@@ -96,7 +100,7 @@ class ConversationsIntro extends React.Component {
 								  ) }
 						</span>
 					</div>
-					<div className="conversations__intro-character" />
+					<img className="conversations__intro-character" src={ charactersImage } alt="" />
 
 					<button
 						className="conversations__intro-close"
@@ -124,7 +128,7 @@ export default connect(
 		};
 	},
 	{
-		dismiss: isInternal => {
+		dismiss: ( isInternal ) => {
 			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
 			const preferenceName = getPreferenceName( isInternal );
 			return savePreference( preferenceName, true );

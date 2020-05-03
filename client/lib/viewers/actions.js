@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
 const ViewersActions = {
-	fetch: function( siteId, page = 1 ) {
+	fetch: function ( siteId, page = 1 ) {
 		const number = 100;
 		debug( 'Fetch site viewers', siteId );
 
@@ -27,7 +25,7 @@ const ViewersActions = {
 		wpcom
 			.undocumented()
 			.site( siteId )
-			.getViewers( { page: page, number: number }, function( error, data ) {
+			.getViewers( { page: page, number: number }, function ( error, data ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_VIEWERS',
 					action: 'RECEIVE_VIEWERS',
@@ -39,7 +37,7 @@ const ViewersActions = {
 			} );
 	},
 
-	remove: function( siteId, viewer ) {
+	remove: function ( siteId, viewer ) {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_VIEWER',
 			siteId: siteId,
@@ -49,7 +47,7 @@ const ViewersActions = {
 		wpcom
 			.undocumented()
 			.site( siteId )
-			.removeViewer( viewer.ID, function( error, data ) {
+			.removeViewer( viewer.ID, function ( error, data ) {
 				if ( error ) {
 					Dispatcher.handleServerAction( {
 						type: 'RECEIVE_REMOVE_VIEWER_ERROR',

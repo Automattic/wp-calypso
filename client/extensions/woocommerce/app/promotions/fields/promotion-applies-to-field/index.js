@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,14 +30,14 @@ class PromotionAppliesToField extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { selectionTypes, value } = this.props;
 		const initialType = this.getInitialType( selectionTypes, value );
 
 		this.setState( () => ( { appliesToType: initialType } ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectionTypes, value } = nextProps;
 		const initialType = this.getInitialType( selectionTypes, value );
 
@@ -93,7 +91,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderTypeSelectOption = option => {
+	renderTypeSelectOption = ( option ) => {
 		return (
 			<option key={ option.type } value={ option.type }>
 				{ option.labelText }
@@ -101,7 +99,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	onTypeChange = e => {
+	onTypeChange = ( e ) => {
 		const appliesToType = e.target.value;
 		this.setState( () => ( { appliesToType } ) );
 		this.initializeValue( appliesToType );
@@ -140,7 +138,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderSearch = appliesToType => {
+	renderSearch = ( appliesToType ) => {
 		const { value, edit, singular } = this.props;
 
 		switch ( appliesToType ) {

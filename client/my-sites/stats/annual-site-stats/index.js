@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,7 +10,7 @@ import { find, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
@@ -21,6 +18,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -110,7 +108,7 @@ class AnnualSiteStats extends Component {
 					<table cellPadding="0" cellSpacing="0">
 						<thead>
 							<tr>
-								{ keys.map( key => (
+								{ keys.map( ( key ) => (
 									<th scope="col" key={ key }>
 										{ strings[ key ] }
 									</th>
@@ -161,8 +159,9 @@ class AnnualSiteStats extends Component {
 		if ( now.month() === 0 ) {
 			previousYear = now.subtract( 1, 'months' ).format( 'YYYY' );
 		}
-		const currentYearData = years && find( years, y => y.year === currentYear );
-		const previousYearData = previousYear && years && find( years, y => y.year === previousYear );
+		const currentYearData = years && find( years, ( y ) => y.year === currentYear );
+		const previousYearData =
+			previousYear && years && find( years, ( y ) => y.year === previousYear );
 		const isLoading = ! years;
 		const isError = ! isLoading && years.errors;
 		const hasData = isWidget ? currentYearData || previousYearData : years;
@@ -203,7 +202,7 @@ class AnnualSiteStats extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
@@ -214,4 +213,4 @@ export default connect( state => {
 		siteId,
 		siteSlug,
 	};
-} )( localize( AnnualSiteStats ) );
+} )( localize( withLocalizedMoment( AnnualSiteStats ) ) );

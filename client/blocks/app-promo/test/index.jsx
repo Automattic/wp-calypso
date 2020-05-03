@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -53,9 +52,7 @@ describe( 'AppPromo', () => {
 
 			const promoLink = wrapper.find( '.app-promo__link' );
 			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink )
-				.to.have.prop( 'href' )
-				.equal( appPromoLink );
+			expect( promoLink ).to.have.prop( 'href' ).equal( appPromoLink );
 		} );
 	} );
 

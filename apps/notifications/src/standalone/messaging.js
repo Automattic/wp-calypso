@@ -14,7 +14,7 @@ const debug = debugFactory( 'notifications:messaging' );
  *
  * @typedef {Function} MessageEventReceiver
  * @throws {TypeError} When no data or invalid data comes in on the event
- * @param {Object} event incoming event
+ * @param {object} event incoming event
  * @returns {undefined}
  */
 
@@ -29,7 +29,7 @@ const debug = debugFactory( 'notifications:messaging' );
  * @param {Function} receiver called with valid incoming messages
  * @returns {MessageEventReceiver}
  */
-export const receiveMessage = receiver => event => {
+export const receiveMessage = ( receiver ) => ( event ) => {
 	if ( ! window || ! event || event.source !== window.parent ) {
 		return debug(
 			'Unexpected or empty message received\n' + 'Messages must come from parent window.'
@@ -69,10 +69,10 @@ export const receiveMessage = receiver => event => {
 /**
  * Sends outgoing messages to parent frame
  *
- * @param {Object} message data to send
+ * @param {object} message data to send
  * @returns {undefined}
  */
-export const sendMessage = message => {
+export const sendMessage = ( message ) => {
 	if ( ! window || ! window.parent ) {
 		return;
 	}

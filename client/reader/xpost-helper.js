@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,6 +18,7 @@ export function isXPost( post ) {
 const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
+	 *
 	 * @param {object} post - post object
 	 * @returns {object} - urls of site and post url
 	 */

@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -17,7 +15,6 @@ import { startCase } from 'lodash';
 import AutomatticLogo from 'components/automattic-logo';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import TranslatorInvite from 'components/translator-invite';
@@ -47,6 +44,7 @@ export class Login extends React.Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isGutenboarding: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -59,13 +57,13 @@ export class Login extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
 
 	componentDidMount() {
 		this.recordPageView( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
@@ -109,10 +107,10 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { currentRoute, translate } = this.props;
+		const { isJetpack, isGutenboarding, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( currentRoute === '/log-in/jetpack' ) {
+		if ( isJetpack || isGutenboarding ) {
 			return null;
 		}
 
@@ -189,6 +187,7 @@ export class Login extends React.Component {
 			domain,
 			isLoggedIn,
 			isJetpack,
+			isGutenboarding,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -196,11 +195,30 @@ export class Login extends React.Component {
 			socialService,
 			socialServiceResponse,
 			fromSite,
+			locale,
+			isLoginView,
+			path,
+			signupUrl,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
 			return <PrivateSite />;
 		}
+
+		const footer = (
+			<>
+				{ ! socialConnect && (
+					<LoginLinks
+						locale={ locale }
+						privateSite={ privateSite }
+						twoFactorAuthType={ twoFactorAuthType }
+						isGutenboarding={ isGutenboarding }
+						signupUrl={ signupUrl }
+					/>
+				) }
+				{ isLoginView && <TranslatorInvite path={ path } /> }
+			</>
+		);
 
 		return (
 			<LoginBlock
@@ -209,25 +227,20 @@ export class Login extends React.Component {
 				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				footer={ footer }
+				locale={ locale }
 			/>
 		);
 	}
 
 	render() {
-		const {
-			isLoginView,
-			locale,
-			path,
-			privateSite,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { locale, translate } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
@@ -240,18 +253,7 @@ export class Login extends React.Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
-					<div>
-						<div className="wp-login__container">{ this.renderContent() }</div>
-
-						{ ! socialConnect && (
-							<LoginLinks
-								locale={ locale }
-								privateSite={ privateSite }
-								twoFactorAuthType={ twoFactorAuthType }
-							/>
-						) }
-						{ isLoginView && <TranslatorInvite path={ path } /> }
-					</div>
+					<div className="wp-login__container">{ this.renderContent() }</div>
 				</Main>
 
 				{ this.renderFooter() }
@@ -262,7 +264,6 @@ export class Login extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
-		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),

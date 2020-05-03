@@ -39,7 +39,7 @@
 		transition-delay: 200ms;
 		height: 468px;
 		padding: 0 0 24px;
-		@include elevation ( 4dp );
+		@include elevation( 4dp );
 
 		@include breakpoint( '>960px' ) {
 			min-width: 280px;
@@ -51,8 +51,7 @@
 			top: 48px;
 			right: 8px;
 			z-index: 2;
-			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ),
-			0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
+			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ), 0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
 		}
 
 		// Only show one iframe at small
@@ -73,7 +72,7 @@
 
 	.is-desktop & {
 		border-radius: 4px;
-		@include elevation ( 3dp );
+		@include elevation( 3dp );
 		@include breakpoint( '<660px' ) {
 			border-radius: 12px 12px 0 0;
 		}
@@ -167,4 +166,13 @@
 		cursor: default;
 		padding: 0 6px;
 	}
+}
+
+.signup-site-preview__scrolling-screenshot {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.signup-site-preview__screenshot-spinner {
+	margin: 40px;
 }

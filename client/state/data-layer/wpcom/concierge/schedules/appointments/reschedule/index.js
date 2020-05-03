@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,15 +12,13 @@ import toApi from './to-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const rescheduleConciergeAppointment = action => {
+export const rescheduleConciergeAppointment = ( action ) => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${
-					action.appointmentId
-				}/reschedule`,
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/reschedule`,
 				apiNamespace: 'wpcom/v2',
 				body: toApi( action ),
 			},

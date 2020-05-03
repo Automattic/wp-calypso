@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,6 +23,9 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	}
 
 	async isPremium() {
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( 'img.is-premium-plan' ) );
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( 'img.is-premium-plan' )
+		);
 	}
 }

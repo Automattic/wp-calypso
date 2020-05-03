@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import url from 'url';
  */
 
 /** Given an iframe, is it okay to have it run without a sandbox?
+ *
  * @param {object} iframe - the iframe to check
  * @returns {boolean} true/false if we trust the source and we know they don't work in a sandbox
  */
@@ -28,7 +27,7 @@ function doesNotNeedSandbox( iframe ) {
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, trustedHost => endsWith( '.' + iframeHost, '.' + trustedHost ) );
+	return some( trustedHosts, ( trustedHost ) => endsWith( '.' + iframeHost, '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {
@@ -38,7 +37,7 @@ export default function makeEmbedsSafe( post, dom ) {
 
 	const iframes = dom.querySelectorAll( 'iframe' );
 
-	forEach( iframes, function( iframe ) {
+	forEach( iframes, function ( iframe ) {
 		if ( ! startsWith( iframe.src, 'http' ) ) {
 			iframe.parentNode.removeChild( iframe );
 			return;
@@ -58,7 +57,7 @@ export default function makeEmbedsSafe( post, dom ) {
 	if ( post.is_external || post.is_jetpack ) {
 		const embeds = dom.querySelectorAll( 'embed,object' );
 
-		forEach( embeds, function( embed ) {
+		forEach( embeds, function ( embed ) {
 			embed.parentNode.removeChild( embed );
 		} );
 	}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,7 @@ export class EmailVerificationGate extends React.Component {
 		noticeStatus: '',
 	};
 
-	handleFocus = e => {
+	handleFocus = ( e ) => {
 		e.target.blur();
 	};
 

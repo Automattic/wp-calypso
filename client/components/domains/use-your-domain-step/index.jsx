@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
@@ -22,12 +20,11 @@ import {
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
 } from 'state/current-user/selectors';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
@@ -110,7 +107,7 @@ class UseYourDomainStep extends React.Component {
 		return buildMapDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordMappingButtonClickInUseYourDomain( this.props.analyticsSection );
@@ -133,14 +130,17 @@ class UseYourDomainStep extends React.Component {
 		buildTransferDomainUrl = `${ basePathForTransfer }/transfer`;
 
 		if ( selectedSite ) {
-			const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
+			const query = stringify( {
+				initialQuery: this.state.searchQuery.trim(),
+				useStandardBack: true,
+			} );
 			buildTransferDomainUrl += `/${ selectedSite.slug }?${ query }`;
 		}
 
 		return buildTransferDomainUrl;
 	}
 
-	goToTransferDomainStep = event => {
+	goToTransferDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTransferButtonClickInUseYourDomain( this.props.analyticsSection );
@@ -272,7 +272,7 @@ class UseYourDomainStep extends React.Component {
 		return mappingProductPrice;
 	};
 
-	renderIllustration = image => {
+	renderIllustration = ( image ) => {
 		return (
 			<div className="use-your-domain-step__option-illustration">
 				<img src={ image } alt="" />
@@ -280,11 +280,11 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionTitle = optionTitle => {
+	renderOptionTitle = ( optionTitle ) => {
 		return <h3 className="use-your-domain-step__option-title">{ optionTitle }</h3>;
 	};
 
-	renderOptionReasons = optionReasons => {
+	renderOptionReasons = ( optionReasons ) => {
 		return (
 			<div className="use-your-domain-step__option-reasons">
 				{ optionReasons.map( ( phrase, index ) => {
@@ -303,7 +303,7 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionContent = content => {
+	renderOptionContent = ( content ) => {
 		const { image, title, reasons, onClick, buttonText, isPrimary, learnMore } = content;
 		return (
 			<Card className="use-your-domain-step__option" compact>
@@ -322,7 +322,7 @@ class UseYourDomainStep extends React.Component {
 		);
 	};
 
-	renderOptionButton = buttonOptions => {
+	renderOptionButton = ( buttonOptions ) => {
 		const { buttonText, onClick, isPrimary } = buttonOptions;
 		const { submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
@@ -382,7 +382,7 @@ class UseYourDomainStep extends React.Component {
 			translate( "Requires changes to the domain's DNS" ),
 			this.getMappingPriceText(),
 		];
-		const buttonText = translate( 'Map Your Domain' );
+		const buttonText = translate( 'Map your domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
 				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
@@ -429,14 +429,14 @@ class UseYourDomainStep extends React.Component {
 	}
 }
 
-const recordTransferButtonClickInUseYourDomain = domain_name =>
+const recordTransferButtonClickInUseYourDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_use_your_domain_transfer_click', { domain_name } );
 
-const recordMappingButtonClickInUseYourDomain = domain_name =>
+const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_use_your_domain_mapping_click', { domain_name } );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, get, includes, pick, values } from 'lodash';
 
 /**
@@ -11,6 +8,7 @@ import { difference, get, includes, pick, values } from 'lodash';
  */
 import { isEnabled } from 'config';
 import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -30,6 +28,10 @@ import { PLANS_LIST } from './plans-list';
 
 export function getPlans() {
 	return PLANS_LIST;
+}
+
+export function getPlansSlugs() {
+	return Object.keys( getPlans() );
 }
 
 export function getPlan( planKey ) {
@@ -80,9 +82,9 @@ export function getPlanClass( planKey ) {
  *
  * Collects features for a plan by calling all possible feature methods for the plan.
  *
- * @param   {Object|String} plan    Plan object or plan name.
- * @param   {String}        feature Feature name.
- * @returns {Boolean}               Whether the specified plan has the specified feature.
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has the specified feature.
  */
 export function planHasFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
@@ -106,6 +108,19 @@ export function planHasFeature( plan, feature ) {
 	return includes( allFeatures, feature );
 }
 
+/**
+ * Determines if a plan has a superior version of a specific feature.
+ *
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has a superior version of a feature.
+ */
+export function planHasSuperiorFeature( plan, feature ) {
+	const planConstantObj = getPlan( plan );
+
+	return includes( planConstantObj.getInferiorHiddenFeatures(), feature );
+}
+
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
@@ -120,7 +135,7 @@ export function filterPlansBySiteAndProps(
 	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
-	return plans.filter( function( plan ) {
+	return plans.filter( function ( plan ) {
 		if ( site && site.jetpack ) {
 			if ( 'monthly' === intervalType ) {
 				if ( showJetpackFreePlan ) {
@@ -152,8 +167,8 @@ export function filterPlansBySiteAndProps(
  * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to monthly.
- * @return {String}          Monthly version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to monthly.
+ * @returns {string}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
@@ -163,8 +178,8 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to yearly.
- * @return {String}          Yearly version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to yearly.
+ * @returns {string}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
@@ -174,8 +189,8 @@ export function getYearlyPlanByMonthly( planSlug ) {
  * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
  * not a recognized or cannot be converted.
  *
- * @param  {String} planSlug Slug to convert to biennial.
- * @return {String}          Biennial version slug or "" if the slug could not be converted.
+ * @param  {string} planSlug Slug to convert to biennial.
+ * @returns {string}          Biennial version slug or "" if the slug could not be converted.
  */
 export function getBiennialPlan( planSlug ) {
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
@@ -189,9 +204,9 @@ export function getBiennialPlan( planSlug ) {
  *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
  *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
  *
- * @param  {String}  planSlugA One of the plan slugs to compare
- * @param  {String}  planSlugB One of the plan slugs to compare
- * @return {Boolean}           Whether the plan "types" match regardless of interval
+ * @param  {string}  planSlugA One of the plan slugs to compare
+ * @param  {string}  planSlugB One of the plan slugs to compare
+ * @returns {boolean}           Whether the plan "types" match regardless of interval
  */
 export function planLevelsMatch( planSlugA, planSlugB ) {
 	const planA = getPlan( planSlugA );
@@ -268,7 +283,7 @@ export function isJetpackFreePlan( planSlug ) {
  *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
- * @return {string|undefined} Matched plan
+ * @returns {string|undefined} Matched plan
  */
 export function findFirstSimilarPlanKey( planKey, diff ) {
 	return findSimilarPlansKeys( planKey, diff )[ 0 ];
@@ -287,7 +302,7 @@ export function findFirstSimilarPlanKey( planKey, diff ) {
  *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
- * @return {string[]} Matched plans keys
+ * @returns {string[]} Matched plans keys
  */
 export function findSimilarPlansKeys( planKey, diff = {} ) {
 	const plan = getPlan( planKey );
@@ -310,11 +325,11 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
  * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
  *
  * @param {object} query @see planMatches
- * @return {string[]} Matched plans keys
+ * @returns {string[]} Matched plans keys
  */
 export function findPlansKeys( query = {} ) {
 	const plans = getPlans();
-	return Object.keys( plans ).filter( k => planMatches( plans[ k ], query ) );
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
 }
 
 /**
@@ -331,7 +346,7 @@ export function findPlansKeys( query = {} ) {
  *
  * @param {string|object} planKey Plan to match
  * @param {object} query Properties that should match
- * @return {bool} Does `planKey` match?
+ * @returns {boolean} Does `planKey` match?
  */
 export function planMatches( planKey, query = {} ) {
 	const acceptedKeys = [ 'type', 'group', 'term' ];
@@ -345,7 +360,7 @@ export function planMatches( planKey, query = {} ) {
 
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getPlan( planKey ) || {};
-	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
@@ -375,16 +390,22 @@ export function getBillingMonthsForTerm( term ) {
 }
 
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
-	const parsedUrl = urlParse( url );
+	const originalUrlType = determineUrlType( url );
+	const resultUrl = getUrlParts( url );
+
 	if ( 'monthly' === intervalType || forceIntervalType ) {
-		parsedUrl.pathname += '/' + intervalType;
+		resultUrl.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
-		parsedUrl.pathname += '/' + siteSlug;
+		resultUrl.pathname += '/' + siteSlug;
 	}
 
-	return urlFormat( parsedUrl );
+	// getUrlFromParts only works with absolute URLs, so add some dummy data if
+	// needed, and format down to the type of the original url.
+	resultUrl.protocol = resultUrl.protocol || 'https:';
+	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
+	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
@@ -424,18 +445,7 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanType = siteType => {
-	switch ( siteType ) {
-		case 'blog':
-			return TYPE_PERSONAL;
-		case 'professional':
-			return TYPE_PREMIUM;
-		default:
-			return TYPE_BUSINESS;
-	}
-};
-
-export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
@@ -446,40 +456,16 @@ export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest 
 		group: GROUP_WPCOM,
 	};
 
-	// Not sure why, but things break if the abtest lib is imported in this file
-	if ( ! siteType || abtest( 'popularPlanBy' ) === 'customerType' ) {
-		if ( customerType === 'personal' ) {
-			spec.type = TYPE_PREMIUM;
-		}
-		return spec;
+	if ( customerType === 'personal' ) {
+		spec.type = TYPE_PREMIUM;
 	}
-
-	spec.type = getPopularPlanType( siteType );
 
 	return spec;
 };
 
-export const chooseDefaultCustomerType = ( {
-	currentCustomerType,
-	selectedPlan,
-	currentPlan,
-	siteType,
-	abtest,
-} ) => {
+export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
-	}
-
-	if ( abtest( 'popularPlanBy' ) === 'siteType' ) {
-		// Choose the tab that will make the "POPULAR" label visible when the
-		// page is first loaded.
-		switch ( siteType ) {
-			case 'blog':
-			case 'professional':
-				return 'personal';
-			default:
-				return 'business';
-		}
 	}
 
 	const group = GROUP_WPCOM;
@@ -491,8 +477,8 @@ export const chooseDefaultCustomerType = ( {
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
+		.map( ( planKey ) => getPlan( planKey ) )
+		.map( ( plan ) => plan.getStoreSlug() );
 
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';

@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import config from 'config';
 import { localize } from 'i18n-calypso';
 import { noop, get } from 'lodash';
@@ -14,6 +13,7 @@ import { noop, get } from 'lodash';
 import ReaderMain from 'reader/components/reader-main';
 import DocumentHead from 'components/data/document-head';
 import BackButton from 'components/back-button';
+import ExternalLink from 'components/external-link';
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	const statusCode = get( post, [ 'error', 'statusCode' ] );
@@ -34,6 +34,8 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 		errorTitle = translate( 'Post not found' );
 	}
 
+	const postPermalink = get( post, [ 'error', 'data', 'permalink' ] );
+
 	return (
 		<ReaderMain className="reader-full-post reader-full-post__unavailable">
 			<BackButton onClick={ onBackClick } />
@@ -44,9 +46,23 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 					<div className="reader-full-post__unavailable-body">
 						<p className="reader-full-post__unavailable-message">{ errorDescription }</p>
 						{ errorHelp && <p className="reader-full-post__unavailable-message">{ errorHelp }</p> }
-						{ config.isEnabled( 'reader/full-errors' ) ? (
+						{ postPermalink && (
+							<Fragment>
+								<p>
+									{ translate( 'The original post is located at:', {
+										comment: 'Followed by a URL to the original post on an external site',
+									} ) }
+								</p>
+								<p>
+									<ExternalLink href={ postPermalink } icon={ true }>
+										{ postPermalink }
+									</ExternalLink>
+								</p>
+							</Fragment>
+						) }
+						{ config.isEnabled( 'reader/full-errors' ) && (
 							<pre>{ JSON.stringify( post, null, '  ' ) }</pre>
-						) : null }
+						) }
 					</div>
 				</div>
 			</div>

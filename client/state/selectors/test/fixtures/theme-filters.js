@@ -1,4 +1,3 @@
-/** @format */
 export const state = {
 	themes: {
 		themeFilters: {

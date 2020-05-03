@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -7,14 +6,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { map, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
 import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { dismissPost } from 'state/reader/site-dismissals/actions';
 import { keyForPost } from 'reader/post-key';
 import QueryReaderPost from 'components/data/query-reader-post';

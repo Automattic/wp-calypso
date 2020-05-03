@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -13,7 +11,6 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import { isMobile } from 'lib/viewport';
 
 /**
  * Style dependencies

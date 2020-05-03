@@ -7,13 +7,13 @@ An ESLint configuration following WordPress.com's "Calypso" [JavaScript Coding G
 You should install this configuration and peer dependencies as `devDependencies` in your project:
 
 ```
-npm install --save-dev eslint-config-wpcalypso eslint eslint-plugin-wpcalypso
+yarn add --dev eslint-config-wpcalypso eslint eslint-plugin-wpcalypso
 ```
 
 If you're planning to use the React superset of rules, you should also install `eslint-plugin-react`:
 
 ```
-npm install --save-dev eslint-plugin-react
+yarn add --dev eslint-plugin-react
 ```
 
 Next, simply extend the configuration from your project's `.eslintrc` file:

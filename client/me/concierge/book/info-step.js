@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -49,7 +47,7 @@ class InfoStep extends Component {
 		validation: '',
 	};
 
-	setTimezone = timezone => {
+	setTimezone = ( timezone ) => {
 		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
 	};
 
@@ -60,11 +58,11 @@ class InfoStep extends Component {
 		} );
 	}
 
-	setRebrandCitiesValue = value => {
+	setRebrandCitiesValue = ( value ) => {
 		this.updateSignupForm( 'isRebrandCitiesSite', value );
 	};
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
 			this.setState( {
 				validation: this.props.translate( 'Please enter a valid phone number.' ),
@@ -232,7 +230,7 @@ class InfoStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),

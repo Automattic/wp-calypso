@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -21,6 +20,7 @@ const ExpandableSidebarHeading = ( {
 	onClick,
 	icon,
 	materialIcon,
+	materialIconStyle,
 	expanded,
 	menuId,
 } ) => {
@@ -31,7 +31,13 @@ const ExpandableSidebarHeading = ( {
 			onClick={ onClick }
 		>
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
-			{ materialIcon && <MaterialIcon className="sidebar__menu-icon" icon={ materialIcon } /> }
+			{ materialIcon && (
+				<MaterialIcon
+					className="sidebar__menu-icon"
+					icon={ materialIcon }
+					style={ materialIconStyle }
+				/>
+			) }
 			<span className="sidebar__expandable-title">{ title }</span>
 			{ undefined !== count && <Count count={ count } /> }
 			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
@@ -45,6 +51,7 @@ ExpandableSidebarHeading.propTypes = {
 	onClick: PropTypes.func,
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
+	materialIconStyle: PropTypes.string,
 };
 
 ExpandableSidebarHeading.defaultProps = {

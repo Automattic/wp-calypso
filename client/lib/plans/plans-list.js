@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,12 @@ import * as constants from './constants';
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
+const plansDescriptionHeadingComponent = {
+	components: {
+		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
+	},
+};
+
 const getPlanBloggerDetails = () => ( {
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BLOGGER,
@@ -28,13 +32,7 @@ const getPlanBloggerDetails = () => ( {
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
@@ -68,6 +66,7 @@ const getPlanBloggerDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
@@ -83,13 +82,7 @@ const getPlanPersonalDetails = () => ( {
 			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Get access to high-quality email and live chat support.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
@@ -100,7 +93,7 @@ const getPlanPersonalDetails = () => ( {
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -109,7 +102,7 @@ const getPlanPersonalDetails = () => ( {
 	getSignupFeatures: () => [
 		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_ALL_FREE_FEATURES,
+		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
@@ -123,6 +116,7 @@ const getPlanPersonalDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -138,13 +132,7 @@ const getPlanEcommerceDetails = () => ( {
 			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
 				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
 				'so it’ll grow with you as your business grows.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		);
 	},
 	getShortDescription: () =>
@@ -162,11 +150,12 @@ const getPlanEcommerceDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
-			constants.FEATURE_UNLIMITED_STORAGE,
+			constants.FEATURE_200GB_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -175,7 +164,6 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 			constants.FEATURE_ACCEPT_PAYMENTS,
 			constants.FEATURE_SHIPPING_CARRIERS,
@@ -184,7 +172,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		] ),
 	getPromotedFeatures: () => [
-		constants.FEATURE_UNLIMITED_STORAGE,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_NO_ADS,
@@ -211,7 +199,9 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
+		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -226,18 +216,14 @@ const getPlanPremiumDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Freelancers:{{/strong}}' +
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
 	getPlanCompareFeatures: () =>
@@ -245,11 +231,12 @@ const getPlanPremiumDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ESSENTIAL,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -279,6 +266,7 @@ const getPlanPremiumDetails = () => ( {
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -293,21 +281,13 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, 200 GB' +
-				' storage, and the ability to remove WordPress.com branding.',
-			{
-				components: {
-					strong: (
-						<strong className="plans__features plan-features__targeted-description-heading" />
-					),
-				},
-			}
+				' 200 GB storage, and the ability to remove WordPress.com branding.',
+			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, 200 GB' +
-				' storage, and the ability to remove WordPress.com branding.'
+				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
 		i18n.translate(
@@ -318,11 +298,12 @@ const getPlanBusinessDetails = () => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
-			constants.FEATURE_UNLIMITED_STORAGE,
+			constants.FEATURE_200GB_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -331,11 +312,10 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 		] ),
 	getPromotedFeatures: () => [
-		constants.FEATURE_UNLIMITED_STORAGE,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_NO_ADS,
@@ -355,7 +335,7 @@ const getPlanBusinessDetails = () => ( {
 	],
 	getPortfolioSignupFeatures: () => [
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
-		constants.FEATURE_UNLIMITED_STORAGE_SIGNUP,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -364,6 +344,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 	],
+	getInferiorHiddenFeatures: () => [],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -410,13 +391,15 @@ export const PLANS_LIST = {
 			constants.FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_BLOGGER ]: {
 		...getPlanBloggerDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan => includes( [ constants.PLAN_FREE ], plan ),
+		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ),
 		getProductId: () => 1010,
 		getStoreSlug: () => constants.PLAN_BLOGGER,
 		getPathSlug: () => 'blogger',
@@ -426,7 +409,7 @@ export const PLANS_LIST = {
 		...getPlanBloggerDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => includes( [ constants.PLAN_FREE, constants.PLAN_BLOGGER ], plan ),
+		availableFor: ( plan ) => includes( [ constants.PLAN_FREE, constants.PLAN_BLOGGER ], plan ),
 		getProductId: () => 1030,
 		getStoreSlug: () => constants.PLAN_BLOGGER_2_YEARS,
 		getPathSlug: () => 'blogger-2-years',
@@ -436,7 +419,7 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
 				plan
@@ -450,7 +433,7 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -469,7 +452,7 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -489,7 +472,7 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -510,7 +493,7 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		term: constants.TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			includes(
 				[
@@ -533,7 +516,7 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -556,7 +539,7 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -580,7 +563,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -605,7 +588,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_FREE,
@@ -632,13 +615,24 @@ export const PLANS_LIST = {
 		group: constants.GROUP_JETPACK,
 		type: constants.TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free' ),
-		getAudience: () => i18n.translate( 'Best for students' ),
+		getAudience: () => i18n.translate( 'Best for Students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: () =>
-			i18n.translate(
-				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-			),
+		getTagline: ( feature ) => {
+			switch ( feature ) {
+				case constants.FEATURE_JETPACK_BACKUP_DAILY:
+				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
+				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection and priority support.'
+					);
+				default:
+					return i18n.translate(
+						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+					);
+			}
+		},
 		getDescription: () =>
 			i18n.translate(
 				'The features most needed by WordPress sites' +
@@ -660,6 +654,8 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM ]: {
@@ -667,11 +663,11 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PREMIUM,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
+		getAudience: () => i18n.translate( 'Best for Small Businesses' ),
 		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
 		getProductId: () => 2000,
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_JETPACK_FREE,
@@ -684,8 +680,10 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.'
+				'{{strong}}Best for Small Businesses:{{/strong}}' +
+					'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -720,6 +718,13 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -727,11 +732,11 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PREMIUM,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
+		getAudience: () => i18n.translate( 'Best for Small Businesses' ),
 		getProductId: () => 2003,
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_JETPACK_FREE,
@@ -742,8 +747,10 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.'
+				'{{strong}}Best for Small Businesses:{{/strong}}' +
+					'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -778,6 +785,13 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -785,16 +799,18 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Personal Use' ),
 		getProductId: () => 2005,
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes( [ constants.PLAN_JETPACK_FREE, constants.PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.'
+				'{{strong}}Best for Personal Use:{{/strong}}' +
+					'Security essentials for your WordPress site, including ' +
+					'automated backups and priority support.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -819,6 +835,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -826,15 +847,17 @@ export const PLANS_LIST = {
 		type: constants.TYPE_PERSONAL,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for hobbyists' ),
+		getAudience: () => i18n.translate( 'Best for Personal Use' ),
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL_MONTHLY,
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
-		availableFor: plan => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
+		availableFor: ( plan ) => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.'
+				'{{strong}}Best for Personal Use:{{/strong}}' +
+					'Security essentials for your WordPress site, including ' +
+					'automated backups and priority support.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -859,6 +882,11 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -866,10 +894,10 @@ export const PLANS_LIST = {
 		type: constants.TYPE_BUSINESS,
 		term: constants.TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getAudience: () => i18n.translate( 'Best for Organizations' ),
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS,
 		getProductId: () => 2001,
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -884,8 +912,10 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.'
+				'{{strong}}Best for Organizations:{{/strong}}' +
+					'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -899,7 +929,6 @@ export const PLANS_LIST = {
 				constants.FEATURE_SPAM_AKISMET_PLUS,
 				constants.FEATURE_EASY_SITE_MIGRATION,
 				constants.FEATURE_PREMIUM_SUPPORT,
-				constants.FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 				constants.FEATURE_SIMPLE_PAYMENTS,
 				constants.FEATURE_WORDADS_INSTANT,
@@ -913,12 +942,21 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_SEARCH,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -926,12 +964,12 @@ export const PLANS_LIST = {
 		type: constants.TYPE_BUSINESS,
 		term: constants.TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
+		getAudience: () => i18n.translate( 'Best for Organizations' ),
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS_MONTHLY,
 		getPathSlug: () => 'professional-monthly',
-		availableFor: plan =>
+		availableFor: ( plan ) =>
 			includes(
 				[
 					constants.PLAN_JETPACK_FREE,
@@ -944,8 +982,10 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'The most powerful WordPress sites: real-time backups, ' +
-					'enhanced search, and unlimited premium themes.'
+				'{{strong}}Best for Organizations:{{/strong}}' +
+					'The most powerful WordPress sites: real-time backups, ' +
+					'enhanced search, and unlimited premium themes.',
+				plansDescriptionHeadingComponent
 			),
 		getTagline: () =>
 			i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -972,26 +1012,31 @@ export const PLANS_LIST = {
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_SEARCH,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
+		getInferiorHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		],
 	},
 };
 
 export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );
 
-export const getPlanObject = planName => {
+export const getPlanObject = ( planName ) => {
 	const plan = PLANS_LIST[ planName ];
 	const objectPlan = {};
-	Object.keys( plan ).forEach( key => {
-		const objectKey =
-			key
-				.substr( 3 )
-				.charAt( 0 )
-				.toLowerCase() + key.slice( 4 );
+	Object.keys( plan ).forEach( ( key ) => {
+		const objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
 		objectPlan[ objectKey ] = plan[ key ]();
 	} );
 

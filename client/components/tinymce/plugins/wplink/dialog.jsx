@@ -14,7 +14,7 @@ import { find } from 'lodash';
 import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
@@ -49,7 +49,7 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}
@@ -116,7 +116,7 @@ class LinkDialog extends React.Component {
 		this.closeDialog();
 	};
 
-	hasSelectedText = linkNode => {
+	hasSelectedText = ( linkNode ) => {
 		const { editor } = this.props;
 		const html = editor.selection.getContent();
 		let nodes;
@@ -210,22 +210,22 @@ class LinkDialog extends React.Component {
 		this.props.onClose();
 	};
 
-	setUrl = event => {
+	setUrl = ( event ) => {
 		this.setState( { url: event.target.value } );
 	};
 
-	setLinkText = event => {
+	setLinkText = ( event ) => {
 		this.setState( {
 			linkText: event.target.value,
 			isUserDefinedLinkText: true,
 		} );
 	};
 
-	setNewWindow = event => {
+	setNewWindow = ( event ) => {
 		this.setState( { newWindow: event.target.checked } );
 	};
 
-	onInputKeyDown = event => {
+	onInputKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			this.updateEditor();
@@ -267,7 +267,7 @@ class LinkDialog extends React.Component {
 		return buttons;
 	};
 
-	setExistingContent = post => {
+	setExistingContent = ( post ) => {
 		const state = { url: post.URL };
 		const shouldSetLinkText =
 			! this.state.isUserDefinedLinkText &&
@@ -364,7 +364,7 @@ class LinkDialog extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		return {
 			site: selectedSite,

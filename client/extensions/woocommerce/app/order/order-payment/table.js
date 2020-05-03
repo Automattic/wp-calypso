@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-valu
 import OrderLineItem from '../order-details/line-item';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -46,20 +45,20 @@ class OrderRefundTable extends Component {
 		this.initializeState( props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.order.id !== this.props.order.id ) {
 			this.initializeState( nextProps );
 		}
 	}
 
-	initializeState = props => {
+	initializeState = ( props ) => {
 		const { order } = props;
 		const shippingTax = getOrderShippingTax( order );
 		const shippingTotal = parseFloat( shippingTax ) + parseFloat( order.shipping_total );
 
 		this.state = {
 			quantities: {},
-			fees: props.order.fee_lines.map( item => {
+			fees: props.order.fee_lines.map( ( item ) => {
 				const value =
 					parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, item.id ) );
 				return getCurrencyFormatDecimal( value, order.currency );
@@ -81,10 +80,10 @@ class OrderRefundTable extends Component {
 		this.props.onChange( this.state );
 	};
 
-	formatInput = name => {
+	formatInput = ( name ) => {
 		const { order } = this.props;
 		return () => {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				const newValue = getCurrencyFormatDecimal( get( prevState, name ), order.currency );
 				// Update the new value in state without mutations https://github.com/lodash/lodash/issues/1696#issuecomment-328335502
 				const newState = setWith( clone( prevState ), name, newValue, clone );
@@ -93,7 +92,7 @@ class OrderRefundTable extends Component {
 		};
 	};
 
-	validateValue = value => {
+	validateValue = ( value ) => {
 		if ( '' === value ) {
 			return value;
 		}
@@ -104,21 +103,21 @@ class OrderRefundTable extends Component {
 		return 0;
 	};
 
-	onChange = ( type, i = false ) => event => {
+	onChange = ( type, i = false ) => ( event ) => {
 		const value = this.validateValue( event.target.value );
 		switch ( type ) {
 			case 'shipping_total':
 				this.setState( { shippingTotal: value }, this.triggerRecalculate );
 				break;
 			case 'quantity':
-				this.setState( prevState => {
+				this.setState( ( prevState ) => {
 					const newQuants = prevState.quantities;
 					newQuants[ i ] = value;
 					return { quantities: newQuants };
 				}, this.triggerRecalculate );
 				break;
 			case 'fee':
-				this.setState( prevState => {
+				this.setState( ( prevState ) => {
 					const newFees = prevState.fees;
 					newFees[ i ] = value;
 					return { fees: newFees };
@@ -150,7 +149,7 @@ class OrderRefundTable extends Component {
 		);
 	};
 
-	renderOrderItem = item => {
+	renderOrderItem = ( item ) => {
 		const { order, site, translate } = this.props;
 		const inputId = `quantity-${ item.id }`;
 		return (

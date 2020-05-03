@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import { isPaidForFullyInCredits } from 'lib/cart-values';
 import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'lib/cart-values/cart-items';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,9 +20,9 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
+import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -81,7 +80,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
@@ -141,7 +140,7 @@ const Account = createReactClass( {
 		// This is a workaround that allows us to use userSettings.updateSetting() without an
 		// existing value. Without this workaround the save button wouldn't become active.
 		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
+		update( this.props.userSettings.settings, colorSchemeKey, ( value ) => value || 'default' );
 
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
@@ -254,7 +253,7 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{' '}
+				{ ' ' }
 				{ translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{
@@ -342,7 +341,7 @@ const Account = createReactClass( {
 	},
 
 	getCheckboxHandler( checkboxName ) {
-		return event => {
+		return ( event ) => {
 			const action = 'Clicked ' + checkboxName + ' checkbox';
 			const value = event.target.checked ? 1 : 0;
 
@@ -378,7 +377,7 @@ const Account = createReactClass( {
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, error => {
+		this.props.username.change( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
 				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
@@ -387,7 +386,7 @@ const Account = createReactClass( {
 
 				// We reload here to refresh cookies, user object, and user settings.
 				// @TODO: Do not require reload here.
-				location.reload();
+				window.location.reload();
 			}
 		} );
 	},
@@ -595,7 +594,7 @@ const Account = createReactClass( {
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={
@@ -628,7 +627,7 @@ const Account = createReactClass( {
 				>
 					{ this.state.submittingForm
 						? translate( 'Saving…' )
-						: translate( 'Save Account Settings' ) }
+						: translate( 'Save account settings' ) }
 				</FormButton>
 			</div>
 		);
@@ -649,19 +648,21 @@ const Account = createReactClass( {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
-				{ // message is translated in the API
-				map( actions, ( message, key ) => (
-					<FormLabel key={ key }>
-						<FormRadio
-							name="usernameAction"
-							onChange={ this.handleRadioChange }
-							onClick={ this.handleUsernameChangeBlogRadio }
-							value={ key }
-							checked={ key === this.state.usernameAction }
-						/>
-						<span>{ message }</span>
-					</FormLabel>
-				) ) }
+				{
+					// message is translated in the API
+					map( actions, ( message, key ) => (
+						<FormLabel key={ key }>
+							<FormRadio
+								name="usernameAction"
+								onChange={ this.handleRadioChange }
+								onClick={ this.handleUsernameChangeBlogRadio }
+								value={ key }
+								checked={ key === this.state.usernameAction }
+							/>
+							<span>{ message }</span>
+						</FormLabel>
+					) )
+				}
 			</FormFieldset>
 		);
 	},
@@ -760,7 +761,7 @@ const Account = createReactClass( {
 						type="button"
 						onClick={ this.getClickHandler( 'Change Username Button', this.submitUsernameForm ) }
 					>
-						{ translate( 'Save Username' ) }
+						{ translate( 'Save username' ) }
 					</FormButton>
 
 					<FormButton
@@ -831,7 +832,7 @@ const Account = createReactClass( {
 
 export default compose(
 	connect(
-		state => ( {
+		( state ) => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
 		} ),

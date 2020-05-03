@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { isFunction, noop, omit, some } from 'lodash';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
-import { setTaxCountryCode } from 'lib/upgrades/actions/cart';
+import { setTaxCountryCode } from 'lib/cart/actions';
 
 export class PaymentCountrySelect extends Component {
 	static propTypes = {
@@ -32,7 +30,7 @@ export class PaymentCountrySelect extends Component {
 		updateCartStore: setTaxCountryCode,
 	};
 
-	componentDidMount = () => {
+	componentDidMount() {
 		// Notify the callback function about the country (or lack thereof)
 		// that is pre-selected at the time the component is first displayed
 		if ( this.props.countriesList.length ) {
@@ -42,7 +40,7 @@ export class PaymentCountrySelect extends Component {
 			);
 			this.props.onCountrySelected( this.props.name, validCountryCode );
 		}
-	};
+	}
 
 	componentDidUpdate( prevProps ) {
 		// There's a chance on first mount that 'countriesList' isn't filled yet
@@ -65,7 +63,7 @@ export class PaymentCountrySelect extends Component {
 	getValidCountryCode = ( countryCode, countriesList ) =>
 		some( countriesList, [ 'code', countryCode ] ) ? countryCode : '';
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		this.props.updateGlobalCountryCode( event.target.value );
 		this.props.updateCartStore( event.target.value );
 		// Notify the callback function that a new country was selected.
@@ -101,14 +99,14 @@ export class PaymentCountrySelect extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			countryCode: getPaymentCountryCode( state ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
-			updateGlobalCountryCode: newCountryCode => {
+			updateGlobalCountryCode: ( newCountryCode ) => {
 				dispatch( setPaymentCountryCode( newCountryCode ) );
 			},
 		};

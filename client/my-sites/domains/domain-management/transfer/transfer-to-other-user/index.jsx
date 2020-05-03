@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card, Dialog } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
@@ -25,11 +23,10 @@ import wp from 'lib/wp';
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
-import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 
 /**
  * Style dependencies
@@ -66,7 +63,7 @@ class TransferOtherUser extends React.Component {
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
 
-	getWpcomUserId = user => {
+	getWpcomUserId = ( user ) => {
 		if ( this.props.isAtomic ) {
 			return get( user, 'linked_user_ID', '' );
 		}
@@ -74,7 +71,7 @@ class TransferOtherUser extends React.Component {
 		return user.ID;
 	};
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		if ( nextState && ! nextState.selectedUserId ) {
 			const defaultUser = head( this.filterAvailableUsers( nextProps.users ) );
 			if ( defaultUser ) {
@@ -123,7 +120,7 @@ class TransferOtherUser extends React.Component {
 						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
 					);
 				},
-				err => {
+				( err ) => {
 					this.setState( { disableDialogButtons: false } );
 					this.props.errorNotice( err.message || defaultErrorMessage );
 					closeDialog();
@@ -140,7 +137,7 @@ class TransferOtherUser extends React.Component {
 	getSelectedUserDisplayName() {
 		const selectedUser = find(
 			this.props.users,
-			user => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
+			( user ) => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
 
 		if ( ! selectedUser ) {
@@ -184,7 +181,7 @@ class TransferOtherUser extends React.Component {
 				},
 				{
 					action: 'confirm',
-					label: this.props.translate( 'Confirm Transfer' ),
+					label: this.props.translate( 'Confirm transfer' ),
 					onClick: this.handleConfirmTransferDomain,
 					disabled: this.state.disableDialogButtons,
 					isPrimary: true,
@@ -194,6 +191,7 @@ class TransferOtherUser extends React.Component {
 			selectedUserDisplay = this.getSelectedUserDisplayName();
 		return (
 			<Dialog
+				className="transfer-to-other-user__confirmation-dialog"
 				isVisible={ this.state.showConfirmationDialog }
 				buttons={ buttons }
 				onClose={ this.handleDialogClose }
@@ -217,7 +215,7 @@ class TransferOtherUser extends React.Component {
 		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
 			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
-			saveButtonLabel = translate( 'Transfer Domain' );
+			saveButtonLabel = translate( 'Transfer domain' );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
@@ -225,7 +223,6 @@ class TransferOtherUser extends React.Component {
 
 		return (
 			<Fragment>
-				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
 				<Card>
 					<p>
 						{ translate(
@@ -249,7 +246,7 @@ class TransferOtherUser extends React.Component {
 							value={ this.state.selectedUserId }
 						>
 							{ availableUsers.length ? (
-								availableUsers.map( user => {
+								availableUsers.map( ( user ) => {
 									const userId = this.getWpcomUserId( user );
 
 									return (
@@ -281,14 +278,18 @@ class TransferOtherUser extends React.Component {
 
 	filterAvailableUsers( users ) {
 		return users.filter(
-			user =>
+			( user ) =>
 				includes( user.roles, 'administrator' ) &&
 				this.getWpcomUserId( user ) !== this.props.currentUser.ID
 		);
 	}
 
 	isDataReady() {
-		return this.props.wapiDomainInfo.hasLoadedFromServer && ! this.props.isRequestingSiteDomains;
+		return (
+			this.props.hasSiteDomainsLoaded &&
+			this.props.wapiDomainInfo.hasLoadedFromServer &&
+			! this.props.isRequestingSiteDomains
+		);
 	}
 }
 
@@ -296,6 +297,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		currentUser: getCurrentUser( state ),
 		isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 	} ),
 	{
 		successNotice,

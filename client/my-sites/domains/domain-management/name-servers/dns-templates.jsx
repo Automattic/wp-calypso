@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { dnsTemplates } from 'lib/domains/constants';
 import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
@@ -57,7 +55,7 @@ class DnsTemplates extends React.Component {
 					validationPattern: /^MS=ms\d{8}$/,
 					dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
-					modifyVariables: variables =>
+					modifyVariables: ( variables ) =>
 						Object.assign( {}, variables, {
 							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com',
 						} ),
@@ -74,7 +72,7 @@ class DnsTemplates extends React.Component {
 		};
 	}
 
-	onTemplateClick = name => {
+	onTemplateClick = ( name ) => {
 		this.setState( { currentComponentName: name } );
 	};
 
@@ -86,7 +84,7 @@ class DnsTemplates extends React.Component {
 		const componentName = this.state.currentComponentName;
 		const template = find(
 			this.state.templates,
-			dnsTemplate => dnsTemplate.name === componentName
+			( dnsTemplate ) => dnsTemplate.name === componentName
 		);
 
 		return (

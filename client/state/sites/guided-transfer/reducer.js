@@ -10,86 +10,92 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { guidedTransferStatusSchema } from './schema';
 
 // Stores the status of guided transfers per site
-export const status = createReducerWithValidation(
-	{},
-	{
-		[ GUIDED_TRANSFER_STATUS_RECEIVE ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: action.guidedTransferStatus,
-		} ),
-	},
-	guidedTransferStatusSchema
-);
-
-// Tracks whether we're fetching the status of a guided transfer for a site
-export const isFetching = createReducer(
-	{},
-	{
-		[ GUIDED_TRANSFER_STATUS_REQUEST ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: true,
-		} ),
-
-		[ GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: false,
-		} ),
-
-		[ GUIDED_TRANSFER_STATUS_REQUEST_FAILURE ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: false,
-		} ),
+export const status = withSchemaValidation( guidedTransferStatusSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case GUIDED_TRANSFER_STATUS_RECEIVE:
+			return {
+				...state,
+				[ action.siteId ]: action.guidedTransferStatus,
+			};
 	}
-);
+
+	return state;
+} );
 
 // Tracks whether we're fetching the status of a guided transfer for a site
-export const error = createReducer(
-	{},
-	{
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: null,
-		} ),
+export const isFetching = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case GUIDED_TRANSFER_STATUS_REQUEST:
+			return {
+				...state,
+				[ action.siteId ]: true,
+			};
+		case GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS:
+			return {
+				...state,
+				[ action.siteId ]: false,
+			};
+		case GUIDED_TRANSFER_STATUS_REQUEST_FAILURE:
+			return {
+				...state,
+				[ action.siteId ]: false,
+			};
+	}
 
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: null,
-		} ),
+	return state;
+} );
 
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: ( state, action ) => {
+// Tracks whether we're fetching the status of a guided transfer for a site
+export const error = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE:
+			return {
+				...state,
+				[ action.siteId ]: null,
+			};
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS:
+			return {
+				...state,
+				[ action.siteId ]: null,
+			};
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE: {
 			let errorCode = true;
 			if ( action.error && action.error.error ) {
 				errorCode = action.error.error;
 			}
 			return { ...state, [ action.siteId ]: errorCode };
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 // Tracks whether we're saving host details on a guided transfer for a site
-export const isSaving = createReducer(
-	{},
-	{
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: true,
-		} ),
-
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: false,
-		} ),
-
-		[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: ( state, action ) => ( {
-			...state,
-			[ action.siteId ]: false,
-		} ),
+export const isSaving = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE:
+			return {
+				...state,
+				[ action.siteId ]: true,
+			};
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS:
+			return {
+				...state,
+				[ action.siteId ]: false,
+			};
+		case GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE:
+			return {
+				...state,
+				[ action.siteId ]: false,
+			};
 	}
-);
+
+	return state;
+} );
 
 export default combineReducers( {
 	error,

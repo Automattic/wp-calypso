@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
+	React.Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -35,8 +34,8 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
-	const { className, title, count, onClick, icon, materialIcon } = props;
+export const ExpandableSidebarMenu = ( props ) => {
+	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
 
 	let { expanded } = props;
 
@@ -59,6 +58,7 @@ export const ExpandableSidebarMenu = props => {
 				onClick={ onClick }
 				icon={ icon }
 				materialIcon={ materialIcon }
+				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
 			/>
@@ -79,6 +79,8 @@ ExpandableSidebarMenu.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,
+	materialIcon: PropTypes.string,
+	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
 };
 

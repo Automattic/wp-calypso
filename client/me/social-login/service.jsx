@@ -8,11 +8,18 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 
-const SocialLoginService = ( { service, icon, isConnected, socialConnectionEmail } ) => (
+const SocialLoginService = ( {
+	service,
+	icon,
+	isConnected,
+	redirectUri,
+	socialConnectionEmail,
+	socialServiceResponse,
+} ) => (
 	<CompactCard>
 		<div className="social-login__header">
 			<div className="social-login__header-info">
@@ -22,7 +29,12 @@ const SocialLoginService = ( { service, icon, isConnected, socialConnectionEmail
 			</div>
 
 			<div className="social-login__header-action">
-				<SocialLoginActionButton service={ service } isConnected={ isConnected } />
+				<SocialLoginActionButton
+					redirectUri={ redirectUri }
+					service={ service }
+					isConnected={ isConnected }
+					socialServiceResponse={ socialServiceResponse }
+				/>
 			</div>
 		</div>
 	</CompactCard>

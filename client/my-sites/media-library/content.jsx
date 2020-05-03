@@ -1,20 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -26,6 +25,7 @@ import {
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
@@ -268,11 +268,11 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	recordPlansNavigation( tracksEvent, tracksData ) {
-		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( tracksEvent, tracksData );
+		gaRecordEvent( 'Media', 'Clicked Upload Error Action' );
+		recordTracksEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing = ev => {
+	goToSharing = ( ev ) => {
 		ev.preventDefault();
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
@@ -407,8 +407,12 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	render() {
+		const classNames = classnames( 'media-library__content', {
+			'has-no-upload-button': ! this.props.displayUploadMediaButton,
+		} );
+
 		return (
-			<div className="media-library__content">
+			<div className={ classNames }>
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
@@ -428,18 +432,19 @@ export default connect(
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
+			displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
 		};
 	},
 	() => ( {
-		toggleGuidedTour: shouldPause => {
+		toggleGuidedTour: ( shouldPause ) => {
 			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
 			// The eventual Reduxification of the media store should prevent this. See: #26168
 			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: connection => {
+		deleteKeyringConnection: ( connection ) => {
 			// We don't want this to trigger a global notice - a notice is shown inline
 			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
 

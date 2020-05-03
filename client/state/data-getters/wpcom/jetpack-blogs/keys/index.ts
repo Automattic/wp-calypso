@@ -16,7 +16,7 @@ interface ResponseData {
 
 export function requestPluginKeys(
 	siteId: SiteId,
-	options: Parameters< typeof requestHttpData >[2] = {}
+	options: Parameters< typeof requestHttpData >[ 2 ] = {}
 ) {
 	requestHttpData(
 		dataKey( siteId ),

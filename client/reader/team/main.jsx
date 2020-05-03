@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import React from 'react';
  */
 import Stream from 'reader/stream';
 
-const TeamStream = props => {
+const TeamStream = ( props ) => {
 	return <Stream { ...props } shouldCombineCards={ false } />;
 };
 

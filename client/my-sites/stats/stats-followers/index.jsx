@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsList from '../stats-list';
 import ErrorPanel from '../stats-error';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -35,7 +33,7 @@ class StatModuleFollowers extends Component {
 		activeFilter: 'wpcom-followers',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		let gaEvent;
 		if ( filter !== this.state.activeFilter ) {
@@ -140,7 +138,7 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData && !! wpcomData.total_wpcom && (
 										<p>
-											{ translate( 'Total WordPress.com Followers' ) }:{' '}
+											{ translate( 'Total WordPress.com Followers' ) }:{ ' ' }
 											{ numberFormat( wpcomData.total_wpcom ) }
 										</p>
 									) }
@@ -160,7 +158,7 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ emailData && !! emailData.total_email && (
 										<p>
-											{ translate( 'Total Email Followers' ) }:{' '}
+											{ translate( 'Total Email Followers' ) }:{ ' ' }
 											{ numberFormat( emailData.total_email ) }
 										</p>
 									) }
@@ -192,7 +190,7 @@ class StatModuleFollowers extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const emailQuery = { type: 'email', max: 10 };
@@ -224,7 +222,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatModuleFollowers );
+export default flowRight( connectComponent, localize )( StatModuleFollowers );

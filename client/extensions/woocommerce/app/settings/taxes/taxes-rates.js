@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -26,7 +24,7 @@ import {
 	getStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
@@ -44,7 +42,7 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRatesAndLocations = props => {
+	maybeFetchRatesAndLocations = ( props ) => {
 		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
 
 		if ( ! loadedLocations ) {
@@ -206,7 +204,7 @@ class TaxesRates extends Component {
 				) }
 				<ExternalLink
 					icon
-					href="https://en.support.wordpress.com/taxjar/"
+					href="https://wordpress.com/support/taxjar/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -295,7 +293,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( TaxesRates ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( TaxesRates ) );

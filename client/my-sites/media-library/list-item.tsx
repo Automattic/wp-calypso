@@ -26,7 +26,7 @@ import './list-item.scss';
 interface MediaObject {
 	transient?: boolean;
 	file?: string;
-	[propName: string]: any;
+	[ propName: string ]: any;
 }
 type Media = string | MediaObject;
 // END TODO
@@ -43,7 +43,7 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
-type DivProps = Omit< React.ComponentProps< 'button' >, 'style' | 'onClick' >;
+type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
 	static defaultProps = {

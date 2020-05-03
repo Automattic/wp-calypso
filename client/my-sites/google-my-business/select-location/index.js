@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -13,9 +11,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
@@ -67,7 +63,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -111,7 +107,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 					{ translate( 'Select the listing you would like to connect to:' ) }
 				</CompactCard>
 
-				{ locations.map( location => (
+				{ locations.map( ( location ) => (
 					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
 						<GoogleMyBusinessSelectLocationButton
 							location={ location }
@@ -148,7 +144,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locations = getGoogleMyBusinessLocations( state, siteId );
 

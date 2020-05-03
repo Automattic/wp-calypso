@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,6 +16,11 @@ import { getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import TranslatableString from 'components/translatable/proptype';
 
+/**
+ * Style dependencies
+ */
+import './apps-badge.scss';
+
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
 const APP_STORE_BADGE_URLS = {
@@ -25,7 +28,7 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getLocaleSlug: function() {
+		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
 			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
 			return localeSlugPrefix === 'en' ? 'en-us' : `${ localeSlugPrefix }-${ localeSlugPrefix }`;
@@ -34,7 +37,7 @@ const APP_STORE_BADGE_URLS = {
 	android: {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
 		src:
-			'http://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
+			'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getLocaleSlug,
 	},
@@ -125,9 +128,6 @@ export class AppsBadge extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( AppsBadge ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( AppsBadge ) );

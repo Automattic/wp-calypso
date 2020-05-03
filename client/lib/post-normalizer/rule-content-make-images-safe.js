@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,25 +17,26 @@ const TRANSPARENT_GIF =
 /**
  * @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
  */
-const removeUnwantedAttributes = node => {
+const removeUnwantedAttributes = ( node ) => {
 	if ( ! node || ! node.hasAttributes() ) {
 		return;
 	}
 
-	const inlineEventHandlerAttributes = filter( node.attributes, attr =>
+	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) =>
 		startsWith( attr.name, 'on' )
 	);
-	inlineEventHandlerAttributes.forEach( a => node.removeAttribute( a.name ) );
+	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a.name ) );
 
 	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
 	node.removeAttribute( 'srcset' );
 };
 
 /** Checks whether or not imageUrl should be removed from the dom
+ *
  * @param {string} imageUrl - the url of the image
  * @returns {boolean} whether or not it should be removed from the dom
  */
-const imageShouldBeRemovedFromContent = imageUrl => {
+const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 	if ( ! imageUrl ) {
 		return;
 	}
@@ -53,7 +52,7 @@ const imageShouldBeRemovedFromContent = imageUrl => {
 		'pixel.wp.com',
 	];
 
-	return some( bannedUrlParts, part => includes( imageUrl.toLowerCase(), part ) );
+	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
 };
 
 function makeImageSafe( post, image, maxWidth ) {
@@ -91,13 +90,13 @@ function makeImageSafe( post, image, maxWidth ) {
 	image.setAttribute( 'src', safeSource );
 }
 
-const makeImagesSafe = maxWidth => ( post, dom ) => {
+const makeImagesSafe = ( maxWidth ) => ( post, dom ) => {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, image => makeImageSafe( post, image, maxWidth ) );
+	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
 
 	return post;
 };

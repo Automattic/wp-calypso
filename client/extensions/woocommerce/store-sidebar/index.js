@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -78,12 +76,12 @@ class StoreSidebar extends Component {
 		this.props.fetchSetupChoices( siteId );
 	};
 
-	isItemLinkSelected = paths => {
+	isItemLinkSelected = ( paths ) => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
 		}
 
-		return paths.some( function( path ) {
+		return paths.some( function ( path ) {
 			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
 	};
@@ -308,7 +306,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( StoreSidebar ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );

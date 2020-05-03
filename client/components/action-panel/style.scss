@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Main
 .action-panel {
@@ -9,7 +9,6 @@
 .action-panel__title {
 	margin-bottom: 16px;
 	font-size: 21px;
-	font-weight: 300;
 	line-height: 24px;
 	color: var( --color-neutral-70 );
 	clear: none;
@@ -21,12 +20,9 @@
 	line-height: 20px;
 	color: var( --color-text-subtle );
 	overflow: hidden;
-	display: flex;
-	flex-direction: column;
 
 	p {
 		margin-bottom: 20px;
-		flex-grow: 1;
 	}
 }
 

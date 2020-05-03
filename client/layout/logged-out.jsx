@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes, get } from 'lodash';
+import { includes, get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import config from 'config';
-import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
@@ -25,9 +22,15 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // Returns true if given section should display sidebar for logged out users.
-const hasSidebar = section => {
+const hasSidebar = ( section ) => {
 	if ( section.name === 'devdocs' ) {
 		// Devdocs should always display a sidebar, except for landing page.
 		return ! includes( section.paths, '/devdocs/start' );
@@ -39,6 +42,8 @@ const hasSidebar = section => {
 const LayoutLoggedOut = ( {
 	currentRoute,
 	isJetpackLogin,
+	isGutenboardingLogin,
+	isPopup,
 	isJetpackWooCommerceFlow,
 	wccomFrom,
 	masterbarIsHidden,
@@ -60,6 +65,8 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
+		'is-gutenboarding-login': isGutenboardingLogin,
+		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
 		'is-wccom-oauth-flow':
@@ -104,7 +111,12 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
 			<div id="content" className="layout__content">
-				<GlobalNotices id="notices" notices={ notices.list } />
+				<AsyncLoad
+					require="components/global-notices"
+					placeholder={ null }
+					id="notices"
+					notices={ notices.list }
+				/>
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
@@ -129,19 +141,23 @@ LayoutLoggedOut.propTypes = {
 	showOAuth2Layout: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
-	const isJetpackLogin = currentRoute === '/log-in/jetpack';
-	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
+	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+	const isGutenboardingLogin = startsWith( currentRoute, `/log-in/${ GUTENBOARDING_BASE_NAME }` );
+	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin;
+	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
-		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {
 		currentRoute,
 		isJetpackLogin,
+		isGutenboardingLogin,
+		isPopup,
 		isJetpackWooCommerceFlow,
 		wccomFrom,
 		masterbarIsHidden:

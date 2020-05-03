@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,7 @@ import {
 	confirmPackages,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-const PackagesStep = props => {
+const PackagesStep = ( props ) => {
 	const { siteId, orderId, selected, weightUnit, errors, expanded, translate } = props;
 
 	const packageIds = Object.keys( selected );
@@ -49,7 +47,7 @@ const PackagesStep = props => {
 			};
 		}
 
-		const errorPackage = find( errors, pckg => ! isEmpty( pckg ) );
+		const errorPackage = find( errors, ( pckg ) => ! isEmpty( pckg ) );
 		if ( errorPackage ) {
 			return {
 				isError: true,
@@ -145,11 +143,8 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep, confirmPackages }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PackagesStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackagesStep ) );

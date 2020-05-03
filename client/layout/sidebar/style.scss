@@ -98,6 +98,10 @@
 		}
 	}
 
+	.badge {
+		margin: -7px 0 -8px;
+	}
+
 	.selected &,
 	.selected &:hover {
 		color: var( --color-sidebar-menu-selected-text );

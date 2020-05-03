@@ -1,4 +1,3 @@
-
 .book__skeleton-site-block .site__content,
 .book__info-step-site-block .site__content,
 .shared__site-block .site__content {
@@ -56,10 +55,32 @@
 }
 
 .book__info-step-phone-input {
-	display: flex;
+	display: block;
+	
+	@include breakpoint( '>480px' ) {
+		display: flex;
+	}
+	
 	& fieldset {
 		flex: 1;
 		margin-bottom: 0;
+	}
+	
+	.form-fieldset__phone-number {
+		margin-top: 20px;
+		
+		@include breakpoint( '>480px' ) {
+			margin-top: 0;
+			margin-left: 12px;
+		}
+	}
+}
+
+.shared__appointment-info-start-session {
+	display: flex;
+
+	& input {
+		flex: 1;
 	}
 }
 

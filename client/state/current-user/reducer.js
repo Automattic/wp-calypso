@@ -14,8 +14,14 @@ import {
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducerWithValidation, withSchemaValidation } from 'state/utils';
-import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+import { combineReducers, withSchemaValidation } from 'state/utils';
+import {
+	capabilitiesSchema,
+	currencyCodeSchema,
+	flagsSchema,
+	idSchema,
+	lasagnaSchema,
+} from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
 
@@ -28,63 +34,64 @@ import emailVerification from './email-verification/reducer';
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const id = createReducerWithValidation(
-	null,
-	{
-		[ CURRENT_USER_RECEIVE ]: ( state, action ) => action.user.ID,
-	},
-	idSchema
-);
+export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user.ID;
+	}
 
-export const flags = createReducerWithValidation(
-	[],
-	{
-		[ CURRENT_USER_RECEIVE ]: ( state, action ) =>
-			get( action.user, 'meta.data.flags.active_flags', [] ),
-	},
-	flagsSchema
-);
+	return state;
+} );
+
+export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return get( action.user, 'meta.data.flags.active_flags', [] );
+	}
+
+	return state;
+} );
 
 /**
  * Tracks the currency code of the current user
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
-export const currencyCode = createReducerWithValidation(
-	null,
-	{
-		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => {
+export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_RECEIVE: {
 			return get(
 				action.productsList,
 				[ first( keys( action.productsList ) ), 'currency_code' ],
 				state
 			);
-		},
-		[ PLANS_RECEIVE ]: ( state, action ) => {
+		}
+		case PLANS_RECEIVE: {
 			return get( action.plans, [ 0, 'currency_code' ], state );
-		},
-		[ SITE_PLANS_FETCH_COMPLETED ]: ( state, action ) => {
+		}
+		case SITE_PLANS_FETCH_COMPLETED: {
 			return get( action.plans, [ 0, 'currencyCode' ], state );
-		},
-	},
-	currencyCodeSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -113,6 +120,15 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 	return state;
 } );
 
+export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user.lasagna_jwt || null;
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	id,
 	currencyCode,
@@ -120,4 +136,5 @@ export default combineReducers( {
 	flags,
 	gravatarStatus,
 	emailVerification,
+	lasagnaJwt,
 } );

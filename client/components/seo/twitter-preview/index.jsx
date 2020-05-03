@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React, { PureComponent } from 'react';
  */
 import './style.scss';
 
-const baseDomain = url =>
+const baseDomain = ( url ) =>
 	url
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain

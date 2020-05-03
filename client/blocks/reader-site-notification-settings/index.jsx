@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +10,11 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
-import FormToggle from 'components/forms/form-toggle';
-import getReaderFollows from 'state/selectors/get-reader-follows';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getReaderFollows } from 'state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -62,7 +61,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	setSelected = text => () => {
+	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
@@ -155,13 +154,14 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'Notify me of new posts' ) }
-						<Gridicon icon="bell" size={ 18 } />
-						<FormToggle
+						<CompactFormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
-						/>
+							id="reader-site-notification-settings__notifications"
+						>
+							{ translate( 'Notify me of new posts' ) }
+						</CompactFormToggle>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -173,21 +173,30 @@ class ReaderSiteNotificationSettings extends Component {
 								: 'reader-site-notification-settings__popout-toggle'
 						}
 					>
-						{ translate( 'Email me new posts' ) }
 						{ ! isEmailBlocked && (
-							<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
+							<CompactFormToggle
+								onChange={ this.toggleNewPostEmail }
+								checked={ sendNewPostsByEmail }
+								id={ 'reader-site-notification-settings__email-posts' }
+							>
+								{ translate( 'Email me new posts' ) }
+							</CompactFormToggle>
 						) }
+
 						{ isEmailBlocked && (
-							<p className="reader-site-notification-settings__popout-instructions-hint">
-								{ translate(
-									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
-									{
-										components: {
-											a: <a href="/me/notifications/subscriptions" />,
-										},
-									}
-								) }
-							</p>
+							<div>
+								{ translate( 'Email me new posts' ) }
+								<p className="reader-site-notification-settings__popout-instructions-hint">
+									{ translate(
+										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
+										{
+											components: {
+												a: <a href="/me/notifications/subscriptions" />,
+											},
+										}
+									) }
+								</p>
+							</div>
 						) }
 					</div>
 
@@ -215,11 +224,13 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
-							{ translate( 'Email me new comments' ) }
-							<FormToggle
+							<CompactFormToggle
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
-							/>
+								id="reader-site-notification-settings__email-comments"
+							>
+								{ translate( 'Email me new comments' ) }
+							</CompactFormToggle>
 						</div>
 					) }
 				</ReaderPopover>
@@ -249,16 +260,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		subscribeToNewPostEmail,
-		unsubscribeToNewPostEmail,
-		updateNewPostEmailSubscription,
-		subscribeToNewCommentEmail,
-		unsubscribeToNewCommentEmail,
-		subscribeToNewPostNotifications,
-		unsubscribeToNewPostNotifications,
-		recordTracksEvent,
-	}
-)( localize( ReaderSiteNotificationSettings ) );
+export default connect( mapStateToProps, {
+	subscribeToNewPostEmail,
+	unsubscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
+	recordTracksEvent,
+} )( localize( ReaderSiteNotificationSettings ) );

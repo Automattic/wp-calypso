@@ -1,5 +1,4 @@
 /**
- * @format
  *
  * Needed for store test
  */
@@ -20,5 +19,5 @@ const reduxState = {
 	},
 };
 
-export const reduxDispatch = action => action;
+export const reduxDispatch = ( action ) => action;
 export const reduxGetState = () => reduxState;

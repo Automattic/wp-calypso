@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow strings which include only placeholders
+ * @file Disallow strings which include only placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -25,14 +24,14 @@ const getCallee = require( '../util/get-callee' ),
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg ) {
+			node.arguments.forEach( function ( arg ) {
 				let value = getTextContentFromNode( arg );
 				if ( 'string' !== typeof value ) {
 					return;

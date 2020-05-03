@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -23,7 +21,7 @@ import 'state/data-layer/wpcom/email-forwarding/get';
 import 'state/data-layer/wpcom/email-forwarding/remove';
 import 'state/data-layer/wpcom/email-forwarding/resend-email-verification';
 
-export const getEmailForwards = domainName => {
+export const getEmailForwards = ( domainName ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST,
 		domainName,

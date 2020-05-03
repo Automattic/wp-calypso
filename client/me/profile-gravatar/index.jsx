@@ -44,7 +44,4 @@ function ProfileGravatar( props ) {
 	);
 }
 
-export default connect(
-	null,
-	{ recordGravatarMisclick }
-)( ProfileGravatar );
+export default connect( null, { recordGravatarMisclick } )( ProfileGravatar );

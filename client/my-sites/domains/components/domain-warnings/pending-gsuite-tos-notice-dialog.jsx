@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -10,11 +10,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import Dialog from 'components/dialog';
 import { errorNotice } from 'state/notices/actions';
 import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
 import VerticalNav from 'components/vertical-nav';
@@ -66,26 +65,30 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		);
 	};
 
-	const onPasswordClick = event => {
+	const onPasswordClick = ( event ) => {
 		event.preventDefault();
 
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
-			data => {
+			( data ) => {
 				setPassword( data.password );
 			},
 			() => {
-				props.errorNotice( translate( 'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.', {
-						args: {
-							gsuiteEmail: props.user,
-						},
-						components: {
-							link: <a href={ CALYPSO_CONTACT } />,
-						},
-					}
-				) );
+				props.errorNotice(
+					translate(
+						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
+						{
+							args: {
+								gsuiteEmail: props.user,
+							},
+							components: {
+								link: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+					)
+				);
 
 				setOpenTracked( false );
 				props.onClose();
@@ -210,10 +213,7 @@ const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		trackEvent,
-	}
-)( PendingGSuiteTosNoticeDialog );
+export default connect( null, {
+	errorNotice,
+	trackEvent,
+} )( PendingGSuiteTosNoticeDialog );

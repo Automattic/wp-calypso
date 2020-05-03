@@ -9,7 +9,7 @@ import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
-import { hasGSuite } from '.';
+import { hasGSuiteWithUs } from '.';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -108,7 +108,7 @@ const validateOverallEmailAgainstExistingEmails = (
  * Clear all previous errors from all fields on a User
  */
 const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
-	return users.map( user => mapValues( user, field => removePreviousErrors( field ) ) );
+	return users.map( ( user ) => mapValues( user, ( field ) => removePreviousErrors( field ) ) );
 };
 
 /*
@@ -116,7 +116,7 @@ const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
  */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
-	mailboxesByCount: { [mailbox: string]: number }
+	mailboxesByCount: { [ mailbox: string ]: number }
 ) => ( {
 	value: mailBox,
 	error:
@@ -129,7 +129,7 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
-	const mailboxesByCount: { [mailbox: string]: number } = countBy(
+	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
 	);
 
@@ -150,7 +150,7 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
  */
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
-	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
+	const { domain, mailBox, firstName, lastName } = mapValues( user, ( field ) =>
 		requiredField( field )
 	);
 
@@ -167,7 +167,7 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
  */
 const validateUsers = (
 	users: GSuiteNewUser[],
-	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = user => user
+	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = ( user ) => user
 ) => {
 	// 1. scrub all previous errors with clearPreviousErrors
 	// 2. first check for uniqueness with validateNewUsersAreUnique
@@ -241,14 +241,14 @@ const getItemsForCart = (
 	productSlug: string,
 	users: GSuiteNewUser[]
 ) => {
-	const usersGroupedByDomain: { [domain: string]: GSuiteProductUser[] } = mapValues(
+	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
-		groupedUsers => groupedUsers.map( transformUserForCart )
+		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
-		return domainInfo && hasGSuite( domainInfo )
+		return domainInfo && hasGSuiteWithUs( domainInfo )
 			? googleAppsExtraLicenses( {
 					domain,
 					users: groupedUsers,

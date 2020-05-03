@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -59,7 +58,7 @@ class PaymentMethodBACS extends Component {
 		};
 	}
 
-	getAccountData = props => {
+	getAccountData = ( props ) => {
 		const {
 			method: { settings },
 		} = props || this.props;
@@ -77,11 +76,11 @@ class PaymentMethodBACS extends Component {
 			  };
 	};
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
 	};
 
-	onEditAccountHandler = e => {
+	onEditAccountHandler = ( e ) => {
 		const newValue = {};
 		newValue[ e.target.name ] = e.target.value;
 		const newAccount = Object.assign( {}, this.getAccountData(), newValue );

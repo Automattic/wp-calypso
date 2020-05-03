@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -75,7 +73,7 @@ class EditorActionBar extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const multiUserSite = isSingleUserSite( state, siteId ) === false;
 	const postId = getEditorPostId( state );

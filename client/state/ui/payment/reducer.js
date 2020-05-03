@@ -7,7 +7,7 @@ import { find, get, has } from 'lodash';
  * Internal dependencies
  */
 import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'state/action-types';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { paymentCountryCodeSchema, paymentPostalCodeSchema } from './schema';
 
 /**
@@ -26,59 +26,69 @@ export const extractStoredCardMetaValue = ( action, meta_key ) =>
 /**
  * Returns the updated state after a country code has been set.
  *
- * @param  {Object} state - The current global state.
- * @param  {Object} action - The action object containing the new country code.
- * @return {Object} - The updated global state.
+ * @param  {object} state - The current global state.
+ * @param  {object} action - The action object containing the new country code.
+ * @returns {object} - The updated global state.
  */
-export const countryCode = createReducerWithValidation(
-	null,
-	{
-		[ PAYMENT_COUNTRY_CODE_SET ]: ( state, action ) => action.countryCode,
-		[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: ( state, action ) =>
-			has( action, 'rawDetails.country' ) ? get( action, 'rawDetails.country', null ) : state,
-		[ 'FLUX_TRANSACTION_PAYMENT_SET' ]: ( state, action ) => {
-			const { payment } = action;
-			if ( has( payment, 'newCardDetails' ) ) {
-				return get( payment, 'newCardDetails.country', null );
+export const countryCode = withSchemaValidation(
+	paymentCountryCodeSchema,
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case PAYMENT_COUNTRY_CODE_SET:
+				return action.countryCode;
+			case 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET':
+				return has( action, 'rawDetails.country' )
+					? get( action, 'rawDetails.country', null )
+					: state;
+			case 'FLUX_TRANSACTION_PAYMENT_SET': {
+				const { payment } = action;
+				if ( has( payment, 'newCardDetails' ) ) {
+					return get( payment, 'newCardDetails.country', null );
+				}
+				if ( has( payment, 'storedCard' ) ) {
+					return extractStoredCardMetaValue( action, 'country_code' ) || null;
+				}
+				return state;
 			}
-			if ( has( payment, 'storedCard' ) ) {
-				return extractStoredCardMetaValue( action, 'country_code' ) || null;
-			}
-			return state;
-		},
-	},
-	paymentCountryCodeSchema
+		}
+
+		return state;
+	}
 );
 
 /**
  * Returns the updated state after a postalCode has been set.
  *
- * @param  {Object} state - The current global state.
- * @param  {Object} action - The action object containing the new postalCode.
- * @return {Object} - The updated global state.
+ * @param  {object} state - The current global state.
+ * @param  {object} action - The action object containing the new postalCode.
+ * @returns {object} - The updated global state.
  */
-export const postalCode = createReducerWithValidation(
-	null,
-	{
-		[ PAYMENT_POSTAL_CODE_SET ]: ( state, action ) => action.postalCode,
-		[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: ( state, action ) =>
-			has( action, 'rawDetails.postal-code' )
-				? get( action, 'rawDetails.postal-code', null )
-				: state,
-		[ 'FLUX_TRANSACTION_PAYMENT_SET' ]: ( state, action ) => {
-			const { payment } = action;
-			if ( has( payment, 'newCardDetails' ) ) {
-				return get( payment, 'newCardDetails.postal-code', null );
-			}
+export const postalCode = withSchemaValidation(
+	paymentPostalCodeSchema,
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case PAYMENT_POSTAL_CODE_SET:
+				return action.postalCode;
+			case 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET':
+				return has( action, 'rawDetails.postal-code' )
+					? get( action, 'rawDetails.postal-code', null )
+					: state;
+			case 'FLUX_TRANSACTION_PAYMENT_SET': {
+				const { payment } = action;
+				if ( has( payment, 'newCardDetails' ) ) {
+					return get( payment, 'newCardDetails.postal-code', null );
+				}
 
-			if ( has( payment, 'storedCard' ) ) {
-				return extractStoredCardMetaValue( action, 'card_zip' ) || null;
-			}
+				if ( has( payment, 'storedCard' ) ) {
+					return extractStoredCardMetaValue( action, 'card_zip' ) || null;
+				}
 
-			return state;
-		},
-	},
-	paymentPostalCodeSchema
+				return state;
+			}
+		}
+
+		return state;
+	}
 );
 
 export default combineReducers( {

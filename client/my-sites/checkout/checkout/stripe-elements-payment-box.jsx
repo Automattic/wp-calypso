@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardPaymentBox from './credit-card-payment-box';
-import { withStripe } from 'lib/stripe';
-
-const CreditCardPaymentBoxWithStripe = withStripe( CreditCardPaymentBox );
+import { StripeHookProvider } from 'lib/stripe';
 
 export function StripeElementsPaymentBox( {
 	translate,
@@ -27,20 +23,22 @@ export function StripeElementsPaymentBox( {
 	cards,
 } ) {
 	return (
-		<CreditCardPaymentBoxWithStripe
-			translate={ translate }
-			cards={ cards }
-			transaction={ transaction }
-			cart={ cart }
-			countriesList={ countriesList }
-			initialCard={ initialCard }
-			selectedSite={ selectedSite }
-			onSubmit={ onSubmit }
-			transactionStep={ transaction.step }
-			presaleChatAvailable={ presaleChatAvailable }
-		>
-			{ children }
-		</CreditCardPaymentBoxWithStripe>
+		<StripeHookProvider>
+			<CreditCardPaymentBox
+				translate={ translate }
+				cards={ cards }
+				transaction={ transaction }
+				cart={ cart }
+				countriesList={ countriesList }
+				initialCard={ initialCard }
+				selectedSite={ selectedSite }
+				onSubmit={ onSubmit }
+				transactionStep={ transaction.step }
+				presaleChatAvailable={ presaleChatAvailable }
+			>
+				{ children }
+			</CreditCardPaymentBox>
+		</StripeHookProvider>
 	);
 }
 export default localize( StripeElementsPaymentBox );

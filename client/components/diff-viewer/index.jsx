@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { parsePatch } from 'diff';
  */
 import './style.scss';
 
-const decompose = path => {
+const decompose = ( path ) => {
 	const lastSlash = path.lastIndexOf( '/' );
 
 	return lastSlash > -1 ? [ path.slice( 0, lastSlash ), path.slice( lastSlash ) ] : [ '', path ];
@@ -34,7 +33,7 @@ const decompose = path => {
  *
  * @param {string} oldFileName filename of left contents
  * @param {string} newFileName filename of right contents
- * @return {Element} description of the file or files in the diff
+ * @returns {Element} description of the file or files in the diff
  */
 const filename = ( { oldFileName, newFileName } ) => {
 	// if we think the diff utility added a bogus

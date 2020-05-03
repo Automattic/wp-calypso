@@ -4,19 +4,11 @@ Custom ESLint rules for the [WordPress.com Calypso project](https://github.com/a
 
 ## Installation
 
-You'll first need to install [ESLint](http://eslint.org):
+Install [ESLint](http://eslint.org) amd `eslint-plugin-wpcalypso`
 
 ```
-$ npm install eslint --save-dev
+$ yarn add --dev eslint eslint-plugin-wpcalypso
 ```
-
-Next, install `eslint-plugin-wpcalypso`:
-
-```
-$ npm install eslint-plugin-wpcalypso --save-dev
-```
-
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-wpcalypso` globally.
 
 ## Usage
 

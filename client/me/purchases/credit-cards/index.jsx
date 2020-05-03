@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,13 +10,13 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import config from 'config';
 import CreditCard from 'components/credit-card';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
+	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
 } from 'state/stored-cards/selectors';
@@ -32,12 +30,12 @@ import SectionHeader from 'components/section-header';
 import './credit-cards.scss';
 
 class CreditCards extends Component {
-	renderCards() {
+	renderCards( cards ) {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return <div className="credit-cards__no-results">{ this.props.translate( 'Loading…' ) }</div>;
 		}
 
-		if ( ! this.props.cards.length ) {
+		if ( ! cards.length ) {
 			return (
 				<div className="credit-cards__no-results">
 					{ this.props.translate( 'You have no saved cards.' ) }
@@ -45,7 +43,7 @@ class CreditCards extends Component {
 			);
 		}
 
-		return this.props.cards.map( card => {
+		return cards.map( ( card ) => {
 			return (
 				<CreditCard key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
@@ -65,7 +63,7 @@ class CreditCards extends Component {
 
 		return (
 			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
-				{ this.props.translate( 'Add Credit Card' ) }
+				{ this.props.translate( 'Add credit card' ) }
 			</Button>
 		);
 	}
@@ -74,21 +72,29 @@ class CreditCards extends Component {
 		return (
 			<div className="credit-cards">
 				<QueryStoredCards />
-
 				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
 					{ this.renderAddCreditCardButton() }
 				</SectionHeader>
-
 				<Card>
-					<div>{ this.renderCards() }</div>
+					<div>{ this.renderCards( this.props.cards ) }</div>
 				</Card>
+
+				{ this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 && (
+					<>
+						<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) } />
+						<Card>
+							<div>{ this.renderCards( this.props.paymentAgreements ) }</div>
+						</Card>
+					</>
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	cards: getStoredCards( state ),
+	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 	isFetching: isFetchingStoredCards( state ),
 } ) )( localize( CreditCards ) );

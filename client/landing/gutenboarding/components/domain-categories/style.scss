@@ -1,0 +1,27 @@
+@import '../../mixins';
+
+.domain-categories__item {
+	.components-button {
+		color: var( --studio-gray-100 );
+		width: 100%;
+		text-align: left;
+
+		&:hover,
+		&:focus {
+			color: var( --studio-gray-100 );
+			box-shadow: none;
+			text-decoration: underline;
+		}
+	}
+
+	&.is-selected {
+		.components-button {
+			font-weight: 600;
+			text-decoration: underline;
+		}
+	}
+}
+
+html:not( .accessible-focus ) .domain-categories__item .components-button:focus {
+	box-shadow: none;
+}

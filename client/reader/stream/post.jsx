@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +21,7 @@ import QueryReaderPost from 'components/data/query-reader-post';
 class ReaderPostCardAdapter extends React.Component {
 	static displayName = 'ReaderPostCardAdapter';
 
-	onClick = postToOpen => {
+	onClick = ( postToOpen ) => {
 		let referredPost;
 		if ( get( this.props, 'discoverPost' ) ) {
 			referredPost = {

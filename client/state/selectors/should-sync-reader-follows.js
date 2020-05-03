@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import getReaderFollowsLastSyncTime from 'state/selectors/get-reader-follows-last-sync-time';
+import { getReaderFollowsLastSyncTime } from 'state/reader/follows/selectors';
 
 export const MS_BETWEEN_SYNCS = 1000 * 60 * 60; // one hour
 

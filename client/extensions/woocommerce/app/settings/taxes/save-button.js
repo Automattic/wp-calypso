@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -26,7 +24,7 @@ class TaxSettingsSaveButton extends Component {
 		onSave: PropTypes.func.isRequired,
 	};
 
-	onSave = e => {
+	onSave = ( e ) => {
 		const { onSave, finishedInitialSetup, site } = this.props;
 
 		let onSuccessExtra = null;

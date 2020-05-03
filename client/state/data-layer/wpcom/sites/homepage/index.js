@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { updateSiteFrontPage } from 'state/sites/actions';
 
-const updateSiteFrontPageRequest = action =>
+const updateSiteFrontPageRequest = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/homepage`,
@@ -31,7 +31,7 @@ const updateSiteFrontPageRequest = action =>
 const setSiteFrontPage = (
 	{ siteId },
 	{ is_page_on_front, page_on_front_id, page_for_posts_id }
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch(
 		bypassDataLayer(
 			updateSiteFrontPage( siteId, {

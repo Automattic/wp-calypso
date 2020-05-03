@@ -1,3 +1,16 @@
+5.0.0
+-----
+
+* Dependencies: Move `react` to `peerDependencies`. `i18n-calypso` no longer depends on `react` directly and consumers should install the dependency.
+* Breaking change: drop support for moment both in `i18n.moment` and `i18n.localize`. It's no longer desirable for moment to be a mandatory dependency of i18n-calypso.
+* Update debug to v4
+* Switch from Jed to Tannin, for smaller size as well as runtime speedups
+
+4.1.0
+-----
+
+* Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
+
 4.0.0
 -----
 
@@ -7,6 +20,7 @@
 * Add support for extracting strings from TypeScript.
 * Update dependency `lodash` to `^4.17.11`
 * Update `xgettext-js` to `^3.0.0`
+* Moved the CLI tool to separate package `i18n-calypso-cli`
 
 3.0.0
 ------

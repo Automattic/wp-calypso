@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -26,7 +25,7 @@ import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
@@ -112,7 +111,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( suggestion );
 	};
 
-	isUnavailableDomain = domain => {
+	isUnavailableDomain = ( domain ) => {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
@@ -194,9 +193,13 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
+			'domain-registration-suggestion__title-domain-copy-test':
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
+		} );
 
 		return (
-			<div className="domain-registration-suggestion__title-wrapper">
+			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
@@ -208,13 +211,22 @@ class DomainRegistrationSuggestion extends React.Component {
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 								'to host a website. When you host this domain at WordPress.com an SSL ' +
-								'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+								'certificate is included. {{a}}Learn more{{/a}}.',
 							{
 								args: {
 									tld: '.' + getTld( domain ),
 								},
 								components: {
-									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									a: (
+										<a
+											href={ HTTPS_SSL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ ( event ) => {
+												event.stopPropagation();
+											} }
+										/>
+									),
 									strong: <strong />,
 								},
 							}
@@ -238,7 +250,9 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = translate( 'Best Match' );
+			title = this.props.isEligibleVariantForDomainTest
+				? translate( 'Our Recommendation' )
+				: translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -255,6 +269,19 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
+			if ( this.props.isEligibleVariantForDomainTest ) {
+				const badgeClassName = classNames( '', {
+					success: isRecommended,
+					'info-blue': isBestAlternative,
+				} );
+
+				return (
+					<div className="domain-registration-suggestion__progress-bar">
+						<Badge type={ badgeClassName }>{ title }</Badge>
+					</div>
+				);
+			}
+
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
 					<ProgressBar { ...progressBarProps } />
@@ -265,6 +292,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
+		if ( this.props.isEligibleVariantForDomainTest ) {
+			return null;
+		}
+
 		const {
 			suggestion: { domain_name: domain },
 			isFeatured,
@@ -314,6 +345,9 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
+				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -327,15 +361,20 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
-		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
+		productSaleCost: getDomainSalePrice(
+			productSlug,
+			productsList,
+			currentUserCurrencyCode,
+			stripZeros
+		),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( DomainRegistrationSuggestion ) );
+export default connect( mapStateToProps, { recordTracksEvent } )(
+	localize( DomainRegistrationSuggestion )
+);

@@ -50,12 +50,8 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 	);
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	redirectNonJetpack()
-)( DisconnectSite );
+export default flowRight( connectComponent, localize, redirectNonJetpack() )( DisconnectSite );
