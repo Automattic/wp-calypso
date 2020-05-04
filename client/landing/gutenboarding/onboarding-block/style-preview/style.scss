@@ -309,7 +309,7 @@ $gutenboarding-style-preview-bar-height: 30px;
 	position: absolute;
 	top: 0;
 	width: 100%;
-	height: $gutenboarding-style-preview-bar-height;
+	height: $gutenboarding-style-preview-bar-height / 2;
 	background: var( --studio-white );
 	border-bottom: 1px solid var( --studio-gray-5 );
 	display: flex;
@@ -319,6 +319,7 @@ $gutenboarding-style-preview-bar-height: 30px;
 
 	@include break-small {
 		padding: 10px;
+		height: $gutenboarding-style-preview-bar-height;
 	}
 }
 
