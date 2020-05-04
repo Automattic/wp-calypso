@@ -87,7 +87,9 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 						entryActionClassNames( threat )
 					) }
 				>
-					<small>{ threat.status }</small>
+					<small>
+						{ threat.status === 'fixed' ? translate( 'fixed' ) : translate( 'ignored' ) }
+					</small>
 				</Badge>
 			</>
 		);
