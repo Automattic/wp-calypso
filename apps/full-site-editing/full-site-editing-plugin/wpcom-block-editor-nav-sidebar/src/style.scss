@@ -3,11 +3,11 @@ $headerHeight: 56px;
 $border: 1px solid #e2e4e7;
 $transitionPeriod: 500ms;
 
-.is-wpcom-block-editor-nav-sidebar-attached {
+.is-wpcom-block-editor-nav-sidebar-attached .edit-post-layout {
 	transition: margin-left $transitionPeriod;
 }
 
-.is-wpcom-block-editor-nav-sidebar-opened {
+.is-wpcom-block-editor-nav-sidebar-opened .edit-post-layout {
 	margin-left: $sidebarWidth;
 }
 

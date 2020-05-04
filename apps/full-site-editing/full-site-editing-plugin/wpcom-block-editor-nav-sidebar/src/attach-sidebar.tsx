@@ -43,17 +43,14 @@ async function findElement( selector: string, timeoutMs = 5000 ) {
 }
 
 async function attachSidebar() {
-	const editorLayoutContainer = await findElement( '.edit-post-layout' );
-	if ( ! editorLayoutContainer ) {
-		return;
-	}
-
 	const closePostButton = await findElement( '.edit-post-fullscreen-mode-close' );
 	if ( ! closePostButton ) {
 		return;
 	}
 
-	editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-attached' );
+	// Classes need to be attached to elements that aren't controlled by React,
+	// otherwise our alterations will be removed when React re-renders.
+	document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-attached' );
 
 	closePostButton.addEventListener( 'click', ( ev ) => {
 		ev.preventDefault();
@@ -70,9 +67,9 @@ async function attachSidebar() {
 		sidebarExpanded = newSidebarState;
 
 		if ( sidebarExpanded ) {
-			editorLayoutContainer.classList.add( 'is-wpcom-block-editor-nav-sidebar-opened' );
+			document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-opened' );
 		} else {
-			editorLayoutContainer.classList.remove( 'is-wpcom-block-editor-nav-sidebar-opened' );
+			document.body.classList.remove( 'is-wpcom-block-editor-nav-sidebar-opened' );
 		}
 	} );
 
