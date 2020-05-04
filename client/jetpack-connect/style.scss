@@ -1086,6 +1086,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			}
 		}
 
+		.login__form-change-username {
+			display: none;
+		}
+
 		.jetpack-connect__logged-in-card button {
 			border: 0;
 			box-shadow: none;
