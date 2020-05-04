@@ -112,7 +112,7 @@ export default {
 			variant: 100,
 			control: 0,
 		},
-		defaultVariation: 'variant',
+		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
 	domainStepPlanStepSwap: {
