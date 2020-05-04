@@ -58,6 +58,7 @@ import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import TextControl from 'extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
@@ -927,6 +928,7 @@ class SignupForm extends Component {
 		if (
 			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 				this.props.isJetpackWooCommerceFlow ) ||
+			this.props.isJetpackWooDnaFlow ||
 			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom )
@@ -1055,6 +1057,7 @@ export default connect(
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isJetpackWooDnaFlow: !! wooDnaConfig[ get( getCurrentQueryArguments( state ), 'from' ) ],
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
