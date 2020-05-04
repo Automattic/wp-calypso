@@ -53,6 +53,10 @@ $domain-picker__suggestion-item-height: 24px;
 	margin-bottom: 27px;
 }
 
+.domain-picker__header-group {
+	flex-grow: 1;
+}
+
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
@@ -252,5 +256,11 @@ $domain-picker__suggestion-item-height: 24px;
 		@include onboarding-medium-text;
 		color: var( --color-neutral-100 );
 		align-items: center;
+	}
+}
+
+.domain-picker__cancel-button {
+	&.components-button {
+		margin-left: 10px;
 	}
 }

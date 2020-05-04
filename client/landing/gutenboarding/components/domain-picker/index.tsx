@@ -51,6 +51,8 @@ export interface Props {
 	 */
 	onClose: () => void;
 
+	onCancel?: () => void;
+
 	onMoreOptions?: () => void;
 
 	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
@@ -70,6 +72,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onClose,
+	onCancel,
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
@@ -104,6 +107,20 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				{ ...props }
 			>
 				{ __( 'Confirm' ) }
+			</Button>
+		);
+	};
+
+	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
+		return (
+			<Button
+				className="domain-picker__cancel-button"
+				onClick={ () => {
+					onCancel && onCancel();
+				} }
+				{ ...props }
+			>
+				{ __( 'Cancel' ) }
 			</Button>
 		);
 	};
@@ -158,6 +175,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 						</div>
 						<ConfirmButton />
+						<CancelButton />
 						<CloseButton
 							className="domain-picker__close-button"
 							onClick={ onClose }
@@ -225,6 +243,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							{ __( 'More Options' ) }
 						</Button>
 						<ConfirmButton />
+						<CancelButton />
 					</div>
 				</PanelRow>
 			</PanelBody>
