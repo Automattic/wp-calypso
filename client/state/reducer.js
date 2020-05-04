@@ -88,6 +88,7 @@ import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
 import timezones from './timezones/reducer';
+import titanUsers from './titan-users/reducer';
 import ui from './ui/reducer';
 import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
@@ -174,6 +175,7 @@ const reducers = {
 	support,
 	terms,
 	timezones,
+	titanUsers,
 	ui,
 	userDevices,
 	userProfileLinks,

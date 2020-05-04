@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -21,9 +22,12 @@ import {
 	hasGSuiteWithUs,
 	isGSuiteRestricted,
 } from 'lib/gsuite';
+import { hasTitanWithUs } from 'lib/titan';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
+import getTitanUsers from 'state/selectors/get-titan-users';
 import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import hasLoadedTitanUsers from 'state/selectors/has-loaded-titan-users';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -40,6 +44,7 @@ import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers }
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import QueryTitanUsers from 'components/data/query-titan-users';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -58,10 +63,12 @@ class EmailManagement extends React.Component {
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
 		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
+		hasTitanUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		titanUsers: PropTypes.array,
 	};
 
 	render() {
@@ -81,6 +88,9 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
+				{ config.isEnabled( 'email/titan/enabled' ) && selectedSiteId && (
+					<QueryTitanUsers siteId={ selectedSiteId } />
+				) }
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
@@ -119,16 +129,22 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
+		const {
+			domains,
+			hasTitanUsersLoaded,
+			hasGSuiteUsersLoaded,
+			hasSiteDomainsLoaded,
+			selectedDomainName,
+		} = this.props;
 
-		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
+		if ( ! hasTitanUsersLoaded || ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
 		}
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
-			return this.googleAppsUsersCard();
+		if ( domainList.some( ( domain ) => hasGSuiteWithUs( domain ) || hasTitanWithUs( domain ) ) ) {
+			return this.emailUsersCard();
 		}
 
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
@@ -215,7 +231,7 @@ class EmailManagement extends React.Component {
 		};
 	}
 
-	googleAppsUsersCard() {
+	emailUsersCard() {
 		const { domains, gsuiteUsers, selectedDomainName } = this.props;
 
 		return (
@@ -272,7 +288,9 @@ export default connect( ( state ) => {
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		hasTitanUsersLoaded: hasLoadedTitanUsers( state, selectedSiteId ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		titanUsers: getTitanUsers( state, selectedSiteId ),
 	};
 }, {} )( localize( EmailManagement ) );
