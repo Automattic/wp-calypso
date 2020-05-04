@@ -38,7 +38,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 				className="domain-categories__dropdown-button"
 				onClick={ () => setIsOpen( ! isOpen ) }
 			>
-				<span>{ ! selected ? 'All Categories' : selected }</span>
+				<span>{ ! selected ? __( 'All Categories' ) : selected }</span>
 				<Icon icon="arrow-down-alt2" size={ 12 }></Icon>
 			</Button>
 			<ul className="domain-categories__item-group">
