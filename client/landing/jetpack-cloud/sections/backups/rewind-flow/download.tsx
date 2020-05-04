@@ -62,7 +62,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a downloadable backup. ',
 					{
 						args: {
 							backupDisplayDate,
@@ -166,9 +166,23 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download error"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">
-				{ translate( 'An error occurred while creating your download' ) }
+			<h3 className="rewind-flow__title error">
+				{ translate( 'Download failed: %s', {
+					args: [ backupDisplayDate ],
+				} ) }
 			</h3>
+			<p className="rewind-flow__info">
+				{ translate(
+					'An error occurred while creating your downloadable backup. Please {{button}}try your download again{{/button}} or contact our support team to resolve the issue.',
+					{
+						components: {
+							button: (
+								<Button className="rewind-flow__error-retry-button" onClick={ requestDownload } />
+							),
+						},
+					}
+				) }
+			</p>
 			<Button
 				className="rewind-flow__primary-button"
 				href={ contactSupportUrl( siteUrl, 'error' ) }
