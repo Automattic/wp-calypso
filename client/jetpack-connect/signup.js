@@ -268,6 +268,7 @@ export class JetpackSignup extends Component {
 		const footerLinks = [];
 		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
 		const wooDna = this.getWooDnaConfig();
+		let pageTitle;
 
 		if ( this.state.showWooDnaLoginForm ) {
 			if ( isFullLoginFormVisible ) {
@@ -281,6 +282,7 @@ export class JetpackSignup extends Component {
 						},
 					}
 				);
+				pageTitle = translate( 'Login to WordPress.com' );
 				footerLinks.push(
 					<LoggedOutFormLinkItem key="signup" onClick={ this.showWooDnaSignupView }>
 						{ this.props.translate( 'Create a new account' ) }
@@ -300,10 +302,12 @@ export class JetpackSignup extends Component {
 			} else {
 				header = wooDna.name( translate );
 				subHeader = translate( 'Enter your email address to get started' );
+				pageTitle = translate( 'Connect' );
 			}
 		} else {
 			header = wooDna.name( translate );
 			subHeader = translate( 'Create an account' );
+			pageTitle = translate( 'Create a WordPress.com account' );
 			footerLinks.push(
 				<LoggedOutFormLinkItem key="login" onClick={ () => this.showWooDnaLoginView() }>
 					{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
@@ -346,7 +350,7 @@ export class JetpackSignup extends Component {
 		}
 
 		return (
-			<MainWrapper wooDna={ wooDna }>
+			<MainWrapper wooDna={ wooDna } pageTitle={ wooDna.name( translate ) + ' — ' + pageTitle }>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<FormattedHeader headerText={ header } subHeaderText={ subHeader } />
