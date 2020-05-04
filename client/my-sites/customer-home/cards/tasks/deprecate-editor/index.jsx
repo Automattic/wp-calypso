@@ -33,14 +33,17 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	};
 	return (
 		<Task
-			title={ translate( 'The Block Editor is coming.' ) }
+			title={ translate( 'The new WordPress editor is coming.' ) }
 			description={ preventWidows(
 				translate(
-					'Get a head start before we enable it for everyone on {{strong}}{{date}}{{/date}}{{/strong}}. {{support}}{{/support}}',
+					'Get a head start before we activate it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
 					{
 						components: {
-							strong: <strong />,
-							date: <FormattedDate date="2020-06-01" format="MMMM D" />,
+							date: (
+								<strong>
+									<FormattedDate date="2020-06-01" format="MMMM D" />
+								</strong>
+							),
 							support: (
 								<InlineSupportLink
 									supportPostId={ 165338 }
@@ -48,7 +51,6 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 										'https://wordpress.com/support/block-editor-is-coming'
 									) }
 									showIcon={ false }
-									text={ translate( 'Read more' ) }
 									tracksEvent="calypso_customer_home_editor_deprecate_support_page_view"
 									statsGroup="calypso_customer_home"
 									statsName="editor_deprecate_learn_more"
@@ -58,11 +60,11 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 					}
 				)
 			) }
-			actionText={ translate( 'Switch to the Block Editor' ) }
+			actionText={ translate( 'Use the WordPress editor' ) }
 			actionOnClick={ actionCallback }
 			illustration={ blockEditorImage }
 			badgeText={ translate( "What's new" ) }
-			taskId="deprecate-editor"
+			taskId="editor-deprecation"
 			enableSkipOptions={ false }
 		/>
 	);
