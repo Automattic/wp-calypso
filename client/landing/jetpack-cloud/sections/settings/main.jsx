@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import RewindCredentialsForm from './components/rewind-credentials-form';
+import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 import { Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -47,7 +47,7 @@ class SettingsPage extends Component {
 								<ExternalLink
 									className="settings__link-external"
 									icon
-									href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/"
+									href="https://jetpack.com/support/adding-credentials-to-jetpack/"
 								/>
 							),
 						},
@@ -84,13 +84,13 @@ class SettingsPage extends Component {
 
 				{ ! isInitialized && <div className="settings__is-uninitialized" /> }
 
-				<RewindCredentialsForm
-					{ ...{
-						allowCancel: false,
-						role: 'main',
-						siteId,
-						showNotices: false,
+				<ServerCredentialsForm
+					role="main"
+					siteId={ siteId }
+					labels={ {
+						save: translate( 'Save credentials' ),
 					} }
+					showCancelButton={ false }
 				/>
 			</Main>
 		);

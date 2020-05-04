@@ -36,6 +36,7 @@ const ServerCredentialsForm = ( {
 	form,
 	formErrors,
 	labels = {},
+	showCancelButton = true,
 } ) => {
 	React.useEffect( () => {
 		// I'm letting the user jump to the next step even if the submission failed
@@ -164,13 +165,15 @@ const ServerCredentialsForm = ( {
 			</FormFieldset>
 
 			<FormFieldset className="dialog__action-buttons server-credentials-form__buttons">
-				<Button
-					disabled={ formIsSubmitting }
-					onClick={ onCancel }
-					className="server-credentials-form__btn server-credentials-form__btn--cancel"
-				>
-					{ labels.cancel || translate( 'Cancel' ) }
-				</Button>
+				{ showCancelButton && (
+					<Button
+						disabled={ formIsSubmitting }
+						onClick={ onCancel }
+						className="server-credentials-form__btn server-credentials-form__btn--cancel"
+					>
+						{ labels.cancel || translate( 'Cancel' ) }
+					</Button>
+				) }
 				<Button
 					primary
 					className="server-credentials-form__btn"
