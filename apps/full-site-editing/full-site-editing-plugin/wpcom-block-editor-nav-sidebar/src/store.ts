@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { apiFetch, controls } from '@wordpress/data-controls';
+import { apiFetch, controls, select as triggerSelect } from '@wordpress/data-controls';
 import { combineReducers, registerStore } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import type { Reducer } from 'redux';
@@ -14,7 +14,7 @@ import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import { actions, Action } from './actions';
 import { STORE_KEY } from './constants';
 
-export interface Page {
+export interface Post {
 	id: number;
 	slug: string;
 	status: string;
@@ -31,9 +31,9 @@ const opened: Reducer< boolean, Action > = ( state = false, action ) => {
 	}
 };
 
-const pages: Reducer< Page[], Action > = ( state = [], action ) => {
+const pages: Reducer< Post[], Action > = ( state = [], action ) => {
 	switch ( action.type ) {
-		case 'RECEIVE_PAGE_LIST':
+		case 'RECEIVE_POST_LIST':
 			return action.response.map( ( { id, slug, status, title } ) => ( {
 				id,
 				slug,
@@ -51,23 +51,28 @@ const reducer = combineReducers( { opened, pages } );
 type State = ReturnType< typeof reducer >;
 
 const resolvers = {
-	getPages: function* () {
+	getNavItems: function* () {
+		const currentPostType = yield triggerSelect( 'core/editor', 'getCurrentPostType' );
+		const postType = yield triggerSelect( 'core', 'getPostType', currentPostType );
+
+		const path = `/wp/v2/${ postType.rest_base }`;
+
 		try {
 			const response = yield apiFetch( {
-				path: addQueryArgs( '/wp/v2/pages', {
+				path: addQueryArgs( path, {
 					_fields: 'id,slug,status,title',
 				} ),
 			} );
 
-			yield actions.receivePageList( response );
+			yield actions.receivePostList( response );
 		} catch ( error ) {
-			yield actions.receivePageListFailed( error );
+			yield actions.receivePostListFailed( error );
 		}
 	},
 };
 
 const selectors = {
-	getPages: ( state: State ) => state.pages,
+	getNavItems: ( state: State ) => state.pages,
 	isSidebarOpened: ( state: State ) => state.opened,
 };
 

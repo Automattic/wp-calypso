@@ -77,8 +77,8 @@ async function attachSidebar() {
 	document.body.appendChild( sidebarContainer );
 	render( <WpcomBlockEditorNavSidebar />, sidebarContainer );
 
-	// Start resolving page data
-	select( STORE_KEY ).getPages();
+	// Start resolving sidebar items
+	select( STORE_KEY ).getNavItems();
 }
 
 attachSidebar();

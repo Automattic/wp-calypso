@@ -1,12 +1,12 @@
-const receivePageList = ( response: any[] ) =>
+const receivePostList = ( response: any[] ) =>
 	( {
-		type: 'RECEIVE_PAGE_LIST',
+		type: 'RECEIVE_POST_LIST',
 		response,
 	} as const );
 
-const receivePageListFailed = ( error: object ) =>
+const receivePostListFailed = ( error: object ) =>
 	( {
-		type: 'RECEIVE_PAGE_LIST_FAILED',
+		type: 'RECEIVE_POST_LIST_FAILED',
 		error,
 	} as const );
 
@@ -16,11 +16,11 @@ const toggleSidebar = () =>
 	} as const );
 
 export const actions = {
-	receivePageList,
-	receivePageListFailed,
+	receivePostList,
+	receivePostListFailed,
 	toggleSidebar,
 };
 
 export type Action = ReturnType<
-	typeof receivePageList | typeof receivePageListFailed | typeof toggleSidebar
+	typeof receivePostList | typeof receivePostListFailed | typeof toggleSidebar
 >;

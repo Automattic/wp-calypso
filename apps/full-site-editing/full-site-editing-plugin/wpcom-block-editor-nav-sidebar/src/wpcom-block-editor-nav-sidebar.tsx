@@ -14,7 +14,7 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import type { Page } from './store';
+import type { Post } from './store';
 
 const Button = ( {
 	children,
@@ -24,12 +24,12 @@ const Button = ( {
 );
 
 export default function WpcomBlockEditorNavSidebar() {
-	const [ pages, isOpen, postType ] = useSelect( ( select ) => {
+	const [ items, isOpen, postType ] = useSelect( ( select ) => {
 		const { getCurrentPostType } = select( 'core/editor' );
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
-			select( STORE_KEY ).getPages(),
+			select( STORE_KEY ).getNavItems(),
 			select( STORE_KEY ).isSidebarOpened(),
 			getPostType( getCurrentPostType() ),
 		];
@@ -62,20 +62,20 @@ export default function WpcomBlockEditorNavSidebar() {
 				</Button>
 			</div>
 			<ul className="wpcom-block-editor-nav-sidebar__page-list">
-				{ pages.map( ( page ) => (
-					<PageItem key={ page.id } page={ page } />
+				{ items.map( ( item ) => (
+					<NavItem key={ item.id } item={ item } />
 				) ) }
 			</ul>
 		</div>
 	);
 }
 
-interface PageItemProps {
-	page: Page;
+interface NavItemProps {
+	item: Post;
 }
 
-function PageItem( props: PageItemProps ) {
-	const { slug, title } = props.page;
+function NavItem( props: NavItemProps ) {
+	const { slug, title } = props.item;
 
 	return (
 		<li>
