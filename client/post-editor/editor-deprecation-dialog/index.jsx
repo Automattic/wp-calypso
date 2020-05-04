@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * WordPress dependencies
@@ -18,12 +17,12 @@ import { Button, Modal } from '@wordpress/components';
 import isEditorDeprecationDialogShowing from 'state/selectors/is-editor-deprecation-dialog-showing';
 import { hideEditorDeprecationDialog } from 'state/ui/editor-deprecation-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import { composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { addQueryArgs } from 'lib/url';
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
 import FormattedDate from 'components/formatted-date';
@@ -40,7 +39,7 @@ class EditorDeprecationDialog extends Component {
 		translate: PropTypes.func,
 		gutenbergUrl: PropTypes.string,
 		hideDialog: PropTypes.func,
-		logTryNow: PropTypes.func,
+		optIn: PropTypes.func,
 		logNotNow: PropTypes.func,
 		siteId: PropTypes.number,
 		isDialogShowing: PropTypes.bool,
@@ -52,12 +51,10 @@ class EditorDeprecationDialog extends Component {
 		hideDialog();
 	};
 
-	trialGutenberg = () => {
-		const { gutenbergUrl, logTryNow, hideDialog } = this.props;
-		logTryNow();
+	optInToGutenberg = () => {
+		const { gutenbergUrl, optIn, siteId, hideDialog } = this.props;
 		hideDialog();
-
-		page.redirect( gutenbergUrl );
+		optIn( siteId, gutenbergUrl );
 	};
 
 	render() {
@@ -103,7 +100,7 @@ class EditorDeprecationDialog extends Component {
 						}
 					) }
 				</p>
-				<Button onClick={ this.trialGutenberg } isPrimary>
+				<Button onClick={ this.optInToGutenberg } isPrimary>
 					{ translate( 'Try it out' ) }
 				</Button>
 				<Button onClick={ this.notNow } isLink>
@@ -115,14 +112,15 @@ class EditorDeprecationDialog extends Component {
 }
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	logTryNow: () => {
+	optIn: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_editor_deprecation_dialog', {
 						opt_in: true,
 					} )
-				)
+				),
+				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
 			)
 		);
 	},
@@ -150,6 +148,6 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		isDialogShowing,
-		gutenbergUrl: addQueryArgs( { 'trial-editor': 1 }, gutenbergUrl ),
+		gutenbergUrl: gutenbergUrl,
 	};
 }, mapDispatchToProps )( localize( EditorDeprecationDialog ) );
