@@ -41,9 +41,6 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
-= 1.2 =
-* Premium Content block.
-
 = 1.1 =
 * New block patterns.
 * Performance and style improvements.

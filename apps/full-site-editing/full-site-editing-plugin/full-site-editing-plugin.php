@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 1.2
+ * Version: 1.1
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -251,7 +251,6 @@ function load_block_patterns() {
 	Block_Patterns::get_instance();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
-
 
 /**
  * Load Premium Content Block
