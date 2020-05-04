@@ -16,9 +16,6 @@ import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-crede
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 
-// This is an experiment. I'm 100% sure this is not the right place to put a HOC.
-// I don't like its name either. The idea is to put all the logic here so we can
-// then have the UI we want without having to rewrite this.
 function withServerCredentialsForm( WrappedComponent ) {
 	const ServerCredentialsFormClass = class ServerCredentialsForm extends Component {
 		static propTypes = {
