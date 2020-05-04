@@ -90,7 +90,9 @@ const DesignSelector: React.FunctionComponent = () => {
 								<img
 									alt=""
 									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignUrl( design ) }
+									style={ {
+										backgroundImage: `url( ${ getDesignUrl( design ) } )`,
+									} }
 								/>
 							</span>
 							<span className="design-selector__option-overlay">
