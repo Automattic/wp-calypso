@@ -37,6 +37,7 @@ export const CheckoutProvider = ( props ) => {
 		showSuccessMessage,
 		theme,
 		paymentMethods,
+		paymentProcessors,
 		registry,
 		onEvent,
 		isLoading,
@@ -82,6 +83,7 @@ export const CheckoutProvider = ( props ) => {
 			formStatus,
 			setFormStatus,
 			transactionStatusManager,
+			paymentProcessors,
 		} ),
 		[
 			formStatus,
@@ -93,6 +95,7 @@ export const CheckoutProvider = ( props ) => {
 			showInfoMessage,
 			showSuccessMessage,
 			transactionStatusManager,
+			paymentProcessors,
 		]
 	);
 
@@ -144,6 +147,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showInfoMessage,
 		showSuccessMessage,
 		paymentMethods,
+		paymentProcessors,
 	} = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
@@ -153,6 +157,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
 		validateLineItems( items );
+		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
 		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
@@ -164,6 +169,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		onPaymentComplete,
 		paymentMethods,
+		paymentProcessors,
 		propsToValidate,
 		showErrorMessage,
 		showInfoMessage,
