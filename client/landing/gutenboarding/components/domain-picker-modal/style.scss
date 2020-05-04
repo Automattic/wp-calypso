@@ -84,6 +84,11 @@
 			bottom: 0;
 			background: var( --studio-white );
 		}
+
+		// Space to accomodate sticky footer
+		.domain-picker__panel-row-main {
+			margin-bottom: 85px;
+		}
 	}
 
 	.domain-picker__search {
