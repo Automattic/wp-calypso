@@ -242,8 +242,10 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
  * @return void
  */
 function premium_content_paywall_initialize() {
-	 $paywall = premium_content_subscription_service();
-	$paywall->initialize();
+	$paywall = premium_content_subscription_service();
+	if ( $paywall ) {
+		$paywall->initialize();
+	}
 }
 
 /**
@@ -274,7 +276,7 @@ function premium_content_default_service( $service ) {
 		return new Jetpack_Token_Subscription_Service();
 	}
 
-	return null;
+	return new Unconfigured_Paywall();
 }
 
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
