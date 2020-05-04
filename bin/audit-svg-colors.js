@@ -52,9 +52,11 @@ const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) =
 	if ( colorValue === '#000' ) {
 		return;
 	}
-	// Don’t use Simplenote Blue or WooCommerce Purple for any WordPress.com images
+	// Don’t use brand colors for any WordPress.com app images
 	return ! (
-		_.startsWith( colorName, 'Simplenote Blue' ) || _.startsWith( colorName, 'WooCommerce Purple' )
+		_.startsWith( colorName, 'Simplenote Blue' ) ||
+		_.startsWith( colorName, 'WooCommerce Purple' ) ||
+		_.startsWith( colorName, 'WordPress Blue' )
 	);
 } );
 
@@ -89,7 +91,7 @@ const SVG_IGNORE_PATHS = [
 	/^static\/images\/me/,
 
 	// Images that seem to be based on a completely different set of colors
-	/illustration-+(?:task-connect-social-accounts|webinars)\.svg$/,
+	/customer-home\/illustration-+(?:task|webinars)/,
 ];
 
 // The image paths that match the following patterns will use `PALETTE_APP_COLORS`,
