@@ -40,6 +40,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -149,7 +150,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
-		this.props.onContactDetailsChange?.( { ...newContactDetails } );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		}
 	};
 
 	needsOrganization() {
@@ -173,9 +177,11 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	getCiraAgreementAcceptedErrorMessage() {
-		const explicitError =
-			this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
-		return explicitError !== '' ? explicitError : this.props.translate( 'Required' );
+		if ( this.props.isManaged ) {
+			return this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
+		}
+
+		return this.props.translate( 'Required' );
 	}
 
 	renderOrganizationField() {
