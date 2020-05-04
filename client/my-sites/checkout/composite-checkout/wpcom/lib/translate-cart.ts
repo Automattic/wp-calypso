@@ -139,10 +139,19 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
-	const label = isPlan( serverCartItem ) ? product_name || '' : meta;
-	const sublabel = isPlan( serverCartItem )
-		? String( translate( 'Plan Subscription' ) )
-		: product_name || '';
+	let label;
+	let sublabel;
+	if ( isPlan( serverCartItem ) ) {
+		label = product_name || '';
+		sublabel = String( translate( 'Plan Subscription' ) );
+	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
+		label = product_name || '';
+		sublabel = '';
+	} else {
+		label = meta;
+		sublabel = product_name || '';
+	}
+
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
 	return {
