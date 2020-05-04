@@ -13,10 +13,9 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 import isRecentlyMigratedSite from 'state/selectors/is-site-recently-migrated';
 
-export default async function ( context, next ) {
-	const state = await context.store.getState();
-	const siteId = await getSelectedSiteId( state );
-
+export default function ( context, next ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
