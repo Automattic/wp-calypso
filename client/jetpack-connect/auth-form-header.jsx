@@ -25,6 +25,7 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWoo: PropTypes.bool,
+		wooDna: PropTypes.object,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -46,11 +47,15 @@ export class AuthFormHeader extends Component {
 			return 'logged-in-success';
 		}
 
+		if ( authorize.isAuthorizing ) {
+			return 'auth-in-progress';
+		}
+
 		return 'logged-in';
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo } = this.props;
+		const { translate, partnerSlug, isWoo, wooDna } = this.props;
 
 		let host = '';
 		switch ( partnerSlug ) {
@@ -89,6 +94,10 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
+		if ( wooDna ) {
+			return wooDna.name( translate );
+		}
+
 		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
@@ -101,7 +110,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo } = this.props;
+		const { translate, isWoo, wooDna } = this.props;
 		const currentState = this.getState();
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
@@ -112,6 +121,16 @@ export class AuthFormHeader extends Component {
 					);
 				default:
 					return translate( "Once connected we'll continue setting up your store" );
+			}
+		}
+
+		if ( wooDna ) {
+			switch ( currentState ) {
+				case 'logged-in-success':
+				case 'auth-in-progress':
+					return translate( 'Connecting your store' );
+				default:
+					return translate( 'Approve your connection' );
 			}
 		}
 
