@@ -12,6 +12,11 @@ import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Task from '../task';
 
+/**
+ * Image dependencies
+ */
+import findDomainIllustration from 'assets/images/customer-home/illustration--task-find-domain.svg';
+
 const FindDomain = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
@@ -25,7 +30,7 @@ const FindDomain = ( { siteSlug } ) => {
 			) }
 			actionText={ translate( 'Find a domain' ) }
 			actionUrl={ `/domains/add/${ siteSlug }` }
-			illustration="/calypso/images/stats/tasks/social-links.svg"
+			illustration={ findDomainIllustration }
 			timing={ 10 }
 			taskId="find-domain"
 		/>
