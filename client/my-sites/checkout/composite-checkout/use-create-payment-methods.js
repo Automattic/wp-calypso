@@ -31,7 +31,6 @@ import {
 	submitFreePurchaseTransaction,
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
-	submitApplePayPayment,
 	submitExistingCardPayment,
 } from './payment-method-helpers';
 
@@ -246,25 +245,6 @@ function useCreateApplePay( {
 		isApplePayAvailable,
 	] );
 	return applePayMethod;
-}
-
-export function applePayProcessor( submitData ) {
-	const pending = submitApplePayPayment(
-		{
-			...submitData,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( select ),
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-		},
-		wpcomTransaction
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
 }
 
 function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeConfiguration } ) {
