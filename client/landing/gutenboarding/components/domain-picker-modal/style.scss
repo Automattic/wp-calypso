@@ -66,6 +66,26 @@
 		display: none;
 	}
 
+	// Show confirm button on fixed footer on mobile view
+	@media ( max-width: $break-medium ) {
+
+		.domain-picker__header .domain-picker__confirm-button {
+			display: none;
+		}
+
+		.domain-picker__footer {
+			flex-direction: row-reverse;
+		}
+
+		.domain-picker__panel-row-footer {
+			display: block;
+			position: fixed;
+			width: 100%;
+			bottom: 0;
+			background: var( --studio-white );
+		}
+	}
+
 	.domain-picker__search {
 		margin-bottom: 60px;
 
