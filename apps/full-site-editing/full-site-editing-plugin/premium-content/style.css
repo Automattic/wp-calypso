@@ -29,6 +29,7 @@
 	border-width: 4px;
 }
 
+.premium-content-logged-out-view-button.wp-block-button .wp-block-button__link,
 .wp-block-premium-content-logged-out-view__buttons .wp-block-button .wp-block-button__link {
 	min-width: 200px;
 	margin-right: 20px;

@@ -80,6 +80,7 @@
 		"@wordpress/i18n": "*",
 		"@wordpress/keycodes": "*",
 		"@wordpress/plugins": "*",
+		"@wordpress/rich-text": "*",
 		"@wordpress/url": "*",
 		"classnames": "2.2.6",
 		"lodash": "*",
