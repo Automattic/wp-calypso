@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import Support from 'my-sites/customer-home/cards/features/support';
+import QuickStart from 'my-sites/customer-home/cards/features/quick-start';
 import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links-compact';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links-compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -19,6 +20,7 @@ const cardComponents = {
 	'home-feature-go-mobile': GoMobile,
 	'home-feature-support': Support,
 	'home-action-quick-links': QuickLinks,
+	'home-feature-quick-start': QuickStart,
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 };
 

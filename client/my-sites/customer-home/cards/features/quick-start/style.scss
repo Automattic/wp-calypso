@@ -1,0 +1,24 @@
+.quick-start p,
+.quick-start .happiness-engineers-tray,
+.quick-start table {
+	margin-bottom: 1.1rem;
+}
+
+.quick-start th {
+	color: var( --color-text-subtle );
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.quick-start__reschedule.is-borderless,
+.quick-start__reschedule.is-borderless:visited {
+	color: var( --color-link );
+	margin: 7px 14px 9px;
+	padding: 0;
+}
+
+.quick-start__placeholder {
+	@include placeholder();
+	width: 100px;
+	max-width: 80%;
+}
