@@ -222,6 +222,7 @@ function useCreateApplePay( {
 	const shouldLoadApplePay = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
 		: isApplePayAvailable;
+
 	const applePayMethod = useMemo( () => {
 		if (
 			! shouldLoadApplePay ||
@@ -234,29 +235,7 @@ function useCreateApplePay( {
 		) {
 			return null;
 		}
-		return createApplePayMethod( {
-			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			registerStore,
-			submitTransaction: ( submitData ) => {
-				const pending = submitApplePayPayment(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( ( result ) => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-			stripe,
-			stripeConfiguration,
-		} );
+		return createApplePayMethod( stripe, stripeConfiguration );
 	}, [
 		shouldLoadApplePay,
 		isApplePayLoading,
@@ -267,6 +246,25 @@ function useCreateApplePay( {
 		isApplePayAvailable,
 	] );
 	return applePayMethod;
+}
+
+export function applePayProcessor( submitData ) {
+	const pending = submitApplePayPayment(
+		{
+			...submitData,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( select ),
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+		},
+		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
 }
 
 function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeConfiguration } ) {
