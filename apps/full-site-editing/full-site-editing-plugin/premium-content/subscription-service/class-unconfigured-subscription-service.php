@@ -13,17 +13,16 @@ use function site_url;
 class Unconfigured_Subscription_Service implements Subscription_Service {
 
 	/**
-	 * Is always avaialble because it is the fallback.
+	 * Is always available because it is the fallback.
 	 *
-	 * @return boolean
+	 * @inheritDoc
 	 */
 	public static function available() {
 		return true;
 	}
 
 	/**
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	function initialize() {
 		// noop
@@ -32,8 +31,7 @@ class Unconfigured_Subscription_Service implements Subscription_Service {
 	/**
 	 * No subscription service available, no users can see this content.
 	 *
-	 * @param int[] $valid_plan_ids
-	 * @return boolean
+	 * @inheritDoc
 	 */
 	function visitor_can_view_content( $valid_plan_ids ) {
 		return false;
@@ -42,8 +40,7 @@ class Unconfigured_Subscription_Service implements Subscription_Service {
 	/**
 	 * The current visitor would like to obtain access. Where do they go?
 	 *
-	 * @param  ('subscribe'|'login') $mode
-	 * @return string
+	 * @inheritDoc
 	 */
 	function access_url( $mode = 'subscribe' ) {
 		return site_url();
