@@ -39,11 +39,13 @@ export function useTransactionStatusManager() {
 		[]
 	);
 	const setTransactionRedirecting = useCallback(
-		() => dispatch( { type: 'STATUS_SET', payload: { status: 'redirecting' } } ),
+		( response ) =>
+			dispatch( { type: 'STATUS_SET', payload: { status: 'redirecting', response } } ),
 		[]
 	);
 	const setTransactionAuthorizing = useCallback(
-		() => dispatch( { type: 'STATUS_SET', payload: { status: 'authorizing' } } ),
+		( response ) =>
+			dispatch( { type: 'STATUS_SET', payload: { status: 'authorizing', response } } ),
 		[]
 	);
 
@@ -82,7 +84,7 @@ function transactionStatusReducer( state, action ) {
 			return {
 				...state,
 				transactionStatus: status,
-				transactionResponse: response,
+				transactionLastResponse: response,
 				transactionError: error,
 			};
 		}
