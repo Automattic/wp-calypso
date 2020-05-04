@@ -602,6 +602,7 @@ export class CheckoutThankYou extends React.Component {
 					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
+					purchases={ purchases }
 				>
 					{ ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
