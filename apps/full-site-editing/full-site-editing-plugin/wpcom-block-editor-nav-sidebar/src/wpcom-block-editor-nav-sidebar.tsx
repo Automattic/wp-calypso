@@ -39,7 +39,9 @@ export default function WpcomBlockEditorNavSidebar() {
 	const [ isClosing, setIsClosing ] = useState( false );
 
 	useEffect( () => {
-		if ( ! isOpen ) {
+		if ( isOpen ) {
+			document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-close-hidden' );
+		} else {
 			setIsClosing( true );
 		}
 	}, [ isOpen, setIsClosing ] );
@@ -68,8 +70,9 @@ export default function WpcomBlockEditorNavSidebar() {
 							toggleSidebar();
 						} }
 						onAnimationEnd={ ( ev: any ) => {
-							if ( ev.animationName === 'wpcom-block-editor-nav-sidebar__button-grow' ) {
+							if ( ev.animationName === 'wpcom-block-editor-nav-sidebar__grow' ) {
 								setIsClosing( false );
+								document.body.classList.remove( 'is-wpcom-block-editor-nav-sidebar-close-hidden' );
 							}
 						} }
 					/>
