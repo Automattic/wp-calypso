@@ -135,6 +135,10 @@ function premium_content_current_visitor_can_access( $attributes ) {
  * @psalm-suppress InvalidArgument
  */
 function premium_content_container_render( $attributes, $content ) {
+	// If Jetpack is not yet configured, don't show anything ...
+	if ( ! class_exists( '\Jetpack_Memberships' ) ) {
+		return '';
+	}
 	// if stripe not connected don't show anything...
 	if ( empty( \Jetpack_Memberships::get_connected_account_id() ) ) {
 		return '';

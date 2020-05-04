@@ -19,7 +19,7 @@ interface Subscription_Service {
 	 *
 	 * @return boolean
 	 */
-	function available();
+	static function available();
 
 	/**
 	 * Allows a Subscription Service to setup anything it needs to provide its features.
