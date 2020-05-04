@@ -1,5 +1,5 @@
 {
-	"plugins": [ "./full-site-editing-plugin", "../../../gutenberg" ],
+	"plugins": [ "./dev-plugin", "./full-site-editing-plugin", "../../../gutenberg" ],
 	"themes": [ "../../../themes/varia", "../../../themes/maywood" ],
 	"port": 4013,
 	"testsPort": 4005
