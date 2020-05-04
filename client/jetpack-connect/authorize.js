@@ -618,18 +618,6 @@ export class JetpackAuthorize extends Component {
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const { blogname, redirectAfterAuth } = this.props.authQuery;
-		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{
-					// translators: eg: Return to The WordPress.com Blog
-					translate( 'Return to %(sitename)s', {
-						args: { sitename: decodeEntities( blogname ) },
-					} )
-				}
-			</LoggedOutFormLinkItem>
-		);
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
@@ -637,7 +625,7 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+				{ this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isJetpack: true,
@@ -656,6 +644,24 @@ export class JetpackAuthorize extends Component {
 					<HelpButton />
 				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
+		);
+	}
+
+	renderBackToWpAdminLink() {
+		const { translate } = this.props;
+		const { blogname, redirectAfterAuth } = this.props.authQuery;
+
+		if ( ! this.isWaitingForConfirmation() ) {
+			return null;
+		}
+		return (
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
+				{ // translators: eg: Return to The WordPress.com Blog
+				translate( 'Return to %(sitename)s', {
+					args: { sitename: decodeEntities( blogname ) },
+				} ) }
+			</LoggedOutFormLinkItem>
 		);
 	}
 
