@@ -129,10 +129,10 @@ references:
     paths:
       - ~/.cache/yarn
   yarn-e2e-install: &yarn-e2e-install
-    name: Install e2e yarn dependencies
+    name: Install e2e npm dependencies
     command: |
       cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
+      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
