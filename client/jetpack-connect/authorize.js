@@ -630,6 +630,10 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
+		if ( this.getWooDnaConfig() ) {
+			return this.renderWooDnaFooterLinks();
+		}
+
 		return (
 			<LoggedOutFormLinks>
 				{ this.renderBackToWpAdminLink() }
@@ -650,6 +654,32 @@ export class JetpackAuthorize extends Component {
 				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
 					<HelpButton />
 				</JetpackConnectHappychatButton>
+			</LoggedOutFormLinks>
+		);
+	}
+
+	renderWooDnaFooterLinks() {
+		const { translate } = this.props;
+		const { name, helpUrl } = this.getWooDnaConfig();
+		/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
+		const helpButtonLabel = translate( 'Get help setting up %(pluginName)s', {
+			args: {
+				pluginName: name( translate ),
+			},
+		} );
+
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+					{ translate( 'Create a new account or connect as a different user' ) }
+				</LoggedOutFormLinkItem>
+				<JetpackConnectHappychatButton
+					eventName="calypso_jpc_authorize_chat_initiated"
+					label={ helpButtonLabel }
+				>
+					<HelpButton label={ helpButtonLabel } url={ helpUrl } />
+				</JetpackConnectHappychatButton>
+				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
 		);
 	}
