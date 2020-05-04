@@ -1,3 +1,9 @@
+.external-link .gridicon.gridicons-external {
+	fill: currentColor;
+	width: 18px;
+	height: 18px;
+}
+
 .card.is-compact.settings__connected,
 .card.is-compact.settings__disconnected {
 	display: flex;
@@ -16,6 +22,12 @@
 	height: 100px;
 	margin-bottom: 32px;
 	@include placeholder( --color-neutral-10 );
+}
+
+.settings__link-external {
+	display: block;
+	margin-top: 16px;
+	font-style: italic;
 }
 
 .settings__disconnected .gridicon {

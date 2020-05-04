@@ -17,6 +17,7 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ExternalLink from 'components/external-link';
 
 /**
  * Style dependencies
@@ -39,7 +40,18 @@ class SettingsPage extends Component {
 		const content = isConnected
 			? translate( 'One-click restores are enabled.' )
 			: translate(
-					'Enter your server credentials to enable one-click restores for Backups. Find your server credentials.'
+					'Enter your server credentials to enable one-click restores for Backups. {{a}}Find your server credentials{{/a}}',
+					{
+						components: {
+							a: (
+								<ExternalLink
+									className="settings__link-external"
+									icon
+									href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/"
+								/>
+							),
+						},
+					}
 			  );
 
 		return (
