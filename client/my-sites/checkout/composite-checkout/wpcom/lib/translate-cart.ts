@@ -143,12 +143,13 @@ function translateReponseCartProductToWPCOMCartItem(
 	const sublabel = isPlan( serverCartItem )
 		? String( translate( 'Plan Subscription' ) )
 		: product_name || '';
+	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
 	return {
 		id: uuid,
 		label,
 		sublabel,
-		type: product_slug,
+		type,
 		amount: {
 			currency: currency || '',
 			value: item_subtotal_integer || 0,
