@@ -24,7 +24,7 @@ const schema = {
 
 export const quickLinksToggleStatus = withSchemaValidation(
 	schema,
-	( state = 'collapsed', action ) => {
+	( state = 'expanded', action ) => {
 		switch ( action.type ) {
 			case HOME_QUICK_LINKS_EXPAND:
 				return 'expanded';
