@@ -21,8 +21,8 @@ import {
 } from 'landing/jetpack-cloud/components/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
-import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
 
 /**
  * Style dependencies
@@ -49,8 +49,13 @@ const ScanError = () => (
 );
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
-	const [ fixingThreats, setFixingThreats ] = React.useState< Array< Threat > >( [] );
-	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >( threats[ 0 ] );
+	const {
+		updatingThreats,
+		selectedThreat,
+		setSelectedThreat,
+		fixThreats,
+		updateThreat,
+	} = useThreats( site.ID );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
@@ -89,7 +94,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			setActionToPerform( action );
 			setShowThreatDialog( true );
 		},
-		[ dispatch, site ]
+		[ dispatch, setSelectedThreat, site ]
 	);
 
 	const closeDialog = React.useCallback( () => {
@@ -97,33 +102,14 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	}, [] );
 
 	const confirmAction = React.useCallback( () => {
-		const eventName =
-			actionToPerform === 'fix' ? 'calypso_scan_threat_fix' : 'calypso_scan_threat_ignore';
-		dispatch(
-			recordTracksEvent( eventName, {
-				site_id: site.ID,
-				threat_signature: selectedThreat.signature,
-			} )
-		);
-		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
-		setFixingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
-		dispatch( actionCreator( site.ID, selectedThreat.id, true ) );
-	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
+		updateThreat( actionToPerform );
+	}, [ actionToPerform, closeDialog, updateThreat ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
-		dispatch(
-			recordTracksEvent( `calypso_scan_all_threats_fix`, {
-				site_id: site.ID,
-				threats_number: allFixableThreats.length,
-			} )
-		);
-		allFixableThreats.forEach( ( threat ) => {
-			dispatch( fixThreatAlert( site.ID, threat.id ) );
-		} );
 		setShowFixAllThreatsDialog( false );
-		setFixingThreats( allFixableThreats );
-	}, [ allFixableThreats, dispatch, site ] );
+		fixThreats( allFixableThreats );
+	}, [ allFixableThreats, fixThreats ] );
 
 	return (
 		<>
@@ -169,7 +155,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							primary
 							className="scan-threats__fix-all-threats-button"
 							onClick={ openFixAllThreatsDialog }
-							disabled={ fixingThreats.length === threats.length }
+							disabled={ updatingThreats.length === threats.length }
 						>
 							{ translate( 'Fix all' ) }
 						</Button>
@@ -181,8 +167,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						threat={ threat }
 						onFixThreat={ () => openDialog( 'fix', threat ) }
 						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
+						isFixing={ !! updatingThreats.find( ( t ) => t.id === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
+						isPlaceholder={ false }
 					/>
 				) ) }
 			</div>

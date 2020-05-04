@@ -61,9 +61,9 @@ class ThreatDescription extends React.PureComponent< Props > {
 				{ fix && (
 					<p className="threat-description__section-title">
 						<strong>
-							{ status === 'current'
-								? translate( 'How we will fix it?' )
-								: translate( 'How did Jetpack fix it?' ) }
+							{ status === 'fixed'
+								? translate( 'How did Jetpack fix it?' )
+								: translate( 'How we will fix it?' ) }
 						</strong>
 					</p>
 				) }
