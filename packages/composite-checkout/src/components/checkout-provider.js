@@ -15,6 +15,7 @@ import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -55,6 +56,7 @@ export const CheckoutProvider = ( props ) => {
 	}, [ paymentMethods, prevPaymentMethods ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
@@ -79,6 +81,7 @@ export const CheckoutProvider = ( props ) => {
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
+			transactionStatusManager,
 		} ),
 		[
 			formStatus,
@@ -89,6 +92,7 @@ export const CheckoutProvider = ( props ) => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
+			transactionStatusManager,
 		]
 	);
 
