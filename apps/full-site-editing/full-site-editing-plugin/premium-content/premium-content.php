@@ -20,6 +20,7 @@ use A8C\FSE\Earn\PremiumContent\Premium_Content_Dom;
 use A8C\FSE\Earn\PremiumContent\SubscriptionService\{
 	Subscription_Service,
 	Jetpack_Token_Subscription_Service,
+	Unconfigured_Subscription_Service,
 	WPCOM_Token_Subscription_Service
 };
 
@@ -276,7 +277,7 @@ function premium_content_default_service( $service ) {
 		return new Jetpack_Token_Subscription_Service();
 	}
 
-	return new Unconfigured_Paywall();
+	return new Unconfigured_Subscription_Service();
 }
 
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );

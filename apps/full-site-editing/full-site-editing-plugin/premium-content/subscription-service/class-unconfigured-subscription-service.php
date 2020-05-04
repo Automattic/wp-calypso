@@ -17,7 +17,7 @@ class Unconfigured_Subscription_Service implements Subscription_Service {
 	 *
 	 * @return boolean
 	 */
-	public static function avaiable() {
+	public static function available() {
 		return true;
 	}
 
