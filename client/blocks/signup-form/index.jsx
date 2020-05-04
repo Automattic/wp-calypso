@@ -954,9 +954,11 @@ class SignupForm extends Component {
 						) }
 					</LoggedOutForm>
 
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
-					</LoggedOutFormLinkItem>
+					{ this.props.footerLink || (
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+						</LoggedOutFormLinkItem>
+					) }
 				</div>
 			);
 		}
