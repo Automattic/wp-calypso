@@ -22,6 +22,7 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
+import SearchPurchase from './search';
 import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
@@ -163,6 +164,31 @@ export function connect( context, next ) {
 	next();
 }
 
+// Purchase Jetpack Search
+export function purchase( context, next ) {
+	const { path, pathname, params, query } = context;
+	const { type = false, interval } = params;
+	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	planSlug && storePlan( planSlug );
+	recordPageView( pathname, analyticsPageTitle );
+
+	removeSidebar( context );
+
+	context.primary = (
+		<SearchPurchase
+			ctaFrom={ query.cta_from /* origin tracking params */ }
+			ctaId={ query.cta_id /* origin tracking params */ }
+			locale={ params.locale }
+			path={ path }
+			type={ type }
+			url={ query.url }
+		/>
+	);
+	next();
+}
+
 export function instructions( context, next ) {
 	recordPageView( 'jetpack/connect/instructions', 'Jetpack Manual Install Instructions' );
 
@@ -212,6 +238,7 @@ export function authorizeForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;

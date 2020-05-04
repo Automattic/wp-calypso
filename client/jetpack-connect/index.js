@@ -25,10 +25,19 @@ export default function () {
 	const locale = getLanguageRouteParam( 'locale' );
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
+		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup)/:interval(yearly|monthly)?',
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/jetpack/connect/:type(jetpack_search)/:interval(yearly|monthly)?',
+		controller.persistMobileAppFlow,
+		controller.setMasterbar,
+		controller.purchase,
 		makeLayout,
 		clientRender
 	);
