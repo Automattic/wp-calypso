@@ -110,7 +110,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
@@ -285,7 +285,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
@@ -706,7 +706,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
