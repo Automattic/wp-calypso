@@ -344,17 +344,13 @@ export class Checkout extends React.Component {
 
 		let redirectTo = '/plans/';
 
-		if ( returnToBlockEditor ) {
-			page.redirect( `/block-editor/page/${ selectedSiteSlug }/home` );
-			return true;
-		}
-
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl(
 				this.state.previousCart,
 				selectedSiteSlug,
 				this.props.upgradeIntent,
-				this.props.redirectTo
+				this.props.redirectTo,
+				returnToBlockEditor
 			);
 		}
 

@@ -68,8 +68,18 @@ export function getValidDeepRedirectTo( redirectTo ) {
 	}
 }
 
-export function getExitCheckoutUrl( cart, siteSlug, upgradeIntent, redirectTo ) {
+export function getExitCheckoutUrl(
+	cart,
+	siteSlug,
+	upgradeIntent,
+	redirectTo,
+	returnToBlockEditor
+) {
 	let url = '/plans/';
+
+	if ( returnToBlockEditor ) {
+		return `/block-editor/page/${ siteSlug }/home`;
+	}
 
 	if ( hasRenewalItem( cart ) ) {
 		const { purchaseId, purchaseDomain } = getRenewalItems( cart )[ 0 ].extra,
