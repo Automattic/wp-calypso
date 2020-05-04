@@ -24,10 +24,6 @@ export function createApplePayMethod( {
 	stripeConfiguration,
 } ) {
 	const actions = {
-		setStripeComplete( payload ) {
-			debug( 'stripe transaction is successful' );
-			return { type: 'STRIPE_TRANSACTION_END', payload };
-		},
 		resetTransaction() {
 			debug( 'resetting transaction' );
 			return { type: 'STRIPE_TRANSACTION_RESET' };
