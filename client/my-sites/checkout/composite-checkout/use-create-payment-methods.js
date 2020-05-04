@@ -23,7 +23,6 @@ import {
 	makePayPalExpressRequest,
 	wpcomPayPalExpress,
 	getDomainDetails,
-	sendStripeTransaction,
 	wpcomTransaction,
 	submitCreditsTransaction,
 	WordPressCreditsLabel,
@@ -96,26 +95,7 @@ function useCreateStripe( {
 		? onlyLoadPaymentMethods.includes( 'card' )
 		: true;
 	const shouldLoadStripeMethod = isStripeMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo(
-		() =>
-			createStripePaymentMethodStore( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
-				getDomainDetails: () => getDomainDetails( select ),
-				submitTransaction: ( submitData ) => {
-					const pending = sendStripeTransaction( submitData, wpcomTransaction );
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( ( result ) => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[]
-	);
+	const stripePaymentMethodStore = useMemo( () => createStripePaymentMethodStore(), [] );
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
