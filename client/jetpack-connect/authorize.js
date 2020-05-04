@@ -617,6 +617,7 @@ export class JetpackAuthorize extends Component {
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { from } = this.props.authQuery;
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
@@ -630,7 +631,7 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						isWoo: this.isWooOnboarding(),
+						from,
 					} ) }
 					onClick={ this.handleSignIn }
 				>

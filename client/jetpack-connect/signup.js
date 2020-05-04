@@ -92,7 +92,7 @@ export class JetpackSignup extends Component {
 		const emailAddress = this.props.authQuery.userEmail;
 		return login( {
 			emailAddress,
-			isWoo: this.isWoo(),
+			from: this.props.authQuery.from,
 			isJetpack: true,
 			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
