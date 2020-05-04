@@ -81,6 +81,7 @@ class DocumentHead extends Component {
 
 DocumentHead.propTypes = {
 	title: TranslatableString,
+	formattedTitle: TranslatableString,
 	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,
@@ -91,8 +92,8 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
-		formattedTitle: getDocumentHeadFormattedTitle( state ),
+	( state, props ) => ( {
+		formattedTitle: props.formattedTitle || getDocumentHeadFormattedTitle( state ),
 	} ),
 	{
 		setTitle,
