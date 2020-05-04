@@ -62,6 +62,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
+	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
@@ -99,6 +100,35 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the Personal plan when hidePersonalPlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_ECOMMERCE ],
+			hidePersonalPlan: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> removing the Premium plan when hidePremiumPlan prop is present, regardless of its position', () => {
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes: [ TYPE_BUSINESS, TYPE_PREMIUM, TYPE_ECOMMERCE ],
+			hidePremiumPlan: true,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+	} );
+	test( 'Should render <PlanFeatures /> with the Personal plan and the Premium plan when hidePersonalPlan and hidePremiumPlan are false.', () => {
+		const planTypes = [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_ECOMMERCE ];
+		const instance = new PlansFeaturesMain( {
+			...props,
+			planTypes,
+			hidePersonalPlan: false,
+			hidePremiumPlan: false,
+		} );
+		const plans = instance.getPlansForPlanFeatures();
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_ECOMMERCE ] );
 	} );
 	test( 'Should render <PlanFeatures /> with Jetpack monthly plans when called with jetpack props', () => {
 		const instance = new PlansFeaturesMain( {
