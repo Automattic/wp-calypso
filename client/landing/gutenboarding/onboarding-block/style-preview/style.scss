@@ -148,14 +148,16 @@
 
 @supports ( display: grid ) {
 	.style-preview__content {
-		display: block;
+		display: grid;
 		width: 100%;
+		grid-template-areas: 'preview' 'fonts';
+		grid-template-columns: auto;
+		grid-template-rows: auto;
 
 		@include break-small {
-			display: grid;
-			grid-template-areas: 'fonts preview';
 			column-gap: 50px;
 			flex: 1;
+			grid-template-areas: 'fonts preview';
 			grid-template-columns: 163px auto;
 		}
 
@@ -227,25 +229,25 @@
 
 .style-preview__preview {
 	float: left;
-	height: 100%;
-	display: none;
+	width: 100%;
+	max-width: 100%;
+	height: calc( ( 100vw - 20px ) / 1.667 );
+	margin-bottom: 28px;
+	padding-left: 0;
 
 	@include break-small {
-		display: block;
-	}
-}
+		width: calc( 100% - 163px );
+		height: 100%;
+		margin: 0 auto;
+		padding-left: 100px;
 
-.style-preview__preview {
-	width: calc( 100% - 163px );
-	margin: 0 auto;
-	padding-left: 100px;
+		&.is-viewport-tablet {
+			max-width: 1024px;
+		}
 
-	&.is-viewport-tablet {
-		max-width: 1024px;
-	}
-
-	&.is-viewport-mobile {
-		max-width: 351px;
+		&.is-viewport-mobile {
+			max-width: 351px;
+		}
 	}
 }
 
@@ -267,7 +269,7 @@
 
 .style-preview__preview-wrapper {
 	background: var( --studio-white );
-	box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.1 );
+	box-shadow: 0 0 0 1px var( --studio-gray-5 );
 	border-radius: 4px;
 	overflow: hidden;
 	position: relative;
@@ -294,6 +296,10 @@
 	.is-viewport-mobile & {
 		padding-top: 691 / 351 * 100%;
 	}
+
+	@include break-small {
+		box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.1 );
+	}
 }
 
 $gutenboarding-style-preview-bar-height: 30px;
@@ -309,15 +315,24 @@ $gutenboarding-style-preview-bar-height: 30px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	padding: 10px;
+	padding: 5px;
+
+	@include break-small {
+		padding: 10px;
+	}
 }
 
 .style-preview__preview-bar-dot {
 	background: var( --studio-gray-5 );
-	width: 6px;
-	height: 6px;
+	width: 3px;
+	height: 3px;
 	border-radius: 50%;
 	margin: 0 2px;
+
+	@include break-small {
+		width: 6px;
+		height: 6px;
+	}
 }
 
 .style-preview__viewport-select {
