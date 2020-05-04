@@ -27,7 +27,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 	const { __ } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const handleSelect = ( domainCategory ) => {
+	const handleSelect = ( domainCategory: DomainCategory ) => {
 		setIsOpen( false );
 		onSelect( domainCategory );
 	};
