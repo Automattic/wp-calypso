@@ -76,7 +76,7 @@ class EditorDeprecationDialog extends Component {
 
 				<p className="editor-deprecation-dialog__subhead">
 					{ translate(
-						'Try the Block Editor now before we enable it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
+						'Get a head start before we enable it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
 						{
 							components: {
 								date: (
@@ -101,7 +101,7 @@ class EditorDeprecationDialog extends Component {
 					) }
 				</p>
 				<Button onClick={ this.optInToGutenberg } isPrimary>
-					{ translate( 'Try it out' ) }
+					{ translate( 'Use the Block Editor' ) }
 				</Button>
 				<Button onClick={ this.notNow } isLink>
 					{ translate( 'Not now' ) }
