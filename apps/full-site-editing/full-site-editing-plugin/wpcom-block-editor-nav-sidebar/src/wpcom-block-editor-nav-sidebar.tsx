@@ -2,13 +2,14 @@
 /**
  * External dependencies
  */
-import React from '@wordpress/element';
+import React, { useState, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -35,17 +36,42 @@ export default function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
+	const [ isClosing, setIsClosing ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isOpen ) {
+			setIsClosing( true );
+		}
+	}, [ isOpen, setIsClosing ] );
+
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 
 	return (
 		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
-			{ isOpen && (
+			{ ( isOpen || isClosing ) && (
 				<div className="wpcom-block-editor-nav-sidebar__header">
 					<Button
 						icon={ wordpress }
 						iconSize={ 36 }
-						className="wpcom-block-editor-nav-sidebar__is-shrinking"
-						onClick={ toggleSidebar }
+						className={ classNames( {
+							'wpcom-block-editor-nav-sidebar__is-shrinking': isOpen,
+							'wpcom-block-editor-nav-sidebar__is-growing': isClosing,
+						} ) }
+						onClick={ () => {
+							if ( isOpen ) {
+								// The `useEffect` above already takes care of setting isClose to true,
+								// but there's a flicker where isOpen and isClosing are both false for
+								// a brief moment in time. Setting isClose to true here too to avoid
+								// the flicker.
+								setIsClosing( true );
+							}
+							toggleSidebar();
+						} }
+						onAnimationEnd={ ( ev: any ) => {
+							if ( ev.animationName === 'wpcom-block-editor-nav-sidebar__button-grow' ) {
+								setIsClosing( false );
+							}
+						} }
 					/>
 				</div>
 			) }

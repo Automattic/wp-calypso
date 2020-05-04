@@ -45,6 +45,9 @@ $transitionPeriod: 500ms;
 		&.wpcom-block-editor-nav-sidebar__is-shrinking {
 			animation: wpcom-block-editor-nav-sidebar__button-shrink $transitionPeriod normal forwards;
 		}
+		&.wpcom-block-editor-nav-sidebar__is-growing {
+			animation: wpcom-block-editor-nav-sidebar__button-grow $transitionPeriod normal forwards;
+		}
 	}
 }
 
@@ -84,5 +87,14 @@ $transitionPeriod: 500ms;
 	}
 	100% {
 		scale: 55%;
+	}
+}
+
+@keyframes wpcom-block-editor-nav-sidebar__button-grow {
+	0% {
+		scale: 55%;
+	}
+	100% {
+		scale: 100%;
 	}
 }
