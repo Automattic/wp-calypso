@@ -50,6 +50,7 @@ describe( 'reducer', () => {
 			'isFormDisabled',
 			'isRequesting',
 			'isRequestingTwoFactorAuth',
+			'lastCheckedUsernameOrEmail',
 			'magicLogin',
 			'redirectTo',
 			'requestError',
