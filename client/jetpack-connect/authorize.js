@@ -711,8 +711,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const wooDna = this.getWooDnaConfig();
 		return (
-			<MainWrapper isWoo={ this.isWooOnboarding() }>
+			<MainWrapper
+				isWoo={ this.isWooOnboarding() }
+				wooDna={ wooDna }
+			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
