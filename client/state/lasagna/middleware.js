@@ -18,7 +18,7 @@ const jwtFetcher = ( jwtType, { params } ) => {
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: '/lasagna/jwt/sign',
-			body: { payload: params },
+			body: { jwt_type: jwtType, payload: params },
 		} )
 		.then( ( { jwt } ) => jwt );
 };
