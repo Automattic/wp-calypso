@@ -4,35 +4,33 @@
 # See https://stackoverflow.com/a/51060063
 # To use this, do `sed "${sedi[@]}" -e $sed_expression`
 sedi=(-i)
-case "$(uname)" in
+# macOS version of sed doesn't support `--version` param and exits with code 1
+sed --version > /dev/null 2>&1
+if [ $? -eq 1 ]
+then
 	# For macOS, use two parameters
-	Darwin*) sedi=(-i "")
-esac
+	sedi=(-i "")
+fi
 
-# try whether user passed --release
-if [ -n "$npm_config_release" ]
+# pick up value considering that the argument
+# has the --key=value shape.
+key_value=$(echo ${1} | cut -d'=' -f 2)
+# Set mode depending on first argument
+if [[ $1 =~ ^--release= ]]
 then
 	MODE=release
-	NAME=$npm_config_release
+	NAME=${key_value}
 	URL=https://github.com/Automattic/newspack-blocks/releases/download/$NAME/newspack-blocks.zip
-fi
-
-# try whether user passed --branch
-if [ -n "$npm_config_branch" ]
+elif [[ $1 =~ ^--branch= ]]
 then
 	MODE=branch
-	NAME=$npm_config_branch
+	NAME=${key_value}
 	URL=https://github.com/Automattic/newspack-blocks/archive/$NAME.zip
-fi
-
-# try whether user passed --path
-if [ -n "$npm_config_path" ]
+elif [[ $1 =~ ^--path= ]]
 then
 	MODE=path
-fi
-
+elif [[ $1 =~ ^--nodemodules ]]
 # try whether user passed --nodemodules
-if [ -n "$npm_config_nodemodules" ]
 then
 	MODE=npm
 fi
@@ -40,10 +38,12 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-    echo "Usage: yarn run sync:blog-posts-block [arguments]"
+    echo "Usage: yarn run sync:newspack-blocks [arguments]"
     echo
     echo Possible arguments:
     echo --branch=master
+    echo "--nodemodules (to use defined in package.json)"
+    echo "--path=/path/to/newspack-blocks"
     echo --release=1.0.0-alpha.17
     echo
     echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
@@ -51,8 +51,8 @@ then
     exit 1
 fi
 
-TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
-ENTRY=./full-site-editing-plugin/blog-posts-block/index.php
+TARGET=./full-site-editing-plugin/newspack-blocks/synced-newspack-blocks
+ENTRY=./full-site-editing-plugin/newspack-blocks/index.php
 
 if [[ ( "$MODE" != "path" ) && ( "$MODE" != "npm" ) ]];
 then
@@ -95,7 +95,7 @@ then
 		exit 1
 	fi
 elif [ "$MODE" = "path" ] ; then
-	CODE="${npm_config_path}"
+	CODE=${key_value}
 elif [ "$MODE" = "npm" ] ; then
 	# Way back to wp-calypso root:
 	CODE="../../node_modules/newspack-blocks"
@@ -120,6 +120,7 @@ mkdir -p $TARGET/shared
 cp $CODE/class-newspack-blocks-api.php $TARGET/
 cp $CODE/class-newspack-blocks.php $TARGET/
 cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
+cp -R $CODE/src/blocks/carousel $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 

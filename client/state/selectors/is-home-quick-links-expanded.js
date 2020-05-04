@@ -4,4 +4,4 @@
  * @param  {object}  state   Global state tree
  * @returns {object} Whether Quick Links are expanded
  */
-export default ( state ) => state.home?.quickLinksToggleStatus === 'expanded';
+export default ( state ) => state.home?.quickLinksToggleStatus !== 'collapsed';

@@ -225,7 +225,7 @@ function load_blog_posts_block() {
 		return;
 	}
 
-	require_once __DIR__ . '/blog-posts-block/index.php';
+	require_once __DIR__ . '/newspack-blocks/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 

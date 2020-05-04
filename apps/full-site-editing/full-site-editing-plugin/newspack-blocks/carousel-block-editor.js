@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
@@ -8,18 +8,17 @@ import { addFilter } from '@wordpress/hooks';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
- * NHA dependencies
+ * External dependencies
  */
-import { settings } from './newspack-homepage-articles/blocks/homepage-articles/index';
-import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage-articles/store';
+import { settings } from './synced-newspack-blocks/blocks/carousel/index';
 
 /**
  * Block name in the A8C\FSE context.
  */
-const blockName = 'a8c/blog-posts';
+const blockName = 'a8c/posts-carousel';
 
 function setBlockTransformationName( name ) {
-	return name !== 'newspack-blocks/homepage-articles' ? name : blockName;
+	return name !== 'newspack-blocks/carousel' ? name : blockName;
 }
 
 addFilter(
@@ -30,8 +29,6 @@ addFilter(
 
 registerBlockType( blockName, {
 	...settings,
-	title: __( 'Blog Posts', 'full-site-editing' ),
+	title: __( 'Posts Carousel', 'full-site-editing' ),
 	category: 'layout',
 } );
-
-registerQueryStore( blockName );
