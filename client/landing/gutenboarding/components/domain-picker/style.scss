@@ -1,6 +1,6 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
-@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+@import '../../../../assets/stylesheets/gutenberg-base-styles';
+@import '../../../../assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import '../../../../assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../mixins';
 
 $domain-picker__suggestion-item-height: 24px;
