@@ -213,6 +213,8 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
 			sitePlanSlug,
 		} = this.props;
 
@@ -269,6 +271,14 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
 		}
 
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
 			plans.splice( plans.indexOf( plans.filter( ( p ) => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
 		}
@@ -290,6 +300,11 @@ export class PlansFeaturesMain extends Component {
 
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
+	}
+
+	isPersonalCustomerTypePlanVisible() {
+		const { hidePersonalPlan, hidePremiumPlan } = this.props;
+		return ! hidePersonalPlan || ! hidePremiumPlan;
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
@@ -320,7 +335,7 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( customerType === 'personal' ) {
+		if ( customerType === 'personal' && this.isPersonalCustomerTypePlanVisible() ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
 			);
@@ -437,13 +452,14 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+
 		if ( this.isDisplayingPlansNeededForFeature() ) {
 			return null;
 		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( withWPPlanTabs && this.isPersonalCustomerTypePlanVisible() ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
@@ -556,6 +572,8 @@ PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
+	hidePersonalPlan: PropTypes.bool,
+	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
@@ -578,6 +596,8 @@ PlansFeaturesMain.propTypes = {
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
+	hidePersonalPlan: false,
+	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,

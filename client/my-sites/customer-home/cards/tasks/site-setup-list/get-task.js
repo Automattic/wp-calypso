@@ -43,27 +43,6 @@ const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) =
 	}
 };
 
-const getTaskActionText = ( task, { emailVerificationStatus } ) => {
-	switch ( task.id ) {
-		case 'email_verified':
-			if ( emailVerificationStatus === 'requesting' ) {
-				return translate( 'Sending…' );
-			}
-
-			if ( emailVerificationStatus === 'error' ) {
-				return translate( 'Error' );
-			}
-
-			if ( emailVerificationStatus === 'sent' ) {
-				return translate( 'Email sent' );
-			}
-
-			return task.actionText;
-		default:
-			return task.actionText;
-	}
-};
-
 const isTaskDisabled = (
 	task,
 	{ emailVerificationStatus, isDomainUnverified, isEmailUnverified }
@@ -131,7 +110,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,
-				actionDispatchArgs: [],
+				actionDispatchArgs: [ { showGlobalNotices: true } ],
 			};
 			break;
 		case 'blogname_set':
@@ -214,7 +193,6 @@ export const getTask = (
 	return {
 		...enhancedTask,
 		description: getTaskDescription( enhancedTask, { isDomainUnverified, isEmailUnverified } ),
-		actionText: getTaskActionText( enhancedTask, { emailVerificationStatus } ),
 		isDisabled: isTaskDisabled( enhancedTask, {
 			emailVerificationStatus,
 			isDomainUnverified,

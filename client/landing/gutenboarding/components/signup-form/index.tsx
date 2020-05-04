@@ -49,16 +49,14 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		const username_hint = siteTitle || siteVertical?.label;
+		const username_hint = siteTitle || siteVertical?.label || null;
 
 		const result = await createAccount( {
 			email: emailVal,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			...( username_hint && {
-				extra: { username_hint },
-			} ),
+			extra: { username_hint },
 			is_passwordless: false,
 		} );
 

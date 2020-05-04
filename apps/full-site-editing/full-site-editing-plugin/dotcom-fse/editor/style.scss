@@ -43,7 +43,8 @@
 		padding-left: 0;
 		padding-right: 0;
 
-		.block-editor-block-list__block[data-align='full'] {
+		.block-editor-block-list__block[data-align='full'],
+		.wp-block[data-align='full'] { // Gutenberg >= 8.0.0
 			margin-left: 0;
 			margin-right: 0;
 		}

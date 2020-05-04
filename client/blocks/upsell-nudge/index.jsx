@@ -18,6 +18,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -37,11 +38,11 @@ export const UpsellNudge = ( {
 	feature,
 	forceDisplay,
 	forceHref,
+	horizontal,
 	href,
 	icon,
 	isJetpackDevDocs,
 	jetpack,
-	horizontal,
 	isVip,
 	list,
 	onClick,
@@ -51,6 +52,7 @@ export const UpsellNudge = ( {
 	price,
 	showIcon = false,
 	site,
+	target,
 	title,
 	tracksClickName,
 	tracksClickProperties,
@@ -83,7 +85,7 @@ export const UpsellNudge = ( {
 
 	return (
 		<Banner
-			callToAction={ callToAction }
+			callToAction={ preventWidows( callToAction ) }
 			className={ classes }
 			compact={ compact }
 			customerType={ customerType }
@@ -103,6 +105,7 @@ export const UpsellNudge = ( {
 			plan={ plan }
 			price={ price }
 			showIcon={ showIcon }
+			target={ target }
 			title={ title }
 			tracksClickName={ tracksClickName }
 			tracksClickProperties={ tracksClickProperties }
