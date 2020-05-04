@@ -1043,6 +1043,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			text-decoration: underline;
 		}
 
+		.logged-out-form__links {
+			max-width: 400px;
+		}
+
 		.logged-out-form__link-item {
 			text-align: center;
 			text-decoration: underline;
@@ -1050,7 +1054,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			font-size: $font-body-small;
 		}
 
-		.signup-form__social {
+		.signup-form__social, .login__form-social {
 			padding-bottom: 0;
 			margin-top: 16px;
 			p {
@@ -1072,10 +1076,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				box-shadow: none;
 				max-width: 310px;
 				height: 48px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.card {
+				padding: 0;
+				box-shadow: none;
 			}
 		}
 
-		.logged-out-form__footer {
+		.logged-out-form__footer, .login__form-footer {
 			text-align: center;
 
 			.button {
@@ -1084,6 +1095,16 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-left: auto;
 				height: 48px;
 			}
+		}
+
+		.login__form-footer {
+			margin-top: 24px;
+		}
+
+		.login__form {
+			padding-top: 14px;
+			border-radius: 3px;
+			@include elevation( 2dp );
 		}
 
 		.login__form-change-username {
