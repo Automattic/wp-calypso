@@ -14,10 +14,20 @@ export interface CurrentUser {
 	language: string;
 
 	/**
+	 * The bootstraped user's locale slug, e.g. `es`.
+	 */
+	localeSlug: string;
+
+	/**
 	 * The user's locale variant, e.g. `es-mx`.
 	 * If there is no variant, `""` empty string is returned.
 	 */
 	locale_variant: string;
+
+	/**
+	 * The bootstrapped user's locale variant, e.g. `es-mx`.
+	 */
+	localeVariant: string;
 }
 
 export interface NewUser {

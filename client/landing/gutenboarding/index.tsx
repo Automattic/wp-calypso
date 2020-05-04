@@ -62,6 +62,7 @@ interface AppWindow extends Window {
 		add( callback: Function ): void;
 		getInstalledChunks(): string[];
 	};
+	BUILD_TARGET?: string;
 }
 declare const window: AppWindow;
 
@@ -158,6 +159,7 @@ async function getLocale(): Promise< [ string, object ] > {
 
 	// User without bootstrapped locale
 	const user = window.currentUser || ( await waitForCurrentUser() );
+
 	if ( ! user ) {
 		return [ DEFAULT_LOCALE_SLUG, {} ];
 	}
@@ -173,7 +175,7 @@ async function getLocaleData( locale: string ) {
 	}
 
 	if ( USE_TRANSLATION_CHUNKS ) {
-		const manifest = await getLanguageManifestFile( locale );
+		const manifest = await getLanguageManifestFile( locale, window.BUILD_TARGET );
 		const localeData = {
 			...manifest.locale,
 			translatedChunks: manifest.translatedChunks,
@@ -201,7 +203,7 @@ function waitForCurrentUser(): Promise< User | undefined > {
 }
 
 function getLocaleFromUser( user: User ): string {
-	return user.locale_variant || user.language;
+	return user.locale_variant || user.localeVariant || user.language || user.localeSlug;
 }
 
 function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
@@ -218,11 +220,14 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
-			setLocaleData( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
+			( translations ) => {
+				setLocaleData( translations );
+				loadedTranslationChunks[ chunkId ] = true;
+			}
+		);
 	};
+
 	const installedChunks = new Set(
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
 	);
