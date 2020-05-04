@@ -312,8 +312,8 @@ function InactiveOrderReview() {
 				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
 					return (
 						<ProductListItem key={ product.id }>
-							<ProductListItemLabel>{ product.label }</ProductListItemLabel>
-							<ProductListItemSublabel product={ product } />
+							<ProductListItemSublabel>{ product.sublabel }</ProductListItemSublabel>
+							<ProductListItemLabel product={ product } />
 						</ProductListItem>
 					);
 				} ) }
@@ -322,15 +322,15 @@ function InactiveOrderReview() {
 	);
 }
 
-function ProductListItemSublabel( { product } ) {
+function ProductListItemLabel( { product } ) {
 	if ( isLineItemADomain( product ) ) {
 		return (
-			<ProductListItemSublabelUI>
-				<strong>{ product.sublabel }</strong>
-			</ProductListItemSublabelUI>
+			<ProductListItemLabelUI>
+				<strong>{ product.label }</strong>
+			</ProductListItemLabelUI>
 		);
 	}
-	return <ProductListItemSublabelUI>{ product.sublabel }</ProductListItemSublabelUI>;
+	return <ProductListItemLabelUI>{ product.label }</ProductListItemLabelUI>;
 }
 
 function shouldItemBeInSummary( item ) {
@@ -390,21 +390,21 @@ const ProductList = styled.ul`
 `;
 
 const ProductListItem = styled.li`
-	margin: 0;
+	margin: 0 0 8px;
 	padding: 0;
 	list-style-type: none;
 
-	&:first-of-type {
-		margin-bottom: 8px;
+	&:last-of-type {
+		margin-bottom: 0;
 	}
 `;
 
-const ProductListItemLabel = styled.div`
+const ProductListItemSublabel = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
 	font-size: 13px;
 `;
 
-const ProductListItemSublabelUI = styled.div`
+const ProductListItemLabelUI = styled.div`
 	color: ${( props ) => props.theme.colors.textColor};
 	font-size: 15px;
 `;
