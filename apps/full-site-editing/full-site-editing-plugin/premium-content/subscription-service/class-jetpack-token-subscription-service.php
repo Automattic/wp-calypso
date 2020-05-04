@@ -13,7 +13,6 @@ use Automattic\Jetpack\Connection\Manager;
 // phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
 class Jetpack_Token_Subscription_Service extends Token_Subscription_Service {
 
-
 	/**
 	 * @inheritDoc
 	 */

@@ -15,6 +15,13 @@ namespace A8C\FSE\Earn\PremiumContent\SubscriptionService;
 interface Subscription_Service {
 
 	/**
+	 * The subscription service can be used.
+	 *
+	 * @return boolean
+	 */
+	function available();
+
+	/**
 	 * Allows a Subscription Service to setup anything it needs to provide its features.
 	 *
 	 * This is called during an `init` action hook callback.

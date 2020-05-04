@@ -28,6 +28,13 @@ final class Mock_SubscriptionService implements Subscription_Service {
 	const TOKEN_QUERY_NAME = 'token';
 
 	/**
+	 * @return boolean
+	 */
+	public static function available() {
+		return true;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function visitor_can_view_content( $valid_plan_ids ) {

@@ -19,11 +19,6 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 	const REST_URL_ORIGIN            = 'https://subscribe.wordpress.com/';
 
 	/**
-	 * @return boolean
-	 */
-	abstract static function available();
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initialize() {
