@@ -203,7 +203,6 @@ export default function CompositeCheckout( {
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
-		translate,
 		showAddCouponSuccessMessage,
 		recordEvent
 	);
