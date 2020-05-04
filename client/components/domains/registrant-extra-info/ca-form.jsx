@@ -157,7 +157,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	organizationFieldIsValid() {
-		return isEmpty( this.getOrganizationErrorMessage() );
+		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
 	}
 
 	getOrganizationErrorMessage() {
@@ -170,6 +170,12 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			);
 		}
 		return message;
+	}
+
+	getCiraAgreementAcceptedErrorMessage() {
+		const explicitError =
+			this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
+		return explicitError !== '' ? explicitError : this.props.translate( 'Required' );
 	}
 
 	renderOrganizationField() {
@@ -240,11 +246,14 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 							} ) }
 						</span>
 						{ ciraAgreementAccepted || (
-							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
+							<FormInputValidation
+								text={ this.getCiraAgreementAcceptedErrorMessage() }
+								isError={ true }
+							/>
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.renderOrganizationField() }
+				{ this.needsOrganization() && this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
