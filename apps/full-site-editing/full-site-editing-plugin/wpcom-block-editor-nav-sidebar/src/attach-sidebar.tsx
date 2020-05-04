@@ -49,7 +49,8 @@ async function attachSidebar() {
 	}
 
 	// Classes need to be attached to elements that aren't controlled by React,
-	// otherwise our alterations will be removed when React re-renders.
+	// otherwise our alterations will be removed when React re-renders. So attach
+	// to <body> element.
 	document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-attached' );
 
 	closePostButton.addEventListener( 'click', ( ev ) => {
