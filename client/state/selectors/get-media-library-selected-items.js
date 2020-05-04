@@ -22,6 +22,6 @@ export default ( state, siteId ) => {
 	}
 
 	return selectedMediaIds
-		.map( mediaId => getMediaItem( state, siteId, mediaId ) )
-		.filter( media => media );
+		.map( ( mediaId ) => getMediaItem( state, siteId, mediaId ) )
+		.filter( ( media ) => media );
 };

@@ -284,7 +284,7 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 			const { media, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: media.map( mediaItem => mediaItem.ID ),
+				[ siteId ]: media.map( ( mediaItem ) => mediaItem.ID ),
 			};
 		}
 		case MEDIA_ITEM_CREATE: {
@@ -309,7 +309,7 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: [ ...( state[ siteId ] ?? [] ), ...media.map( mediaItem => mediaItem.ID ) ],
+				[ siteId ]: [ ...( state[ siteId ] ?? [] ), ...media.map( ( mediaItem ) => mediaItem.ID ) ],
 			};
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
@@ -318,14 +318,14 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: media.filter( mediaId => transientMediaId !== mediaId ),
+				[ siteId ]: media.filter( ( mediaId ) => transientMediaId !== mediaId ),
 			};
 		}
 		case MEDIA_DELETE: {
 			const { mediaIds, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( mediaId => ! mediaIds.includes( mediaId ) ),
+				[ siteId ]: state[ siteId ].filter( ( mediaId ) => ! mediaIds.includes( mediaId ) ),
 			};
 		}
 	}
