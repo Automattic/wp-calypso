@@ -25,11 +25,15 @@
 		"common": "check-npm-client && calypso-build --source='common'",
 		"dev:common": "check-npm-client && yarn run common",
 		"build:common": "check-npm-client && NODE_ENV=production yarn run common",
-		"blog-posts-block-editor": "check-npm-client && calypso-build --source='blog-posts-block/editor'",
-		"blog-posts-block-view": "check-npm-client && calypso-build --source='blog-posts-block/view'",
-		"blog-posts-block": "check-npm-client && npm-run-all --parallel blog-posts-block-*",
-		"dev:blog-posts-block": "check-npm-client && yarn run blog-posts-block",
-		"build:blog-posts-block": "check-npm-client && NODE_ENV=production yarn run blog-posts-block",
+		"newspack-blocks": "check-npm-client && npm-run-all --parallel newspack-blocks-*",
+		"newspack-blog-posts-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-editor'",
+		"newspack-blog-posts-block-view": "check-npm-client && calypso-build --source='newspack-blocks/blog-posts-block-view'",
+		"newspack-blocks-blog-posts-block": "check-npm-client && npm-run-all --parallel newspack-blog-posts-block-*",
+		"newspack-carousel-block-editor": "check-npm-client && calypso-build --source='newspack-blocks/carousel-block-editor'",
+		"newspack-carousel-block-view": "check-npm-client && calypso-build --source='newspack-blocks/carousel-block-view'",
+		"newspack-blocks-carousel-block": "check-npm-client && npm-run-all --parallel newspack-carousel-block-*",
+		"dev:newspack-blocks": "check-npm-client && yarn run newspack-blocks",
+		"build:newspack-blocks": "check-npm-client && NODE_ENV=production yarn run newspack-blocks",
 		"starter-page-templates": "check-npm-client && calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "check-npm-client && yarn run starter-page-templates",
 		"build:starter-page-templates": "check-npm-client && NODE_ENV=production yarn run starter-page-templates",
@@ -56,9 +60,9 @@
 		"clean": "check-npm-client && npx rimraf dist full-site-editing-plugin/*/dist",
 		"prebuild": "check-npm-client && yarn run clean",
 		"predev": "check-npm-client && yarn run clean",
-		"sync:blog-posts-block": "check-npm-client && ./bin/sync-blog-posts-block.sh",
+		"sync:newspack-blocks": "check-npm-client && ./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "check-npm-client && ./bin/wpcom-watch-and-sync.sh",
-		"prepare": "check-npm-client && npm run sync:blog-posts-block --nodemodules"
+		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "*",
@@ -81,6 +85,6 @@
 		"classnames": "2.2.6",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks#v1.2.1"
+		"newspack-blocks": "github:Automattic/newspack-blocks#v1.3.1"
 	}
 }
