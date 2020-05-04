@@ -33,6 +33,6 @@ describe( 'shouldNewSiteBePrivateByDefault()', () => {
 				dependencyStore: { cartItem: { product_slug: 'ecommerce-bundle', free_trial: false } },
 			},
 		};
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( false );
+		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
 	} );
 } );
