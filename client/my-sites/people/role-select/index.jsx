@@ -19,6 +19,8 @@ import QuerySiteRoles from 'components/data/query-site-roles';
 import { getSite } from 'state/sites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 
+import './style.scss';
+
 const getWpcomFollowerRole = ( { site, translate } ) => {
 	const displayName = site.is_private
 		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
@@ -61,12 +63,20 @@ const RoleSelect = ( props ) => {
 				map( siteRoles, ( role ) => {
 					return (
 						<FormLabel key={ role.name }>
-							<FormRadio
-								checked={ role.name === value }
-								value={ role.name }
-								{ ...omit( props, omitProps ) }
-							/>
-							<span>{ role.display_name }</span>
+							<div className="role-select__role-wrapper">
+								<FormRadio
+									className="role-select__role-radio"
+									checked={ role.name === value }
+									value={ role.name }
+									{ ...omit( props, omitProps ) }
+								/>
+								<div className="role-select__role-name">
+									<div>{ role.display_name }</div>
+									<div className="role-select__role-name-description">
+										Full power: can invite people
+									</div>
+								</div>
+							</div>
 						</FormLabel>
 					);
 				} ) }
