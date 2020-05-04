@@ -54,7 +54,9 @@ function WPLineItem( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
-			<LineItemPrice item={ item } aria-labelledby={ itemSpanId } />
+			<span aria-labelledby={ itemSpanId }>
+				<LineItemPrice item={ item } />
+			</span>
 			{ item.sublabel && (
 				<LineItemMeta>
 					{ item.sublabel }: { translate( 'billed yearly' ) }
