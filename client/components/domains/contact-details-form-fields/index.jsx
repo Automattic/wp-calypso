@@ -209,10 +209,14 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
-	setFormState = ( form ) => {
-		this.setState( { form }, () => {
-			this.props.onContactDetailsChange( this.getMainFieldValues( form ) );
+	setStateAndUpdateParent = ( newState ) => {
+		this.setState( newState, () => {
+			this.props.onContactDetailsChange( this.getMainFieldValues( newState.form ) );
 		} );
+	};
+
+	setFormState = ( form ) => {
+		this.setStateAndUpdateParent( { form } );
 	};
 
 	handleFormControllerError = ( error ) => {
@@ -322,25 +326,21 @@ export class ContactDetailsFormFields extends Component {
 
 	handleFieldChange = ( event ) => {
 		const { name, value } = event.target;
-		const { phone = {} } = this.state.form;
+		const newState = { ...this.state };
 
-		if ( name === 'country-code' ) {
-			if ( value && ! phone.value ) {
-				this.setState( {
-					phoneCountryCode: value,
-				} );
-			}
+		if ( name === 'country-code' && value && ! newState.phone?.value ) {
+			newState.phoneCountryCode = value;
 		}
 
 		if ( this.props.isManaged ) {
-			let form = updateFormWithContactChange( this.state.form, name, value );
+			newState.form = updateFormWithContactChange( newState.form, name, value );
 			if ( name === 'country-code' ) {
-				form = updateFormWithContactChange( form, 'state', '', {
+				newState.form = updateFormWithContactChange( newState.form, 'state', '', {
 					isShowingErrors: false,
 				} );
 			}
 
-			this.setFormState( form );
+			this.setStateAndUpdateParent( newState );
 			return;
 		}
 
@@ -359,15 +359,15 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
+		const newState = { ...this.state };
+
 		if ( countries[ countryCode ] ) {
-			this.setState( {
-				phoneCountryCode: countryCode,
-			} );
+			newState.phoneCountryCode = countryCode;
 		}
 
 		if ( this.props.isManaged ) {
-			const form = updateFormWithContactChange( this.state.form, 'phone', value );
-			this.setFormState( form );
+			newState.form = updateFormWithContactChange( newState.form, 'phone', value );
+			this.setStateAndUpdateParent( newState );
 			return;
 		}
 
