@@ -128,7 +128,7 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
-  yarn-e2e-install: &yarn-e2e-install
+  npm-e2e-install: &npm-e2e-install
     name: Install e2e npm dependencies
     command: |
       cd test/e2e &&
@@ -198,7 +198,7 @@ jobs:
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
-      - run: *yarn-e2e-install
+      - run: *npm-e2e-install
       - save_cache: *save-yarn-cache
       - run: yarn run build-packages
       - persist_to_workspace:
