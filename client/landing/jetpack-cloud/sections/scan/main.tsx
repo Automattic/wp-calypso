@@ -208,7 +208,7 @@ class ScanPage extends Component< Props > {
 				{ this.renderHeader( translate( 'Something went wrong' ) ) }
 				<p>
 					{ translate(
-						'The scan was unable to process the themes directory and did not complete ' +
+						'The scan did not complete ' +
 							'successfully. In order to complete the scan you will need ' +
 							'to speak to support who can help determine what went wrong.'
 					) }
