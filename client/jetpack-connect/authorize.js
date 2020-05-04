@@ -72,6 +72,7 @@ import {
 } from 'state/jetpack-connect/selectors';
 import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import wooDnaConfig from './woo-dna-config';
 
 /**
  * Constants
@@ -268,21 +269,27 @@ export class JetpackAuthorize extends Component {
 		return 'sso' === from && isSsoApproved( clientId );
 	}
 
-	isWooRedirect( props = this.props ) {
+	isWooRedirect = ( props = this.props ) => {
 		const { from } = props.authQuery;
-		return includes(
-			[
-				'woocommerce-services-auto-authorize',
-				'woocommerce-setup-wizard',
-				'woocommerce-onboarding',
-			],
-			from
+		return (
+			includes(
+				[
+					'woocommerce-services-auto-authorize',
+					'woocommerce-setup-wizard',
+					'woocommerce-onboarding',
+				],
+				from
+			) || this.getWooDnaConfig( props )
 		);
-	}
+	};
 
 	isWooOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-onboarding' === from;
+	}
+
+	getWooDnaConfig( props = this.props ) {
+		return wooDnaConfig[ props.authQuery.from ];
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
