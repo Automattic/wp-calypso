@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from '@wordpress/element';
+import React, { useState, useEffect, useRef } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft, wordpress } from '@wordpress/icons';
@@ -36,15 +36,19 @@ export default function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
+	const prevIsOpen = useRef( isOpen );
 	const [ isClosing, setIsClosing ] = useState( false );
 
 	useEffect( () => {
 		if ( isOpen ) {
 			document.body.classList.add( 'is-wpcom-block-editor-nav-sidebar-close-hidden' );
-		} else {
+		} else if ( prevIsOpen.current ) {
+			// Check previous isOpen value so we don't set isClosing on first mount
 			setIsClosing( true );
 		}
-	}, [ isOpen, setIsClosing ] );
+
+		prevIsOpen.current = isOpen;
+	}, [ isOpen, prevIsOpen, setIsClosing ] );
 
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 
