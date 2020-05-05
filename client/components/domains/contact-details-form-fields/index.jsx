@@ -175,7 +175,7 @@ export class ContactDetailsFormFields extends Component {
 			pick( this.props.contactDetails, CONTACT_DETAILS_FORM_FIELDS )
 		);
 
-	getMainFieldValues( form ) {
+	getMainFieldValues = ( form ) => {
 		const mainFieldValues = formState.getAllFieldValues( form );
 		const { needsFax } = this.props;
 		const { countryCode } = mainFieldValues;
