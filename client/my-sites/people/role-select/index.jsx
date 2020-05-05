@@ -18,6 +18,8 @@ import QuerySites from 'components/data/query-sites';
 import QuerySiteRoles from 'components/data/query-site-roles';
 import { getSite } from 'state/sites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
+import { ROLES_LIST } from './constants';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 import './style.scss';
 
@@ -34,8 +36,11 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 
 const RoleSelect = ( props ) => {
 	let { siteRoles } = props;
+	const { isWPForTeamsSite } = props;
+
 	const { site, includeFollower, siteId, id, explanation, translate, value } = props;
 	const omitProps = [
+		'isWPForTeamsSite',
 		'site',
 		'key',
 		'siteId',
@@ -72,9 +77,11 @@ const RoleSelect = ( props ) => {
 								/>
 								<div className="role-select__role-name">
 									<div>{ role.display_name }</div>
-									<div className="role-select__role-name-description">
-										Full power: can invite people
-									</div>
+									{ ROLES_LIST[ role.name ] && (
+										<div className="role-select__role-name-description">
+											{ ROLES_LIST[ role.name ].getDescription( isWPForTeamsSite ) }
+										</div>
+									) }
 								</div>
 							</div>
 						</FormLabel>
@@ -88,4 +95,5 @@ const RoleSelect = ( props ) => {
 export default connect( ( state, ownProps ) => ( {
 	site: getSite( state, ownProps.siteId ),
 	siteRoles: getSiteRoles( state, ownProps.siteId ),
+	isWPForTeamsSite: isSiteWPForTeams( state, ownProps.siteId ),
 } ) )( localize( RoleSelect ) );
