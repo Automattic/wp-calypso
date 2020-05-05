@@ -4,16 +4,22 @@
 .domain-picker-button {
 	&.components-button {
 		@include onboarding-medium-text;
-		color: var( --studio-gray-90 );
-		padding: 9px 12px;
+		background: var( --studio-blue-0 );
+		color: var( --studio-blue-40 );
+		padding: 5px 12px;
 		height: auto; // prevent clipping when there are 2 lines
 		text-align: left;
 		border-radius: $radius-round-rectangle;
 
 		&:focus,
 		&:hover[type] {
-			box-shadow: 0 0 0 1px var( --studio-gray-100 );
+			box-shadow: 0 0 0 1px var( --studio-blue-40 );
 			outline: 0;
+		}
+
+		&:not( [aria-disabled='true'] ):active {
+			box-shadow: 0 0 0 1px var( --studio-blue-60 );
+			color: var( --studio-blue-60 );
 		}
 
 		&:disabled {
@@ -22,7 +28,13 @@
 	}
 
 	&__label {
-		word-break: break-word;
+		// This makes the label ready for slide-out
+		// animation using width: 0% to width: 100%.
+		white-space: nowrap;
+		overflow: hidden;
+		// This is for mobile later on long domains.
+		// Commented out for now.
+		// text-overflow: ellipsis;
 	}
 
 	.dashicon {

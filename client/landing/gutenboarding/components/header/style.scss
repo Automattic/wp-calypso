@@ -50,10 +50,6 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 }
 
-.gutenboarding__header-domain-picker-button {
-	padding: 0.3em 0.5em;
-}
-
 .gutenboarding__header-domain-picker-button-domain {
 	&.placeholder {
 		@include placeholder();
