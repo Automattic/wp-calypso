@@ -53,7 +53,7 @@ class ExportCard extends Component {
 					actionButtonIcon="cog"
 					header={
 						<div>
-							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
+							<h1 className="export-card__title">{ translate( 'Export content' ) }</h1>
 							<h2 className="export-card__subtitle">
 								{ translate(
 									'Export all (or specific) text content (pages, posts, feedback) from your site.'

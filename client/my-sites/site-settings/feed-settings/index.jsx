@@ -49,7 +49,7 @@ class FeedSettings extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Feed Settings' ) }
+					title={ translate( 'Feed settings' ) }
 				/>
 				<CompactCard>
 					<FormFieldset>

@@ -513,7 +513,7 @@ export class ContactDetailsFormFields extends Component {
 						'first-name',
 						Input,
 						{
-							label: translate( 'First Name' ),
+							label: translate( 'First name' ),
 						},
 						{
 							customErrorMessage: contactDetailsErrors?.firstName,
@@ -524,7 +524,7 @@ export class ContactDetailsFormFields extends Component {
 						'last-name',
 						Input,
 						{
-							label: translate( 'Last Name' ),
+							label: translate( 'Last name' ),
 						},
 						{
 							customErrorMessage: contactDetailsErrors?.lastName,

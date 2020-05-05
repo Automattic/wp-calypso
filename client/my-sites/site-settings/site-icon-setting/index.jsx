@@ -273,7 +273,7 @@ class SiteIconSetting extends Component {
 		return (
 			<FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
-					{ translate( 'Site Icon' ) }
+					{ translate( 'Site icon' ) }
 					<InfoPopover position="bottom right">
 						{ translate(
 							'The Site Icon is used as a browser and app icon for your site.' +

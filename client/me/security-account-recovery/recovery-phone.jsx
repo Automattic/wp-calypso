@@ -20,7 +20,7 @@ class RecoveryPhone extends Component {
 			<ManageContact
 				type="sms"
 				isLoading={ isLoading }
-				title={ translate( 'Recovery SMS Number', {
+				title={ translate( 'Recovery SMS number', {
 					comment: 'Account security',
 				} ) }
 				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }

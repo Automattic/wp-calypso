@@ -109,7 +109,7 @@ class FreeCartPaymentBox extends React.Component {
 
 	render() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);

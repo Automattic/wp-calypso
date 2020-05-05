@@ -475,7 +475,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset className="site-settings__moderation-settings">
-				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
+				<FormLegend>{ translate( 'Comment moderation' ) }</FormLegend>
 				<p>
 					{ translate(
 						'Hold a comment in the queue if it contains {{numberOfLinks /}} or more links. ' +
@@ -525,7 +525,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
+				<FormLegend>{ translate( 'Comment blacklist' ) }</FormLegend>
 				<FormLabel htmlFor="blacklist_keys">
 					{ translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
@@ -586,7 +586,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
-				<SettingsSectionHeader title={ translate( 'Default Article Settings' ) } />
+				<SettingsSectionHeader title={ translate( 'Default article settings' ) } />
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>

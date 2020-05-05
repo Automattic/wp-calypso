@@ -262,7 +262,7 @@ export class DomainDetailsForm extends PureComponent {
 		} else if ( this.needsOnlyGoogleAppsDetails() ) {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
-			title = this.props.translate( 'Domain Contact Information' );
+			title = this.props.translate( 'Domain contact information' );
 			if ( hasDomainProduct ) {
 				if ( hasSomeDomainsWithPrivacy ) {
 					if ( hasAllDomainsWithPrivacy ) {

@@ -208,7 +208,7 @@ class PurchasesListing extends Component {
 		return (
 			<Fragment>
 				<Card compact>
-					<strong>{ translate( 'My Plan' ) }</strong>
+					<strong>{ translate( 'My plan' ) }</strong>
 				</Card>
 				{ this.isLoading() ? (
 					<MyPlanCard isPlaceholder />

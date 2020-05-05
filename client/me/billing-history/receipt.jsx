@@ -200,7 +200,7 @@ class BillingReceipt extends React.Component {
 
 		return (
 			<div className="billing-history__receipt">
-				<h4>{ translate( 'Order Summary' ) }</h4>
+				<h4>{ translate( 'Order summary' ) }</h4>
 				<table className="billing-history__receipt-line-items">
 					<thead>
 						<tr>

@@ -96,7 +96,7 @@ class ApplicationPasswords extends Component {
 					onSubmit={ this.createApplicationPassword }
 				>
 					<FormFieldset>
-						<FormLabel htmlFor="application-name">{ translate( 'Application Name' ) }</FormLabel>
+						<FormLabel htmlFor="application-name">{ translate( 'Application name' ) }</FormLabel>
 						<FormTextInput
 							className="application-passwords__add-new-field"
 							disabled={ this.state.submittingForm }
@@ -193,7 +193,7 @@ class ApplicationPasswords extends Component {
 			<Fragment>
 				<QueryApplicationPasswords />
 
-				<SectionHeader label={ translate( 'Application Passwords' ) }>
+				<SectionHeader label={ translate( 'Application passwords' ) }>
 					{ ! newAppPassword && (
 						<Button
 							compact

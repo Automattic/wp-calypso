@@ -291,7 +291,7 @@ class Security2faBackupCodesList extends React.Component {
 						onClick={ this.onNextStep }
 						disabled={ this.isSubmitDisabled() }
 					>
-						{ this.props.translate( 'All Finished!', {
+						{ this.props.translate( 'All finished!', {
 							context: 'The user presses the All Finished button at the end of Two-Step setup.',
 						} ) }
 					</FormButton>
