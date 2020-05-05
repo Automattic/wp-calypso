@@ -56,16 +56,49 @@ function ruleNameFromMessage( message ) {
 	);
 }
 
+function validateWithSirenSiretChecksum( contactDetails ) {
+	// populate validate.errors
+	validate( contactDetails );
+
+	const sirenSiret = contactDetails?.extra?.fr?.sirenSiret ?? '';
+
+	if ( sirenSiret && ( sirenSiret.match( /^\d{9}$/ ) || sirenSiret.match( /^\d{14}$/ ) ) ) {
+		let double = false;
+		let sum = 0;
+
+		for ( let i = sirenSiret.length - 1; i >= 0; i-- ) {
+			const digit = parseInt( sirenSiret[ i ], 10 ) * ( double ? 2 : 1 );
+			sum += digit;
+
+			if ( digit > 9 ) {
+				sum -= 9;
+			}
+
+			double = ! double;
+		}
+
+		if ( sum % 10 !== 0 ) {
+			const error = { field: 'data.extra.fr.sirenSiret', message: 'checksum' };
+			if ( validate.errors ) {
+				validate.errors.push( error );
+			} else {
+				validate.errors = [ error ];
+			}
+		}
+	}
+
+	return validate.errors;
+}
+
 /*
  * @returns errors by field, like: { 'extra.fr.field: name, errors: [ string ] }
  */
 export default function validateContactDetails( contactDetails ) {
-	// Populate validate.errors
-	validate( contactDetails );
-	validate.errors && debug( validate.errors );
+	const errors = validateWithSirenSiretChecksum( contactDetails );
+	errors && debug( errors );
 
 	return reduce(
-		validate.errors,
+		errors,
 		( accumulatedErrors, { field, message } ) => {
 			// Drop 'data.' prefix
 			const path = String( field ).split( '.' ).slice( 1 );
