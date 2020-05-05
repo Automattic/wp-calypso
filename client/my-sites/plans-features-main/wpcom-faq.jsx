@@ -86,14 +86,14 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				answer={ translate(
 					'No. All WordPress.com sites include our specially tailored WordPress hosting to ensure' +
 						' your site stays available and secure at all times. You can even use your own domain' +
-						' when you upgrade to the Personal, Premium, Business or eCommerce plan.'
+						' when you upgrade to the Personal, Premium, Business, or eCommerce plan.'
 				) }
 			/>
 
 			<FAQItem
 				question={ translate( 'Do you offer email accounts?' ) }
 				answer={ translate(
-					'Yes. If you register a new domain with our Personal, Premium, Business or eCommerce plans, you can' +
+					'Yes. If you register a new domain with our Personal, Premium, Business, or eCommerce plans, you can' +
 						' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 					{
