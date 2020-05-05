@@ -26,6 +26,7 @@
 		margin-bottom: 0;
 		order: 1;
 		align-self: center;
+		display: inline;
 
 		@include breakpoint( '<800px' ) {
 			display: none;
