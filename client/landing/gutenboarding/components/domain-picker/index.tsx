@@ -114,6 +114,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
 		return (
 			<Button
+				isLink
 				className="domain-picker__cancel-button"
 				onClick={ () => {
 					onCancel && onCancel();
@@ -174,13 +175,15 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								<p>{ __( 'Free for the first year with any paid plan.' ) }</p>
 							) }
 						</div>
-						<ConfirmButton />
-						<CancelButton />
-						<CloseButton
-							className="domain-picker__close-button"
-							onClick={ onClose }
-							tabIndex={ -1 }
-						/>
+						<div className="domain-picker__header-buttons">
+							<CancelButton />
+							<ConfirmButton />
+							<CloseButton
+								className="domain-picker__close-button"
+								onClick={ onClose }
+								tabIndex={ -1 }
+							/>
+						</div>
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
@@ -242,8 +245,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						<Button className="domain-picker__more-button" isTertiary onClick={ onMoreOptions }>
 							{ __( 'More Options' ) }
 						</Button>
-						<ConfirmButton />
 						<CancelButton />
+						<ConfirmButton />
 					</div>
 				</PanelRow>
 			</PanelBody>

@@ -57,6 +57,11 @@ $domain-picker__suggestion-item-height: 24px;
 	flex-grow: 1;
 }
 
+.domain-picker__header-buttons {
+	display: flex;
+	align-items: center;
+}
+
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
@@ -259,8 +264,15 @@ $domain-picker__suggestion-item-height: 24px;
 	}
 }
 
-.domain-picker__cancel-button {
+.domain-picker__confirm-button {
 	&.components-button {
-		margin-left: 10px;
+		padding: 0 40px;
+	}
+}
+
+.domain-picker__cancel-button {
+	&.components-button.is-link {
+		margin: 0 1em;
+		color: var( --studio-gray-40 );
 	}
 }
