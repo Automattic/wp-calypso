@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { planHasFeature } from 'lib/plans';
 
-import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
+import { getSitePlanSlug } from 'state/sites/plans/selectors/get-site-plan-slug';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 export { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
@@ -21,17 +16,7 @@ export { hasDomainCredit } from 'state/sites/plans/selectors/has-domain-credit';
 export { isRequestingSitePlans } from 'state/sites/plans/selectors/is-requesting-site-plans';
 export { isCurrentPlanExpiring } from 'state/sites/plans/selectors/is-current-plan-expiring';
 export { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors/is-current-user-current-plan-owner';
-
-/**
- * Returns a site's current plan's product slug
- *
- * @param  {object}  state   Global State tree
- * @param  {number}  siteId  Site ID
- * @returns {?string}          The site's current plan's product slug
- */
-export function getSitePlanSlug( state, siteId ) {
-	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
-}
+export { getSitePlanSlug } from 'state/sites/plans/selectors/get-site-plan-slug';
 
 /**
  * Whether a site's current plan includes a given feature
