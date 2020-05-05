@@ -17,6 +17,7 @@ import {
 	toIcannFormat,
 	findCountryFromNumber,
 	processNumber,
+	getUpdatedCursorPosition,
 	MIN_LENGTH_TO_FORMAT,
 } from 'components/phone-input/phone-number';
 import CountryFlag from 'components/phone-input/country-flag';
@@ -121,36 +122,30 @@ PhoneInput.propTypes = {
 
 function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
 	const cursorPosition = useRef( 0 );
-	cursorPosition.current = numberInputRef.current?.selectionStart ?? 0;
 	const oldValue = useRef( displayValue );
 	const oldCountry = useRef( countryCode );
 	useEffect( () => {
+		const oldCursorPosition = cursorPosition.current;
+		cursorPosition.current = numberInputRef.current?.selectionStart ?? 0;
+		if ( ! numberInputRef.current ) {
+			return;
+		}
 		if ( displayValue === oldValue.current && countryCode === oldCountry.current ) {
 			return;
 		}
-		const oldCursorPosition = cursorPosition.current;
 
-		const nonDigitCountOld = oldValue.current
-			.substring( 0, oldCursorPosition )
-			.split( '' )
-			.map( ( char ) => /\D/.test( char ) )
-			.filter( ( x ) => x ).length;
-
-		const nonDigitCountNew = displayValue
-			.substring( 0, oldCursorPosition )
-			.split( '' )
-			.map( ( char ) => /\D/.test( char ) )
-			.filter( ( x ) => x ).length;
-
-		const newCursorPosition =
-			oldCursorPosition >= oldValue.current.length
-				? displayValue.length
-				: oldCursorPosition + nonDigitCountNew - nonDigitCountOld;
+		const newCursorPosition = getUpdatedCursorPosition(
+			oldValue.current,
+			displayValue,
+			oldCursorPosition,
+			numberInputRef.current.selectionEnd
+		);
 
 		oldValue.current = displayValue;
 		oldCountry.current = countryCode;
+
 		debug( 'moving cursor from', oldCursorPosition, 'to', newCursorPosition );
-		numberInputRef.current?.setSelectionRange( newCursorPosition, newCursorPosition );
+		numberInputRef.current.setSelectionRange( newCursorPosition, newCursorPosition );
 	}, [ displayValue, numberInputRef, countryCode ] );
 }
 
@@ -230,9 +225,11 @@ function getInputHandler(
 			freezeSelection
 		);
 
-		setPhoneNumberState( { rawValue, displayValue } );
+		setPhoneNumberState( ( oldValue ) => {
+			debug( 'changing value from', oldValue.displayValue, 'to', displayValue );
+			return { rawValue, displayValue };
+		} );
 
-		debug( 'setting new value', displayValue );
 		onChange( { value: displayValue, countryCode } );
 	};
 }
