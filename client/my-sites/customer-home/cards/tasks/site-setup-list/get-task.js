@@ -7,11 +7,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import InlineSupportLink from 'components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { localizeUrl } from 'lib/i18n-utils';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { verifyEmail } from 'state/current-user/email-verification/actions';
 
 const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
@@ -168,20 +168,25 @@ export const getTask = (
 			taskData = {
 				timing: 10,
 				title: translate( 'Create a site menu' ),
-				description: translate(
-					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
+				description: (
+					<>
+						{ translate(
+							"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
+						) }{ ' ' }
+						<InlineSupportLink
+							supportPostId={ 59580 }
+							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+							showIcon={ false }
+							text={ translate( 'View tutorial.' ) }
+							tracksEvent="calypso_customer_home_menus_support_page_view"
+							statsGroup="calypso_customer_home"
+							statsName="menus_view_tutorial"
+						/>
+					</>
 				),
-				actionText: translate( 'View tutorial' ),
+				actionText: translate( 'Add a menu' ),
 				isSkippable: true,
-				actionDispatch: openSupportArticleDialog,
-				actionDispatchArgs: [
-					{
-						postId: 59580,
-						postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
-						actionLabel: translate( 'Go to the Customizer' ),
-						actionUrl: menusUrl,
-					},
-				],
+				actionUrl: menusUrl,
 			};
 			break;
 	}
