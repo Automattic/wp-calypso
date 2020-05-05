@@ -497,6 +497,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		box-shadow: none;
 	}
 }
+
+.site-settings .site-settings__wordpress-version {
+	display: inline;
+}
+
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
 }
