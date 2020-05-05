@@ -26,6 +26,14 @@
 		margin-bottom: 0;
 		order: 1;
 		align-self: center;
+
+		@include breakpoint( '<800px' ) {
+			display: none;
+		}
+
+		@include breakpoint( '<660px' ) {
+			display: inline;
+		}
 	}
 
 	.action-panel__body p.task__description {
