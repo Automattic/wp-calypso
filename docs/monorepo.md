@@ -68,9 +68,9 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	},
 	"files": [ "dist", "src" ],
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && yarn run clean",
+		"prepare": "check-npm-client && transpile"
 	}
 }
 ```
@@ -78,6 +78,8 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
+
+Please note the inclusion of `check-npm-client` before each script. This is an intentional guard against someone accidentally using `npm` in the repository instead of `yarn` and should be included at the start of each script. See the root [`package.json`](../../package.json) for an example.
 
 ## Running Tests
 
