@@ -7,8 +7,7 @@
 	}
 
 	.current-section {
-		margin-left: -16px;
-		margin-right: -16px;
+		margin: 0 -16px;
 
 		.site-icon {
 			display: none;
@@ -190,35 +189,38 @@
 
 // Universal Text Styles
 
-html h2 {
-	font-size: 22px;
-	font-weight: 600;
-	line-height: 32px;
+html {
 
-	@include breakpoint( '>660px' ) {
-		font-size: 36px;
-		line-height: 40px;
+	h2 {
+		font-size: 22px;
+		font-weight: 600;
+		line-height: 32px;
+
+		@include breakpoint('>660px') {
+			font-size: 36px;
+			line-height: 40px;
+		}
 	}
-}
 
-html h3 {
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 23px;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
+	h3 {
+		font-size: 16px;
+		font-weight: 600;
 		line-height: 23px;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 18px;
+			line-height: 23px;
+		}
 	}
-}
 
-html p {
-	font-size: 16px;
-	line-height: 24px;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
+	p {
+		font-size: 16px;
 		line-height: 24px;
+
+		@include breakpoint('>660px') {
+			font-size: 18px;
+			line-height: 24px;
+		}
 	}
 }
 
