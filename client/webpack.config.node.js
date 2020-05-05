@@ -55,6 +55,10 @@ function getExternals() {
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
+
+				// Exclude any folder in `node_modules` that we want to alias later. By default, anything in `node_modules` will be
+				// tagged as 'external' and aliases defined in `resolver.aliases` won't be run
+				'config',
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
