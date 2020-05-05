@@ -45,7 +45,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	}, [ pathname ] );
 
 	const canUseDesignSelection = useCallback( (): boolean => {
-		return ! ( ! siteVertical && ! siteTitle && ! wasVerticalSkipped );
+		return !! ( siteVertical || siteTitle || wasVerticalSkipped );
 	}, [ siteTitle, siteVertical, wasVerticalSkipped ] );
 
 	const canUseStyleStep = useCallback( (): boolean => {
@@ -57,12 +57,13 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	}, [ isCreatingSite, isRedirecting ] );
 
 	const getLatestStepPath = (): string => {
-		if ( ! canUseDesignSelection() ) {
-			return makePath( Step.IntentGathering );
+		if ( canUseStyleStep() ) {
+			return makePath( Step.Style );
 		}
-		if ( ! canUseStyleStep ) {
+		if ( canUseDesignSelection() ) {
 			return makePath( Step.DesignSelection );
 		}
+
 		return makePath( Step.IntentGathering );
 	};
 
