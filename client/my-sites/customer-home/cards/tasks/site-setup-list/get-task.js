@@ -12,7 +12,6 @@ import { domainManagementEdit, domainManagementList } from 'my-sites/domains/pat
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { localizeUrl } from 'lib/i18n-utils';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { verifyEmail } from 'state/current-user/email-verification/actions';
 
 const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
