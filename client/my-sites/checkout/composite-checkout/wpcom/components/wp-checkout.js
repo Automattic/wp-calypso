@@ -322,15 +322,22 @@ const UpsellWrapperUI = styled.div`
 	}
 
 	.cart__upsell-wrapper {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		}
 	}
 
 	.cart__upsell-header {
-		border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		border-top: none;
 		box-shadow: none;
 		padding-left: 20px;
 		padding-right: 20px;
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		}
 
 		.section-header__label {
 			color: ${( props ) => props.theme.colors.textColor};
@@ -339,7 +346,11 @@ const UpsellWrapperUI = styled.div`
 	}
 
 	.cart__upsell-body {
-		padding: 20px;
+		padding: 0 20px 20px;
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			padding: 20px;
+		}
 
 		p {
 			margin-bottom: 1.2em;

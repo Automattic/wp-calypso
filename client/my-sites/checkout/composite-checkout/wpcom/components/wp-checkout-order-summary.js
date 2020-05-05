@@ -58,7 +58,11 @@ export default function WPCheckoutOrderSummary() {
 }
 
 const CheckoutSummaryFeatures = styled.div`
-	padding: 20px;
+	padding: 20px 20px 0;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		padding: 20px;
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -84,8 +88,11 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	padding: 20px;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	}
 `;
 
 const CheckoutSummaryLineItem = styled.div`
