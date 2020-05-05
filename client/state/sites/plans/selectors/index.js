@@ -13,28 +13,12 @@ import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 import { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
+import { isSitePlanDiscounted } from 'state/sites/plans/selectors/is-site-plan-discounted';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 export { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 export { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
-
-/**
- * Returns true if a plan is discounted
- *
- * @param  {object}   state         global state
- * @param  {number}   siteId        the site id
- * @param  {string}   productSlug   the plan product slug
- * @returns {?boolean}              true if a plan has a discount
- */
-export function isSitePlanDiscounted( state, siteId, productSlug ) {
-	const plan = getSitePlan( state, siteId, productSlug );
-
-	if ( ! plan ) {
-		return null;
-	}
-
-	return get( plan, 'rawDiscount', -1 ) > 0;
-}
+export { isSitePlanDiscounted } from 'state/sites/plans/selectors/is-site-plan-discounted';
 
 /**
  * Returns a plan price, including any applied discounts
