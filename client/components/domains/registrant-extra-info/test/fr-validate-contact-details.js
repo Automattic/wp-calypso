@@ -25,7 +25,7 @@ describe( 'validateContactDetails', () => {
 		extra: {
 			fr: {
 				registrantType: 'individual',
-				sirenSiret: '123456789',
+				sirenSiret: '123456782',
 				registrantVatId: 'FRXX123456789',
 				trademarkNumber: '123456789',
 			},
