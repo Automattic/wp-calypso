@@ -168,20 +168,18 @@ export const getTask = (
 			taskData = {
 				timing: 10,
 				title: translate( 'Create a site menu' ),
-				description: translate(
-					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings. {{supportLink/}}.",
-					{
-						components: {
-							supportLink: (
-								<InlineSupportLink
-									supportPostId={ 59580 }
-									supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
-									showIcon={ false }
-									text={ translate( 'View tutorial' ) }
-								/>
-							),
-						},
-					}
+				description: (
+					<>
+						{ translate(
+							"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
+						) }{ ' ' }
+						<InlineSupportLink
+							supportPostId={ 59580 }
+							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+							showIcon={ false }
+							text={ translate( 'View tutorial.' ) }
+						/>
+					</>
 				),
 				actionText: translate( 'Add a menu' ),
 				isSkippable: true,
