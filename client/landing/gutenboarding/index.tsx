@@ -102,7 +102,7 @@ window.AppBoot = async () => {
 		setLocaleData( localeData );
 
 		if ( USE_TRANSLATION_CHUNKS ) {
-			setupTranslationChunks( userLocale, translatedChunks );
+			await setupTranslationChunks( userLocale, translatedChunks );
 		}
 
 		locale = userLocale;
@@ -206,7 +206,7 @@ function getLocaleFromUser( user: User ): string {
 	return user.locale_variant || user.localeVariant || user.language || user.localeSlug;
 }
 
-function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
+async function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
 	if ( ! window.__requireChunkCallback__ ) {
 		return;
 	}
@@ -215,7 +215,7 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		[ propName: string ]: undefined | boolean;
 	}
 	const loadedTranslationChunks: TranslationChunksCache = {};
-	const loadTranslationForChunkIfNeeded = ( chunkId: string ) => {
+	const loadTranslationForChunkIfNeeded = async ( chunkId: string ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
 			return;
 		}
@@ -232,9 +232,9 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
 	);
 
-	installedChunks.forEach( ( chunkId ) => {
-		loadTranslationForChunkIfNeeded( chunkId );
-	} );
+	await Promise.all(
+		[ ...installedChunks ].map( ( chunkId ) => loadTranslationForChunkIfNeeded( chunkId ) )
+	);
 
 	interface RequireChunkCallbackParameters {
 		publicPath: string;
