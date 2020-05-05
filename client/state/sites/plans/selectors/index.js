@@ -8,33 +8,15 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { initialSiteState } from 'state/sites/plans/reducer';
-import createSelector from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 
 import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
+import { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 export { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
-
-/**
- * Returns a site specific plan
- *
- * @param  {object} state        global state
- * @param  {number} siteId       the site id
- * @param  {string} productSlug  the plan product slug
- * @returns {object} the matching plan
- */
-export const getSitePlan = createSelector(
-	( state, siteId, productSlug ) => {
-		const plansBySiteId = getPlansBySiteId( state, siteId );
-		if ( ! plansBySiteId || ! plansBySiteId.data ) {
-			return null;
-		}
-		return plansBySiteId.data.filter( ( plan ) => plan.productSlug === productSlug ).shift();
-	},
-	( state, siteId ) => getPlansBySiteId( state, siteId )
-);
+export { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
 
 /**
  * Returns true if a plan is discounted
