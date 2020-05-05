@@ -27,6 +27,11 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
+import {
+	MARKETING_PRICE_GROUP_2020_Q2_TEST_2,
+	MARKETING_PRICE_GROUP_2020_Q2_TEST_3,
+} from 'state/current-user/constants';
 
 /**
  * Style dependencies
@@ -134,7 +139,18 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
+			marketingPriceGroup,
 		} = this.props;
+
+		let hidePersonalPlan = false,
+			hidePremiumPlan = false;
+
+		if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_2 ) {
+			hidePersonalPlan = true;
+		} else if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_3 ) {
+			hidePersonalPlan = true;
+			hidePremiumPlan = true;
+		}
 
 		return (
 			<div>
@@ -143,6 +159,8 @@ export class PlansStep extends Component {
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
+					hidePersonalPlan={ hidePersonalPlan }
+					hidePremiumPlan={ hidePremiumPlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ this.onSelectPlan }
@@ -242,7 +260,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem, marketing_price_group } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -254,6 +272,9 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+
+		// the former is for signing up; the latter is for the logged-in case
+		marketingPriceGroup: marketing_price_group || getCurrentUserMarketingPriceGroup( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
