@@ -119,7 +119,7 @@ class ScanPage extends Component< Props > {
 		const { siteSlug, moment, scanState } = this.props;
 
 		const lastScanTimestamp = scanState?.mostRecent?.timestamp
-			? Date.parse( scanState?.mostRecent?.timestamp )
+			? scanState?.mostRecent?.timestamp.getTime()
 			: '';
 		return (
 			<>
