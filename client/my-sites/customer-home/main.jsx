@@ -154,7 +154,9 @@ const mapStateToProps = ( state ) => {
 		hasChecklistData,
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-		displayChecklist: layout?.primary?.includes( 'home-primary-checklist-site-setup' ),
+		displayChecklist:
+			layout?.primary?.includes( 'home-primary-checklist-site-setup' ) ||
+			layout?.primary?.includes( 'home-task-site-setup-checklist' ),
 		user,
 		layout,
 	};
