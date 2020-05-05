@@ -38,8 +38,12 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__panel-row-footer {
-	padding: 24px 36px;
+	padding: 10px 20px;
 	border-top: 1px solid #f0f0f0;
+
+	@include break-small {
+		padding: 24px 36px;
+	}
 }
 
 .domain-picker__header {
