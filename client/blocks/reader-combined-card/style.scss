@@ -23,7 +23,7 @@
 	margin-bottom: 0;
 	top: 0;
 	overflow: hidden;
-	font-weight: 500;
+	font-weight: 600;
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -204,7 +204,7 @@
 
 .reader-combined-card__post .reader-excerpt {
 	font-size: 15px;
-	font-weight: 100;
+	font-weight: 400;
 	overflow: hidden;
 	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
