@@ -261,3 +261,38 @@ export function toIcannFormat( inputNumber, country ) {
 
 	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }
+
+export function getUpdatedCursorPosition( oldValue, newValue, selectStart, selectEnd = null ) {
+	const oldDigits = oldValue.split( '' ).filter( ( char ) => /\d/.test( char ) );
+	let digitIndex = 0;
+	let foundIndex = newValue.length;
+	const newChars = newValue.split( '' );
+	let stopSearch = false;
+	if ( selectEnd ) {
+		return selectEnd > newChars.length ? newChars.length : selectEnd;
+	}
+	newChars.forEach( ( char, index ) => {
+		if ( stopSearch ) {
+			return;
+		}
+		const isDigit = /\d/.test( char );
+		if ( index >= selectStart ) {
+			if ( isDigit ) {
+				if ( char !== oldDigits[ digitIndex ] ) {
+					foundIndex = index + 1;
+				} else {
+					digitIndex += 1;
+				}
+			}
+			return;
+		}
+		if ( isDigit ) {
+			if ( char !== oldDigits[ digitIndex ] ) {
+				foundIndex = index;
+				stopSearch = true;
+			}
+			digitIndex += 1;
+		}
+	} );
+	return foundIndex;
+}
