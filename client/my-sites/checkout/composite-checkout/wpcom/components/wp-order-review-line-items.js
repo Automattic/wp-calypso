@@ -169,7 +169,7 @@ export const LineItemUI = styled( WPLineItem )`
 const LineItemMeta = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
 	display: flex;
-	font-size: 13px;
+	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
 `;

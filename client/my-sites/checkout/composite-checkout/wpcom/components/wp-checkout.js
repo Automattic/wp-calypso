@@ -312,7 +312,6 @@ function InactiveOrderReview() {
 				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
 					return (
 						<ProductListItem key={ product.id }>
-							{ product.sublabel && product.sublabel + ': ' }
 							{ isLineItemADomain( product ) ? <strong>{ product.label }</strong> : product.label }
 						</ProductListItem>
 					);
@@ -380,7 +379,7 @@ const ProductList = styled.ul`
 
 const ProductListItem = styled.li`
 	color: ${( props ) => props.theme.colors.textColor};
-	font-size: 15px;
+	font-size: 14px;
 	margin: 0 0 6px;
 	padding: 0;
 	list-style-type: none;
