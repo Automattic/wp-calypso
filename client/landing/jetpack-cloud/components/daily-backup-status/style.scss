@@ -101,15 +101,31 @@
 	box-shadow: none;
 }
 
-.daily-backup-status__realtime-details-card .activity-card .card .activity-log-item__actor .activity-log-item__actor-info {
+.daily-backup-status__realtime-details-card
+	.activity-card
+	.card
+	.activity-log-item__actor
+	.activity-log-item__actor-info {
 	display: flex;
+	& > *:not( :last-child ) {
+		margin-right: 8px;
+	}
 }
 
-.daily-backup-status__realtime-details-card .activity-card .card .activity-log-item__actor .activity-log-item__actor-info .activity-log-item__actor-name::after {
+.daily-backup-status__realtime-details-card
+	.activity-card
+	.card
+	.activity-log-item__actor
+	.activity-log-item__actor-info
+	.activity-log-item__actor-name::after {
 	margin-right: 0.2rem;
 }
 
-.daily-backup-status__realtime-details-card .activity-card .card .activity-log-item__actor .gravatar,
+.daily-backup-status__realtime-details-card
+	.activity-card
+	.card
+	.activity-log-item__actor
+	.gravatar,
 .daily-backup-status__realtime-details-card .activity-card .card .activity-log-item__actor svg {
 	width: 30px;
 }
@@ -160,7 +176,7 @@
 		margin-top: 0;
 		color: var( --studio-gray-40 );
 		font-weight: 400;
-    	font-size: 0.9rem;
+		font-size: 0.9rem;
 	}
 
 	.form-button.daily-backup-status__download-button,
