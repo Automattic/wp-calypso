@@ -266,9 +266,18 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
-					.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
+					.mapValues( ( stringIds ) =>
+						_.chain( languageTranslations )
+							.pick( stringIds )
+							.mapKeys( ( value, key ) =>
+								crypto.createHash( 'sha1' ).update( key ).digest( 'hex' ).substr( 0, 8 )
+							)
+							.value()
+					)
 					.omitBy( _.isEmpty )
 					.value();
+
+				languageTranslations[ '' ][ 'key-hash' ] = 'sha1-8';
 
 				// Write language translated chunks map
 				const translatedChunksKeys = Object.keys( languageChunks ).map(
