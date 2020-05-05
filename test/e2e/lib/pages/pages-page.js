@@ -19,10 +19,10 @@ export default class PagesPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.pages__page-list .is-placeholder:not(.page)' );
 		return await driver.wait(
-			function() {
+			function () {
 				return driverHelper
 					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},

@@ -89,7 +89,7 @@ describe( 'LocalList', () => {
 	} );
 
 	describe( 'set', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			statList.clear();
 		} );
 

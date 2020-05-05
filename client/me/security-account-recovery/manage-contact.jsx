@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 const views = {
 	VIEWING: 'VIEWING',
@@ -99,26 +98,26 @@ class ManageContact extends Component {
 	}
 
 	onEdit = () => {
-		this.setState( { currentView: views.EDITING }, function() {
+		this.setState( { currentView: views.EDITING }, function () {
 			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
 		} );
 	};
 
 	onCancel = () => {
-		this.setState( { currentView: views.VIEWING }, function() {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.recordEvent( 'cancel' );
 		} );
 	};
 
-	onSave = data => {
-		this.setState( { currentView: views.VIEWING }, function() {
+	onSave = ( data ) => {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );
 		} );
 	};
 
 	onDelete = () => {
-		this.setState( { currentView: views.VIEWING }, function() {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.props.onDelete();
 			this.recordEvent( 'delete' );
 		} );
@@ -126,7 +125,7 @@ class ManageContact extends Component {
 
 	recordEvent( action ) {
 		const event = `calypso_security_account_recovery_${ this.props.type }_${ action }_click`;
-		analytics.tracks.recordEvent( event );
+		recordTracksEvent( event );
 	}
 }
 

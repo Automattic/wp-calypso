@@ -33,14 +33,12 @@ import MainWrapper from './main-wrapper';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
-import versionCompare from 'lib/version-compare';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { JPC_PATH_PLANS, JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -173,7 +171,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
@@ -212,6 +210,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
+			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber'
 		) {
@@ -252,13 +251,18 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
+	isFromBlockEditor( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'jetpack-block-editor' === from;
+	}
+
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
-	 * @param  {Object}  props          Props to test
+	 * @param  {object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
-	 * @return {boolean}                True if it's a valid SSO request otherwise false
+	 * @returns {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
 		const { from, clientId } = props.authQuery;
@@ -424,7 +428,7 @@ export class JetpackAuthorize extends Component {
 
 		let redirectToMobileApp = null;
 		if ( this.props.isMobileAppFlow ) {
-			redirectToMobileApp = reason => {
+			redirectToMobileApp = ( reason ) => {
 				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
 				this.externalRedirectOnce( url );
 			};
@@ -571,12 +575,14 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
+		// translators: %(user) is user's Display Name (Eg Connecting as John Doe)
 		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
 			args: { user: this.props.user.display_name },
 			components: { strong: <strong /> },
 		} );
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
+			// translators: %(user) is user's Display Name (Eg Connected as John Doe)
 			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
 				args: { user: this.props.user.display_name },
 				components: { strong: <strong /> },
@@ -592,8 +598,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
-		const { canManageOptions, isAtomic, partnerSlug } = this.props;
+		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { partnerSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -603,18 +609,9 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
-		const nextRoute =
-			config.isEnabled( 'jetpack/connect/site-questions' ) &&
-			isJetpackVersionSupported &&
-			canManageOptions &&
-			! isAtomic
-				? JPC_PATH_SITE_TYPE
-				: JPC_PATH_PLANS;
-
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
-			`${ nextRoute }/${ urlToSlug( homeUrl ) }`
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 	}
 
@@ -625,9 +622,12 @@ export class JetpackAuthorize extends Component {
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{ translate( 'Return to %(sitename)s', {
-					args: { sitename: decodeEntities( blogname ) },
-				} ) }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( blogname ) },
+					} )
+				}
 			</LoggedOutFormLinkItem>
 		);
 
@@ -754,8 +754,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackAuthorize );
+export default flowRight( connectComponent, localize )( JetpackAuthorize );

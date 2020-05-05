@@ -16,6 +16,7 @@ const theme = {
 		success: swatches.green50,
 		discount: swatches.green50,
 		disabledPaymentButtons: swatches.gray0,
+		disabledPaymentButtonsAccent: swatches.gray5,
 		disabledButtons: swatches.gray20,
 		borderColor: swatches.gray20,
 		borderColorLight: swatches.gray5,
@@ -39,6 +40,7 @@ const theme = {
 		placeHolderTextColor: swatches.gray30,
 	},
 	breakpoints: {
+		desktopUp: 'min-width: 960px',
 		tabletUp: 'min-width: 700px',
 		smallPhoneUp: 'min-width: 400px',
 	},

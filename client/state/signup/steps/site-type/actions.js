@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-
 import { SIGNUP_STEPS_SITE_TYPE_SET } from 'state/action-types';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { submitSignupStep } from 'state/signup/progress/actions';
+
+import 'state/signup/init';
 
 export function setSiteType( siteType ) {
 	return {
@@ -14,7 +15,7 @@ export function setSiteType( siteType ) {
 }
 
 export function submitSiteType( siteType, stepName = 'site-type' ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( setSiteType( siteType ) );
 
 		let themeSlugWithRepo = undefined;

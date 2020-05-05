@@ -68,7 +68,7 @@ const PostScheduleExample = localize(
 				} );
 			}
 
-			setDate = date => {
+			setDate = ( date ) => {
 				console.log( 'date: ', date.format() ); // eslint-disable-line no-console
 
 				this.setState( {
@@ -77,12 +77,12 @@ const PostScheduleExample = localize(
 				} );
 			};
 
-			setMonth = date => {
+			setMonth = ( date ) => {
 				console.log( 'month: %s', date.format() ); // eslint-disable-line no-console
 				this.setState( { month: date } );
 			};
 
-			setGMTOffset = event => {
+			setGMTOffset = ( event ) => {
 				if ( typeof event.target.value === 'undefined' ) {
 					return;
 				}
@@ -90,7 +90,7 @@ const PostScheduleExample = localize(
 				this.setState( { gmtOffset: Number( event.target.value ) } );
 			};
 
-			setTimezone = zone => {
+			setTimezone = ( zone ) => {
 				this.setState( { timezone: zone } );
 			};
 

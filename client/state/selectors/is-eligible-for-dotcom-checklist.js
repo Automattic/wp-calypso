@@ -20,6 +20,11 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 		return false;
 	}
 
+	//TODO: we should add checklist support for Atomic
+	if ( isAtomicSite( state, siteId ) ) {
+		return false;
+	}
+
 	const siteOptions = getSiteOptions( state, siteId );
 
 	// Checklist should not show up if the site is created before the feature was launched.

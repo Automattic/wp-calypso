@@ -93,6 +93,6 @@ export class SiteSettingsNavigation extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SiteSettingsNavigation ) );

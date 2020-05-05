@@ -104,7 +104,7 @@ class AppleLoginButton extends Component {
 		return this.appleClient;
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.onClick ) {
@@ -117,7 +117,7 @@ class AppleLoginButton extends Component {
 		}
 
 		if ( this.props.uxMode === 'redirect' ) {
-			this.loadAppleClient().then( AppleID => AppleID.auth.signIn() );
+			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
 			return;
 		}
 	};
@@ -165,7 +165,7 @@ class AppleLoginButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 	} ),
 	null

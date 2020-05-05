@@ -8,18 +8,16 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import SuggestionSearch from '..';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: jest.fn(),
-	},
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 describe( 'SuggestionSearch', () => {
 	describe( 'fires analytics with railcar prop', () => {
 		beforeEach( () => {
-			tracks.recordEvent.mockReset();
+			recordTracksEvent.mockReset();
 		} );
 
 		test( 'rendering fires traintracks render events', () => {
@@ -37,7 +35,7 @@ describe( 'SuggestionSearch', () => {
 			);
 
 			wrapper.instance().onSuggestionItemMount( { index: 0, suggestionIndex: 0 } );
-			expect( tracks.recordEvent ).toHaveBeenCalledWith( 'calypso_traintracks_render', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_traintracks_render', {
 				fetch_algo: 'THE_FETCH_ALGO',
 				fetch_position: 0,
 				railcar: 'RAILCAR-ID-0',
@@ -61,7 +59,7 @@ describe( 'SuggestionSearch', () => {
 			);
 
 			wrapper.instance().handleSuggestionMouseDown( suggestions[ 0 ], 0 );
-			expect( tracks.recordEvent ).toHaveBeenCalledWith( 'calypso_traintracks_interact', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_traintracks_interact', {
 				action: 'THE_ACTION',
 				railcar: 'RAILCAR-ID-0',
 			} );

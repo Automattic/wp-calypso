@@ -34,7 +34,7 @@ function promotionContainsString( promotion, textString ) {
 	return false;
 }
 
-const PromotionsList = props => {
+const PromotionsList = ( props ) => {
 	const {
 		site,
 		searchFilter,
@@ -56,7 +56,7 @@ const PromotionsList = props => {
 		return <EmptyContent title={ translate( 'No Results' ) } line={ message } />;
 	}
 
-	const switchPage = index => {
+	const switchPage = ( index ) => {
 		if ( site ) {
 			props.setPromotionsPage( index, perPage );
 		}
@@ -95,7 +95,7 @@ function mapStateToProps( state ) {
 	const promotions = site && getPromotions( state, site.ID );
 	const filteredPromotions =
 		promotions &&
-		promotions.filter( promotion => {
+		promotions.filter( ( promotion ) => {
 			return promotionContainsString( promotion, searchFilter );
 		} );
 	const promotionsPage = site && getPromotionsPage( filteredPromotions, currentPage, perPage );

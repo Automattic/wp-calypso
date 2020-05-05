@@ -45,10 +45,10 @@ const postLike = {
 /**
  * Make a quick clone of an object for testing
  *
- * @param {Object} o object to shallow-clone
- * @returns {Object} cloned object
+ * @param {object} o object to shallow-clone
+ * @returns {object} cloned object
  */
-const cp = o => ( { ...o } );
+const cp = ( o ) => ( { ...o } );
 
 describe( '#buildKey', () => {
 	test( 'should collapse "duplicate" requests', () => {

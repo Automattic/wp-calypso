@@ -24,6 +24,7 @@ import {
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
@@ -39,6 +40,7 @@ import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers }
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -52,17 +54,30 @@ import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
+		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
 		gsuiteUsers: PropTypes.array,
 		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
-		selectedDomainName: PropTypes.string,
 	};
 
 	render() {
-		const { selectedSiteId, selectedDomainName } = this.props;
+		const { canManageSite, selectedDomainName, selectedSiteId } = this.props;
+
+		if ( ! canManageSite ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
 
 		return (
 			<Main className="email-management" wideLayout>
@@ -134,7 +149,7 @@ class EmailManagement extends React.Component {
 
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
-			action: translate( 'Add a Custom Domain' ),
+			action: translate( 'Add a custom domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		};
 
@@ -158,7 +173,7 @@ class EmailManagement extends React.Component {
 		}
 
 		const emailForwardingAction = {
-			secondaryAction: translate( 'Add Email Forwarding' ),
+			secondaryAction: translate( 'Add email forwarding' ),
 			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
 		};
 
@@ -174,8 +189,9 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL:
-					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL: localizeUrl(
+					'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
+				),
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};
@@ -248,9 +264,10 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { CompactCard, ProductIcon } from '@automattic/components';
 import {
 	getDisplayName,
 	isExpired,
@@ -29,23 +29,22 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
-	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanTermLabel } from 'lib/plans';
+import { getPlanClass, getPlanTermLabel } from 'lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const eventProperties = warning => ( { warning, position: 'purchase-list' } );
+const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {
@@ -69,20 +68,23 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewMoment ) {
+		if ( isRenewing( purchase ) && purchase.renewDate ) {
+			const renewDate = moment( purchase.renewDate );
 			return translate( 'Renews on %s', {
-				args: purchase.renewMoment.format( 'LL' ),
+				args: renewDate.format( 'LL' ),
 			} );
 		}
 
+		const expiry = moment( purchase.expiryDate );
+
 		if ( isExpiring( purchase ) ) {
-			if ( purchase.expiryMoment < moment().add( 30, 'days' ) ) {
+			if ( expiry < moment().add( 30, 'days' ) ) {
 				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
 				return (
 					<Notice isCompact status={ status } icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
-								timeUntilExpiry: purchase.expiryMoment.fromNow(),
+								timeUntilExpiry: expiry.fromNow(),
 							},
 							context:
 								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -93,21 +95,19 @@ class PurchaseItem extends Component {
 			}
 
 			return translate( 'Expires on %s', {
-				args: purchase.expiryMoment.format( 'LL' ),
+				args: expiry.format( 'LL' ),
 			} );
 		}
 
 		if ( isExpired( purchase ) ) {
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
-					args: purchase.expiryMoment.format( 'LL' ),
+					args: expiry.format( 'LL' ),
 				} );
 			}
 
-			const expiredToday = moment().diff( purchase.expiryMoment, 'hours' ) < 24;
-			const expiredText = expiredToday
-				? purchase.expiryMoment.format( '[today]' )
-				: purchase.expiryMoment.fromNow();
+			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
+			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
 
 			return (
 				<Notice isCompact status="is-error" icon="notice">
@@ -158,10 +158,13 @@ class PurchaseItem extends Component {
 			return null;
 		}
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+					<ProductIcon
+						slug={ purchase.productSlug }
+						className={ getPlanClass( purchase.productSlug ) }
+					/>
 				</div>
 			);
 		}
@@ -173,8 +176,6 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
-		} else if ( isJetpackBackup( purchase ) ) {
-			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {

@@ -15,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const retryOnFailure = rof();
-const retryWithDelay = delay => rof( () => delay );
+const retryWithDelay = ( delay ) => rof( () => delay );
 
 const nextError = { fail: 'failed big time' };
 
@@ -27,7 +27,7 @@ const getSites = deepFreeze(
 	} )
 );
 
-const withRetries = retryCount => actionOrInbound =>
+const withRetries = ( retryCount ) => ( actionOrInbound ) =>
 	undefined !== actionOrInbound.originalRequest
 		? merge( actionOrInbound, {
 				originalRequest: withRetries( retryCount )( actionOrInbound.originalRequest ),
@@ -39,7 +39,7 @@ describe( '#retryOnFailure', () => {
 	let dispatch;
 	let store;
 
-	useFakeTimers( fakeClock => ( clock = fakeClock ) );
+	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
 
 	beforeEach( () => {
 		dispatch = spy();

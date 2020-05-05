@@ -70,7 +70,7 @@ class DocumentHead extends Component {
 		this.setFormattedTitle.cancel();
 	}
 
-	setFormattedTitle = debounce( title => {
+	setFormattedTitle = debounce( ( title ) => {
 		document.title = title;
 	} );
 
@@ -91,7 +91,7 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		formattedTitle: getDocumentHeadFormattedTitle( state ),
 	} ),
 	{

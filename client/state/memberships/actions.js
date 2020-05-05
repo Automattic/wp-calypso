@@ -9,10 +9,10 @@ import {
 import wpcom from 'lib/wp';
 
 export function listMembershipsConnectedAccounts() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST } );
 
-		return wpcom.req.get( '/me/connected_accounts/list' ).then( endpointResponse => {
+		return wpcom.req.get( '/me/connected_accounts/list' ).then( ( endpointResponse ) => {
 			const accounts = endpointResponse.accounts.reduce( ( accumulator, item ) => {
 				accumulator[ item.connected_destination_account_id ] = item;
 				return accumulator;

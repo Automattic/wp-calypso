@@ -183,7 +183,7 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		liveChatAvailable: isHappychatAvailable( state ),
 	} ),
 	{ recordTracksEvent }

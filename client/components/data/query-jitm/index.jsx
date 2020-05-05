@@ -30,7 +30,7 @@ QueryJITM.defaultProps = {
 	sectionName: '',
 };
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	locale: getCurrentUserLocale( state ),
 } );
 

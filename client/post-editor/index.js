@@ -11,7 +11,7 @@ import controller from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page( '/post', controller.pressThis, siteSelection, sites, makeLayout, clientRender );
 	page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
 	page(
@@ -38,7 +38,7 @@ export default function() {
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:type', siteSelection, sites, makeLayout, clientRender );
-		page( '/edit/:type/new', context => page.redirect( `/edit/${ context.params.type }` ) );
+		page( '/edit/:type/new', ( context ) => page.redirect( `/edit/${ context.params.type }` ) );
 		page(
 			'/edit/:type/:site?/:post?',
 			siteSelection,

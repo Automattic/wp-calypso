@@ -26,7 +26,7 @@ import { TimestampMS } from 'client/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const anyFrom = obj => {
+const anyFrom = ( obj ) => {
 	const key = Object.keys( obj )[ 0 ];
 	return key && obj[ key ];
 };

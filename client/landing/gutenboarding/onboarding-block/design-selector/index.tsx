@@ -1,121 +1,107 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import React, { useState, FunctionComponent, MouseEvent } from 'react';
-import classnames from 'classnames';
-import { CSSTransition } from 'react-transition-group';
-import PageLayoutSelector from './page-layout-selector';
-import { partition } from 'lodash';
+import React from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
+import { useI18n } from '@automattic/react-i18n';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
-import { SiteVertical } from '../../stores/onboard/types';
-import DesignCard from './design-card';
-
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import designs from '../../available-designs';
+import { usePath, Step } from '../../path';
+import { isEnabled } from '../../../../config';
+import Link from '../../components/link';
+import { SubTitle, Title } from '../../components/titles';
+import { useTrackStep } from '../../hooks/use-track-step';
 import './style.scss';
-import { VerticalsTemplates } from '@automattic/data-stores';
 
-type Template = VerticalsTemplates.Template;
+type Design = import('../../stores/onboard/types').Design;
 
-const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
+const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
-const DesignSelector: FunctionComponent = () => {
-	const siteVertical = useSelect(
-		select => select( 'automattic/onboard' ).getState().siteVertical as SiteVertical
-	);
+const DesignSelector: React.FunctionComponent = () => {
+	const { __ } = useI18n();
+	const { push } = useHistory();
+	const makePath = usePath();
 
-	const templates =
-		useSelect( select => select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical.id ) ) ??
-		[];
+	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
-	const [ designs, otherTemplates ] = partition(
-		templates,
-		( { category } ) => category === 'home'
-	);
+	const getDesignUrl = ( design: Design ) => {
+		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
+		// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
+		// https://github.com/Automattic/mShots/issues/16
+		// https://github.com/Automattic/wp-calypso/issues/40564
+		if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
+			return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+		}
 
-	const [ selectedDesign, setSelectedDesign ] = useState< Template | undefined >();
-	const [ selectedLayouts, setSelectedLayouts ] = useState< Set< string > >( new Set() );
-	const resetLayouts = () => setSelectedLayouts( new Set() );
-	const toggleLayout = ( layout: Template ) =>
-		setSelectedLayouts( layouts => {
-			const nextLayouts = new Set( layouts );
-			if ( nextLayouts.has( layout.slug ) ) {
-				nextLayouts.delete( layout.slug );
-			} else {
-				nextLayouts.add( layout.slug );
-			}
-			return nextLayouts;
+		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
+		const previewUrl = addQueryArgs( design.src, {
+			font_headings: design.fonts.headings,
+			font_base: design.fonts.base,
 		} );
-
-	const resetState = () => {
-		setSelectedDesign( undefined );
-		resetLayouts();
+		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
 
-	const transitionTiming = 250;
-	const hasSelectedDesign = !! selectedDesign;
-	const [ cp, setCp ] = useState< number >();
+	useTrackStep( 'DesignSelection', () => ( {
+		selected_design: getSelectedDesign()?.slug,
+	} ) );
 
 	return (
-		<div className={ classnames( 'design-selector', { 'has-selected-design': selectedDesign } ) }>
-			<div
-				className="design-selector__header-container"
-				onClick={ () => resetState() }
-				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
-			>
-				<h1 className="design-selector__title">
-					{ NO__( 'Choose a starting design for your site' ) }
-				</h1>
-				<h2 className="design-selector__subtitle">
-					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
-				</h2>
-			</div>
-
-			<CSSTransition in={ ! hasSelectedDesign } timeout={ transitionTiming }>
-				<div
-					className="design-selector__grid-container"
-					onClick={ hasSelectedDesign ? resetState : undefined }
+		<div className="gutenboarding-page design-selector">
+			<div className="design-selector__header">
+				<div className="design-selector__heading">
+					<Title>{ __( 'Choose a design' ) }</Title>
+					<SubTitle>
+						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
+					</SubTitle>
+				</div>
+				<Link
+					className="design-selector__start-over-button"
+					to={ makePath( Step.IntentGathering ) }
+					isLink
 				>
-					<div className="design-selector__grid">
-						{ designs.map( design => (
-							<DesignCard
-								key={ design.slug }
-								design={ design }
-								isSelected={ design.slug === selectedDesign?.slug }
-								style={
-									selectedDesign?.slug === design.slug
-										? {
-												transform: `translate3d( 0, calc( -100vh + ${ -( cp ?? 0 ) + 10 }px ), 0 )`,
-										  }
-										: undefined
-								}
-								onClick={ ( e: MouseEvent< HTMLDivElement > ) => {
-									window.scrollTo( 0, 0 );
-									setCp( e.currentTarget.offsetTop );
-									setSelectedDesign( currentTemplate =>
-										currentTemplate?.slug === design?.slug ? undefined : design
-									);
-									resetLayouts();
-								} }
-							/>
-						) ) }
-					</div>
-				</div>
-			</CSSTransition>
+					{ __( 'Go back' ) }
+				</Link>
+			</div>
+			<div className="design-selector__design-grid">
+				<div className="design-selector__grid">
+					{ designs.featured.map( ( design ) => (
+						<button
+							key={ design.slug }
+							className="design-selector__design-option"
+							onClick={ () => {
+								setSelectedDesign( design );
 
-			<CSSTransition in={ hasSelectedDesign } timeout={ transitionTiming } unmountOnExit>
-				<div className="page-layout-selector__container">
-					<PageLayoutSelector
-						selectedDesign={ selectedDesign }
-						selectedLayouts={ selectedLayouts }
-						selectLayout={ toggleLayout }
-						templates={ otherTemplates }
-					/>
+								// Update fonts to the design defaults
+								setFonts( design.fonts );
+
+								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
+									push( makePath( Step.Style ) );
+								}
+							} }
+						>
+							<span className="design-selector__image-frame">
+								<img
+									alt=""
+									aria-labelledby={ makeOptionId( design ) }
+									src={ getDesignUrl( design ) }
+								/>
+							</span>
+							<span className="design-selector__option-overlay">
+								<span id={ makeOptionId( design ) } className="design-selector__option-name">
+									{ design.title }
+								</span>
+							</span>
+						</button>
+					) ) }
 				</div>
-			</CSSTransition>
+			</div>
 		</div>
 	);
 };

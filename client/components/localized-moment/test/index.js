@@ -17,7 +17,7 @@ import { MomentProvider } from '../context';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
 
 // helper to create state object with specified `languageSlug`
-const createState = localeSlug => ( { ui: { language: { localeSlug } } } );
+const createState = ( localeSlug ) => ( { ui: { language: { localeSlug } } } );
 
 // reducer for the Redux store
 const reducer = ( state, action ) => {
@@ -54,7 +54,7 @@ const csLabel = 'čtvrtek listopad';
 // and gets the `loadingLocalePromise` instance property. The provider exposes the property
 // for testing purposes so that the test can wait for the locale dynamic import to finish.
 // After the promise is resolved, the wrapper is updated in order to get the latest rendered tree.
-const getMomentProviderLoadingPromise = async wrapper => {
+const getMomentProviderLoadingPromise = async ( wrapper ) => {
 	await wrapper.childAt( 0 ).instance().loadingLocalePromise;
 	wrapper.update();
 };
@@ -127,12 +127,12 @@ describe.each( [
 			)
 		);
 
-		wrappers.forEach( wrapper => expect( wrapper.text() ).toEqual( enLabel ) );
+		wrappers.forEach( ( wrapper ) => expect( wrapper.text() ).toEqual( enLabel ) );
 
 		await setLocaleAndWait( 'cs', store, ...wrappers );
-		wrappers.forEach( wrapper => expect( wrapper.text() ).toEqual( csLabel ) );
+		wrappers.forEach( ( wrapper ) => expect( wrapper.text() ).toEqual( csLabel ) );
 
 		await setLocaleAndWait( 'en', store, ...wrappers );
-		wrappers.forEach( wrapper => expect( wrapper.text() ).toEqual( enLabel ) );
+		wrappers.forEach( ( wrapper ) => expect( wrapper.text() ).toEqual( enLabel ) );
 	} );
 } );

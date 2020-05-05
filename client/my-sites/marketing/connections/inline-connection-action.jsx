@@ -19,7 +19,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import requestExternalAccess from 'lib/sharing';
 
 export const getNamedConnectedService = ( state, name ) =>
-	getKeyringConnections( state ).filter( item => item.service === name );
+	getKeyringConnections( state ).filter( ( item ) => item.service === name );
 
 const STATUS_UNKNOWN = 'unknown';
 const STATUS_NOT_CONNECTED = 'not-connected';

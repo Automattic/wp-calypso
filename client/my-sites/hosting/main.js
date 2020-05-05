@@ -23,18 +23,20 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
-import { isEnabled } from 'config';
+import MiscellaneousCard from './miscellaneous-card';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+} from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { requestSite } from 'state/sites/actions';
 import FeatureExample from 'components/feature-example';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_SFTP } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -75,14 +77,14 @@ class Hosting extends Component {
 			return null;
 		}
 
-		const sftpPhpMyAdminFeaturesEnabled = isEnabled( 'hosting/sftp-phpmyadmin' );
-
 		const getUpgradeBanner = () => (
-			<Banner
+			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
 				event="calypso_hosting_configuration_upgrade_click"
 				href={ `/checkout/${ siteId }/business` }
 				plan={ PLAN_BUSINESS }
+				feature={ FEATURE_SFTP }
+				showIcon={ true }
 			/>
 		);
 
@@ -159,12 +161,13 @@ class Hosting extends Component {
 				<WrapperComponent>
 					<div className="hosting__layout">
 						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
-							{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
-							{ <PhpVersionCard disabled={ isDisabled } /> }
+							<SFTPCard disabled={ isDisabled } />
+							<PhpMyAdminCard disabled={ isDisabled } />
+							<PhpVersionCard disabled={ isDisabled } />
+							<MiscellaneousCard disabled={ isDisabled } />
 						</div>
 						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SiteBackupCard disabled={ isDisabled } /> }
+							<SiteBackupCard disabled={ isDisabled } />
 							<SupportCard />
 						</div>
 					</div>
@@ -179,11 +182,9 @@ class Hosting extends Component {
 				<SidebarNavigation />
 				<FormattedHeader
 					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={
-						sftpPhpMyAdminFeaturesEnabled
-							? translate( 'Access your website’s database and more advanced settings.' )
-							: translate( 'Access and manage more advanced settings of your website.' )
-					}
+					subHeaderText={ translate(
+						'Access your website’s database and more advanced settings.'
+					) }
 					align="left"
 				/>
 				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
@@ -197,7 +198,7 @@ export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

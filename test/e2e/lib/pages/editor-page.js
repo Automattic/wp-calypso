@@ -88,7 +88,10 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
+		await driverHelper.elementIsNotPresent(
+			driver,
+			by.css( '.media-library__list-item.is-transient' )
+		);
 		const errorShown = await this.isErrorDisplayed();
 		if ( errorShown ) {
 			throw new Error( 'There is an error shown on the editor page!' );
@@ -216,7 +219,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
 			by.css( '.editor-simple-payments-modal' ),
-			this.explicitWaitMS * 3
+			this.explicitWaitMS * 7
 		);
 	}
 

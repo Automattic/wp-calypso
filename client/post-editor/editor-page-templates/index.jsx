@@ -113,7 +113,7 @@ class EditorPageTemplates extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );

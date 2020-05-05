@@ -38,7 +38,7 @@ export const setFormMetaProperty = ( siteId, key, value ) => {
 	};
 };
 
-export const fetchSettings = siteId => dispatch => {
+export const fetchSettings = ( siteId ) => ( dispatch ) => {
 	dispatch( setFormMetaProperty( siteId, 'isFetching', true ) );
 
 	api
@@ -46,7 +46,7 @@ export const fetchSettings = siteId => dispatch => {
 		.then( ( { storeOptions, formMeta, formData } ) => {
 			dispatch( initForm( siteId, storeOptions, formData, formMeta ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( setFormMetaProperty( siteId, 'isFetchError', true ) );
 			console.error( error ); // eslint-disable-line no-console
 		} )
@@ -59,7 +59,7 @@ export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, ge
 	api
 		.post( siteId, api.url.accountSettings, getLabelSettingsFormData( getState() ) )
 		.then( onSaveSuccess )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setFormMetaProperty( siteId, 'pristine', false ) );
 			return onSaveFailure( err );
 		} )
@@ -68,17 +68,17 @@ export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, ge
 		} );
 };
 
-export const restorePristineSettings = siteId => {
+export const restorePristineSettings = ( siteId ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
 		siteId,
 	};
 };
 
-export const openAddCardDialog = siteId => {
+export const openAddCardDialog = ( siteId ) => {
 	return { type: WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG, siteId };
 };
 
-export const closeAddCardDialog = siteId => {
+export const closeAddCardDialog = ( siteId ) => {
 	return { type: WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG, siteId };
 };

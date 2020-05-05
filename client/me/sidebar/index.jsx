@@ -127,7 +127,7 @@ class MeSidebar extends React.Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log Out' ) }
+							{ translate( 'Log out' ) }
 						</Button>
 					</div>
 
@@ -228,7 +228,7 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			currentUser: getCurrentUser( state ),
 		} ),
 		{

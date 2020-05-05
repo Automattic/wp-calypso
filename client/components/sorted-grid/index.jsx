@@ -66,7 +66,7 @@ class SortedGrid extends PureComponent {
 		);
 	}
 
-	renderItem = item => {
+	renderItem = ( item ) => {
 		if ( item.isGridLabel ) {
 			return this.renderLabels( item );
 		}

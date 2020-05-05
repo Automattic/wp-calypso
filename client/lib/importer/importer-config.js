@@ -8,7 +8,7 @@ import { filter, head, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import InlineSupportLink from 'components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -34,15 +34,21 @@ function getConfig( { siteTitle = '' } = {} ) {
 			'A WordPress export is ' +
 				'an XML file with your page and post content, or a zip archive ' +
 				'containing several XML files. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+				'{{supportLink/}}',
 			{
 				components: {
-					ExternalLink: (
-						<ExternalLink href="https://en.support.wordpress.com/coming-from-self-hosted/" />
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 67084 }
+							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
+							showIcon={ false }
+							text={ translate( 'Need help exporting your content?' ) }
+						/>
 					),
 				},
 			}
 		),
+		overrideDestination: '/migrate/%SITE_SLUG%',
 		weight: 1,
 	};
 
@@ -67,14 +73,19 @@ function getConfig( { siteTitle = '' } = {} ) {
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
 				'containing your page and post content. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+				'{{supportLink/}}',
 			{
 				args: {
 					importerName: 'Blogger',
 				},
 				components: {
-					ExternalLink: (
-						<ExternalLink href="https://en.support.wordpress.com/import/coming-from-blogger/" />
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 66764 }
+							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
+							showIcon={ false }
+							text={ translate( 'Need help exporting your content?' ) }
+						/>
 					),
 				},
 			}
@@ -99,7 +110,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site' ),
+		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+			components: {
+				supportLink: (
+					<InlineSupportLink
+						supportPostId={ 154436 }
+						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
+						showIcon={ false }
+						text={ translate( 'Need help?' ) }
+					/>
+				),
+			},
+		} ),
 		weight: 0,
 	};
 
@@ -124,14 +146,19 @@ function getConfig( { siteTitle = '' } = {} ) {
 		uploadDescription: translate(
 			'A %(importerName)s export file is a ZIP ' +
 				'file containing several HTML files with your stories. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+				'{{supportLink/}}',
 			{
 				args: {
 					importerName: 'Medium',
 				},
 				components: {
-					ExternalLink: (
-						<ExternalLink href={ 'https://en.support.wordpress.com/import/import-from-medium/' } />
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 93180 }
+							supportLink="https://wordpress.com/support/import/import-from-medium/"
+							showIcon={ false }
+							text={ translate( 'Need help exporting your content?' ) }
+						/>
 					),
 				},
 			}
@@ -160,15 +187,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
 				'containing your page and post content. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+				'{{supportLink/}}',
 			{
 				args: {
 					importerName: 'Squarespace',
 				},
 				components: {
-					ExternalLink: (
-						<ExternalLink
-							href={ 'https://en.support.wordpress.com/import/import-from-squarespace' }
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 87696 }
+							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
+							showIcon={ false }
+							text={ translate( 'Need help exporting your content?' ) }
 						/>
 					),
 				},
@@ -194,7 +224,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site' ),
+		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+			components: {
+				supportLink: (
+					<InlineSupportLink
+						supportPostId={ 147777 }
+						supportLink="https://wordpress.com/support/import/import-from-wix/"
+						showIcon={ false }
+						text={ translate( 'Need help?' ) }
+					/>
+				),
+			},
+		} ),
 		weight: 0,
 	};
 
@@ -212,11 +253,11 @@ export function getImporters( params = {} ) {
 }
 
 export function getFileImporters( params = {} ) {
-	return filter( getImporters( params ), importer => importer.type === 'file' );
+	return filter( getImporters( params ), ( importer ) => importer.type === 'file' );
 }
 
 export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), importer => importer.key === key ) );
+	return head( filter( getImporters( params ), ( importer ) => importer.key === key ) );
 }
 
 export default getConfig;

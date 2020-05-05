@@ -23,11 +23,7 @@ describe( 'validation', () => {
 	const validCard = {
 		name: 'John Doe',
 		number: '4111111111111111',
-		'expiration-date':
-			'01/' +
-			moment()
-				.add( 1, 'years' )
-				.format( 'YY' ),
+		'expiration-date': '01/' + moment().add( 1, 'years' ).format( 'YY' ),
 		cvv: '111',
 		country: 'US',
 		'postal-code': '90210',
@@ -36,11 +32,7 @@ describe( 'validation', () => {
 	const validBrazilianEbanxCard = {
 		name: 'Ana Santos Araujo',
 		number: '4111111111111111',
-		'expiration-date':
-			'01/' +
-			moment()
-				.add( 1, 'years' )
-				.format( 'YY' ),
+		'expiration-date': '01/' + moment().add( 1, 'years' ).format( 'YY' ),
 		cvv: '111',
 		country: 'BR',
 		'postal-code': '90210',

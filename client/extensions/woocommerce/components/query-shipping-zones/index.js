@@ -64,7 +64,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		loaded: areShippingZonesFullyLoaded( state, ownProps.siteId ),
 	} ),
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,

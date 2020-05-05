@@ -28,7 +28,7 @@ import {
 	editProductRemoveCategory,
 } from 'woocommerce/state/ui/products/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {
@@ -315,10 +315,10 @@ describe( 'handlers', () => {
 			};
 
 			const successAction = { type: '%%SUCCESS%%' };
-			const onSuccess = dispatch => dispatch( successAction );
+			const onSuccess = ( dispatch ) => dispatch( successAction );
 
 			const failureAction = { type: '%%FAILURE%%' };
-			const onFailure = dispatch => dispatch( failureAction );
+			const onFailure = ( dispatch ) => dispatch( failureAction );
 
 			const actionList = makeProductActionList( rootState, 123, edits, [], onSuccess, onFailure );
 

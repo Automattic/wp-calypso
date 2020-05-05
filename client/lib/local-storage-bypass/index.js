@@ -6,15 +6,15 @@ import debugModule from 'debug';
 
 const debug = debugModule( 'calypso:support-user' );
 
-export const length = memoryStore => {
+export const length = ( memoryStore ) => {
 	return () => {
 		debug( 'Bypassing localStorage', 'length property' );
 		return Object.keys( memoryStore ).length;
 	};
 };
 
-export const key = memoryStore => {
-	return index => {
+export const key = ( memoryStore ) => {
+	return ( index ) => {
 		debug( 'Bypassing localStorage', 'key' );
 		if ( index >= Object.keys( memoryStore ).length ) {
 			return null;
@@ -37,7 +37,7 @@ export const setItem = ( memoryStore, allowedKeys, original ) => {
 };
 
 export const getItem = ( memoryStore, allowedKeys, original ) => {
-	return _key => {
+	return ( _key ) => {
 		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
 			return original( _key );
 		}
@@ -48,7 +48,7 @@ export const getItem = ( memoryStore, allowedKeys, original ) => {
 };
 
 export const removeItem = ( memoryStore, allowedKeys, original ) => {
-	return _key => {
+	return ( _key ) => {
 		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
 			original( _key );
 			return;
@@ -59,7 +59,7 @@ export const removeItem = ( memoryStore, allowedKeys, original ) => {
 	};
 };
 
-export const clear = memoryStore => {
+export const clear = ( memoryStore ) => {
 	return () => {
 		debug( 'Bypassing localStorage', 'clear' );
 
@@ -80,7 +80,7 @@ export const clear = memoryStore => {
  * @param {object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
  * @param {string[]} [arg.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
  */
-export default function( {
+export default function ( {
 	root = typeof window === 'undefined' ? undefined : window,
 	allowedKeys = [],
 } = {} ) {

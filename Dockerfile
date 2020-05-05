@@ -1,11 +1,10 @@
-FROM node:12.13.1
+FROM node:12.16.2
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
 
 
 ENV        CONTAINER 'docker'
-ENV        NODE_PATH=/calypso/server:/calypso/client
 ENV        PROGRESS=true
 
 # Build a "base" layer
@@ -21,20 +20,13 @@ ENV        PROGRESS=true
 COPY       ./env-config.sh /tmp/env-config.sh
 RUN        bash /tmp/env-config.sh
 
-# Build a node_modules layer
-#
-# This one builds out our node_modules tree. Since we use
-# file: references, we have to copy over our
-# package.json, lockfiles, and the contents of packages/*
-COPY package.json package-lock.json /calypso/
-COPY packages /calypso/packages
-RUN npm ci
-
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-COPY       . /calypso/
+COPY . /calypso/
+RUN yarn install --frozen-lockfile
+
 
 # Build the final layer
 #
@@ -44,7 +36,7 @@ ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
 ARG        workers
-RUN        WORKERS=$workers CALYPSO_ENV=production npm run build
+RUN        WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true yarn run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

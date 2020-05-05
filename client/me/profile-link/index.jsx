@@ -36,11 +36,11 @@ class ProfileLink extends React.Component {
 		slug: PropTypes.string.isRequired,
 	};
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 

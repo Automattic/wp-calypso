@@ -122,7 +122,7 @@ class GuidedTransferCard extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	cost: getProductDisplayCost( state, 'guided_transfer' ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),

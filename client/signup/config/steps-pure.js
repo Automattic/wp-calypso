@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -12,6 +13,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -23,6 +25,7 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -33,6 +36,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	addOrRemoveFromProgressStore = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -221,6 +225,17 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-ecommerce-fulfilled': {
+			stepName: 'plans-ecommerce-fulfilled',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE,
+			},
+		},
+
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
@@ -237,11 +252,47 @@ export function generateSteps( {
 			},
 		},
 
+		'upsell-plan': {
+			stepName: 'upsell-plan',
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+		},
+
+		'plans-plan-only': {
+			stepName: 'plans-plan-only',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
+		},
+
+		'plans-with-domain': {
+			stepName: 'plans-with-domain',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
+			props: {
+				headerText: i18n.translate( 'Choose a plan' ),
+				subHeaderText: i18n.translate(
+					'Pick a plan that’s right for you. Switch plans as your needs change. {{br/}} There’s no risk, you can cancel for a full refund within 30 days.',
+					{
+						components: { br: <br /> },
+						comment:
+							'Subheader of the plans page where users land from onboarding after they picked a paid domain',
+					}
+				),
+			},
 		},
 
 		domains: {
@@ -290,8 +341,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'useThemeHeadstart',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -568,6 +620,7 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'isPreLaunch' ],
 		},
 
 		passwordless: {
@@ -575,6 +628,12 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'team-site': {
+			stepName: 'team-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
 		},
 	};
 }

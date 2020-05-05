@@ -57,7 +57,7 @@ export class MediaLibraryList extends React.Component {
 
 	state = {};
 
-	setListContext = component => {
+	setListContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -75,7 +75,7 @@ export class MediaLibraryList extends React.Component {
 		return Math.floor( 1 / this.props.mediaScale );
 	};
 
-	getMediaItemStyle = index => {
+	getMediaItemStyle = ( index ) => {
 		const itemsPerRow = this.getItemsPerRow();
 		const isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale;
 		const isLastInRow = 0 === ( index + 1 ) % itemsPerRow;
@@ -142,11 +142,11 @@ export class MediaLibraryList extends React.Component {
 		}
 	};
 
-	getItemRef = item => {
+	getItemRef = ( item ) => {
 		return 'item-' + item.ID;
 	};
 
-	getGroupLabel = date => {
+	getGroupLabel = ( date ) => {
 		const itemDate = new Date( date );
 		const currentDate = new Date();
 
@@ -157,10 +157,10 @@ export class MediaLibraryList extends React.Component {
 		return this.props.moment( date ).format( 'MMM D, YYYY' );
 	};
 
-	getItemGroup = item =>
+	getItemGroup = ( item ) =>
 		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
-	renderItem = item => {
+	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.mediaLibrarySelectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
@@ -194,7 +194,7 @@ export class MediaLibraryList extends React.Component {
 		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
+		return Array.apply( null, new Array( placeholders ) ).map( function ( value, i ) {
 			return (
 				<ListItem
 					key={ 'placeholder-' + i }
@@ -227,7 +227,7 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		const onFetchNextPage = function() {
+		const onFetchNextPage = function () {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();
@@ -261,6 +261,6 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	mediaScale: getPreference( state, 'mediaScale' ),
 } ) )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

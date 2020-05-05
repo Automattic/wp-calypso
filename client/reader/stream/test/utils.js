@@ -31,24 +31,12 @@ describe( 'reader stream', () => {
 	};
 
 	describe( '#sameDay', () => {
-		const datePostKey = date => ( { date } );
+		const datePostKey = ( date ) => ( { date } );
 		const todayPostKey = datePostKey( today );
 		const todayPostKey2 = datePostKey( new Date() );
-		const oneYearAgoPostKey = datePostKey(
-			moment( today )
-				.subtract( 1, 'year' )
-				.toDate()
-		);
-		const oneYearInTheFuturePostKey = datePostKey(
-			moment( today )
-				.add( 1, 'year' )
-				.toDate()
-		);
-		const oneMonthAgoPostKey = datePostKey(
-			moment( today )
-				.subtract( 1, 'month' )
-				.toDate()
-		);
+		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );
+		const oneYearInTheFuturePostKey = datePostKey( moment( today ).add( 1, 'year' ).toDate() );
+		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
 
 		test( 'should return true when two days are the same day', () => {
 			assert( sameDay( todayPostKey, todayPostKey2 ) );
@@ -186,9 +174,7 @@ describe( 'reader stream', () => {
 		} );
 
 		test( 'should not combine cards that are greater than a day apart', () => {
-			const theDistantPast = moment()
-				.year( -1 )
-				.toDate();
+			const theDistantPast = moment().year( -1 ).toDate();
 			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );

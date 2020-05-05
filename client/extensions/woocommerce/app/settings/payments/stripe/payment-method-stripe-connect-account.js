@@ -60,7 +60,7 @@ class StripeConnectAccount extends Component {
 		);
 	};
 
-	onDeauthorize = event => {
+	onDeauthorize = ( event ) => {
 		event.preventDefault();
 		this.props.onDeauthorize();
 	};

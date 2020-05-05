@@ -64,7 +64,7 @@ const RestorePasswordDialog = ( {
 	);
 };
 
-const restore = siteId =>
+const restore = ( siteId ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -78,7 +78,7 @@ const restore = siteId =>
 	);
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{

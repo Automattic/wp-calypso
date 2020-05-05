@@ -13,7 +13,7 @@ import { receiveRecentPostViews } from 'state/stats/recent-post-views/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId, postIds, num, date, offset } = action;
 
 	return http(

@@ -42,13 +42,13 @@ describe( 'MediaLibraryList item selection', () => {
 
 	function expectSelectedItems() {
 		expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.have.members(
-			toArray( arguments ).map( function( arg ) {
+			toArray( arguments ).map( function ( arg ) {
 				return fixtures.media[ arg ];
 			} )
 		);
 	}
 
-	beforeAll( function() {
+	beforeAll( function () {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			siteId: DUMMY_SITE_ID,

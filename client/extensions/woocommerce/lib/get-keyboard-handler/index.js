@@ -6,11 +6,11 @@
  *
  *
  * @param {Function} callback A callback function
- * @return {Function} the callback to fire on a keydown event
+ * @returns {Function} the callback to fire on a keydown event
  */
 
-export default function( callback ) {
-	return event => {
+export default function ( callback ) {
+	return ( event ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			callback( event );

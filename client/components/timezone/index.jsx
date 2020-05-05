@@ -16,14 +16,14 @@ import getRawOffsets from 'state/selectors/get-raw-offsets';
 import getTimezones from 'state/selectors/get-timezones';
 
 class Timezone extends Component {
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event.target.value );
 	};
 
 	renderOptionsByContinent() {
 		const { timezones } = this.props;
 
-		return map( timezones, timezoneContinent => {
+		return map( timezones, ( timezoneContinent ) => {
 			const [ continent, countries ] = timezoneContinent;
 
 			return (
@@ -84,7 +84,7 @@ Timezone.propTypes = {
 	includeManualOffsets: PropTypes.bool,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	rawOffsets: getRawOffsets( state ),
 	timezones: getTimezones( state ),
 } ) )( localize( Timezone ) );

@@ -172,15 +172,16 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			[
-				'siteInformation' => array_merge( $default_info, $site_info ),
-				'templates'       => array_merge( $default_templates, $vertical_templates ),
-				'vertical'        => $vertical,
-				'segment'         => $segment,
+				'siteInformation' 		=> array_merge( $default_info, $site_info ),
+				'templates'       		=> array_merge( $default_templates, $vertical_templates ),
+				'vertical'        		=> $vertical,
+				'segment'         		=> $segment,
 				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'screenAction'    => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'           => normalize_theme_slug( get_stylesheet() ),
+				'screenAction'    		=> isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
+				'theme'           		=> normalize_theme_slug( get_stylesheet() ),
 				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'isFrontPage'     => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
+				'isFrontPage'     		=> isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
+				'hideFrontPageTitle'	=> get_theme_mod( 'hide_front_page_title' ),
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
@@ -249,9 +250,11 @@ class Starter_Page_Templates {
 	 * @return string ISO 639 locale string
 	 */
 	private function get_iso_639_locale() {
-		$language = strtolower( get_locale() );
+		// Make sure to get blog locale, not user locale.
+		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		$language = strtolower( $language );
 
-		if ( in_array( $language, [ 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
+		if ( in_array( $language, [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
 			$language = str_replace( '_', '-', $language );
 		} else {
 			$language = preg_replace( '/([-_].*)$/i', '', $language );

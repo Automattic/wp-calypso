@@ -45,22 +45,8 @@
 	}
 
 	.contact-display {
-		h2 {
-			background-color: var( --color-neutral-0 );
-			border: 1px solid var( --color-neutral-0 );
-			border-bottom: 0;
-			color: var( --color-neutral-light );
-			font-size: 11px;
-			font-weight: 600;
-			line-height: 1;
-			margin: 16px 0 0;
-			padding: 8px 0;
-			text-transform: uppercase;
-			text-align: center;
-		}
-
 		.contact-display__content {
-			border: 1px solid var( --color-neutral-0 );
+			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral );
 			font-size: 12px;
 			line-height: 140%;
@@ -71,5 +57,6 @@
 				margin-bottom: 0;
 			}
 		}
+		margin-bottom: 1.5em;
 	}
 }

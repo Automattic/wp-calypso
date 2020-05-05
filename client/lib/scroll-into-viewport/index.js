@@ -15,6 +15,7 @@ export function recursivelyWalkAndSum( node, valueProp, nextNodeProp, value = 0 
 
 /**
  * Checks whether the given bounds are within the viewport.
+ *
  * @param {number} elementStart - The element start bound
  * @param {number} elementEnd - The element end bound
  * @returns {boolean} Boolean indicating whether the bounds are within the viewport
@@ -28,9 +29,10 @@ function isInViewportRange( elementStart, elementEnd ) {
 /**
  * Implements a fallback mechanism to scroll an element into the viewport if it's not
  * already inside the viewport.
+ *
  * @param {HTMLElement} element - The element to be scrolled into view.
- * @param {String} behavior - Whether to use a smooth or auto scroll behavior.
- * @param {String} scrollMode - Whether to always scroll, or only scroll when needed.
+ * @param {string} behavior - Whether to use a smooth or auto scroll behavior.
+ * @param {string} scrollMode - Whether to always scroll, or only scroll when needed.
  */
 function fallbackScrollIntoViewport( element, behavior, scrollMode ) {
 	const elementStartY = recursivelyWalkAndSum( element, 'offsetTop', 'offsetParent' );
@@ -49,8 +51,9 @@ function fallbackScrollIntoViewport( element, behavior, scrollMode ) {
 
 /**
  * Scroll an element into the viewport.
+ *
  * @param {HTMLElement} element - The element to be scrolled into view.
- * @param {Object} options - Options to use for the scrolling (same as the options for Element.scrollIntoView).
+ * @param {object} options - Options to use for the scrolling (same as the options for Element.scrollIntoView).
  */
 export default function scrollIntoViewport( element, options = {} ) {
 	const { behavior = 'auto', block = 'start', scrollMode = 'always', ...otherOptions } = options;

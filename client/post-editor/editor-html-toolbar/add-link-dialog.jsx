@@ -66,11 +66,11 @@ export class AddLinkDialog extends Component {
 		return '';
 	}
 
-	bindLinkUrlRef = input => {
+	bindLinkUrlRef = ( input ) => {
 		this.linkUrl = input;
 	};
 
-	setLinkUrl = event => {
+	setLinkUrl = ( event ) => {
 		const { selectedPost } = this.state;
 		this.setState( {
 			linkUrl: event.target.value,
@@ -79,15 +79,15 @@ export class AddLinkDialog extends Component {
 		} );
 	};
 
-	setLinkText = event => {
+	setLinkText = ( event ) => {
 		this.setState( { linkText: event.target.value } );
 	};
 
-	setLinkNewTab = event => {
+	setLinkNewTab = ( event ) => {
 		this.setState( { linkNewTab: event.target.checked } );
 	};
 
-	onSelectPost = post => {
+	onSelectPost = ( post ) => {
 		this.setState( {
 			linkUrl: post.URL,
 			selectedPost: { id: post.ID, url: post.URL },
@@ -191,6 +191,6 @@ export class AddLinkDialog extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( AddLinkDialog ) );

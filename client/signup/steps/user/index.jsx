@@ -7,12 +7,14 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
+import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
@@ -22,10 +24,12 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
+import { abtest } from 'lib/abtest';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -46,6 +50,7 @@ export class UserStep extends Component {
 	state = {
 		submitting: false,
 		subHeaderText: '',
+		recaptchaClientId: null,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -73,6 +78,10 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+			this.initGoogleRecaptcha();
+		}
+
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -143,14 +152,45 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
-	save = form => {
+	initGoogleRecaptcha() {
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( ( result ) => {
+			if ( ! result ) {
+				return;
+			}
+
+			this.setState( { recaptchaClientId: result.clientId } );
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				recaptchaToken: typeof result.token === 'string' ? result.token : undefined,
+			} );
+		} );
+	}
+
+	isEligibleForSwapStepsTest() {
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const isUserFromUS = 'US' === countryCodeFromCookie;
+
+		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			form,
 		} );
 	};
 
-	submit = data => {
+	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
@@ -168,6 +208,14 @@ export class UserStep extends Component {
 			dependencies
 		);
 
+		if (
+			this.isEligibleForSwapStepsTest() &&
+			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+		) {
+			const switchFlowName = 'onboarding-plan-first';
+			this.props.goToNextStep( switchFlowName );
+		}
+
 		this.props.goToNextStep();
 	};
 
@@ -182,10 +230,34 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
+		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
+
+		let recaptchaToken = undefined;
+		let recaptchaDidntLoad = false;
+		let recaptchaFailed = false;
+
+		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+			if ( isRecaptchaLoaded ) {
+				recaptchaToken = await recordGoogleRecaptchaAction(
+					this.state.recaptchaClientId,
+					'calypso/signup/formSubmit'
+				);
+
+				if ( ! recaptchaToken ) {
+					recaptchaFailed = true;
+				}
+			} else {
+				recaptchaDidntLoad = true;
+			}
+		}
+
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
 			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			recaptchaDidntLoad,
+			recaptchaFailed,
+			recaptchaToken: recaptchaToken || undefined,
 		} );
 	};
 
@@ -338,7 +410,10 @@ export class UserStep extends Component {
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
+					recaptchaClientId={ this.state.recaptchaClientId }
+					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
 				/>
+				<div id="g-recaptcha"></div>
 			</>
 		);
 	}
@@ -359,7 +434,7 @@ export class UserStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

@@ -22,17 +22,17 @@ class NotificationSettingsFormStreamSelector extends PureComponent {
 		onChange: PropTypes.func.isRequired,
 	};
 
-	onChange = event => this.props.onChange( event.target.value );
+	onChange = ( event ) => this.props.onChange( event.target.value );
 
 	render() {
 		const options = [ 'timeline', 'email' ]
-			.map( stream => (
+			.map( ( stream ) => (
 				<option key={ stream } value={ stream }>
 					{ getLabelForStream( stream ) }
 				</option>
 			) )
 			.concat(
-				map( this.props.devices, device => (
+				map( this.props.devices, ( device ) => (
 					<option key={ device.id } value={ device.id }>
 						{ device.name }
 					</option>
@@ -49,6 +49,6 @@ class NotificationSettingsFormStreamSelector extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	devices: getUserDevices( state ),
 } ) )( NotificationSettingsFormStreamSelector );

@@ -46,9 +46,9 @@ export class TldFilterBar extends Component {
 		showPopover: false,
 	};
 
-	bindButton = button => ( this.button = button );
+	bindButton = ( button ) => ( this.button = button );
 
-	handleButtonClick = event => {
+	handleButtonClick = ( event ) => {
 		const { filters: { tlds = [] } = {} } = this.props;
 
 		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
@@ -76,8 +76,8 @@ export class TldFilterBar extends Component {
 		this.togglePopover();
 		this.hasFiltersChanged() && this.props.onSubmit();
 	};
-	handleTokenChange = newTlds => {
-		const tlds = newTlds.filter( tld => includes( this.props.availableTlds, tld ) );
+	handleTokenChange = ( newTlds ) => {
+		const tlds = newTlds.filter( ( tld ) => includes( this.props.availableTlds, tld ) );
 		this.props.onChange( { tlds } );
 	};
 
@@ -95,7 +95,9 @@ export class TldFilterBar extends Component {
 	}
 
 	render() {
-		if ( this.props.showPlaceholder ) {
+		const { showPlaceholder } = this.props;
+
+		if ( showPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
@@ -136,6 +138,7 @@ export class TldFilterBar extends Component {
 
 	renderPopoverButton() {
 		const { filters: { tlds = [] } = {}, translate } = this.props;
+
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
@@ -169,8 +172,8 @@ export class TldFilterBar extends Component {
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
-						displayTransform={ item => `.${ item }` }
-						saveTransform={ query => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
+						displayTransform={ ( item ) => `.${ item }` }
+						saveTransform={ ( query ) => ( query[ 0 ] === '.' ? query.substr( 1 ) : query)  }
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }

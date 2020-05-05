@@ -12,7 +12,7 @@ import InlineHelpChecklistComponent from '../components/inline-help-checklist-co
 import SitePreviewComponent from '../components/site-preview-component.js';
 
 export const canSeeTheSitePreview = () => {
-	step( 'Can then see the site preview', async function() {
+	step( 'Can then see the site preview', async function () {
 		const sitePreviewComponent = await SitePreviewComponent.Expect( this.driver );
 
 		const toolbar = await sitePreviewComponent.sitePreviewToolbar();
@@ -31,7 +31,7 @@ export const canSeeTheSitePreview = () => {
 };
 
 export const canSeeTheInlineHelpCongratulations = () => {
-	step( 'Can then see the inlineHelp congratulations', async function() {
+	step( 'Can then see the inlineHelp congratulations', async function () {
 		const inlineHelpChecklistComponent = await InlineHelpChecklistComponent.Expect( this.driver );
 
 		const congratulations = await inlineHelpChecklistComponent.congratulationsExists();
@@ -43,7 +43,7 @@ export const canSeeTheInlineHelpCongratulations = () => {
 };
 
 export const canSeeTheOnboardingChecklist = () => {
-	step( 'Can then see the onboarding checklist', async function() {
+	step( 'Can then see the onboarding checklist', async function () {
 		// dismiss upsell page if displayed
 		try {
 			const upsellPage = await UpsellPage.Expect( this.driver );

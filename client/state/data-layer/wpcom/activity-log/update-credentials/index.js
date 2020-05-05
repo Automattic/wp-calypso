@@ -29,7 +29,9 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const navigateTo =
-	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
+	undefined !== typeof window
+		? ( path ) => window.open( path, '_blank' )
+		: ( path ) => page( path );
 
 /**
  * Makes sure that we can initialize a connection
@@ -46,7 +48,7 @@ export const primeHappychat = ( { dispatch, getState } ) => {
 	}
 };
 
-export const request = action => {
+export const request = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
 	const {
 		notice: { noticeId },
@@ -55,8 +57,14 @@ export const request = action => {
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
+	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
+	} );
+
 	return [
 		notice,
+		tracksEvent,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -85,6 +93,10 @@ export const success = ( action, { rewind_state } ) => [
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
 		id: action.noticeId,
+	} ),
+	recordTracksEvent( 'calypso_rewind_creds_update_success', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
 	} ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
@@ -119,7 +131,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const announce = ( message, options ) =>
 		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
 
-	const spreadHappiness = message => {
+	const spreadHappiness = ( message ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
 			site_id: action.siteId,
 			error: error.error,

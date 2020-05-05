@@ -36,9 +36,9 @@ import {
 /**
  * Updates state with latest MailChimp connected plugin settings
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function settings( state = {}, action ) {
 	switch ( action.type ) {
@@ -67,9 +67,9 @@ function settings( state = {}, action ) {
 /**
  * Updates state with settings request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function settingsRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -86,9 +86,9 @@ function settingsRequest( state = false, { type } ) {
  * Updates state with settings request error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function settingsRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -106,9 +106,9 @@ function settingsRequestError( state = false, action ) {
  * Updates state with latest MailChimp connected plugin sync status.
  * This is sync between plugin and mailchimp server
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
@@ -123,9 +123,9 @@ function syncStatus( state = {}, action ) {
 /**
  * Updates state with sync status request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function syncStatusRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -142,9 +142,9 @@ function syncStatusRequest( state = false, { type } ) {
  * Updates state with sync status request error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function syncStatusRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -161,9 +161,9 @@ function syncStatusRequestError( state = false, action ) {
 /**
  * Updates state with resync request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function resyncRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -180,9 +180,9 @@ function resyncRequest( state = false, { type } ) {
  * Updates state with sync status request error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function resyncRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -199,9 +199,9 @@ function resyncRequestError( state = false, action ) {
 /**
  * Updates state with api key submit status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function apiKeySubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -218,9 +218,9 @@ function apiKeySubmit( state = false, { type } ) {
  * Updates state with api key submit error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function apiKeySubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -237,9 +237,9 @@ function apiKeySubmitError( state = false, action ) {
 /**
  * Updates state with store info submit status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function storeInfoSubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -256,9 +256,9 @@ function storeInfoSubmit( state = false, { type } ) {
  * Updates state with store info submit error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function storeInfoSubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -275,9 +275,9 @@ function storeInfoSubmitError( state = false, action ) {
 /**
  * Updates state with lists request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function listsRequest( state = false, { type } ) {
 	switch ( type ) {
@@ -294,9 +294,9 @@ function listsRequest( state = false, { type } ) {
  * Updates state with list request error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function listsRequestError( state = false, action ) {
 	switch ( action.type ) {
@@ -313,9 +313,9 @@ function listsRequestError( state = false, action ) {
 /**
  * Updates state with newsletter submit status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function newsletterSettingsSubmit( state = false, { type } ) {
 	switch ( type ) {
@@ -332,9 +332,9 @@ function newsletterSettingsSubmit( state = false, { type } ) {
  * Updates state with newsletter settings submit error
  * Holds information only for latest request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function newsletterSettingsSubmitError( state = false, action ) {
 	switch ( action.type ) {
@@ -355,9 +355,9 @@ function newsletterSettingsSubmitError( state = false, action ) {
  * The name ( saveSettings ) is generic because in future this should repond
  * also to other events than newsletter settings
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action
+ * @returns {object}        Updated state
  */
 function saveSettings( state = false, { type } ) {
 	switch ( type ) {

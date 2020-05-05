@@ -30,7 +30,7 @@ describe( 'getUpcomingBillingTransactions()', () => {
 				},
 			},
 		};
-		const expected = state.billingTransactions.items.upcoming.map( transaction => {
+		const expected = state.billingTransactions.items.upcoming.map( ( transaction ) => {
 			transaction.date = new Date( transaction.date );
 			return transaction;
 		} );

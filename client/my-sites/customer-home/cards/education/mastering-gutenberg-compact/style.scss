@@ -1,0 +1,28 @@
+.mastering-gutenberg {
+	.mastering-gutenberg__illustration {
+		margin: 0 auto 0.5rem;
+		max-width: 100px;
+	}
+
+	.mastering-gutenberg__text {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.inline-support-link {
+		display: block;
+		margin: 0;
+		padding: 8px 0;
+		border-bottom: 1px solid var( --color-neutral-5 );
+	}
+
+	.inline-support-link:first-of-type {
+		padding-top: 0;
+	}
+
+	.inline-support-link:last-of-type {
+		padding-bottom: 0;
+		border-bottom: none;
+	}
+}

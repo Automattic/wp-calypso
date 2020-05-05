@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -12,7 +12,6 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
 import Popover from 'components/popover';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { Button } from '@automattic/components';
@@ -38,7 +37,7 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 		rememberDismiss: true,
 	};
 
-	setRenderContext = renderContext => {
+	setRenderContext = ( renderContext ) => {
 		if ( ! renderContext ) {
 			return;
 		}
@@ -130,16 +129,16 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		sectionName: getSectionName( state ),
 		isMediaModalGalleryInstructionsDismissed:
 			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
 			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
-				onDismiss: options => {
+				onDismiss: ( options ) => {
 					if ( options.remember ) {
 						return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
 					}

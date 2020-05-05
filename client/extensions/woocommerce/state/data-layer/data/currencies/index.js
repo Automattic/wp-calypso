@@ -9,7 +9,7 @@ import {
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_CURRENCIES_REQUEST } from 'woocommerce/state/action-types';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId } = action;
 	return request( siteId, action ).get( 'data/currencies' );
 };

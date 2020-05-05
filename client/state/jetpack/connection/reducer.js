@@ -27,8 +27,8 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  * concerning Jetpack connection updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
- * @return {Array}         Updated state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
  */
 export const items = keyedReducer(
 	'siteId',
@@ -48,9 +48,9 @@ export const items = keyedReducer(
  * `Reducer` function which handles request/response actions
  * concerning Jetpack connection requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const requests = keyedReducer(
 	'siteId',
@@ -73,8 +73,8 @@ export const requests = keyedReducer(
  * concerning Jetpack user connection data
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
- * @return {Array}         Updated state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
  */
 export const dataItems = keyedReducer(
 	'siteId',
@@ -94,9 +94,9 @@ export const dataItems = keyedReducer(
  * `Reducer` function which handles request/response actions
  * concerning Jetpack user connection data requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const dataRequests = keyedReducer(
 	'siteId',

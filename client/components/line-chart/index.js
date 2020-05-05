@@ -34,7 +34,7 @@ const Y_AXIS_TICKS = 6;
 const Y_AXIS_TICKS_SPACE = 30;
 const APPROXIMATELY_A_MONTH_IN_MS = 31 * 24 * 60 * 60 * 1000;
 
-const dateToAbsoluteMonth = date => date.getYear() * 12 + date.getMonth();
+const dateToAbsoluteMonth = ( date ) => date.getYear() * 12 + date.getMonth();
 // number of different colors this component can display
 // More than NUM_SERIES and 2 series will use the same color
 const NUM_SERIES = 3;
@@ -58,7 +58,7 @@ class LineChart extends Component {
 			bottom: 30,
 			left: 30,
 		},
-		renderTooltipForDatanum: datum => datum.value,
+		renderTooltipForDatanum: ( datum ) => datum.value,
 	};
 
 	state = {
@@ -84,7 +84,7 @@ class LineChart extends Component {
 		return null;
 	}
 
-	dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) => {
+	dateFormatFunction = ( displayMonthTicksOnly ) => ( date, index, tickRefs ) => {
 		const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
 		// this can only be figured out here, because D3 will decide how many ticks there should be
 		const isFirstMonthTick =
@@ -95,7 +95,7 @@ class LineChart extends Component {
 						.map( ( tickRef, tickRefIndex ) =>
 							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
 						)
-						.filter( e => e !== null )
+						.filter( ( e ) => e !== null )
 				)
 			);
 		return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
@@ -155,8 +155,8 @@ class LineChart extends Component {
 		const { data } = this.state;
 
 		const line = d3Line()
-			.x( datum => xScale( datum.date ) )
-			.y( datum => yScale( datum.value ) )
+			.x( ( datum ) => xScale( datum.date ) )
+			.y( ( datum ) => yScale( datum.value ) )
 			.curve( d3MonotoneXCurve );
 
 		data.forEach( ( dataSeries, index ) => {
@@ -170,9 +170,9 @@ class LineChart extends Component {
 
 		if ( this.state.fillArea ) {
 			const area = d3Area()
-				.x( datum => xScale( datum.date ) )
+				.x( ( datum ) => xScale( datum.date ) )
 				.y0( yScale( 0 ) )
-				.y1( datum => yScale( datum.value ) )
+				.y1( ( datum ) => yScale( datum.value ) )
 				.curve( d3MonotoneXCurve );
 
 			data.forEach( ( dataSeries, index ) => {
@@ -195,7 +195,7 @@ class LineChart extends Component {
 			const colorNum = dataSeriesIndex % NUM_SERIES;
 
 			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
-				datum => {
+				( datum ) => {
 					svg
 						.append( 'circle' )
 						.attr(
@@ -215,7 +215,7 @@ class LineChart extends Component {
 
 	bindEvents = ( svg, params ) => {
 		const updateMouseMove = throttle( this.handleMouseMove, 100, { trailing: false } );
-		svg.on( 'mousemove', function() {
+		svg.on( 'mousemove', function () {
 			const coordinates = d3Mouse( this );
 			updateMouseMove( ...coordinates, params );
 		} );
@@ -229,7 +229,7 @@ class LineChart extends Component {
 		} );
 	};
 
-	drawOverlayElement = svg => {
+	drawOverlayElement = ( svg ) => {
 		// This is needed so we can bind mouse events on the whole svg
 		// otherwise they will only be fired over svg shapes.
 		// SVG2 could solve it with `pointer-events: bounding-box;`
@@ -311,7 +311,7 @@ class LineChart extends Component {
 				data.forEach( ( dataSeries, dataSeriesIndex ) => {
 					const colorNum = dataSeriesIndex % NUM_SERIES;
 
-					dataSeries.forEach( datum => {
+					dataSeries.forEach( ( datum ) => {
 						if ( closestDate === datum.date ) {
 							const circleSelection = svg
 								.append( 'circle' )
@@ -334,7 +334,7 @@ class LineChart extends Component {
 	};
 
 	getXAxisParams = ( concatData, data, margin, newWidth ) => {
-		const [ minTimestamp, maxTimestamp ] = d3Extent( concatData, datum => datum.date );
+		const [ minTimestamp, maxTimestamp ] = d3Extent( concatData, ( datum ) => datum.date );
 
 		const timeDomainAdjustment = ( maxTimestamp - minTimestamp ) * CHART_MARGIN;
 		const displayMonthOnly = maxTimestamp - minTimestamp > APPROXIMATELY_A_MONTH_IN_MS;
@@ -364,7 +364,7 @@ class LineChart extends Component {
 	};
 
 	getYAxisParams = ( concatData, margin, newHeight ) => {
-		const [ minValue, maxValue ] = d3Extent( concatData, datum => datum.value );
+		const [ minValue, maxValue ] = d3Extent( concatData, ( datum ) => datum.value );
 
 		let maxDomain = maxValue;
 
@@ -387,7 +387,7 @@ class LineChart extends Component {
 		};
 	};
 
-	handleDataSeriesSelected = selectedItemIndex => {
+	handleDataSeriesSelected = ( selectedItemIndex ) => {
 		const { data } = this.props;
 		const { svg } = this.state;
 
@@ -412,10 +412,10 @@ class LineChart extends Component {
 
 			if ( selected ) {
 				// bring to front
-				lineSelection.each( function() {
+				lineSelection.each( function () {
 					this.parentNode.appendChild( this );
 				} );
-				areaSelection.each( function() {
+				areaSelection.each( function () {
 					this.parentNode.appendChild( this );
 				} );
 				const selectedPoints = svg.selectAll(
@@ -427,7 +427,7 @@ class LineChart extends Component {
 		} );
 	};
 
-	getParams = node => {
+	getParams = ( node ) => {
 		const { data } = this.state;
 		const { aspectRatio, margin } = this.props;
 
@@ -444,7 +444,7 @@ class LineChart extends Component {
 		};
 	};
 
-	getTooltipPositionMap = values => {
+	getTooltipPositionMap = ( values ) => {
 		const sortedUniqValues = uniq( values ).sort(
 			( leftValue, rightValue ) => leftValue - rightValue
 		);
@@ -477,10 +477,10 @@ class LineChart extends Component {
 
 	renderTooltips = () => {
 		const { selectedPoints } = this.state;
-		const selectPointsValues = selectedPoints.map( point => d3Select( point ).datum().value );
+		const selectPointsValues = selectedPoints.map( ( point ) => d3Select( point ).datum().value );
 		const tooltipPositionsMap = this.getTooltipPositionMap( selectPointsValues );
 
-		return selectedPoints.map( point => {
+		return selectedPoints.map( ( point ) => {
 			const pointData = d3Select( point ).datum();
 
 			if ( ! pointData ) {

@@ -14,7 +14,7 @@ const TextareaRenderer = ( { input, meta, ...props } ) => (
 	<FormTextarea { ...input } { ...props } />
 );
 
-const ReduxFormTextarea = props => <Field component={ TextareaRenderer } { ...props } />;
+const ReduxFormTextarea = ( props ) => <Field component={ TextareaRenderer } { ...props } />;
 
 ReduxFormTextarea.propTypes = {
 	name: PropTypes.string.isRequired,

@@ -8,7 +8,7 @@ import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
 import { setRewindBackups } from 'state/rewind/backups/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-export const fetchBackups = action => {
+export const fetchBackups = ( action ) => {
 	return http(
 		{
 			method: 'GET',

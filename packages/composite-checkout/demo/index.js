@@ -1,5 +1,5 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
-require( '@babel/polyfill' );
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies
@@ -9,17 +9,28 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
+	CheckoutStepArea,
+	CheckoutStep,
+	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
-	createRegistry,
 	createStripeMethod,
+	createStripePaymentMethodStore,
+	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
-	usePaymentData,
+	useSelect,
+	useDispatch,
+	useMessages,
+	useFormStatus,
 } from '../src/public-api';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -39,22 +50,20 @@ const initialItems = [
 	},
 ];
 
-const successRedirectUrl = '/complete.html';
-const failureRedirectUrl = window.location.href;
-
 const onPaymentComplete = () => {
+	const successRedirectUrl = '/complete.html';
 	window.location.href = successRedirectUrl;
 };
-const onEvent = event => window.console.log( 'Event', event );
-const showErrorMessage = error => {
+const onEvent = ( event ) => window.console.log( 'Event', event );
+const showErrorMessage = ( error ) => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
 };
-const showInfoMessage = message => {
+const showInfoMessage = ( message ) => {
 	console.log( 'Info:', message ); /* eslint-disable-line no-console */
 	window.alert( message );
 };
-const showSuccessMessage = message => {
+const showSuccessMessage = ( message ) => {
 	console.log( 'Success:', message ); /* eslint-disable-line no-console */
 	window.alert( message );
 };
@@ -84,63 +93,96 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const registry = createRegistry();
-const { registerStore, select, subscribe } = registry;
+const { registerStore, select } = defaultRegistry;
 
-const stripeMethod = createStripeMethod( {
-	getSiteId: () => 5555,
-	getCountry: () => select( 'checkout' ).getPaymentData().billing.country,
-	getPostalCode: () => 90210,
-	getPhoneNumber: () => 5555555555,
-	getSubdivisionCode: () => 'CA',
-	getDomainDetails: () => ( {} ),
-	registerStore,
-	fetchStripeConfiguration,
-	sendStripeTransaction,
+registerStore( 'demo', {
+	actions: {
+		setCountry( payload ) {
+			return { type: 'set_country', payload };
+		},
+	},
+	selectors: {
+		getCountry( state ) {
+			return state.country;
+		},
+	},
+	reducer( state = {}, action ) {
+		if ( action.type === 'set_country' ) {
+			return { ...state, country: action.payload };
+		}
+		return state;
+	},
 } );
 
-const applePayMethod = isApplePayAvailable()
-	? createApplePayMethod( {
-			registerStore,
-			fetchStripeConfiguration,
-	  } )
-	: null;
+export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
 
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
-
-export function isApplePayAvailable() {
-	// Our Apple Pay implementation uses the Payment Request API, so check that first.
-	if ( ! window.PaymentRequest ) {
-		return false;
-	}
-
-	// Check if Apple Pay is available. This can be very expensive on certain
-	// Safari versions due to a bug (https://trac.webkit.org/changeset/243447/webkit),
-	// and there is no way it can change during a page request, so cache the
-	// result.
-	if ( typeof isApplePayAvailable.canMakePayments === 'undefined' ) {
-		try {
-			isApplePayAvailable.canMakePayments = Boolean(
-				window.ApplePaySession && window.ApplePaySession.canMakePayments()
-			);
-		} catch ( error ) {
-			console.error( error ); // eslint-disable-line no-console
-			return false;
+	useEffect( () => {
+		let isSubscribed = true;
+		// Only calculate this once
+		if ( canMakePayment !== 'loading' ) {
+			return;
 		}
-	}
-	return isApplePayAvailable.canMakePayments;
+
+		// We'll need the Stripe library so wait until it is loaded
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+
+		// Our Apple Pay implementation uses the Payment Request API, so
+		// check that first.
+		if ( ! window.PaymentRequest ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask the browser if apple pay can be used. This can be very
+		// expensive on certain Safari versions due to a bug
+		// (https://trac.webkit.org/changeset/243447/webkit)
+		try {
+			const browserResponse = !! window.ApplePaySession?.canMakePayments();
+			if ( ! browserResponse ) {
+				setCanMakePayment( false );
+				return;
+			}
+		} catch ( error ) {
+			setCanMakePayment( false );
+			return;
+		}
+
+		// Ask Stripe if apple pay can be used. This is async.
+		const countryCode =
+			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+		const currency = items.reduce(
+			( firstCurrency, item ) => firstCurrency || item.amount.currency,
+			'usd'
+		);
+		const paymentRequestOptions = {
+			requestPayerName: true,
+			requestPayerPhone: false,
+			requestPayerEmail: false,
+			requestShipping: false,
+			country: countryCode,
+			currency: currency.toLowerCase(),
+			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
+			displayItems: [],
+			total: {
+				label: 'Total',
+				amount: 0,
+			},
+		};
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( ( result ) => {
+			isSubscribed && setCanMakePayment( !! result?.applePay );
+		} );
+
+		return () => ( isSubscribed = false );
+	}, [ canMakePayment, stripe, items, stripeConfiguration ] );
+
+	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
 
-const handleEvent = setItems => () => {
-	const cardholderName = select( 'stripe' ).getCardholderName();
-	if ( cardholderName === 'admin' ) {
-		setItems( items =>
-			items.map( item => ( { ...item, amount: { ...item.amount, value: 0, displayValue: '0' } } ) )
-		);
-	}
-};
-
-const getTotal = items => {
+const getTotal = ( items ) => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
 	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
 	return {
@@ -153,25 +195,20 @@ const getTotal = items => {
 	};
 };
 
-// Replace this with the host page's translation system
-const useLocalize = () => text => text;
-const hostTranslate = text => text;
-
 const ContactFormTitle = () => {
-	const localize = useLocalize();
 	const isActive = useIsStepActive();
-	return isActive ? localize( 'Enter your billing details' ) : localize( 'Billing details' );
+	return isActive ? 'Enter your contact details' : 'Contact details';
 };
 
 const Label = styled.label`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${( props ) => props.theme.colors.textColor};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
 	}
 `;
 
@@ -181,11 +218,12 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
 	padding: 13px 10px 12px 10px;
 
 	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+		outline: ${( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline}
 			solid 2px !important;
 	}
 `;
@@ -195,14 +233,10 @@ const Form = styled.div`
 `;
 
 function ContactForm( { summary } ) {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { billing = {} } = paymentData;
-	const { country = '' } = billing;
-	const onChangeCountry = event =>
-		changePaymentData( 'billing', { ...billing, country: event.target.value } );
-	const showAdditionalFields = shouldShowAdditionalFields( paymentData );
-	const toggleAdditionalFields = () =>
-		changePaymentData( 'billing', { ...billing, showAdditionalFields: ! showAdditionalFields } );
+	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { setCountry } = useDispatch( 'demo' );
+	const onChangeCountry = ( event ) => setCountry( event.target.value );
+	const { formStatus } = useFormStatus();
 
 	if ( summary ) {
 		return (
@@ -216,93 +250,128 @@ function ContactForm( { summary } ) {
 	return (
 		<Form>
 			<Label htmlFor="country">Country</Label>
-			<Input id="country" type="text" value={ country } onChange={ onChangeCountry } />
-			<input
-				id="show-additional-fields"
-				type="checkbox"
-				defaultChecked={ showAdditionalFields }
-				onChange={ toggleAdditionalFields }
+			<Input
+				id="country"
+				type="text"
+				value={ country }
+				onChange={ onChangeCountry }
+				disabled={ formStatus !== 'ready' }
 			/>
-			<label htmlFor="show-additional-fields">Show additional fields?</label>
-			{ showAdditionalFields && <AdditionalFields /> }
 		</Form>
 	);
 }
 
-function shouldShowAdditionalFields( paymentData ) {
-	return paymentData.billing && paymentData.billing.showAdditionalFields;
-}
+const orderSummary = getDefaultOrderSummary();
+const orderSummaryStep = getDefaultOrderSummaryStep();
+const paymentMethodStep = getDefaultPaymentMethodStep();
+const reviewOrderStep = getDefaultOrderReviewStep();
+const contactFormStep = {
+	id: 'contact-form',
+	className: 'checkout__billing-details-step',
+	titleContent: <ContactFormTitle />,
+	activeStepContent: <ContactForm />,
+	completeStepContent: <ContactForm summary />,
+};
 
-function AdditionalFields() {
-	const [ paymentData, changePaymentData ] = usePaymentData();
-	const { domain = {} } = paymentData;
-	const { name = '', address = '' } = domain;
-	const onChangeName = event =>
-		changePaymentData( 'domain', { ...domain, name: event.target.value } );
-	const onChangeAddress = event =>
-		changePaymentData( 'domain', { ...domain, address: event.target.value } );
+function HostPage() {
 	return (
-		<Form>
-			<Label htmlFor="name">Name</Label>
-			<Input id="name" type="text" value={ name } onChange={ onChangeName } />
-			<Label htmlFor="address">Address</Label>
-			<Input id="address" type="text" value={ address } onChange={ onChangeAddress } />
-		</Form>
+		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+			<MyCheckout />
+		</StripeHookProvider>
 	);
 }
 
-const steps = [
-	getDefaultOrderSummaryStep(),
-	{
-		...getDefaultPaymentMethodStep(),
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the payment method' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the selected payment method' ),
-	},
-	{
-		id: 'contact-form',
-		className: 'checkout__billing-details-step',
-		hasStepNumber: true,
-		titleContent: <ContactFormTitle />,
-		activeStepContent: <ContactForm />,
-		completeStepContent: <ContactForm summary />,
-		isCompleteCallback: isContactFormComplete,
-		isEditableCallback: ( { paymentData } ) => {
-			if ( paymentData.billing ) {
-				return true;
-			}
-			return false;
-		},
-		getEditButtonAriaLabel: () => hostTranslate( 'Edit the billing details' ),
-		getNextStepButtonAriaLabel: () => hostTranslate( 'Continue with the entered billing details' ),
-	},
-	getDefaultOrderReviewStep(),
-];
-
-function isContactFormComplete( { paymentData } ) {
-	const { billing = {}, domain = {} } = paymentData;
-	const allFields = [ billing.country ].concat(
-		shouldShowAdditionalFields( paymentData ) ? [ domain.name, domain.address ] : []
-	);
-	const emptyFields = allFields.filter( value => ! value );
-	if ( emptyFields.length > 0 ) {
-		return false;
-	}
-	return true;
-}
-
-// This is the parent component which would be included on a host page
 function MyCheckout() {
-	const [ items, setItems ] = useState( initialItems );
-	useEffect( () => {
-		subscribe( handleEvent( setItems ) );
-	}, [] );
+	const [ items ] = useState( initialItems );
 	const total = useMemo( () => getTotal( items ), [ items ] );
+	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const {
+		canMakePayment: isApplePayAvailable,
+		isLoading: isApplePayLoading,
+	} = useIsApplePayAvailable( stripe, stripeConfiguration, items );
 
-	// This simulates loading the data
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
+		if ( isStripeLoading ) {
+			return;
+		}
+		if ( stripeLoadingError ) {
+			setIsLoading( false );
+			showErrorMessage( stripeLoadingError );
+			return;
+		}
+		if ( ! stripe || ! stripeConfiguration ) {
+			return;
+		}
+		if ( isApplePayLoading ) {
+			return;
+		}
+		// This simulates an additional loading delay
 		setTimeout( () => setIsLoading( false ), 1500 );
-	}, [] );
+	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
+
+	const stripeStore = useMemo(
+		() =>
+			createStripePaymentMethodStore( {
+				getCountry: () => select( 'demo' ).getCountry(),
+				getPostalCode: () => 90210,
+				getSubdivisionCode: () => 'CA',
+				getSiteId: () => 12345,
+				getDomainDetails: {},
+				submitTransaction: sendStripeTransaction,
+			} ),
+		[]
+	);
+
+	const stripeMethod = useMemo( () => {
+		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
+			return null;
+		}
+		return createStripeMethod( {
+			store: stripeStore,
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
+
+	const applePayMethod = useMemo( () => {
+		if (
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			isApplePayLoading ||
+			! isApplePayAvailable
+		) {
+			return null;
+		}
+		return createApplePayMethod( {
+			getCountry: () => select( 'demo' ).getCountry(),
+			getPostalCode: () => 90210,
+			registerStore,
+			submitTransaction: sendStripeTransaction,
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [
+		isApplePayLoading,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		isApplePayAvailable,
+	] );
+
+	const paypalMethod = useMemo(
+		() =>
+			createPayPalMethod( {
+				registerStore,
+				getSuccessUrl: () => '#',
+				getCancelUrl: () => '#',
+			} ),
+		[]
+	);
+	paypalMethod.submitTransaction = makePayPalExpressRequest;
 
 	return (
 		<CheckoutProvider
@@ -314,14 +383,71 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			registry={ registry }
+			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>
-			<Checkout steps={ steps } />
+			<MyCheckoutBody />
 		</CheckoutProvider>
+	);
+}
+
+function MyCheckoutBody() {
+	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const { showErrorMessage: showError } = useMessages();
+
+	return (
+		<Checkout>
+			<CheckoutSummaryArea className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummaryArea>
+			<CheckoutStepArea>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary' }
+				/>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId={ contactFormStep.id }
+						isCompleteCallback={ () =>
+							new Promise( ( resolve ) =>
+								setTimeout( () => {
+									if ( country.length === 0 ) {
+										showError( 'The country field is required' );
+										resolve( false );
+										return;
+									}
+									resolve( true );
+								}, 1500 )
+							)
+						}
+						activeStepContent={ contactFormStep.activeStepContent }
+						completeStepContent={ contactFormStep.completeStepContent }
+						titleContent={ contactFormStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
+		</Checkout>
 	);
 }
 
@@ -335,7 +461,7 @@ function formatValueForCurrency( currency, value ) {
 
 // Simulate network request time
 async function asyncTimeout( timeout ) {
-	return new Promise( resolve => setTimeout( resolve, timeout ) );
+	return new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
 }
 
-ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );
+ReactDOM.render( <HostPage />, document.getElementById( 'root' ) );

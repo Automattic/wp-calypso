@@ -15,11 +15,11 @@ import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class FormAnalyticsStores extends Component {
-	handleToggleChange = name => () => {
+	handleToggleChange = ( name ) => () => {
 		this.props.handleToggleChange( name );
 	};
 
-	renderExplanation = setting => {
+	renderExplanation = ( setting ) => {
 		const link = setting.link ? (
 			<ExternalLink icon href={ setting.link.url } target="_blank" rel="noopener noreferrer">
 				{ setting.link.label }
@@ -44,7 +44,7 @@ class FormAnalyticsStores extends Component {
 
 		return (
 			<div className={ classes }>
-				{ settings.map( setting => {
+				{ settings.map( ( setting ) => {
 					const checked = fields.wga ? Boolean( fields.wga[ setting.key ] ) : false;
 					return (
 						<div key={ setting.key }>
@@ -65,7 +65,7 @@ class FormAnalyticsStores extends Component {
 		);
 	};
 
-	renderBasicSettings = disableAll => {
+	renderBasicSettings = ( disableAll ) => {
 		const { translate } = this.props;
 		const settings = [
 			{
@@ -88,7 +88,7 @@ class FormAnalyticsStores extends Component {
 		return this.renderSettings( settings, disableAll );
 	};
 
-	renderEnhancedSettings = disableAll => {
+	renderEnhancedSettings = ( disableAll ) => {
 		const { translate } = this.props;
 		const settings = [
 			{

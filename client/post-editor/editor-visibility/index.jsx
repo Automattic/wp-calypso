@@ -80,7 +80,7 @@ class EditorVisibility extends React.Component {
 		return 'public';
 	};
 
-	recordStats = newVisibility => {
+	recordStats = ( newVisibility ) => {
 		if ( this.getVisibility() !== newVisibility ) {
 			this.props.recordEditorStat( 'visibility-set-' + newVisibility );
 			this.props.recordEditorEvent( 'Changed visibility', newVisibility );
@@ -157,7 +157,7 @@ class EditorVisibility extends React.Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.onPrivatePublish();
 				}
@@ -167,7 +167,7 @@ class EditorVisibility extends React.Component {
 		);
 	};
 
-	onPasswordChange = event => {
+	onPasswordChange = ( event ) => {
 		const { siteId, postId } = this.props;
 		let newPassword = event.target.value.trim();
 		const passwordIsValid = newPassword.length > 0;
@@ -206,7 +206,7 @@ class EditorVisibility extends React.Component {
 		);
 	}
 
-	renderPrivacyDropdown = visibility => {
+	renderPrivacyDropdown = ( visibility ) => {
 		const publicLabelPublicSite = this.props.translate( 'Public', {
 			context: 'Editor: Radio label to set post visible to public',
 		} );
@@ -254,7 +254,7 @@ class EditorVisibility extends React.Component {
 						}
 						selectedIcon={ selectedItem.icon }
 					>
-						{ dropdownItems.map( option => (
+						{ dropdownItems.map( ( option ) => (
 							<SelectDropdown.Item
 								selected={ option.value === visibility }
 								key={ option.value }
@@ -288,7 +288,7 @@ class EditorVisibility extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const currentPost = getSitePost( state, siteId, postId );

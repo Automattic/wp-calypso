@@ -14,7 +14,7 @@ const UserItemExample = ( { currentUser } ) => {
 	return <UserItem user={ currentUser } />;
 };
 
-const ConnectedUserItemExample = connect( state => {
+const ConnectedUserItemExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return {};

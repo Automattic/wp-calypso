@@ -74,12 +74,12 @@ function removeSingle( siteId, item ) {
 function receivePage( siteId, items ) {
 	ensureMediaForSiteId( siteId );
 
-	items.forEach( function( item ) {
+	items.forEach( function ( item ) {
 		receiveSingle( siteId, item );
 	} );
 }
 
-MediaListStore.ensureActiveQueryForSiteId = function( siteId ) {
+MediaListStore.ensureActiveQueryForSiteId = function ( siteId ) {
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		MediaListStore._activeQueries[ siteId ] = assign( {}, DEFAULT_ACTIVE_QUERY );
 	}
@@ -131,7 +131,7 @@ function sourceHasDate( source ) {
 	return -1 === sourcesWithoutDate.indexOf( source );
 }
 
-MediaListStore.isItemMatchingQuery = function( siteId, item ) {
+MediaListStore.isItemMatchingQuery = function ( siteId, item ) {
 	let query, matches;
 
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
@@ -181,15 +181,15 @@ MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 
 emitter( MediaListStore );
 
-MediaListStore.get = function( siteId, postId ) {
+MediaListStore.get = function ( siteId, postId ) {
 	return MediaStore.get( siteId, postId );
 };
 
-MediaListStore.getAllIds = function( siteId ) {
+MediaListStore.getAllIds = function ( siteId ) {
 	return MediaListStore._media[ siteId ];
 };
 
-MediaListStore.getAll = function( siteId ) {
+MediaListStore.getAll = function ( siteId ) {
 	const allIds = MediaListStore.getAllIds( siteId );
 
 	if ( allIds ) {
@@ -197,7 +197,7 @@ MediaListStore.getAll = function( siteId ) {
 	}
 };
 
-MediaListStore.getNextPageQuery = function( siteId ) {
+MediaListStore.getNextPageQuery = function ( siteId ) {
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return MediaListStore.DEFAULT_QUERY;
 	}
@@ -212,21 +212,21 @@ MediaListStore.getNextPageQuery = function( siteId ) {
 	);
 };
 
-MediaListStore.hasNextPage = function( siteId ) {
+MediaListStore.hasNextPage = function ( siteId ) {
 	return (
 		! ( siteId in MediaListStore._activeQueries ) ||
 		null !== MediaListStore._activeQueries[ siteId ].nextPageHandle
 	);
 };
 
-MediaListStore.isFetchingNextPage = function( siteId ) {
+MediaListStore.isFetchingNextPage = function ( siteId ) {
 	return (
 		siteId in MediaListStore._activeQueries &&
 		MediaListStore._activeQueries[ siteId ].isFetchingNextPage
 	);
 };
 
-MediaListStore.dispatchToken = Dispatcher.register( function( payload ) {
+MediaListStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );

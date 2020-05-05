@@ -21,7 +21,7 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'returns a fragment for each section', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( buildDeepLinkFragment( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -51,7 +51,7 @@ describe( 'iOS deep links', () => {
 	} );
 
 	test( 'returns URIs for each path', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( getiOSDeepLink( '/test', section ) ).toMatchSnapshot()
 		);
 	} );

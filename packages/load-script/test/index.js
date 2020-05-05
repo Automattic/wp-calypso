@@ -23,7 +23,7 @@ describe( 'loadScript', () => {
 		const url = '/';
 		const callback = jest.fn();
 
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 			loadScript( url, callback );
 		} );
@@ -50,7 +50,7 @@ describe( 'loadScript', () => {
 	describe( 'loadjQueryDependentScript( scriptURL, callback )', () => {
 		const url = '/';
 
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 
@@ -75,7 +75,7 @@ describe( 'loadScript', () => {
 			delete window.jQuery;
 		} );
 
-		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', done => {
+		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', ( done ) => {
 			// NOTE: jsdom has jQuery attached to the window. We temporarily replace this
 			// jQuery instance fir this test.
 			const jQueryBackup = global.window.jQuery;

@@ -62,7 +62,7 @@ export const ACTION_ACTIVE_PROMOTIONS_REQUEST_FAILURE = {
  * - requesting: false
  * - error: false
  *
- * @return {Object} an state instance
+ * @returns {object} an state instance
  */
 export const getStateInstance = () => {
 	return {

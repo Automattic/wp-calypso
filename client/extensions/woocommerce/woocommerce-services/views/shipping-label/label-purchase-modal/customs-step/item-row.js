@@ -28,7 +28,7 @@ import WeightField from 'woocommerce/woocommerce-services/components/weight-fiel
 import PriceField from 'woocommerce/woocommerce-services/components/price-field';
 import { TariffCodeTitle, OriginCountryTitle } from './item-row-header';
 
-const ItemRow = props => {
+const ItemRow = ( props ) => {
 	const {
 		errors,
 		packageId,
@@ -141,15 +141,15 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { orderId, siteId, productId } ) => ( {
-	setCustomsItemDescription: value =>
+	setCustomsItemDescription: ( value ) =>
 		dispatch( setCustomsItemDescription( orderId, siteId, productId, value ) ),
-	setCustomsItemTariffNumber: value =>
+	setCustomsItemTariffNumber: ( value ) =>
 		dispatch( setCustomsItemTariffNumber( orderId, siteId, productId, value ) ),
-	setCustomsItemWeight: value =>
+	setCustomsItemWeight: ( value ) =>
 		dispatch( setCustomsItemWeight( orderId, siteId, productId, value ) ),
-	setCustomsItemValue: value =>
+	setCustomsItemValue: ( value ) =>
 		dispatch( setCustomsItemValue( orderId, siteId, productId, value ) ),
-	setCustomsItemOriginCountry: value =>
+	setCustomsItemOriginCountry: ( value ) =>
 		dispatch( setCustomsItemOriginCountry( orderId, siteId, productId, value ) ),
 } );
 

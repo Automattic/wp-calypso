@@ -22,9 +22,9 @@ import {
  * state maps site ID keys to a boolean value. Each site is true if
  * a site-rename request is currently taking place, and false otherwise.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated rename request state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated rename request state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -57,9 +57,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated site-rename state after an action has been dispatched.
  * Saving state tracks whether the settings for a site are currently being saved.
  *
- * @param  {Object} state 	Current rename requesting state
- * @param  {Object} action 	Action object
- * @return {Object} 		Updated rename request state
+ * @param  {object} state 	Current rename requesting state
+ * @param  {object} action 	Action object
+ * @returns {object} 		Updated rename request state
  */
 export const status = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

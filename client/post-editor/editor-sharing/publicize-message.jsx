@@ -47,7 +47,7 @@ class PublicizeMessage extends Component {
 
 	userHasEditedMessage = false;
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.userHasEditedMessage = true;
 		this.props.onChange( event.target.value );
 	};

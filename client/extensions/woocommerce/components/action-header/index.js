@@ -24,7 +24,7 @@ class ActionHeader extends React.Component {
 		site: PropTypes.object.isRequired,
 	};
 
-	toggleSidebar = event => {
+	toggleSidebar = ( event ) => {
 		event.preventDefault();
 		this.props.setLayoutFocus( 'sidebar' );
 	};
@@ -67,7 +67,7 @@ class ActionHeader extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSiteWithFallback( state ),
 	} ),
 	{ setLayoutFocus }

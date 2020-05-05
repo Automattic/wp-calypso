@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * External dependencies
  */
@@ -13,6 +14,7 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
@@ -45,19 +47,19 @@ export const MODAL_VIEW_STATS = {
  * Returns an action object to be used in signalling that the editor should
  * begin to edit the post with the specified post ID, or `null` as a new post.
  *
- * @param  {Number}  siteId   Site ID
- * @param  {?Number} postId   Post ID
- * @return {Action}           Action object
+ * @param  {number}  siteId   Site ID
+ * @param  {?number} postId   Post ID
+ * @returns {Action}           Action object
  */
 export function startEditingPost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( editorReset( { isLoading: true } ) );
 		dispatch( { type: EDITOR_START, siteId, postId } );
 	};
 }
 
 export function startEditingNewPost( siteId, post ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const postAttributes = defaults( post, {
 			status: 'draft',
 			type: 'post',
@@ -76,12 +78,12 @@ export function startEditingNewPost( siteId, post ) {
  * Returns an action object to be used in signalling that the editor should
  * stop editing.
  *
- * @param  {Number}  siteId Site ID
- * @param  {?Number} postId Post ID
- * @return {Action}         Action object
+ * @param  {number}  siteId Site ID
+ * @param  {?number} postId Post ID
+ * @returns {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( editorReset() );
 		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
@@ -91,8 +93,8 @@ export function stopEditingPost( siteId, postId ) {
  * Returns an action object to be used in signalling that the user has pasted
  * some content from source.
  *
- * @param {String} source Identifier of the app the content was pasted from.
- * @return {Object} Action object
+ * @param {string} source Identifier of the app the content was pasted from.
+ * @returns {object} Action object
  */
 export function pasteEvent( source ) {
 	return {
@@ -106,7 +108,7 @@ export function pasteEvent( source ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );
@@ -123,9 +125,9 @@ export function setEditorMediaModalView( view ) {
  * Returns an action object used in signalling that the confirmation sidebar
  * preference has changed.
  *
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
- * @return {Object}            Action object
+ * @returns {object}            Action object
  */
 export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	return ( dispatch, getState ) => {
@@ -135,7 +137,7 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 			dispatch(
 				savePreference(
 					'editorConfirmationDisabledSites',
-					filter( disabledSites, _siteId => siteId !== _siteId )
+					filter( disabledSites, ( _siteId ) => siteId !== _siteId )
 				)
 			);
 		} else {
@@ -154,39 +156,41 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
+export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
+	type: EDITOR_IFRAME_LOADED,
+	isIframeLoaded,
+} );
+
 export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
 } );
 
-export const editorAutosaveSuccess = autosave => ( {
+export const editorAutosaveSuccess = ( autosave ) => ( {
 	type: EDITOR_AUTOSAVE_SUCCESS,
 	autosave,
 } );
 
-export const editorAutosaveFailure = error => ( {
+export const editorAutosaveFailure = ( error ) => ( {
 	type: EDITOR_AUTOSAVE_FAILURE,
 	error,
 } );
 
-export const editorAutosave = post => dispatch => {
+export const editorAutosave = ( post ) => ( dispatch ) => {
 	if ( ! post.ID ) {
 		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
 	}
 
 	dispatch( { type: EDITOR_AUTOSAVE } );
 
-	const autosaveResult = wpcom
-		.undocumented()
-		.site( post.site_ID )
-		.postAutosave( post.ID, {
-			content: post.content,
-			title: post.title,
-			excerpt: post.excerpt,
-		} );
+	const autosaveResult = wpcom.undocumented().site( post.site_ID ).postAutosave( post.ID, {
+		content: post.content,
+		title: post.title,
+		excerpt: post.excerpt,
+	} );
 
 	autosaveResult
-		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )
-		.catch( error => dispatch( editorAutosaveFailure( error ) ) );
+		.then( ( autosave ) => dispatch( editorAutosaveSuccess( autosave ) ) )
+		.catch( ( error ) => dispatch( editorAutosaveFailure( error ) ) );
 
 	return autosaveResult;
 };
@@ -206,6 +210,7 @@ export function editorEditRawContent( content ) {
 
 /**
  * Unsets the raw TinyMCE content value
+ *
  * @returns {Action} Action object
  */
 export function editorResetRawContent() {

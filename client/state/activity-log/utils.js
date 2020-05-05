@@ -3,7 +3,7 @@
  */
 import { isUndefined } from 'lodash';
 
-export const filterStateToApiQuery = filter => {
+export const filterStateToApiQuery = ( filter ) => {
 	// by default, we'll tell the api to create aggregate events
 	const aggregate = isUndefined( filter.aggregate ) ? true : filter.aggregate;
 
@@ -23,7 +23,7 @@ export const filterStateToApiQuery = filter => {
 	);
 };
 
-export const filterStateToQuery = filter =>
+export const filterStateToQuery = ( filter ) =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
@@ -40,7 +40,7 @@ export const filterStateToQuery = filter =>
 		filter.page > 1 && { page: filter.page }
 	);
 
-export const queryToFilterState = query =>
+export const queryToFilterState = ( query ) =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },

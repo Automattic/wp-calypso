@@ -20,15 +20,15 @@ export default class ChecklistExample extends PureComponent {
 	togglePlaceholder = () =>
 		void this.setState( ( { showPlaceholder } ) => ( { showPlaceholder: ! showPlaceholder } ) );
 
-	getClickHandler = taskId => () =>
+	getClickHandler = ( taskId ) => () =>
 		accept(
 			'Will you complete this thing?',
-			accepted => ( accepted ? void this.setState( { [ taskId ]: true } ) : undefined ),
+			( accepted ) => ( accepted ? void this.setState( { [ taskId ]: true } ) : undefined) ,
 			'Yes',
 			'No'
 		);
-	getToggleHandler = taskId => () =>
-		void this.setState( state => ( { [ taskId ]: ! state[ taskId ] } ) );
+	getToggleHandler = ( taskId ) => () =>
+		void this.setState( ( state ) => ( { [ taskId ]: ! state[ taskId ] } ) );
 
 	render() {
 		return (

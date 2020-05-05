@@ -45,6 +45,8 @@ class PlanIntervalDiscount extends Component {
 
 		const price = this.getDiscountPriceObject();
 		const { siteSlug, translate } = this.props;
+		/* translators: symbol is a currency symbol,
+		   integer is the integer amount of the sum (eg 18 of 18.50), fraction is the fraction. Eg (.50 of the 18.50) */
 		return translate(
 			'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} over {{Link}}monthly{{/Link}}.',
 			{

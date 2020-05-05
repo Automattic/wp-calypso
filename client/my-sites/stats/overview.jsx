@@ -35,7 +35,7 @@ class StatsOverview extends Component {
 	render() {
 		const { moment, path, period, sites, translate } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
-		const sitesSorted = sites.map( site => {
+		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
 			const gmtOffset = get( site, 'options.gmt_offset' );
 			if ( Number.isFinite( gmtOffset ) ) {
@@ -125,7 +125,7 @@ class StatsOverview extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),

@@ -32,7 +32,7 @@ const InputChronoExample = localize(
 				clearInterval( this.interval );
 			}
 
-			onSet = date => {
+			onSet = ( date ) => {
 				// eslint-disable-next-line no-console
 				console.log( `date: %s`, date.toDate() );
 				this.setState( { date: date } );

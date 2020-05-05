@@ -16,7 +16,6 @@ import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
@@ -36,7 +35,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 import { extendAction } from 'state/utils';
@@ -57,9 +56,9 @@ export class CommentNavigation extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate = ( prevProps ) => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
 		if ( commentsListQuery && ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
 			refreshPage( commentsListQuery );
@@ -76,7 +75,7 @@ export class CommentNavigation extends Component {
 		}
 	};
 
-	changeFilter = status => () => this.props.recordChangeFilter( status );
+	changeFilter = ( status ) => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate, counts } = this.props;
@@ -106,7 +105,7 @@ export class CommentNavigation extends Component {
 		return navItems;
 	};
 
-	getStatusPath = status => {
+	getStatusPath = ( status ) => {
 		const { postId } = this.props;
 
 		const appendPostId = postId ? `/${ postId }` : '';
@@ -116,7 +115,7 @@ export class CommentNavigation extends Component {
 			: `/comments/pending/${ this.props.siteFragment }${ appendPostId }`;
 	};
 
-	setBulkStatus = newStatus => () => {
+	setBulkStatus = ( newStatus ) => () => {
 		const {
 			changeStatus,
 			deletePermanently,
@@ -150,7 +149,7 @@ export class CommentNavigation extends Component {
 		toggleBulkMode();
 	};
 
-	showBulkNotice = newStatus => {
+	showBulkNotice = ( newStatus ) => {
 		const { translate } = this.props;
 
 		const message = get(
@@ -176,7 +175,7 @@ export class CommentNavigation extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
+	statusHasAction = ( action ) => includes( bulkActions[ this.props.status ], action );
 
 	toggleSelectAll = () => {
 		if ( this.props.isSelectedAll ) {
@@ -192,7 +191,6 @@ export class CommentNavigation extends Component {
 			hasSearch,
 			hasComments,
 			isBulkMode,
-			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
 			selectedComments,
@@ -294,7 +292,7 @@ export class CommentNavigation extends Component {
 				</NavTabs>
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					{ isCommentsTreeSupported && hasComments && (
+					{ hasComments && (
 						<SegmentedControl compact className="comment-navigation__sort-buttons">
 							<SegmentedControl.Item
 								onClick={ setOrder( NEWEST_FIRST ) }
@@ -317,7 +315,7 @@ export class CommentNavigation extends Component {
 
 					{ hasComments && (
 						<Button compact onClick={ toggleBulkMode }>
-							{ translate( 'Bulk Edit' ) }
+							{ translate( 'Bulk edit' ) }
 						</Button>
 					) }
 				</CommentNavigationTab>
@@ -332,7 +330,7 @@ export class CommentNavigation extends Component {
 
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const visibleComments = map( commentsPage, commentId => {
+	const visibleComments = map( commentsPage, ( commentId ) => {
 		const comment = getSiteComment( state, siteId, commentId );
 		if ( comment ) {
 			return {
@@ -348,8 +346,6 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
 		hasPendingBulkAction: hasPendingCommentRequests( state ),
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
 };
 
@@ -396,15 +392,15 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
 		),
-	recordChangeFilter: status =>
+	recordChangeFilter: ( status ) =>
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
 				bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	refreshPage: query => dispatch( requestCommentsList( query ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
+	refreshPage: ( query ) => dispatch( requestCommentsList( query ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: ( postId, commentId ) =>
 		dispatch(

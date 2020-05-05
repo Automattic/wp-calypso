@@ -61,7 +61,7 @@ class PostTypeBulkEditBar extends React.Component {
 	}
 }
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			multiSelectEnabled: isMultiSelectEnabled( state ),
 			selectedPostsCount: getSelectedPostsCount( state ),

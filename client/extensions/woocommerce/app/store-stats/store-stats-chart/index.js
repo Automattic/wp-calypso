@@ -43,14 +43,14 @@ class StoreStatsChart extends Component {
 		};
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		const { unit, slug, basePath, urlQueryParam } = this.props;
 		const query = Object.assign( { startDate: bar.data.period }, urlQueryParam );
 		const path = getWidgetPath( unit, slug, query );
 		page( `${ basePath }${ path }` );
 	};
 
-	tabClick = tab => {
+	tabClick = ( tab ) => {
 		const { tabs } = this.props;
 		const tabData = tabs[ tab.index ];
 		this.setState( {
@@ -63,14 +63,14 @@ class StoreStatsChart extends Component {
 		} );
 	};
 
-	legendClick = attr => {
+	legendClick = ( attr ) => {
 		const activeCharts = this.state.activeCharts.indexOf( attr ) === -1 ? [ attr ] : [];
 		this.setState( {
 			activeCharts,
 		} );
 	};
 
-	createTooltipDate = item => {
+	createTooltipDate = ( item ) => {
 		const { unit, moment } = this.props;
 		const dateFormat = UNITS[ unit ].shortFormat;
 		const date = moment( item.period );
@@ -93,10 +93,10 @@ class StoreStatsChart extends Component {
 				label: selectedTab.label,
 			},
 		];
-		activeCharts.forEach( attr => {
+		activeCharts.forEach( ( attr ) => {
 			data.push( {
 				value: formatValue( item[ attr ], selectedTab.type, item.currency ),
-				label: find( tabs, tab => tab.attr === attr ).label,
+				label: find( tabs, ( tab ) => tab.attr === attr ).label,
 			} );
 		} );
 		return data;
@@ -119,7 +119,7 @@ class StoreStatsChart extends Component {
 		};
 	};
 
-	renderLegend = selectedTabIndex => {
+	renderLegend = ( selectedTabIndex ) => {
 		const { tabs } = this.props;
 		const activeTab = tabs[ selectedTabIndex ];
 		return (
@@ -139,8 +139,8 @@ class StoreStatsChart extends Component {
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
-		const chartData = data.map( item => this.buildChartData( item, selectedTab, chartFormat ) );
-		const selectedIndex = findIndex( data, d => d.period === selectedDate );
+		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
+		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
 		return (
 			<Card className={ classnames( className, 'stats-module' ) }>
 				<div className="store-stats-chart__top">

@@ -40,6 +40,7 @@ import {
 	CONCIERGE_WPCOM_BUSINESS_ID,
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
 } from 'me/concierge/constants';
+import NoSitesMessage from 'components/empty-content/no-sites-message';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -54,7 +55,9 @@ class PurchasesList extends Component {
 		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
 
 		if ( null === hasAvailableConciergeSessions ) {
-			return <ConciergeBanner bannerType="placeholder" />;
+			return (
+				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
+			);
 		}
 
 		let bannerType;
@@ -98,7 +101,7 @@ class PurchasesList extends Component {
 				<div>
 					{ this.renderConciergeBanner() }
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
@@ -113,6 +116,15 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
+			if ( ! this.props.sites.length ) {
+				return (
+					<Main>
+						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+						<PurchasesHeader section="purchases" />
+						<NoSitesMessage />
+					</Main>
+				);
+			}
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
@@ -124,7 +136,7 @@ class PurchasesList extends Component {
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade Now' ) }
+							action={ this.props.translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>
@@ -155,7 +167,7 @@ PurchasesList.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

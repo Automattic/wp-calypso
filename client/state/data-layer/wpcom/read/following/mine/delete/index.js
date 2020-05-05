@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { READER_UNFOLLOW } from 'state/action-types';
+import { READER_UNFOLLOW } from 'state/reader/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -19,7 +19,7 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestUnfollow = action =>
+export const requestUnfollow = ( action ) =>
 	http( {
 		method: 'POST',
 		path: '/read/following/mine/delete',
@@ -32,7 +32,7 @@ export const requestUnfollow = action =>
 		onFailure: action,
 	} );
 
-export const fromApi = data => {
+export const fromApi = ( data ) => {
 	if ( ! data ) {
 		throw new Error( 'Invalid API response: missing data' );
 	}
@@ -44,9 +44,9 @@ export const fromApi = data => {
 	return data.subscribed;
 };
 
-export const receiveUnfollow = action => bypassDataLayer( action );
+export const receiveUnfollow = ( action ) => bypassDataLayer( action );
 
-export const unfollowError = action => ( dispatch, getState ) => {
+export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
 	const site = getSiteByFeedUrl( getState(), feedUrl );
 	const feed = getFeedByFeedUrl( getState(), feedUrl );

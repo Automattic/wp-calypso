@@ -15,7 +15,7 @@ class SkipNavigation extends React.Component {
 		skipToElementId: PropTypes.string,
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		event.preventDefault();
 		const element = document.getElementById( this.props.skipToElementId );
 		// Make the element focusable

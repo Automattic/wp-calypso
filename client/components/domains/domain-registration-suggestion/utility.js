@@ -45,6 +45,6 @@ export function parseMatchReasons( domain, matchReasons ) {
 	const matchReasonsMap = getMatchReasonPhrasesMap( getTld( domain ) );
 
 	return sortMatchReasons( matchReasons )
-		.filter( matchReason => matchReasonsMap.has( matchReason ) )
-		.map( matchReason => matchReasonsMap.get( matchReason ) );
+		.filter( ( matchReason ) => matchReasonsMap.has( matchReason ) )
+		.map( ( matchReason ) => matchReasonsMap.get( matchReason ) );
 }

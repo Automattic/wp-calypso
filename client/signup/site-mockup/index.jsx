@@ -109,7 +109,7 @@ class SiteMockups extends Component {
 	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
-	 * @return {string} Formatted content
+	 * @returns {string} Formatted content
 	 */
 	getContent( content = '' ) {
 		if ( 'string' !== typeof content ) {
@@ -136,7 +136,7 @@ class SiteMockups extends Component {
 		};
 	}
 
-	handlePreviewClick = size =>
+	handlePreviewClick = ( size ) =>
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,

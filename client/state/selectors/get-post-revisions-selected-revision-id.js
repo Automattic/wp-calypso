@@ -3,7 +3,12 @@
  */
 import { get } from 'lodash';
 
-const getPostRevisionsSelectedRevisionId = state => {
+/**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
+const getPostRevisionsSelectedRevisionId = ( state ) => {
 	return get( state, 'posts.revisions.selection.revisionId' );
 };
 export default getPostRevisionsSelectedRevisionId;

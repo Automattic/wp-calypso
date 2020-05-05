@@ -50,9 +50,7 @@ GSuiteUpsellProductDetails.propTypes = {
 	productSlug: GSUITE_SLUG_PROP_TYPES,
 };
 
-export default connect(
-	( state, { productSlug } ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, productSlug ),
-	} )
-)( GSuiteUpsellProductDetails );
+export default connect( ( state, { productSlug } ) => ( {
+	currencyCode: getCurrentUserCurrencyCode( state ),
+	product: getProductBySlug( state, productSlug ),
+} ) )( GSuiteUpsellProductDetails );

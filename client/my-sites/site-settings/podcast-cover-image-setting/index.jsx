@@ -64,7 +64,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		transientMediaId: null,
 	};
 
-	toggleModal = isModalVisible => {
+	toggleModal = ( isModalVisible ) => {
 		const { isEditingCoverImage } = this.state;
 
 		this.setState( {
@@ -78,7 +78,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 	hideModal = () => this.toggleModal( false );
 
-	editSelectedMedia = value => {
+	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingCoverImage: true } );
 			this.props.onEditSelectedMedia();
@@ -136,7 +136,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		} );
 	}
 
-	onUploadStateChange = isUploading => {
+	onUploadStateChange = ( isUploading ) => {
 		this.props.onUploadStateChange( isUploading );
 		this.setState( { isUploading } );
 	};
@@ -189,7 +189,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	};
 
 	isParentReady( selectedMedia ) {
-		return ! selectedMedia.some( item => item.external );
+		return ! selectedMedia.some( ( item ) => item.external );
 	}
 
 	preloadModal() {
@@ -319,7 +319,7 @@ class PodcastCoverImageSetting extends PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

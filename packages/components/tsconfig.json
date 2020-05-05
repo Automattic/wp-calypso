@@ -6,7 +6,7 @@
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
+		"declarationDir": "dist/types",
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 
@@ -19,8 +19,15 @@
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 
-		"forceConsistentCasingInFileNames": true
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+		"rootDir": "src",
+
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__components"
 	},
-	"files": [ "src/index" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

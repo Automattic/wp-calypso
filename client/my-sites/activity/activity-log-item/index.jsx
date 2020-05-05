@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -40,7 +41,6 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { getSite } from 'state/sites/selectors';
-import { withDesktopBreakpoint } from 'lib/viewport/react';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
@@ -94,7 +94,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
 			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
-				k => ! this.state.restoreArgs[ k ]
+				( k ) => ! this.state.restoreArgs[ k ]
 			),
 		} );
 	};
@@ -103,7 +103,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
-				k => ! this.state.downloadArgs[ k ]
+				( k ) => ! this.state.downloadArgs[ k ]
 			),
 		} );
 	};
@@ -236,11 +236,15 @@ class ActivityLogItem extends Component {
 
 	renderRewindAction() {
 		const {
+			activity,
+			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableRestore,
 			disableBackup,
-			activity,
+			siteId,
+			siteSlug,
+			trackAddCreds,
 			translate,
 		} = this.props;
 
@@ -254,6 +258,20 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
+
+					{ disableRestore && (
+						<PopoverMenuItem
+							icon="plus"
+							href={
+								canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+									: `/settings/security/${ siteSlug }#credentials`
+							}
+							onClick={ trackAddCreds }
+						>
+							{ translate( 'Add server credentials to enable restoring' ) }
+						</PopoverMenuItem>
+					) }
 
 					<PopoverMenuSeparator />
 
@@ -467,10 +485,11 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	trackHelp: activityName =>
+	trackHelp: ( activityName ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 

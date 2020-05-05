@@ -22,14 +22,14 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 
-const process_data = data => {
+const process_data = ( data ) => {
 	const options = {};
 	const fromAddress = filter( data, {
 		group_id: 'email',
 		id: 'woocommerce_email_from_address',
 	} );
 	const defaultEmail = isEmpty( fromAddress ) ? '' : fromAddress[ 0 ].default;
-	data.forEach( function( option ) {
+	data.forEach( function ( option ) {
 		setWith(
 			options,
 			[ option.group_id, option.id ],
@@ -41,7 +41,7 @@ const process_data = data => {
 		);
 	} );
 
-	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], key => {
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], ( key ) => {
 		if ( get( options, [ key, 'enabled', 'value' ] ) !== 'yes' ) {
 			return;
 		}

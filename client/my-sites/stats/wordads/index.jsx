@@ -46,7 +46,7 @@ function updateQueryString( query = {} ) {
 	};
 }
 
-const formatCurrency = value => {
+const formatCurrency = ( value ) => {
 	return '$' + numberFormat( value, 2 );
 };
 
@@ -71,7 +71,7 @@ const CHARTS = [
 	},
 ];
 
-const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
 class WordAds extends Component {
 	static defaultProps = {
@@ -103,15 +103,15 @@ class WordAds extends Component {
 		return activeTab.legendOptions || [];
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
-	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	switchChart = tab => {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
 			this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
@@ -125,10 +125,7 @@ class WordAds extends Component {
 
 		const { period, endOf } = this.props.period;
 
-		const yesterday = moment
-			.utc()
-			.subtract( 1, 'days' )
-			.format( 'YYYY-MM-DD' );
+		const yesterday = moment.utc().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 
 		// Never show stats for the current day. Stats are fetched nightly for the previous day.
 		const queryDate = date.isSameOrAfter( yesterday ) ? yesterday : date.format( 'YYYY-MM-DD' );
@@ -221,7 +218,7 @@ class WordAds extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		return {

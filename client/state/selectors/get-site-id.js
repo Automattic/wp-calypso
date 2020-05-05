@@ -15,9 +15,9 @@ import { getSite } from 'state/sites/selectors';
  * // or
  * const numericID = getSiteId( state, siteIdentifierOfUnknownFormat );
  *
- * @param  {Object}  state       Global state tree
- * @param  {Number|String|null}  siteIdOrSlug Site ID
- * @return {?Object}             Site object
+ * @param  {object}  state       Global state tree
+ * @param  {number|string|null}  siteIdOrSlug Site ID
+ * @returns {?object}             Site object
  */
 export default function getSiteId( state, siteIdOrSlug ) {
 	if ( ! siteIdOrSlug ) {

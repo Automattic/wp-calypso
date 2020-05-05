@@ -25,7 +25,7 @@ export class ReaderSidebarTagsList extends Component {
 
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, tag => (
+		return map( tags, ( tag ) => (
 			<ReaderSidebarTagsListItem
 				key={ tag.id }
 				tag={ tag }

@@ -89,11 +89,13 @@
 	}
 }
 
+
+
 .search-filters__buttons {
 	display: flex;
 	flex-flow: row;
-	justify-content: space-between;
 	overflow: hidden;
+	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
@@ -161,14 +163,6 @@
 	margin-bottom: 0.25em;
 }
 
-.search-filters__checkboxes-fieldset .search-filters__label {
-	margin-bottom: 1em;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
-}
-
 .search-filters__token-field-fieldset {
 	.token-field__token {
 		&:first-child {
@@ -218,4 +212,3 @@
 		}
 	}
 }
-

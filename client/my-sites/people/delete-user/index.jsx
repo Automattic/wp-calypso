@@ -82,7 +82,7 @@ class DeleteUser extends React.Component {
 		} );
 	};
 
-	handleRadioChange = event => {
+	handleRadioChange = ( event ) => {
 		const name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
@@ -130,9 +130,9 @@ class DeleteUser extends React.Component {
 		);
 	};
 
-	setReassignLabel = label => ( this.reassignLabel = label );
+	setReassignLabel = ( label ) => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => this.setState( { reassignUser: author } );
+	onSelectAuthor = ( author ) => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { contributorType, siteId, translate, user } = this.props;
@@ -156,7 +156,7 @@ class DeleteUser extends React.Component {
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.recordGoogleEvent(
 						'People',
@@ -181,7 +181,7 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	};
 
-	deleteUser = event => {
+	deleteUser = ( event ) => {
 		event.preventDefault();
 		const { contributorType, siteId, user } = this.props;
 		if ( ! user.ID ) {

@@ -20,7 +20,7 @@ const API_DOMAIN = 'https://public-api.wordpress.com:443';
 describe( 'actions', () => {
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 		const getState = () => ( { pushNotifications: { settings: {}, system: {} } } );
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( API_DOMAIN )
 					.persist()
 					.post( '/rest/v1.1/devices/new' )

@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import { Button, Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -18,7 +18,7 @@ import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -56,8 +56,7 @@ class PluginInformation extends React.Component {
 		) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked Plugin Homepage Link',
 			'Plugin Name',
@@ -80,8 +79,7 @@ class PluginInformation extends React.Component {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked wp.org Plugin Link',
 			'Plugin Name',
@@ -181,7 +179,7 @@ class PluginInformation extends React.Component {
 		return {};
 	};
 
-	getActionLinks = plugin => {
+	getActionLinks = ( plugin ) => {
 		if ( this.props.calypsoify ) {
 			return null;
 		}

@@ -41,8 +41,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
 	const wasValidated =
-		[ firstName, lastName, mailBox ].some( value => '' !== value ) ||
-		[ firstNameError, lastNameError, mailBoxError, domainError ].some( value => null !== value );
+		[ firstName, lastName, mailBox ].some( ( value ) => '' !== value ) ||
+		[ firstNameError, lastNameError, mailBoxError, domainError ].some(
+			( value ) => null !== value
+		);
 
 	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
 	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
@@ -92,7 +94,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				/>
 				<GSuiteDomainsSelect
 					domains={ domains }
-					onChange={ event => {
+					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
 					value={ domain }
@@ -114,7 +116,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'First Name' ) }
+							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }
 							isError={ hasFirstNameError }
@@ -130,7 +132,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					</div>
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'Last Name' ) }
+							placeholder={ translate( 'Last name' ) }
 							value={ lastName }
 							maxLength={ 60 }
 							isError={ hasLastNameError }
@@ -150,7 +152,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onClick={ onUserRemove }
 						>
 							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove User' ) }</span>
+							<span>{ translate( 'Remove user' ) }</span>
 						</Button>
 					</div>
 				</div>

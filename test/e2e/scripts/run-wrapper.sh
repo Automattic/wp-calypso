@@ -42,4 +42,4 @@ fi
 #  TESTARGS+=" -x"
 #fi
 
-npm test
+yarn test

@@ -24,18 +24,21 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import memoizeLast from 'lib/memoize-last';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import EmptyContent from 'components/empty-content';
+import { activateModule } from 'state/jetpack/modules/actions';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -73,7 +76,7 @@ const CHARTS = [
 	},
 ];
 
-const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
 class StatsSite extends Component {
 	static defaultProps = {
@@ -105,15 +108,15 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
-	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	switchChart = tab => {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
@@ -122,8 +125,8 @@ class StatsSite extends Component {
 		}
 	};
 
-	render() {
-		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
+	renderStats() {
+		const { date, siteId, slug, isJetpack } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -148,14 +151,7 @@ class StatsSite extends Component {
 		}
 
 		return (
-			<Main wideLayout={ true }>
-				<QueryKeyringConnections />
-				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats and Insights' ) } />
-				<PageViewTracker
-					path={ `/stats/${ period }/:site` }
-					title={ `Stats > ${ titlecase( period ) }` }
-				/>
+			<>
 				<PrivacyPolicyBanner />
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
@@ -171,9 +167,6 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && (
-						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
-					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -267,23 +260,72 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				<JetpackColophon />
+			</>
+		);
+	}
+
+	enableStatsModule = () => {
+		const { siteId, path } = this.props;
+		this.props.enableJetpackStatsModule( siteId, path );
+	};
+
+	renderEnableStatsModule() {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'Looking for stats?' ) }
+				line={ translate(
+					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
+				) }
+				action={ translate( 'Enable Site Stats' ) }
+				actionCallback={ this.enableStatsModule }
+			/>
+		);
+	}
+
+	render() {
+		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+		const { period } = this.props.period;
+
+		return (
+			<Main wideLayout={ true }>
+				<QueryKeyringConnections />
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }
 			</Main>
 		);
 	}
 }
+const enableJetpackStatsModule = ( siteId, path ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_jetpack_module_toggle', {
+			module: 'stats',
+			path,
+			toggled: 'on',
+		} ),
+		activateModule( siteId, 'stats' )
+	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-
+		const showEnableStatsModule =
+			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
+			showEnableStatsModule,
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, enableJetpackStatsModule }
 )( localize( StatsSite ) );

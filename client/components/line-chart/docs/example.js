@@ -36,7 +36,7 @@ export default class LineChartExample extends Component {
 	}
 
 	static createLegendInfo() {
-		return range( NUM_DATA_SERIES ).map( index => ( {
+		return range( NUM_DATA_SERIES ).map( ( index ) => ( {
 			name: `Line #${ index + 1 }`,
 		} ) );
 	}
@@ -51,7 +51,7 @@ export default class LineChartExample extends Component {
 		showDataControls: false,
 	};
 
-	changeDataMin = event => {
+	changeDataMin = ( event ) => {
 		const newDataMin = event.target.value;
 
 		this.setState( {
@@ -60,7 +60,7 @@ export default class LineChartExample extends Component {
 		} );
 	};
 
-	changeDataMax = event => {
+	changeDataMax = ( event ) => {
 		const newDataMax = event.target.value;
 
 		this.setState( {
@@ -69,7 +69,7 @@ export default class LineChartExample extends Component {
 		} );
 	};
 
-	changeSeriesLength = event => {
+	changeSeriesLength = ( event ) => {
 		const newSeriesLength = event.target.value;
 
 		this.setState( {

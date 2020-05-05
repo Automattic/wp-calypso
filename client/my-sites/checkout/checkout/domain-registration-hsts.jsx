@@ -59,7 +59,7 @@ class DomainRegistrationHsts extends React.PureComponent {
 					{ translate(
 						'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 							'to host a website. When you host this domain at WordPress.com an SSL ' +
-							'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+							'certificate is included. {{a}}Learn more{{/a}}.',
 						{
 							args: {
 								tld: tlds,
@@ -76,6 +76,6 @@ class DomainRegistrationHsts extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	productsList: getProductsList( state ),
 } ) )( localize( DomainRegistrationHsts ) );

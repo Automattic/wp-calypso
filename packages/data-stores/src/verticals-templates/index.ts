@@ -24,7 +24,7 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			actions,
 			controls,
-			reducer,
+			reducer: reducer as any,
 			resolvers,
 			selectors,
 		} );

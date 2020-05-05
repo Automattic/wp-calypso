@@ -22,6 +22,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		const submitButton = By.css( ".form-submit[style='display: block;'] #comment-submit" );
 		const commentContent = By.xpath( `//div[@class='comment-content']/p[.='${ comment }']` );
 
+		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
 		await driverHelper.clickWhenClickable( this.driver, commentForm );
 		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
 		await this.switchToFrameIfJetpack();

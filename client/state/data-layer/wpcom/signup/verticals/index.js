@@ -19,7 +19,7 @@ import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 // Some flows do not choose a site type before requesting verticals. In this
 // case don't send a site_type param to the API.
-export const requestVerticals = action => {
+export const requestVerticals = ( action ) => {
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',

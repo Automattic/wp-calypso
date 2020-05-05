@@ -40,7 +40,7 @@ const serviceWorkerOptions = {
 };
 
 export function init() {
-	return dispatch => {
+	return ( dispatch ) => {
 		// require `lib/user/support-user-interop` here so that unit tests don't
 		// fail because of lack of `window` global when importing this module
 		// from test (before a chance to mock things is possible)
@@ -129,12 +129,12 @@ export function apiReady() {
 }
 
 export function fetchAndLoadServiceWorker() {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Registering service worker' );
 
 		registerServerWorker( serviceWorkerOptions )
-			.then( serviceWorkerRegistration => dispatch( apiReady( serviceWorkerRegistration ) ) )
-			.catch( err => {
+			.then( ( serviceWorkerRegistration ) => dispatch( apiReady( serviceWorkerRegistration ) ) )
+			.catch( ( err ) => {
 				debug( 'Error loading service worker!', err );
 				dispatch( apiNotReady() );
 			} );
@@ -142,13 +142,13 @@ export function fetchAndLoadServiceWorker() {
 }
 
 export function deactivateSubscription() {
-	return dispatch => {
+	return ( dispatch ) => {
 		navigator.serviceWorker
 			.getRegistration( serviceWorkerOptions )
-			.then( serviceWorkerRegistration => {
+			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager
 					.getSubscription()
-					.then( pushSubscription => {
+					.then( ( pushSubscription ) => {
 						dispatch( unregisterDevice() );
 
 						if ( ! ( pushSubscription && pushSubscription.unsubscribe ) ) {
@@ -159,14 +159,14 @@ export function deactivateSubscription() {
 						pushSubscription
 							.unsubscribe()
 							.then( () => debug( 'Push subscription unsubscribed' ) )
-							.catch( err => debug( 'Error while unsubscribing', err ) );
+							.catch( ( err ) => debug( 'Error while unsubscribing', err ) );
 					} )
-					.catch( err => {
+					.catch( ( err ) => {
 						dispatch( unregisterDevice() );
 						debug( 'Error getting subscription to deactivate', err );
 					} );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				dispatch( unregisterDevice() );
 				debug( 'Error getting ServiceWorkerRegistration to deactivate', err );
 			} );
@@ -203,22 +203,22 @@ export function mustPrompt() {
 	};
 }
 export function fetchPushManagerSubscription() {
-	return dispatch => {
+	return ( dispatch ) => {
 		window.navigator.serviceWorker.ready
-			.then( serviceWorkerRegistration => {
+			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager
 					.getSubscription()
-					.then( pushSubscription => {
+					.then( ( pushSubscription ) => {
 						dispatch( sendSubscriptionToWPCOM( pushSubscription ) );
 					} )
-					.catch( err => debug( 'Error getting subscription', err ) );
+					.catch( ( err ) => debug( 'Error getting subscription', err ) );
 			} )
-			.catch( err => debug( 'Error fetching push manager subscription', err ) );
+			.catch( ( err ) => debug( 'Error fetching push manager subscription', err ) );
 	};
 }
 
 export function sendSubscriptionToWPCOM( pushSubscription ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		if ( ! pushSubscription ) {
 			debug( 'No subscription to send to WPCOM' );
 			return;
@@ -235,7 +235,7 @@ export function sendSubscriptionToWPCOM( pushSubscription ) {
 					headers,
 				} )
 			)
-			.catch( err => debug( "Couldn't register device", err ) );
+			.catch( ( err ) => debug( "Couldn't register device", err ) );
 	};
 }
 
@@ -246,19 +246,19 @@ export function activateSubscription() {
 			return;
 		}
 		window.navigator.serviceWorker.ready
-			.then( serviceWorkerRegistration => {
+			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager
 					.subscribe( {
 						userVisibleOnly: true,
 						applicationServerKey: urlBase64ToUint8Array( config( 'push_notification_vapid_key' ) ),
 					} )
 					.then( () => dispatch( checkPermissionsState() ) )
-					.catch( err => {
+					.catch( ( err ) => {
 						debug( "Couldn't get subscription", err );
 						dispatch( checkPermissionsState() );
 					} );
 			} )
-			.catch( err => debug( 'Error activating subscription', err ) );
+			.catch( ( err ) => debug( 'Error activating subscription', err ) );
 	};
 }
 
@@ -273,11 +273,11 @@ export function unregisterDevice() {
 		return wpcom
 			.undocumented()
 			.unregisterDevice( deviceId )
-			.then( data => {
+			.then( ( data ) => {
 				debug( 'Successfully unregistered device', data );
 				dispatch( receiveUnregisterDevice( data ) );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( "Couldn't unregister device", err );
 				dispatch( receiveUnregisterDevice() );
 			} );
@@ -292,26 +292,26 @@ export function receiveUnregisterDevice( data ) {
 }
 
 export function checkPermissionsState() {
-	return dispatch => {
+	return ( dispatch ) => {
 		window.navigator.serviceWorker.ready
-			.then( serviceWorkerRegistration => {
+			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager
 					.permissionState( { userVisibleOnly: true } )
-					.then( permissionState => {
+					.then( ( permissionState ) => {
 						debug( 'Received push messaging state', permissionState );
 						dispatch( receivePermissionState( permissionState ) );
 					} )
-					.catch( err => {
+					.catch( ( err ) => {
 						debug( 'Error checking permission state', err );
 						dispatch( receivePermissionState( 'denied' ) );
 					} );
 			} )
-			.catch( err => debug( 'Error checking permission state -- not ready', err ) );
+			.catch( ( err ) => debug( 'Error checking permission state -- not ready', err ) );
 	};
 }
 
 export function block() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUSH_NOTIFICATIONS_BLOCK,
 		} );

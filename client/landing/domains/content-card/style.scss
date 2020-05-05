@@ -5,7 +5,6 @@
 	.content-card__title {
 		color: var( --color-neutral-70 );
 		font-size: 34px;
-		font-weight: 300;
 		margin-bottom: 1em;
 
 		@include breakpoint( '<660px' ) {
@@ -16,7 +15,7 @@
 	.content-card__message {
 		color: var( --color-neutral-50 );
 		font-size: 22px;
-		font-weight: 300;
+		font-weight: 400;
 		margin-bottom: 40px;
 		text-align: left;
 
@@ -32,7 +31,7 @@
 	.content-card__footer {
 		color: var( --color-neutral-50 );
 		font-size: 18px;
-		font-weight: 300;
+		font-weight: 400;
 		margin-bottom: 16px;
 
 		@include breakpoint( '<660px' ) {

@@ -10,10 +10,10 @@
  *
  * @see /client/components/data/media-list-data/utils.js
  * @param {string} filter Media filter path segment
- * @return {string}        Media mime type prefix
+ * @returns {string}        Media mime type prefix
  */
 
-export default function( filter ) {
+export default function ( filter ) {
 	let mimePrefix;
 
 	switch ( filter ) {

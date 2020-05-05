@@ -1,0 +1,22 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>wpcom.js testing app</title>
+  <link rel="stylesheet" href="mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="mocha.js"></script>
+  <script>
+    mocha.setup({
+      ui: 'bdd',
+      timeout: 15000
+    });
+  </script>
+  <script src="./testing-bundle.js"></script>
+  <script>
+    mocha.checkLeaks();
+    mocha.run();
+  </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-t
 
 jest.mock( 'i18n-calypso', () => {
 	return {
-		translate: str => str,
+		translate: ( str ) => str,
 	};
 } );
 

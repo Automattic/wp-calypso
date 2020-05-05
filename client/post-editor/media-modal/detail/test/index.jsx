@@ -47,13 +47,13 @@ const DUMMY_VIDEO_MEDIA = {
 const SHARED_PROPS = {
 	site: DUMMY_SITE,
 	canUserUploadFiles: true,
-	translate: str => str,
+	translate: ( str ) => str,
 };
 
 describe( 'EditorMediaModalDetailItem', () => {
 	let isVideoPressEnabled;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		isVideoPressEnabled = sandbox.stub().returns( true );
 	} );
 

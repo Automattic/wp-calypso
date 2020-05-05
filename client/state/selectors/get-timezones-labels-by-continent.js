@@ -15,9 +15,9 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  * Return the timezones by continent data
  * gotten from state.timezones subtree.
  *
- * @param  {Object} state - Global state tree
- * @param {String} continent - continent value
- * @return {Array} Continent timezones array
+ * @param  {object} state - Global state tree
+ * @param {string} continent - continent value
+ * @returns {Array} Continent timezones array
  */
 export default function getTimezonesLabelsByContinent( state, continent ) {
 	const timezones = getTimezonesByContinent( state, continent );
@@ -26,5 +26,5 @@ export default function getTimezonesLabelsByContinent( state, continent ) {
 		return null;
 	}
 
-	return fromPairs( map( timezones, value => [ value, getTimezonesLabel( state, value ) ] ) );
+	return fromPairs( map( timezones, ( value ) => [ value, getTimezonesLabel( state, value ) ] ) );
 }

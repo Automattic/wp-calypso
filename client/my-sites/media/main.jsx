@@ -64,7 +64,7 @@ class Media extends Component {
 		} );
 	}
 
-	onFilterChange = filter => {
+	onFilterChange = ( filter ) => {
 		let redirect = '/media';
 
 		if ( filter ) {
@@ -82,7 +82,7 @@ class Media extends Component {
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = image => {
+	openDetailsModalForASingleImage = ( image ) => {
 		this.setState( {
 			currentDetail: 0,
 			selectedItems: [ image ],
@@ -128,7 +128,7 @@ class Media extends Component {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
 		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
@@ -223,7 +223,7 @@ class Media extends Component {
 		this.maybeRedirectToAll();
 	};
 
-	setDetailSelectedIndex = index => {
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
 	};
 
@@ -250,7 +250,7 @@ class Media extends Component {
 
 		accept(
 			confirmMessage,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -325,7 +325,7 @@ class Media extends Component {
 		return this.state.selectedItems;
 	};
 
-	getSelectedItem = defaultMediaItem => {
+	getSelectedItem = ( defaultMediaItem ) => {
 		const { media } = this.props;
 		if ( media ) {
 			return media;

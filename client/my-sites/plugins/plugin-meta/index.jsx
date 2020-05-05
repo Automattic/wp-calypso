@@ -6,14 +6,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
@@ -32,15 +33,15 @@ import WpcomPluginInstallButton from 'my-sites/plugins/plugin-install-button-wpc
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
-import Banner from 'components/banner';
-import { TYPE_BUSINESS } from 'lib/plans/constants';
+import UpsellNudge from 'blocks/upsell-nudge';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import { isAutomatedTransferActive } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -404,7 +405,7 @@ export class PluginMeta extends Component {
 					status="is-warning"
 					showDismiss={ false }
 				>
-					<NoticeAction href="https://support.wordpress.com/incompatible-plugins/">
+					<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
 						{ this.props.translate( 'More info' ) }
 					</NoticeAction>
 				</Notice>
@@ -520,7 +521,7 @@ export class PluginMeta extends Component {
 		}
 
 		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return some( this.props.plugin.compatibility, compatibleVersion => {
+		return some( this.props.plugin.compatibility, ( compatibleVersion ) => {
 			return compatibleVersion.indexOf( siteVersion ) === 0;
 		} );
 	}
@@ -537,7 +538,7 @@ export class PluginMeta extends Component {
 
 	getAvailableNewVersions() {
 		return this.props.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( ! site.canUpdateFiles ) {
 					return null;
 				}
@@ -550,29 +551,29 @@ export class PluginMeta extends Component {
 					}
 				}
 			} )
-			.filter( newVersions => newVersions );
+			.filter( ( newVersions ) => newVersions );
 	}
 
-	handlePluginUpdatesSingleSite = event => {
+	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Selected Site Plugin',
 			'Plugin Name',
 			this.props.pluginSlug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
 			plugin: this.props.sites[ 0 ].plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID,
 		} );
 	};
 
-	handlePluginUpdatesMultiSite = event => {
+	handlePluginUpdatesMultiSite = ( event ) => {
 		event.preventDefault();
-		this.props.sites.forEach( site => {
+		this.props.sites.forEach( ( site ) => {
 			const { plugin } = site;
 			if (
 				site.canUpdateFiles &&
@@ -583,14 +584,14 @@ export class PluginMeta extends Component {
 				PluginsActions.updatePlugin( site, plugin );
 				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
-				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
+				recordTracksEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
 					site: site,
 					plugin: plugin.slug,
 				} );
 			}
 		} );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update All Sites Plugin',
 			'Plugin Name',
@@ -613,11 +614,13 @@ export class PluginMeta extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugin-meta__upgrade_nudge">
-				<Banner
+				<UpsellNudge
 					event="calypso_plugin_detail_page_upgrade_nudge"
 					href={ bannerURL }
+					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ plan }
 					title={ title }
+					showIcon={ true }
 				/>
 			</div>
 		);
@@ -707,7 +710,7 @@ export class PluginMeta extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 

@@ -1,7 +1,3 @@
-export const enum ActionType {
-	RECEIVE_DOMAIN_SUGGESTIONS = 'RECEIVE_DOMAIN_SUGGESTIONS',
-}
-
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
@@ -18,6 +14,11 @@ export interface DomainSuggestionQuery {
 	 * example.wordpress.com
 	 */
 	include_wordpressdotcom: boolean;
+
+	/**
+	 * Localizes domain results, e.g., price format
+	 */
+	locale?: string;
 
 	/**
 	 * True to only provide a wordpress.com subdomain
@@ -48,6 +49,11 @@ export interface DomainSuggestionQuery {
 	 * The vertical id or slug
 	 */
 	vertical?: string;
+
+	/**
+	 * An array of tlds
+	 */
+	tlds?: readonly string[];
 }
 
 export type DomainName = string;
@@ -82,7 +88,7 @@ export interface DomainSuggestion {
 	 *
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: readonly string[];
 
 	/**
 	 * Rendered cost with currency

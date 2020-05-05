@@ -7,7 +7,7 @@ import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
 import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
 
 export function connectionLost( noticeText ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionRestored' ) );
 		dispatch(
 			warningNotice( noticeText, {
@@ -22,7 +22,7 @@ export function connectionLost( noticeText ) {
 }
 
 export function connectionRestored( noticeText ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionLost' ) );
 		dispatch(
 			successNotice( noticeText, {

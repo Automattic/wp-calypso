@@ -12,9 +12,9 @@ import {
 /**
  * Tracks the status of "sending" an order invoice API request
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isSending( state = {}, action ) {
 	const { type, orderId } = action;

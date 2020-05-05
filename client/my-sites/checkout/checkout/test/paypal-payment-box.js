@@ -68,7 +68,7 @@ describe( 'PaypalPaymentBox', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	];
 
-	eligiblePlans.forEach( product_slug => {
+	eligiblePlans.forEach( ( product_slug ) => {
 		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
@@ -82,7 +82,7 @@ describe( 'PaypalPaymentBox', () => {
 		} );
 	} );
 
-	eligiblePlans.forEach( product_slug => {
+	eligiblePlans.forEach( ( product_slug ) => {
 		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
@@ -113,7 +113,7 @@ describe( 'PaypalPaymentBox', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	];
 
-	otherPlans.forEach( product_slug => {
+	otherPlans.forEach( ( product_slug ) => {
 		test( 'should not render PaymentChatButton if only non-business plan products are in the cart', () => {
 			const props = {
 				...defaultProps,

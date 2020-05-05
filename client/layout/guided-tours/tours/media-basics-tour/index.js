@@ -36,7 +36,7 @@ export const MediaBasicsTour = makeTour(
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( 'Welcome to your media libary!' ) }</p>
+					<p>{ translate( 'Welcome to your Media Library!' ) }</p>
 					<p>
 						{ translate(
 							'Upload media — photos, documents, audio files, and more — ' +
@@ -61,7 +61,7 @@ export const MediaBasicsTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'You can also drag-and-drop image and video files from your computer into your media library.'
+							'You can also drag-and-drop image and video files from your computer into your Media Library.'
 						) }
 					</p>
 					<img

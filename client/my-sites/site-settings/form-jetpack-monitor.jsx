@@ -38,13 +38,13 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		}
 	}
 
-	recordEvent = event => {
+	recordEvent = ( event ) => {
 		return () => {
 			this.props.trackEvent( event );
 		};
 	};
 
-	handleToggle = name => () => {
+	handleToggle = ( name ) => () => {
 		this.props.trackEvent( `Toggled ${ name }` );
 		this.setState(
 			{
@@ -132,7 +132,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
@@ -164,7 +164,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

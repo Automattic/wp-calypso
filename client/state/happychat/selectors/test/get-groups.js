@@ -87,7 +87,7 @@ describe( 'selectors', () => {
 		test( 'should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const state = {
 					...uiState,
 					...userState,

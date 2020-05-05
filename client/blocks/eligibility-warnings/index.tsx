@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes, noop } from 'lodash';
+import { union, includes, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import page from 'page';
@@ -13,7 +13,12 @@ import page from 'page';
  * Internal dependencies
  */
 import hasLocalizedText from './has-localized-text';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, FEATURE_SFTP } from 'lib/plans/constants';
+import {
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_PERFORMANCE,
+	FEATURE_UPLOAD_THEMES,
+	FEATURE_SFTP,
+} from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
@@ -22,6 +27,10 @@ import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
+import { launchSite } from 'state/sites/launch/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import getRequest from 'state/selectors/get-request';
 
 /**
  * Style dependencies
@@ -31,11 +40,18 @@ import './style.scss';
 interface ExternalProps {
 	backUrl: string;
 	onProceed: () => void;
+	className?: string;
+	eligibilityData?: {
+		eligibilityHolds: string[];
+		eligibilityWarnings: string[];
+		lastUpdated: string;
+	};
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
 
 export const EligibilityWarnings = ( {
+	className,
 	ctaName,
 	context,
 	feature,
@@ -46,21 +62,40 @@ export const EligibilityWarnings = ( {
 	recordUpgradeClick,
 	siteId,
 	siteSlug,
+	siteIsLaunching,
+	siteIsSavingSettings,
+	launchSite: launch,
+	makeSitePublic,
 	translate,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
-	const classes = classNames( 'eligibility-warnings', {
-		'eligibility-warnings__placeholder': isPlaceholder,
-		'eligibility-warnings--with-indent': showWarnings,
-	} );
+	const classes = classNames(
+		'eligibility-warnings',
+		{
+			'eligibility-warnings__placeholder': isPlaceholder,
+			'eligibility-warnings--with-indent': showWarnings,
+		},
+		className
+	);
+
+	const launchCurrentSite = () => launch( siteId );
+	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
+			return;
+		}
+		if ( siteRequiresLaunch( listHolds ) ) {
+			launchCurrentSite();
+			return;
+		}
+		if ( siteRequiresGoingPublic( listHolds ) ) {
+			makeCurrentSitePublic();
 			return;
 		}
 		onProceed();
@@ -101,7 +136,12 @@ export const EligibilityWarnings = ( {
 				<div className="eligibility-warnings__confirm-buttons">
 					<Button
 						primary={ true }
-						disabled={ isProceedButtonDisabled( isEligible, listHolds ) }
+						disabled={
+							isProceedButtonDisabled( isEligible, listHolds ) ||
+							siteIsSavingSettings ||
+							siteIsLaunching
+						}
+						busy={ siteIsLaunching || siteIsSavingSettings }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate ) }
@@ -136,9 +176,19 @@ function getSiteIsEligibleMessage(
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
 	const defaultCopy = translate( 'Proceed' );
-	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
+	if ( siteRequiresUpgrade( holds ) ) {
 		return hasLocalizedText( 'Upgrade and continue' )
 			? translate( 'Upgrade and continue' )
+			: defaultCopy;
+	}
+	if ( siteRequiresLaunch( holds ) ) {
+		return hasLocalizedText( 'Launch your site and continue' )
+			? translate( 'Launch your site and continue' )
+			: defaultCopy;
+	}
+	if ( siteRequiresGoingPublic( holds ) ) {
+		return hasLocalizedText( 'Make your site public and continue' )
+			? translate( 'Make your site public and continue' )
 			: defaultCopy;
 	}
 
@@ -146,9 +196,8 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
-	const canHandleHoldsAutomatically =
-		holds.length <= 2 && holds.every( hold => [ 'NO_BUSINESS_PLAN' ].includes( hold ) );
-
+	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED', 'SITE_NOT_PUBLIC' ];
+	const canHandleHoldsAutomatically = union( resolvableHolds, holds ).length === 3;
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
 
@@ -156,16 +205,24 @@ function siteRequiresUpgrade( holds: string[] ) {
 	return holds.includes( 'NO_BUSINESS_PLAN' );
 }
 
+function siteRequiresLaunch( holds: string[] ) {
+	return holds.includes( 'SITE_UNLAUNCHED' );
+}
+
+function siteRequiresGoingPublic( holds: string[] ) {
+	return holds.includes( 'SITE_NOT_PUBLIC' );
+}
+
 EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
-const mapStateToProps = ( state: object ) => {
+const mapStateToProps = ( state: object, ownProps: ExternalProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const eligibilityData = getEligibility( state, siteId );
-	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const dataLoaded = !! eligibilityData.lastUpdate;
+	const eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
+	const isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
+	const dataLoaded = ownProps.eligibilityData || !! eligibilityData.lastUpdate;
 
 	return {
 		eligibilityData,
@@ -173,6 +230,8 @@ const mapStateToProps = ( state: object ) => {
 		isPlaceholder: ! dataLoaded,
 		siteId,
 		siteSlug,
+		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		siteIsSavingSettings: isSavingSiteSettings( state, siteId ),
 	};
 };
 
@@ -184,6 +243,13 @@ const mapDispatchToProps = {
 			cta_name: ctaName,
 			cta_feature: feature,
 			cta_size: 'regular',
+		} ),
+	launchSite,
+	makeSitePublic: ( selectedSiteId: number | null ) =>
+		saveSiteSettings( selectedSiteId, {
+			blog_public: 1,
+			wpcom_coming_soon: 0,
+			apiVersion: '1.4',
 		} ),
 };
 
@@ -207,6 +273,10 @@ function mergeProps(
 		context = 'hosting';
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
+	} else if ( includes( ownProps.backUrl, 'performance' ) ) {
+		context = 'performance';
+		feature = FEATURE_PERFORMANCE;
+		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
 	const onProceed = () => {

@@ -20,20 +20,20 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			// we wait for all promises to fulfill
 			const runners = map( promises, ( promise, key ) =>
 				promise
-					.then( a => {
+					.then( ( a ) => {
 						if ( this._isMounted ) {
-							this.setState( state => ( { results: { ...state.results, [ key ]: a } } ) );
+							this.setState( ( state ) => ( { results: { ...state.results, [ key ]: a } } ) );
 						}
 
 						return a;
 					} )
 					.then(
-						a => [ true, a, key ],
-						a => [ false, a, key ]
+						( a ) => [ true, a, key ],
+						( a ) => [ false, a, key ]
 					)
 			);
 
-			Promise.all( runners ).then( resolutions => {
+			Promise.all( runners ).then( ( resolutions ) => {
 				const [ results, successful ] = resolutions.reduce(
 					( [ output, allSuccess ], [ wasSuccess, data, key ] ) => [
 						{ ...output, [ key ]: data },

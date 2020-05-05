@@ -25,7 +25,7 @@ const tldSpecificForms = {
 	uk,
 };
 
-const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
+const enabledTldForms = filter( keys( tldSpecificForms ), ( tld ) =>
 	config.isEnabled( `domains/cctlds/${ tld }` )
 );
 

@@ -24,10 +24,23 @@ class IcannVerificationCard extends React.Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		whoisData: PropTypes.array,
+		compact: PropTypes.bool,
 	};
 
 	getExplanation() {
-		const { translate, explanationContext } = this.props;
+		const { translate, explanationContext, contactDetails } = this.props;
+
+		if ( 'new-status' === explanationContext ) {
+			return translate(
+				'We sent {{strong}}%(email)s{{/strong}} an email to verify your contact information. Please complete the verification or your domain will stop working in {{strong}}10 days{{/strong}}.',
+				{
+					args: { email: contactDetails.email },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
 		if ( explanationContext === 'name-servers' ) {
 			return translate(
 				'You have to verify the email address used to register this domain before you ' +
@@ -55,13 +68,13 @@ class IcannVerificationCard extends React.Component {
 	}
 
 	render() {
-		const { contactDetails, selectedDomainName, selectedSiteSlug, translate } = this.props;
+		const { contactDetails, selectedDomainName, selectedSiteSlug, translate, compact } = this.props;
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
-		const verificationExplanation = this.getExplanation();
 
 		if ( ! contactDetails ) {
 			return <QueryWhois domain={ selectedDomainName } />;
 		}
+		const verificationExplanation = this.getExplanation();
 
 		return (
 			<EmailVerificationCard
@@ -73,6 +86,7 @@ class IcannVerificationCard extends React.Component {
 				resendVerification={ resendIcannVerification }
 				selectedDomainName={ selectedDomainName }
 				selectedSiteSlug={ selectedSiteSlug }
+				compact={ compact }
 			/>
 		);
 	}

@@ -122,7 +122,7 @@ const Caching = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_type', 'is_cache_enabled' ] );
 };
 

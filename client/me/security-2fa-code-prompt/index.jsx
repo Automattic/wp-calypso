@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -81,12 +80,12 @@ class Security2faCodePrompt extends React.Component {
 		this.setState( { codeRequestsAllowed: true } );
 	};
 
-	onRequestCode = event => {
+	onRequestCode = ( event ) => {
 		event.preventDefault();
 		this.requestCode();
 	};
 
-	onCancel = event => {
+	onCancel = ( event ) => {
 		event.preventDefault();
 		if ( this.props.onCancel ) {
 			this.props.onCancel();
@@ -103,7 +102,7 @@ class Security2faCodePrompt extends React.Component {
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
 	};
 
-	onCodeRequestResponse = error => {
+	onCodeRequestResponse = ( error ) => {
 		if ( error ) {
 			this.setState( {
 				codeRequestPerformed: false,
@@ -115,7 +114,7 @@ class Security2faCodePrompt extends React.Component {
 		}
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
 	};
@@ -207,8 +206,8 @@ class Security2faCodePrompt extends React.Component {
 						disabled={ this.state.submittingForm }
 						method={ method }
 						name="verificationCode"
-						onFocus={ function() {
-							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
+						onFocus={ function () {
+							gaRecordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
 						value={ this.state.verificationCode }
 						onChange={ this.handleChange }
@@ -227,8 +226,8 @@ class Security2faCodePrompt extends React.Component {
 					<FormButton
 						className="security-2fa-code-prompt__verify-code"
 						disabled={ this.getFormDisabled() }
-						onClick={ function() {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
+						onClick={ function () {
+							gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
 						} }
 					>
 						{ this.getSubmitButtonLabel() }
@@ -239,11 +238,8 @@ class Security2faCodePrompt extends React.Component {
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent(
-									'Me',
-									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
-								);
+							onClick={ function ( event ) {
+								gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
 								this.onRequestCode( event );
 							}.bind( this ) }
 						>
@@ -257,8 +253,8 @@ class Security2faCodePrompt extends React.Component {
 						<FormButton
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+							onClick={ function ( event ) {
+								gaRecordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
 								this.onCancel( event );
 							}.bind( this ) }
 						>
@@ -270,7 +266,7 @@ class Security2faCodePrompt extends React.Component {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

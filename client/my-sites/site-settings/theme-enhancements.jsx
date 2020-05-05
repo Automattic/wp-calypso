@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import { getCustomizerUrl, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import Notice from 'components/notice';
@@ -87,10 +87,10 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate( 'Control how additional posts are loaded.' ) }
-					link="https://support.wordpress.com/infinite-scroll/"
+					link="https://wordpress.com/support/infinite-scroll/"
 					privacyLink={ false }
 				/>
 				{ this.renderToggle(
@@ -198,10 +198,11 @@ class ThemeEnhancements extends Component {
 						jetpackVersion &&
 						versionCompare( jetpackVersion, '8.1-alpha', '>=' )
 							? translate(
-									'{{b}}Action needed:{{/b}} The Jetpack mobile theme will be retired ' +
-										'and removed from Jetpack in March. Please ensure your current theme ' +
+									'{{b}}Action needed:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update to the most recent ' +
+										'version of the plugin. Please ensure your current theme ' +
 										'is mobile-ready {{link}}using this tool{{/link}}. ' +
-										'If it is not, consider replacing it before March.',
+										'If it is not, consider replacing it.',
 									{
 										components: {
 											b: <strong />,
@@ -216,8 +217,9 @@ class ThemeEnhancements extends Component {
 									}
 							  )
 							: translate(
-									'{{b}}Note:{{/b}} The Jetpack mobile theme is being retired ' +
-										'and will be removed from Jetpack in March.',
+									'{{b}}Note:{{/b}} The Jetpack mobile theme is not supported ' +
+										'anymore. It will be removed when you update ' +
+										'to the most recent version of the plugin.',
 									{
 										components: {
 											b: <strong />,
@@ -226,7 +228,9 @@ class ThemeEnhancements extends Component {
 							  )
 					}
 				>
-					<NoticeAction href={ minilevenSupportUrl }>{ translate( 'Learn more' ) }</NoticeAction>
+					<NoticeAction href={ minilevenSupportUrl } external>
+						{ translate( 'Learn more' ) }
+					</NoticeAction>
 				</Notice>
 				<SupportInfo
 					text={ translate(
@@ -277,20 +281,24 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { siteIsJetpack, translate } = this.props;
+		const { siteIsJetpack, siteHasMinileven, translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Theme Enhancements' ) } />
+				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ siteIsJetpack ? (
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderMinilevenSettings() }
-							<hr />
+							{ siteHasMinileven && (
+								<Fragment>
+									{ this.renderMinilevenSettings() }
+									<hr />
+								</Fragment>
+							) }
 							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
@@ -303,7 +311,7 @@ class ThemeEnhancements extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
 
@@ -318,5 +326,6 @@ export default connect( state => {
 		),
 		minilevenModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'minileven' ),
 		site,
+		siteHasMinileven: false === isJetpackMinimumVersion( state, selectedSiteId, '8.3-alpha' ),
 	};
 } )( localize( ThemeEnhancements ) );

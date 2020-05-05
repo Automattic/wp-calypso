@@ -6,7 +6,6 @@ export default {
 	description: 'Just another WordPress site',
 	domain: 'restapiusertests.wordpress.com',
 	hasJetpackProtect: true,
-	hasMinimumJetpackVersion: true,
 	icon: {},
 	is_following: false,
 	is_private: false,

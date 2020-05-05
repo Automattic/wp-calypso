@@ -67,7 +67,7 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = suggestion => {
+	handleAddRemoveDomain = ( suggestion ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion );
 		} else {
@@ -75,12 +75,12 @@ class DomainSearch extends Component {
 		}
 	};
 
-	handleAddMapping = domain => {
+	handleAddMapping = ( domain ) => {
 		addItem( domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	handleAddTransfer = domain => {
+	handleAddTransfer = ( domain ) => {
 		addItem( domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
@@ -170,6 +170,8 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const suggestion =
+				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -180,16 +182,15 @@ class DomainSearch extends Component {
 							noticeStatus="is-info"
 						>
 							<RegisterDomainStep
-								path={ this.props.context.path }
-								suggestion={ this.props.context.query.suggestion }
+								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
 								cart={ this.props.cart }
-								selectedSite={ selectedSite }
 								offerUnavailableOption
+								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 								vendor={ getSuggestionsVendor() }
@@ -212,7 +213,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

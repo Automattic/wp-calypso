@@ -1,29 +1,30 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
+import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
 
-import { assign, pick } from 'lodash';
-import urls from 'url';
-
-export default function( url ) {
-	let bits,
-		formatKeys = [ 'host', 'hash', 'search', 'path' ];
-
+export default function safeProtocolUrl( url ) {
 	// If it's empty, return null
 	if ( null === url || '' === url || 'undefined' === typeof url ) {
 		return null;
 	}
-
-	bits = urls.parse( url );
 
 	// If it's relative, return it
 	if ( /^\/[^/]/.test( url ) ) {
 		return url;
 	}
 
-	if ( 'http:' === bits.protocol || 'https:' === bits.protocol ) {
+	const { protocol, host, hash, search, pathname } = getUrlParts( url );
+
+	if ( 'http:' === protocol || 'https:' === protocol ) {
 		return url;
 	}
 
-	return urls.format( assign( pick( bits, formatKeys ), { protocol: 'http' } ) );
+	// Handle hostless protocols, such as `javascript:`
+	// Preserves the behavior of the previous implementation.
+	if ( ! host ) {
+		return 'http:';
+	}
+
+	return getUrlFromParts( { host, hash, search, pathname, protocol: 'http' } ).href;
 }

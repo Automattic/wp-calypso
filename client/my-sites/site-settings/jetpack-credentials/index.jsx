@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { some } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,13 +26,29 @@ import RewindCredentialsForm from 'components/rewind-credentials-form';
 import './style.scss';
 
 class JetpackCredentials extends Component {
+	isSectionHighlighted() {
+		if ( ! window.location.hash ) {
+			return false;
+		}
+
+		const hash = window.location.hash.substring( 1 );
+		if ( 'credentials' === hash ) {
+			return true;
+		}
+		return false;
+	}
+
 	render() {
 		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;
+		const classes = classNames(
+			'jetpack-credentials',
+			this.isSectionHighlighted() && 'is-highlighted'
+		);
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
 		const hasCredentials = some( credentials, { role: 'main' } );
 
 		return (
-			<div className="jetpack-credentials">
+			<div className={ classes }>
 				<QueryRewindState siteId={ siteId } />
 				<SettingsSectionHeader title={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
@@ -66,7 +83,7 @@ class JetpackCredentials extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const { credentials, state: rewindState } = getRewindState( state, siteId );
 

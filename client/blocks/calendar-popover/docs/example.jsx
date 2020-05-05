@@ -10,7 +10,7 @@ import moment from 'moment';
 import { Button } from '@automattic/components';
 import CalendarPopover from 'blocks/calendar-popover';
 
-const tomorrow = date => date.date( date.date() + 1 );
+const tomorrow = ( date ) => date.date( date.date() + 1 );
 
 class CalendarPopoverExample extends PureComponent {
 	buttonRef = React.createRef();

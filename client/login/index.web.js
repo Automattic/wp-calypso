@@ -3,14 +3,12 @@
  */
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { MomentProvider } from 'components/localized-moment/context';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import {
-	lang,
 	login,
 	magicLogin,
 	magicLoginUse,
@@ -21,6 +19,8 @@ import { setShouldServerSideRenderLogin } from './ssr';
 import { setUpLocale, setSection, makeLayoutMiddleware } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
 import LayoutLoggedOut from 'layout/logged-out';
+import { getLanguageRouteParam } from 'lib/i18n-utils';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -34,16 +34,16 @@ export const LOGIN_SECTION_DEFINITION = {
 const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	return (
 		<ReduxProvider store={ store }>
-			<MomentProvider>
-				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-			</MomentProvider>
+			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		</ReduxProvider>
 	);
 };
 
 const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
-export default router => {
+export default ( router ) => {
+	const lang = getLanguageRouteParam();
+
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
@@ -55,7 +55,11 @@ export default router => {
 		);
 
 		router(
-			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }` ],
+			[
+				`/log-in/link/${ lang }`,
+				`/log-in/jetpack/link/${ lang }`,
+				`/log-in/${ GUTENBOARDING_BASE_NAME }/link/${ lang }`,
+			],
 			setUpLocale,
 			setSection( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
@@ -71,7 +75,9 @@ export default router => {
 				`/log-in/:flow(social-connect|private-site)/${ lang }`,
 				`/log-in/:socialService(google|apple)/callback/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
-				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push)/${ lang }`,
+				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+				`/log-in/:isGutenboarding(${ GUTENBOARDING_BASE_NAME })/${ lang }`,
+				`/log-in/:isGutenboarding(${ GUTENBOARDING_BASE_NAME })/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,

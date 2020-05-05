@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
-const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
+const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 
 /**
@@ -57,12 +56,8 @@ module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
 	new MiniCssExtractPluginWithRTL( {
 		chunkFilename,
 		filename,
+		ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
 		rtlEnabled: true,
-	} ),
-	new FilterWarningsPlugin( {
-		// suppress conflicting order warnings from mini-css-extract-plugin.
-		// see https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
-		exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
 	} ),
 	new WebpackRTLPlugin( {
 		minify,

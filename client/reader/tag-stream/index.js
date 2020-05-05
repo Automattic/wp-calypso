@@ -18,7 +18,7 @@ const redirectHashtaggedTags = ( context, next ) => {
 	next();
 };
 
-export default function() {
+export default function () {
 	page( '/tag/*', preloadReaderBundle, redirectHashtaggedTags, initAbTests );
 	page( '/tag/:tag', updateLastRoute, sidebar, tagListing, makeLayout, clientRender );
 }

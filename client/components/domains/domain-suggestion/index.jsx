@@ -45,7 +45,8 @@ class DomainSuggestion extends React.Component {
 			price,
 			priceRule,
 			salePrice,
-			showTestCopy,
+			isEligibleVariantForDomainTest,
+			showFreeDomainExplainerForFreePlan,
 			isFeatured,
 		} = this.props;
 		const classes = classNames(
@@ -60,7 +61,7 @@ class DomainSuggestion extends React.Component {
 		);
 
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': showTestCopy && ! isFeatured,
+			'domain-suggestion__content-domain-copy-test': isEligibleVariantForDomainTest && ! isFeatured,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -80,7 +81,8 @@ class DomainSuggestion extends React.Component {
 							price={ price }
 							salePrice={ salePrice }
 							rule={ priceRule }
-							showTestCopy={ showTestCopy }
+							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
+							showFreeDomainExplainerForFreePlan={ showFreeDomainExplainerForFreePlan }
 						/>
 					) }
 				</div>
@@ -97,7 +99,7 @@ class DomainSuggestion extends React.Component {
 	}
 }
 
-DomainSuggestion.Placeholder = function() {
+DomainSuggestion.Placeholder = function () {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">

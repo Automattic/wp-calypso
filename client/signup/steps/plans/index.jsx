@@ -17,6 +17,7 @@ import { getTld, isSubdomain } from 'lib/domains';
 import { getSiteBySlug } from 'state/sites/selectors';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import GutenboardingHeader from 'my-sites/plans-features-main/gutenboarding-header';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
@@ -25,6 +26,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
 /**
  * Style dependencies
@@ -36,7 +38,7 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
@@ -70,7 +72,15 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem } );
+		this.props.submitSignupStep( step, {
+			cartItem,
+			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
+			...( this.isGutenboarding() &&
+				! this.props.isLaunchPage && {
+					isPreLaunch: true,
+					isGutenboardingCreate: true,
+				} ),
+		} );
 		this.props.goToNextStep();
 	};
 
@@ -86,14 +96,9 @@ export class PlansStep extends Component {
 		}
 
 		const siteGoals = this.props.siteGoals.split( ',' );
-		let customerType =
+		const customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
-
-		// Default to 'business' when the blogger plan is not available.
-		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
-			customerType = 'business';
-		}
 
 		return customerType;
 	}
@@ -101,6 +106,25 @@ export class PlansStep extends Component {
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
+
+	isGutenboarding = () =>
+		this.props.flowName === 'new-launch' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
+
+	getGutenboardingHeader() {
+		if ( this.isGutenboarding() ) {
+			const { headerText, subHeaderText } = this.props;
+
+			return (
+				<GutenboardingHeader
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
+					onFreePlanSelect={ this.handleFreePlanButtonClick }
+				/>
+			);
+		}
+
+		return null;
+	}
 
 	plansFeaturesList() {
 		const {
@@ -130,13 +154,20 @@ export class PlansStep extends Component {
 					plansWithScroll={ true }
 					planTypes={ planTypes }
 					flowName={ flowName }
+					customHeader={ this.getGutenboardingHeader() }
 				/>
 			</div>
 		);
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -146,9 +177,9 @@ export class PlansStep extends Component {
 
 		let backUrl, backLabelText;
 
-		if ( 0 === positionInFlow && selectedSite ) {
-			backUrl = '/view/' + siteSlug;
-			backLabelText = translate( 'Back to Site' );
+		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
+			backUrl = hasInitializedSitesBackUrl;
+			backLabelText = translate( 'Back to My Sites' );
 		}
 
 		return (
@@ -162,9 +193,10 @@ export class PlansStep extends Component {
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! selectedSite }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
+				hideFormattedHeader={ this.isGutenboarding() }
 			/>
 		);
 	}
@@ -190,6 +222,7 @@ PlansStep.propTypes = {
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
+	flowName: PropTypes.string,
 };
 
 /**
@@ -199,7 +232,7 @@ PlansStep.propTypes = {
  * @param {object} domainItem domainItem object stored in the "choose domain" step
  * @returns {boolean} is .blog domain registration
  */
-export const isDotBlogDomainRegistration = domainItem => {
+export const isDotBlogDomainRegistration = ( domainItem ) => {
 	if ( ! domainItem ) {
 		return false;
 	}
@@ -220,7 +253,7 @@ export default connect(
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
-		siteSlug,
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

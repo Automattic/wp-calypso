@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import isFollowing from '../is-following';
+import { isFollowing } from 'state/reader/follows/selectors';
 
 describe( 'is-following', () => {
 	const state = deepFreeze( {

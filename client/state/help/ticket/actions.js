@@ -9,31 +9,41 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
-export const ticketSupportConfigurationRequestSuccess = configuration => {
+export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 		configuration,
 	};
 };
 
-export const ticketSupportConfigurationRequestFailure = error => {
+export const ticketSupportConfigurationRequestFailure = ( error ) => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 		error,
 	};
 };
 
-export const ticketSupportConfigurationRequest = () => dispatch => {
-	dispatch( { type: HELP_TICKET_CONFIGURATION_REQUEST } );
+export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
+	const requestAction = {
+		type: HELP_TICKET_CONFIGURATION_REQUEST,
+	};
+
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_ticket_support_configuration_requested' ),
+			requestAction
+		)
+	);
 
 	return wpcom
 		.undocumented()
 		.getKayakoConfiguration()
-		.then( configuration => {
+		.then( ( configuration ) => {
 			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( ticketSupportConfigurationRequestFailure( error ) );
 		} );
 };

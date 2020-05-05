@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { endsWith, get, includes, isNumber, isString, some, sortBy } from 'lodash';
+import { endsWith, get, isNumber, isString, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,6 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
-	GSUITE_LINK_PREFIX
 } from 'lib/gsuite/constants';
 import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
 import userFactory from 'lib/user';
@@ -29,22 +28,17 @@ function applyPrecision( cost, precision ) {
 }
 
 /**
- * Can a domain add G Suite
+ * Determines whether G Suite is allowed for the specified domain.
  *
- * @param {string} domainName - domainname
- * @returns {boolean} -Can a domain add G Suite
+ * @param {string} domainName - domain name
+ * @returns {boolean} - true if G Suite is allowed, false otherwise
  */
 function canDomainAddGSuite( domainName ) {
-	const GOOGLE_APPS_INVALID_SUFFIXES = [ '.in', '.wpcomstaging.com' ];
-	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-	const includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, bannedPhrase =>
-		includes( domainName, bannedPhrase )
-	);
-	const hasInvalidSuffix = some( GOOGLE_APPS_INVALID_SUFFIXES, invalidSuffix =>
-		endsWith( domainName, invalidSuffix )
-	);
+	if ( endsWith( domainName, '.wpcomstaging.com' ) ) {
+		return false;
+	}
 
-	return ! ( hasInvalidSuffix || includesBannedPhrase || isGSuiteRestricted() );
+	return ! isGSuiteRestricted();
 }
 
 /**
@@ -98,7 +92,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	// Orders domains with the primary domain in first position, if any
 	const supportedDomains = sortBy(
 		getGSuiteSupportedDomains( domains ),
-		domain => ! domain.isPrimary
+		( domain ) => ! domain.isPrimary
 	);
 
 	return get( supportedDomains, '[0].name', '' );
@@ -111,7 +105,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
  * @returns {Array} - the list of domains that are eligible for G Suite
  */
 function getGSuiteSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
+	return domains.filter( function ( domain ) {
 		if ( hasGSuiteWithAnotherProvider( domain ) ) {
 			return false;
 		}
@@ -125,6 +119,10 @@ function getGSuiteSupportedDomains( domains ) {
 
 		return canDomainAddGSuite( domain.name );
 	} );
+}
+
+function getGSuiteMailboxCount( domain ) {
+	return get( domain, 'googleAppsSubscription.totalUserCount', 0 );
 }
 
 /**
@@ -159,16 +157,6 @@ function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
 	}
 
 	return formatPrice( cost / 12, currencyCode, { precision: 1 } );
-}
-
-/**
- * Returns G Suite management url
- *
- * @param {string} domainName - domain name
- * @returns {string} - Returns G Suite settings url
- */
-function getGSuiteSettingsUrl( domainName ) {
-	return GSUITE_LINK_PREFIX + domainName;
 }
 
 /**
@@ -260,8 +248,8 @@ export {
 	canDomainAddGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getGSuiteSettingsUrl,
 	getGSuiteSupportedDomains,
+	getGSuiteMailboxCount,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,

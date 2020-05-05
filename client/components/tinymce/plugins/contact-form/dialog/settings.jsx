@@ -29,11 +29,11 @@ class ContactFormDialogFormSettings extends React.Component {
 		onUpdate: PropTypes.func.isRequired,
 	};
 
-	onToChange = event => {
+	onToChange = ( event ) => {
 		this.props.onUpdate( { to: event.target.value } );
 	};
 
-	onSubjectChange = event => {
+	onSubjectChange = ( event ) => {
 		this.props.onUpdate( { subject: event.target.value } );
 	};
 

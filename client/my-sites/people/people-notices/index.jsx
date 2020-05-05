@@ -23,7 +23,7 @@ const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === sit
 
 const isSameUser = ( userId, log ) => userId && log.user && log.user.ID === userId;
 
-const translateArg = log => {
+const translateArg = ( log ) => {
 	return { user: 'string' === typeof log.user ? log.user : log.user.login };
 };
 
@@ -41,7 +41,7 @@ const filterBy = ( siteId, userId, log ) => {
 	return false;
 };
 
-const isMultisite = site => {
+const isMultisite = ( site ) => {
 	return site && site.is_multisite;
 };
 
@@ -220,7 +220,7 @@ class PeopleNotices extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		site: getSelectedSite( state ),
 	};

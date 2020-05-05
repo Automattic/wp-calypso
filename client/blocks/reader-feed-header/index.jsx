@@ -20,7 +20,7 @@ import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
 import getUserSetting from 'state/selectors/get-user-setting';
-import isFollowing from 'state/selectors/is-following';
+import { isFollowing } from 'state/reader/follows/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
 
 /**

@@ -33,7 +33,7 @@ import { VideoAudioPosts } from '../video-audio-posts';
 describe( 'VideoAudioPosts basic tests', () => {
 	const props = {
 		plan: PLAN_FREE,
-		translate: x => x,
+		translate: ( x ) => x,
 		selectedSite: {
 			plan: PLAN_FREE,
 		},
@@ -48,27 +48,27 @@ describe( 'VideoAudioPosts basic tests', () => {
 describe( 'VideoAudioPosts should use proper description', () => {
 	const props = {
 		plan: PLAN_FREE,
-		translate: x => x,
+		translate: ( x ) => x,
 		selectedSite: {
 			plan: PLAN_FREE,
 		},
 	};
 
-	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( plan => {
+	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( plan ) => {
 		test( `for business plan ${ plan }`, () => {
 			const comp = shallow( <VideoAudioPosts { ...props } plan={ plan } /> );
 			expect( comp.find( 'PurchaseDetail' ).props().description ).toContain( 'Business Plan' );
 		} );
 	} );
 
-	[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( plan => {
+	[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( ( plan ) => {
 		test( `for ecommerce plan ${ plan }`, () => {
 			const comp = shallow( <VideoAudioPosts { ...props } plan={ plan } /> );
 			expect( comp.find( 'PurchaseDetail' ).props().description ).toContain( 'Ecommerce Plan' );
 		} );
 	} );
 
-	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( plan => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( ( plan ) => {
 		test( `for premium plan ${ plan }`, () => {
 			const comp = shallow( <VideoAudioPosts { ...props } plan={ plan } /> );
 			expect( comp.find( 'PurchaseDetail' ).props().description ).toContain( '13GB of media' );
@@ -86,7 +86,7 @@ describe( 'VideoAudioPosts should use proper description', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `for plans ${ plan }`, () => {
 			const comp = shallow( <VideoAudioPosts { ...props } plan={ plan } /> );
 			expect( comp.find( 'PurchaseDetail' ).props().description ).toBe( '' );

@@ -44,7 +44,7 @@ interface HasPageCoords {
  * Discriminate between Mouse and Touch types of events.
  *
  * @param event Event (Mouse or Touch)
- * @return      True if the event has touches
+ * @returns      True if the event has touches
  */
 function isEventWithTouches( event: HasTouches | HasPageCoords ): event is HasTouches {
 	return (
@@ -138,7 +138,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		this.props.onStop();
 	};
 
-	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = event => {
+	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = ( event ) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
@@ -147,7 +147,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
 	};
 
-	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = event => {
+	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = ( event ) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first

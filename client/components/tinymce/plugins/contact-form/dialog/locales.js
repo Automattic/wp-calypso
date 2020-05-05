@@ -27,6 +27,6 @@ const labels = {
 	},
 };
 
-export default function( type ) {
+export default function ( type ) {
 	return labels.hasOwnProperty( type ) ? labels[ type ].call() : null;
 }

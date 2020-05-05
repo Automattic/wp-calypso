@@ -127,7 +127,7 @@ class ProductForm extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSiteWithFallback( state ),
 	storeIsManagingStock: getProductsSettingValue( state, 'woocommerce_manage_stock' ),
 } ) )( ProductForm );

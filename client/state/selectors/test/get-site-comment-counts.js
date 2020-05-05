@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
-import getSiteCommentCounts from 'state/selectors/get-site-comment-counts';
+import { getSiteCommentCounts } from 'state/comments/selectors';
 
 describe( 'getSiteCommentCounts()', () => {
 	const siteId = 2916284;
@@ -55,7 +51,11 @@ describe( 'getSiteCommentCounts()', () => {
 	} );
 
 	test( 'should return null when counts are not available', () => {
-		const state = {};
+		const state = {
+			comments: {
+				counts: {},
+			},
+		};
 		const output = getSiteCommentCounts( state, siteId, 12345 );
 		expect( output ).toEqual( null );
 	} );

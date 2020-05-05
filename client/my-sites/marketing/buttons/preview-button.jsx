@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +10,8 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SocialLogo from 'components/social-logo';
@@ -29,7 +29,7 @@ class SharingButtonsPreviewButton extends React.Component {
 	static defaultProps = {
 		style: 'icon',
 		enabled: true,
-		onClick: function() {},
+		onClick: function () {},
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -62,12 +62,12 @@ class SharingButtonsPreviewButton extends React.Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	onClick = () => {
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_share_button_click', {
+		recordTracksEvent( 'calypso_sharing_buttons_share_button_click', {
 			service: this.props.button.ID,
 			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
 			path: this.props.path,
 		} );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
+		gaRecordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
 	};
 
@@ -100,7 +100,7 @@ class SharingButtonsPreviewButton extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ),
 	} ),
 	null,

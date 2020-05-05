@@ -48,7 +48,7 @@ const getTokenFromUrl = () => {
 	};
 };
 
-export const AuthWrapper = Wrapped =>
+export const AuthWrapper = ( Wrapped ) =>
 	class extends Component {
 		state = {};
 
@@ -59,7 +59,7 @@ export const AuthWrapper = Wrapped =>
 
 			const proxiedWpcom = wpcom();
 			proxiedWpcom.request = proxyRequest;
-			proxiedWpcom.request( { metaAPI: { accessAllUsersBlogs: true } }, error => {
+			proxiedWpcom.request( { metaAPI: { accessAllUsersBlogs: true } }, ( error ) => {
 				if ( error ) {
 					throw error;
 				}

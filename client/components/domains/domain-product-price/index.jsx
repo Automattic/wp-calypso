@@ -35,7 +35,12 @@ class DomainProductPrice extends React.Component {
 	};
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+		const {
+			isMappingProduct,
+			isEligibleVariantForDomainTest,
+			showFreeDomainExplainerForFreePlan,
+			translate,
+		} = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
@@ -46,14 +51,30 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( this.props.showTestCopy ) {
-					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
-						args: { cost: this.props.price },
-						components: {
-							del: <del />,
-							span: <span className="domain-product-price__free-price" />,
-						},
-					} );
+				if ( isEligibleVariantForDomainTest ) {
+					if ( showFreeDomainExplainerForFreePlan ) {
+						message = translate(
+							'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free with paid plan{{/span}}',
+							{
+								args: { cost: this.props.price },
+								components: {
+									del: <del />,
+									span: <span className="domain-product-price__free-price" />,
+								},
+							}
+						);
+					} else {
+						message = translate(
+							'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}',
+							{
+								args: { cost: this.props.price },
+								components: {
+									del: <del />,
+									span: <span className="domain-product-price__free-price" />,
+								},
+							}
+						);
+					}
 				} else {
 					message = translate( 'First year included in paid plans' );
 				}
@@ -75,7 +96,7 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		const priceText = this.props.showTestCopy
+		const priceText = this.props.isEligibleVariantForDomainTest
 			? this.props.translate( 'Renews at %(cost)s / year', {
 					args: { cost: this.props.price },
 			  } )
@@ -89,7 +110,7 @@ class DomainProductPrice extends React.Component {
 
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+			'domain-product-price__domain-step-copy-updates': this.props.isEligibleVariantForDomainTest,
 		} );
 
 		return (
@@ -101,17 +122,21 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFree() {
+		const { isEligibleVariantForDomainTest, translate } = this.props;
+
 		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': this.props.showTestCopy,
+			'domain-product-price__domain-step-copy-updates': isEligibleVariantForDomainTest,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {
-			'domain-product-price__free-price': this.props.showTestCopy,
+			'domain-product-price__free-price': isEligibleVariantForDomainTest,
 		} );
 
 		return (
 			<div className={ className }>
-				<div className={ productPriceClassName }>{ this.props.translate( 'Free' ) }</div>
+				<div className={ productPriceClassName }>
+					<span>{ translate( 'Free' ) }</span>
+				</div>
 			</div>
 		);
 	}
@@ -172,7 +197,7 @@ class DomainProductPrice extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	domainsWithPlansOnly: getCurrentUser( state )
 		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 		: true,

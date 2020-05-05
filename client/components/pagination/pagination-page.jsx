@@ -24,7 +24,7 @@ class PaginationPage extends Component {
 		totalPages: PropTypes.number.isRequired,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		event.stopPropagation();
 		const { currentPage, pageClick, pageNumber, totalPages } = this.props;
 
@@ -75,7 +75,12 @@ class PaginationPage extends Component {
 				} );
 				return (
 					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
+						<Button
+							className="pagination__list-button"
+							borderless
+							onClick={ this.clickHandler }
+							disabled={ currentPage <= 1 }
+						>
 							<Gridicon icon="arrow-left" size={ 18 } />
 							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
 						</Button>
@@ -88,7 +93,12 @@ class PaginationPage extends Component {
 				} );
 				return (
 					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
+						<Button
+							className="pagination__list-button"
+							borderless
+							onClick={ this.clickHandler }
+							disabled={ currentPage >= totalPages }
+						>
 							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
 							<Gridicon icon="arrow-right" size={ 18 } />
 						</Button>
@@ -101,7 +111,7 @@ class PaginationPage extends Component {
 				} );
 				return (
 					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler }>
+						<Button className="pagination__list-button" borderless onClick={ this.clickHandler }>
 							{ numberFormat( pageNumber ) }
 						</Button>
 					</li>

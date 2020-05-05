@@ -46,7 +46,7 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 	if ( ! data ) {
 		return EMPTY_RESULT;
 	}
-	return data.map( record => {
+	return data.map( ( record ) => {
 		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
 
 		const recordClassName =
@@ -138,7 +138,7 @@ function addTooltipData( chartTab, item, period ) {
 						icon: 'posts',
 						value: '',
 					} );
-					item.data.post_titles.forEach( post_title => {
+					item.data.post_titles.forEach( ( post_title ) => {
 						tooltipData.push( {
 							className: 'is-published-item',
 							label: post_title,

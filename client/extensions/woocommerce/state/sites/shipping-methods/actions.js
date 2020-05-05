@@ -24,7 +24,7 @@ export const fetchShippingMethodsSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchShippingMethods = siteId => ( dispatch, getState ) => {
+export const fetchShippingMethods = ( siteId ) => ( dispatch, getState ) => {
 	if (
 		areShippingMethodsLoaded( getState(), siteId ) ||
 		areShippingMethodsLoading( getState(), siteId )
@@ -41,18 +41,18 @@ export const fetchShippingMethods = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'shipping_methods' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( fetchShippingMethodsSuccess( siteId, data ) );
 			return data;
 		} )
-		.then( data => {
+		.then( ( data ) => {
 			// Only need to check the feature flag. If WCS isn't enabled, no "wc_services_*" methods will be returned in the first place
 			const wcsMethods = config.isEnabled( 'woocommerce/extension-wcservices' )
 				? data.filter( ( { id } ) => startsWith( id, 'wc_services' ) )
 				: [];
 			wcsMethods.forEach( ( { id } ) => dispatch( fetchShippingMethodSchema( siteId, id ) ) );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

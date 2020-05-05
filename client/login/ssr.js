@@ -11,7 +11,7 @@ import { intersection } from 'lodash';
  * present, then it also needs to start with a certain prefix).
  *
  * @param {object}   context  The entire request context
- * @param {function} next     Next middleware in the running sequence
+ * @param {Function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {
 	const whitelistedQueryKeys = [ 'client_id', 'signup_flow', 'redirect_to' ];
@@ -31,7 +31,7 @@ export function setShouldServerSideRenderLogin( context, next ) {
  * Verifies if the given redirect_to value enables SSR or not.
  *
  * @param {string}   redirectToQueryValue The URI-encoded value of the analyzed redirect_to
- * @return {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
+ * @returns {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
  */
 function isRedirectToValidForSsr( redirectToQueryValue ) {
 	if ( 'undefined' === typeof redirectToQueryValue ) {

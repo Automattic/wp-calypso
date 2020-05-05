@@ -87,7 +87,6 @@ describe( 'selectors', () => {
 				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
-				expiryMoment: null,
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
@@ -99,7 +98,6 @@ describe( 'selectors', () => {
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
-				mostRecentRenewMoment: null,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -114,10 +112,8 @@ describe( 'selectors', () => {
 				refundAmount: NaN,
 				refundText: undefined,
 				renewDate: undefined,
-				renewMoment: null,
 				siteName: undefined,
 				subscribedDate: undefined,
-				subscribedMoment: null,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
 				taxAmount: undefined,
@@ -266,7 +262,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
@@ -306,7 +302,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();

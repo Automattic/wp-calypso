@@ -16,7 +16,6 @@ import DocumentHead from 'components/data/document-head';
 import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
@@ -43,7 +42,7 @@ class JetpackNewSite extends Component {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
-	handleJetpackUrlChange = event => {
+	handleJetpackUrlChange = ( event ) => {
 		const url = event.target.value;
 
 		this.setState( {
@@ -162,8 +161,4 @@ const connectComponent = connect( null, {
 	recordTracksEvent,
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackNewSite );
+export default flowRight( connectComponent, localize )( JetpackNewSite );

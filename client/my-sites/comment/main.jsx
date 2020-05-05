@@ -22,7 +22,7 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
 import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 
 /**

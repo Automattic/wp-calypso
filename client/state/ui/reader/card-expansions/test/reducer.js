@@ -9,7 +9,7 @@ import freeze from 'deep-freeze';
  */
 import reducer from '../reducer';
 import { keyToString } from 'reader/post-key';
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/reader/action-types';
 
 describe( 'reducer', () => {
 	const postKey = freeze( { postId: 'postId', blogId: 'blogId' } );

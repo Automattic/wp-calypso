@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SITE_BLOCK } from 'state/action-types';
+import { READER_SITE_BLOCK } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -43,7 +43,7 @@ export function receiveSiteBlock() {
 	} );
 }
 
-export const receiveSiteBlockError = ( { payload: { siteId } } ) => dispatch => {
+export const receiveSiteBlockError = ( { payload: { siteId } } ) => ( dispatch ) => {
 	dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
 	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
 };

@@ -37,7 +37,7 @@ export async function useLoginCookies( driver, username ) {
 			await loadLoginCookies( driver, cookiePath );
 			usedCookie = true;
 		} else {
-			fs.unlink( cookiePath, function( err ) {
+			fs.unlink( cookiePath, function ( err ) {
 				if ( err ) {
 					console.log( 'Deleting of login cookies failed' );
 				}

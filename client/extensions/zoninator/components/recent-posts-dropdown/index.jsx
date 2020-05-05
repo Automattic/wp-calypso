@@ -35,7 +35,7 @@ class RecentPostsDropdown extends PureComponent {
 		exclude: [],
 	};
 
-	handleSelect = option => {
+	handleSelect = ( option ) => {
 		const { onSelect, posts } = this.props;
 		const slug = option.value;
 

@@ -35,7 +35,7 @@ class HelloDollyPage extends Component {
 					</span>
 				</SectionHeader>
 				<Card>
-					<p style={ { fontSize: 18, fontWeight: 300 } }>
+					<p style={ { fontSize: 18 } }>
 						This is not just an extension, it symbolizes the hope and enthusiasm of an entire
 						generation summed up in two words sung most famously by Louis Armstrong.
 					</p>

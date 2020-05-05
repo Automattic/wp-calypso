@@ -19,16 +19,13 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import getSiteCommentsTree from 'state/selectors/get-site-comments-tree';
-import isCommentsTreeInitialized from 'state/selectors/is-comments-tree-initialized';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/comments/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE } from '../constants';
 
-const CommentTransition = props => (
+const CommentTransition = ( props ) => (
 	<CSSTransition { ...props } classNames="comment-list__transition" timeout={ 150 } />
 );
 
@@ -70,7 +67,7 @@ export class CommentTree extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = page => {
+	changePage = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -107,9 +104,9 @@ export class CommentTree extends Component {
 
 	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
 
-	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
+	hasCommentJustMovedBackToCurrentStatus = ( commentId ) => this.state.lastUndo === commentId;
 
-	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+	isCommentSelected = ( commentId ) => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
@@ -124,7 +121,7 @@ export class CommentTree extends Component {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
 
-	toggleCommentSelected = comment => {
+	toggleCommentSelected = ( comment ) => {
 		if ( this.isCommentSelected( comment.commentId ) ) {
 			return this.setState( ( { selectedComments } ) => ( {
 				selectedComments: selectedComments.filter(
@@ -137,13 +134,12 @@ export class CommentTree extends Component {
 		} ) );
 	};
 
-	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
+	toggleSelectAll = ( selectedComments ) => this.setState( { selectedComments } );
 
-	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
+	updateLastUndo = ( commentId ) => this.setState( { lastUndo: commentId } );
 
 	render() {
 		const {
-			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
 			order,
@@ -170,15 +166,7 @@ export class CommentTree extends Component {
 		return (
 			<div className="comment-tree comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-				{ ! isCommentsTreeSupported && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
-				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+				<QuerySiteCommentsTree siteId={ siteId } status={ status } />
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 				<CommentNavigation
 					commentsPage={ commentsPage }
@@ -197,17 +185,14 @@ export class CommentTree extends Component {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<TransitionGroup className="comment-list__transition-wrapper">
 					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
-					{ map( commentsPage, commentId => (
+					{ map( commentsPage, ( commentId ) => (
 						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
 							<Comment
 								commentId={ commentId }
 								isBulkMode={ isBulkMode }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
-								refreshCommentData={
-									isCommentsTreeSupported &&
-									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-								}
+								refreshCommentData={ ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 								toggleSelected={ this.toggleCommentSelected }
 								updateLastUndo={ this.updateLastUndo }
 							/>
@@ -259,15 +244,13 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		isPostView,
 		siteId,
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	recordChangePage: ( page, total ) =>
 		dispatch(
 			composeAnalytics(

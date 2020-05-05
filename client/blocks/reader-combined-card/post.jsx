@@ -37,7 +37,7 @@ class ReaderCombinedCardPost extends React.Component {
 		showFeaturedAsset: true,
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 		const selection = window.getSelection && window.getSelection();
 

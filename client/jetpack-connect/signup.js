@@ -26,7 +26,6 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import SignupForm from 'blocks/signup-form';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
@@ -133,7 +132,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle user creation result
 	 *
-	 * @param {Object} _             …
+	 * @param {object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
@@ -148,16 +147,17 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle error on user creation
 	 *
-	 * @param {?Object} error Error result
+	 * @param {?object} error Error result
 	 */
-	handleUserCreationError = error => {
+	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;
 		debug( 'Signup error: %o', error );
 		this.resetState();
 		if ( error && 'user_exists' === error.code ) {
 			const text =
 				error.data && error.data.email
-					? translate(
+					? // translators: email is an email address. eg you@name.com
+					  translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
@@ -250,8 +250,4 @@ const connectComponent = connect( null, {
 	warningNotice: warningNoticeAction,
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackSignup );
+export default flowRight( connectComponent, localize )( JetpackSignup );

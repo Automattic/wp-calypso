@@ -1,10 +1,10 @@
 const defaultGetCacheKey = ( ...args ) => args.join();
 
-const isFunction = fn => {
+const isFunction = ( fn ) => {
 	return fn && typeof fn === 'function';
 };
 
-const isObject = o => {
+const isObject = ( o ) => {
 	return o && typeof o === 'object';
 };
 
@@ -14,10 +14,10 @@ const isObject = o => {
  * @param  {Function} getDependents A Function describing the dependent(s) of the selector.
  *                                    Must return an array which gets passed as the first arg to the selector
  * @param  {Function} selector      A standard selector for calculating cached result
- * @param  {Object}   options       Options bag with additional arguments
+ * @param  {object}   options       Options bag with additional arguments
  * @param  {Function} options.getCacheKey
  *                                  Custom way to compute the cache key from the `args` list
- * @return {Function}               Cached selector
+ * @returns {Function}               Cached selector
  */
 export default function treeSelect( getDependents, selector, options = {} ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
@@ -32,7 +32,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 
 	const { getCacheKey = defaultGetCacheKey } = options;
 
-	const cachedSelector = function( state, ...args ) {
+	const cachedSelector = function ( state, ...args ) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {

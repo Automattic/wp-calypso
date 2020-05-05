@@ -57,12 +57,13 @@ function renderValidationError( message ) {
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
-		ccTldDetails: PropTypes.object,
+		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		translate: PropTypes.func,
-		updateContactDetailsCache: PropTypes.func,
+		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -83,24 +84,29 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		//    fields so we can keep them together in one place
 		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				fr: { registrantType: defaultRegistrantType },
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
 	updateContactDetails( field, value ) {
 		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( set( {}, field, sanitizedValue ) );
+		const payload = set( {}, field, sanitizedValue );
+		this.props.updateContactDetailsCache( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
-	handleChangeContactEvent = event => {
+	handleChangeContactEvent = ( event ) => {
 		this.updateContactDetails( event.target.id, event.target.value );
 	};
 
-	handleChangeContactExtraEvent = event => {
+	handleChangeContactExtraEvent = ( event ) => {
 		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
 	};
 
@@ -179,7 +185,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			pattern: this.props.translate( 'An EU Trademark number uses only digits.' ),
 		};
 
-		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, error =>
+		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, ( error ) =>
 			renderValidationError( trademarkNumberStrings[ error ] )
 		);
 
@@ -192,8 +198,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			$ref: translate( 'Organization field is required' ),
 		};
 
-		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
-			renderValidationError( organizationValidationStrings[ error ] )
+		const organizationValidationMessage = map(
+			contactDetailsValidationErrors.organization,
+			( error ) => renderValidationError( organizationValidationStrings[ error ] )
 		);
 
 		return (
@@ -285,7 +292,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

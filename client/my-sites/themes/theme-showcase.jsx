@@ -24,16 +24,22 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
-import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
-import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-description';
-import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
-import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import {
+	getThemesBookmark,
+	hasShowcaseOpened as hasShowcaseOpenedSelector,
+} from 'state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-import { getActiveTheme } from 'state/themes/selectors';
+import {
+	getActiveTheme,
+	getThemeFilterTerms,
+	getThemeFilterToTermTable,
+	getThemeShowcaseDescription,
+	getThemeShowcaseTitle,
+	prependThemeFilterKeys,
+} from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
 
@@ -151,20 +157,17 @@ class ThemeShowcase extends React.Component {
 		this.props.trackMoreThemesClick();
 	};
 
-	doSearch = searchBoxContent => {
+	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
-		const validFilters = filters.map( filter => filterToTermTable[ filter ] );
+		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 
 		const url = this.constructUrl( {
 			filter: compact( validFilters ).join( '+' ),
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent
-				.replace( filterRegex, '' )
-				.replace( /\s+/g, ' ' )
-				.trim(),
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		page( url );
 		this.scrollToSearchInput();
@@ -182,7 +185,7 @@ class ThemeShowcase extends React.Component {
 	 *
 	 * @returns {string} Theme showcase url
 	 */
-	constructUrl = sections => {
+	constructUrl = ( sections ) => {
 		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
@@ -256,7 +259,7 @@ class ThemeShowcase extends React.Component {
 		].concat(
 			Object.keys( this.props.subjects )
 				.map(
-					subject =>
+					( subject ) =>
 						subjectsMeta[ subject ] && {
 							label: subject,
 							uri: this.constructUrl( { vertical: subject } ),
@@ -264,7 +267,7 @@ class ThemeShowcase extends React.Component {
 							order: subjectsMeta[ subject ].order,
 						}
 				)
-				.filter( icon => !! icon )
+				.filter( ( icon ) => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
@@ -296,7 +299,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install Theme' ) }
+							{ translate( 'Install theme' ) }
 						</Button>
 					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
@@ -312,25 +315,25 @@ class ThemeShowcase extends React.Component {
 								defaultOption={ this.props.defaultOption }
 								secondaryOption={ this.props.secondaryOption }
 								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function( theme ) {
+								getScreenshotUrl={ function ( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
 									return getScreenshotOption( theme ).getUrl( theme );
 								} }
-								onScreenshotClick={ function( themeId ) {
+								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
 										return;
 									}
 									getScreenshotOption( themeId ).action( themeId );
 								} }
-								getActionLabel={ function( theme ) {
+								getActionLabel={ function ( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								getOptions={ function( theme ) {
+								getOptions={ function ( theme ) {
 									return pickBy(
 										addTracking( options ),
-										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 									);
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
@@ -344,7 +347,7 @@ class ThemeShowcase extends React.Component {
 									<hr />
 								) : (
 									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
-										{ translate( 'Show All Themes' ) }
+										{ translate( 'Show all themes' ) }
 									</Button>
 								) }
 							</div>
@@ -398,25 +401,25 @@ class ThemeShowcase extends React.Component {
 							defaultOption={ this.props.defaultOption }
 							secondaryOption={ this.props.secondaryOption }
 							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function( theme ) {
+							getScreenshotUrl={ function ( theme ) {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
 								return getScreenshotOption( theme ).getUrl( theme );
 							} }
-							onScreenshotClick={ function( themeId ) {
+							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
 									return;
 								}
 								getScreenshotOption( themeId ).action( themeId );
 							} }
-							getActionLabel={ function( theme ) {
+							getActionLabel={ function ( theme ) {
 								return getScreenshotOption( theme ).label;
 							} }
-							getOptions={ function( theme ) {
+							getOptions={ function ( theme ) {
 								return pickBy(
 									addTracking( options ),
-									option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 								);
 							} }
 							trackScrollPage={ this.props.trackScrollPage }
@@ -441,8 +444,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	hasShowcaseOpened: state.themes.themesUI.themesShowcaseOpen,
-	themesBookmark: state.themes.themesUI.themesBookmark,
+	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 const mapDispatchToProps = {

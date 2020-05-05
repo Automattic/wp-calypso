@@ -2,8 +2,8 @@
  * Returns the poster URL of the video.
  *
  *
- * @param {Object}  state Global state tree
- * @return {String}  URL of the poster.
+ * @param {object}  state Global state tree
+ * @returns {string}  URL of the poster.
  */
 
 export default function getPosterUrl( state ) {

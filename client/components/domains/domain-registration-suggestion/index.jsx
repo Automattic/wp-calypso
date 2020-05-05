@@ -111,7 +111,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( suggestion );
 	};
 
-	isUnavailableDomain = domain => {
+	isUnavailableDomain = ( domain ) => {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
@@ -195,7 +195,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.showTestCopy && ! this.props.isFeatured,
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -211,13 +211,22 @@ class DomainRegistrationSuggestion extends React.Component {
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 								'to host a website. When you host this domain at WordPress.com an SSL ' +
-								'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+								'certificate is included. {{a}}Learn more{{/a}}.',
 							{
 								args: {
 									tld: '.' + getTld( domain ),
 								},
 								components: {
-									a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+									a: (
+										<a
+											href={ HTTPS_SSL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ ( event ) => {
+												event.stopPropagation();
+											} }
+										/>
+									),
 									strong: <strong />,
 								},
 							}
@@ -241,7 +250,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.showTestCopy
+			title = this.props.isEligibleVariantForDomainTest
 				? translate( 'Our Recommendation' )
 				: translate( 'Best Match' );
 			progressBarProps = {
@@ -260,11 +269,12 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.showTestCopy ) {
+			if ( this.props.isEligibleVariantForDomainTest ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
 				} );
+
 				return (
 					<div className="domain-registration-suggestion__progress-bar">
 						<Badge type={ badgeClassName }>{ title }</Badge>
@@ -282,7 +292,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.showTestCopy ) {
+		if ( this.props.isEligibleVariantForDomainTest ) {
 			return null;
 		}
 
@@ -335,7 +345,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				showTestCopy={ this.props.showTestCopy }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 				isFeatured={ isFeatured }
 			>
 				{ this.renderDomain() }
@@ -350,8 +361,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const showTestCopy = get( props, 'showTestCopy', false );
-	const stripZeros = showTestCopy ? true : false;
+	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),

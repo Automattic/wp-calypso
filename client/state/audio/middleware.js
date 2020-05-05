@@ -5,7 +5,7 @@ import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'state/action-types';
 
 const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
 
-export const playSound = src => {
+export const playSound = ( src ) => {
 	if ( ! isAudioSupported() ) {
 		return;
 	}
@@ -36,12 +36,12 @@ handlers[ HAPPYCHAT_IO_RECEIVE_MESSAGE ] = playSoundForMessageToCustomer;
  * Middleware
  */
 
-export default ( { dispatch } ) => next => {
+export default ( { dispatch } ) => ( next ) => {
 	if ( ! isAudioSupported() ) {
 		return next;
 	}
 
-	return action => {
+	return ( action ) => {
 		const handler = handlers[ action.type ];
 		if ( 'function' === typeof handler ) {
 			handler( dispatch, action );

@@ -37,6 +37,6 @@ function Orders( { className, params, site, translate } ) {
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSiteWithFallback( state ),
 } ) )( localize( Orders ) );

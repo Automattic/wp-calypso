@@ -24,7 +24,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#testCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#deleteCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#preloadCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -188,7 +188,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#cancelPreloadCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {

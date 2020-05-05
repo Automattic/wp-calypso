@@ -190,7 +190,7 @@ class DomainConnectMapping extends React.Component {
 				redirectUri
 			)
 			.then(
-				data => {
+				( data ) => {
 					const success = get( data, 'success', false );
 					const syncUxUrl = get( data, 'sync_ux_apply_url', null );
 					if ( success && syncUxUrl ) {

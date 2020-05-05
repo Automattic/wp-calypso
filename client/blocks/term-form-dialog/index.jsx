@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,7 +20,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormToggle from 'components/forms/form-toggle';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
-import { isMobile } from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
@@ -67,7 +66,7 @@ class TermFormDialog extends Component {
 		showDialog: false,
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		this.setState( { searchTerm: searchTerm } );
 	};
 
@@ -78,7 +77,7 @@ class TermFormDialog extends Component {
 		this.props.onClose();
 	};
 
-	onParentChange = item => {
+	onParentChange = ( item ) => {
 		this.setState(
 			{
 				selectedParent: [ item.ID ],
@@ -100,19 +99,19 @@ class TermFormDialog extends Component {
 		);
 	};
 
-	onNameChange = event => {
+	onNameChange = ( event ) => {
 		this.setState( {
 			name: event.target.value,
 		} );
 	};
 
-	onDescriptionChange = event => {
+	onDescriptionChange = ( event ) => {
 		this.setState( {
 			description: event.target.value,
 		} );
 	};
 
-	validateInput = event => {
+	validateInput = ( event ) => {
 		if ( 13 === event.keyCode ) {
 			this.saveTerm();
 		} else {
@@ -145,7 +144,7 @@ class TermFormDialog extends Component {
 		this.props.bumpStat( 'taxonomy_manager', statLabels.mc );
 		this.props.recordGoogleEvent( 'Taxonomy Manager', statLabels.ga );
 
-		savePromise.then( savedTerm => {
+		savePromise.then( ( savedTerm ) => {
 			this.setState( { saving: false } );
 			this.props.onSuccess( savedTerm );
 			this.closeDialog();
@@ -220,7 +219,7 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = find( this.props.terms, term => {
+		const matchingTerm = find( this.props.terms, ( term ) => {
 			return (
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )

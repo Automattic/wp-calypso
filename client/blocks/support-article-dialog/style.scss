@@ -1,3 +1,8 @@
+.support-article-dialog__base.dialog__backdrop {
+	// Display above the guided tour.
+	z-index: z-index( 'root', '.support-article-dialog__base.dialog__backdrop' );
+}
+
 .support-article-dialog.dialog.card {
 	position: absolute;
 	top: 0;

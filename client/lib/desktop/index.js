@@ -17,6 +17,7 @@ import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
@@ -28,7 +29,7 @@ const Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: async function() {
+	init: async function () {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
@@ -42,6 +43,8 @@ const Desktop = {
 
 		this.store = await getReduxStore();
 
+		this.editorLoadedStatus();
+
 		// Send some events immediatley - this sets the app state
 		this.notificationStatus();
 		this.sendUserLoginStatus();
@@ -49,7 +52,7 @@ const Desktop = {
 
 	selectedSite: null,
 
-	navigate: function( to ) {
+	navigate: function ( to ) {
 		if ( isNotificationsOpen( this.store.getState() ) ) {
 			this.toggleNotificationsPanel();
 		}
@@ -57,15 +60,15 @@ const Desktop = {
 		this.store.dispatch( navigate( to ) );
 	},
 
-	toggleNotificationsPanel: function() {
+	toggleNotificationsPanel: function () {
 		this.store.dispatch( toggleNotificationsPanel() );
 	},
 
-	setSelectedSite: function( site ) {
+	setSelectedSite: function ( site ) {
 		this.selectedSite = site;
 	},
 
-	notificationStatus: function() {
+	notificationStatus: function () {
 		let previousHasUnseen = hasUnseenNotifications( this.store.getState() );
 
 		// Send initial status to main process
@@ -82,7 +85,7 @@ const Desktop = {
 		} );
 	},
 
-	sendUserLoginStatus: function() {
+	sendUserLoginStatus: function () {
 		let status = true;
 
 		if ( user.data === false || user.data instanceof Array ) {
@@ -95,19 +98,19 @@ const Desktop = {
 		ipc.send( 'user-auth', user, oAuthToken.getToken() );
 	},
 
-	onToggleNotifications: function() {
+	onToggleNotifications: function () {
 		debug( 'Toggle notifications' );
 
 		this.toggleNotificationsPanel();
 	},
 
-	onSignout: function() {
+	onSignout: function () {
 		debug( 'Signout' );
 
 		userUtilities.logout();
 	},
 
-	onShowMySites: function() {
+	onShowMySites: function () {
 		debug( 'Showing my sites' );
 		const site = this.selectedSite;
 		const siteSlug = site ? site.slug : null;
@@ -115,31 +118,59 @@ const Desktop = {
 		this.navigate( getStatsPathForTab( 'day', siteSlug ) );
 	},
 
-	onShowReader: function() {
+	onShowReader: function () {
 		debug( 'Showing reader' );
 
 		this.navigate( '/read' );
 	},
 
-	onShowProfile: function() {
+	onShowProfile: function () {
 		debug( 'Showing my profile' );
 
 		this.navigate( '/me' );
 	},
 
-	onNewPost: function() {
+	onNewPost: function () {
 		debug( 'New post' );
 
 		this.navigate( newPost( this.selectedSite ) );
 	},
 
-	onShowHelp: function() {
+	onShowHelp: function () {
 		debug( 'Showing help' );
 
 		this.navigate( '/help' );
 	},
 
-	print: function( title, html ) {
+	editorLoadedStatus: function () {
+		const sendLoadedEvt = () => {
+			debug( 'Editor iframe loaded' );
+
+			const evt = new window.Event( 'editor-iframe-loaded' );
+			window.dispatchEvent( evt );
+		};
+
+		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
+
+		if ( previousLoaded ) {
+			sendLoadedEvt();
+		}
+
+		this.store.subscribe( () => {
+			const state = this.store.getState();
+			const loaded = isEditorIframeLoaded( state );
+
+			if ( loaded !== previousLoaded ) {
+				if ( loaded ) {
+					sendLoadedEvt();
+				}
+
+				previousLoaded = loaded;
+			}
+		} );
+	},
+
+	print: function ( title, html ) {
 		ipc.send( 'print', title, html );
 	},
 };

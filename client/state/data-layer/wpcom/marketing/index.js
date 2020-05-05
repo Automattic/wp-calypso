@@ -8,7 +8,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 import { MARKETING_CLICK_UPGRADE_NUDGE } from 'state/action-types';
 
-export const notifyUpgradeNudgeClick = action =>
+export const notifyUpgradeNudgeClick = ( action ) =>
 	http(
 		{
 			method: 'POST',

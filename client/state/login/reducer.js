@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
@@ -490,7 +489,7 @@ export const authAccountType = withoutPersistence( ( state = null, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	authAccountType,
 	isFormDisabled,
 	isRequesting,
@@ -506,3 +505,6 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	twoFactorAuthRequestError,
 } );
+
+const loginReducer = withStorageKey( 'login', combinedReducer );
+export default loginReducer;

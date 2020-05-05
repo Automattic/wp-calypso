@@ -18,7 +18,7 @@ jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
 } ) );
 jest.mock( 'lib/redux-bridge', () => ( {
-	reduxGetState: function() {
+	reduxGetState: function () {
 		return { reader: { posts: { items: {} } } };
 	},
 } ) );

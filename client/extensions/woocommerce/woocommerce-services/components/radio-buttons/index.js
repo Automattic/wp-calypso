@@ -31,7 +31,7 @@ const RadioButtons = ( { valuesMap, title, description, value, setValue, classNa
 		<FormFieldset className={ className }>
 			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
 			<FieldDescription text={ description } />
-			{ Object.keys( valuesMap ).map( key => {
+			{ Object.keys( valuesMap ).map( ( key ) => {
 				return (
 					<RadioButton
 						key={ key }

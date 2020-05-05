@@ -43,7 +43,7 @@ jest.mock( 'lib/user', () => () => {} );
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

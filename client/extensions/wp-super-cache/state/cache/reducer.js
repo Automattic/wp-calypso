@@ -19,9 +19,9 @@ import {
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether the cache for a site is currently being deleted.
  *
- * @param  {Object} state Current deleting state
- * @param  {Object} action Action object
- * @return {Object} Updated deleting state
+ * @param  {object} state Current deleting state
+ * @param  {object} action Action object
+ * @returns {object} Updated deleting state
  */
 const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -66,9 +66,10 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 /**
  * Returns the updated preloading state after an action has been dispatched.
  * Preloading state tracks whether the preload for a site is currently in progress.
- * @param  {Object} state Current preloading state
- * @param  {Object} action Action object
- * @return {Object} Updated preloading state
+ *
+ * @param  {object} state Current preloading state
+ * @param  {object} action Action object
+ * @returns {object} Updated preloading state
  */
 const preloading = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -101,9 +102,9 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated cache testing state after an action has been dispatched.
  * Testing state tracks whether the cache test for a site is currently in progress.
  *
- * @param  {Object} state Current cache testing state
- * @param  {Object} action Action object
- * @return {Object} Updated cache testing state
+ * @param  {object} state Current cache testing state
+ * @param  {object} action Action object
+ * @returns {object} Updated cache testing state
  */
 const testing = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -135,9 +136,9 @@ const testing = withoutPersistence( ( state = {}, action ) => {
 /**
  * Tracks the cache test results for a particular site.
  *
- * @param  {Object} state Current cache test results
- * @param  {Object} action Action object
- * @return {Object} Updated cache test results
+ * @param  {object} state Current cache test results
+ * @param  {object} action Action object
+ * @returns {object} Updated cache test results
  */
 const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

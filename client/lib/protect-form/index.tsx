@@ -138,7 +138,7 @@ export const checkFormHandler: PageJS.Callback = ( context, next ) => {
 	} else {
 		// save off the current path just in case context changes after this call
 		const currentPath = context.canonicalPath;
-		setTimeout( function() {
+		setTimeout( function () {
 			page.replace( currentPath, null, false, false );
 		}, 0 );
 	}

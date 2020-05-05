@@ -17,7 +17,7 @@ describe( 'User Settings', () => {
 		userSettings.fetchSettings();
 	} );
 
-	test( 'should consider overridden settings as saved', done => {
+	test( 'should consider overridden settings as saved', ( done ) => {
 		expect( userSettings.updateSetting( 'test', true ) ).toBe( true );
 		expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
 		expect( userSettings.unsavedSettings.test ).toBe( true );
@@ -93,7 +93,7 @@ describe( 'User Settings', () => {
 		} );
 	} );
 
-	test( 'should support flat and deep settings', done => {
+	test( 'should support flat and deep settings', ( done ) => {
 		expect( userSettings.settings.lang_id ).toBe( false );
 		expect( userSettings.settings.testParent.testChild ).toBe( false );
 

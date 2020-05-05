@@ -35,8 +35,11 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
+		contactDetailsValidationErrors: PropTypes.object,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -107,14 +110,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			defaultValues.lang = 'FR';
 		}
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				ca: pick( defaultValues, neededRequiredDetails ),
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
-	validateContactDetails = contactDetails => {
+	validateContactDetails = ( contactDetails ) => {
 		wpcom.validateDomainContactInformation(
 			contactDetails,
 			this.props.getDomainNames(),
@@ -126,7 +132,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		);
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		const { value, name, checked, type, id } = event.target;
 		const newContactDetails = {};
 
@@ -143,6 +149,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
+		this.props.onContactDetailsChange?.( { ...newContactDetails } );
 	};
 
 	needsOrganization() {
@@ -154,7 +161,9 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	getOrganizationErrorMessage() {
-		let message = ( this.state.errorMessages.organization || [] ).join( '\n' );
+		let message =
+			this.props.contactDetailsValidationErrors?.organization ||
+			( this.state.errorMessages.organization || [] ).join( '\n' );
 		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
 			message = this.props.translate(
 				'An organization name is required for Canadian corporations'
@@ -243,7 +252,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

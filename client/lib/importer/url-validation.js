@@ -6,7 +6,7 @@ import { isURL } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { inRange, trim } from 'lodash';
 
-const parseUrl = function( value = '' ) {
+const parseUrl = function ( value = '' ) {
 	const rawUrl = trim( value );
 	const parsedUrl = url.parse( rawUrl, false, true );
 
@@ -14,7 +14,7 @@ const parseUrl = function( value = '' ) {
 	return parsedUrl.protocol ? parsedUrl : url.parse( 'https://' + rawUrl );
 };
 
-const hasTld = function( hostname ) {
+const hasTld = function ( hostname ) {
 	// Min length of hostname with TLD is 4 characters, e.g. "a.co".
 	return hostname.length > 3 && inRange( hostname.lastIndexOf( '.' ), 1, hostname.length - 2 );
 };

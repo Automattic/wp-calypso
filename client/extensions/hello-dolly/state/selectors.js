@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import lyrics from './lyrics';
 
-export const getCurrentLyric = lines => reduxState => {
+export const getCurrentLyric = ( lines ) => ( reduxState ) => {
 	const state = reduxState.extensions.helloDolly;
 	const index = state || 0;
 

@@ -16,7 +16,7 @@ export default class FormTextInput extends PureComponent {
 
 	currentTextField = undefined;
 
-	textFieldRef = element => {
+	textFieldRef = ( element ) => {
 		this.currentTextField = element;
 
 		const { inputRef } = this.props;
@@ -38,7 +38,7 @@ export default class FormTextInput extends PureComponent {
 		}
 	}
 
-	selectOnFocus = event => {
+	selectOnFocus = ( event ) => {
 		if ( this.props.selectOnFocus ) {
 			event.target.select();
 		}

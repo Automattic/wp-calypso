@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
@@ -10,7 +10,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWithinBreakpoint } from 'lib/viewport';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import Gridicon from 'components/gridicon';
@@ -35,7 +34,7 @@ function advanced( editor ) {
 		const isSmallViewport = isWithinBreakpoint( '<960px' );
 		let containerPadding = 0;
 
-		toolbars.each( function( toolbar, i ) {
+		toolbars.each( function ( toolbar, i ) {
 			const isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
 
 			toolbar.visible( isToolbarVisible );
@@ -63,7 +62,7 @@ function advanced( editor ) {
 		tooltip: translate( 'Toggle Advanced' ),
 		classes: 'btn wpcom-icon-button advanced',
 		cmd: 'WPCOM_ToggleAdvancedVisible',
-		onPostRender: function() {
+		onPostRender: function () {
 			// Save a reference to the menu button after render so the
 			// visibility update handler can change its active state.
 			menuButton = this;
@@ -85,13 +84,13 @@ function advanced( editor ) {
 		dispatch( savePreference( 'editorAdvancedVisible', ! isAdvancedVisible ) );
 	} );
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		if ( ! isFetchingPreferences( getState() ) ) {
 			dispatch( fetchPreferences() );
 		}
 	} );
 
-	editor.on( 'preInit', function() {
+	editor.on( 'preInit', function () {
 		editor.shortcuts.add( 'access+z', '', 'WPCOM_ToggleAdvancedVisible' );
 	} );
 
@@ -110,6 +109,6 @@ function advanced( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/advanced', advanced );
 }

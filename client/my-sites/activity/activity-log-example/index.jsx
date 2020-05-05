@@ -51,7 +51,7 @@ class ActivityLogExample extends Component {
 			},
 		];
 
-		const exampleItems = exampleContents.map( example => {
+		const exampleItems = exampleContents.map( ( example ) => {
 			return Object.assign(
 				{
 					activityMeta: {},
@@ -72,7 +72,7 @@ class ActivityLogExample extends Component {
 					/>
 				) }
 				<FeatureExample role="presentation">
-					{ exampleItems.map( log => (
+					{ exampleItems.map( ( log ) => (
 						<ActivityLogItem
 							key={ log.activityTs }
 							activity={ log }

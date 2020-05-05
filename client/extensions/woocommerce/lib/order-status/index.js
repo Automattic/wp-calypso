@@ -27,7 +27,7 @@ export const statusFailed = [ 'cancelled', 'failed' ];
 /**
  * Get a list of order statuses for display (including a translated label)
  *
- * @return {Array} List of objects {name,value} for each status
+ * @returns {Array} List of objects {name,value} for each status
  */
 export function getOrderStatusList() {
 	return [
@@ -65,8 +65,8 @@ export function getOrderStatusList() {
 /**
  * Return a list of statuses from a given calypso label "group"
  *
- * @param {String} status Calypso version of status label
- * @return {String} A comma-separated list of WC core statuses matching this group
+ * @param {string} status Calypso version of status label
+ * @returns {string} A comma-separated list of WC core statuses matching this group
  */
 export function getOrderStatusGroup( status ) {
 	// Convert URL status to status group
@@ -83,8 +83,8 @@ export function getOrderStatusGroup( status ) {
 /**
  * Checks if this status (from an order) is in the "waiting for payment" group
  *
- * @param {String} status Order status
- * @return {Boolean} true if the status is awaiting payment
+ * @param {string} status Order status
+ * @returns {boolean} true if the status is awaiting payment
  */
 export function isOrderWaitingPayment( status ) {
 	return -1 !== statusWaitingPayment.indexOf( status );
@@ -93,8 +93,8 @@ export function isOrderWaitingPayment( status ) {
 /**
  * Checks if this status (from an order) is editable
  *
- * @param {String} status Order status
- * @return {Boolean} true if the status is editable
+ * @param {string} status Order status
+ * @returns {boolean} true if the status is editable
  */
 export function isOrderEditable( { id, status } ) {
 	return isObject( id ) || -1 !== statusEditable.indexOf( status );
@@ -103,8 +103,8 @@ export function isOrderEditable( { id, status } ) {
 /**
  * Checks if this status (from an order) is in the "waiting for fulfillment" group
  *
- * @param {String} status Order status
- * @return {Boolean} true if the status is awaiting fulfillment
+ * @param {string} status Order status
+ * @returns {boolean} true if the status is awaiting fulfillment
  */
 export function isOrderWaitingFulfillment( status ) {
 	return -1 !== statusWaitingFulfillment.indexOf( status );
@@ -113,8 +113,8 @@ export function isOrderWaitingFulfillment( status ) {
 /**
  * Checks if this status (from an order) is in the "finished" group
  *
- * @param {String} status Order status
- * @return {Boolean} true if the status is completed, cancelled, or otherwise has no further action
+ * @param {string} status Order status
+ * @returns {boolean} true if the status is completed, cancelled, or otherwise has no further action
  */
 export function isOrderFinished( status ) {
 	return -1 !== statusFinished.indexOf( status );
@@ -123,8 +123,8 @@ export function isOrderFinished( status ) {
 /**
  * Checks if this status (from an order) is in the "failed" group
  *
- * @param {String} status Order status
- * @return {Boolean} true if the status is cancelled or failed– not a successful order
+ * @param {string} status Order status
+ * @returns {boolean} true if the status is cancelled or failed– not a successful order
  */
 export function isOrderFailed( status ) {
 	return -1 !== statusFailed.indexOf( status );

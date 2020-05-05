@@ -11,13 +11,15 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class UpsellPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.concierge-quickstart-session' ) );
+		super( driver, By.css( '.concierge-quickstart-session, .plan-upgrade-upsell' ) );
 	}
 
 	async declineOffer() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.concierge-quickstart-session__decline-offer-button' )
+			By.css(
+				'.concierge-quickstart-session__decline-offer-button, .plan-upgrade-upsell__decline-offer-button'
+			)
 		);
 	}
 }

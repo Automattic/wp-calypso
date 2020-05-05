@@ -20,7 +20,7 @@ class TrademarkNotice extends React.Component {
 		trademarkClaimsInfo: PropTypes.object.isRequired,
 	};
 
-	getAsArray = data => {
+	getAsArray = ( data ) => {
 		return Array.isArray( data ) ? data : [ data ];
 	};
 

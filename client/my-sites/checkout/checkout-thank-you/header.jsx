@@ -29,6 +29,7 @@ import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import { Button } from '@automattic/components';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -237,7 +238,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	visitSite = event => {
+	visitSite = ( event ) => {
 		event.preventDefault();
 
 		const { primaryPurchase, selectedSite, primaryCta } = this.props;
@@ -253,7 +254,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
-	visitSiteHostingSettings = event => {
+	visitSiteHostingSettings = ( event ) => {
 		event.preventDefault();
 
 		const { selectedSite } = this.props;
@@ -263,7 +264,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = `/hosting-config/${ selectedSite.slug }`;
 	};
 
-	visitScheduler = event => {
+	visitScheduler = ( event ) => {
 		event.preventDefault();
 		const { selectedSite } = this.props;
 
@@ -272,7 +273,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
-	startTransfer = event => {
+	startTransfer = ( event ) => {
 		event.preventDefault();
 
 		const { primaryPurchase, selectedSite } = this.props;
@@ -351,13 +352,17 @@ export class CheckoutThankYouHeader extends PureComponent {
 			primaryPurchase,
 			selectedSite,
 			displayMode,
+			isAtomic,
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
 
 		if (
 			! isConciergePurchase &&
-			( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack )
+			( hasFailedPurchases ||
+				! primaryPurchase ||
+				! selectedSite ||
+				( selectedSite.jetpack && ! isAtomic ) )
 		) {
 			return null;
 		}
@@ -416,6 +421,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
+						{ this.props.children }
+
 						{ this.getButtons() }
 					</div>
 				</div>
@@ -450,7 +457,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const CHECKMARK_SIZE = 24;
 		return (
 			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( message => (
+				{ messages.map( ( message ) => (
 					<li className="checkout-thank-you__success-message-item">
 						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
 						<div>{ preventWidows( message ) }</div>
@@ -464,6 +471,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 export default connect(
 	( state, ownProps ) => ( {
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
+		isAtomic: isAtomicSite( state, ownProps.selectedSite.ID ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,

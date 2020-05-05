@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
@@ -170,7 +173,7 @@
 		color: var( --color-primary );
 	}
 
-	.visit-site, .continue-as-user {
+	.visit-site {
 		margin: -12px 0 24px;
 	}
 }
@@ -224,5 +227,21 @@
 .login__jetpack-logo {
 	@include breakpoint( '<660px' ) {
 		margin-top: 20px;
+	}
+}
+
+.login__form-gutenboarding-wordpress-logo {
+	height: 64px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	@include break-mobile {
+		padding: 8px 24px;
 	}
 }

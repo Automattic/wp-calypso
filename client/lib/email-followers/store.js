@@ -22,7 +22,7 @@ const _removingFromSite = {};
 
 const EmailFollowersStore = {
 	// This data may help with infinite scrolling
-	getPaginationData: function( fetchOptions ) {
+	getPaginationData: function ( fetchOptions ) {
 		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
@@ -35,11 +35,11 @@ const EmailFollowersStore = {
 		};
 	},
 
-	isRemoving: function( siteId ) {
+	isRemoving: function ( siteId ) {
 		return _removingFromSite[ siteId ];
 	},
 
-	getFollowers: function( fetchOptions ) {
+	getFollowers: function ( fetchOptions ) {
 		const namespace = getNamespace( fetchOptions ),
 			siteId = fetchOptions.siteId,
 			followers = [];
@@ -52,7 +52,7 @@ const EmailFollowersStore = {
 		if ( ! _followerIDsByNamespace[ namespace ] ) {
 			return false;
 		}
-		_followerIDsByNamespace[ namespace ].forEach( followerId => {
+		_followerIDsByNamespace[ namespace ].forEach( ( followerId ) => {
 			if ( _followersBySite[ siteId ][ followerId ] ) {
 				followers.push( _followersBySite[ siteId ][ followerId ] );
 			}
@@ -60,7 +60,7 @@ const EmailFollowersStore = {
 		return followers;
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
@@ -93,7 +93,7 @@ function updateFollowers( fetchOptions, followers, total ) {
 		_followerIDsByNamespace[ namespace ] = new Set();
 	}
 
-	followers.forEach( function( follower ) {
+	followers.forEach( function ( follower ) {
 		_followerIDsByNamespace[ namespace ].add( follower.ID );
 		updateFollower( fetchOptions.siteId, follower.ID, follower );
 	} );
@@ -108,7 +108,7 @@ function getNamespace( fetchOptions ) {
 }
 
 function decrementPaginationData( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -121,7 +121,7 @@ function decrementPaginationData( siteId, followerId ) {
 }
 
 function incrementPaginationData( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -142,7 +142,7 @@ function removeFollowerFromSite( siteId, followerId ) {
 }
 
 function removeFollowerFromNamespaces( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -152,7 +152,7 @@ function removeFollowerFromNamespaces( siteId, followerId ) {
 	} );
 }
 
-EmailFollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
+EmailFollowersStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 	let namespace;
 	debug( 'register event Type', action.type, payload );

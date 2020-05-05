@@ -1,0 +1,98 @@
+.post-type-wp_template_part .edit-post-header .edit-post-fullscreen-mode-close,
+.post-type-page .edit-post-header .edit-post-fullscreen-mode-close,
+.post-type-post .edit-post-header .edit-post-fullscreen-mode-close,
+.close-button-override-thin,
+// keep legacy selectors for backward compatibility with Gutenberg plugin < v7.7
+.post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar,
+.post-type-page .edit-post-fullscreen-mode-close__toolbar,
+.post-type-post .edit-post-fullscreen-mode-close__toolbar {
+	display: none;
+}
+
+.post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page .edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-post .edit-post-fullscreen-mode-close__toolbar__override {
+	display: flex;
+	align-items: center;
+	margin-right: 10px;
+	margin-left: -24px;
+	border: none;
+	border-right: 1px solid #e2e4e7;
+
+	a,
+	a:link,
+	a:visited,
+	a:hover,
+	a:active {
+		text-decoration: none;
+	}
+
+	.close-button-override__label {
+		font-size: 13px;
+	}
+
+	.dashicons-arrow-left-alt2 {
+		margin-left: -7px;
+	}
+
+	@media ( max-width: 599px ) {
+		margin-left: -2px;
+	}
+
+	@media ( max-width: 400px ) {
+		.close-button-override-wide {
+			display: none;
+		}
+		.close-button-override-thin {
+			display: flex;
+		}
+		.close-button-override__label {
+			display: none;
+		}
+	}
+}
+
+// add an extra class specific for the new Gutenberg plugin version so the main override above stays compatible with < v7.7
+// includes additional `.interface-interface-skeleton__header` classes for compatibility with Gutenberg >= 8.0.0
+.post-type-wp_template_part
+	.block-editor-editor-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page
+	.block-editor-editor-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-post
+	.block-editor-editor-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-wp_template_part
+	.interface-interface-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page
+	.interface-interface-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-post
+	.interface-interface-skeleton__header
+	.edit-post-fullscreen-mode-close__toolbar__override {
+	// Close button override doesn't need the extraneous left-padding
+	// provided by .edit-post-header__toolbar from WP. So here we
+	// offset the -24px padding and then restore the 24px padding
+	// for other toolbar buttons that comes after this button.
+	margin-left: -24px;
+	margin-right: 24px;
+
+	// Back button is not displayed in mobile & tablet view.
+	@media ( max-width: 782px ) {
+		display: none;
+	}
+
+	// Hide label to make room for others
+	@media ( max-width: 960px ) {
+		.close-button-override__label {
+			display: none;
+		}
+	}
+
+	// Overrides < v7.7.
+	@media ( max-width: 599px ) {
+		margin-left: -24px;
+	}
+}

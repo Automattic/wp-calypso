@@ -34,7 +34,7 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = ( event ) => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;

@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
@@ -31,7 +30,7 @@ class Locked extends React.Component {
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, error => {
+		requestTransferCode( options, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			}
@@ -62,8 +61,6 @@ class Locked extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain' ) } />
-
 				<Card className="transfer-out__card">
 					<p>
 						{ privateDomain
@@ -83,7 +80,7 @@ class Locked extends React.Component {
 						primary
 						disabled={ this.state.submitting }
 					>
-						{ translate( 'Update Settings And Continue' ) }
+						{ translate( 'Update settings and continue' ) }
 					</Button>
 				</Card>
 			</div>

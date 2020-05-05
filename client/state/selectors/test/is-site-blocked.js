@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isSiteBlocked from 'state/selectors/is-site-blocked';
+import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
 
 describe( 'isSiteBlocked()', () => {
 	test( 'should return true if the specified site is blocked', () => {

@@ -12,7 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -267,11 +268,11 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	recordPlansNavigation( tracksEvent, tracksData ) {
-		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( tracksEvent, tracksData );
+		gaRecordEvent( 'Media', 'Clicked Upload Error Action' );
+		recordTracksEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing = ev => {
+	goToSharing = ( ev ) => {
 		ev.preventDefault();
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
@@ -438,12 +439,12 @@ export default connect(
 		};
 	},
 	() => ( {
-		toggleGuidedTour: shouldPause => {
+		toggleGuidedTour: ( shouldPause ) => {
 			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
 			// The eventual Reduxification of the media store should prevent this. See: #26168
 			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: connection => {
+		deleteKeyringConnection: ( connection ) => {
 			// We don't want this to trigger a global notice - a notice is shown inline
 			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
 

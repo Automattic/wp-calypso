@@ -15,7 +15,7 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
 function getCommonHandlers( {
@@ -35,7 +35,7 @@ function getCommonHandlers( {
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a

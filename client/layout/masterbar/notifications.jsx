@@ -70,7 +70,7 @@ class MasterbarItemNotifications extends Component {
 		}
 	};
 
-	toggleNotesFrame = event => {
+	toggleNotesFrame = ( event ) => {
 		if ( event ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
@@ -85,9 +85,9 @@ class MasterbarItemNotifications extends Component {
 	 * determine what state the notifications indicator
 	 * should be in: on, off, or animate-to-on
 	 *
-	 * @param {Number} currentUnseenCount Number of reported unseen notifications
+	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = currentUnseenCount => {
+	setNotesIndicator = ( currentUnseenCount ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -145,7 +145,7 @@ class MasterbarItemNotifications extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),

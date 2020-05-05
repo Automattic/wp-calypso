@@ -4,6 +4,8 @@
  */
 
 import React from 'react';
+import classNames from 'classnames';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -12,13 +14,19 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function NotFound( { faviconURL, entrypoint, isRTL } ) {
+function NotFound( { faviconURL, entrypoint } ) {
+	const theme = config( 'theme' );
+
 	return (
 		<html lang="en">
 			<Head faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-				{ chunkCssLinks( entrypoint, isRTL ) }
+				{ chunkCssLinks( entrypoint ) }
 			</Head>
-			<body>
+			<body
+				className={ classNames( {
+					[ 'theme-' + theme ]: theme,
+				} ) }
+			>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="wp has-no-sidebar">

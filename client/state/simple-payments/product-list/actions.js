@@ -13,7 +13,7 @@ import {
 
 import 'state/data-layer/wpcom/sites/simple-payments';
 
-export const requestProducts = siteId => ( {
+export const requestProducts = ( siteId ) => ( {
 	siteId,
 	type: SIMPLE_PAYMENTS_PRODUCTS_LIST,
 } );

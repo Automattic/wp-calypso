@@ -45,7 +45,7 @@ class ProductList extends Component {
 
 		if ( ! paymentButtons ) {
 			// Render 2 placeholder items
-			return range( 2 ).map( i => <ProductListItemPlaceholder key={ i } /> );
+			return range( 2 ).map( ( i ) => <ProductListItemPlaceholder key={ i } /> );
 		}
 
 		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) => (

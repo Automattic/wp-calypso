@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
+import { READER_UNFOLLOW_TAG_REQUEST } from 'state/reader/action-types';
 import { receiveUnfollowTag as receiveUnfollowTagAction } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -28,9 +28,9 @@ export function requestUnfollow( action ) {
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
  *
  * @param  {RemovedTag} apiResponse api response from the unfollow
- * @return {Number} the ID of the tag that was removed
+ * @returns {number} the ID of the tag that was removed
  */
-export const fromApi = apiResponse => {
+export const fromApi = ( apiResponse ) => {
 	if ( apiResponse.subscribed ) {
 		throw new Error(
 			`failed to unsubscribe to tag with response: ${ JSON.stringify( apiResponse ) }`

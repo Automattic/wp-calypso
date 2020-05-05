@@ -30,7 +30,7 @@ class ImageSelectorDropZone extends Component {
 		translate: PropTypes.func,
 	};
 
-	onFilesDrop = files => {
+	onFilesDrop = ( files ) => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
 		 *

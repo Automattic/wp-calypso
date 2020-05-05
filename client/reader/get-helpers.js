@@ -83,7 +83,7 @@ export const getSiteDescription = ( { site, feed } ) => {
 	return description;
 };
 
-export const getSiteAuthorName = site => {
+export const getSiteAuthorName = ( site ) => {
 	const siteAuthor = site && site.owner;
 	const authorFullName =
 		siteAuthor &&

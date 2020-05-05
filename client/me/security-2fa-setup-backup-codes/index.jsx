@@ -30,16 +30,14 @@ class Security2faSetupBackupCodes extends React.Component {
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
 	}
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain backup codes.  Please try again later.'
-				),
+				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
 			} );
 			return;
 		}

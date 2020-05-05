@@ -74,7 +74,7 @@ class EditorPostFormats extends React.Component {
 		return formats;
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const format = event.target.value;
 
 		this.props.editPost( this.props.siteId, this.props.postId, { format } );
@@ -119,7 +119,7 @@ class EditorPostFormats extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postFormats = getPostFormats( state, siteId );

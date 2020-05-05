@@ -15,10 +15,15 @@ export default class ChartBarContainer extends React.PureComponent {
 	static propTypes = {
 		barClick: PropTypes.func,
 		data: PropTypes.array,
+		isPlaceholder: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		isTouch: PropTypes.bool,
 		width: PropTypes.number,
 		yAxisMax: PropTypes.number,
+	};
+
+	static defaultProps = {
+		isPlaceholder: false,
 	};
 
 	render() {
@@ -40,7 +45,9 @@ export default class ChartBarContainer extends React.PureComponent {
 						/>
 					) ) }
 				</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
+				{ ! this.props.isPlaceholder && (
+					<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
+				) }
 			</>
 		);
 	}

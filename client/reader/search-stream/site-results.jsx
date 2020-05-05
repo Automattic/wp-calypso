@@ -9,8 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
-import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
+import {
+	getReaderFeedsForQuery,
+	getReaderFeedsCountForQuery,
+} from 'state/reader/feed-searches/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import ReaderInfiniteStream from 'reader/components/reader-infinite-stream';
 import {
@@ -33,7 +35,7 @@ class SiteResults extends React.Component {
 		showLastUpdatedDate: PropTypes.bool,
 	};
 
-	fetchNextPage = offset => {
+	fetchNextPage = ( offset ) => {
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -42,7 +44,7 @@ class SiteResults extends React.Component {
 		} );
 	};
 
-	hasNextPage = offset => offset < this.props.searchResultsCount;
+	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;

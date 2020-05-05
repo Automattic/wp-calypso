@@ -14,7 +14,7 @@ import { receivePostTypes } from 'state/post-types/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const handlePostTypesRequest = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',

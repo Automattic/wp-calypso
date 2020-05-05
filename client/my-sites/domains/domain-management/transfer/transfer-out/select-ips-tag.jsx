@@ -12,7 +12,6 @@ import debugFactory from 'debug';
  */
 import { Card, Dialog, Suggestions } from '@automattic/components';
 import SearchCard from 'components/search-card';
-import SectionHeader from 'components/section-header';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -34,11 +33,12 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
+		// eslint-disable-next-line no-undef
 		fetch( SelectIpsTag.ipsTagListUrl )
-			.then( async response => {
+			.then( async ( response ) => {
 				this.receiveIpsTagList( await response.json() );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				debug( 'Failed to load IPS tag list! ' + error );
 			} );
 	}
@@ -49,15 +49,16 @@ class SelectIpsTag extends Component {
 		}
 	}
 
-	receiveIpsTagList = ipsTagList => {
+	receiveIpsTagList = ( ipsTagList ) => {
 		this.setState( { ipsTagList } );
 	};
 
-	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
+	handleKeyDown = ( event ) => this.suggestionsRef.handleKeyEvent( event );
 
-	handleSearchInputChange = query => this.setState( { currentQuery: query, ipsTagInput: query } );
+	handleSearchInputChange = ( query ) =>
+		this.setState( { currentQuery: query, ipsTagInput: query } );
 
-	handleSuggestionClick = position => {
+	handleSuggestionClick = ( position ) => {
 		const parsedLabel = position.label.split( ' ' );
 		this.setState( { ipsTagInput: parsedLabel[ 0 ] } );
 	};
@@ -73,13 +74,13 @@ class SelectIpsTag extends Component {
 	getSuggestions() {
 		return this.state.ipsTagList
 			.filter(
-				hint =>
+				( hint ) =>
 					this.state.currentQuery && startsWith( hint.tag, toUpper( this.state.currentQuery ) )
 			)
-			.map( hint => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
+			.map( ( hint ) => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
 	}
 
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
+	setSuggestionsRef = ( ref ) => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { currentQuery: '' } );
 
@@ -97,7 +98,7 @@ class SelectIpsTag extends Component {
 		} );
 	};
 
-	onCloseDialog = action => {
+	onCloseDialog = ( action ) => {
 		if ( 'submit' === action ) {
 			this.handleSubmit();
 		}
@@ -192,11 +193,14 @@ class SelectIpsTag extends Component {
 			>
 				<h1>{ translate( 'Transfer Confirmation' ) }</h1>
 				<p>
-					{ translate(
-						'Please verify you wish to set the registrar for ' +
-							'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
-						{ args: { selectedDomainName }, components: { strong: <strong /> } }
-					) }
+					{
+						// translators: %s is a domain name. eg newDomain.com
+						translate(
+							'Please verify you wish to set the registrar for ' +
+								'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
+							{ args: { selectedDomainName }, components: { strong: <strong /> } }
+						)
+					}
 				</p>
 				<p>
 					<strong>{ selectedRegistrar.tag }</strong>
@@ -219,7 +223,6 @@ class SelectIpsTag extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Registrar' ) } />
 				<Card>
 					<p>
 						{ translate(

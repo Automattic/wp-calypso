@@ -13,9 +13,15 @@ import useConstructor from './use-constructor';
 
 export { createRegistry, RegistryProvider, useRegistry, useDispatch, useSelect };
 
+export const defaultRegistry = createRegistry();
+
+export function registerStore( ...args ) {
+	return defaultRegistry.registerStore( ...args );
+}
+
 export function useRegisterStore( id, store ) {
-	const { registerStore } = useRegistry();
-	useConstructor( () => registerStore( id, store ) );
+	const registry = useRegistry();
+	useConstructor( () => registry.registerStore( id, store ) );
 }
 
 const primaryStoreId = 'checkout';
@@ -25,15 +31,9 @@ export function useRegisterPrimaryStore( store ) {
 }
 
 export function usePrimarySelect( callback ) {
-	return useSelect( select => callback( select.bind( null, primaryStoreId ) ) );
+	return useSelect( ( select ) => callback( select.bind( null, primaryStoreId ) ) );
 }
 
 export function usePrimaryDispatch() {
 	return useDispatch( primaryStoreId );
-}
-
-export function usePaymentData() {
-	const paymentData = usePrimarySelect( select => select().getPaymentData() );
-	const { updatePaymentData } = usePrimaryDispatch();
-	return [ paymentData, updatePaymentData ];
 }

@@ -13,7 +13,6 @@ import * as dataHelper from '../lib/data-helper';
 import LoginFlow from '../lib/flows/login-flow';
 
 import PlansPage from '../lib/pages/plans-page';
-import StatsPage from '../lib/pages/stats-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
 
 import ReaderPage from '../lib/pages/reader-page.js';
@@ -37,58 +36,56 @@ const host = dataHelper.getJetpackHost();
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Purchase Business Plan:', function() {
-		before( async function() {
+	describe( 'Purchase Business Plan:', function () {
+		before( async function () {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function() {
+		step( 'Can log into WordPress.com', async function () {
 			this.loginFlow = new LoginFlow( driver );
 			return await this.loginFlow.login();
 		} );
 
-		step( 'Can log into site via Jetpack SSO', async function() {
+		step( 'Can log into site via Jetpack SSO', async function () {
 			const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 			return await loginPage.logonSSO();
 		} );
 
-		step( 'Can open Jetpack dashboard', async function() {
+		step( 'Can open Jetpack dashboard', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectJetpack();
 		} );
 
-		step( 'Can find and click Upgrade nudge button', async function() {
+		step( 'Can find and click Upgrade nudge button', async function () {
 			await driverHelper.refreshIfJNError( driver );
 			const jetpackDashboard = await WPAdminJetpackPage.Expect( driver );
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		step( 'Can click upgrade on Jetpack landing page', async function() {
+		step( 'Can click upgrade on Jetpack landing page', async function () {
 			const searchLandingPage = await JetpackComSearchLandingPage.Expect( driver );
 			return await searchLandingPage.upgrade();
 		} );
 
-		step( 'Can then see secure payment component', async function() {
+		step( 'Can then see secure payment component', async function () {
 			return await SecurePaymentComponent.Expect( driver );
 		} );
 
 		// Remove all items from basket for clean up
-		after( async function() {
+		after( async function () {
 			await ReaderPage.Visit( driver );
 
 			const navbarComponent = await NavBarComponent.Expect( driver );
 			await navbarComponent.clickMySites();
-
-			await StatsPage.Expect( driver );
 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlan();
@@ -100,17 +97,17 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 	} );
 
 	// NOTE: Disabled, since now Pressable plans are not managed through Calypso.
-	xdescribe( 'Renew Premium Plan:', function() {
-		before( async function() {
+	xdescribe( 'Renew Premium Plan:', function () {
+		before( async function () {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function() {
+		step( 'Can log into WordPress.com', async function () {
 			this.loginFlow = new LoginFlow( driver, 'jetpackUserPREMIUM' );
 			return await this.loginFlow.login();
 		} );
 
-		step( '"Renew Now" link takes user to Payment Details form', async function() {
+		step( '"Renew Now" link takes user to Payment Details form', async function () {
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickProfileLink();
 			const profilePage = await ProfilePage.Expect( driver );

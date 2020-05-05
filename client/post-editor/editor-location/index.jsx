@@ -38,9 +38,9 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // Convert a float coordinate to formatted string with 7 decimal places.
 // Ensures correct equality comparison with values returned from WP.com API
 // that formats float metadata values exactly this way.
-const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
+const toGeoString = ( coord ) => String( Number( coord ).toFixed( 7 ) );
 
-const coordinatePropType = function( props, propName ) {
+const coordinatePropType = function ( props, propName ) {
 	const prop = props[ propName ];
 	if (
 		prop &&
@@ -65,7 +65,7 @@ class EditorLocation extends React.Component {
 		error: null,
 	};
 
-	onGeolocateSuccess = position => {
+	onGeolocateSuccess = ( position ) => {
 		const latitude = toGeoString( position.coords.latitude ),
 			longitude = toGeoString( position.coords.longitude );
 
@@ -78,8 +78,8 @@ class EditorLocation extends React.Component {
 		this.props.recordEditorStat( 'location_geolocate_success' );
 
 		reverseGeocode( latitude, longitude )
-			.then( results => {
-				const localityResult = find( results, result => {
+			.then( ( results ) => {
+				const localityResult = find( results, ( result ) => {
 					return includes( result.types, 'locality' );
 				} );
 
@@ -105,7 +105,7 @@ class EditorLocation extends React.Component {
 			} );
 	};
 
-	onGeolocateFailure = error => {
+	onGeolocateFailure = ( error ) => {
 		this.setState( {
 			error: error,
 			locating: false,
@@ -142,7 +142,7 @@ class EditorLocation extends React.Component {
 		] );
 	};
 
-	onSearchSelect = result => {
+	onSearchSelect = ( result ) => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			geo_latitude: toGeoString( result.geometry.location.lat() ),
 			geo_longitude: toGeoString( result.geometry.location.lng() ),
@@ -244,7 +244,7 @@ class EditorLocation extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 

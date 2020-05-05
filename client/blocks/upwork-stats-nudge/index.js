@@ -50,7 +50,7 @@ class UpworkStatsNudge extends Component {
 		}
 	}
 
-	recordClick = eventName => {
+	recordClick = ( eventName ) => {
 		const plan = this.props.plan ? this.props.plan.productSlug : '';
 
 		this.props.recordTracksEvent( eventName, { plan } );

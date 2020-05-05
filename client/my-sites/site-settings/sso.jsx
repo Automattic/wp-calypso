@@ -98,7 +98,7 @@ Sso.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

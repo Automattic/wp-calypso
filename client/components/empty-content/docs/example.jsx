@@ -9,7 +9,7 @@ import React from 'react';
  */
 import EmptyContent from 'components/empty-content';
 
-const EmptyContentExample = props => {
+const EmptyContentExample = ( props ) => {
 	return props.exampleCode;
 };
 

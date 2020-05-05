@@ -24,7 +24,7 @@ class TaxSettingsSaveButton extends Component {
 		onSave: PropTypes.func.isRequired,
 	};
 
-	onSave = e => {
+	onSave = ( e ) => {
 		const { onSave, finishedInitialSetup, site } = this.props;
 
 		let onSuccessExtra = null;

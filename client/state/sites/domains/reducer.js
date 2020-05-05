@@ -31,10 +31,10 @@ import { itemsSchema } from './schema';
 /**
  * Returns a copy of the domains state object with some modifications
  *
- * @param {Object} state - current state
+ * @param {object} state - current state
  * @param {int} siteId - site ID
  * @param {string} domain - domain name
- * @param {Object} modifyDomainProperties - object with modified site domain properties
+ * @param {object} modifyDomainProperties - object with modified site domain properties
  * @returns {any} - new copy of the state
  */
 const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
@@ -54,9 +54,9 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 /**
  * Domains `Reducer` function
  *
- * @param {Object} state - current state
- * @param {Object} action - domains action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - domains action
+ * @returns {object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
@@ -95,8 +95,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  *
  * Figure out if we're in the middle of privacy modification command
  *
- * @param {Object} state - current state
- * @param {Object} action - action
+ * @param {object} state - current state
+ * @param {object} action - action
  * @returns {any} - new state
  */
 export const updatingPrivacy = ( state = {}, action ) => {
@@ -133,9 +133,9 @@ export const updatingPrivacy = ( state = {}, action ) => {
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {Object} state - current state
- * @param {Object} action - domains action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - domains action
+ * @returns {object} updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -153,9 +153,9 @@ export const requesting = ( state = {}, action ) => {
 /**
  * `Reducer` function which handles ERRORs REST-API response actions
  *
- * @param {Object} state - current state
- * @param {Object} action - domains action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - domains action
+ * @returns {object} updated state
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {

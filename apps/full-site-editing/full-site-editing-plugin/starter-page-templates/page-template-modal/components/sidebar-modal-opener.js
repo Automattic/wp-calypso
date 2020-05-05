@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { Button, Modal } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -17,12 +17,11 @@ import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {
 	state = {
-		isTemplateModalOpen: false,
 		isWarningOpen: false,
 	};
 
 	toggleTemplateModal = () => {
-		this.setState( { isTemplateModalOpen: ! this.state.isTemplateModalOpen } );
+		this.props.setIsOpen( ! this.props.isOpen );
 	};
 
 	toggleWarningModal = () => {
@@ -43,7 +42,7 @@ class SidebarModalOpener extends Component {
 			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
 			return templates[ 0 ];
 		}
-		const matchingTemplate = templates.find( temp => temp.slug === lastTemplateUsedSlug );
+		const matchingTemplate = templates.find( ( temp ) => temp.slug === lastTemplateUsedSlug );
 		// If no matching template, return the blank template.
 		if ( ! matchingTemplate ) {
 			return templates[ 0 ];
@@ -53,7 +52,16 @@ class SidebarModalOpener extends Component {
 
 	render() {
 		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
-		const { isFrontPage, templates, theme, vertical, segment, siteInformation } = this.props;
+		const {
+			templates,
+			theme,
+			vertical,
+			segment,
+			siteInformation,
+			hidePageTitle,
+			isFrontPage,
+			isOpen,
+		} = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
@@ -74,7 +82,7 @@ class SidebarModalOpener extends Component {
 					{ __( 'Change Layout' ) }
 				</Button>
 
-				{ this.state.isTemplateModalOpen && (
+				{ isOpen && (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
@@ -82,6 +90,7 @@ class SidebarModalOpener extends Component {
 						vertical={ vertical }
 						segment={ segment }
 						toggleTemplateModal={ this.toggleTemplateModal }
+						hidePageTitle={ hidePageTitle }
 						isFrontPage={ isFrontPage }
 						isPromptedFromSidebar
 					/>
@@ -115,9 +124,13 @@ class SidebarModalOpener extends Component {
 }
 
 const SidebarTemplatesPlugin = compose(
-	withSelect( select => ( {
+	withSelect( ( select ) => ( {
 		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
+		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
+	} ) ),
+	withDispatch( ( dispatch ) => ( {
+		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
 	} ) )
 )( SidebarModalOpener );
 

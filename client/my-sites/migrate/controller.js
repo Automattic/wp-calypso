@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-
+import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
@@ -23,14 +23,23 @@ export function migrateSite( context, next ) {
 		const sourceSiteId =
 			context.params.sourceSiteId &&
 			getSiteId( context.store.getState(), context.params.sourceSiteId );
-		context.primary = <SectionMigrate sourceSiteId={ sourceSiteId } />;
+		context.primary = (
+			<SectionMigrate sourceSiteId={ sourceSiteId } step={ context.migrationStep } />
+		);
 		return next();
 	}
 
 	page.redirect( '/' );
 }
 
+export function setStep( migrationStep ) {
+	return ( context, next ) => {
+		context.migrationStep = migrationStep;
+		next();
+	};
+}
+
 export function setSiteSelectionHeader( context, next ) {
-	context.getSiteSelectionHeaderText = () => 'Select a site to import into';
+	context.getSiteSelectionHeaderText = () => translate( 'Select a site to import into' );
 	next();
 }

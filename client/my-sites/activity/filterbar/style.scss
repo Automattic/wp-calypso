@@ -47,7 +47,9 @@
 		white-space: nowrap;
 	}
 
-	.filterbar__selection.is-selected {
+	.filterbar__selection.is-selected,
+	.filterbar__selection.is-selected:focus,
+	.filterbar__selection.is-selected:hover {
 		margin: 8px;
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-60 );
@@ -61,7 +63,10 @@
 		}
 	}
 
-	.filterbar__selection.is-active {
+	.filterbar__selection.is-active,
+	.filterbar__selection.is-active:focus,
+	.filterbar__selection.is-active:hover,
+	.date-range.toggle-visible .filterbar__selection.button:not( .is-selected ) {
 		margin: 8px;
 		border-radius: 5px;
 		border: 1px solid var( --color-neutral-60 );
@@ -69,7 +74,7 @@
 		color: var( --color-text-inverted );
 	}
 
-	.filterbar__selection-close {
+	.filterbar__selection-close.button {
 		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
 		background-color: var( --color-neutral-60 );
@@ -85,7 +90,7 @@
 		}
 	}
 
-	.filterbar__selection-close:hover {
+	.filterbar__selection-close.button:hover {
 		color: var( --color-text-inverted );
 		background-color: var( --color-neutral-60 );
 	}
@@ -119,7 +124,7 @@
 
 .filterbar__activity-types-selection-granular {
 	label {
-		font-weight: normal;
+		font-weight: 400;
 	}
 }
 

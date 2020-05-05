@@ -39,7 +39,7 @@ export function blogPost( context, next ) {
 			postId={ postId }
 			referral={ referral }
 			referralStream={ context.lastRoute }
-			onClose={ function() {
+			onClose={ function () {
 				page.back( context.lastRoute || '/' );
 			} }
 		/>

@@ -11,7 +11,7 @@ import WPorgActions from 'lib/plugins/wporg-data/actions';
 import * as mockedWporg from 'lib/wporg';
 jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
 jest.mock( 'lib/impure-lodash', () => ( {
-	debounce: cb => cb,
+	debounce: ( cb ) => cb,
 } ) );
 
 describe( 'WPorg Data Actions', () => {

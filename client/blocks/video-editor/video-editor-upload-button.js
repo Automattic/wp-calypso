@@ -25,7 +25,7 @@ class VideoEditorUploadButton extends Component {
 		onUploadImage: noop,
 	};
 
-	uploadImage = files => {
+	uploadImage = ( files ) => {
 		const file = files[ 0 ];
 
 		if ( file ) {

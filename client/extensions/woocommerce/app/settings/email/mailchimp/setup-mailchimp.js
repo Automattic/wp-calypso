@@ -159,12 +159,12 @@ class MailChimpSetup extends React.Component {
 		return pick( this.state.settings, campaignDefaultsRequiredFields );
 	};
 
-	hasEmptyValues = data => {
+	hasEmptyValues = ( data ) => {
 		return some( data, isEmpty );
 	};
 
-	areStoreSettingsValid = settings => {
-		const hasAllKeys = storeSettingsRequiredFields.every( key => key in settings );
+	areStoreSettingsValid = ( settings ) => {
+		const hasAllKeys = storeSettingsRequiredFields.every( ( key ) => key in settings );
 		if ( ! hasAllKeys ) {
 			return false;
 		}
@@ -178,8 +178,8 @@ class MailChimpSetup extends React.Component {
 		return true;
 	};
 
-	areCampaignSettingsValid = settings => {
-		const hasAllKeys = campaignDefaultsRequiredFields.every( key => key in settings );
+	areCampaignSettingsValid = ( settings ) => {
+		const hasAllKeys = campaignDefaultsRequiredFields.every( ( key ) => key in settings );
 		if ( ! hasAllKeys ) {
 			return false;
 		}
@@ -228,7 +228,7 @@ class MailChimpSetup extends React.Component {
 		}
 	};
 
-	onKeyInputChange = e => {
+	onKeyInputChange = ( e ) => {
 		const value = e.target.value;
 		this.setState( {
 			api_key_input: value,
@@ -239,7 +239,7 @@ class MailChimpSetup extends React.Component {
 
 	// Right now Store info is combination of values from SettingsPaymentsLocationCurrency
 	// and managed directly - not the greatest option but good for now.
-	onStoreInfoChange = e => {
+	onStoreInfoChange = ( e ) => {
 		this.setState( {
 			settings: Object.assign( {}, this.state.settings, { [ e.target.name ]: e.target.value } ),
 		} );

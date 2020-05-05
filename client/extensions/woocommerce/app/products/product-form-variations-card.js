@@ -71,13 +71,13 @@ class ProductFormVariationsCard extends Component {
 		const productData = { ...product };
 		const simpleProduct = [ ...this.state.simpleProduct ];
 
-		this.simpleFields.forEach( function( field ) {
+		this.simpleFields.forEach( function ( field ) {
 			if ( product[ field ] ) {
 				simpleProduct[ field ] = product[ field ];
 				productData[ field ] = null;
 			}
 		} );
-		this.state.variationAttributes.forEach( function( attribute ) {
+		this.state.variationAttributes.forEach( function ( attribute ) {
 			attributes.push( attribute );
 		} );
 
@@ -94,15 +94,17 @@ class ProductFormVariationsCard extends Component {
 		const productData = { ...product };
 		const simpleProduct = this.state.simpleProduct;
 
-		this.simpleFields.forEach( function( field ) {
+		this.simpleFields.forEach( function ( field ) {
 			if ( simpleProduct[ field ] ) {
 				productData[ field ] = simpleProduct[ field ];
 			}
 		} );
 		const variationAttributes =
-			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+			( product.attributes && product.attributes.filter( ( attribute ) => attribute.variation ) ) ||
+			[];
 		const attributes =
-			( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) ||
+			( product.attributes &&
+				product.attributes.filter( ( attribute ) => ! attribute.variation ) ) ||
 			null;
 
 		this.setState( { variationAttributes, simpleProduct: [] } );

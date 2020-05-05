@@ -15,6 +15,8 @@ import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
 import SignupSiteCreatedNotice from 'my-sites/checkout/checkout/signup-site-created-notice';
+import Gridicon from 'components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -51,11 +53,11 @@ class CheckoutContainer extends React.Component {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
-	setHeaderText = headerText => this.setState( { headerText } );
+	setHeaderText = ( headerText ) => this.setState( { headerText } );
 
 	shouldDisplaySiteCreatedNotice() {
 		return (
-			this.props.isComingFromSignup &&
+			( this.props.isComingFromSignup || this.props.isComingFromGutenboarding ) &&
 			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) )
 		);
 	}
@@ -73,12 +75,24 @@ class CheckoutContainer extends React.Component {
 			upgradeIntent,
 			shouldShowCart = true,
 			clearTransaction,
+			isComingFromGutenboarding,
+			isGutenboardingCreate,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
 
 		return (
 			<>
+				{ this.props.isComingFromGutenboarding && (
+					<Button
+						borderless
+						className="navigation-link back" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
+					>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ this.props.translate( 'Back' ) }
+					</Button>
+				) }
 				{ this.renderCheckoutHeader() }
 				{ this.shouldDisplaySiteCreatedNotice() && (
 					<TransactionData>
@@ -97,6 +111,8 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
+							hideNudge={ isComingFromGutenboarding }
+							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
 						>
 							{ this.props.children }
 						</Checkout>

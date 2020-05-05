@@ -7,7 +7,7 @@ import {
 	THEME_SETUP_TOGGLE_DIALOG,
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 export function toggleDialog() {
 	return {
@@ -16,7 +16,7 @@ export function toggleDialog() {
 }
 
 export function runThemeSetup( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_SETUP_REQUEST,
 		} );
@@ -25,13 +25,13 @@ export function runThemeSetup( siteId ) {
 			.undocumented()
 			.site( siteId )
 			.runThemeSetup()
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: THEME_SETUP_RESULT,
 					data: response,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_SETUP_RESULT,
 					data: error,

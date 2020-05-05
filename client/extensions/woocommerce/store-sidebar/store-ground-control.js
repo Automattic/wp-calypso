@@ -45,6 +45,6 @@ StoreGroundControl.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteHomeUrl: getSiteHomeUrl( state ),
 } ) )( localize( StoreGroundControl ) );

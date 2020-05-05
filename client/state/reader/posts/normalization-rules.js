@@ -61,12 +61,13 @@ export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
-const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
+const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**
  * Attempt to classify the post into a display type
+ *
  * @param  {object}   post     A post to classify
- * @return {object}            The classified post
+ * @returns {object}            The classified post
  */
 export function classifyPost( post ) {
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );

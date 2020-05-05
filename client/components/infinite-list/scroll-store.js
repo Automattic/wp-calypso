@@ -21,7 +21,7 @@ const ScrollStore = {
 	},
 
 	storePositions: throttle(
-		function( url, positions ) {
+		function ( url, positions ) {
 			debug( 'storing positions:', url, positions );
 			scrollPositionsStore.set( url, positions );
 		},
@@ -36,7 +36,7 @@ const ScrollStore = {
 	},
 
 	storeScrollTop: throttle(
-		function( url, scrollTop ) {
+		function ( url, scrollTop ) {
 			debug( 'storing scrollTop:', url, scrollTop );
 			scrollTopStore.set( url, scrollTop );
 		},

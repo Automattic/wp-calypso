@@ -152,7 +152,7 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
-	onRequestRedirect = redirectURL => {
+	onRequestRedirect = ( redirectURL ) => {
 		this.setState( { redirectURL } );
 	};
 

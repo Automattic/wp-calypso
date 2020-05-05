@@ -2,7 +2,7 @@ let keyboardNavigation = false,
 	keyboardNavigationKeycodes = [ 9, 32, 37, 38, 39, 40 ]; // keyCodes for tab, space, left, up, right, down respectively
 
 function accessibleFocus() {
-	document.addEventListener( 'keydown', function( event ) {
+	document.addEventListener( 'keydown', function ( event ) {
 		if ( keyboardNavigation ) {
 			return;
 		}
@@ -11,7 +11,7 @@ function accessibleFocus() {
 			document.documentElement.classList.add( 'accessible-focus' );
 		}
 	} );
-	document.addEventListener( 'mouseup', function() {
+	document.addEventListener( 'mouseup', function () {
 		if ( ! keyboardNavigation ) {
 			return;
 		}

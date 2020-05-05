@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ensure placeholder counts match between singular and plural strings
+ * @file Ensure placeholder counts match between singular and plural strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -23,9 +23,9 @@ const getCallee = require( '../util/get-callee' ),
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}

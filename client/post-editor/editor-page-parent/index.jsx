@@ -47,7 +47,7 @@ class EditorPageParent extends Component {
 		}
 	}
 
-	updatePageParent = item => {
+	updatePageParent = ( item ) => {
 		const { siteId, postId } = this.props;
 		const parentId = get( item, 'ID' );
 
@@ -113,7 +113,7 @@ class EditorPageParent extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );

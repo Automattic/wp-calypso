@@ -59,7 +59,7 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( imageId => MediaStore.get( siteId, imageId ) );
+			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
 			MediaActions.setLibrarySelectedItems( siteId, images );
 		}
 
@@ -74,24 +74,24 @@ export class ImageSelector extends Component {
 		} );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		if ( value ) {
 			this.props.onImageSelected( value );
 		}
 		this.hideMediaModal();
 	};
 
-	removeImage = image => {
+	removeImage = ( image ) => {
 		this.props.onRemoveImage( image );
 	};
 
-	addImage = image => {
+	addImage = ( image ) => {
 		this.props.onAddImage( image );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = images => {
+	onImageChange = ( images ) => {
 		this.props.onImageChange( images );
 	};
 

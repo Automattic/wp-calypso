@@ -6,7 +6,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
+import { READER_FOLLOW_TAG_REQUEST } from 'state/reader/action-types';
 import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -33,7 +33,10 @@ function fromApi( response ) {
 
 	const addedTag = find( response.tags, { ID: response.added_tag } );
 
-	return transformTagFromApi( { tag: addedTag } ).map( tag => ( { ...tag, isFollowing: true } ) );
+	return transformTagFromApi( { tag: addedTag } ).map( ( tag ) => ( {
+		...tag,
+		isFollowing: true,
+	} ) );
 }
 
 export function receiveFollowTag( action, addedTag ) {

@@ -50,7 +50,7 @@ class ProductCategories extends Component {
 		}
 	}
 
-	requestPages = pages => {
+	requestPages = ( pages ) => {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
@@ -61,7 +61,7 @@ class ProductCategories extends Component {
 		}
 		const requestedPages = this.state[ stateName ];
 
-		pages.forEach( page => {
+		pages.forEach( ( page ) => {
 			if ( ! includes( requestedPages, page ) ) {
 				this.props.fetchProductCategories( site.ID, { search: searchQuery, page } );
 			}
@@ -72,7 +72,7 @@ class ProductCategories extends Component {
 		} );
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -134,7 +134,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	searchProductCategories: ( siteId, query ) =>
 		withAnalytics(
 			recordTrack( 'calypso_woocommerce_product_category_search', query ),

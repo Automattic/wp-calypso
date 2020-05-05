@@ -10,16 +10,14 @@ import { isJetpackSite } from 'state/sites/selectors';
 /**
  * Return an array with the selected site or all sites Jetpack can manage
  *
- * @param {Object} state  Global state tree
- * @return {Array}        Array of Sites objects with the result
+ * @param {object} state  Global state tree
+ * @returns {Array}        Array of Sites objects with the result
  */
 export default createSelector(
-	state =>
+	( state ) =>
 		getSelectedOrAllSites( state ).filter(
-			site =>
-				isJetpackSite( state, site.ID ) &&
-				site.canManage &&
-				canCurrentUser( state, site.ID, 'manage_options' )
+			( site ) =>
+				isJetpackSite( state, site.ID ) && canCurrentUser( state, site.ID, 'manage_options' )
 		),
-	state => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
+	( state ) => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
 );

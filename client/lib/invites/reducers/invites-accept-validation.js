@@ -17,7 +17,7 @@ const initialState = fromJS( {
 } );
 
 function filterObjectProperties( object ) {
-	return mapValues( object, value => {
+	return mapValues( object, ( value ) => {
 		if ( 'object' === typeof value ) {
 			return filterObjectProperties( value );
 		}

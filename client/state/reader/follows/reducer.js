@@ -23,8 +23,8 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-	SERIALIZE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
@@ -253,10 +253,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// Only check items with an ID (the subscription ID) because those are what
 			// we show on the manage listing. Items without an ID are either inflight follows
 			// or follows that we picked up from a feed, site, or post object.
-			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
+			return omitBy( state, ( follow ) => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
 		}
 		case SERIALIZE:
-			return pickBy( state, item => item.ID && item.is_following );
+			return pickBy( state, ( item ) => item.ID && item.is_following );
 	}
 
 	return state;

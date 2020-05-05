@@ -9,12 +9,16 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import BlockPreview from './block-template-preview';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const TemplateSelectorItem = props => {
+/**
+ * Internal dependencies
+ */
+import BlockIframePreview from './block-iframe-preview';
+
+const TemplateSelectorItem = ( props ) => {
 	const {
 		id,
 		value,
@@ -38,7 +42,7 @@ const TemplateSelectorItem = props => {
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
+			<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
@@ -64,10 +68,7 @@ const TemplateSelectorItem = props => {
 			onClick={ handleLabelClick }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			<span className="template-selector-item__template-title" id={ labelId }>
-				{ label }
-			</span>
+			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
 		</button>
 	);
 };

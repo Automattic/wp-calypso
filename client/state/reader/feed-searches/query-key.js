@@ -11,8 +11,9 @@
  * For example: a search for "halloween",
  * excluding followed sites, using relevance sortwould be
  *   halloween-X-relevance
+ *
  * @param  {object} query The feed search action
- * @return {string} the key
+ * @returns {string} the key
  */
 export default function keyBy( query ) {
 	const excludeFollowed = query.excludeFollowed ? 'X' : 'A';

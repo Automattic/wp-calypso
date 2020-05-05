@@ -17,7 +17,7 @@ export default class TimezoneExample extends PureComponent {
 		timezone: 'America/Argentina/La_Rioja',
 	};
 
-	onTimezoneSelect = timezone => {
+	onTimezoneSelect = ( timezone ) => {
 		this.setState( { timezone } );
 	};
 

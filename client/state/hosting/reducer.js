@@ -14,8 +14,8 @@ export const sftpUsers = ( state = {}, { type, users } ) => {
 	}
 
 	if ( type === HOSTING_SFTP_USER_UPDATE && Array.isArray( state ) ) {
-		return state.map( user => {
-			const updatedUser = users.find( u => u.username === user.username );
+		return state.map( ( user ) => {
+			const updatedUser = users.find( ( u ) => u.username === user.username );
 			return {
 				...user,
 				...updatedUser,

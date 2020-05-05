@@ -6,6 +6,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
 } from 'lib/products-values/constants';
 
 // plans constants
@@ -64,10 +66,14 @@ export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
+export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
+export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
+	'email-live-chat-support-business-days';
+export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
@@ -87,6 +93,7 @@ export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
+export const FEATURE_PERFORMANCE = 'performance';
 export const FEATURE_REPUBLICIZE = 'republicize';
 export const FEATURE_SIMPLE_PAYMENTS = 'simple-payments';
 export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
@@ -163,6 +170,8 @@ export const FEATURE_JETPACK_BACKUP_DAILY = PRODUCT_JETPACK_BACKUP_DAILY;
 export const FEATURE_JETPACK_BACKUP_DAILY_MONTHLY = PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY;
 export const FEATURE_JETPACK_BACKUP_REALTIME = PRODUCT_JETPACK_BACKUP_REALTIME;
 export const FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY = PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY;
+export const FEATURE_JETPACK_SCAN_DAILY = PRODUCT_JETPACK_SCAN;
+export const FEATURE_JETPACK_SCAN_DAILY_MONTHLY = PRODUCT_JETPACK_SCAN_MONTHLY;
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';

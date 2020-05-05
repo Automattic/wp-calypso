@@ -14,7 +14,6 @@ export default {
 	description: 'Just another Sandbox Sites site',
 	domain: 'example.com/site1',
 	hasJetpackProtect: true,
-	hasMinimumJetpackVersion: true,
 	icon: {},
 	is_following: false,
 	is_private: false,

@@ -1,168 +1,128 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
-
-$design-selector-transition-timing: 250ms;
-
-$design-selector-max-width: 1100px;
-$design-selector-header-height: 60px;
-// We'll use this height to move the heading up out of the viewport.
-// Gutenberg editor adds 50px
-$design-selector-header-vertical-shift: $design-selector-header-height + 50px;
-$deisgn-selector-selection-space: 175px;
-
-@mixin design-selector-show {
-	transform: translate3d( 0, 0, 0 );
-}
-@mixin design-selector-hide {
-	transform: translate3d( 0, 100vh, 0 );
-}
-
-@mixin design-selector-transition {
-	transition: $design-selector-transition-timing transform ease-out;
-}
+@import '../../mixins';
+@import '../../variables.scss';
 
 .design-selector {
-	@include design-selector-transition();
-	transform: translate3d( 0, 0, 0 );
-	&.has-selected-design {
-		transform: translate3d( 0, -( $design-selector-header-vertical-shift ), 0 );
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+
+	.design-selector__header {
+		display: block;
+		@include onboarding-heading-padding;
+
+		@include break-large {
+			display: flex;
+			align-items: center;
+		}
+
+		@include onboarding-break-gigantic {
+			display: flex;
+			align-items: center;
+		}
 	}
-}
 
-.design-selector__title {
-	color: $dark-gray-800;
-	font-size: 2em;
-	font-weight: bold;
-	margin-bottom: 0.25em;
-	text-align: center;
-}
-
-.design-selector__subtitle {
-	color: $dark-gray-800;
-	font-size: 1.3em;
-	margin-bottom: 3em;
-	text-align: center;
-}
-
-@media ( prefers-color-scheme: dark ) {
-	.design-selector__subtitle,
-	.design-selector__title {
-		color: $white;
+	.design-selector__heading {
+		flex-grow: 1;
 	}
-}
 
-.design-selector__grid-container {
-	position: absolute;
-	margin-top: 1em;
+	.design-selector__start-over-button {
+		&.is-link {
+			color: var( --color-text-subtle );
+			padding-top: 1em;
 
-	&.exit,
-	&.exit-done {
-		overflow-y: hidden;
-		height: 100vh;
+			@include break-large {
+				padding-top: 0;
+			}
 
+			@include onboarding-break-gigantic {
+				padding-top: 0;
+			}
+		}
+	}
+
+	.design-selector__grid {
+		margin: 0 -32px 30px;
+	}
+
+	.design-selector__design-option {
+		cursor: pointer;
+		float: left;
+		width: 100%;
+		margin: 0;
+
+		&:hover,
+		&:focus {
+			.design-selector__image-frame {
+				border-color: var( --highlightColor );
+			}
+		}
+		@include break-large {
+			width: calc( 33.33% - 64px );
+		}
+
+		@include onboarding-break-gigantic {
+			width: calc( 25% - 64px );
+		}
+	}
+
+	@supports ( display: grid ) {
 		.design-selector__grid {
-			@include design-selector-hide();
+			display: grid;
+			grid-template-columns: 1fr;
+			column-gap: 64px;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr 1fr;
+			}
+
+			@include onboarding-break-gigantic {
+				grid-template-columns: 1fr 1fr 1fr 1fr;
+			}
+		}
+
+		.design-selector__design-option {
+			width: auto;
+			margin: 0;
+
+			@include break-large {
+				width: auto;
+			}
+
+			@include onboarding-break-gigantic {
+				width: auto;
+			}
 		}
 	}
-}
-.design-selector__grid {
-	@include design-selector-transition();
-	display: grid;
-	grid-gap: 4.5em;
 
-	@include breakpoint( '>660px' ) {
-		grid-template-columns: 1fr 1fr;
-	}
+	.design-selector__image-frame {
+		display: block;
+		width: 100%;
+		height: 0;
+		padding-top: 360px / 480px * 200%;
+		border: 2px solid var( --studio-gray-5 );
+		position: relative;
+		overflow: hidden;
 
-	@include design-selector-show();
-}
-
-.page-layout-selector__container {
-	position: absolute;
-	top: $design-selector-header-vertical-shift + $deisgn-selector-selection-space;
-
-	&,
-	&.enter,
-	&.exit-active.exit-active, // duplicate selector to override `.exit` below
-	&.exit-done {
-		.page-layout-selector {
-			@include design-selector-hide();
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 100%;
+			height: auto;
 		}
 	}
 
-	&.exit,
-	&.enter-active,
-	&.enter-done {
-		.page-layout-selector {
-			@include design-selector-show();
-			transform: translate3d( 0, 0, 0 );
-		}
+	.design-selector__option-name {
+		color: var( --studio-gray-40 );
+		display: block;
+		margin: 16px 0;
+		text-align: center;
+		width: 100%;
+		@include onboarding-medium-text;
 	}
-}
-.page-layout-selector {
-	@include design-selector-transition();
-	background: $white;
-	box-shadow: gray 0 0 12px; // use a sass variable
-	padding: 2em 4em;
-}
-
-.design-selector__header-container {
-	height: $design-selector-header-height;
-}
-
-.page-layout-selector__title {
-	font-weight: bold;
-	margin-bottom: 1em;
-	font-size: 1.3em;
-}
-
-.page-layout-selector__grid {
-	display: grid;
-	grid-gap: 0.75em;
-	@include breakpoint( '>660px' ) {
-		grid-template-columns: 1fr 1fr 1fr;
-	}
-}
-
-.page-layout-selector__item {
-	position: relative;
-	overflow: hidden;
-	padding: 2px;
-
-	&.is-selected {
-		border: 3px solid $blue-medium-focus;
-		padding: 0;
-		.page-layout-selector__selected-indicator {
-			top: -2px;
-			right: -2px;
-			transform: translate3d( 0, 0, 0 );
-		}
-	}
-}
-
-.page-layout-selector__selected-indicator {
-	$size: 24px; // should match icon size
-	$full-size: floor( $size * 1.66 );
-
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: $full-size;
-	height: $full-size;
-
-	text-align: right;
-	color: $white;
-	background: linear-gradient(
-		to bottom left,
-		$blue-medium-focus,
-		$blue-medium-focus 50%,
-		transparent 51% /* 1% difference helps prevent a rough edge */
-	);
-
-	transition: 80ms transform linear;
-	transform: translate3d( $size, -$size, 0 );
-}
-
-.design-selector__design-option {
-	transform: translate3d( 0, 0, 0 );
-	@include design-selector-transition();
 }

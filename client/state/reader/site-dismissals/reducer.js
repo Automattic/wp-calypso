@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'state/action-types';
+import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'state/reader/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {

@@ -34,7 +34,7 @@ class SimplePaymentsDialogExample extends PureComponent {
 	}
 }
 
-const ConnectedSimplePaymentsDialogExample = connect( state => ( {
+const ConnectedSimplePaymentsDialogExample = connect( ( state ) => ( {
 	siteId: get( getCurrentUser( state ), 'primary_blog' ),
 } ) )( SimplePaymentsDialogExample );
 

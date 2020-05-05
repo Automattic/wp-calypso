@@ -10,6 +10,7 @@ import debug from './debug';
 
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
+ *
  * @returns {Promise<void>} Promise that resolves when the refreshing is done (or immediately)
  */
 export default async function refreshCountryCodeCookieGdpr() {

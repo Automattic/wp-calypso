@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
@@ -9,7 +8,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import AllTours from './all-tours';
 import QueryPreferences from 'components/data/query-preferences';
 import { RootChild } from '@automattic/components';
@@ -42,13 +41,13 @@ class GuidedToursComponent extends Component {
 	start = ( { step, tour, tourVersion: tour_version } ) => {
 		if ( tour && tour_version ) {
 			this.props.dispatch( nextGuidedTourStep( { step, tour } ) );
-			tracks.recordEvent( 'calypso_guided_tours_start', { tour, tour_version } );
+			recordTracksEvent( 'calypso_guided_tours_start', { tour, tour_version } );
 		}
 	};
 
 	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
 		if ( ! skipping && step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			recordTracksEvent( 'calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version: tourVersion,
@@ -62,14 +61,14 @@ class GuidedToursComponent extends Component {
 
 	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
 		if ( step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			recordTracksEvent( 'calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version,
 			} );
 		}
 
-		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
+		recordTracksEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit'}`, {
 			step,
 			tour,
 			tour_version,
@@ -107,9 +106,9 @@ class GuidedToursComponent extends Component {
 	}
 }
 
-const getTourWhenState = state => when => !! when( state );
+const getTourWhenState = ( state ) => ( when ) => !! when( state );
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const tourState = getGuidedTourState( state );
 	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
 	return {

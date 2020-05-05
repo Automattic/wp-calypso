@@ -11,6 +11,6 @@ import { makeLayout, render as clientRender } from 'controller';
 import { privacy } from './controller';
 import { sidebar } from 'me/controller';
 
-export default function() {
+export default function () {
 	page( '/me/privacy', sidebar, privacy, makeLayout, clientRender );
 }

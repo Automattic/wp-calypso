@@ -34,7 +34,7 @@ export class UserBlock extends React.Component {
 	 * @param {string} timestamp - Time stamp in Date.parse()'able format
 	 * @returns {string} - Time stamp formatted for display or '' if input invalid
 	 */
-	getTimeString = timestamp => {
+	getTimeString = ( timestamp ) => {
 		var DAY_IN_SECONDS = 3600 * 24,
 			MAX_LENGTH = 15,
 			parsedTime = Date.parse( timestamp ),

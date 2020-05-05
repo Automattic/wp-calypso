@@ -14,7 +14,7 @@ import * as api from '../../api';
 const PAPER_SIZES = {
 	a4: {
 		name: translate( 'A4' ),
-		exclude: country => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
+		exclude: ( country ) => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
 	},
 	label: {
 		name: translate( 'Label (4"x6")' ),
@@ -27,7 +27,7 @@ const PAPER_SIZES = {
 	},
 };
 
-export const getPaperSizes = country =>
+export const getPaperSizes = ( country ) =>
 	reduce(
 		PAPER_SIZES,
 		( result, { name, exclude }, key ) => {
@@ -48,7 +48,7 @@ const _getPDFURL = ( paperSize, labels, baseUrl ) => {
 		// send params as a CSV to avoid conflicts with some plugins out there (woocommerce-services #1111)
 		label_id_csv: filter( map( labels, 'labelId' ) ).join( ',' ),
 		caption_csv: filter(
-			map( labels, l => ( l.caption ? encodeURIComponent( l.caption ) : null ) )
+			map( labels, ( l ) => ( l.caption ? encodeURIComponent( l.caption ) : null)  )
 		).join( ',' ),
 		json: true,
 	};

@@ -52,7 +52,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-const redirectToDomainSearchSuggestion = context => {
+const redirectToDomainSearchSuggestion = ( context ) => {
 	return page.redirect(
 		`/domains/add/${ context.params.domain }?suggestion=${ context.params.suggestion }`
 	);
@@ -207,7 +207,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
-const redirectIfNoSite = redirectTo => {
+const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );

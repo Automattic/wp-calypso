@@ -18,7 +18,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { changeCommentStatus } from 'state/comments/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { removeNotice, successNotice } from 'state/notices/actions';
 
 class ModerateComment extends Component {
@@ -102,7 +102,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } ) => ( {
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	updateCommentStatus: () =>
 		dispatch(

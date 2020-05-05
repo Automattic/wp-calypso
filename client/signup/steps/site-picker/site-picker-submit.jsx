@@ -12,7 +12,7 @@ import { isFreePlan } from 'lib/plans';
 import { getSite } from 'state/sites/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
-export const siteHasPaidPlan = selectedSite =>
+export const siteHasPaidPlan = ( selectedSite ) =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
 
 export class SitePickerSubmit extends React.Component {

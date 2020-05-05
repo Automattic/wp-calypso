@@ -56,7 +56,7 @@ class Checklist extends PureComponent {
 		const { children } = this.props;
 		const childrenArray = Children.toArray( children ).filter( Boolean );
 		const completedCount = childrenArray.reduce(
-			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
+			( count, task ) => ( true === task.props.completed ? count + 1 : count) ,
 			0
 		);
 		const total = childrenArray.length;
@@ -71,11 +71,11 @@ class Checklist extends PureComponent {
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
 		return Children.toArray( this.props.children ).findIndex(
-			task => task && ! task.props.completed && ! task.props.inProgress
+			( task ) => task && ! task.props.completed && ! task.props.inProgress
 		);
 	}
 
-	setExpandedTask = newExpandedTaskIndex =>
+	setExpandedTask = ( newExpandedTaskIndex ) =>
 		void this.setState( ( { expandedTaskIndex } ) => {
 			if ( newExpandedTaskIndex === expandedTaskIndex ) {
 				return { expandedTaskIndex: null }; // Collapse
@@ -108,7 +108,7 @@ class Checklist extends PureComponent {
 					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
 
 					<div className="checklist__tasks">
-						{ times( total, index => (
+						{ times( total, ( index ) => (
 							<TaskPlaceholder key={ index } />
 						) ) }
 					</div>
@@ -150,6 +150,6 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( Checklist ) );

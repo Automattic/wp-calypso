@@ -30,7 +30,7 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 								aria-selected={ isSelected }
 								className={ classes }
 								onClick={ () => update( { headings, base } ) }
-								onKeyDown={ event =>
+								onKeyDown={ ( event ) =>
 									event.keyCode === ENTER ? update( { headings, base } ) : null
 								}
 							>

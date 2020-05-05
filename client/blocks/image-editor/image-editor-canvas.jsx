@@ -114,7 +114,7 @@ export class ImageEditorCanvas extends Component {
 			this.initImage( objectURL );
 		};
 
-		req.onerror = error => onLoadError( error );
+		req.onerror = ( error ) => onLoadError( error );
 		req.send();
 	}
 
@@ -125,7 +125,7 @@ export class ImageEditorCanvas extends Component {
 		this.image.onerror = this.onLoadComplete;
 	}
 
-	onLoadComplete = event => {
+	onLoadComplete = ( event ) => {
 		if ( event.type !== 'load' || ! this.isMounted ) {
 			return;
 		}
@@ -219,7 +219,7 @@ export class ImageEditorCanvas extends Component {
 		context.restore();
 	}
 
-	updateCanvasPosition = timestamp => {
+	updateCanvasPosition = ( timestamp ) => {
 		const now = timestamp;
 		const elapsedTime = now - this.lastTimestamp;
 
@@ -286,7 +286,7 @@ export class ImageEditorCanvas extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );

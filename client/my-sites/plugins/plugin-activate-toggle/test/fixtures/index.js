@@ -11,5 +11,5 @@ export default {
 		completed: [],
 		errors: [],
 	},
-	action: function() {},
+	action: function () {},
 };

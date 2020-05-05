@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 
@@ -14,5 +19,5 @@ import getRawSite from 'state/selectors/get-raw-site';
 export default function getSiteMigrationStatus( state, siteId ) {
 	const site = getRawSite( state, siteId );
 
-	return ( site && site.migration_status ) || 'inactive';
+	return get( site, 'site_migration.status', 'inactive' );
 }

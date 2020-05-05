@@ -18,9 +18,7 @@ import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansExtendedInfo from './plans-extended-info';
 import QueryPlans from 'components/data/query-plans';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
@@ -62,7 +60,7 @@ class PlansLanding extends Component {
 		}
 	}
 
-	storeSelectedPlan = cartItem => {
+	storeSelectedPlan = ( cartItem ) => {
 		const { url } = this.props;
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
@@ -81,7 +79,7 @@ class PlansLanding extends Component {
 		}, 25 );
 	};
 
-	handleInfoButtonClick = info => () => {
+	handleInfoButtonClick = ( info ) => () => {
 		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
 			help_type: info,
 		} );
@@ -108,7 +106,6 @@ class PlansLanding extends Component {
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
 							<HelpButton />
@@ -135,8 +132,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( PlansLanding );
+export default flowRight( connectComponent, localize )( PlansLanding );

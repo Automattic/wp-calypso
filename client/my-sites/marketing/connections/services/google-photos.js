@@ -92,7 +92,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( connection => ( {
+			siteUserConnections: props.keyringConnections.map( ( connection ) => ( {
 				...connection,
 				keyring_connection_ID: connection.ID,
 			} ) ),

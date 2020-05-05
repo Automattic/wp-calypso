@@ -48,7 +48,7 @@ class ApplicationPasswords extends Component {
 	}
 
 	getClickHandler = ( action, callback ) => {
-		return event => {
+		return ( event ) => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
 			if ( callback ) {
@@ -61,7 +61,7 @@ class ApplicationPasswords extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Focused on Application Name Field' );
 	};
 
-	createApplicationPassword = event => {
+	createApplicationPassword = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingForm: true } );
 		this.props.createApplicationPassword( this.state.applicationName );
@@ -72,12 +72,12 @@ class ApplicationPasswords extends Component {
 		this.setState( this.constructor.initialState );
 	};
 
-	toggleNewPassword = event => {
+	toggleNewPassword = ( event ) => {
 		event.preventDefault();
 		this.setState( { addingPassword: ! this.state.addingPassword } );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
@@ -96,7 +96,7 @@ class ApplicationPasswords extends Component {
 					onSubmit={ this.createApplicationPassword }
 				>
 					<FormFieldset>
-						<FormLabel htmlFor="application-name">{ translate( 'Application Name' ) }</FormLabel>
+						<FormLabel htmlFor="application-name">{ translate( 'Application name' ) }</FormLabel>
 						<FormTextInput
 							className="application-passwords__add-new-field"
 							disabled={ this.state.submittingForm }
@@ -178,7 +178,7 @@ class ApplicationPasswords extends Component {
 			<div className="application-passwords__active">
 				<FormSectionHeading>{ translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
-					{ appPasswords.map( password => (
+					{ appPasswords.map( ( password ) => (
 						<AppPasswordItem password={ password } key={ password.ID } />
 					) ) }
 				</ul>
@@ -193,7 +193,7 @@ class ApplicationPasswords extends Component {
 			<Fragment>
 				<QueryApplicationPasswords />
 
-				<SectionHeader label={ translate( 'Application Passwords' ) }>
+				<SectionHeader label={ translate( 'Application passwords' ) }>
 					{ ! newAppPassword && (
 						<Button
 							compact
@@ -205,7 +205,7 @@ class ApplicationPasswords extends Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Add New Application Password' ) }
+							{ translate( 'Add new application password' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -228,7 +228,7 @@ class ApplicationPasswords extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		appPasswords: getApplicationPasswords( state ),
 		newAppPassword: getNewApplicationPassword( state ),
 	} ),

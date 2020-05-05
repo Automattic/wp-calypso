@@ -20,9 +20,9 @@ import {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, post ID keys to the post's likes.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const itemReducer = withSchemaValidation(
 	itemSchema,
@@ -32,7 +32,7 @@ export const itemReducer = withSchemaValidation(
 				const { likes, iLike, found } = action;
 				return {
 					likes: Array.isArray( likes )
-						? likes.map( like => {
+						? likes.map( ( like ) => {
 								return {
 									ID: like.ID,
 									avatar_URL: like.avatar_URL,
@@ -74,7 +74,7 @@ export const itemReducer = withSchemaValidation(
 			}
 			case POST_LIKES_ADD_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
 				if ( state.likeCount === likeCount && hasLiker ) {
 					// if the like count matches and we already have this liker, bail
@@ -95,7 +95,7 @@ export const itemReducer = withSchemaValidation(
 			}
 			case POST_LIKES_REMOVE_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
 				if ( state.likeCount === likeCount && ! hasLiker ) {
 					// if the like count matches and we don't have this liker, bail
@@ -104,7 +104,7 @@ export const itemReducer = withSchemaValidation(
 
 				let likes = state.likes;
 				if ( hasLiker ) {
-					likes = dropWhile( state.likes, l => liker.ID === l.ID );
+					likes = dropWhile( state.likes, ( l ) => liker.ID === l.ID );
 				}
 
 				return {

@@ -14,8 +14,8 @@ import { setLocale } from 'state/ui/language/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 function QuickLanguageSwitcher( props ) {
-	const [ isShowingModal, toggleLanguagesModal ] = useReducer( toggled => ! toggled, false );
-	const onSelected = languageSlug => props.setLocale( languageSlug );
+	const [ isShowingModal, toggleLanguagesModal ] = useReducer( ( toggled ) => ! toggled, false );
+	const onSelected = ( languageSlug ) => props.setLocale( languageSlug );
 
 	return (
 		<Fragment>
@@ -40,7 +40,7 @@ function QuickLanguageSwitcher( props ) {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
 	} ),
 	{ setLocale }

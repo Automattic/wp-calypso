@@ -23,7 +23,7 @@ import Input from './input';
 class StateSelect extends Component {
 	static instances = 0;
 
-	inputRef = element => {
+	inputRef = ( element ) => {
 		this.inputElement = element;
 
 		if ( ! this.props.inputRef ) {
@@ -102,7 +102,7 @@ class StateSelect extends Component {
 							<option key="--" value="" disabled="disabled">
 								{ selectText || this.props.translate( 'Select State' ) }
 							</option>
-							{ countryStates.map( state => (
+							{ countryStates.map( ( state ) => (
 								<option key={ state.code } value={ state.code }>
 									{ state.name }
 								</option>

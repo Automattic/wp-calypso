@@ -20,7 +20,7 @@ import { CONTACT_FORM_DEFAULT, CONTACT_FORM_DEFAULT_NEW_FIELD } from './constant
 
 const initialState = cloneDeep( CONTACT_FORM_DEFAULT );
 
-export default function( state = initialState, action ) {
+export default function ( state = initialState, action ) {
 	const { index, field, settings } = action;
 
 	switch ( action.type ) {

@@ -26,11 +26,11 @@ import { SUPPORTED_CURRENCY_LIST } from 'lib/simple-payments/constants';
 export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
 // Export some selectors that are needed by the code that submits the form
-export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
-export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
-export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
+export const getProductFormValues = ( state ) => getFormValues( REDUX_FORM_NAME )( state );
+export const isProductFormValid = ( state ) => isValid( REDUX_FORM_NAME )( state );
+export const isProductFormDirty = ( state ) => isDirty( REDUX_FORM_NAME )( state );
 
-const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
+const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( ( code ) => {
 	const { symbol } = getCurrencyDefaults( code );
 	// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
 	// trim the dot at the end, e.g., 'kr.' becomes 'kr'

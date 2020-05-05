@@ -69,6 +69,6 @@ PurchasesHeader.propTypes = {
 	section: PropTypes.string.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	pastTransactions: getPastBillingTransactions( state ),
 } ) )( localize( PurchasesHeader ) );

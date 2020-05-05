@@ -25,7 +25,7 @@ import {
 	isSettingsSaveSuccessful,
 } from '../state/settings/selectors';
 
-const wrapSettingsForm = getFormSettings => SettingsForm => {
+const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		UNSAFE_componentWillMount() {
 			if ( getFormSettings ) {
@@ -69,7 +69,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! isEqual( currentFields[ field ], persistedFields[ field ] )
+				( field ) => ! isEqual( currentFields[ field ], persistedFields[ field ] )
 			);
 
 			// Update the dirty fields state without updating their values
@@ -87,7 +87,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.replaceFields( nextNonDirtyFields );
 		}
 
-		showCacheDeleteNotice = prevProps => {
+		showCacheDeleteNotice = ( prevProps ) => {
 			if ( this.props.isDeleting || ! prevProps.isDeleting ) {
 				return;
 			}
@@ -111,18 +111,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 		};
 
-		handleChange = field => event => {
+		handleChange = ( field ) => ( event ) => {
 			this.props.updateFields( { [ field ]: event.target.value } );
 		};
 
-		handleRadio = event => {
+		handleRadio = ( event ) => {
 			const name = event.currentTarget.name;
 			const value = event.currentTarget.value;
 
 			this.props.updateFields( { [ name ]: value } );
 		};
 
-		handleSelect = event => {
+		handleSelect = ( event ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int.
 			const parsedValue = parseInt( value, 10 );
@@ -130,13 +130,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
-		handleAutosavingToggle = name => () => {
+		handleAutosavingToggle = ( name ) => () => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
 				this.submitForm();
 			} );
 		};
 
-		handleToggle = name => () => {
+		handleToggle = ( name ) => () => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
@@ -161,7 +161,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			);
 		};
 
-		handleSubmitForm = event => {
+		handleSubmitForm = ( event ) => {
 			event.preventDefault();
 			this.submitForm();
 		};
@@ -202,7 +202,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 	}
 
 	const connectComponent = connect(
-		state => {
+		( state ) => {
 			const site = getSelectedSite( state ) || {};
 			const siteId = getSelectedSiteId( state );
 			const isSaving = isSavingSettings( state, siteId );

@@ -12,7 +12,7 @@ import controller from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 		page(
 			'/feature/store/:domain',

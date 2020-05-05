@@ -7,7 +7,7 @@ import { uniqBy } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
-import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
+import { READER_FEED_SEARCH_RECEIVE } from 'state/reader/action-types';
 
 /**
  * Tracks mappings between queries --> feed results
@@ -23,8 +23,8 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 	}
  *
  * @param  {Array} state  Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}        Updated state
  */
 export const items = keyedReducer(
 	'queryKey',
@@ -54,8 +54,8 @@ export const items = keyedReducer(
 	}
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action Action payload
- * @return {Array}         Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}         Updated state
  */
 export const total = keyedReducer(
 	'queryKey',

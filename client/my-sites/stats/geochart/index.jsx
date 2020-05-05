@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import config from 'config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -72,7 +72,7 @@ class StatsGeochart extends Component {
 	}
 
 	recordEvent = () => {
-		analytics.ga.recordEvent( 'Stats', 'Clicked Country on Map' );
+		gaRecordEvent( 'Stats', 'Clicked Country on Map' );
 	};
 
 	drawRegionsMap = () => {
@@ -102,7 +102,7 @@ class StatsGeochart extends Component {
 			return;
 		}
 
-		const mapData = map( data, country => {
+		const mapData = map( data, ( country ) => {
 			return [
 				{
 					v: country.countryCode,
@@ -125,13 +125,9 @@ class StatsGeochart extends Component {
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent-5' )
-				.trim() || '#ffdff3';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
 		const chartColorDark =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent' )
-				.trim() || '#d52c82';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
 			width: 100 + '%',

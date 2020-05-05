@@ -26,6 +26,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	showCompositeCheckout: {
+		datestamp: '20200326',
+		variations: {
+			composite: 50,
+			regular: 50,
+		},
+		defaultVariation: 'regular',
+		allowExistingUsers: true,
+	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -63,10 +72,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -91,61 +100,37 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 90,
-			control: 10,
+			variantShowUpdates: 100,
+			control: 0,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	domainStepMoveParagraph: {
-		datestamp: '20191216',
+	ATPrivacy: {
+		datestamp: '20200331',
 		variations: {
-			variantMoveParagraph: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	nonEnglishDomainStepCopyUpdates: {
-		datestamp: '20191219',
-		variations: {
-			variantShowUpdates: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
-	},
-	domainSuggestionsWithHints: {
-		datestamp: '20191220',
-		variations: {
-			variation2_front: 0,
-			variation3_front: 50,
-			variation4_front: 25,
-			variation5_front: 25,
-		},
-		defaultVariation: 'variation2_front',
-	},
-	showBusinessPlanPopular: {
-		datestamp: '20191220',
-		variations: {
-			variantShowBizPopular: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
-	},
-	readerFreeToPaidPlanNudge: {
-		datestamp: '20200102',
-		variations: {
-			display: 50,
-			control: 50,
+			variant: 5,
+			control: 95,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		localeTargets: 'any',
+	},
+	domainStepPlanStepSwap: {
+		datestamp: '20200415',
+		variations: {
+			variantShowSwapped: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	showActiveTicketsNotice: {
+		datestamp: '20200430',
+		variations: {
+			showNotice: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

@@ -48,7 +48,7 @@
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
 	font-size: 11px;
-	font-weight: 500;
+	font-weight: 600;
 	height: 46px;
 	margin: 0;
 	position: fixed;
@@ -146,6 +146,10 @@
 
 .reader-full-post__story-content img {
 	margin-bottom: 12px;
+
+	&.latex {
+		margin-bottom: 0;
+	}
 }
 
 .reader-full-post__story-content figure img {
@@ -240,13 +244,13 @@
 		}
 
 		.reader-author-link {
-			font-weight: 700;
+			font-weight: 600;
 			display: inline;
 			margin-right: 5px;
 
 			&::after {
 				content: ',';
-				font-weight: normal;
+				font-weight: 400;
 			}
 		}
 

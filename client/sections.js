@@ -6,6 +6,14 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
+		name: 'root',
+		paths: [ '/' ],
+		module: 'root',
+		group: 'root',
+		secondary: true,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
@@ -189,13 +197,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'checklist',
-		paths: [ '/checklist' ],
-		module: 'my-sites/checklist',
-		secondary: true,
-		group: 'checklist',
-	},
-	{
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
@@ -291,7 +292,7 @@ const sections = [
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
-		paths: [ '/', '/read' ],
+		paths: [ '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -410,7 +411,7 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-editor',
-		paths: [ '/block-editor' ],
+		paths: [ '/block-editor', '/site-editor' ],
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
@@ -463,6 +464,38 @@ const sections = [
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
+	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'backups',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-settings',
+		paths: [ '/settings' ],
+		module: 'landing/jetpack-cloud/sections/settings',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
 	},
 ];
 

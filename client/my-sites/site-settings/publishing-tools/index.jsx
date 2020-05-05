@@ -184,7 +184,7 @@ PublishingTools.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );

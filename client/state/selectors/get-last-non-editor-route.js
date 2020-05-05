@@ -17,7 +17,7 @@ import createSelector from 'lib/create-selector';
  * @returns {string} The last non editor route -- empty string if none.
  */
 const getLastNonEditorRoute = createSelector(
-	state => {
+	( state ) => {
 		const previousPath = getPreviousPath( state );
 
 		/**
@@ -44,7 +44,7 @@ const getLastNonEditorRoute = createSelector(
 			''
 		);
 	},
-	state => [ getPreviousPath( state ), getRouteHistory( state ) ]
+	( state ) => [ getPreviousPath( state ), getRouteHistory( state ) ]
 );
 
 export default getLastNonEditorRoute;

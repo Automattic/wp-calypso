@@ -94,7 +94,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {

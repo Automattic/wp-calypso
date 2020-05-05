@@ -14,9 +14,9 @@ import {
  * Returns an action object to be used in signalling that a mediaStorage object
  * has been received.
  *
- * @param  {Object} mediaStorage received
- * @param  {Number} siteId       Site ID
- * @return {Object}              Action object
+ * @param  {object} mediaStorage received
+ * @param  {number} siteId       Site ID
+ * @returns {object}              Action object
  */
 export function receiveMediaStorage( mediaStorage, siteId ) {
 	return {
@@ -28,11 +28,12 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
 
 /**
  * Triggers a network request to find media storage limits for a given site
- * @param   {Number}   siteId Site ID
+ *
+ * @param   {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
 export function requestMediaStorage( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_MEDIA_STORAGE_REQUEST,
 			siteId,
@@ -41,14 +42,14 @@ export function requestMediaStorage( siteId ) {
 			.undocumented()
 			.site( siteId )
 			.mediaStorage()
-			.then( mediaStorage => {
+			.then( ( mediaStorage ) => {
 				dispatch( receiveMediaStorage( mediaStorage, siteId ) );
 				dispatch( {
 					type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 					siteId,

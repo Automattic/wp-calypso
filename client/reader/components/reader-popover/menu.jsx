@@ -10,7 +10,7 @@ import { omit } from 'lodash';
 import ReaderPopover from 'reader/components/reader-popover';
 import PopoverMenu from 'components/popover/menu';
 
-const ReaderPopoverMenu = props => {
+const ReaderPopoverMenu = ( props ) => {
 	const popoverProps = omit( props, 'popoverComponent' );
 	return (
 		<PopoverMenu

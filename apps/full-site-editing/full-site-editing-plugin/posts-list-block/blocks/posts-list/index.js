@@ -47,7 +47,7 @@ registerBlockType( metadata.name, {
 		// Find if any of possible transformations is into the Homepage Posts block.
 		const possibleTransforms = getPossibleBlockTransformations( [ block ] );
 		const homepagePostsTransform = possibleTransforms.find(
-			transform => transform && isValidHomepagePostsBlockType( transform.name )
+			( transform ) => transform && isValidHomepagePostsBlockType( transform.name )
 		);
 		const canBeUpgraded = !! homepagePostsTransform;
 
@@ -85,7 +85,7 @@ registerBlockType( metadata.name, {
 						<RangeControl
 							label={ __( 'Number of posts to show', 'full-site-editing' ) }
 							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
+							onChange={ ( val ) => setAttributes( { postsPerPage: val } ) }
 							min={ 1 }
 							max={ 50 }
 						/>
@@ -96,7 +96,7 @@ registerBlockType( metadata.name, {
 						<RangeControl
 							label={ __( 'Number of posts', 'full-site-editing' ) }
 							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
+							onChange={ ( val ) => setAttributes( { postsPerPage: val } ) }
 							min={ 1 }
 							max={ 50 }
 						/>

@@ -66,7 +66,7 @@ class CalendarCard extends Component {
 			let closestTimeOffset = Math.abs( closestTimestamp - targetTimestamp );
 
 			// Then look through all timestamps to find which one is the closest to the target
-			times.forEach( time => {
+			times.forEach( ( time ) => {
 				const offset = Math.abs( time - targetTimestamp );
 				if ( offset < closestTimeOffset ) {
 					closestTimestamp = time;
@@ -89,8 +89,8 @@ class CalendarCard extends Component {
 	 * Returns a string representing the day of the week, with certain dates using natural
 	 * language like "Today" or "Tomorrow" instead of the name of the day.
 	 *
-	 * @param {Number} date Timestamp of the date
-	 * @returns {String} The name for the day of the week
+	 * @param {number} date Timestamp of the date
+	 * @returns {string} The name for the day of the week
 	 */
 	getDayOfWeekString( date ) {
 		const { translate } = this.props;
@@ -168,7 +168,7 @@ class CalendarCard extends Component {
 						onChange={ this.onChange }
 						value={ this.state.selectedTime }
 					>
-						{ times.map( time => (
+						{ times.map( ( time ) => (
 							<option value={ time } key={ time }>
 								{ this.withTimezone( time ).format( 'LT z' ) }
 							</option>

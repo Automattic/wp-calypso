@@ -87,7 +87,7 @@ class StoreLocationSetupView extends Component {
 		} ),
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { contactDetails, storeLocation } = newProps;
 
 		if ( ! this.state.userBeganEditing ) {
@@ -115,7 +115,7 @@ class StoreLocationSetupView extends Component {
 		}
 	};
 
-	getAddressFromContactDetails = contactDetails => {
+	getAddressFromContactDetails = ( contactDetails ) => {
 		const { address1, address2, city, state, postalCode, countryCode } = contactDetails;
 		return {
 			street: address1 || '',
@@ -127,7 +127,7 @@ class StoreLocationSetupView extends Component {
 		};
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
 
@@ -148,7 +148,7 @@ class StoreLocationSetupView extends Component {
 		this.setState( { address, userBeganEditing: true } );
 	};
 
-	onNext = event => {
+	onNext = ( event ) => {
 		const {
 			countries,
 			currentUserEmailVerified,
@@ -238,7 +238,7 @@ class StoreLocationSetupView extends Component {
 		}
 
 		const requiredAddressFields = pick( this.state.address, requiredKeys );
-		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
+		const everyRequiredFieldHasAValue = every( requiredAddressFields, ( field ) => {
 			return ! isEmpty( trim( field ) );
 		} );
 		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;

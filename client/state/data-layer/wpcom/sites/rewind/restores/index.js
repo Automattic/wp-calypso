@@ -19,7 +19,7 @@ import { REWIND_RESTORE_DISMISS_PROGRESS } from 'state/action-types';
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissRestore = action =>
+export const dismissRestore = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -38,7 +38,7 @@ export const dismissRestore = action =>
  *
  * @param {object}   action   Changeset to update state.
  * @param {object}     data     Description of request result.
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const restoreSilentlyDismissed = ( action, data ) =>
 	! data.dismissed
@@ -48,7 +48,7 @@ export const restoreSilentlyDismissed = ( action, data ) =>
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const restoreDismissFailed = () => null;
 
@@ -58,7 +58,7 @@ export const restoreDismissFailed = () => null;
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromRestoreDismiss = data => ( {
+const fromRestoreDismiss = ( data ) => ( {
 	restoreId: parseInt( data.restore_id ),
 	dismissed: data.is_dismissed,
 } );

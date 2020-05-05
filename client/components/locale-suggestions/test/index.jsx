@@ -14,10 +14,10 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import { LocaleSuggestions } from '../';
 
-jest.mock( 'lib/i18n-utils', () => ( { addLocaleToPath: locale => locale } ) );
+jest.mock( 'lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );
 jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
 
-jest.mock( 'components/notice', () => props => [ ...props.children ] );
+jest.mock( 'components/notice', () => ( props ) => [ ...props.children ] );
 
 describe( 'LocaleSuggestions', () => {
 	const defaultProps = {

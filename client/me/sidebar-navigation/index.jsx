@@ -27,6 +27,6 @@ function MeSidebarNavigation( { currentUser } ) {
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 } ) )( MeSidebarNavigation );

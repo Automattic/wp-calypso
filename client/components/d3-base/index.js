@@ -81,9 +81,7 @@ export default class D3Base extends Component {
 	}
 
 	deleteChart() {
-		d3Select( this.chartRef.current )
-			.selectAll( 'svg' )
-			.remove();
+		d3Select( this.chartRef.current ).selectAll( 'svg' ).remove();
 	}
 
 	/**

@@ -37,7 +37,7 @@ export class CartButtons extends React.Component {
 		);
 	}
 
-	goToCheckout = event => {
+	goToCheckout = ( event ) => {
 		event.preventDefault();
 		this.props.recordGoogleEvent( 'Domain Search', 'Click "Checkout" Button on Popup Cart' );
 		page( '/checkout/' + this.props.selectedSite.slug );

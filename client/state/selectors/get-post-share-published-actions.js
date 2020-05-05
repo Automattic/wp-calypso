@@ -20,10 +20,10 @@ const getPublishedActions = ( state, siteId, postId ) =>
 /**
  * Return a share-published-actions array propagaring data from publicize connections.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
- * @return {Array} share publihed actions array
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @param {number} postId Post ID
+ * @returns {Array} share publihed actions array
  */
 const getPostSharePublishedActions = createSelector(
 	( state, siteId, postId ) => {

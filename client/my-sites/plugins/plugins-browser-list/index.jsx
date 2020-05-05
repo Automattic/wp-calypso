@@ -64,7 +64,7 @@ class PluginsBrowserList extends Component {
 	}
 
 	renderPlaceholdersViews() {
-		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, i => (
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
 	}

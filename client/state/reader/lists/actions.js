@@ -22,13 +22,15 @@ import {
 	READER_LISTS_UNFOLLOW,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+
+import 'state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.
  *
  * @param  {Array}  lists Lists received
- * @return {Object}       Action object
+ * @returns {object}       Action object
  */
 export function receiveLists( lists ) {
 	return {
@@ -40,10 +42,10 @@ export function receiveLists( lists ) {
 /**
  * Triggers a network request to fetch the current user's lists.
  *
- * @return {Function}        Action thunk
+ * @returns {Function}        Action thunk
  */
 export function requestSubscribedLists() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_REQUEST,
 		} );
@@ -53,14 +55,14 @@ export function requestSubscribedLists() {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( receiveLists( data.lists ) );
 				dispatch( {
 					type: READER_LISTS_REQUEST_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_REQUEST_FAILURE,
 					error,
@@ -72,12 +74,12 @@ export function requestSubscribedLists() {
 /**
  * Triggers a network request to fetch a single Reader list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function}        Action thunk
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function}        Action thunk
  */
 export function requestList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_REQUEST,
 		} );
@@ -98,13 +100,13 @@ export function requestList( owner, slug ) {
 				}
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LIST_REQUEST_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( errorInfo => {
+			.catch( ( errorInfo ) => {
 				dispatch( {
 					type: READER_LIST_REQUEST_FAILURE,
 					error: errorInfo.error,
@@ -118,12 +120,12 @@ export function requestList( owner, slug ) {
 /**
  * Triggers a network request to follow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function} Action promise
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function} Action promise
  */
 export function followList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_FOLLOW,
 			owner,
@@ -137,13 +139,13 @@ export function followList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LISTS_FOLLOW_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_FOLLOW_FAILURE,
 					error,
@@ -155,12 +157,12 @@ export function followList( owner, slug ) {
 /**
  * Triggers a network request to unfollow a list.
  *
- * @param  {String}  owner List owner
- * @param  {String}  slug List slug
- * @return {Function} Action promise
+ * @param  {string}  owner List owner
+ * @param  {string}  slug List slug
+ * @returns {Function} Action promise
  */
 export function unfollowList( owner, slug ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LISTS_UNFOLLOW,
 			owner,
@@ -174,13 +176,13 @@ export function unfollowList( owner, slug ) {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: READER_LISTS_UNFOLLOW_SUCCESS,
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: READER_LISTS_UNFOLLOW_FAILURE,
 					error,
@@ -192,8 +194,8 @@ export function unfollowList( owner, slug ) {
 /**
  * Triggers a network request to update a list's details.
  *
- * @param  {Object}  list List details to save
- * @return {Function} Action promise
+ * @param  {object}  list List details to save
+ * @returns {Function} Action promise
  */
 export function updateListDetails( list ) {
 	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
@@ -204,7 +206,7 @@ export function updateListDetails( list ) {
 	const preparedSlug = decodeURIComponent( list.slug );
 	const preparedList = Object.assign( {}, list, { owner: preparedOwner, slug: preparedSlug } );
 
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE,
 			list,
@@ -235,11 +237,11 @@ export function updateListDetails( list ) {
 /**
  * Trigger an action to dismiss a list update notice.
  *
- * @param  {Integer}  listId List ID
- * @return {Function} Action thunk
+ * @param  {number}  listId List ID
+ * @returns {Function} Action thunk
  */
 export function dismissListNotice( listId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_DISMISS_NOTICE,
 			listId,
@@ -250,12 +252,12 @@ export function dismissListNotice( listId ) {
 /**
  * Trigger an action to update a list title.
  *
- * @param  {Integer}  listId List ID
- * @param  {String}  newTitle List title
- * @return {Function} Action thunk
+ * @param  {number}  listId List ID
+ * @param  {string}  newTitle List title
+ * @returns {Function} Action thunk
  */
 export function updateTitle( listId, newTitle ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE_TITLE,
 			listId,
@@ -267,12 +269,12 @@ export function updateTitle( listId, newTitle ) {
 /**
  * Trigger an action to update a list description.
  *
- * @param  {Integer}  listId List ID
- * @param  {String}  newDescription List description
- * @return {Function} Action thunk
+ * @param  {number}  listId List ID
+ * @param  {string}  newDescription List description
+ * @returns {Function} Action thunk
  */
 export function updateDescription( listId, newDescription ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_LIST_UPDATE_DESCRIPTION,
 			listId,

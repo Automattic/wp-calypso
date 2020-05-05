@@ -10,7 +10,7 @@ import { find, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import { Button } from '@automattic/components';
@@ -43,12 +43,12 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	pickTheme = themeId => {
+	pickTheme = ( themeId ) => {
 		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
+		recordTracksEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
 			headstart: useHeadstart,
 		} );

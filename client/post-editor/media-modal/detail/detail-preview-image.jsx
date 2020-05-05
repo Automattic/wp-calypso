@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
 import Spinner from 'components/spinner';
+import MediaImage from 'my-sites/media-library/media-image';
 import { url, isItemBeingUploaded } from 'lib/media/utils';
 
 export default class EditorMediaModalDetailPreviewImage extends Component {
@@ -84,7 +84,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 
 		return (
 			<div>
-				<img
+				<MediaImage
 					src={ src }
 					width={ this.props.item.width }
 					height={ this.props.item.height }
@@ -92,7 +92,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					className={ fakeClasses }
 				/>
 
-				<ImagePreloader
+				<MediaImage
 					src={ src }
 					width={ this.props.item.width }
 					height={ this.props.item.height }

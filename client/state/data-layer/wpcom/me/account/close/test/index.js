@@ -11,6 +11,10 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { closeAccount } from 'state/account/actions';
 import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 
+jest.mock( 'lib/user', () => () => {
+	return { clear: jest.fn() };
+} );
+
 describe( 'account-close', () => {
 	describe( 'requestAccountClose', () => {
 		test( 'should dispatch a HTTP request', () => {
@@ -39,14 +43,13 @@ describe( 'account-close', () => {
 	} );
 
 	describe( 'receiveAccountCloseSuccess', () => {
-		test( 'should fire a success action', () => {
-			const result = receiveAccountCloseSuccess();
+		test( 'should dispatch a success action', async () => {
+			const spy = jest.fn();
+			await receiveAccountCloseSuccess()( spy );
 
-			expect( result ).toEqual(
-				expect.objectContaining( {
-					type: ACCOUNT_CLOSE_SUCCESS,
-				} )
-			);
+			expect( spy ).toHaveBeenCalledWith( {
+				type: ACCOUNT_CLOSE_SUCCESS,
+			} );
 		} );
 	} );
 

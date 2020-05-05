@@ -38,7 +38,7 @@ export class GoogleMyBusiness extends SharingService {
 		deleteStoredKeyringConnection: () => {},
 	};
 
-	externalAccessProvided = keyringConnectionId => {
+	externalAccessProvided = ( keyringConnectionId ) => {
 		if ( ! keyringConnectionId ) {
 			this.setState( {
 				isAwaitingConnections: false,

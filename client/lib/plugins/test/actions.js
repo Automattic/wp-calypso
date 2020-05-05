@@ -15,11 +15,9 @@ import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
 import actions from 'lib/plugins/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
-jest.mock( 'lib/analytics', () => ( {
-	mc: { bumpStat: () => {} },
-	tracks: { recordEvent: () => {} },
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => {},
 } ) );
 
 describe( 'WPcom Data Actions', () => {
@@ -49,7 +47,7 @@ describe( 'WPcom Data Actions', () => {
 	} );
 
 	test( "when installing a plugin, it should not send a request to .com when the site doesn't allow us to update its files", () => {
-		return actions.installPlugin( { canUpdateFiles: false }, 'test', noop ).catch( error => {
+		return actions.installPlugin( { canUpdateFiles: false }, 'test', noop ).catch( ( error ) => {
 			assert.equal( error, "Error: Can't update files on the site" );
 			assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 0 );
 		} );
@@ -62,7 +60,7 @@ describe( 'WPcom Data Actions', () => {
 				'test',
 				noop
 			)
-			.catch( error => assert.equal( error, "Error: Can't update files on the site" ) );
+			.catch( ( error ) => assert.equal( error, "Error: Can't update files on the site" ) );
 	} );
 
 	test( "when installing a plugin, it should return a rejected promise if user can't manage the site", () => {
@@ -72,7 +70,7 @@ describe( 'WPcom Data Actions', () => {
 				'test',
 				noop
 			)
-			.catch( error => assert.equal( error, "Error: Can't update files on the site" ) );
+			.catch( ( error ) => assert.equal( error, "Error: Can't update files on the site" ) );
 	} );
 
 	test( 'Actions should have method removePlugin', () => {

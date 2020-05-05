@@ -41,7 +41,7 @@ class ZoneLockWarningNotice extends PureComponent {
 		this.props.requestLock( this.props.siteId, this.props.zoneId );
 	};
 
-	noticeText = isBlocked =>
+	noticeText = ( isBlocked ) =>
 		isBlocked
 			? this.props.translate(
 					'This zone is currently being edited by another user. Try again in a moment.'

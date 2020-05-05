@@ -13,7 +13,7 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
  * Transforms API response into array of activities
  *
  * @param  {object} apiResponse API response body
- * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
+ * @returns {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
 	const groups = [];

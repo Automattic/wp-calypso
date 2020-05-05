@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow collapsible whitespace in translatable strings
+ * @file Disallow collapsible whitespace in translatable strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

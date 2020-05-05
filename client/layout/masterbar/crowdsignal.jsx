@@ -21,15 +21,15 @@ class CrowdsignalOauthMasterbar extends Component {
 		// By loading it here we're not affecting any other pages inside Calypso that don't need the font
 
 		const crowdsignalFonts = [
-			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/400.woff2)' ),
-			new FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', {
+			new window.FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/400.woff2)' ),
+			new window.FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', {
 				weight: 700,
 			} ),
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, font => {
-				font.load().then( loadedFont => document.fonts.add( loadedFont ) );
+			map( crowdsignalFonts, ( font ) => {
+				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
 			} );
 		}
 	}
@@ -54,17 +54,20 @@ class CrowdsignalOauthMasterbar extends Component {
 						<li className="masterbar__crowdsignal-nav-item masterbar__crowdsignal-nav-text">
 							<p className="masterbar__crowdsignal-text">
 								<span>
-									{ translate(
-										'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
-										{
-											args: {
-												product: oauth2Client.title,
-											},
-											components: {
-												span: <span className="masterbar__crowdsignal-wide-screen-only" />,
-											},
-										}
-									) }
+									{
+										// translators: product here is an Automattic product (eg: CrowdSignal or JetPack)
+										translate(
+											'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
+											{
+												args: {
+													product: oauth2Client.title,
+												},
+												components: {
+													span: <span className="masterbar__crowdsignal-wide-screen-only" />,
+												},
+											}
+										)
+									}
 								</span>
 							</p>
 						</li>

@@ -314,7 +314,7 @@ export default connect(
 		errorNotice,
 		infoNotice,
 		removeNotice,
-		trackTryRewind: siteSlug =>
+		trackTryRewind: ( siteSlug ) =>
 			withAnalytics(
 				recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
 				navigate( `/activity-log/${ siteSlug }` )

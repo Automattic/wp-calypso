@@ -47,12 +47,12 @@ const queries = {
 };
 
 const getFirstGlobalIdByQueryLabel = ( state, siteId ) =>
-	mapValues( queries, query => {
+	mapValues( queries, ( query ) => {
 		const postsForQuery = getPostsForQuery( state, siteId, query );
 		return get( postsForQuery, [ 0, 'global_ID' ] );
 	} );
 
-const ConnectedPostStatusExample = connect( state => {
+const ConnectedPostStatusExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const primarySiteId = get( user, 'primary_blog' );
 	return {

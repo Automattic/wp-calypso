@@ -24,7 +24,8 @@ export function requestCoupons( action ) {
 	const { siteId, params } = action;
 	const paramString = Object.keys( params )
 		.map(
-			key => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
+			( key ) =>
+				encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
 		)
 		.join( '&' );
 	const path = `coupons?${ paramString }`;

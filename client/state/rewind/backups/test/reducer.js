@@ -11,7 +11,7 @@ import { REWIND_BACKUPS_SET, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

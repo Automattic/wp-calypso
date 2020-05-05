@@ -24,7 +24,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const bookConciergeAppointment = action => {
+export const bookConciergeAppointment = ( action ) => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
 		http(
@@ -39,7 +39,7 @@ export const bookConciergeAppointment = action => {
 	];
 };
 
-export const errorMessage = code => {
+export const errorMessage = ( code ) => {
 	switch ( code ) {
 		case CONCIERGE_ERROR_NO_AVAILABLE_STAFF:
 			return translate( 'This session is no longer available. Please select a different time.' );

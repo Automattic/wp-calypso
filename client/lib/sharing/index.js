@@ -1,8 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-
-import PopupMonitor from 'lib/popup-monitor';
+import PopupMonitor from '@automattic/popup-monitor';
 
 const requestExternalAccess = ( url, cb ) => {
 	const popupMonitor = new PopupMonitor();
@@ -24,7 +23,7 @@ const requestExternalAccess = ( url, cb ) => {
 		cb( result );
 	} );
 
-	popupMonitor.on( 'message', message => ( lastMessage = message ) );
+	popupMonitor.on( 'message', ( message ) => ( lastMessage = message ) );
 };
 
 export default requestExternalAccess;

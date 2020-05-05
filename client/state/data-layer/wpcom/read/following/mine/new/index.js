@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import config from 'config';
-import { READER_FOLLOW } from 'state/action-types';
+import { READER_FOLLOW } from 'state/reader/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';

@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map, filter, reduce, includes } from 'lodash';
-import WindowScroller from 'react-virtualized/WindowScroller';
+import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
  * Internal dependencies
@@ -106,7 +106,7 @@ class ProductCategories extends Component {
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="product-categories__list-nested">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>

@@ -34,10 +34,10 @@ Emitter( ProductsList.prototype );
 /**
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
- * @return {array} The array of products
+ * @returns {Array} The array of products
  * @api public
  */
-ProductsList.prototype.get = function() {
+ProductsList.prototype.get = function () {
 	let data;
 
 	if ( ! this.data ) {
@@ -68,13 +68,13 @@ ProductsList.prototype.get = function() {
  *
  * @api public
  */
-ProductsList.prototype.fetch = function() {
+ProductsList.prototype.fetch = function () {
 	debug( 'getting ProductsList from api' );
 
 	this.isFetching = true;
 
 	wpcom.undocumented().getProducts(
-		function( error, data ) {
+		function ( error, data ) {
 			if ( error ) {
 				debug( 'error fetching ProductsList from api', error );
 
@@ -108,9 +108,10 @@ ProductsList.prototype.fetch = function() {
 
 /**
  * Initializes data with a list of products.
- * @param {Object} productsList The list of products
+ *
+ * @param {object} productsList The list of products
  **/
-ProductsList.prototype.initialize = function( productsList ) {
+ProductsList.prototype.initialize = function ( productsList ) {
 	this.data = productsList;
 	this.initialized = true;
 };
@@ -118,15 +119,15 @@ ProductsList.prototype.initialize = function( productsList ) {
 /**
  * Determines whether the data has initially loaded from the server.
  *
- * @return {boolean} Has it loaded
+ * @returns {boolean} Has it loaded
  */
-ProductsList.prototype.hasLoadedFromServer = function() {
+ProductsList.prototype.hasLoadedFromServer = function () {
 	return this.initialized;
 };
 
 const productsList = new ProductsList();
 
-export default function() {
+export default function () {
 	if ( ! productsList.hasLoadedFromServer() && ! productsList.isFetching ) {
 		productsList.get();
 	}

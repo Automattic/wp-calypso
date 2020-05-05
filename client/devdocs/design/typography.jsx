@@ -24,8 +24,9 @@ export default class Typography extends React.PureComponent {
 					<h2>Interface Typography</h2>
 
 					<p>
-						We use sans-serif system fonts as the default for UI. This includes UI elements like
-						buttons, notices, and navigation. System fonts improve the page-rendering speed.
+						We use sans-serif system fonts with weights of 400 or greater as the default for UI.
+						This includes UI elements like buttons, notices, and navigation. System fonts improve
+						the page-rendering speed.
 					</p>
 					<p>
 						<code>
@@ -68,9 +69,9 @@ export default class Typography extends React.PureComponent {
 
 					<h2>Content Typography</h2>
 					<p>
-						We mostly use <code>Noto Serif</code> in reading and writing contexts, like the Reader
-						and the editor. Use your best judgment when using Noto Serif for a UI element. Does it
-						add valuable context for the person using our products?
+						We mostly use <code>Noto Serif</code> with weights of 400 or greater in reading and
+						writing contexts, like the Reader and the editor. Use your best judgment when using Noto
+						Serif for a UI element. Does it add valuable context for the person using our products?
 					</p>
 
 					<Card className="design__typography-content-example">

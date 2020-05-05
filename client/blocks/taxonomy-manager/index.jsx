@@ -57,7 +57,7 @@ export class TaxonomyManager extends Component {
 		} );
 	};
 
-	editTerm = term => {
+	editTerm = ( term ) => {
 		const { taxonomy } = this.props;
 		this.props.recordGoogleEvent( 'Taxonomy Manager', `Clicked Edit ${ taxonomy }` );
 		this.props.bumpStat( 'taxonomy_manager', `clicked_edit_${ taxonomy }` );
@@ -67,7 +67,7 @@ export class TaxonomyManager extends Component {
 		} );
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,

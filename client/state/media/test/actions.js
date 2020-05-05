@@ -140,6 +140,7 @@ describe( 'actions', () => {
 				type: MEDIA_ITEM_REQUEST_FAILURE,
 				siteId: 2916284,
 				mediaId: 2454,
+				error: null,
 			} );
 		} );
 	} );

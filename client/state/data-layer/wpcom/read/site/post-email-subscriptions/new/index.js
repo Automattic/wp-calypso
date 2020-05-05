@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'state/action-types';
+import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {

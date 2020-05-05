@@ -8,11 +8,12 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
+	getJetpackProductsDisplayNames,
+	getJetpackProductsTaglines,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_PRODUCT_DISPLAY_NAMES,
-	JETPACK_PRODUCT_TAGLINES,
 } from './constants';
+import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -232,6 +233,13 @@ export function isJetpackProduct( product ) {
 	return isJetpackProductSlug( product.product_slug );
 }
 
+export function getProductFromSlug( productSlug ) {
+	if ( PRODUCTS_LIST[ productSlug ] ) {
+		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+	}
+	return productSlug; // Consistent behavior with `getPlan`.
+}
+
 export function isMonthly( rawProduct ) {
 	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
@@ -397,8 +405,9 @@ export function getProductClass( productSlug ) {
 export function getJetpackProductDisplayName( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 
-	return JETPACK_PRODUCT_DISPLAY_NAMES?.[ product.productSlug ];
+	return jetpackProductsDisplayNames?.[ product.productSlug ];
 }
 
 /**
@@ -410,8 +419,9 @@ export function getJetpackProductDisplayName( product ) {
 export function getJetpackProductTagline( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
+	const jetpackProductsTaglines = getJetpackProductsTaglines();
 
-	return JETPACK_PRODUCT_TAGLINES?.[ product.productSlug ];
+	return jetpackProductsTaglines?.[ product.productSlug ];
 }
 
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
@@ -523,50 +533,3 @@ export function isConciergeSession( product ) {
 
 	return 'concierge-session' === product.product_slug;
 }
-
-export default {
-	formatProduct,
-	getDomainProductRanking,
-	getIncludedDomainPurchaseAmount,
-	includesProduct,
-	isBusiness,
-	isChargeback,
-	isCredits,
-	isCustomDesign,
-	isDependentProduct,
-	isDelayedDomainTransfer,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainTransferProduct,
-	isBundled,
-	isDotComPlan,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isFreePlan,
-	isPersonal,
-	isFreeTrial,
-	isFreeWordPressComDomain,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackBusiness,
-	isJetpackPlan,
-	isJetpackPremium,
-	isJetpackMonthlyPlan,
-	isVipPlan,
-	isMonthly,
-	isJpphpBundle,
-	isNoAds,
-	isPlan,
-	isPremium,
-	isSiteRedirect,
-	isSpaceUpgrade,
-	isTheme,
-	isUnlimitedSpace,
-	isUnlimitedThemes,
-	isVideoPress,
-	whitelistAttributes,
-	isConciergeSession,
-};

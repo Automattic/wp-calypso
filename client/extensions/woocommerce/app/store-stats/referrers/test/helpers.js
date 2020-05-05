@@ -14,7 +14,7 @@ describe( 'sortBySales', () => {
 		const sortedAndTrimmed = sortBySales( data, 3 );
 		assert.lengthOf( sortedAndTrimmed, 3 );
 		assert.deepEqual(
-			sortedAndTrimmed.map( d => d.sales ),
+			sortedAndTrimmed.map( ( d ) => d.sales ),
 			[ 5, 4, 3 ]
 		);
 	} );

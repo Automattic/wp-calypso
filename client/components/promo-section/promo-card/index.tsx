@@ -30,7 +30,7 @@ export interface Props {
 	image?: Image;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
-	badge: string;
+	badge?: string;
 }
 
 const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {
@@ -51,7 +51,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 				</ActionPanelTitle>
 				{ isPrimary
-					? React.Children.map( children, child => {
+					? React.Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type
 								? React.cloneElement( child, { isPrimary } )
 								: child;

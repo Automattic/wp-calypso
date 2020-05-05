@@ -30,7 +30,7 @@ class ProductImagePicker extends Component {
 		isSelecting: false,
 	};
 
-	showMediaModal = event => {
+	showMediaModal = ( event ) => {
 		if ( event.key && event.key !== 'Enter' ) {
 			// A11y - prevent opening Media modal with any key
 			return;
@@ -39,7 +39,7 @@ class ProductImagePicker extends Component {
 		this.setState( { isSelecting: true } );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		this.setState( { isSelecting: false }, () => {
 			if ( ! value ) {
 				return;
@@ -54,13 +54,13 @@ class ProductImagePicker extends Component {
 		} );
 	};
 
-	removeCurrentImage = event => {
+	removeCurrentImage = ( event ) => {
 		event.stopPropagation();
 
 		this.props.input.onChange( false );
 	};
 
-	onImageChange = imageId => {
+	onImageChange = ( imageId ) => {
 		this.props.input.onChange( imageId );
 		// the action cares only about the ID -- that allows us to construct a 'valid' item
 		MediaActions.setLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
@@ -140,6 +140,6 @@ class ProductImagePicker extends Component {
 	}
 }
 
-export default connect( state => ( { siteId: getSelectedSiteId( state ) } ), { requestMediaItem } )(
-	localize( ProductImagePicker )
-);
+export default connect( ( state ) => ( { siteId: getSelectedSiteId( state ) } ), {
+	requestMediaItem,
+} )( localize( ProductImagePicker ) );

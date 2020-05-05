@@ -1,4 +1,10 @@
-TBD
+3.0.0 / TBD
+===========
+
+  * Drop dependency on `url` npm package.
+  * Breaking change: support for URL / URLSearchParams APIs is now required.
+
+2.1.0 / 2019-06-03
 ==================
 
   * Move source into [Calypso](https://github.com/Automattic/wp-calypso).

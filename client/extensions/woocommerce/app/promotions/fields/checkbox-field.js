@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormField from './form-field';
 
-const CheckboxField = props => {
+const CheckboxField = ( props ) => {
 	const { fieldName, explanationText, placeholderText, value, edit } = props;
 	const renderedValue = 'undefined' !== typeof value ? value : false;
 

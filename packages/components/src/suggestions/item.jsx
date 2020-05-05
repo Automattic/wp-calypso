@@ -4,6 +4,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { escapeRegExp } from 'lodash';
+
+function escapeRegExpWithSpace( str ) {
+	return escapeRegExp( str ).replace( /\s/g, '\\s' );
+}
 
 class Item extends PureComponent {
 	static propTypes = {
@@ -26,19 +31,24 @@ class Item extends PureComponent {
 
 	/**
 	 * Highlights the part of the text that matches the query.
+	 *
 	 * @param  {string} text  Text.
 	 * @param  {string} query The text to be matched.
-	 * @return {element}      A React element including the highlighted text.
+	 *
+	 * @returns {Array< ReactElement< JSX.IntrinsicElements[ 'span' ] > >} An element including the highlighted text.
 	 */
 	createTextWithHighlight( text, query ) {
-		const re = new RegExp( '(' + query + ')', 'gi' );
+		const re = new RegExp( '(' + escapeRegExpWithSpace( query ) + ')', 'gi' );
 		const parts = text.split( re );
+
+		// Replaces char code 160 (&nbsp;) with 32 (space)
+		const match = query.toLowerCase().replace( /\s/g, ' ' );
 
 		return parts.map( ( part, i ) => {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			const spanClass = classNames( 'suggestions__label', {
-				'is-emphasized': lowercasePart === query.toLowerCase(),
+				'is-emphasized': lowercasePart === match,
 			} );
 
 			return (
@@ -49,7 +59,7 @@ class Item extends PureComponent {
 		} );
 	}
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		this.props.onMouseDown();

@@ -101,6 +101,6 @@ class PostsMain extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( PostsMain ) );

@@ -12,8 +12,9 @@ import { connect } from 'react-redux';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { planHasFeature } from 'lib/plans';
+import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
 
@@ -37,18 +38,22 @@ export class PlanStorage extends Component {
 			canViewBar,
 			className,
 			jetpackSite,
+			atomicSite,
 			siteId,
 			sitePlanSlug,
 			siteSlug,
 		} = this.props;
 
-		if ( jetpackSite || ! canViewBar || ! sitePlanSlug ) {
+		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
 			return null;
 		}
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
 		}
+
+		const planHasTopStorageSpace =
+			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 
 		return (
 			<div className={ classNames( className, 'plan-storage' ) }>
@@ -57,7 +62,7 @@ export class PlanStorage extends Component {
 					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ canUserUpgrade }
+					displayUpgradeLink={ canUserUpgrade && ! planHasTopStorageSpace }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
@@ -71,6 +76,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		mediaStorage: getMediaStorage( state, siteId ),
 		jetpackSite: isJetpackSite( state, siteId ),
+		atomicSite: isAtomicSite( state, siteId ),
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),

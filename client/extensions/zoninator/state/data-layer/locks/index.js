@@ -7,7 +7,7 @@ import { fromApi } from './utils';
 import { requestLockError, updateLock } from '../../locks/actions';
 import { ZONINATOR_REQUEST_LOCK } from 'zoninator/state/action-types';
 
-export const fetch = action =>
+export const fetch = ( action ) =>
 	http(
 		{
 			method: 'POST',

@@ -11,8 +11,8 @@ describe( 'pathToSection', () => {
 		receiveSections( sections );
 	} );
 
-	test( 'should assume the Reader as the default app root', () => {
-		expect( pathToSection( '/' ) ).toBe( 'reader' );
+	test( 'should assume the Root as the default app root', () => {
+		expect( pathToSection( '/' ) ).toBe( 'root' );
 	} );
 
 	test( 'should handle cases where path and section have different names', () => {

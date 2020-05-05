@@ -2,9 +2,9 @@
  * External dependencies
  *
  */
-
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import path from 'path';
 
 /**
  * Internal dependencies
@@ -18,8 +18,10 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
+import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
+import { PerformanceTrackerInstall } from 'lib/performance-tracking';
 
 class Document extends React.Component {
 	render() {
@@ -43,7 +45,6 @@ class Document extends React.Component {
 			sectionGroup,
 			sectionName,
 			clientData,
-			isFluidWidth,
 			env,
 			badge,
 			abTestHelper,
@@ -58,11 +59,18 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
+			useTranslationChunks,
+			target,
 		} = this.props;
+
+		const installedChunks = entrypoint.js
+			.concat( chunkFiles.js )
+			.map( ( chunk ) => path.parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
+			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -72,21 +80,23 @@ class Document extends React.Component {
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
-				: '' );
+				: '' ) +
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
 
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
 
+		const theme = config( 'theme' );
+
+		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
+
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( {
-					'is-fluid-width': isFluidWidth,
-					'is-iframe': sectionName === 'gutenberg-editor',
-				} ) }
+				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ head.title }
@@ -95,6 +105,8 @@ class Document extends React.Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 				>
+					<PerformanceTrackerInstall nonce={ inlineScriptNonce } />
+
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
@@ -108,6 +120,7 @@ class Document extends React.Component {
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
@@ -133,7 +146,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
@@ -168,16 +181,17 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{ // Use <script nomodule> to redirect browsers with no ES module
-					// support to the fallback build. ES module support is a convenient
-					// test to determine that a browser is modern enough to handle
-					// the evergreen bundle.
-					addEvergreenCheck && (
-						<script
-							nonce={ inlineScriptNonce }
-							noModule
-							dangerouslySetInnerHTML={ {
-								__html: `
+					{
+						// Use <script nomodule> to redirect browsers with no ES module
+						// support to the fallback build. ES module support is a convenient
+						// test to determine that a browser is modern enough to handle
+						// the evergreen bundle.
+						addEvergreenCheck && (
+							<script
+								nonce={ inlineScriptNonce }
+								noModule
+								dangerouslySetInnerHTML={ {
+									__html: `
 							(function() {
 								var url = window.location.href;
 
@@ -188,17 +202,18 @@ class Document extends React.Component {
 								}
 							})();
 							`,
-							} }
-						/>
-					) }
+								} }
+							/>
+						)
+					}
 
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
+					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
+					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
 					{ env !== 'development' && (
 						<script
 							nonce={ inlineScriptNonce }
@@ -207,10 +222,18 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.js.map( asset => (
+
+					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
+
+					{ ( entrypoint?.language?.translations || [] ).map( ( translationChunk ) => (
+						<script key={ translationChunk } src={ translationChunk } />
+					) ) }
+
+					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-					{ chunkFiles.js.map( chunk => (
+
+					{ chunkFiles.js.map( ( chunk ) => (
 						<script key={ chunk } src={ chunk } />
 					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">

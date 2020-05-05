@@ -18,7 +18,7 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const request = action =>
+export const request = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',

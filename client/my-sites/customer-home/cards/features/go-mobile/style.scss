@@ -1,0 +1,29 @@
+.go-mobile__app-badges {
+	display: flex;
+}
+
+.go-mobile__app-badges .get-apps__app-badge {
+	width: 50%;
+}
+
+.go-mobile__email-link-button {
+	margin-top: 1rem;
+	width: 100%;
+}
+
+.go-mobile__row.has-2-cols {
+	display: flex;
+}
+
+.go-mobile__row.has-2-cols .get-apps__app-badge {
+	width: auto;
+}
+
+.go-mobile__row.has-2-cols .go-mobile__subheader {
+	margin: 0;
+}
+
+.go-mobile__row.has-2-cols .go-mobile__app-badges {
+	margin-left: auto;
+	padding-left: 1rem;
+}

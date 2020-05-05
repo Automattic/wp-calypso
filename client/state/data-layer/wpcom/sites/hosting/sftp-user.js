@@ -18,7 +18,7 @@ import {
 import { errorNotice } from 'state/notices/actions';
 import { updateAtomicSftpUser, setAtomicSftpUsers } from 'state/hosting/actions';
 
-const requestAtomicSftpUsers = action => {
+const requestAtomicSftpUsers = ( action ) => {
 	return http(
 		{
 			method: 'GET',
@@ -29,7 +29,7 @@ const requestAtomicSftpUsers = action => {
 	);
 };
 
-const createAtomicSftpUser = action => {
+const createAtomicSftpUser = ( action ) => {
 	return http(
 		{
 			method: 'POST',
@@ -41,7 +41,7 @@ const createAtomicSftpUser = action => {
 	);
 };
 
-const resetAtomicSftpPassword = action => {
+const resetAtomicSftpPassword = ( action ) => {
 	return http(
 		{
 			method: 'POST',
@@ -76,7 +76,7 @@ const userToUserList = ( { username, password } ) => {
 };
 
 const usernameListToUsers = ( { users } ) => {
-	return users.map( user => ( {
+	return users.map( ( user ) => ( {
 		username: user,
 	} ) );
 };

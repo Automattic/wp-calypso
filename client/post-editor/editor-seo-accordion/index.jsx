@@ -45,7 +45,7 @@ class EditorSeoAccordion extends Component {
 	showPreview = () => this.setState( { showPreview: true } );
 	hidePreview = () => this.setState( { showPreview: false } );
 
-	onMetaChange = event => {
+	onMetaChange = ( event ) => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			advanced_seo_description: event.target.value,
 		} );
@@ -99,7 +99,7 @@ class EditorSeoAccordion extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

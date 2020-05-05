@@ -12,12 +12,12 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
 const commonHandlers = [ siteSelection, navigation ];
 
-export default function() {
+export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {

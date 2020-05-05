@@ -64,7 +64,7 @@ const Head = ( {
 				href={ cdn + '/i/favicons/android-chrome-192x192.png' }
 				sizes="192x192"
 			/>
-			{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( size => (
+			{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( ( size ) => (
 				<link
 					key={ size }
 					rel="apple-touch-icon"

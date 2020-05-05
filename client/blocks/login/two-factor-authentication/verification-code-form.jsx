@@ -35,6 +35,7 @@ class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
 		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -67,14 +68,14 @@ class VerificationCodeForm extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
 		// Resets the verification code input field when switching pages
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.setState( { twoStepCode: '' } );
 		}
 	};
 
-	onChangeField = event => {
+	onChangeField = ( event ) => {
 		const { name, value = '' } = event.target;
 
 		this.props.formUpdate();
@@ -82,7 +83,7 @@ class VerificationCodeForm extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
-	onSubmitForm = event => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		const { onSuccess, twoFactorAuthType } = this.props;
@@ -99,7 +100,7 @@ class VerificationCodeForm extends Component {
 
 				onSuccess();
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.setState( { isDisabled: false } );
 
 				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
@@ -109,13 +110,14 @@ class VerificationCodeForm extends Component {
 			} );
 	};
 
-	saveRef = input => {
+	saveRef = ( input ) => {
 		this.input = input;
 	};
 
 	render() {
 		const {
 			isJetpack,
+			isGutenboarding,
 			translate,
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
@@ -175,14 +177,18 @@ class VerificationCodeForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ twoFactorAuthType } isJetpack={ isJetpack } />
+				<TwoFactorActions
+					twoFactorAuthType={ twoFactorAuthType }
+					isJetpack={ isJetpack }
+					isGutenboarding={ isGutenboarding }
+				/>
 			</form>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 	} ),
 	{

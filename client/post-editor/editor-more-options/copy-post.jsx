@@ -55,7 +55,7 @@ class EditorMoreOptionsCopyPost extends Component {
 		} );
 	};
 
-	setPostToCopy = post => {
+	setPostToCopy = ( post ) => {
 		this.setState( {
 			selectedPostId: post.ID,
 		} );
@@ -139,7 +139,7 @@ class EditorMoreOptionsCopyPost extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const postId = getEditorPostId( state );
 	const siteId = getSelectedSiteId( state );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );

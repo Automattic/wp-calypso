@@ -35,10 +35,10 @@ function StatsDataLocalList( options ) {
 /**
  * Get the data from localStorage
  *
- * @return [Array]
+ * @returns [Array]
  * @api public
  */
-StatsDataLocalList.prototype.getData = function() {
+StatsDataLocalList.prototype.getData = function () {
 	const localStoreData = store.get( this.localStoreKey ) || [];
 	return localStoreData;
 };
@@ -46,10 +46,10 @@ StatsDataLocalList.prototype.getData = function() {
 /**
  * Empty all data from localStorage for this localStoreKey
  *
- * @return true
+ * @returns true
  * @api public
  */
-StatsDataLocalList.prototype.clear = function() {
+StatsDataLocalList.prototype.clear = function () {
 	store.set( this.localStoreKey, [] );
 	return true;
 };
@@ -59,16 +59,16 @@ StatsDataLocalList.prototype.clear = function() {
  *
  * @param key String
  * @param value
- * @return { Record } object
+ * @returns { Record } object
  * @api public
  */
-StatsDataLocalList.prototype.set = function( key, value ) {
+StatsDataLocalList.prototype.set = function ( key, value ) {
 	let record = { key: key, createdAt: new Date().getTime(), data: value },
 		localData = this.getData(),
 		newLocalData;
 
 	debug( 'storing data locally ' + key, value );
-	newLocalData = localData.filter( function( cachedRecord ) {
+	newLocalData = localData.filter( function ( cachedRecord ) {
 		return cachedRecord && cachedRecord.key !== key;
 	} );
 
@@ -87,10 +87,10 @@ StatsDataLocalList.prototype.set = function( key, value ) {
  * Finds 'value' for the 'key' in localStorage
  *
  * @param key String
- * @return { Record } object || false if not found
+ * @returns { Record } object || false if not found
  * @api public
  */
-StatsDataLocalList.prototype.find = function( key ) {
+StatsDataLocalList.prototype.find = function ( key ) {
 	return find( this.getData(), { key } ) || false;
 };
 

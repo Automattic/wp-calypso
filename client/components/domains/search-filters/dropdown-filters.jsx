@@ -102,7 +102,7 @@ export class DropdownFilters extends Component {
 		} );
 	};
 
-	handleOnChange = event => {
+	handleOnChange = ( event ) => {
 		const { currentTarget } = event;
 		if ( currentTarget.type === 'checkbox' ) {
 			this.updateFilterValues( currentTarget.name, currentTarget.checked );
@@ -136,6 +136,17 @@ export class DropdownFilters extends Component {
 		);
 	}
 
+	renderFilterIcon() {
+		return (
+			<>
+				<Gridicon icon="cog" size={ 12 } />
+				<span className="search-filters__dropdown-filters-button-text">
+					{ this.props.translate( 'Filters' ) }
+				</span>
+			</>
+		);
+	}
+
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
 
@@ -154,10 +165,7 @@ export class DropdownFilters extends Component {
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					<Gridicon icon="cog" size={ 12 } />
-					<span className="search-filters__dropdown-filters-button-text">
-						{ this.props.translate( 'Filters' ) }
-					</span>
+					{ this.renderFilterIcon() }
 				</Button>
 
 				{ this.state.showPopover && this.renderPopover() }

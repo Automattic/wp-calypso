@@ -34,7 +34,7 @@ QueryHappinessEngineers.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
 		};

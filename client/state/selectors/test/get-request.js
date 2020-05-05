@@ -40,9 +40,9 @@ test( 'should indicate loading when status is pending', () => {
 test( "should indicate not loading if status isn't pending", () => {
 	const action = { type: 'DUMMY_REQUEST' };
 	const requestKey = getRequestKey( action );
-	const state = status => ( { dataRequests: { [ requestKey ]: { status } } } );
+	const state = ( status ) => ( { dataRequests: { [ requestKey ]: { status } } } );
 
-	[ 'success', 'failure', undefined, null ].forEach( status =>
+	[ 'success', 'failure', undefined, null ].forEach( ( status ) =>
 		expect( getRequest( state( status ), action ) ).toHaveProperty( 'isLoading', false )
 	);
 } );

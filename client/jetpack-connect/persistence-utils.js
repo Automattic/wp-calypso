@@ -15,7 +15,7 @@ import { urlToSlug } from 'lib/url';
  * state is not guaranteed to be persisted in these scenarios.
  */
 
-export const storePlan = planSlug => {
+export const storePlan = ( planSlug ) => {
 	const options = { path: '/' };
 	document.cookie = cookie.serialize( 'jetpack_connect_selected_plan', planSlug, options );
 };
@@ -30,7 +30,7 @@ export const retrievePlan = () => {
 	return cookies.jetpack_connect_selected_plan;
 };
 
-export const persistSession = url => {
+export const persistSession = ( url ) => {
 	const options = {
 		maxAge: JETPACK_CONNECT_TTL_SECONDS,
 		path: '/',
@@ -38,12 +38,12 @@ export const persistSession = url => {
 	document.cookie = cookie.serialize( 'jetpack_connect_session_url', urlToSlug( url ), options );
 };
 
-export const isCalypsoStartedConnection = siteSlug => {
+export const isCalypsoStartedConnection = ( siteSlug ) => {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.jetpack_connect_session_url === urlToSlug( siteSlug );
 };
 
-export const persistSsoApproved = siteId => {
+export const persistSsoApproved = ( siteId ) => {
 	const options = {
 		maxAge: 300,
 		path: '/',
@@ -51,12 +51,12 @@ export const persistSsoApproved = siteId => {
 	document.cookie = cookie.serialize( 'jetpack_sso_approved', siteId, options );
 };
 
-export const isSsoApproved = siteId => {
+export const isSsoApproved = ( siteId ) => {
 	const cookies = cookie.parse( document.cookie );
 	return siteId === parseInt( cookies.jetpack_sso_approved, 10 );
 };
 
-export const persistMobileRedirect = url => {
+export const persistMobileRedirect = ( url ) => {
 	const options = { path: '/' };
 	document.cookie = cookie.serialize( 'jetpack_connect_mobile_redirect', url, options );
 };

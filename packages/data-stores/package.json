@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "Calypso Data Stores",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -22,22 +22,26 @@
 	"files": [
 		"autocomplete.gif",
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist types",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "npm run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "check-npm-client && yarn run clean",
+		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/data": "^4.10.0",
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
 		"fast-json-stable-stringify": "^2.1.0",
+		"qs": "^6.9.1",
 		"redux": "^4.0.4",
-		"tslib": "^1.10.0"
+		"tslib": "^1.10.0",
+		"utility-types": "^3.10.0",
+		"wpcom-proxy-request": "^6.0.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4"
 	}
 }

@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Action to request the product install status.
  * @returns {object}        The dispatched action.
  */
-export const requestJetpackProductInstallStatus = action =>
+export const requestJetpackProductInstallStatus = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -33,9 +33,9 @@ export const requestJetpackProductInstallStatus = action =>
 /**
  * Dispatches a product install status receive action when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @param   {Object} status Status as returned from the endpoint
- * @returns {Object} Dispatched product install status receive action
+ * @param   {object} action Redux action
+ * @param   {object} status Status as returned from the endpoint
+ * @returns {object} Dispatched product install status receive action
  */
 export const handleRequestSuccess = ( { siteId }, status ) =>
 	receiveJetpackProductInstallStatus( siteId, status );

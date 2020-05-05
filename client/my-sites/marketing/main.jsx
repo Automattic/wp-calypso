@@ -14,7 +14,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isVipSite from 'state/selectors/is-vip-site';
 import DocumentHead from 'components/data/document-head';
-import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
@@ -23,7 +23,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
@@ -33,11 +33,12 @@ import './style.scss';
 
 export const Sharing = ( {
 	contentComponent,
-	path,
+	pathname,
 	showButtons,
 	showConnections,
 	showTraffic,
 	siteId,
+	isJetpack,
 	isVip,
 	siteSlug,
 	translate,
@@ -81,8 +82,7 @@ export const Sharing = ( {
 		} );
 	}
 
-	const selected = find( filters, { route: path } );
-
+	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -98,19 +98,22 @@ export const Sharing = ( {
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
 						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ path === route }>
+							<NavItem key={ id } path={ route } selected={ pathname === route }>
 								{ title }
 							</NavItem>
 						) ) }
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && (
-				<UpgradeNudge
+			{ ! isVip && ! isJetpack && (
+				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ FEATURE_NO_ADS }
-					message={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No Ads with WordPress.com Premium' ) }
+					description={ translate( 'Prevent ads from showing on your site.' ) }
+					title={ translate( 'No ads with WordPress.com Premium' ) }
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksClickName="calypso_upgrade_nudge_cta_click"
+					showIcon={ true }
 				/>
 			) }
 			{ contentComponent }
@@ -130,13 +133,11 @@ Sharing.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const hasSharedaddy =
-		isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
-		isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
@@ -145,5 +146,6 @@ export default connect( state => {
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		isJetpack: isJetpack,
 	};
 } )( localize( Sharing ) );

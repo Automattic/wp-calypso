@@ -144,29 +144,27 @@ class Plans extends React.Component {
 						/>
 					) }
 					{ canAccessPlans && (
-						<div id="plans" className="plans plans__has-sidebar">
-							<FormattedHeader
-								className="plans__page-heading"
-								headerText={ translate( 'Plans' ) }
-								align="left"
-							/>
-							<CartData>
-								<PlansNavigation path={ this.props.context.path } />
-							</CartData>
-							<PlansFeaturesMain
-								displayJetpackPlans={ displayJetpackPlans }
-								hideFreePlan={ true }
-								customerType={ this.props.customerType }
-								intervalType={ this.props.intervalType }
-								selectedFeature={ this.props.selectedFeature }
-								selectedPlan={ this.props.selectedPlan }
-								redirectTo={ this.props.redirectTo }
-								withDiscount={ this.props.withDiscount }
-								discountEndDate={ this.props.discountEndDate }
-								site={ selectedSite }
-								plansWithScroll={ false }
-							/>
-						</div>
+						<>
+							<FormattedHeader headerText={ translate( 'Plans' ) } align="left" />
+							<div id="plans" className="plans plans__has-sidebar">
+								<CartData>
+									<PlansNavigation path={ this.props.context.path } />
+								</CartData>
+								<PlansFeaturesMain
+									displayJetpackPlans={ displayJetpackPlans }
+									hideFreePlan={ true }
+									customerType={ this.props.customerType }
+									intervalType={ this.props.intervalType }
+									selectedFeature={ this.props.selectedFeature }
+									selectedPlan={ this.props.selectedPlan }
+									redirectTo={ this.props.redirectTo }
+									withDiscount={ this.props.withDiscount }
+									discountEndDate={ this.props.discountEndDate }
+									site={ selectedSite }
+									plansWithScroll={ false }
+								/>
+							</div>
+						</>
 					) }
 				</Main>
 			</div>
@@ -174,7 +172,7 @@ class Plans extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );

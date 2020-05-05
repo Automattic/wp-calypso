@@ -24,17 +24,17 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
-		const setError = err => ( error = err );
-		const setSuccess = json => {
+		const setError = ( err ) => ( error = err );
+		const setSuccess = ( json ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
-				rates: mapValues( json.rates, pckg => ( 'rates' in pckg ? pckg : pckg.default ) ),
+				rates: mapValues( json.rates, ( pckg ) => ( 'rates' in pckg ? pckg : pckg.default)  ),
 				requestData,
 				siteId,
 				orderId,
 			} );
 		};
-		const setIsSaving = saving => {
+		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
 				dispatch( {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,

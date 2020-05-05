@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ class AppointmentInfo extends Component {
 		} = this.props;
 
 		const conferenceLink = meta.conference_link || '';
+		const guessedTimezone = moment.tz.guess();
 
 		return (
 			<>
@@ -74,8 +76,8 @@ class AppointmentInfo extends Component {
 						<FormLabel>{ translate( 'When?' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
-							{ moment( endTimestamp ).format( 'LT ' ) }
-							{ moment.tz.zone( meta.timezone ).abbr( 360 ) }
+							{ moment.tz( endTimestamp, guessedTimezone ).format( 'LT z' ) }{ ' ' }
+							{ `(${ guessedTimezone })` }
 						</FormSettingExplanation>
 					</FormFieldset>
 

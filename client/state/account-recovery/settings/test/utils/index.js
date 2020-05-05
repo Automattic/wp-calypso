@@ -17,10 +17,8 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	const apiUrl = 'https://public-api.wordpress.com:443';
 
 	describe( testBaseName + ' success', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( 200, successResponse );
+		useNock( ( nock ) => {
+			nock( apiUrl )[ method ]( endpoint ).reply( 200, successResponse );
 		} );
 
 		test( 'should be successful.', () => {
@@ -33,10 +31,8 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	} );
 
 	describe( testBaseName + ' fail', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( errorResponse.status, errorResponse );
+		useNock( ( nock ) => {
+			nock( apiUrl )[ method ]( endpoint ).reply( errorResponse.status, errorResponse );
 		} );
 
 		test( 'should be failed', () => {

@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import interpolateComponents from 'interpolate-components';
 import Tannin from 'tannin';
 import LRU from 'lru';
-import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
 import sprintf from '@tannin/sprintf';
@@ -29,7 +28,7 @@ const domain_key = 'messages';
 
 const translationLookup = [
 	// By default don't modify the options when looking up translations.
-	function( options ) {
+	function ( options ) {
 		return options;
 	},
 ];
@@ -143,7 +142,7 @@ function I18N() {
 	}
 	this.defaultLocaleSlug = 'en';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
-	this.defaultPluralForms = n => ( n === 1 ? 0 : 1 );
+	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1) ;
 	this.state = {
 		numberFormatSettings: {},
 		tannin: undefined,
@@ -164,17 +163,16 @@ function I18N() {
 }
 
 I18N.throwErrors = false;
-I18N.prototype.moment = moment;
 
-I18N.prototype.on = function( ...args ) {
+I18N.prototype.on = function ( ...args ) {
 	this.stateObserver.on( ...args );
 };
 
-I18N.prototype.off = function( ...args ) {
+I18N.prototype.off = function ( ...args ) {
 	this.stateObserver.off( ...args );
 };
 
-I18N.prototype.emit = function( ...args ) {
+I18N.prototype.emit = function ( ...args ) {
 	this.stateObserver.emit( ...args );
 };
 
@@ -185,7 +183,7 @@ I18N.prototype.emit = function( ...args ) {
  * @param   {number|object}  options  Number of decimal places or options object (optional)
  * @returns {string}         Formatted number as string
  */
-I18N.prototype.numberFormat = function( number, options = {} ) {
+I18N.prototype.numberFormat = function ( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
 	const decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.';
 	const thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
@@ -193,23 +191,21 @@ I18N.prototype.numberFormat = function( number, options = {} ) {
 	return numberFormat( number, decimals, decPoint, thousandsSep );
 };
 
-I18N.prototype.configure = function( options ) {
+I18N.prototype.configure = function ( options ) {
 	Object.assign( this, options || {} );
 	this.setLocale();
 };
 
-I18N.prototype.setLocale = function( localeData ) {
+I18N.prototype.setLocale = function ( localeData ) {
 	if ( localeData && localeData[ '' ] && localeData[ '' ][ 'key-hash' ] ) {
 		const keyHash = localeData[ '' ][ 'key-hash' ];
 
-		const transform = function( string, hashLength ) {
+		const transform = function ( string, hashLength ) {
 			const lookupPrefix = hashLength === false ? '' : String( hashLength );
 			if ( typeof hashCache[ lookupPrefix + string ] !== 'undefined' ) {
 				return hashCache[ lookupPrefix + string ];
 			}
-			const hash = sha1()
-				.update( string )
-				.digest( 'hex' );
+			const hash = sha1().update( string ).digest( 'hex' );
 
 			if ( hashLength ) {
 				return ( hashCache[ lookupPrefix + string ] = hash.substr( 0, hashLength ) );
@@ -218,8 +214,8 @@ I18N.prototype.setLocale = function( localeData ) {
 			return ( hashCache[ lookupPrefix + string ] = hash );
 		};
 
-		const generateLookup = function( hashLength ) {
-			return function( options ) {
+		const generateLookup = function ( hashLength ) {
+			return function ( options ) {
 				if ( options.context ) {
 					options.original = transform(
 						options.context + String.fromCharCode( 4 ) + options.original,
@@ -282,8 +278,6 @@ I18N.prototype.setLocale = function( localeData ) {
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
-	moment.locale( this.state.localeSlug );
-
 	// Updates numberFormat preferences with settings from translations
 	this.state.numberFormatSettings.decimal_point = getTranslationFromTannin(
 		this.state.tannin,
@@ -306,7 +300,7 @@ I18N.prototype.setLocale = function( localeData ) {
 	this.stateObserver.emit( 'change' );
 };
 
-I18N.prototype.getLocale = function() {
+I18N.prototype.getLocale = function () {
 	return this.state.locale;
 };
 
@@ -315,7 +309,7 @@ I18N.prototype.getLocale = function() {
  *
  * @returns {string} The string representing the currently loaded locale
  **/
-I18N.prototype.getLocaleSlug = function() {
+I18N.prototype.getLocaleSlug = function () {
 	return this.state.localeSlug;
 };
 
@@ -324,7 +318,7 @@ I18N.prototype.getLocaleSlug = function() {
  *
  * @returns {boolean} `true` in case the current locale has RTL text direction
  */
-I18N.prototype.isRtl = function() {
+I18N.prototype.isRtl = function () {
 	return this.state.textDirection === 'rtl';
 };
 
@@ -333,7 +327,7 @@ I18N.prototype.isRtl = function() {
  *
  * @param {object} localeData Locale data
  */
-I18N.prototype.addTranslations = function( localeData ) {
+I18N.prototype.addTranslations = function ( localeData ) {
 	for ( const prop in localeData ) {
 		if ( prop !== '' ) {
 			this.state.tannin.data.messages[ prop ] = localeData[ prop ];
@@ -348,7 +342,7 @@ I18N.prototype.addTranslations = function( localeData ) {
  *
  * @returns {boolean} whether a translation exists
  */
-I18N.prototype.hasTranslation = function() {
+I18N.prototype.hasTranslation = function () {
 	return !! getTranslation( this, normalizeTranslateArguments( arguments ) );
 };
 
@@ -358,7 +352,7 @@ I18N.prototype.hasTranslation = function() {
  *
  * @returns {string|object} translated text or an object containing React children that can be inserted into a parent component
  */
-I18N.prototype.translate = function() {
+I18N.prototype.translate = function () {
 	const options = normalizeTranslateArguments( arguments );
 
 	let translation = getTranslation( this, options );
@@ -397,7 +391,7 @@ I18N.prototype.translate = function() {
 	}
 
 	// run any necessary hooks
-	this.translateHooks.forEach( function( hook ) {
+	this.translateHooks.forEach( function ( hook ) {
 		translation = hook( translation, options );
 	} );
 
@@ -414,16 +408,16 @@ I18N.prototype.translate = function() {
  * If at all possible, react components should try to use the more local
  * updateTranslation() function inherited from the mixin.
  */
-I18N.prototype.reRenderTranslations = function() {
+I18N.prototype.reRenderTranslations = function () {
 	debug( 'Re-rendering all translations due to external request' );
 	this.stateObserver.emit( 'change' );
 };
 
-I18N.prototype.registerComponentUpdateHook = function( callback ) {
+I18N.prototype.registerComponentUpdateHook = function ( callback ) {
 	this.componentUpdateHooks.push( callback );
 };
 
-I18N.prototype.registerTranslateHook = function( callback ) {
+I18N.prototype.registerTranslateHook = function ( callback ) {
 	this.translateHooks.push( callback );
 };
 

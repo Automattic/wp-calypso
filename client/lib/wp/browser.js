@@ -29,7 +29,7 @@ if ( config.isEnabled( 'oauth' ) ) {
 		{
 			metaAPI: { accessAllUsersBlogs: true },
 		},
-		function( error ) {
+		function ( error ) {
 			if ( error ) {
 				throw error;
 			}

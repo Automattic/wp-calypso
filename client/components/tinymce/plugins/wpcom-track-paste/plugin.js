@@ -19,11 +19,11 @@ function trackPaste( editor ) {
 
 	const store = editor.getParam( 'redux_store' );
 
-	const isGoogleDocsType = type =>
+	const isGoogleDocsType = ( type ) =>
 		type === 'application/x-vnd.google-docs-image-clip+wrapped' ||
 		type === 'application/x-vnd.google-docs-document-slice-clip+wrapped';
 
-	const getSource = types =>
+	const getSource = ( types ) =>
 		types.some( isGoogleDocsType ) ? SOURCE_GOOGLE_DOCS : SOURCE_UNKNOWN;
 
 	/**
@@ -32,7 +32,7 @@ function trackPaste( editor ) {
 	 * @see [types]{@link https://html.spec.whatwg.org/multipage/interaction.html#datatransfer}
 	 * @see [DOMStringList]{@link https://developer.mozilla.org/en-US/docs/Web/API/DOMStringList}
 	 *
-	 * @param {String} mode 'html-editor' or 'visual-editor', indicates which editor was in use on paste.
+	 * @param {string} mode 'html-editor' or 'visual-editor', indicates which editor was in use on paste.
 	 * @param {(Array|DOMStringList)} types The types the content is available to paste.
 	 */
 	const recordPasteEvent = ( mode, types ) => {
@@ -52,9 +52,9 @@ function trackPaste( editor ) {
 		);
 	};
 
-	const onPasteFromTinyMCEEditor = event =>
+	const onPasteFromTinyMCEEditor = ( event ) =>
 		event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
-	const onPasteFromHTMLEditor = event =>
+	const onPasteFromHTMLEditor = ( event ) =>
 		event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
 
 	editor.on( 'paste', onPasteFromTinyMCEEditor );

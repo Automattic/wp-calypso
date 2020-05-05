@@ -30,7 +30,7 @@ class RemoveButton extends PureComponent {
 		}
 
 		const selected = MediaLibrarySelectedStore.getAll( siteId );
-		const items = reject( selected, item => item.ID === itemId );
+		const items = reject( selected, ( item ) => item.ID === itemId );
 
 		MediaActions.setLibrarySelectedItems( siteId, items );
 	};
@@ -41,7 +41,7 @@ class RemoveButton extends PureComponent {
 		return (
 			<button
 				onClick={ this.remove }
-				onMouseDown={ event => event.stopPropagation() }
+				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
 				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>

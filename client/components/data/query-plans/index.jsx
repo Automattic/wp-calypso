@@ -34,7 +34,7 @@ QueryPlans.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			requestingPlans: isRequestingPlans( state ),
 		};

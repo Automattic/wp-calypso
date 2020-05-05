@@ -23,7 +23,7 @@ import contrastImg from 'assets/images/color-schemes/color-scheme-thumbnail-cont
  * `client/state/preferences/schema.js` or preferences state persistence may be invalidated.
  */
 
-export default function( translate ) {
+export default function ( translate ) {
 	return compact( [
 		{
 			label: translate( 'Classic Bright' ),

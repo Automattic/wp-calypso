@@ -294,7 +294,7 @@ class CharMap extends React.Component {
 		];
 	};
 
-	renderCell = cell => {
+	renderCell = ( cell ) => {
 		return (
 			<div
 				key={ cell[ 0 ] }
@@ -308,7 +308,7 @@ class CharMap extends React.Component {
 		);
 	};
 
-	onCellClick = event => {
+	onCellClick = ( event ) => {
 		this.props.editor.execCommand( 'mceInsertContent', false, event.target.textContent.trim() );
 	};
 

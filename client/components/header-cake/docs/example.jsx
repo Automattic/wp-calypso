@@ -13,7 +13,7 @@ import HeaderCake from 'components/header-cake';
 /**
  * Module vars
  */
-const noop = function() {};
+const noop = function () {};
 
 const action = () => alert( 'i <3 cake' );
 

@@ -130,7 +130,7 @@ class EditorFeaturedImagePreview extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		siteId: getSelectedSiteId( state ),
 	};

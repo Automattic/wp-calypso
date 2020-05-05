@@ -95,7 +95,7 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	);
 };
 
-const ConnectedPlanStorageExample = connect( state => {
+const ConnectedPlanStorageExample = connect( ( state ) => {
 	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
 	const siteSlug = getSiteSlug( state, siteId );
 

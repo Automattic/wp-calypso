@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import { getDomainDns } from './selectors';
 
-export const fetchDns = domainName => ( dispatch, getState ) => {
+export const fetchDns = ( domainName ) => ( dispatch, getState ) => {
 	const dns = getDomainDns( getState(), domainName );
 
 	if ( dns.isFetching || dns.hasLoadedFromServer ) {
@@ -64,7 +64,7 @@ export const deleteDns = ( domainName, record ) => ( dispatch, getState ) => {
 	return updateResult;
 };
 
-export const applyDnsTemplate = ( domainName, provider, service, variables ) => dispatch => {
+export const applyDnsTemplate = ( domainName, provider, service, variables ) => ( dispatch ) => {
 	const applyResult = wpcom
 		.undocumented()
 		.applyDnsTemplate( domainName, provider, service, variables );

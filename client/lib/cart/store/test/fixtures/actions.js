@@ -113,7 +113,7 @@ export const payments = {
 	},
 };
 
-export const transactionPaymentSetActions = mapValues( payments, payment => ( {
+export const transactionPaymentSetActions = mapValues( payments, ( payment ) => ( {
 	type: 'TRANSACTION_PAYMENT_SET',
 	payment,
 } ) );

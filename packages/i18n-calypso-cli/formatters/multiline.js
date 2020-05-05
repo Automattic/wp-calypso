@@ -12,7 +12,7 @@ const SEPARATORS = [ ' ', '/', ',', ';' ];
  *
  * @param {string} literal      - A string literal
  * @param {string|int} startAt  - A prefix (or the negative length of the prefix) the literal will be printed at
- * @return {string}             - A multiline string compatible with the POT format
+ * @returns {string}             - A multiline string compatible with the POT format
  */
 module.exports = function multiline( literal, startAt ) {
 	const maxPosition = MAX_COLUMNS - 1; // MAX_COLUMNS minus the last character needed for closing string (a ");

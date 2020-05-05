@@ -141,7 +141,7 @@ Good:
 }
 ```
 
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `npm start`.
+The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `yarn start`.
 
 Adding additional breakpoints should not be undertaken lightly.
 
@@ -204,7 +204,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ## Right-To-Left (RTL)
 
-We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `npm run build-css`.
+We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `yarn run build-css`.
 
 - If your css code refers to a filename with ‘left’ or ‘right’ in it, for example background: `url(arrow-left.png)`: the RTL version will reference a different file, e.g. `background: url(arrow-right.png)`. Please make sure that file exists.
 - Same goes for ‘ltr’ and ‘rtl’ in it, for example background: url(icons-ltr.png): the RTL version will link to the other direction, e.g `background: url(icons-ltr.png)`. Please make sure that file exists.

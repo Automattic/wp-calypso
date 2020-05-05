@@ -34,7 +34,7 @@ class EditorRevisionsList extends PureComponent {
 		prevIsDisabled: PropTypes.bool,
 	};
 
-	selectRevision = revisionId => {
+	selectRevision = ( revisionId ) => {
 		this.props.selectPostRevision( revisionId );
 	};
 
@@ -160,7 +160,7 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
-						{ map( revisions, revision => {
+						{ map( revisions, ( revision ) => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );

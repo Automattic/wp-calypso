@@ -20,7 +20,6 @@ import PluginsStore from 'lib/plugins/store';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
-jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'Plugins Store', () => {
 	test( 'Store should be an object', () => {

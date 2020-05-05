@@ -6,8 +6,8 @@ import config from 'config';
 import { difference, map } from 'lodash';
 import fs from 'fs';
 
-String.prototype.toProperCase = function() {
-	return this.replace( /\w\S*/g, function( txt ) {
+String.prototype.toProperCase = function () {
+	return this.replace( /\w\S*/g, function ( txt ) {
 		return txt.charAt( 0 ).toUpperCase() + txt.substr( 1 ).toLowerCase();
 	} );
 };
@@ -25,7 +25,7 @@ export function getEmailAddress( prefix, inboxId ) {
 
 export function getExpectedFreeAddresses( searchTerm ) {
 	const suffixes = [ '.wordpress.com', 'blog.wordpress.com', 'site.wordpress.com', '.home.blog' ];
-	return map( suffixes, suffix => {
+	return map( suffixes, ( suffix ) => {
 		return searchTerm + suffix;
 	} );
 }
@@ -156,7 +156,7 @@ export function getAllAccountsWithFeatures( features = [] ) {
 
 	const mustHaveFeatures = [],
 		mustNotHaveFeatures = [];
-	features.forEach( function( feature ) {
+	features.forEach( function ( feature ) {
 		if ( feature.indexOf( '-' ) === 0 ) {
 			mustNotHaveFeatures.push( feature.substring( 1 ) );
 		} else if ( feature.indexOf( '+' ) === 0 ) {
@@ -166,7 +166,7 @@ export function getAllAccountsWithFeatures( features = [] ) {
 		}
 	} );
 
-	return allAccounts.filter( function( account ) {
+	return allAccounts.filter( function ( account ) {
 		// return accounts that have all the "must-have" features and none of the "must-not-have" ones.
 		return (
 			difference( mustHaveFeatures, account.features || [] ).length === 0 &&
@@ -181,7 +181,7 @@ export function hasAccountWithFeatures( features ) {
 }
 
 export function pickRandomAccountWithFeatures( features ) {
-	const accounts = getAllAccountsWithFeatures( features ).filter( function( account ) {
+	const accounts = getAllAccountsWithFeatures( features ).filter( function ( account ) {
 		return ! account.inUse;
 	} );
 

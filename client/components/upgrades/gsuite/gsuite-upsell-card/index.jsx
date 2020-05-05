@@ -34,7 +34,7 @@ const GSuiteUpsellCard = ( {
 	const canContinue = areAllUsersValid( users );
 	const translate = useTranslate();
 
-	const recordClickEvent = eventName => {
+	const recordClickEvent = ( eventName ) => {
 		recordTracksEvent( eventName, {
 			domain_name: domain,
 			user_count: users.length,
@@ -65,14 +65,14 @@ const GSuiteUpsellCard = ( {
 		onSkipClick();
 	};
 
-	const handleReturnKeyPress = event => {
+	const handleReturnKeyPress = ( event ) => {
 		// Simulate an implicit submission for the add user form :)
 		if ( event.key === 'Enter' ) {
 			handleAddEmailClick();
 		}
 	};
 
-	const handleUsersChange = changedUsers => {
+	const handleUsersChange = ( changedUsers ) => {
 		recordUsersChangedEvent( users, changedUsers );
 
 		setUsers( changedUsers );
@@ -85,7 +85,7 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
+						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
 								domain,
 							},
@@ -102,7 +102,7 @@ const GSuiteUpsellCard = ( {
 				<GSuiteUpsellProductDetails domain={ domain } productSlug={ productSlug } />
 
 				<GSuiteNewUserList
-					extraValidation={ user => user }
+					extraValidation={ ( user ) => user }
 					selectedDomainName={ domain }
 					onUsersChange={ handleUsersChange }
 					users={ users }

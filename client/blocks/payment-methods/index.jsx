@@ -57,7 +57,7 @@ function PaymentMethods( { translate, cart } ) {
 			} ) }
 
 			<div className="payment-methods__methods">
-				{ methods.map( method => (
+				{ methods.map( ( method ) => (
 					<PaymentLogo type={ method } key={ method } />
 				) ) }
 			</div>

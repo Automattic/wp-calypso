@@ -95,6 +95,6 @@ class SocialLogin extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	errorUpdatingSocialConnection: getRequestError( state ),
 } ) )( localize( SocialLogin ) );

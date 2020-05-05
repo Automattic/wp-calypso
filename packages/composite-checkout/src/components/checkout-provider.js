@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -13,7 +13,7 @@ import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider, createRegistry } from '../lib/registry';
+import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
 import defaultTheme from '../theme';
 import {
@@ -25,7 +25,7 @@ import {
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider = props => {
+export const CheckoutProvider = ( props ) => {
 	const {
 		locale,
 		total,
@@ -34,36 +34,39 @@ export const CheckoutProvider = props => {
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
-		successRedirectUrl,
-		failureRedirectUrl,
 		theme,
 		paymentMethods,
 		registry,
 		onEvent,
 		isLoading,
+		isValidating,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		paymentMethods ? paymentMethods[ 0 ].id : null
+		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
-
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState( [] );
 	useEffect( () => {
-		if ( formStatus === 'complete' ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			onPaymentComplete();
+		if ( paymentMethods.length !== prevPaymentMethods.length ) {
+			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
+			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+			setPrevPaymentMethods( paymentMethods );
 		}
-	}, [ formStatus, onPaymentComplete ] );
+	}, [ paymentMethods, prevPaymentMethods ] );
 
-	// Remove undefined and duplicate CheckoutWrapper properties
-	const wrappers = [
-		...new Set( paymentMethods.map( method => method.CheckoutWrapper ).filter( Boolean ) ),
-	];
-	debug( `applying ${ wrappers.length } CheckoutWrapper wrappers` );
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const didCallOnPaymentComplete = useRef( false );
+	useEffect( () => {
+		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			didCallOnPaymentComplete.current = true;
+			onPaymentComplete( { paymentMethodId } );
+		}
+	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
-	registryRef.current = registryRef.current || createRegistry();
+	registryRef.current = registryRef.current || defaultRegistry;
 
 	const value = useMemo(
 		() => ( {
@@ -73,14 +76,11 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
-			successRedirectUrl,
-			failureRedirectUrl,
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
 		} ),
 		[
-			failureRedirectUrl,
 			formStatus,
 			onEvent,
 			paymentMethodId,
@@ -89,24 +89,23 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
-			successRedirectUrl,
 		]
 	);
 
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
+	const onError = useCallback(
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error.message } ),
+		[ onEvent ]
+	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
 					<LocalizeProvider locale={ locale }>
 						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>
-								<PaymentMethodWrapperProvider wrappers={ wrappers }>
-									{ children }
-								</PaymentMethodWrapperProvider>
-							</CheckoutContext.Provider>
+							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
 						</LineItemsProvider>
 					</LocalizeProvider>
 				</RegistryProvider>
@@ -127,8 +126,6 @@ CheckoutProvider.propTypes = {
 	showErrorMessage: PropTypes.func.isRequired,
 	showInfoMessage: PropTypes.func.isRequired,
 	showSuccessMessage: PropTypes.func.isRequired,
-	successRedirectUrl: PropTypes.string.isRequired,
-	failureRedirectUrl: PropTypes.string.isRequired,
 	onEvent: PropTypes.func,
 	isLoading: PropTypes.bool,
 };
@@ -142,8 +139,6 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
-		successRedirectUrl,
-		failureRedirectUrl,
 		paymentMethods,
 	} = propsToValidate;
 	useEffect( () => {
@@ -160,10 +155,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
 		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
 		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
-		validateArg( successRedirectUrl, 'CheckoutProvider missing required prop: successRedirectUrl' );
-		validateArg( failureRedirectUrl, 'CheckoutProvider missing required prop: failureRedirectUrl' );
 	}, [
-		failureRedirectUrl,
 		items,
 		locale,
 		onPaymentComplete,
@@ -172,16 +164,9 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
-		successRedirectUrl,
 		total,
 	] );
 	return null;
-}
-
-function PaymentMethodWrapperProvider( { children, wrappers } ) {
-	return wrappers.reduce( ( whole, Wrapper ) => {
-		return <Wrapper>{ whole }</Wrapper>;
-	}, children );
 }
 
 export function useEvents() {
@@ -199,11 +184,3 @@ export function useMessages() {
 	}
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
 }
-
-export const useCheckoutRedirects = () => {
-	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
-	if ( ! successRedirectUrl || ! failureRedirectUrl ) {
-		throw new Error( 'useCheckoutRedirects can only be used inside a CheckoutProvider' );
-	}
-	return { successRedirectUrl, failureRedirectUrl };
-};

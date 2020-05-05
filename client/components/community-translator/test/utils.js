@@ -4,6 +4,7 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -13,14 +14,13 @@ import {
 	getTranslationPermaLink,
 	normalizeDetailsFromTranslationData,
 } from '../utils';
-import { isMobile } from 'lib/viewport';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 } from 'lib/i18n-utils/constants';
 
-jest.mock( 'lib/viewport', () => ( {
+jest.mock( '@automattic/viewport', () => ( {
 	isMobile: jest.fn(),
 } ) );
 

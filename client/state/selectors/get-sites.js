@@ -12,22 +12,22 @@ import { getSite } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getSitesItems from 'state/selectors/get-sites-items';
 
-const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
+const sortByNameAndUrl = ( list ) => sortBy( list, [ 'name', 'URL' ] );
 
 /**
  * Get all sites
  *
- * @param {Object} state  Global state tree
- * @return {Array}        Sites objects
+ * @param {object} state  Global state tree
+ * @returns {Array}        Sites objects
  */
 export default createSelector(
-	state => {
+	( state ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const [ primarySite, sites ] = partition( getSitesItems( state ), { ID: primarySiteId } );
 
-		return [ ...primarySite, ...sortByNameAndUrl( sites ) ].map( site =>
+		return [ ...primarySite, ...sortByNameAndUrl( sites ) ].map( ( site ) =>
 			getSite( state, site.ID )
 		);
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

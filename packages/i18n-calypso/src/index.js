@@ -9,7 +9,6 @@ import rtlFactory from './rtl';
 const i18n = new I18N();
 export { I18N };
 export default i18n;
-export const moment = i18n.moment;
 export const numberFormat = i18n.numberFormat.bind( i18n );
 export const translate = i18n.translate.bind( i18n );
 export const configure = i18n.configure.bind( i18n );

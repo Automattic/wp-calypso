@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, get, partialRight, sumBy } from 'lodash';
+import { flatten, partialRight, sumBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,7 +29,7 @@ import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { withEnhancers } from 'state/utils';
 
-const withToolTip = WrappedComponent => props => {
+const withToolTip = ( WrappedComponent ) => ( props ) => {
 	// inject interval props to renderTooltipForDatanum
 	const renderTooltipForDatanum = props.renderTooltipForDatanum
 		? partialRight( props.renderTooltipForDatanum, props.tooltipInterval )
@@ -55,15 +55,15 @@ function transformData( props ) {
 	const aggregation = getAggregation( props );
 
 	if ( aggregation === 'total' ) {
-		return data.metricValues.map( metric => ( {
+		return data.metricValues.map( ( metric ) => ( {
 			value: metric.totalValue.value,
-			description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-			name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+			description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
+			name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
 		} ) );
 	}
 
-	return data.metricValues.map( metric => {
-		return metric.dimensionalValues.map( datum => {
+	return data.metricValues.map( ( metric ) => {
+		return metric.dimensionalValues.map( ( datum ) => {
 			const datumDate = new Date( datum.time );
 			/* lock date to midnight for all values to better align with ticks */
 			datumDate.setHours( 0 );
@@ -85,9 +85,9 @@ function createLegendInfo( props ) {
 		return data;
 	}
 
-	return data.metricValues.map( metric => ( {
-		description: get( props.dataSeriesInfo, `${ metric.metric }.description`, '' ),
-		name: get( props.dataSeriesInfo, `${ metric.metric }.name`, metric.metric ),
+	return data.metricValues.map( ( metric ) => ( {
+		description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
+		name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
 	} ) );
 }
 
@@ -162,7 +162,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		);
 	}
 
-	handleIntervalChange = event => {
+	handleIntervalChange = ( event ) => {
 		const { interval, statType, siteId } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {

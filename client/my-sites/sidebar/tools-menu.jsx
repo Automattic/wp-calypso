@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import SidebarItem from 'layout/sidebar/item';
 import config from 'config';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import compareProps from 'lib/compare-props';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
@@ -22,6 +22,7 @@ import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -33,10 +34,15 @@ class ToolsMenu extends PureComponent {
 		isJetpack: PropTypes.bool,
 		siteAdminUrl: PropTypes.string,
 		siteSlug: PropTypes.string,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	getPluginItem() {
 		const { canManagePlugins, isAtomicSite, translate } = this.props;
+
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return {};
+		}
 
 		return {
 			name: 'plugins',
@@ -52,15 +58,17 @@ class ToolsMenu extends PureComponent {
 	}
 
 	getImportItem() {
-		const { isJetpack, translate } = this.props;
+		const { isJetpack, isAtomicSite, translate } = this.props;
+
+		const migrateEnabled = config.isEnabled( 'tools/migrate' );
 
 		return {
 			name: 'import',
 			label: translate( 'Import' ),
 			capability: 'manage_options',
-			queryable: ! isJetpack,
+			queryable: ! isJetpack || ( isAtomicSite && migrateEnabled ),
 			link: '/import',
-			paths: [ '/import' ],
+			paths: [ '/import', '/migrate' ],
 			wpAdminLink: 'import.php',
 		};
 	}
@@ -79,9 +87,9 @@ class ToolsMenu extends PureComponent {
 		};
 	}
 
-	onNavigate = postType => () => {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_tools_sidebar_item_clicked', {
 			menu_item: postType,
@@ -142,6 +150,7 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,

@@ -4,8 +4,8 @@
  *
  *
  * @see lib/directly for more about Directly
- * @param {Object}  state  Global state tree
- * @return {Boolean}        Whether the widget has failed
+ * @param {object}  state  Global state tree
+ * @returns {boolean}        Whether the widget has failed
  */
 
 /**

@@ -21,7 +21,7 @@ function DeleteSiteWarningDialog( { isVisible, onClose } ) {
 	const buttons = [
 		{ action: 'dismiss', label: translate( 'Dismiss' ) },
 		<Button primary href={ purchasesRoot }>
-			{ translate( 'Manage Purchases', { context: 'button label' } ) }
+			{ translate( 'Manage purchases', { context: 'button label' } ) }
 		</Button>,
 	];
 

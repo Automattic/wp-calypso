@@ -14,9 +14,8 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -285,9 +284,7 @@ describe( 'reducer', () => {
 				type: READER_SITE_REQUEST_SUCCESS,
 				payload: { ID: 1 },
 			};
-			chaiExpect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 
 		test( 'should update the last fetched time on site update', () => {
@@ -296,9 +293,7 @@ describe( 'reducer', () => {
 				type: READER_SITE_UPDATE,
 				payload: [ { ID: 1 } ],
 			};
-			chaiExpect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );

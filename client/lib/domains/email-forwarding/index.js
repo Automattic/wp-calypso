@@ -13,15 +13,15 @@ import { type as domainTypes } from 'lib/domains/constants';
 /**
  * Retrieves the first domain that is eligible for Email Forwarding either from the current selected site or the list of domains.
  *
- * @param {String} selectedDomainName - domain name for the site currently selected by the user
+ * @param {string} selectedDomainName - domain name for the site currently selected by the user
  * @param {Array} domains - list of domain objects
- * @returns {String} - Eligible domain name
+ * @returns {string} - Eligible domain name
  */
 function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
 	const eligibleDomains = getEmailForwardingSupportedDomains( domains );
 	let selectedDomain;
 	if ( selectedDomainName ) {
-		selectedDomain = eligibleDomains.reduce( function( selected, domain ) {
+		selectedDomain = eligibleDomains.reduce( function ( selected, domain ) {
 			return domain.name === selectedDomainName ? domain.name : selected;
 		}, '' );
 	}
@@ -35,7 +35,7 @@ function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
  * @returns {Array} - Array of Email Forwarding supported domans
  */
 function getEmailForwardingSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
+	return domains.filter( function ( domain ) {
 		const domainHasGSuiteWithUs = hasGSuiteWithUs( domain );
 		const wpcomHosted =
 			includes( [ domainTypes.REGISTERED ], domain.type ) && domain.hasWpcomNameservers;

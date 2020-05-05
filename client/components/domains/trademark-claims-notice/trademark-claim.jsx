@@ -16,11 +16,11 @@ class TrademarkClaim extends React.Component {
 		trademarkClaim: PropTypes.object.isRequired,
 	};
 
-	renderItemLabel = label => (
+	renderItemLabel = ( label ) => (
 		<span className="trademark-claims-notice__claim-item-label">{ label + ': ' }</span>
 	);
 
-	renderItemData = data => (
+	renderItemData = ( data ) => (
 		<span className="trademark-claims-notice__claim-item-data">{ data }</span>
 	);
 
@@ -37,23 +37,23 @@ class TrademarkClaim extends React.Component {
 		</li>
 	);
 
-	renderList = list => (
+	renderList = ( list ) => (
 		<ul className="trademark-claims-notice__claim-item-list">
 			{ list.map( ( item, index ) => item && this.renderListItem( index, item ) ) }
 		</ul>
 	);
 
-	renderMark = claim => {
+	renderMark = ( claim ) => {
 		const { markName } = claim;
 		return markName && this.renderItem( 'mark-name', 'Mark', markName );
 	};
 
-	renderJurisdiction = claim => {
+	renderJurisdiction = ( claim ) => {
 		const { jurDesc } = claim;
 		return jurDesc && this.renderItem( 'jurisdiction', 'Jurisdiction', jurDesc );
 	};
 
-	renderGoodsAndServices = claim => {
+	renderGoodsAndServices = ( claim ) => {
 		const goodsAndServices = get( claim, 'goodsAndServices' );
 
 		return (
@@ -66,7 +66,7 @@ class TrademarkClaim extends React.Component {
 		);
 	};
 
-	renderInternationalClassification = claim => {
+	renderInternationalClassification = ( claim ) => {
 		const classDesc = get( claim, 'classDesc' );
 
 		return (
@@ -79,7 +79,7 @@ class TrademarkClaim extends React.Component {
 		);
 	};
 
-	renderContactInfo = contact => {
+	renderContactInfo = ( contact ) => {
 		if ( ! contact ) {
 			return;
 		}
@@ -105,7 +105,7 @@ class TrademarkClaim extends React.Component {
 		return this.renderList( contactData );
 	};
 
-	renderRegistrant = claim => {
+	renderRegistrant = ( claim ) => {
 		const holder = get( claim, 'holder' );
 		return (
 			holder &&
@@ -113,12 +113,12 @@ class TrademarkClaim extends React.Component {
 		);
 	};
 
-	renderContact = claim => {
+	renderContact = ( claim ) => {
 		const contact = get( claim, 'contact' );
 		return contact && this.renderItem( 'contact', 'Contact', this.renderContactInfo( contact ) );
 	};
 
-	renderCourtCases = courtCases => {
+	renderCourtCases = ( courtCases ) => {
 		return courtCases.map( ( courtCase, index ) =>
 			this.renderItem(
 				index,
@@ -132,7 +132,7 @@ class TrademarkClaim extends React.Component {
 		);
 	};
 
-	renderUdrpCases = udrpCases => {
+	renderUdrpCases = ( udrpCases ) => {
 		return udrpCases.map( ( udrpCase, index ) =>
 			this.renderItem(
 				index,
@@ -145,7 +145,7 @@ class TrademarkClaim extends React.Component {
 		);
 	};
 
-	renderCases = claim => {
+	renderCases = ( claim ) => {
 		const notExactMatch = get( claim, 'notExactMatch' );
 
 		if ( ! notExactMatch ) {

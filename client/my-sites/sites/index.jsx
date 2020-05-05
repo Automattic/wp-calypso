@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import VisitSite from 'blocks/visit-site';
-
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 /**
  * Style dependencies
  */
@@ -24,7 +24,7 @@ class Sites extends Component {
 		siteBasePath: PropTypes.string.isRequired,
 	};
 
-	filterSites = site => {
+	filterSites = ( site ) => {
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
@@ -43,13 +43,17 @@ class Sites extends Component {
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {
-			// Hosting routes are not applicable to any VIP or WP.org Jetpack sites.
-			if ( site.is_vip || ( site.jetpack && ! site.options.is_automated_transfer ) ) {
+			if ( ! site.capabilities.view_hosting ) {
 				return false;
 			}
 
 			// allow both Atomic sites and Simple sites, so they can be exposed to upgrade notices.
 			return true;
+		}
+
+		// Supported on Simple and Atomic Sites
+		if ( /^\/home/.test( path ) ) {
+			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
 		}
 
 		return site;
@@ -128,6 +132,7 @@ class Sites extends Component {
 						groups
 					/>
 				</Card>
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	}

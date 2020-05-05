@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
+import { getReaderConversationFollowStatus } from 'state/reader/conversations/selectors';
 
 describe( 'getReaderConversationFollowStatus()', () => {
 	test( 'should return F for a known followed post', () => {

@@ -1040,34 +1040,6 @@ describe( 'themes selectors', () => {
 			} );
 
 			describe( 'with JP version >= 4.7', () => {
-				describe( 'with Jetpack Manage turned off', () => {
-					test( "should return the site's wp-admin theme details URL", () => {
-						const detailsUrl = getThemeDetailsUrl(
-							{
-								sites: {
-									items: {
-										77203074: {
-											ID: 77203074,
-											URL: 'https://example.net',
-											jetpack: true,
-											options: {
-												admin_url: 'https://example.net/wp-admin/',
-												jetpack_version: '4.7',
-												active_modules: [],
-											},
-										},
-									},
-								},
-							},
-							'twentysixteen',
-							77203074
-						);
-						expect( detailsUrl ).to.equal(
-							'https://example.net/wp-admin/themes.php?theme=twentysixteen'
-						);
-					} );
-				} );
-
 				describe( 'with Jetpack Manage not explicitly turned off', () => {
 					test( 'should return the Calypso theme sheet URL', () => {
 						const detailsUrl = getThemeDetailsUrl(
@@ -1386,6 +1358,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				},
 				'twentysixteen',
@@ -1443,6 +1416,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1497,6 +1471,7 @@ describe( 'themes selectors', () => {
 								items: { twentysixteen },
 							} ),
 						},
+						activeThemes: {},
 					},
 				};
 
@@ -1778,7 +1753,7 @@ describe( 'themes selectors', () => {
 		test( 'given no site, should return null', () => {
 			const activeTheme = getActiveTheme( {
 				themes: {
-					activeTheme: {},
+					activeThemes: {},
 				},
 			} );
 
@@ -2460,7 +2435,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
 						sites: {

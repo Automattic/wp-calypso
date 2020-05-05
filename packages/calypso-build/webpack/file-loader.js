@@ -2,9 +2,9 @@
  * Return a Webpack loader configuration object for files / images.
  *
  * @param  {object} options File loader options
- * @return {object}         Webpack loader object
+ * @returns {object}         Webpack loader object
  */
-module.exports.loader = options => ( {
+module.exports.loader = ( options ) => ( {
 	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
 	use: [
 		{

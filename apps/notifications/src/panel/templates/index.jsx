@@ -39,17 +39,17 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {Object} Notification
- * @property {!Number} id notification id
+ * @typedef {object} Notification
+ * @property {!number} id notification id
  */
 
 /**
  * Returns the next index into a list of notes following
  * the index for the given sought-after notification id
  *
- * @param {!Number} noteId id of note to search for
+ * @param {!number} noteId id of note to search for
  * @param {!Array<Notification>} notes list of notes to search through
- * @returns {?Number} index into note list of note following that given by noteId
+ * @returns {?number} index into note list of note following that given by noteId
  */
 export const findNextNoteId = ( noteId, notes ) => {
 	if ( notes.length === 0 ) {
@@ -173,7 +173,7 @@ class Layout extends React.Component {
 		window.removeEventListener( 'resize', this.redraw );
 	}
 
-	navigateByDirection = direction => {
+	navigateByDirection = ( direction ) => {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
@@ -201,7 +201,7 @@ class Layout extends React.Component {
 		}
 
 		const stepAtom = direction > 0 ? 1 : -1;
-		const noteIndexIsSelectable = index => {
+		const noteIndexIsSelectable = ( index ) => {
 			/* Note doesn't exist */
 			if ( 'undefined' === typeof filteredNotes[ index ] ) {
 				return false;
@@ -296,7 +296,7 @@ class Layout extends React.Component {
 		this.navigateByDirection( -1 );
 	};
 
-	toggleNavigation = navigationEnabled => {
+	toggleNavigation = ( navigationEnabled ) => {
 		return 'boolean' === typeof navigationEnabled && this.setState( { navigationEnabled } );
 	};
 
@@ -315,16 +315,16 @@ class Layout extends React.Component {
 		this.forceUpdate();
 	};
 
-	modifierKeyIsActive = e => {
+	modifierKeyIsActive = ( e ) => {
 		return e.altKey || e.ctrlKey || e.metaKey;
 	};
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( ! this.props.isShowing ) {
 			return;
 		}
 
-		const stopEvent = function() {
+		const stopEvent = function () {
 			event.stopPropagation();
 			event.preventDefault();
 		};
@@ -420,7 +420,7 @@ class Layout extends React.Component {
 		}
 	};
 
-	refreshNotesToDisplay = allNotes => {
+	refreshNotesToDisplay = ( allNotes ) => {
 		const notes = this.filterController.getFilteredNotes( allNotes );
 		if (
 			this.state.selectedNote &&
@@ -432,15 +432,15 @@ class Layout extends React.Component {
 		this.setState( { notes } );
 	};
 
-	storeNoteList = ref => {
+	storeNoteList = ( ref ) => {
 		this.noteList = ref;
 	};
 
-	storeDetailViewRef = ref => {
+	storeDetailViewRef = ( ref ) => {
 		this.detailView = ref;
 	};
 
-	storeNoteListVisibilityUpdater = updater => {
+	storeNoteListVisibilityUpdater = ( updater ) => {
 		this.noteListVisibilityUpdater = updater;
 	};
 
@@ -524,8 +524,8 @@ class Layout extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	isNoteHidden: noteId => getIsNoteHidden( state, noteId ),
+const mapStateToProps = ( state ) => ( {
+	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),
 	selectedNoteId: getSelectedNoteId( state ),

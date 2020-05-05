@@ -12,10 +12,10 @@ import { isValidCapability } from 'state/current-user/selectors';
  *
  * @see https://codex.wordpress.org/Function_Reference/current_user_can
  *
- * @param  {Object}   state      Global state tree
- * @param  {Number}   siteId     Site ID
- * @param  {String}   capability Capability label
- * @return {?Boolean}            Whether current user has capability
+ * @param  {object}   state      Global state tree
+ * @param  {number}   siteId     Site ID
+ * @param  {string}   capability Capability label
+ * @returns {?boolean}            Whether current user has capability
  */
 export const canCurrentUser = ( state, siteId, capability ) => {
 	if ( ! isValidCapability( state, siteId, capability ) ) {

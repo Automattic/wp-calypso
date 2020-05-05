@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 
-const StatsCommentTab = props => {
+const StatsCommentTab = ( props ) => {
 	const { data, followList, isActive, name, value, label } = props;
 	let statsList;
 

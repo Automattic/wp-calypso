@@ -1,0 +1,5 @@
+.scan-history-placeholder__content,
+.scan-history-placeholder__header {
+	display: inline-flex;
+	@include placeholder( --color-neutral-10 );
+}

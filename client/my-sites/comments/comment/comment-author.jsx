@@ -20,7 +20,7 @@ import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
@@ -60,9 +60,7 @@ export class CommentAuthor extends Component {
 
 		const formattedDate = moment( commentDate ).format( 'll LT' );
 
-		const relativeDate = moment()
-			.subtract( 1, 'month' )
-			.isBefore( commentDate )
+		const relativeDate = moment().subtract( 1, 'month' ).isBefore( commentDate )
 			? moment( commentDate ).fromNow()
 			: moment( commentDate ).format( 'll' );
 

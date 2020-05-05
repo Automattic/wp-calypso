@@ -32,7 +32,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	static defaultProps = {
 		buttons: Object.freeze( [] ),
 		style: 'icon',
-		onButtonClick: function() {},
+		onButtonClick: function () {},
 		showMore: false,
 		forceMorePreviewVisible: false,
 	};
@@ -74,7 +74,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		}
 	};
 
-	detectWidgetPreviewChanges = event => {
+	detectWidgetPreviewChanges = ( event ) => {
 		let preview, offset;
 
 		// Ensure this only triggers in the context of an official preview
@@ -118,7 +118,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		}
 	};
 
-	showMorePreview = event => {
+	showMorePreview = ( event ) => {
 		let moreButton, offset;
 
 		if ( event && ( event.currentTarget.contains( event.relatedTarget ) || hasTouch() ) ) {
@@ -148,7 +148,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		}
 	};
 
-	toggleMorePreview = event => {
+	toggleMorePreview = ( event ) => {
 		if ( event ) {
 			// Prevent document click handler from doubling or counteracting this
 			// toggle action
@@ -188,7 +188,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	getCustomPreviewElement = () => {
-		const buttons = this.props.buttons.map( function( button ) {
+		const buttons = this.props.buttons.map( function ( button ) {
 			return (
 				<ButtonsPreviewButton
 					key={ button.ID }

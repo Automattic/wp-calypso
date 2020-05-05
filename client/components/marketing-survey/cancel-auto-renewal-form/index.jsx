@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -63,7 +64,7 @@ class CancelAutoRenewalForm extends Component {
 		const { translate } = props;
 		const productType = this.getProductTypeString();
 
-		this.radioButtons = [
+		this.radioButtons = shuffle( [
 			[
 				'let-it-expire',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
@@ -79,7 +80,7 @@ class CancelAutoRenewalForm extends Component {
 				} ),
 			],
 			[ 'not-sure', translate( "I'm not sure." ) ],
-		];
+		] );
 	}
 
 	onSubmit = () => {
@@ -93,13 +94,13 @@ class CancelAutoRenewalForm extends Component {
 		submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSite.ID,
-			enrichedSurveyData( surveyData, selectedSite, purchase )
+			enrichedSurveyData( surveyData, purchase )
 		);
 
 		this.props.onClose();
 	};
 
-	onRadioChange = event => {
+	onRadioChange = ( event ) => {
 		this.setState( {
 			response: event.currentTarget.value,
 		} );
@@ -146,7 +147,7 @@ class CancelAutoRenewalForm extends Component {
 							}
 						) }
 					</p>
-					{ this.radioButtons.map( radioButton =>
+					{ this.radioButtons.map( ( radioButton ) =>
 						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
 					) }
 				</FormFieldset>

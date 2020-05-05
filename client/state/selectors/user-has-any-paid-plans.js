@@ -13,10 +13,10 @@ import { isPlan } from 'lib/products-values';
 /**
  * Whether the user currently has any paid plans
  *
- * @param {Object} state  Global state tree
- * @return {Object}       Site object
+ * @param {object} state  Global state tree
+ * @returns {object}       Site object
  */
 export default createSelector(
-	state => some( getSitesItems( state ), site => isPlan( site.plan ) ),
-	state => [ getSitesItems( state ) ]
+	( state ) => some( getSitesItems( state ), ( site ) => isPlan( site.plan ) ),
+	( state ) => [ getSitesItems( state ) ]
 );

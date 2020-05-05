@@ -8,7 +8,8 @@ import deepfreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, isRequesting } from '../reducer';
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE, DESERIALIZE } from 'state/action-types';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-types';
+import { DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
@@ -19,7 +20,7 @@ const invalidState = [ { slug: 1, title: 'foo bar' } ];
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

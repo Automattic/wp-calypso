@@ -1,14 +1,37 @@
-enum ActionType {
-	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
-	SET_DOMAIN = 'SET_DOMAIN',
-	SET_SITE_TITLE = 'SET_SITE_TITLE',
-	SET_SITE_TYPE = 'SET_SITE_TYPE',
-	SET_SITE_VERTICAL = 'SET_SITE_VERTICAL',
-	RESET_SITE_VERTICAL = 'RESET_SITE_VERTICAL',
-}
-export { ActionType };
+type FontPair = import('../../constants').FontPair;
 
 export interface SiteVertical {
+	/**
+	 * Vertical Label. Either obtained from WP.com, or specified by the user.
+	 *
+	 * @example
+	 * Christmas Tree Farm
+	 */
 	label: string;
-	id: string;
+
+	/**
+	 * Untranslated Vertical Label. Obtained from WP.com.
+	 *
+	 * @example
+	 * Christmas Tree Farm
+	 */
+	slug?: string;
+
+	/**
+	 * Vertical ID. Can be undefined for user-specified verticals that don't exist in WP.com's curated list.
+	 *
+	 * @example
+	 * p2v19
+	 */
+	id?: string;
+}
+
+export interface Design {
+	title: string;
+	slug: string;
+	src: string;
+	theme: string;
+	template: string;
+	fonts: FontPair;
+	categories: Array< string >;
 }

@@ -34,26 +34,40 @@ import {
 	requestDeleteProduct,
 } from 'state/memberships/product-list/actions';
 
-// These are Stripe settlement currencies.
-const CURRENCIES = [
-	'USD',
-	'AUD',
-	'BRL',
-	'CAD',
-	'CHF',
-	'DKK',
-	'EUR',
-	'GBP',
-	'HKD',
-	'JPY',
-	'MXN',
-	'NOK',
-	'NZD',
-	'SEK',
-	'SGD',
-];
+/**
+ * @typedef {[string, number] CurrencyMinimum
+ *
+ *
+ * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
+ *
+ * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
+ *
+ * @type { [currency: string]: number }
+ */
+const MINIMUM_CURRENCY_AMOUNT = {
+	USD: 0.5,
+	AUD: 0.5,
+	BRL: 0.5,
+	CAD: 0.5,
+	CHF: 0.5,
+	DKK: 2.5,
+	EUR: 0.5,
+	GBP: 0.3,
+	HKD: 4.0,
+	INR: 0.5,
+	JPY: 50,
+	MXN: 10,
+	NOK: 3.0,
+	NZD: 0.5,
+	PLN: 2.0,
+	SEK: 3.0,
+	SGD: 0.5,
+};
 
-const currencyList = CURRENCIES.map( code => ( { code } ) );
+/**
+ * @type Array<{ code: string }>
+ */
+const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
 class MembershipsProductsSection extends Component {
 	constructor() {
@@ -86,7 +100,7 @@ class MembershipsProductsSection extends Component {
 		);
 	}
 
-	onCloseDialog = reason => {
+	onCloseDialog = ( reason ) => {
 		if ( reason === 'submit' && ! this.state.editedProductId ) {
 			this.props.requestAddProduct(
 				this.props.siteId,
@@ -118,9 +132,9 @@ class MembershipsProductsSection extends Component {
 		this.setState( { showDialog: false, editedProductId: null } );
 	};
 
-	openProductDialog = editedProductId => {
+	openProductDialog = ( editedProductId ) => {
 		if ( editedProductId ) {
-			const product = this.props.products.filter( prod => prod.ID === editedProductId ).pop();
+			const product = this.props.products.filter( ( prod ) => prod.ID === editedProductId ).pop();
 			this.setState( {
 				showDialog: true,
 				editedProductId,
@@ -141,7 +155,7 @@ class MembershipsProductsSection extends Component {
 				editedProductName: '',
 				editedPrice: {
 					currency: 'USD',
-					value: 5.0,
+					value: minimumCurrencyTransactionAmount( 'USD' ),
 				},
 				editedSchedule: '1 month',
 				editedPayWhatYouWant: false,
@@ -150,9 +164,11 @@ class MembershipsProductsSection extends Component {
 			} );
 		}
 	};
-	onCloseDeleteProduct = reason => {
+	onCloseDeleteProduct = ( reason ) => {
 		if ( reason === 'delete' ) {
-			const product = this.props.products.filter( p => p.ID === this.state.deletedProductId ).pop();
+			const product = this.props.products
+				.filter( ( p ) => p.ID === this.state.deletedProductId )
+				.pop();
 			this.props.requestDeleteProduct(
 				this.props.siteId,
 				product,
@@ -161,27 +177,30 @@ class MembershipsProductsSection extends Component {
 		}
 		this.setState( { deletedProductId: null } );
 	};
-	handleCurrencyChange = event => {
+	handleCurrencyChange = ( event ) => {
 		const { value: currency } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			editedPrice: { ...state.editedPrice, currency },
 		} ) );
 	};
-	handlePriceChange = event => {
+	handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			editedPrice: { ...state.editedPrice, value },
 		} ) );
 	};
-	handlePayWhatYouWant = newValue => this.setState( { editedPayWhatYouWant: newValue } );
-	handleMultiplePerUser = newValue => this.setState( { editedMultiplePerUser: newValue } );
+	handlePayWhatYouWant = ( newValue ) => this.setState( { editedPayWhatYouWant: newValue } );
+	handleMultiplePerUser = ( newValue ) => this.setState( { editedMultiplePerUser: newValue } );
 
-	onNameChange = event => this.setState( { editedProductName: event.target.value } );
-	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
-	isFormValid = field => {
-		if ( ( field === 'price' || ! field ) && this.state.editedPrice.value < 5.0 ) {
+	onNameChange = ( event ) => this.setState( { editedProductName: event.target.value } );
+	onSelectSchedule = ( event ) => this.setState( { editedSchedule: event.target.value } );
+	isFormValid = ( field ) => {
+		if (
+			( field === 'price' || ! field ) &&
+			! isValidCurrencyAmount( this.state.editedPrice.currency, this.state.editedPrice.value )
+		) {
 			return false;
 		}
 		if ( ( field === 'name' || ! field ) && this.state.editedProductName.length === 0 ) {
@@ -235,8 +254,7 @@ class MembershipsProductsSection extends Component {
 					<FormCurrencyInput
 						name="currency"
 						id="currency"
-						min="5.00"
-						value={ this.state.editedPrice.value }
+						value={ isNaN( this.state.editedPrice.value ) ? '' : this.state.editedPrice.value }
 						onChange={ this.handlePriceChange }
 						currencySymbolPrefix={ this.state.editedPrice.currency }
 						onCurrencyChange={ this.handleCurrencyChange }
@@ -246,7 +264,14 @@ class MembershipsProductsSection extends Component {
 					{ ! this.isFormValid( 'price' ) && (
 						<FormInputValidation
 							isError
-							text={ this.props.translate( 'Please enter a price higher than 5.00' ) }
+							text={ this.props.translate( 'Please enter a price higher than %s', {
+								args: [
+									formatCurrency(
+										minimumCurrencyTransactionAmount( this.state.editedPrice.currency ),
+										this.state.editedPrice.currency
+									),
+								],
+							} ) }
 						/>
 					) }
 				</FormFieldset>
@@ -315,7 +340,7 @@ class MembershipsProductsSection extends Component {
 						{ this.props.translate( 'Add new plan' ) }
 					</Button>
 				</SectionHeader>
-				{ this.props.products.map( product => (
+				{ this.props.products.map( ( product ) => (
 					<CompactCard className="memberships__products-product-card" key={ product.ID }>
 						<div className="memberships__products-product-details">
 							<div className="memberships__products-product-price">
@@ -346,7 +371,7 @@ class MembershipsProductsSection extends Component {
 					<p>
 						{ this.props.translate( 'Do you want to delete "%s"?', {
 							args: get(
-								this.props.products.filter( p => p.ID === this.state.deletedProductId ),
+								this.props.products.filter( ( p ) => p.ID === this.state.deletedProductId ),
 								[ 0, 'title' ],
 								''
 							),
@@ -365,8 +390,30 @@ class MembershipsProductsSection extends Component {
 	}
 }
 
+/**
+ * Return the minimum transaction amount for a currency.
+ *
+ *
+ * @param {string} currency - Currency.
+ * @returns {number} Minimum transaction amount for given currency.
+ */
+function minimumCurrencyTransactionAmount( currency ) {
+	return MINIMUM_CURRENCY_AMOUNT[ currency ];
+}
+
+/**
+ * Validates that the given price is at least the minimum transaction amount for the given currency.
+ *
+ * @param {string} currency Currency of price.
+ * @param {number} price Amount in currency.
+ * @returns {boolean} True if the price is valid for the currency.
+ */
+function isValidCurrencyAmount( currency, price ) {
+	return price >= minimumCurrencyTransactionAmount( currency );
+}
+
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		return {

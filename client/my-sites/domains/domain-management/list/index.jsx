@@ -30,13 +30,6 @@ import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
-import DomainListNotice from './domain-list-notice';
-import {
-	PRIMARY_DOMAIN_CHANGE_SUCCESS,
-	PRIMARY_DOMAIN_CHANGE_FAIL,
-	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS,
-} from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import EmptyContent from 'components/empty-content';
@@ -51,11 +44,13 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
-
+import { successNotice, errorNotice } from 'state/notices/actions';
 /**
  * Style dependencies
  */
 import './style.scss';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -78,16 +73,7 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		notice: null,
 	};
-
-	componentDidUpdate( prevProps ) {
-		if (
-			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
-		) {
-			this.hideNotice();
-		}
-	}
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -125,10 +111,11 @@ export class List extends React.Component {
 
 		return (
 			<Notice
-				status="is-info"
+				status="is-success"
 				showDismiss={ false }
 				text={ translate( 'Free domain available' ) }
-				icon="globe"
+				icon="info-outline"
+				className="domain-management__claim-free-domain"
 			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
@@ -145,7 +132,9 @@ export class List extends React.Component {
 	}
 
 	filterOutWpcomDomains( domains ) {
-		return domains.filter( domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+		return domains.filter(
+			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+		);
 	}
 
 	render() {
@@ -215,10 +204,7 @@ export class List extends React.Component {
 
 				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
-				<div className="domain-management-list__items">
-					{ this.notice() }
-					{ this.listItems() }
-				</div>
+				<div className="domain-management-list__items">{ this.listItems() }</div>
 
 				<DomainToPlanNudge />
 			</Main>
@@ -236,75 +222,10 @@ export class List extends React.Component {
 			domain.registrationDate &&
 			this.props
 				.moment()
-				.subtract( 1, 'day' )
+				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
-
-	hideNotice = () => {
-		this.setState( { notice: null } );
-	};
-
-	notice() {
-		const { notice } = this.state;
-		if ( ! notice ) {
-			return null;
-		}
-
-		return (
-			<DomainListNotice
-				type={ notice.type }
-				errorMessage={ notice.error && notice.error.message }
-				onDismissClick={ this.hideNotice }
-				onUndoClick={ this.undoSetPrimaryDomain }
-				domainName={ notice.domainName }
-			/>
-		);
-	}
-
-	undoSetPrimaryDomain = () => {
-		if ( ! this.state.notice ) {
-			return;
-		}
-
-		const { previousDomainName } = this.state.notice;
-
-		this.setPrimaryDomain( previousDomainName ).then(
-			() => {
-				this.setState( {
-					primaryDomainIndex: -1,
-					settingPrimaryDomain: false,
-					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_REVERT_SUCCESS,
-						domainName: previousDomainName,
-					},
-				} );
-			},
-			error => {
-				this.setState( {
-					notice: {
-						primaryDomainIndex: -1,
-						settingPrimaryDomain: false,
-						changePrimaryDomainModeEnabled: false,
-						type: PRIMARY_DOMAIN_REVERT_FAIL,
-						domainName: previousDomainName,
-						error,
-					},
-				} );
-			}
-		);
-		const previousDomainIndex = findIndex( this.props.domains, { name: previousDomainName } );
-
-		this.setState( {
-			notice: null,
-			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: previousDomainIndex,
-			settingPrimaryDomain: true,
-		} );
-
-		this.props.undoChangePrimary( this.props.domains[ previousDomainIndex ] );
-	};
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
@@ -369,7 +290,7 @@ export class List extends React.Component {
 				className="domain-management-list__change-primary-button"
 				onClick={ this.enableChangePrimaryDomainMode }
 			>
-				{ this.props.translate( 'Change Primary', {
+				{ this.props.translate( 'Change primary', {
 					context: 'Button label for changing primary domain',
 				} ) }
 			</Button>
@@ -390,7 +311,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add Domain' ) }
+				{ this.props.translate( 'Add domain' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -410,6 +331,8 @@ export class List extends React.Component {
 	}
 
 	handleUpdatePrimaryDomain = ( index, domain ) => {
+		const { translate } = this.props;
+
 		if ( this.state.settingPrimaryDomain ) {
 			return;
 		}
@@ -436,30 +359,47 @@ export class List extends React.Component {
 				this.setState( {
 					settingPrimaryDomain: false,
 					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
-						domainName: domain.name,
-						previousDomainName: currentPrimaryName,
-					},
 				} );
+
+				this.props.successNotice(
+					translate(
+						'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
+						{ args: { domainName: domain.name }, components: { em: <em /> } }
+					),
+					{ duration: 10000, isPersistent: true }
+				);
 			},
-			error => {
+			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_FAIL,
-						domainName: domain.name,
-						error,
-					},
 				} );
+				this.props.errorNotice(
+					error.message ||
+						translate( "Something went wrong and we couldn't change your primary domain." ),
+					{ duration: 10000, isPersistent: true }
+				);
 			}
 		);
 	};
 
+	shouldUpgradeToMakeDomainPrimary( domain ) {
+		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag } = this.props;
+
+		return (
+			hasNonPrimaryDomainsFlag &&
+			isOnFreePlan &&
+			( domain.type === type.REGISTERED || domain.type === type.MAPPED ) &&
+			! isDomainOnly &&
+			! domain.isPrimary &&
+			! domain.isWPCOMDomain &&
+			! domain.isWpcomStagingDomain
+		);
+	}
+
 	listItems() {
 		if ( this.isLoading() ) {
-			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
 		const domains =
@@ -481,17 +421,24 @@ export class List extends React.Component {
 					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
+					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
+					onUpgradeClick={ this.goToPlans }
 				/>
 			);
 		} );
 	}
 
-	goToEditDomainRoot = domain => {
+	goToEditDomainRoot = ( domain ) => {
 		if ( domain.type !== type.TRANSFER ) {
 			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 		} else {
 			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
+	};
+
+	goToPlans = () => {
+		this.props.upsellUpgradeClick();
+		page( `/plans/${ this.props.selectedSite.slug }` );
 	};
 }
 
@@ -516,7 +463,10 @@ const disablePrimaryDomainMode = () =>
 		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
 	);
 
-const changePrimary = domain =>
+const upsellUpgradeClick = () =>
+	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
+
+const changePrimary = ( domain ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -529,32 +479,25 @@ const changePrimary = domain =>
 		} )
 	);
 
-const undoChangePrimary = domain =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Undo change Primary Domain in List',
-			'Domain Name (Reverted to)',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_list_undo_change_primary_domain_click', {
-			section: domain.type,
-		} )
-	);
-
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const selectedSite = get( ownProps, 'selectedSite', null );
+		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
+			isOnFreePlan,
 			userCanManageOptions,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
@@ -566,8 +509,10 @@ export default connect(
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-			changePrimary: domain => dispatch( changePrimary( domain ) ),
-			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
+			changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
+			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );

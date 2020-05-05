@@ -25,12 +25,13 @@ import FormSelect from 'components/forms/form-select';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import Main from 'components/main';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
+/* eslint-disable react/prefer-es6-class */
 const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
@@ -45,7 +46,7 @@ const NotificationSubscriptions = createReactClass( {
 	},
 
 	handleCheckboxEvent( action ) {
-		return event => {
+		return ( event ) => {
 			const eventAction = 'Clicked ' + action + ' checkbox';
 			const optionValue = event.target.checked ? 1 : 0;
 
@@ -57,11 +58,7 @@ const NotificationSubscriptions = createReactClass( {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
 			context: 'Hour range between which subscriptions are delivered',
 			args: {
-				fromHour: this.props
-					.moment()
-					.hour( hour )
-					.minute( 0 )
-					.format( 'LT' ),
+				fromHour: this.props.moment().hour( hour ).minute( 0 ).format( 'LT' ),
 				toHour: this.props
 					.moment()
 					.hour( hour + 2 )
@@ -73,7 +70,7 @@ const NotificationSubscriptions = createReactClass( {
 
 	render() {
 		return (
-			<Main className="notifications-settings">
+			<Main className="reader-subscriptions__notifications-settings">
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
@@ -83,14 +80,14 @@ const NotificationSubscriptions = createReactClass( {
 
 				<Navigation path={ this.props.path } />
 
-				<Card className="me-notification-settings">
+				<Card className="reader-subscriptions__notification-settings">
 					<form
 						id="notification-settings"
 						onChange={ this.props.markChanged }
 						onSubmit={ this.submitForm }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Subscriptions Delivery' ) }
+							{ this.props.translate( 'Subscriptions delivery' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
@@ -110,7 +107,7 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_email_default">
-								{ this.props.translate( 'Default Email Delivery' ) }
+								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
@@ -130,7 +127,7 @@ const NotificationSubscriptions = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.getSetting( 'subscription_delivery_jabber_default' ) }
@@ -138,7 +135,7 @@ const NotificationSubscriptions = createReactClass( {
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onChange={ this.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Notification Delivery by Jabber' ) }
+									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
 								/>
 								<span>
 									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
@@ -148,14 +145,14 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_mail_option">
-								{ this.props.translate( 'Email Delivery Format' ) }
+								{ this.props.translate( 'Email delivery format' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
 								onChange={ this.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email Delivery Format' ) }
+								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.getSetting( 'subscription_delivery_mail_option' ) }
 							>
 								<option value="html">{ this.props.translate( 'HTML' ) }</option>
@@ -165,15 +162,15 @@ const NotificationSubscriptions = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_day">
-								{ this.props.translate( 'Email Delivery Window' ) }
+								{ this.props.translate( 'Email delivery window' ) }
 							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
-								className="me-notification-settings__delivery-window"
+								className="reader-subscriptions__delivery-window"
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
 								onChange={ this.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email Delivery Window Day' ) }
+								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.getSetting( 'subscription_delivery_day' ) }
 							>
 								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
@@ -215,7 +212,7 @@ const NotificationSubscriptions = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Block Emails' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Block emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.getSetting( 'subscription_delivery_email_blocked' ) }
@@ -240,7 +237,7 @@ const NotificationSubscriptions = createReactClass( {
 						>
 							{ this.state.submittingForm
 								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save Notification Settings' ) }
+								: this.props.translate( 'Save notification settings' ) }
 						</FormButton>
 					</form>
 				</Card>

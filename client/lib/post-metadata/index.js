@@ -25,10 +25,10 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 	}
 
 	return metadata
-		.filter( function( meta ) {
+		.filter( function ( meta ) {
 			return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
 		} )
-		.map( function( meta ) {
+		.map( function ( meta ) {
 			return parseInt( meta.key.match( pattern )[ 1 ], 10 );
 		} );
 }
@@ -38,10 +38,10 @@ const PostMetadata = {
 	 * Given a post object, returns the Publicize custom message assigned to
 	 * that post, or `undefined` if the value cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {string}      Publicize custom message
+	 * @param  {object} post Post object
+	 * @returns {string}      Publicize custom message
 	 */
-	publicizeMessage: function( post ) {
+	publicizeMessage: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -54,10 +54,10 @@ const PostMetadata = {
 	 * the post has been successfully Publicized, or `undefined` if the value
 	 * cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {Array}       Array of Publicize service IDs
+	 * @param  {object} post Post object
+	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeDone: function( post ) {
+	publicizeDone: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -70,10 +70,10 @@ const PostMetadata = {
 	 * the user has chosen not to have the post Publicized, or `undefined` if
 	 * the value cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {Array}       Array of Publicize service IDs
+	 * @param  {object} post Post object
+	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeSkipped: function( post ) {
+	publicizeSkipped: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -85,10 +85,10 @@ const PostMetadata = {
 	 * Given a post object, returns the theme id of a template-first theme, or `undefined` if the value
 	 * cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {String|undefined} ThemeId on success.
+	 * @param  {object} post Post object
+	 * @returns {string|undefined} ThemeId on success.
 	 */
-	homepageTemplate: function( post ) {
+	homepageTemplate: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -101,10 +101,10 @@ const PostMetadata = {
 	 * the geographic location saved for that post, or `undefined` if the value
 	 * cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {string}      Human-readable geographic address label
+	 * @param  {object} post Post object
+	 * @returns {string}      Human-readable geographic address label
 	 */
-	geoLabel: function( post ) {
+	geoLabel: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -116,10 +116,10 @@ const PostMetadata = {
 	 * Given a post object, returns the custom post meta description for
 	 * the post, or undefined if it is has not been set.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {string}      Custom post meta description
+	 * @param  {object} post Post object
+	 * @returns {string}      Custom post meta description
 	 */
-	metaDescription: function( post ) {
+	metaDescription: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -132,10 +132,10 @@ const PostMetadata = {
 	 * the geographic location saved for that post, or `undefined` if the value
 	 * cannot be determined.
 	 *
-	 * @param  {Object} post Post object
-	 * @return {string}      Array of geographic float coordinates
+	 * @param  {object} post Post object
+	 * @returns {string}      Array of geographic float coordinates
 	 */
-	geoCoordinates: function( post ) {
+	geoCoordinates: function ( post ) {
 		if ( ! post ) {
 			return;
 		}
@@ -152,10 +152,10 @@ const PostMetadata = {
 	 * Given a post object, return a boolean, indicating whether the geo-location data
 	 * associated with the post is allowed to be displayed publicly.
 	 *
-	 * @param {Object} post Post object
+	 * @param {object} post Post object
 	 * @returns {boolean|null} Whether the geo-location data is shared publicly.
 	 */
-	geoIsSharedPublicly: function( post ) {
+	geoIsSharedPublicly: function ( post ) {
 		if ( ! post ) {
 			return null;
 		}

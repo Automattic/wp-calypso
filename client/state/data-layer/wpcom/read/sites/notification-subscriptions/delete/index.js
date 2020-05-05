@@ -6,7 +6,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'state/action-types';
+import { READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';

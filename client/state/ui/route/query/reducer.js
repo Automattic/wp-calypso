@@ -9,14 +9,14 @@ import { isEqual, omit } from 'lodash';
  */
 import { ROUTE_SET } from 'state/action-types';
 
-const timestamped = query => ( {
+const timestamped = ( query ) => ( {
 	...query,
 	_timestamp: Date.now(),
 } );
 
 const isEqualQuery = ( a, b ) => isEqual( omit( a, '_timestamp' ), omit( b, '_timestamp' ) );
 
-const initialReducer = ( state, query ) => ( state === false ? timestamped( query ) : state );
+const initialReducer = ( state, query ) => ( state === false ? timestamped( query ) : state) ;
 const currentReducer = ( state, query ) =>
 	! isEqualQuery( state, query ) ? timestamped( query ) : state;
 

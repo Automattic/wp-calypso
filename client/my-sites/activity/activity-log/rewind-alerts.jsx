@@ -31,7 +31,7 @@ export class RewindAlerts extends Component {
 					{ translate( 'These items require your immediate attention' ) }
 				</div>
 				{ 'function' === typeof threats.map &&
-					threats.map( threat => (
+					threats.map( ( threat ) => (
 						<ThreatAlert key={ threat.id } threat={ threat } siteId={ siteId } />
 					) ) }
 			</Card>

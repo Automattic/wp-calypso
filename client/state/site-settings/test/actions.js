@@ -33,7 +33,7 @@ const getState = () => ( {
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveSiteSettings()', () => {
 		test( 'should return an action object', () => {
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSiteSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/settings' )
@@ -124,7 +124,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveSiteSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/settings' )

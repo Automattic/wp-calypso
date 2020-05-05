@@ -2,6 +2,11 @@
 	margin-bottom: 0;
 }
 
+.domain-management-list__cancel-change-primary-button {
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
+
 .domain-management-list-item {
 	&.busy {
 		background-color: var( --color-neutral-0 );
@@ -14,10 +19,9 @@
 }
 
 .domain-management-list-item__link {
-	cursor: pointer;
-	display: block;
 	overflow: hidden;
 	text-align: inherit;
+	line-height: normal;
 
 	.domain__primary-flag {
 		vertical-align: middle;
@@ -35,16 +39,14 @@
 	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 600;
-	text-overflow: ellipsis;
-	overflow: hidden;
 	white-space: pre;
-	max-width: 70%;
 	font-family: $serif;
 	text-align: inherit;
+	line-height: normal;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 18px;
-		font-weight: 700;
+		font-weight: 600;
 		max-width: none;
 		white-space: normal;
 	}
@@ -56,6 +58,7 @@
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	line-height: normal;
 
 	@include breakpoint( '>480px' ) {
 		text-transform: uppercase;
@@ -84,6 +87,27 @@
 		@include placeholder( --color-neutral-10 );
 		display: inline-block;
 		width: 40%;
+	}
+}
+
+.domain-management-list-item__upsell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	span {
+		margin-right: 16px;
+		flex: 1;
+	}
+}
+
+.domain-management-list-item__content {
+	display: flex;
+	justify-content: space-between;
+
+	@include breakpoint( '<960px' ) {
+		justify-content: flex-start;
+		flex-direction: column;
 	}
 }
 
@@ -116,4 +140,10 @@ input[type='radio'].domain-management-list-item__radio {
 
 .list-all__container .list-all__site {
 	margin-bottom: 10px;
+}
+
+.domain-management__claim-free-domain {
+	@include breakpoint( '>660px' ) {
+		display: none;
+	}
 }

@@ -11,6 +11,7 @@ import createConfig from 'lib/create-config';
 
 /**
  * Manages config flags for various deployment builds
+ *
  * @module config/index
  */
 if ( 'undefined' === typeof window || ! window.configData ) {
@@ -33,7 +34,7 @@ export function isCalypsoLive() {
 
 function applyFlags( flagsString, modificationMethod ) {
 	const flags = flagsString.split( ',' );
-	flags.forEach( flagRaw => {
+	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
 		const enabled = ! /^-/.test( flagRaw );
 		configData.features[ flag ] = enabled;

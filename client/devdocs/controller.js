@@ -32,7 +32,7 @@ const devdocs = {
 	 * Documentation is rendered on #primary and doesn't expect a sidebar to exist
 	 * so #secondary needs to be cleaned up
 	 */
-	sidebar: function( context, next ) {
+	sidebar: function ( context, next ) {
 		context.secondary = React.createElement( Sidebar, {
 			path: context.path,
 		} );
@@ -43,7 +43,7 @@ const devdocs = {
 	/*
 	 * Controller for page listing multiple developer docs
 	 */
-	devdocs: function( context, next ) {
+	devdocs: function ( context, next ) {
 		function onSearchChange( searchTerm ) {
 			const query = context.query;
 
@@ -53,9 +53,7 @@ const devdocs = {
 				delete query.term;
 			}
 
-			const queryString = stringify( query )
-				.replace( /%20/g, '+' )
-				.trim();
+			const queryString = stringify( query ).replace( /%20/g, '+' ).trim();
 
 			let newUrl = context.pathname;
 
@@ -78,7 +76,7 @@ const devdocs = {
 	/*
 	 * Controller for single developer document
 	 */
-	singleDoc: function( context, next ) {
+	singleDoc: function ( context, next ) {
 		context.primary = React.createElement( SingleDocComponent, {
 			path: context.params.path,
 			term: context.query.term,
@@ -88,32 +86,32 @@ const devdocs = {
 	},
 
 	// UI components
-	design: function( context, next ) {
+	design: function ( context, next ) {
 		context.primary = <AsyncLoad component={ context.params.component } require="./design" />;
 		next();
 	},
 
-	wizard: function( context, next ) {
+	wizard: function ( context, next ) {
 		context.primary = <WizardComponent stepName={ context.params.stepName } />;
 		next();
 	},
 
 	// App Blocks
-	blocks: function( context, next ) {
+	blocks: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/blocks" />
 		);
 		next();
 	},
 
-	playground: function( context, next ) {
+	playground: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/playground" />
 		);
 		next();
 	},
 
-	selectors: function( context, next ) {
+	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
 				require="./docs-selectors"
@@ -124,21 +122,21 @@ const devdocs = {
 		next();
 	},
 
-	typography: function( context, next ) {
+	typography: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/typography" />
 		);
 		next();
 	},
 
-	formStateExamples: function( context, next ) {
+	formStateExamples: function ( context, next ) {
 		context.primary = React.createElement( FormStateExamplesComponent, {
 			component: context.params.component,
 		} );
 		next();
 	},
 
-	pleaseLogIn: function( context, next ) {
+	pleaseLogIn: function ( context, next ) {
 		const currentUrl = url.parse( location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
@@ -161,7 +159,7 @@ const devdocs = {
 	},
 
 	// Welcome screen
-	welcome: function( context, next ) {
+	welcome: function ( context, next ) {
 		context.primary = React.createElement( DevWelcome, {} );
 		next();
 	},

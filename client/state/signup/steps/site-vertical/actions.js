@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
 import { submitSignupStep } from 'state/signup/progress/actions';
+
+import 'state/signup/init';
 
 /**
  * Action creator: Set site vertical data
@@ -32,7 +33,7 @@ export const submitSiteVertical = (
 	siteVerticalData,
 	stepName = 'site-topic',
 	suggestedTheme = undefined
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( setSiteVertical( siteVerticalData ) );
 	dispatch(
 		submitSignupStep(

@@ -105,7 +105,7 @@ class PostRevisionsDialog extends PureComponent {
 export default flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			isVisible: isPostRevisionsDialogVisible( state ),
 			postId: getEditorPostId( state ),
 			revision: getPostRevisionsSelectedRevision( state ),

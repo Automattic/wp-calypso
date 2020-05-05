@@ -110,7 +110,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'getSelectedSite', () => {
-		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
+		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function () {
 			const fakeState = {
 				selectedSiteId: 42,
 			};

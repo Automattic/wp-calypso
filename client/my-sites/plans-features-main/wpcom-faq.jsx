@@ -39,7 +39,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/all-about-domains/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -59,7 +59,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/plugins/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -100,7 +100,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/add-email/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/add-email/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -121,7 +121,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/custom-design/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/custom-design/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -164,7 +164,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( WpcomFAQ ) );

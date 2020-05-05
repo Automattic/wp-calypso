@@ -17,3 +17,8 @@
 .main .empty-content {
 	margin-top: 0;
 }
+
+// Use Recoleta on all page headings
+.main > .formatted-header .formatted-header__title {
+	font-family: 'Recoleta', $serif;
+}

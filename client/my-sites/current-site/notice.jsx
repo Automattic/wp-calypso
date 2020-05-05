@@ -7,13 +7,12 @@ import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config, { isEnabled } from 'config';
 import { get, reject, transform } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getActiveDiscount from 'state/selectors/get-active-discount';
@@ -25,13 +24,6 @@ import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
-import {
-	isStarted as isJetpackPluginsStarted,
-	isFinished as isJetpackPluginsFinished,
-} from 'state/plugins/premium/selectors';
-import CartData from 'components/data/cart';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PendingPaymentNotice from './pending-payment-notice';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import QueryProductsList from 'components/data/query-products-list';
@@ -41,9 +33,13 @@ import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
+import UpsellNudge from 'blocks/upsell-nudge';
+import { preventWidows } from 'lib/formatting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -86,25 +82,30 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
+		const noticeText = preventWidows( translate( 'Free domain available' ) );
+		const ctaText = translate( 'Claim' );
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
-				icon="info-outline"
-				text={ translate( 'Free domain available' ) }
-			>
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.site.slug }` }
-				>
-					{ translate( 'Claim' ) }
-					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-				</NoticeAction>
-			</Notice>
+			<UpsellNudge
+				callToAction={ ctaText }
+				compact
+				event={ eventName }
+				forceHref={ true }
+				forceDisplay={ true }
+				href={ `/domains/add/${ this.props.site.slug }` }
+				title={ noticeText }
+				tracksClickName="calypso_domain_credit_reminder_click"
+				tracksClickProperties={ eventProperties }
+				tracksImpressionName={ eventName }
+				tracksImpressionProperties={ eventProperties }
+			/>
 		);
 	}
 
@@ -113,15 +114,16 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		const eligibleDomains = reject(
 			this.props.domains,
-			domain =>
+			( domain ) =>
 				domain.isWPCOMDomain ||
 				domain.name.endsWith( '.wpcomstaging.com' ) ||
-				( domain.registrationDate &&
-					moment( domain.registrationDate )
-						.add( 7, 'days' )
-						.isAfter() )
+				( domain.registrationDate && moment( domain.registrationDate ).add( 7, 'days' ).isAfter() )
 		);
 
 		if ( eligibleDomains.length !== 1 ) {
@@ -132,7 +134,7 @@ export class SiteNotice extends React.Component {
 
 		const priceAndSaleInfo = transform(
 			productsList,
-			function( result, value, key ) {
+			function ( result, value, key ) {
 				if ( value.is_domain_registration && value.available ) {
 					const regularPrice = getUnformattedDomainPrice( key, productsList );
 					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
@@ -179,29 +181,32 @@ export class SiteNotice extends React.Component {
 		}
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
-				icon="info-outline"
+			<UpsellNudge
+				callToAction={ translate( 'Add' ) }
+				compact
+				href={ `/domains/add/${ site.slug }` }
 				onDismissClick={ this.props.clickDomainUpsellDismiss }
-				showDismiss={ true }
-			>
-				<NoticeAction
-					onClick={ this.props.clickDomainUpsellGo }
-					href={ `/domains/add/${ site.slug }` }
-				>
-					{ noticeText }
-					<TrackComponentView
-						eventName="calypso_upgrade_nudge_impression"
-						eventProperties={ { cta_name: 'domain-upsell-nudge' } }
-					/>
-				</NoticeAction>
-			</Notice>
+				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
+				event="calypso_upgrade_nudge_impression"
+				forceDisplay={ true }
+				horizontal={ true }
+				title={ preventWidows( noticeText ) }
+				tracksClickName="calypso_upgrade_nudge_cta_click"
+				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksImpressionProperties={ { cta_name: 'domain-upsell-nudge' } }
+				tracksDismissName="calypso_upgrade_nudge_cta_click"
+				tracksDismissProperties={ { cta_name: 'domain-upsell-nudge-dismiss' } }
+			/>
 		);
 	}
 
 	activeDiscountNotice() {
 		if ( ! this.props.activeDiscount ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -217,13 +222,18 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		const eventProperties = { cta_name: 'active-discount-sidebar' };
 		return (
-			<SidebarBanner
-				ctaName="active-discount-sidebar"
-				ctaText={ ctaText || 'Upgrade' }
+			<UpsellNudge
+				event="calypso_upgrade_nudge_impression"
+				forceDisplay={ true }
+				tracksClickName="calypso_upgrade_nudge_cta_click"
+				tracksClickProperties={ eventProperties }
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksImpressionProperties={ eventProperties }
+				callToAction={ ctaText || 'Upgrade' }
 				href={ `/plans/${ site.slug }?discount=${ name }` }
-				icon="info-outline"
-				text={ bannerText }
+				title={ bannerText }
 			/>
 		);
 	}
@@ -232,44 +242,6 @@ export class SiteNotice extends React.Component {
 		const now = new Date();
 		const format = 'YYYYMMDD';
 		return moment( now ).format( format ) === moment( endsAt ).format( format );
-	}
-
-	jetpackPluginsSetupNotice() {
-		if (
-			! this.props.pausedJetpackPluginsSetup ||
-			this.props.site.plan.product_slug === 'jetpack_free'
-		) {
-			return null;
-		}
-
-		const { translate } = this.props;
-
-		return (
-			<Notice
-				icon="plugins"
-				isCompact
-				status="is-info"
-				text={ translate( 'Your %(plan)s plan needs setting up!', {
-					args: { plan: this.props.site.plan.product_name_short },
-				} ) }
-			>
-				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` }>
-					{ translate( 'Finish' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
-	pendingPaymentNotice() {
-		if ( ! config.isEnabled( 'async-payments' ) ) {
-			return null;
-		}
-
-		return (
-			<CartData>
-				<PendingPaymentNotice />
-			</CartData>
-		);
 	}
 
 	render() {
@@ -281,31 +253,27 @@ export class SiteNotice extends React.Component {
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
-		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
+
+		const showJitms =
+			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
+			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
 			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
-				{ discountOrFreeToPaid ||
-					( config.isEnabled( 'jitms' ) && (
-						<AsyncLoad
-							require="blocks/jitm"
-							messagePath={ messagePath }
-							template="sidebar-banner"
-						/>
-					) ) }
 				{ siteRedirectNotice }
+				{ showJitms && (
+					<AsyncLoad
+						require="blocks/jitm"
+						messagePath={ messagePath }
+						template="sidebar-banner"
+						placeholder={ null }
+					/>
+				) }
 				<QuerySitePlans siteId={ site.ID } />
-				{ this.pendingPaymentNotice() }
 				{ ! hasJITM && domainCreditNotice }
-				{ jetpackPluginsSetupNotice }
-				{ ! (
-					hasJITM ||
-					discountOrFreeToPaid ||
-					domainCreditNotice ||
-					jetpackPluginsSetupNotice
-				) && this.domainUpsellNudge() }
+				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
 			</div>
 		);
 	}
@@ -317,25 +285,27 @@ export default connect(
 		const sectionName = getSectionName( state );
 		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
 
+		const isMigrationInProgress =
+			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
+
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
 			activeDiscount: getActiveDiscount( state ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-			pausedJetpackPluginsSetup:
-				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
 			productsList: getProductsList( state ),
 			domains: getDomainsBySiteId( state, siteId ),
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
-			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
@@ -351,11 +321,6 @@ export default connect(
 				),
 			clickDomainUpsellDismiss: () => {
 				dispatch( savePreference( DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString() ) );
-				dispatch(
-					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-						cta_name: 'domain-upsell-nudge-dismiss',
-					} )
-				);
 			},
 		};
 	}

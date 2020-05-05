@@ -26,7 +26,6 @@ import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
 import { getEmailForwards } from 'state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryEmailForwards from 'components/data/query-email-forwards';
-import SectionHeader from 'components/section-header';
 
 /**
  * Style dependencies
@@ -51,7 +50,6 @@ class EmailForwarding extends Component {
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Email Forwarding' ) }
 				</Header>
-				<SectionHeader label={ translate( 'Email Forwarding' ) } />
 				{ this.renderContent() }
 			</Main>
 		);

@@ -16,7 +16,7 @@ import getRawSite from 'state/selectors/get-raw-site';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchCommentsTreeForSite = action => {
+export const fetchCommentsTreeForSite = ( action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
 
 	return http(
@@ -37,7 +37,7 @@ const mapPosts = ( commentIds, apiPostId ) => {
 	const [ topLevelIds, replyIds ] = ! isArray( commentIds[ 0 ] ) ? [ commentIds, [] ] : commentIds;
 
 	return flatten( [
-		topLevelIds.map( commentId => [ commentId, postId, 0 ] ),
+		topLevelIds.map( ( commentId ) => [ commentId, postId, 0 ] ),
 		replyIds.map( ( [ commentId, commentParentId ] ) => [ commentId, postId, commentParentId ] ),
 	] );
 };

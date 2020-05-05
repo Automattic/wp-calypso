@@ -14,9 +14,8 @@ import {
 	receiveUpdates,
 } from 'state/reader/streams/actions';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent: jest.fn() },
-	mc: { bumpStat: jest.fn() },
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'lib/wp' );
@@ -194,7 +193,7 @@ describe( 'streams', () => {
 						},
 					},
 				},
-			].forEach( testCase => {
+			].forEach( ( testCase ) => {
 				it( testCase.stream + ' should pass the expected params', () => {
 					const pageAction = requestPageAction( { streamKey: testCase.stream } );
 					const expected = {

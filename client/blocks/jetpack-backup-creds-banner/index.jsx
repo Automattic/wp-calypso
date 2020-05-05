@@ -44,7 +44,7 @@ class JetpackBackupCredsBanner extends Component {
 						href={
 							rewindState.canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/settings/security/${ siteSlug }`
+								: `/settings/security/${ siteSlug }#credentials`
 						}
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(
@@ -57,7 +57,7 @@ class JetpackBackupCredsBanner extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

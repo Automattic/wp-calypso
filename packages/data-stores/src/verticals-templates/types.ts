@@ -1,7 +1,3 @@
-export const enum ActionType {
-	RECEIVE_TEMPLATES = 'RECEIVE_TEMPLATES',
-}
-
 export interface Template {
 	/**
 	 * Block-editor HTML (includes block style markup)

@@ -16,7 +16,7 @@ function redirectToLoginIfSiteRequested( context, next ) {
 	next();
 }
 
-export default function( router ) {
+export default function ( router ) {
 	const user = userFactory();
 	const isLoggedIn = !! user.get();
 	const siteId =

@@ -18,7 +18,7 @@ function queryGoogleMapsApi( queryParams ) {
 			return queryGeocoder( queryParams, resolve, reject );
 		}
 
-		loadScript( GOOGLE_MAPS_API_BASE_URL + '?key=' + GOOGLE_MAPS_API_KEY, function() {
+		loadScript( GOOGLE_MAPS_API_BASE_URL + '?key=' + GOOGLE_MAPS_API_KEY, function () {
 			// eslint-disable-next-line no-undef
 			geocoder = new google.maps.Geocoder();
 			return queryGeocoder( queryParams, resolve, reject );
@@ -27,7 +27,7 @@ function queryGoogleMapsApi( queryParams ) {
 }
 
 function queryGeocoder( queryParams, resolve, reject ) {
-	geocoder.geocode( queryParams, function( results, status ) {
+	geocoder.geocode( queryParams, function ( results, status ) {
 		if ( status === 'OK' ) {
 			return resolve( results );
 		}

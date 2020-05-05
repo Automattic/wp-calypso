@@ -92,7 +92,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userInUsa = getCurrentUserCountryCode( state ) === 'US';
 		const userInCa = getCurrentUserCountryCode( state ) === 'CA';
 		const site = getSelectedSite( state );

@@ -52,7 +52,7 @@ const PromotionFormCard = ( {
 	showEmptyValidationErrors,
 } ) => {
 	const edit = promotionFieldEdit( siteId, promotion, editPromotion );
-	const fields = Object.keys( cardModel.fields ).map( fieldName => {
+	const fields = Object.keys( cardModel.fields ).map( ( fieldName ) => {
 		const fieldModel = cardModel.fields[ fieldName ];
 		return renderField(
 			fieldName,

@@ -12,7 +12,7 @@ import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import SidebarItem from 'layout/sidebar/item';
 
-const handleReaderSidebarTeamsListItemClicked = team => () => {
+const handleReaderSidebarTeamsListItemClicked = ( team ) => () => {
 	recordAction( 'clicked_reader_sidebar_teams_list_item' );
 	recordGaEvent( 'Clicked Reader Sidebar Teams List Item' );
 	recordTrack( 'calypso_reader_sidebar_teams_list_item_clicked', {

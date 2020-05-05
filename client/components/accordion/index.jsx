@@ -61,7 +61,7 @@ export default class Accordion extends Component {
 		this.setExpandedStatus( ! this.state.isExpanded );
 	};
 
-	setExpandedStatus = isExpanded => {
+	setExpandedStatus = ( isExpanded ) => {
 		this.setState( { isExpanded } );
 		this.props.onToggle( isExpanded );
 	};

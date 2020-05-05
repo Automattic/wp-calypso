@@ -11,7 +11,7 @@ import {
 } from 'state/action-types';
 
 export function fetchShortcode( siteId, shortcode ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHORTCODE_REQUEST,
 			siteId,
@@ -22,7 +22,7 @@ export function fetchShortcode( siteId, shortcode ) {
 			.undocumented()
 			.site( siteId )
 			.shortcodes( { shortcode } )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: SHORTCODE_REQUEST_SUCCESS,
 					siteId,
@@ -36,7 +36,7 @@ export function fetchShortcode( siteId, shortcode ) {
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHORTCODE_REQUEST_FAILURE,
 					siteId,

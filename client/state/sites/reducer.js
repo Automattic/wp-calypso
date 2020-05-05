@@ -7,6 +7,7 @@ import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import { products } from './products/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -32,12 +33,12 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
 	combineReducers,
@@ -132,7 +133,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'site_icon' ],
+				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
@@ -151,6 +152,19 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							nextSite = {
 								...nextSite,
 								is_private: isPrivate,
+							};
+							break;
+						}
+						case 'wpcom_coming_soon': {
+							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+
+							if ( site.is_coming_soon === isComingSoon ) {
+								return memo;
+							}
+
+							nextSite = {
+								...nextSite,
+								is_coming_soon: isComingSoon,
 							};
 							break;
 						}
@@ -245,17 +259,23 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		}
 
 		case SITE_MIGRATION_STATUS_UPDATE: {
-			const { siteId, migrationStatus } = action;
+			const { siteId, migrationStatus, lastModified } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
 				return state;
+			}
+
+			const siteMigrationMeta = state[ siteId ].site_migration || {};
+			const newMeta = { status: migrationStatus };
+			if ( lastModified ) {
+				newMeta.last_modified = lastModified;
 			}
 
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					migration_status: migrationStatus,
+					site_migration: merge( {}, siteMigrationMeta, newMeta ),
 				},
 			};
 		}
@@ -364,6 +384,7 @@ export default combineReducers( {
 	items,
 	mediaStorage,
 	plans,
+	products,
 	guidedTransfer,
 	monitor,
 	vouchers,

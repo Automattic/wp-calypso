@@ -75,7 +75,7 @@ ShippingZoneLocationDialog.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isVisible: isEditLocationsModalOpen( state ),
 		canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
 	} ),

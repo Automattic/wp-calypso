@@ -28,22 +28,22 @@ export const updateConciergeAppointmentDetails = ( appointmentId, appointmentDet
 	appointmentDetails,
 } );
 
-export const requestConciergeInitial = siteId => ( {
+export const requestConciergeInitial = ( siteId ) => ( {
 	type: CONCIERGE_INITIAL_REQUEST,
 	siteId,
 } );
 
-export const updateConciergeInitial = initial => ( {
+export const updateConciergeInitial = ( initial ) => ( {
 	type: CONCIERGE_INITIAL_UPDATE,
 	initial,
 } );
 
-export const updateConciergeSignupForm = signupForm => ( {
+export const updateConciergeSignupForm = ( signupForm ) => ( {
 	type: CONCIERGE_SIGNUP_FORM_UPDATE,
 	signupForm,
 } );
 
-export const updateConciergeBookingStatus = status => ( {
+export const updateConciergeBookingStatus = ( status ) => ( {
 	type: CONCIERGE_UPDATE_BOOKING_STATUS,
 	status,
 } );

@@ -21,9 +21,9 @@ import {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a settings request is in progress for a site.
  *
- * @param  {Object} state Current requesting state
- * @param  {Object} action Action object
- * @return {Object} Updated requesting state
+ * @param  {object} state Current requesting state
+ * @param  {object} action Action object
+ * @returns {object} Updated requesting state
  */
 const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -60,9 +60,9 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated saving state after an action has been dispatched.
  * Saving state tracks whether the settings for a site are currently being saved.
  *
- * @param  {Object} state Current saving state
- * @param  {Object} action Action object
- * @return {Object} Updated saving state
+ * @param  {object} state Current saving state
+ * @param  {object} action Action object
+ * @returns {object} Updated saving state
  */
 const saveStatus = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -111,9 +111,9 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated restoring state after an action has been dispatched.
  * Restoring state tracks whether a settings restore request is in progress for a site.
  *
- * @param  {Object} state Current restoring state
- * @param  {Object} action Action object
- * @return {Object} Updated restoring state
+ * @param  {object} state Current restoring state
+ * @param  {object} action Action object
+ * @returns {object} Updated restoring state
  */
 export const restoring = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -149,9 +149,9 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
 /**
  * Tracks the settings for a particular site.
  *
- * @param  {Object} state Current settings
- * @param  {Object} action Action object
- * @return {Object} Updated settings
+ * @param  {object} state Current settings
+ * @param  {object} action Action object
+ * @returns {object} Updated settings
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

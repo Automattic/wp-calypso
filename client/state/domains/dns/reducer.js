@@ -111,7 +111,7 @@ function addDns( state, domainName, record ) {
 		[ domainName ]: {
 			isSubmittingForm: { $set: true },
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const added = records.concat( [ newRecord ] );
 					return removeDuplicateWpcomRecords( domainName, added );
 				},
@@ -130,7 +130,7 @@ function deleteDns( state, domainName, record ) {
 	const command = {
 		[ domainName ]: {
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const deleted = reject( records, ( _, current ) => {
 						return index === current;
 					} );

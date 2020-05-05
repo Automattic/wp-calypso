@@ -41,16 +41,20 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	async clickMySites() {
 		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			by.css( '.sidebar__menu-wrapper' )
+		);
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			by.css( '.is-group-sites' )
 		);
 	}
 	hasUnreadNotifications() {
 		return this.driver
 			.findElement( by.css( '.masterbar__item-notifications' ) )
 			.getAttribute( 'class' )
-			.then( classNames => {
+			.then( ( classNames ) => {
 				return classNames.includes( 'has-unread' );
 			} );
 	}

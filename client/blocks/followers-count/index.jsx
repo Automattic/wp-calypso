@@ -38,7 +38,7 @@ class FollowersCount extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = get( site, 'ID' );
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );

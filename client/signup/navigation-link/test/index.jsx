@@ -33,7 +33,7 @@ describe( 'NavigationLink', () => {
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
-		translate: str => `translated:${ str }`,
+		translate: ( str ) => `translated:${ str }`,
 	};
 
 	beforeEach( () => {

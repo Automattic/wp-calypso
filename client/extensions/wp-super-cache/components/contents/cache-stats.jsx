@@ -48,7 +48,7 @@ class CacheStats extends Component {
 		url: '',
 	};
 
-	deleteFile = event => {
+	deleteFile = ( event ) => {
 		const url = get( event, 'currentTarget.dataset.url', '' );
 
 		if ( ! url ) {
@@ -102,7 +102,7 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

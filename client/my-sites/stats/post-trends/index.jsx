@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { max, throttle, values } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -85,7 +85,7 @@ class PostTrends extends React.Component {
 		this.setState( scrollProps );
 	};
 
-	scroll = direction => {
+	scroll = ( direction ) => {
 		const node = this.wrapperRef.current,
 			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -128,10 +128,7 @@ class PostTrends extends React.Component {
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
-			const startDate = i18n
-				.moment()
-				.subtract( i, 'months' )
-				.startOf( 'month' );
+			const startDate = this.props.moment().subtract( i, 'months' ).startOf( 'month' );
 			months.push(
 				<Month key={ i } startDate={ startDate } streakData={ streakData } max={ maxPosts } />
 			);
@@ -155,7 +152,7 @@ class PostTrends extends React.Component {
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
+				<SectionHeader label={ this.props.translate( 'Posting activity' ) } />
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
 						<span className="left-arrow" />
@@ -193,20 +190,15 @@ class PostTrends extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
-		startDate: i18n
-			.moment()
+		startDate: moment()
 			.locale( 'en' )
 			.subtract( 1, 'year' )
 			.startOf( 'month' )
 			.format( 'YYYY-MM-DD' ),
-		endDate: i18n
-			.moment()
-			.locale( 'en' )
-			.endOf( 'month' )
-			.format( 'YYYY-MM-DD' ),
+		endDate: moment().locale( 'en' ).endOf( 'month' ).format( 'YYYY-MM-DD' ),
 		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 		max: 3000,
 	};

@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { READER_SITE_REQUEST } from 'state/action-types';
+import { READER_SITE_REQUEST } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';

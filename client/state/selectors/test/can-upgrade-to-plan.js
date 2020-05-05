@@ -325,13 +325,13 @@ describe( 'canUpgradeToPlan', () => {
 		};
 
 		test( 'should return true for atomic site without a plan to business/', () => {
-			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( planToPurchase => {
+			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( planToPurchase ) => {
 				expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( true );
 			} );
 		} );
 
 		test( 'should return false for atomic v1 site when upgrading to eCommerce', () => {
-			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( planToPurchase => {
+			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( ( planToPurchase ) => {
 				expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( false );
 			} );
 		} );
@@ -342,13 +342,13 @@ describe( 'canUpgradeToPlan', () => {
 			};
 			atomicV2State.sites.items[ siteId ].options.is_wpcom_atomic = true;
 
-			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( planToPurchase => {
+			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( ( planToPurchase ) => {
 				expect( canUpgradeToPlan( atomicV2State, siteId, planToPurchase ) ).toBe( true );
 			} );
 		} );
 
 		test( 'should return false for atomic site without a plan to other plans', () => {
-			[ PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( planToPurchase => {
+			[ PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( planToPurchase ) => {
 				expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( false );
 			} );
 		} );

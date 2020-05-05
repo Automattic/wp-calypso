@@ -9,11 +9,11 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  */
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 
-export const isValidSimplePaymentsProduct = product =>
+export const isValidSimplePaymentsProduct = ( product ) =>
 	product.type === SIMPLE_PAYMENTS_PRODUCT_POST_TYPE && product.status === 'publish';
 
 // based on https://stackoverflow.com/a/10454560/59752
-export const decimalPlaces = number => {
+export const decimalPlaces = ( number ) => {
 	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
 	if ( ! match ) {
 		return 0;

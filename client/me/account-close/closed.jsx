@@ -53,7 +53,7 @@ class AccountSettingsClosedComponent extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		previousRoute: getPreviousRoute( state ),
 		isUserAccountClosed: isAccountClosed( state ),

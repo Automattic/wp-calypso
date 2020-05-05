@@ -13,7 +13,7 @@ import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import useNock from 'test/helpers/use-nock';
 import sampleSuccessResponse from './sample-responses.json';
 
@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestTagImages', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/tags/banana/images?number=5' )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 						tag: 'banana',
 					} );
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );

@@ -1,0 +1,47 @@
+.log-item {
+	border-radius: 3px;
+	--color-log-item: var( --color-text );
+
+	$highlights: ( 'info': 'primary-20', 'success': 'success-20', 'error': 'error-20', 'warning': 'warning-20' );
+	@each $type, $color in $highlights {
+		&.is-#{$type} {
+			--color-log-item: var( --color-#{$color} );
+		}
+	}
+
+	&__header-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	&__tag {
+		display: block;
+		margin-right: 10px;
+		padding: 2px 6px;
+		border-radius: 3px;
+		background-color: var( --color-log-item );
+		font-size: 10px;
+		color: var( --color-text-inverted );
+		text-transform: uppercase;
+		text-align: center;
+		min-width: 48px;
+		font-weight: 600;
+		height: 16px;
+	}
+
+	&__header-wrapper .card-heading {
+		font-weight: 600;
+		margin: 0;
+		color: var( --color-log-item );
+	}
+
+	&__subheader {
+		flex-basis: 100%;
+		margin: 0;
+	}
+
+	&.is-expanded .foldable-card__content {
+		border-top-width: 0;
+	}
+}

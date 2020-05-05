@@ -151,7 +151,7 @@ class AdsWrapper extends Component {
 						</div>
 					</div>
 					<ActionCard
-						headerText={ 'Start Earning Income from Your Site' }
+						headerText={ translate( 'Start Earning Income from Your Site' ) }
 						mainText={ translate(
 							'WordAds is the leading advertising optimization platform for WordPress sites, ' +
 								'where the internet’s top ad suppliers bid against each other to deliver their ads to your site, maximizing your revenue.' +
@@ -166,7 +166,7 @@ class AdsWrapper extends Component {
 								},
 							}
 						) }
-						buttonText={ 'Learn More on WordAds.co' }
+						buttonText={ translate( 'Learn More on WordAds.co' ) }
 						buttonIcon="external"
 						buttonPrimary={ false }
 						buttonHref="https://wordads.co"
@@ -263,7 +263,7 @@ class AdsWrapper extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	return {

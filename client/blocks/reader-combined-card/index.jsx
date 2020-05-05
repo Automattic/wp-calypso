@@ -93,9 +93,10 @@ class ReaderCombinedCardComponent extends React.Component {
 		const feedIcon = get( feed, 'image' );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteName = getSiteName( { site, post: posts[ 0 ] } );
-		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
+		const isSelectedPost = ( post ) => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
-		const mediaCount = filter( posts, post => post && ! isEmpty( post.canonical_media ) ).length;
+		const mediaCount = filter( posts, ( post ) => post && ! isEmpty( post.canonical_media ) )
+			.length;
 
 		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
 		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {
@@ -178,7 +179,7 @@ export function combinedCardPostKeyToKeys( postKey, memoized = null ) {
 		return memoized.lastPostKeys;
 	}
 
-	const keys = postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
+	const keys = postKey.postIds.map( ( postId ) => ( { feedId, blogId, postId } ) );
 
 	if ( memoized ) {
 		memoized.lastPostIds = postKey.postIds;
@@ -197,7 +198,7 @@ export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
 function mapStateToProps( st, ownProps ) {
 	const memoized = {};
 
-	return state => {
+	return ( state ) => {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
 
 		return {

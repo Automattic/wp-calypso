@@ -84,21 +84,21 @@ function removeSingleLog( log ) {
 }
 
 LogStore = {
-	getErrors: function() {
+	getErrors: function () {
 		return clone( _errors );
 	},
 
-	getInProgress: function() {
+	getInProgress: function () {
 		return clone( _inProgress );
 	},
 
-	getCompleted: function() {
+	getCompleted: function () {
 		return clone( _completed );
 	},
 
-	isInProgressAction: function( siteId, pluginSlug, action ) {
+	isInProgressAction: function ( siteId, pluginSlug, action ) {
 		const dones = arguments.length;
-		return _inProgress.some( function( log ) {
+		return _inProgress.some( function ( log ) {
 			let done = 0;
 			if ( action && isArray( action ) ) {
 				if ( indexOf( action, log.action ) !== -1 ) {
@@ -120,12 +120,12 @@ LogStore = {
 		} );
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
 
-LogStore.dispatchToken = Dispatcher.register( function( payload ) {
+LogStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );

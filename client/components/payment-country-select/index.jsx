@@ -63,7 +63,7 @@ export class PaymentCountrySelect extends Component {
 	getValidCountryCode = ( countryCode, countriesList ) =>
 		some( countriesList, [ 'code', countryCode ] ) ? countryCode : '';
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		this.props.updateGlobalCountryCode( event.target.value );
 		this.props.updateCartStore( event.target.value );
 		// Notify the callback function that a new country was selected.
@@ -99,14 +99,14 @@ export class PaymentCountrySelect extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			countryCode: getPaymentCountryCode( state ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
-			updateGlobalCountryCode: newCountryCode => {
+			updateGlobalCountryCode: ( newCountryCode ) => {
 				dispatch( setPaymentCountryCode( newCountryCode ) );
 			},
 		};

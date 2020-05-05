@@ -8,10 +8,10 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
-const getSiteTypePropertyDefaults = propertyKey =>
+const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
-			theme: 'pub/maywood',
+			theme: 'pub/hever',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."

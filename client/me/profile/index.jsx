@@ -21,10 +21,11 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'me/profile-links';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
+import { localizeUrl } from 'lib/i18n-utils';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -37,6 +38,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
+/* eslint-disable react/prefer-es6-class */
 const Profile = createReactClass( {
 	displayName: 'Profile',
 
@@ -68,12 +70,12 @@ const Profile = createReactClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
-				<Card className="me-profile-settings">
+				<Card className="profile__settings">
 					<EditGravatar />
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.props.translate( 'First Name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{ this.props.translate( 'First name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="first_name"
@@ -85,7 +87,7 @@ const Profile = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last Name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="last_name"
@@ -98,7 +100,7 @@ const Profile = createReactClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="display_name">
-								{ this.props.translate( 'Public Display Name' ) }
+								{ this.props.translate( 'Public display name' ) }
 							</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
@@ -111,7 +113,7 @@ const Profile = createReactClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.props.translate( 'About Me' ) }</FormLabel>
+							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
 							<FormTextarea
 								disabled={ this.getDisabledState() }
 								id="description"
@@ -131,11 +133,11 @@ const Profile = createReactClass( {
 							>
 								{ this.state.submittingForm
 									? this.props.translate( 'Saving…' )
-									: this.props.translate( 'Save Profile Details' ) }
+									: this.props.translate( 'Save profile details' ) }
 							</FormButton>
 						</p>
 					</form>
-					<p className="me-profile-settings__info-text">
+					<p className="profile__info-text">
 						{ this.props.translate(
 							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
 								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
@@ -152,7 +154,7 @@ const Profile = createReactClass( {
 									hovercardslink: (
 										<a
 											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href="https://support.wordpress.com/gravatar-hovercards/"
+											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

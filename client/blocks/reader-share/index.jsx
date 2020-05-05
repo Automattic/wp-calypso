@@ -112,7 +112,7 @@ class ReaderShare extends React.Component {
 		this.mounted = false;
 	}
 
-	deferMenuChange = showing => {
+	deferMenuChange = ( showing ) => {
 		if ( this.closeHandle ) {
 			clearTimeout( this.closeHandle );
 		}
@@ -123,7 +123,7 @@ class ReaderShare extends React.Component {
 		} );
 	};
 
-	toggle = event => {
+	toggle = ( event ) => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			stats.recordAction( 'open_share' );
@@ -144,7 +144,7 @@ class ReaderShare extends React.Component {
 		}
 	};
 
-	pickSiteToShareTo = slug => {
+	pickSiteToShareTo = ( slug ) => {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
@@ -152,7 +152,7 @@ class ReaderShare extends React.Component {
 		return true;
 	};
 
-	closeExternalShareMenu = action => {
+	closeExternalShareMenu = ( action ) => {
 		this.closeMenu();
 		const actionFunc = actionMap[ action ];
 		if ( actionFunc ) {
@@ -230,6 +230,6 @@ class ReaderShare extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	hasSites: !! getPrimarySiteId( state ),
 } ) )( localize( ReaderShare ) );

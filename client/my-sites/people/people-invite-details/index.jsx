@@ -85,7 +85,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 					scary={ isPending }
 					onClick={ this.handleDelete }
 				>
-					{ isPending ? translate( 'Revoke Invite' ) : translate( 'Clear Invite' ) }
+					{ isPending ? translate( 'Revoke invite' ) : translate( 'Clear invite' ) }
 				</Button>
 			</div>
 		);

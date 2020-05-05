@@ -1,70 +1,79 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useState } from 'react';
-import classNames from 'classnames';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import React, { FunctionComponent } from 'react';
+import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
-import StepperWizard from './stepper-wizard';
-import VerticalSelect from './vertical-select';
-import SiteTitle from './site-title';
+import CreateSite from './create-site';
 import { Attributes } from './types';
-import { Step } from '../steps';
+import { Step, usePath, useNewQueryParam } from '../path';
+import AcquireIntent from './acquire-intent';
+import StylePreview from './style-preview';
+import { isEnabled } from '../../../config';
+
+import './colors.scss';
 import './style.scss';
-import VerticalBackground from './vertical-background';
-import Link from '../components/link';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
-	const [ hasBackground, setHasBackground ] = useState( false );
+	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
+	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
+	const replaceHistory = useNewQueryParam();
+
+	const makePath = usePath();
+
+	const { pathname } = useLocation();
+
+	React.useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [ pathname ] );
 
 	return (
-		<>
-			<VerticalBackground onLoad={ () => setHasBackground( true ) } />
+		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
+			{ isCreatingSite && (
+				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
+			) }
 			<Switch>
-				<Route exact path={ Step.IntentGathering }>
-					<div
-						className={ classNames( 'onboarding-block__acquire-intent', {
-							'has-background': hasBackground && siteVertical,
-						} ) }
-					>
-						<div className="onboarding-block__questions">
-							<h2 className="onboarding-block__questions-heading">
-								{ ! siteVertical &&
-									! siteTitle &&
-									NO__( "Let's set up your website – it takes only a moment." ) }
-							</h2>
-							<StepperWizard
-								stepComponents={ [ VerticalSelect, ( siteVertical || siteTitle ) && SiteTitle ] }
-							/>
-							{ siteVertical && (
-								<div className="onboarding-block__footer">
-									<Link
-										to={ Step.DesignSelection }
-										className="onboarding-block__question-skip"
-										isLink
-									>
-										{ /* @TODO: add transitions and correct action */ }
-										{ siteTitle ? NO__( 'Continue' ) : NO__( "Don't know yet" ) } →
-									</Link>
-								</div>
-							) }
-						</div>
-					</div>
+				<Route exact path={ makePath( Step.IntentGathering ) }>
+					<AcquireIntent />
 				</Route>
-				<Route exact path={ Step.DesignSelection }>
-					{ ! siteVertical ? <Redirect to={ Step.IntentGathering } /> : <DesignSelector /> }
+
+				<Route path={ makePath( Step.DesignSelection ) }>
+					{ ! siteVertical && ! siteTitle && ! wasVerticalSkipped ? (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
+					) : (
+						<DesignSelector />
+					) }
+				</Route>
+
+				<Route path={ makePath( Step.Style ) }>
+					{
+						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
+						// eslint-disable-next-line no-nested-ternary
+						! selectedDesign ? (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						) : isEnabled( 'gutenboarding/style-preview' ) ? (
+							<StylePreview />
+						) : (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						)
+					}
+				</Route>
+
+				<Route path={ makePath( Step.CreateSite ) }>
+					<CreateSite />
 				</Route>
 			</Switch>
-		</>
+		</div>
 	);
 };
 

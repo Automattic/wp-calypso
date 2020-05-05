@@ -38,7 +38,7 @@ Label.defaultProps = {
 };
 
 const connectComponent = connect(
-	state => ( {
+	( state ) => ( {
 		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	null,

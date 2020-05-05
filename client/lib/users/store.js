@@ -22,7 +22,7 @@ const _userIDsByNamespace = {}; // store user order
 
 const UsersStore = {
 	// This data can help manage infinite scroll
-	getPaginationData: function( fetchOptions ) {
+	getPaginationData: function ( fetchOptions ) {
 		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
@@ -35,7 +35,7 @@ const UsersStore = {
 		};
 	},
 	// Get Users for a set of fetchOptions
-	getUsers: function( fetchOptions ) {
+	getUsers: function ( fetchOptions ) {
 		const namespace = getNamespace( fetchOptions );
 		const siteId = fetchOptions.siteId;
 		const users = [];
@@ -48,7 +48,7 @@ const UsersStore = {
 		if ( ! _userIDsByNamespace[ namespace ] ) {
 			return users;
 		}
-		_userIDsByNamespace[ namespace ].forEach( userId => {
+		_userIDsByNamespace[ namespace ].forEach( ( userId ) => {
 			if ( _usersBySite[ siteId ][ userId ] ) {
 				users.push( _usersBySite[ siteId ][ userId ] );
 			}
@@ -56,15 +56,15 @@ const UsersStore = {
 		return users;
 	},
 
-	getUser: function( siteId, userId ) {
+	getUser: function ( siteId, userId ) {
 		if ( ! _usersBySite[ siteId ] || ! _usersBySite[ siteId ][ userId ] ) {
 			return null;
 		}
 		return _usersBySite[ siteId ][ userId ];
 	},
 
-	getUserByLogin: function( siteId, login ) {
-		return find( _usersBySite[ siteId ], function( user ) {
+	getUserByLogin: function ( siteId, login ) {
+		return find( _usersBySite[ siteId ], function ( user ) {
 			return user.login === login;
 		} );
 	},
@@ -79,7 +79,7 @@ const UsersStore = {
 		} );
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
@@ -97,7 +97,7 @@ function updateUser( siteId, id, user ) {
 }
 
 function decrementPaginationData( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
@@ -109,7 +109,7 @@ function decrementPaginationData( siteId, userId ) {
 }
 
 function incrementPaginationData( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
@@ -129,7 +129,7 @@ function deleteUserFromSite( siteId, userId ) {
 }
 
 function deleteUserFromNamespaces( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
@@ -158,7 +158,7 @@ function updateUsers( fetchOptions, users, total ) {
 		_userIDsByNamespace[ namespace ] = new Set();
 	}
 
-	users.forEach( function( user ) {
+	users.forEach( function ( user ) {
 		_userIDsByNamespace[ namespace ].add( user.ID );
 		updateUser( fetchOptions.siteId, user.ID, user );
 	} );
@@ -172,7 +172,7 @@ function getNamespace( fetchOptions ) {
 	return deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) );
 }
 
-UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
+UsersStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 	let namespace;
 

@@ -1,4 +1,4 @@
-export const captureConsole = testFn => ( callback = () => {} ) => {
+export const captureConsole = ( testFn ) => ( callback = () => {} ) => {
 	const original = console;
 	const replacement = {
 		log: jest.fn(),

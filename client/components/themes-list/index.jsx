@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,6 +14,7 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies
@@ -56,7 +56,7 @@ export class ThemesList extends React.Component {
 		isInstalling: () => false,
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		this.props.fetchNextPage( options );
 	};
 
@@ -101,7 +101,7 @@ export class ThemesList extends React.Component {
 	}
 
 	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function( i ) {
+		return times( this.props.placeholderCount, function ( i ) {
 			return (
 				<Theme
 					key={ 'placeholder-' + i }
@@ -115,7 +115,7 @@ export class ThemesList extends React.Component {
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
+		return times( NUM_SPACERS, function ( i ) {
 			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
 	}
@@ -148,8 +148,8 @@ export class ThemesList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	themesBookmark: state.themes.themesUI.themesBookmark,
+const mapStateToProps = ( state ) => ( {
+	themesBookmark: getThemesBookmark( state ),
 } );
 
 export default connect( mapStateToProps )( localize( ThemesList ) );

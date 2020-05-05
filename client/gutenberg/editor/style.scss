@@ -51,6 +51,10 @@
 			@media ( min-width: 600px ) {
 				top: 56px;
 			}
+			// Fixes a color consistency issue.
+			.edit-post-visual-editor {
+				background-color: transparent;
+			}
 		}
 
 		.editor-post-publish-panel {

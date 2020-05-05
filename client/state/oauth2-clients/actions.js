@@ -17,12 +17,12 @@ const cache = new LRU( {
 	maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
 } );
 
-const convertWpcomError = wpcomError => ( {
+const convertWpcomError = ( wpcomError ) => ( {
 	message: wpcomError.message,
 	code: wpcomError.error,
 } );
 
-export const fetchOAuth2ClientData = clientId => async dispatch => {
+export const fetchOAuth2ClientData = ( clientId ) => async ( dispatch ) => {
 	const cacheKey = String( clientId );
 
 	try {

@@ -16,6 +16,7 @@ import {
 	INSTALL_RESPONSE_ERROR,
 	INVALID_CREDENTIALS,
 	IS_DOT_COM,
+	IS_DOT_COM_GET_SEARCH,
 	JETPACK_IS_DISCONNECTED,
 	JETPACK_IS_VALID,
 	NOT_ACTIVE_JETPACK,
@@ -49,6 +50,7 @@ export class JetpackConnectNotices extends Component {
 			INSTALL_RESPONSE_ERROR,
 			INVALID_CREDENTIALS,
 			IS_DOT_COM,
+			IS_DOT_COM_GET_SEARCH,
 			JETPACK_IS_DISCONNECTED,
 			JETPACK_IS_VALID,
 			NOT_ACTIVE_JETPACK,
@@ -103,6 +105,14 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
 				noticeValues.text = translate( 'Good news! WordPress.com sites already have Jetpack.' );
+				return noticeValues;
+
+			case IS_DOT_COM_GET_SEARCH:
+				noticeValues.status = 'is-success';
+				noticeValues.icon = 'status';
+				noticeValues.text = translate(
+					'Good news! Jetpack Search is coming soon to WordPress.com sites.'
+				);
 				return noticeValues;
 
 			case NOT_WORDPRESS:

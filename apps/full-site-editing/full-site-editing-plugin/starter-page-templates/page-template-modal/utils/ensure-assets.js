@@ -11,42 +11,48 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * A full asset URL.
- * @typedef {String} URL
+ *
+ * @typedef {string} URL
  */
 
 /**
  * Gutenberg Block.
- * @typedef {Object} GutenbergBlock
- * @property {String} clientId A unique id of the block.
- * @property {String} name A block name, like "core/paragraph".
+ *
+ * @typedef {object} GutenbergBlock
+ * @property {string} clientId A unique id of the block.
+ * @property {string} name A block name, like "core/paragraph".
  * @property {Array<GutenbergBlock>} innerBlocks Nested blocks.
- * @property {Object} attributes An object with attributes, different for each block type.
+ * @property {object} attributes An object with attributes, different for each block type.
  */
 
 /**
  * Usage object contains an info that certain property is used inside another object.
- * @typedef {Object} Usage
- * @property {String} prop Name of the property.
- * @property {Array<String|Number>} path A path inside an object where prop is, defined as list of keys.
+ *
+ * @typedef {object} Usage
+ * @property {string} prop Name of the property.
+ * @property {Array<string|number>} path A path inside an object where prop is, defined as list of keys.
  */
 
 /**
  * An asset file that is referenced in blocks.
- * @typedef {Object} Asset
+ *
+ * @typedef {object} Asset
  * @property {URL} url A full URL of the asset.
  * @property {Array<Usage>} usages A list of {@link Usage} objects.
  */
 
 /**
  * A collection of {@link Asset} objects, keyed by their URLs.
- * @typedef {Object.<String, Asset>} Assets URLs as keys, {@link Asset}.as a values.
+ *
+ * @typedef {object.<string, Asset>} Assets URLs as keys, {@link Asset}.as a values.
  */
 
 /**
  * FetchSession describes a set of blocks and their assets.
- * @typedef {Object} FetchSession
+ *
+ * @typedef {object} FetchSession
  * @property {Array<GutenbergBlock>} blocks List of Gutenberg blocks.
- * @property {Object<String, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
+ * @property {object<string, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
  * @property {Assets} assets A list of assets detected in blocks.
  */
 
@@ -141,12 +147,12 @@ const findAssetsInBlock = ( session, block ) => {
  * @param {Assets} assets Assets that were detected from blocks.
  * @returns {Promise} Promise that resoves into an object with URLs as keys and fetch results as values.
  */
-const fetchAssets = async assets => {
+const fetchAssets = async ( assets ) => {
 	return await apiFetch( {
 		method: 'POST',
 		path: '/fse/v1/sideload/image/batch',
 		data: { resources: map( assets ) },
-	} ).then( response =>
+	} ).then( ( response ) =>
 		reduce(
 			assets,
 			( fetched, asset ) => {
@@ -166,16 +172,16 @@ const fetchAssets = async assets => {
  * their new local copies.
  *
  * @param {FetchSession} session A current session.
- * @param {Object<String,Object>} fetchedAssets Fetched assets.
+ * @param {object<string, object>} fetchedAssets Fetched assets.
  * @returns {Array<GutenbergBlock>} A promise resolving into an array of blocks.
  */
 const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
-	forEach( session.assets, asset => {
+	forEach( session.assets, ( asset ) => {
 		const newAsset = fetchedAssets[ asset.url ];
 		if ( ! newAsset ) {
 			return;
 		}
-		forEach( asset.usages, usage => {
+		forEach( asset.usages, ( usage ) => {
 			set( session.blocksByClientId, usage.path, newAsset[ usage.prop ] );
 		} );
 	} );
@@ -190,7 +196,7 @@ const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
  * @param {Array<GutenbergBlock>} blocks Blocks, as returned by `wp.block.parse`
  * @returns {Promise} A promise that resolves into an array of {@link GutenbergBlock} with updated assets
  */
-const ensureAssetsInBlocks = async blocks => {
+const ensureAssetsInBlocks = async ( blocks ) => {
 	// Create a FetchSession object by reducing blocks.
 	const session = reduce( blocks, findAssetsInBlock, {
 		assets: {},
@@ -205,7 +211,7 @@ const ensureAssetsInBlocks = async blocks => {
 
 	// Ensure assets are available on the site and replace originals
 	// with local copies before inserting the template.
-	return fetchAssets( session.assets ).then( fetchedAssets => {
+	return fetchAssets( session.assets ).then( ( fetchedAssets ) => {
 		return getBlocksWithAppliedAssets( session, fetchedAssets );
 	} );
 };

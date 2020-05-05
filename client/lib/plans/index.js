@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, get, includes, pick, values } from 'lodash';
 
 /**
@@ -9,6 +8,7 @@ import { difference, get, includes, pick, values } from 'lodash';
  */
 import { isEnabled } from 'config';
 import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -135,7 +135,7 @@ export function filterPlansBySiteAndProps(
 	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
-	return plans.filter( function( plan ) {
+	return plans.filter( function ( plan ) {
 		if ( site && site.jetpack ) {
 			if ( 'monthly' === intervalType ) {
 				if ( showJetpackFreePlan ) {
@@ -329,7 +329,7 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
  */
 export function findPlansKeys( query = {} ) {
 	const plans = getPlans();
-	return Object.keys( plans ).filter( k => planMatches( plans[ k ], query ) );
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
 }
 
 /**
@@ -360,7 +360,7 @@ export function planMatches( planKey, query = {} ) {
 
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getPlan( planKey ) || {};
-	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
@@ -390,16 +390,22 @@ export function getBillingMonthsForTerm( term ) {
 }
 
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
-	const parsedUrl = urlParse( url );
+	const originalUrlType = determineUrlType( url );
+	const resultUrl = getUrlParts( url );
+
 	if ( 'monthly' === intervalType || forceIntervalType ) {
-		parsedUrl.pathname += '/' + intervalType;
+		resultUrl.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
-		parsedUrl.pathname += '/' + siteSlug;
+		resultUrl.pathname += '/' + siteSlug;
 	}
 
-	return urlFormat( parsedUrl );
+	// getUrlFromParts only works with absolute URLs, so add some dummy data if
+	// needed, and format down to the type of the original url.
+	resultUrl.protocol = resultUrl.protocol || 'https:';
+	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
+	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
@@ -439,14 +445,7 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanSpec = ( {
-	customerType,
-	isJetpack,
-	abtest,
-	isInSignup,
-	isLaunchPage,
-	countryCode,
-} ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
@@ -458,18 +457,6 @@ export const getPopularPlanSpec = ( {
 	};
 
 	if ( customerType === 'personal' ) {
-		const isUserOutsideUS = countryCode && 'US' !== countryCode;
-
-		if (
-			isInSignup &&
-			! isLaunchPage &&
-			isUserOutsideUS &&
-			'control' === abtest( 'nonEnglishDomainStepCopyUpdates' ) &&
-			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
-		) {
-			return spec;
-		}
-
 		spec.type = TYPE_PREMIUM;
 	}
 
@@ -490,8 +477,8 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
+		.map( ( planKey ) => getPlan( planKey ) )
+		.map( ( plan ) => plan.getStoreSlug() );
 
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';

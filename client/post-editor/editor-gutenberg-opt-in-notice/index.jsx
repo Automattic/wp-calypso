@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { isMobile } from 'lib/viewport';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
@@ -74,7 +73,7 @@ class EditorGutenbergOptInNotice extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
 	sidebarOpen: 'open' === getPreference( state, 'editor-sidebar' ),
