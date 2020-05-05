@@ -232,7 +232,10 @@ const SiteSetupList = ( {
 									className="site-setup-list__task-action task__action"
 									primary
 									onClick={ () => startTask( dispatch, currentTask, siteId ) }
-									disabled={ currentTask.isDisabled }
+									disabled={
+										currentTask.isDisabled ||
+										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
+									}
 								>
 									{ currentTask.actionText }
 								</Button>

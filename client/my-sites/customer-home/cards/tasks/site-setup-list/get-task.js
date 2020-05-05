@@ -151,6 +151,7 @@ export const getTask = (
 				actionText: translate( 'Launch site' ),
 				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
 				actionDispatchArgs: [ siteId ],
+				actionDisableOnComplete: true,
 			};
 			break;
 		case 'front_page_updated':
