@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import InlineSupportLink from 'components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
@@ -169,19 +170,23 @@ export const getTask = (
 				timing: 10,
 				title: translate( 'Create a site menu' ),
 				description: translate(
-					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
-				),
-				actionText: translate( 'View tutorial' ),
-				isSkippable: true,
-				actionDispatch: openSupportArticleDialog,
-				actionDispatchArgs: [
+					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings. {{supportLink/}}.",
 					{
-						postId: 59580,
-						postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
-						actionLabel: translate( 'Go to the Customizer' ),
-						actionUrl: menusUrl,
-					},
-				],
+						components: {
+							supportLink: (
+								<InlineSupportLink
+									supportPostId={ 59580 }
+									supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+									showIcon={ false }
+									text={ translate( 'View tutorial' ) }
+								/>
+							),
+						},
+					}
+				),
+				actionText: translate( 'Add a menu' ),
+				isSkippable: true,
+				actionUrl: menusUrl,
 			};
 			break;
 	}
