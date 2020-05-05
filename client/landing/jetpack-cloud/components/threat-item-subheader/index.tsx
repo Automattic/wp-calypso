@@ -44,7 +44,7 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 			case 'file':
 				return (
 					<>
-						{ translate( 'Threat found {{signature/}}', {
+						{ translate( 'Threat found ({{signature/}})', {
 							components: {
 								signature: (
 									<span className="threat-item-subheader__alert-signature">
