@@ -178,6 +178,21 @@ describe( 'validateContactDetails', () => {
 			} );
 		} );
 
+		test( 'should reject values that fail Luhn check', () => {
+			const badSiretNumbers = [ '123456789', '12345678901234' ];
+
+			badSiretNumbers.forEach( ( sirenSiret ) => {
+				const testDetails = Object.assign( {}, contactDetails, { extra: { fr: { sirenSiret } } } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result, `expected to reject '${ sirenSiret }'` )
+					.to.have.property( 'extra' )
+					.with.property( 'fr' )
+					.with.property( 'sirenSiret' )
+					.to.deep.equal( [ 'checksum' ] );
+			} );
+		} );
+
 		test( 'should accept an empty value', () => {
 			const testDetails = contactWithExtraProperty( 'sirenSiret', '' );
 
