@@ -14,7 +14,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
 	getSiteOption,
@@ -302,7 +302,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteId }&source=editor`,
+				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`,
 			} );
 		}
 
@@ -660,6 +660,7 @@ const mapStateToProps = (
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
@@ -711,6 +712,7 @@ const mapStateToProps = (
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		siteSlug,
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
