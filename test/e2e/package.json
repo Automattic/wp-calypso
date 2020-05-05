@@ -3,6 +3,9 @@
 	"version": "0.0.1",
 	"description": "Automated end to end acceptance tests for the Calypso project",
 	"private": true,
+	"workspaces": [
+		"./lib/reporter"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-e2e-tests.git"
@@ -58,7 +61,7 @@
 		"selenium-webdriver": "4.0.0-alpha.4",
 		"slack-notify": "^0.1.7",
 		"speakeasy": "^2.0.0",
-		"spec-xunit-reporter": "./lib/reporter",
+		"spec-xunit-reporter": "^0.0.1",
 		"testarmada-magellan": "11.0.1",
 		"testarmada-magellan-local-executor": "^2.0.0",
 		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#b731cdf",
