@@ -1,45 +1,21 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
-import debugFactory from 'debug';
+import { get } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import { initialSiteState } from 'state/sites/plans/reducer';
-import { getSite } from 'state/sites/selectors';
-import { createSitePlanObject } from 'state/sites/plans/assembler';
 import createSelector from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 
 import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
+import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
-
-/**
- * Module dependencies
- */
-const debug = debugFactory( 'calypso:state:sites:plans:selectors' );
-
-export const getCurrentPlan = ( state, siteId ) => {
-	const plans = getPlansBySiteId( state, siteId );
-	if ( plans.data ) {
-		const currentPlan = find( plans.data, 'currentPlan' );
-
-		if ( currentPlan ) {
-			debug( 'current plan: %o', currentPlan );
-			return currentPlan;
-		}
-
-		const site = getSite( state, siteId );
-		const plan = createSitePlanObject( site.plan );
-		debug( 'current plan: %o', plan );
-		return plan;
-	}
-	return null;
-};
+export { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 
 /**
  * Returns a site specific plan
