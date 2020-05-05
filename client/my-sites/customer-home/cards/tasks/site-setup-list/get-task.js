@@ -178,6 +178,9 @@ export const getTask = (
 							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
 							showIcon={ false }
 							text={ translate( 'View tutorial.' ) }
+							tracksEvent="calypso_customer_home_menus_support_page_view"
+							statsGroup="calypso_customer_home"
+							statsName="menus_view_tutorial"
 						/>
 					</>
 				),
