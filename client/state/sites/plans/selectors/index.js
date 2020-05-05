@@ -8,12 +8,10 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { initialSiteState } from 'state/sites/plans/reducer';
-import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
+import { planHasFeature } from 'lib/plans';
 
 import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
-import { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
-import { isSitePlanDiscounted } from 'state/sites/plans/selectors/is-site-plan-discounted';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 export { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
@@ -21,28 +19,7 @@ export { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
 export { isSitePlanDiscounted } from 'state/sites/plans/selectors/is-site-plan-discounted';
 export { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors/get-plan-discounted-raw-price';
 export { getSitePlanRawPrice } from 'state/sites/plans/selectors/get-site-plan-raw-price';
-
-/**
- * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
- * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
- *
- * @param  {object}  state        global state
- * @param  {number}  siteId       the site id
- * @param  {string}  productSlug  the plan product slug
- * @param  {boolean} isMonthly    if true, returns monthly price
- * @returns {number}               plan raw discount
- */
-export function getPlanRawDiscount( state, siteId, productSlug, { isMonthly = false } = {} ) {
-	const plan = getSitePlan( state, siteId, productSlug );
-
-	if ( ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
-		return null;
-	}
-
-	return isMonthly
-		? calculateMonthlyPriceForPlan( productSlug, plan.rawDiscount )
-		: plan.rawDiscount;
-}
+export { getPlanRawDiscount } from 'state/sites/plans/selectors/get-plan-raw-discount';
 
 export function hasDomainCredit( state, siteId ) {
 	if ( ! siteId ) {
