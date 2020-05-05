@@ -221,7 +221,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onFocus={ () => setIsFocused( true ) }
 							onBlur={ selectLastInputValue }
 						/>
-						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+						<span className="vertical-select__placeholder">
+							<span className="vertical-select__placeholder-text">{ animatedPlaceholder }</span>
+						</span>
 						{ showArrow && (
 							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
 						) }

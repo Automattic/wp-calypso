@@ -73,6 +73,9 @@
 
 	.madlib__input:empty {
 		@include break-small {
+			padding-right: 300px; // there's not enough container width on smaller screens
+		}
+		@include break-medium {
 			padding-right: 400px;
 		}
 	}
@@ -88,6 +91,14 @@
 		position: absolute;
 		left: 0;
 		z-index: 2;
+
+		.vertical-select__placeholder-text {
+			position: absolute;
+			white-space: nowrap; // force placeholder on a single line
+			width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 
 	&::after {
