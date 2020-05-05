@@ -213,6 +213,7 @@ export function signupForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
