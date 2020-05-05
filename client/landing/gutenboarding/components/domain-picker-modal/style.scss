@@ -60,7 +60,7 @@
 	}
 
 	// Show confirm button on fixed footer on mobile view
-	@media ( max-width: $break-medium ) {
+	@media ( max-width: $break-mobile ) {
 
 		.domain-picker__header .domain-picker__confirm-button {
 			display: none;
