@@ -6,6 +6,7 @@ import { find } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -25,6 +26,8 @@ import { countries } from 'components/phone-input/data';
  * Style dependencies
  */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:phone-input' );
 
 function PhoneInput( {
 	translate,
@@ -167,20 +170,37 @@ function useSharedRef( inputRef ) {
 }
 
 function usePhoneNumberState( value, countryCode, countriesList, freezeSelection ) {
+	const previousValue = useRef( value );
 	const [ phoneNumberState, setPhoneNumberState ] = useState(
 		getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
 	);
+	const { rawValue, displayValue } = phoneNumberState;
+	const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
 
 	useEffect( () => {
-		const { rawValue, displayValue, icannValue } = phoneNumberState;
-		// No need to update it if the prop value is equal to one form of the current value
+		// No need to update if the value has not changed
+		if ( previousValue.current === value ) {
+			return;
+		}
+		previousValue.current = value;
+		// No need to update if the prop value is equal to one form of the current value
 		if ( value === rawValue || value === displayValue || value === icannValue ) {
 			return;
 		}
+		debug(
+			'props changed, updating value; raw value is',
+			rawValue,
+			'display value is',
+			displayValue,
+			'icannValue is',
+			icannValue,
+			'and prop value is',
+			value
+		);
 		setPhoneNumberState(
 			getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
 		);
-	}, [ phoneNumberState, value, countryCode, countriesList, freezeSelection ] );
+	}, [ rawValue, displayValue, icannValue, value, countryCode, countriesList, freezeSelection ] );
 
 	return [ phoneNumberState, setPhoneNumberState ];
 }
@@ -192,8 +212,7 @@ function getPhoneNumberStatesFromProp( rawValue, countryCode, countriesList, fre
 		countriesList,
 		freezeSelection
 	);
-	const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
-	return { rawValue, displayValue, icannValue };
+	return { rawValue, displayValue };
 }
 
 function getInputHandler(
@@ -214,8 +233,9 @@ function getInputHandler(
 			freezeSelection
 		);
 
-		setPhoneNumberState( { rawValue, displayValue, icannValue: toIcannFormat( displayValue ) } );
+		setPhoneNumberState( { rawValue, displayValue } );
 
+		debug( 'setting new value', displayValue );
 		onChange( { value: displayValue, countryCode } );
 	};
 }
@@ -354,6 +374,7 @@ function getCountrySelectionHandler(
 			countryCode: newCountryCode,
 			value: format( inputValue, newCountryCode, countriesList ),
 		} );
+		debug( 'setting freeze to', enableStickyCountry );
 		setFreezeSelection( enableStickyCountry );
 	};
 }
