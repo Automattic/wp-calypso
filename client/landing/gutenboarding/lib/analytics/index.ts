@@ -46,7 +46,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 	trackEventWithFlow( 'calypso_signup_complete', {
 		is_new_user: params.isNewUser,
 		is_new_site: params.isNewSite,
-		blog_id: params.blogId,
+		blogid: params.blogId,
 	} );
 }
 
