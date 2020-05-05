@@ -8,8 +8,8 @@
 		"client",
 		"apps/*",
 		"packages/*",
-		"xtest/e2e",
-		"xtest/e2e/lib/reporter"
+		"test/e2e",
+		"test/e2e/lib/reporter"
 	],
 	"license": "GPL-2.0-or-later",
 	"repository": {
