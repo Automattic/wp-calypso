@@ -18,6 +18,7 @@ import {
 	useDispatch,
 	useTotal,
 	usePaymentMethod,
+	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
 
 /**
@@ -31,6 +32,7 @@ import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
+import MaterialIcon from 'components/material-icon';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -121,6 +123,8 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 
+	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
+
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
 		setSiteId( siteId );
@@ -136,14 +140,27 @@ export default function WPCheckout( {
 	// so we mock the loaded property the CartStore would inject.
 	const mockCart = { ...responseCart, hasLoadedFromServer: true };
 
+	//...( isSummaryVisible ? [ 'is-visible' ] : [] ),
+
 	return (
 		<Checkout>
-			<CheckoutSummaryUI>
-				<WPCheckoutOrderSummary />
-				<UpsellWrapperUI>
-					<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-				</UpsellWrapperUI>
-			</CheckoutSummaryUI>
+			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+					<span>
+						{ translate( 'Purchase Details' ) }
+						<CheckoutSummaryIcon icon="keyboard_arrow_down" />
+					</span>
+					<CheckoutSummaryTitlePrice>
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</CheckoutSummaryTitlePrice>
+				</CheckoutSummaryTitleLink>
+				<CheckoutSummaryBody>
+					<WPCheckoutOrderSummary />
+					<UpsellWrapperUI>
+						<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+					</UpsellWrapperUI>
+				</CheckoutSummaryBody>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutSteps>
 					<CheckoutStep
@@ -240,17 +257,63 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
-	display: none;
+const CheckoutSummaryTitleLink = styled.button`
+	background: ${( props ) => props.theme.colors.background};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	color: ${( props ) => props.theme.colors.textColor};
+	display: flex;
+	font-weight: ${( props ) => props.theme.weights.bold};
+	justify-content: space-between;
+	padding: 20px;
+	width: 100%;
+
+	.is-visible & {
+		border-bottom: none;
+	}
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryIcon = styled( MaterialIcon )`
+	fill: ${( props ) => props.theme.colors.textColor};
+	margin-left: 4px;
+	transition: transform 0.1s linear;
+	width: 16px;
+	height: 16px;
+	vertical-align: bottom;
+
+	.is-visible & {
+		transform: rotate( 180deg );
+	}
+`;
+
+const CheckoutSummaryTitlePrice = styled.span`
+	.is-visible & {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryBody = styled.div`
+	display: none;
+
+	.is-visible & {
+		display: block;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border-bottom: none;
 		display: block;
 	}
 `;
 
 const UpsellWrapperUI = styled.div`
-	margin-top: 24px;
 	background: ${( props ) => props.theme.colors.surface};
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		margin-top: 24px;
+	}
 
 	.cart__upsell-wrapper {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};

@@ -20,7 +20,6 @@ export default function WPCheckoutOrderSummary() {
 
 	return (
 		<CheckoutSummaryCard>
-			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
@@ -57,17 +56,6 @@ export default function WPCheckoutOrderSummary() {
 		</CheckoutSummaryCard>
 	);
 }
-
-const CheckoutSummaryTitle = styled.h2`
-	color: ${( props ) => props.theme.colors.textColor};
-	display: none;
-	font-weight: ${( props ) => props.theme.weights.bold};
-	padding: 20px 20px 0;
-
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		display: none;
-	}
-`;
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 20px;
