@@ -204,9 +204,11 @@ export class ContactDetailsFormFields extends Component {
 			...mainFieldValues,
 			fax,
 			state,
-			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
+			phone: mainFieldValues.phone
+				? toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] )
+				: '',
 		};
-	}
+	};
 
 	getFormState = () => {
 		// Primarily for tests to use
