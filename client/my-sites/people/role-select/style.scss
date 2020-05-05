@@ -1,6 +1,12 @@
 .role-select__role-wrapper {
 	display: flex;
 	margin-bottom: 10px;
+	font-weight: 400;
+
+	input[type='radio'] {
+		margin-top: 3px;
+		margin-right: 8px;
+	}
 }
 
 .role-select__role-name-description {
