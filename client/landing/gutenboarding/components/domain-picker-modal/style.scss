@@ -50,7 +50,11 @@
 	}
 
 	.domain-picker__header-title {
-		@include onboarding-heading-text;
+		@include onboarding-heading-text-mobile;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
 	}
 
 	// Do not display domain picker footer which contains
