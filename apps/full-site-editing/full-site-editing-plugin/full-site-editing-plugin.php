@@ -265,3 +265,11 @@ function load_premium_content() {
 	require_once __DIR__ . '/premium-content/premium-content.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
+
+/**
+ * Load New Blocks Showcase module
+ */
+function load_new_blocks_showcase() {
+	require_once __DIR__ . '/new-blocks-showcase/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_new_blocks_showcase' );
