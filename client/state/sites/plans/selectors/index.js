@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -20,17 +19,7 @@ export { getSitePlanRawPrice } from 'state/sites/plans/selectors/get-site-plan-r
 export { getPlanRawDiscount } from 'state/sites/plans/selectors/get-plan-raw-discount';
 export { hasDomainCredit } from 'state/sites/plans/selectors/has-domain-credit';
 export { isRequestingSitePlans } from 'state/sites/plans/selectors/is-requesting-site-plans';
-
-export function isCurrentPlanExpiring( state, siteId ) {
-	const currentPlan = getCurrentPlan( state, siteId );
-
-	if ( ! currentPlan || ! currentPlan.expiryDate ) {
-		return true;
-	}
-
-	const expiration = moment( currentPlan.expiryDate ).startOf( 'day' );
-	return expiration < moment().add( 30, 'days' );
-}
+export { isCurrentPlanExpiring } from 'state/sites/plans/selectors/is-current-plan-expiring';
 
 /**
  * Returns true if current user is also a current plan owner.
