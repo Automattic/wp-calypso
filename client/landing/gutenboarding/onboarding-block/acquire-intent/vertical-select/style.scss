@@ -70,6 +70,12 @@
 	&--with-arrow {
 		margin-right: 40px; // make space for absolute positioned arrow
 	}
+
+	.madlib__input:empty {
+		@include break-small {
+			padding-right: 400px;
+		}
+	}
 }
 
 .vertical-select__placeholder {
@@ -78,7 +84,10 @@
 	color: var( --studio-gray-5 );
 
 	@include break-small {
-		width: 400px;
+		height: 80px;
+		position: absolute;
+		left: 0;
+		z-index: 2;
 	}
 
 	&::after {
