@@ -20,19 +20,7 @@ export { getPlanRawDiscount } from 'state/sites/plans/selectors/get-plan-raw-dis
 export { hasDomainCredit } from 'state/sites/plans/selectors/has-domain-credit';
 export { isRequestingSitePlans } from 'state/sites/plans/selectors/is-requesting-site-plans';
 export { isCurrentPlanExpiring } from 'state/sites/plans/selectors/is-current-plan-expiring';
-
-/**
- * Returns true if current user is also a current plan owner.
- *
- * @param  {object}  state        global state
- * @param  {number}  siteId       the site id
- * @returns {boolean}			  True when user is a plan owner
- */
-export function isCurrentUserCurrentPlanOwner( state, siteId ) {
-	const currentPlan = getCurrentPlan( state, siteId );
-
-	return get( currentPlan, 'userIsOwner', false );
-}
+export { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors/is-current-user-current-plan-owner';
 
 /**
  * Returns a site's current plan's product slug
