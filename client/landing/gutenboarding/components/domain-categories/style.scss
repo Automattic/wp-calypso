@@ -29,6 +29,10 @@
 	border: 1px solid var( --studio-gray-5 );
 	display: none;
 
+	> * {
+		vertical-align: middle;
+	}
+
 	svg {
 		margin-left: 5px;
 	}
