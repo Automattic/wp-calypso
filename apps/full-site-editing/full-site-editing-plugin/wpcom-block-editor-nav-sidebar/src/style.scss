@@ -1,4 +1,5 @@
 @import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
 
 $sidebarWidth: 272px;
@@ -8,10 +9,12 @@ $transitionPeriod: 500ms;
 .is-wpcom-block-editor-nav-sidebar-attached {
 	.edit-post-layout {
 		transition: margin-left $transitionPeriod;
+		@include reduce-motion( 'transition' );
 	}
 
 	.edit-post-fullscreen-mode-close {
 		transition: width $transitionPeriod;
+		@include reduce-motion( 'transition' );
 	}
 }
 
@@ -41,6 +44,7 @@ $transitionPeriod: 500ms;
 	width: $sidebarWidth;
 	border-right: $border;
 	transition: left $transitionPeriod;
+	@include reduce-motion( 'transition' );
 }
 
 .wpcom-block-editor-nav-sidebar__container:not( [aria-hidden=true] ) {
@@ -66,9 +70,11 @@ $transitionPeriod: 500ms;
 
 		&.wpcom-block-editor-nav-sidebar__is-shrinking {
 			animation: wpcom-block-editor-nav-sidebar__shrink $transitionPeriod normal forwards;
+			@include reduce-motion( 'animation' );
 		}
 		&.wpcom-block-editor-nav-sidebar__is-growing {
 			animation: wpcom-block-editor-nav-sidebar__grow $transitionPeriod normal forwards;
+			@include reduce-motion( 'animation' );
 		}
 	}
 }
