@@ -5,7 +5,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
+import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
 
 /**
  * Style dependencies
@@ -39,15 +40,6 @@ interface Props {
 	error: boolean;
 }
 
-// @todo: once we have designs for the "error+threats found" case, we should update this component
-const ScanError = () => (
-	<Card highlight="error">
-		Something went wrong with the most recent Scan. Please, get in touch with support to get more
-		information. <br />
-		Despite this error, we can inform you we have found threats in your site.
-	</Card>
-);
-
 const ScanThreats = ( { error, site, threats }: Props ) => {
 	const {
 		updatingThreats,
@@ -63,6 +55,10 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
 	);
 	const dispatch = useDispatch();
+
+	const dispatchScanRun = React.useCallback( () => {
+		triggerScanRun( site.ID )( dispatch );
+	}, [ dispatch, site ] );
 
 	const allFixableThreats = threats.filter(
 		( threat ): threat is FixableThreat => threat.fixable !== false
@@ -115,7 +111,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		<>
 			<SecurityIcon icon="error" />
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
-			{ error && <ScanError /> }
 			<p>
 				{ translate(
 					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
@@ -173,6 +168,30 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					/>
 				) ) }
 			</div>
+
+			{ error && (
+				<div className="scan-threats__error">
+					{ translate(
+						'The scanner was unable to check all files and errored before completion.{{lineBreak/}} Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						{
+							components: {
+								lineBreak: <br />,
+								runScan: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+								linkToSupport: (
+									<a
+										href={ contactSupportUrl( site.URL ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			) }
+
 			{ selectedThreat && (
 				<ThreatDialog
 					showDialog={ showThreatDialog }

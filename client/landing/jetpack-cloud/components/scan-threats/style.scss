@@ -3,6 +3,42 @@
 		margin: 16px 0;
 	}
 
+	&__error {
+		text-align: center;
+		font-size: 16px;
+		line-height: 24px;
+		color: var( --studio-gray-40 );
+		margin-top: 24px;
+	}
+
+	&__run-scan-button {
+		padding: initial;
+		border: initial;
+		font-weight: normal;
+		vertical-align: initial;
+		font-size: initial;
+		color: var( --color-link );
+		background: inherit;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: initial;
+			color: var( --color-link-dark );
+		}
+
+		&:hover,
+		&:active {
+			outline: initial;
+		}
+
+		&:focus {
+			outline: thin dotted;
+			box-shadow: initial;
+			border: initial;
+		}
+	}
+
 	&__buttons {
 		display: flex;
 		justify-content: space-between;
