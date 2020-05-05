@@ -100,7 +100,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }`
+		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent(
 		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
