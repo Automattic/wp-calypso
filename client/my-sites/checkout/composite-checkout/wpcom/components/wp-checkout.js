@@ -262,6 +262,7 @@ const CheckoutSummaryTitleLink = styled.button`
 	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	color: ${( props ) => props.theme.colors.textColor};
 	display: flex;
+	font-size: 16px;
 	font-weight: ${( props ) => props.theme.weights.bold};
 	justify-content: space-between;
 	padding: 20px;
@@ -285,8 +286,8 @@ const CheckoutSummaryIcon = styled( MaterialIcon )`
 	fill: ${( props ) => props.theme.colors.textColor};
 	margin-left: 4px;
 	transition: transform 0.1s linear;
-	width: 16px;
-	height: 16px;
+	width: 18px;
+	height: 18px;
 	vertical-align: bottom;
 
 	.is-visible & {
