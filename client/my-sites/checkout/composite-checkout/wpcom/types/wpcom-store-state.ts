@@ -51,7 +51,7 @@ type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	fr?: {
 		registrantType: T;
 		trademarkNumber: T;
-		sirenSirat: T;
+		sirenSiret: T;
 	};
 };
 
@@ -151,9 +151,9 @@ export function updateManagedContactDetailsShape< A, B >(
 					update.tldExtraFields.fr.trademarkNumber,
 					data.tldExtraFields.fr.trademarkNumber
 				),
-				sirenSirat: combine(
-					update.tldExtraFields.fr.sirenSirat,
-					data.tldExtraFields.fr.sirenSirat
+				sirenSiret: combine(
+					update.tldExtraFields.fr.sirenSiret,
+					data.tldExtraFields.fr.sirenSiret
 				),
 			};
 		} else {
@@ -163,7 +163,7 @@ export function updateManagedContactDetailsShape< A, B >(
 		tldExtraFields.fr = {
 			registrantType: construct( update.tldExtraFields.fr.registrantType ),
 			trademarkNumber: construct( update.tldExtraFields.fr.trademarkNumber ),
-			sirenSirat: construct( update.tldExtraFields.fr.sirenSirat ),
+			sirenSiret: construct( update.tldExtraFields.fr.sirenSiret ),
 		};
 	}
 
@@ -232,7 +232,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 			? [
 					f( x.tldExtraFields.fr.registrantType ),
 					f( x.tldExtraFields.fr.trademarkNumber ),
-					f( x.tldExtraFields.fr.sirenSirat ),
+					f( x.tldExtraFields.fr.sirenSiret ),
 			  ]
 			: [];
 
@@ -492,7 +492,7 @@ function prepareFrDomainContactExtraDetails(
 			registrantType: details.tldExtraFields.fr.registrantType.value,
 			registrantVatId: details.vatId.value,
 			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.value,
-			sirenSirat: details.tldExtraFields.fr.sirenSirat.value,
+			sirenSiret: details.tldExtraFields.fr.sirenSiret.value,
 		};
 	}
 	return null;
@@ -503,10 +503,10 @@ function prepareFrDomainContactExtraDetailsErrors(
 ): FrDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.fr ) {
 		return {
-			registrantType: details.tldExtraFields.fr?.registrantType?.errors?.[ 0 ],
-			registrantVatId: details.vatId.errors[ 0 ],
-			trademarkNumber: details.tldExtraFields.fr?.trademarkNumber?.errors?.[ 0 ],
-			sirenSirat: details.tldExtraFields.fr?.sirenSirat?.errors?.[ 0 ],
+			registrantType: details.tldExtraFields.fr?.registrantType?.errors,
+			registrantVatId: details.vatId.errors,
+			trademarkNumber: details.tldExtraFields.fr?.trademarkNumber?.errors,
+			sirenSiret: details.tldExtraFields.fr?.sirenSiret?.errors,
 		};
 	}
 	return null;
@@ -537,7 +537,7 @@ export function prepareDomainContactValidationRequest(
 			registrant_type: details.tldExtraFields.fr.registrantType.value,
 			registrant_vat_id: details.vatId.value,
 			trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
-			siren_sirat: details.tldExtraFields.fr.sirenSirat.value,
+			siren_siret: details.tldExtraFields.fr.sirenSiret.value,
 		};
 	}
 
@@ -597,7 +597,7 @@ export function formatDomainContactValidationResponse(
 			fr: {
 				registrantType: response.messages?.extra?.fr?.registrantType,
 				trademarkNumber: response.messages?.extra?.fr?.trademarkNumber,
-				sirenSirat: response.messages?.extra?.fr?.sirenSirat,
+				sirenSiret: response.messages?.extra?.fr?.sirenSiret,
 			},
 		},
 	};
@@ -636,7 +636,7 @@ function prepareManagedContactDetailsUpdate(
 			fr: {
 				registrantType: rawFields?.extra?.fr?.registrantType,
 				trademarkNumber: rawFields?.extra?.fr?.trademarkNumber,
-				sirenSirat: rawFields?.extra?.fr?.sirenSirat,
+				sirenSiret: rawFields?.extra?.fr?.sirenSiret,
 			},
 		},
 	};

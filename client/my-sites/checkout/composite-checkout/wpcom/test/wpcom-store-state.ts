@@ -64,7 +64,7 @@ describe( 'updateManagedContactDetailsShape', function () {
 		'extra.uk.tradingName',
 		'extra.fr.registrantType',
 		'extra.fr.trademarkNumber',
-		'extra.fr.sirenSirat',
+		'extra.fr.sirenSiret',
 	];
 
 	const testProperty = ( merge, construct, update, data ) => {
@@ -122,7 +122,7 @@ describe( 'updateManagedContactDetailsShape', function () {
 			data.tldExtraFields.fr = {
 				registrantType: gen(),
 				trademarkNumber: gen(),
-				sirenSirat: gen(),
+				sirenSiret: gen(),
 			};
 		}
 
@@ -317,7 +317,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					fr: {
 						registrantType: 'registrantType',
 						trademarkNumber: 'trademarkNumber',
-						sirenSirat: 'sirenSirat',
+						sirenSiret: 'sirenSiret',
 					},
 				},
 			} )
@@ -356,7 +356,7 @@ describe( 'flattenManagedContactDetailsShape', function () {
 					fr: {
 						registrantType: 'registrantType',
 						trademarkNumber: 'trademarkNumber',
-						sirenSirat: 'sirenSirat',
+						sirenSiret: 'sirenSiret',
 					},
 				},
 			} )
