@@ -17,7 +17,10 @@ import {
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164,
+	getUpdatedCursorPosition,
 } from '../phone-number';
+
+/* eslint-disable jest/expect-expect */
 
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
@@ -268,5 +271,75 @@ describe( 'metadata:', () => {
 		test( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
 			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
 		} );
+	} );
+} );
+
+describe( 'getUpdatedCursorPosition', () => {
+	test( 'should return last position for appending without special characters', () => {
+		equal( getUpdatedCursorPosition( '23', '234', 2 ), 3 );
+	} );
+
+	test( 'should return last position for appending with special characters', () => {
+		equal( getUpdatedCursorPosition( '234', '234-5', 3 ), 5 );
+	} );
+
+	test( 'should return last position for deleting from end with special characters', () => {
+		equal( getUpdatedCursorPosition( '234-5', '234', 5 ), 3 );
+	} );
+
+	test( 'should return last position for appending with initial plus', () => {
+		equal( getUpdatedCursorPosition( '+1 234', '+1 234-5', 6 ), 8 );
+	} );
+
+	test( 'should return last position for appending with initial parenthesis', () => {
+		equal( getUpdatedCursorPosition( '(802) 234', '(802) 234-5', 9 ), 11 );
+	} );
+
+	test( 'should return last position for appending when initial parenthesis are added', () => {
+		equal( getUpdatedCursorPosition( '802-2343', '(802) 234-39', 8 ), 12 );
+	} );
+
+	test( 'should return last position for deleting when initial parenthesis are removed', () => {
+		equal( getUpdatedCursorPosition( '(802) 234-39', '802-2343', 12 ), 8 );
+	} );
+
+	test( 'should return last position for deleting in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 234-3943', '(802) 233-943', 9 ), 8 );
+	} );
+
+	test( 'should return last position for deleting multiple characters in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 687-6234', '802-6234', 6, 9 ), 4 );
+	} );
+
+	test( 'should return last position for replacing multiple characters in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 687-6234', '(802) 555-6234', 6, 9 ), 9 );
+	} );
+
+	test( 'should return position after cursor for inserting without special characters', () => {
+		equal( getUpdatedCursorPosition( '124', '1234', 2 ), 3 );
+	} );
+
+	test( 'should return position after cursor for inserting before special characters', () => {
+		equal( getUpdatedCursorPosition( '124', '123-4', 2 ), 3 );
+	} );
+
+	test( 'should return position after cursor for inserting multiple numbers before special characters', () => {
+		equal( getUpdatedCursorPosition( '224', '223-764', 2 ), 6 );
+	} );
+
+	test( 'should return position after cursor for inserting after special characters', () => {
+		equal( getUpdatedCursorPosition( '124-4', '124-64', 4 ), 5 );
+	} );
+
+	test( 'should return position after cursor for inserting after parenthesis before hyphen', () => {
+		equal( getUpdatedCursorPosition( '(802) 614-21', '(802) 619-421', 8 ), 9 );
+	} );
+
+	test( 'should return last position when replacing characters with parenthesis', () => {
+		equal( getUpdatedCursorPosition( '(802) 222-2222', '6', 0, 14 ), 1 );
+	} );
+
+	test( 'should return last position when replacing characters with a plus', () => {
+		equal( getUpdatedCursorPosition( '+1 802 222-2222', '6', 0, 15 ), 1 );
 	} );
 } );
