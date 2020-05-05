@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -14,12 +13,10 @@ import { find, isNumber, pick, noop, get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 import getMemberships from 'state/selectors/get-memberships';
 import QueryMemberships from 'components/data/query-memberships';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { Dialog } from '@automattic/components';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import Navigation from './navigation';
 import ProductForm, {
@@ -33,21 +30,21 @@ import wpcom from 'lib/wp';
 import accept from 'lib/accept';
 import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships/index.js';
 import { receiveUpdateProduct, receiveDeleteProduct } from 'state/memberships/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import Banner from 'components/banner';
+import { localizeUrl } from 'lib/i18n-utils';
 
 // Utility function for checking the state of the Payment Buttons list
-const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
+const isEmptyArray = ( a ) => Array.isArray( a ) && a.length === 0;
 
-const createMembershipButton = siteId => ( dispatch, getState ) => {
+const createMembershipButton = ( siteId ) => ( dispatch, getState ) => {
 	// This is a memberships submission.
 	const values = getProductFormValues( getState() );
-	const createProduct = product =>
+	const createProduct = ( product ) =>
 		wpcom.req
 			.post( `/sites/${ siteId }/memberships/product`, {
 				title: product.title,
@@ -57,7 +54,7 @@ const createMembershipButton = siteId => ( dispatch, getState ) => {
 				price: product.price,
 				currency: product.currency,
 			} )
-			.then( newProduct => {
+			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				return membershipProduct;
@@ -70,7 +67,7 @@ const createMembershipButton = siteId => ( dispatch, getState ) => {
 				country: 'US', // FOR NOW
 				email: values.email,
 			} )
-			.then( newAccount => {
+			.then( ( newAccount ) => {
 				values.stripe_account = newAccount.result.account.connected_destination_account_id;
 				return createProduct( values );
 			} );
@@ -91,7 +88,7 @@ const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) =
 			price: values.price,
 			currency: values.currency,
 		} )
-		.then( newProduct => {
+		.then( ( newProduct ) => {
 			const product = membershipProductFromApi( newProduct.product );
 			dispatch( receiveUpdateProduct( siteId, product ) );
 			return product;
@@ -99,7 +96,7 @@ const updateMembershipButton = ( siteId, productId ) => ( dispatch, getState ) =
 };
 
 // Thunk action creator to delete a button
-const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
+const trashPaymentButton = ( siteId, paymentId ) => ( dispatch ) => {
 	// TODO: Replace double-delete with single-delete call after server-side shortcode renderer
 	// is updated to ignore payment button posts with `trash` status.
 	const post = wpcom.site( siteId ).post( paymentId );
@@ -179,7 +176,7 @@ class MembershipsDialog extends Component {
 		const { paymentButtons, currencyCode, currentUserEmail } = this.props;
 
 		if ( isNumber( paymentId ) ) {
-			const editedPayment = find( paymentButtons, p => p.ID === paymentId );
+			const editedPayment = find( paymentButtons, ( p ) => p.ID === paymentId );
 			if ( editedPayment ) {
 				// Pick only the fields supported by the form -- drop the rest
 				return pick( editedPayment, Object.keys( initialFields ) );
@@ -205,7 +202,7 @@ class MembershipsDialog extends Component {
 		}
 
 		// ask for confirmation
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			const { translate } = this.props;
 			accept(
 				translate( 'Wait! You have unsaved changes. Do you really want to discard them?' ),
@@ -222,16 +219,16 @@ class MembershipsDialog extends Component {
 	handleDialogClose = () => {
 		// If there is a form that needs to be saved, ask for confirmation first.
 		// If not confirmed, the transition will be cancelled -- dialog remains opened.
-		this.checkUnsavedForm().then( accepted => accepted && this.props.onClose() );
+		this.checkUnsavedForm().then( ( accepted ) => accepted && this.props.onClose() );
 	};
 
-	handleChangeTabs = activeTab => {
+	handleChangeTabs = ( activeTab ) => {
 		if ( activeTab === 'form' ) {
 			this.showButtonForm( null );
 		} else {
 			// If there is a form that needs to be saved, ask for confirmation first.
 			// If not confirmed, the transition will be cancelled -- tab is not switched.
-			this.checkUnsavedForm().then( accepted => accepted && this.showButtonList() );
+			this.checkUnsavedForm().then( ( accepted ) => accepted && this.showButtonList() );
 		}
 	};
 
@@ -239,18 +236,18 @@ class MembershipsDialog extends Component {
 		this.setState( { activeTab: 'list' } );
 	}
 
-	showButtonForm = editedPaymentId => {
+	showButtonForm = ( editedPaymentId ) => {
 		const initialFormValues = this.getInitialFormFields( editedPaymentId );
 		this.setState( { activeTab: 'form', editedPaymentId, initialFormValues } );
 	};
 
-	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
+	handleSelectedChange = ( selectedPaymentId ) => this.setState( { selectedPaymentId } );
 
 	setIsSubmitting( isSubmitting ) {
 		this._isMounted && this.setState( { isSubmitting } );
 	}
 
-	showError = errorMessage => this._isMounted && this.setState( { errorMessage } );
+	showError = ( errorMessage ) => this._isMounted && this.setState( { errorMessage } );
 
 	dismissError = () => this._isMounted && this.setState( { errorMessage: null } );
 
@@ -266,7 +263,7 @@ class MembershipsDialog extends Component {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
 			// This is memberships business.
-			productId = dispatch( createMembershipButton( siteId ) ).then( newProduct => {
+			productId = dispatch( createMembershipButton( siteId ) ).then( ( newProduct ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_memberships_button_create', {
 						price: newProduct.price,
@@ -279,10 +276,10 @@ class MembershipsDialog extends Component {
 		}
 
 		productId
-			.then( id =>
+			.then( ( id ) =>
 				dispatch( ( d, getState ) => getMemberships( getState(), this.props.siteId, id ) )
 			)
-			.then( product => {
+			.then( ( product ) => {
 				this.props.onInsert( { id: product.ID, isMembership: true } );
 				dispatch(
 					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
@@ -317,14 +314,14 @@ class MembershipsDialog extends Component {
 		}
 	};
 
-	handleTrash = paymentId => {
+	handleTrash = ( paymentId ) => {
 		const { translate } = this.props;
 		const areYouSure = translate(
 			'Are you sure you want to delete this item? It will be disabled and removed from all locations where it currently appears.'
 		);
 		accept(
 			areYouSure,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -414,10 +411,8 @@ class MembershipsDialog extends Component {
 		const {
 			showDialog,
 			siteId,
-			siteSlug,
 			paymentButtons,
 			currencyCode,
-			isJetpackNotSupported,
 			translate,
 			planHasSimplePaymentsFeature,
 			shouldQuerySitePlans,
@@ -429,28 +424,6 @@ class MembershipsDialog extends Component {
 		const showNavigation =
 			activeTab === 'list' ||
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
-
-		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
-			return this.renderEmptyDialog(
-				<EmptyContent
-					className="upgrade-jetpack"
-					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
-					illustrationWidth={ 600 }
-					action={
-						<Banner
-							icon="star"
-							title={ translate( 'Upgrade your Jetpack!' ) }
-							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
-							feature={ FEATURE_SIMPLE_PAYMENTS }
-							plan={ PLAN_PREMIUM }
-							href={ '../../plugins/jetpack/' + siteSlug }
-						/>
-					}
-				/>,
-				true
-			);
-		}
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
@@ -473,7 +446,7 @@ class MembershipsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://support.wordpress.com/simple-payments/"
+							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>
@@ -529,12 +502,9 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
 		paymentButtons: getMemberships( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		isJetpackNotSupported:
-			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),

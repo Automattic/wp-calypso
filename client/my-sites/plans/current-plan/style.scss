@@ -69,7 +69,6 @@
 
 .current-plan__header-text {
 	font-size: 18px;
-	font-weight: 300;
 }
 
 .current-plan__header.is-placeholder {
@@ -106,7 +105,7 @@
 }
 
 .current-plan__header-purchase-info-wrapper.card.is-compact {
-	margin: 24px -32px -32px;
+	margin: 24px -32px -14px;
 	display: flex;
 	flex-direction: column;
 }

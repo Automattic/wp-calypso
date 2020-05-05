@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ class PaginationExample extends Component {
 		compact: false,
 	};
 
-	updatePage = page => {
+	updatePage = ( page ) => {
 		this.setState( { page } );
 	};
 

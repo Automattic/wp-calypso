@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
@@ -87,7 +85,7 @@ class VideoEditor extends Component {
 	 * Updates the poster by selecting a particular frame of the video.
 	 * @param {number} currentTime - Time at which to capture the frame
 	 */
-	updatePoster = currentTime => {
+	updatePoster = ( currentTime ) => {
 		if ( ! this.state.isSelectingFrame ) {
 			return;
 		}
@@ -120,7 +118,7 @@ class VideoEditor extends Component {
 	 * Uploads an image to use as the poster for the video.
 	 * @param {object} file - Uploaded image
 	 */
-	uploadImage = file => {
+	uploadImage = ( file ) => {
 		if ( ! file ) {
 			return;
 		}
@@ -208,7 +206,7 @@ class VideoEditor extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			posterUrl: getPosterUrl( state ),
 			shouldShowError: shouldShowVideoEditorError( state ),

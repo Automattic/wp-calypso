@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import PackageDialog from './package-dialog';
 import PackagesListItem from './packages-list-item';
@@ -28,7 +25,7 @@ import {
 } from '../../state/packages/selectors';
 
 class Packages extends Component {
-	renderListHeader = packages => {
+	renderListHeader = ( packages ) => {
 		const { translate } = this.props;
 
 		if ( ! packages || ! packages.length ) {
@@ -142,7 +139,7 @@ Packages.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const form = getPackagesForm( state, siteId ) || {};
 		return {
@@ -153,7 +150,7 @@ export default connect(
 			allSelectedPackages: getAllSelectedPackages( state, siteId ) || [],
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		...bindActionCreators( PackagesActions, dispatch ),
 	} )
 )( localize( Packages ) );

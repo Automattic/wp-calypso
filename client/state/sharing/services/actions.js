@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -16,7 +14,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 /**
  * Triggers a network request for Keyring services.
  *
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function requestKeyringServices() {
 	return ( dispatch, getState ) => {
@@ -28,7 +26,7 @@ export function requestKeyringServices() {
 		return wpcom
 			.undocumented()
 			.sitesExternalServices( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: KEYRING_SERVICES_RECEIVE,
 					services: response.services,
@@ -37,7 +35,7 @@ export function requestKeyringServices() {
 					type: KEYRING_SERVICES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: KEYRING_SERVICES_REQUEST_FAILURE,
 					error,

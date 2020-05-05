@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import React, { PureComponent } from 'react';
  */
 import { languages } from 'languages';
 import LanguagePicker from 'components/language-picker';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';
@@ -23,7 +20,7 @@ class LanguagePickerExample extends PureComponent {
 		language: 'en',
 	};
 
-	selectLanguage = event => {
+	selectLanguage = ( event ) => {
 		this.setState( { language: event.target.value } );
 	};
 

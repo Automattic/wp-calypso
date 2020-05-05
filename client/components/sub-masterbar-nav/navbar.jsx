@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -83,7 +81,7 @@ export default class Navbar extends Component {
 	};
 
 	toggleList = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			collapsed: ! state.collapsed,
 		} ) );
 	};

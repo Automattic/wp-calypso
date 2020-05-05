@@ -11,19 +11,6 @@ import PropTypes from 'prop-types';
  */
 import './style.scss';
 
-const getClassName = ( { className, compact, displayAsLink, highlight, href, onClick } ) =>
-	classNames(
-		'card',
-		className,
-		{
-			'is-card-link': displayAsLink || href,
-			'is-clickable': onClick,
-			'is-compact': compact,
-			'is-highlight': highlight,
-		},
-		highlight ? 'is-' + highlight : false
-	);
-
 class Card extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
@@ -38,6 +25,7 @@ class Card extends PureComponent {
 	render() {
 		const {
 			children,
+			className,
 			compact,
 			displayAsLink,
 			highlight,
@@ -47,13 +35,25 @@ class Card extends PureComponent {
 			...props
 		} = this.props;
 
+		const elementClass = classNames(
+			'card',
+			className,
+			{
+				'is-card-link': displayAsLink || href,
+				'is-clickable': this.props.onClick,
+				'is-compact': compact,
+				'is-highlight': highlight,
+			},
+			highlight ? 'is-' + highlight : false
+		);
+
 		return href ? (
-			<a { ...props } href={ href } target={ target } className={ getClassName( this.props ) }>
+			<a { ...props } href={ href } target={ target } className={ elementClass }>
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 				{ children }
 			</a>
 		) : (
-			<TagName { ...props } className={ getClassName( this.props ) }>
+			<TagName { ...props } className={ elementClass }>
 				{ displayAsLink && (
 					<Gridicon
 						className="card__link-indicator"

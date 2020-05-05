@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/** @format */
 
 /**
  * External dependencies
@@ -12,9 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Card, Button, CompactCard } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -85,7 +82,7 @@ class DeleteUser extends React.Component {
 		} );
 	};
 
-	handleRadioChange = event => {
+	handleRadioChange = ( event ) => {
 		const name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
@@ -133,9 +130,9 @@ class DeleteUser extends React.Component {
 		);
 	};
 
-	setReassignLabel = label => ( this.reassignLabel = label );
+	setReassignLabel = ( label ) => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => this.setState( { reassignUser: author } );
+	onSelectAuthor = ( author ) => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { contributorType, siteId, translate, user } = this.props;
@@ -159,7 +156,7 @@ class DeleteUser extends React.Component {
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.recordGoogleEvent(
 						'People',
@@ -184,7 +181,7 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	};
 
-	deleteUser = event => {
+	deleteUser = ( event ) => {
 		event.preventDefault();
 		const { contributorType, siteId, user } = this.props;
 		if ( ! user.ID ) {
@@ -264,11 +261,11 @@ class DeleteUser extends React.Component {
 							/>
 
 							<span>{ this.getTranslatedAssignLabel() }</span>
-
-							{ this.state.authorSelectorToggled ? (
-								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
-							) : null }
 						</FormLabel>
+
+						{ this.state.authorSelectorToggled ? (
+							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+						) : null }
 
 						<FormLabel>
 							<FormRadio

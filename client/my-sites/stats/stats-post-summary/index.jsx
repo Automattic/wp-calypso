@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -17,6 +14,7 @@ import SummaryChart from '../stats-summary';
 import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import QueryPostStats from 'components/data/query-post-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
 /**
@@ -43,7 +41,7 @@ class StatsPostSummary extends Component {
 			} );
 	}
 
-	selectRecord = record => {
+	selectRecord = ( record ) => {
 		this.setState( { selectedRecord: record } );
 	};
 
@@ -74,7 +72,7 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				return Object.keys( stats.years ).map( year => {
+				return Object.keys( stats.years ).map( ( year ) => {
 					return {
 						period: year,
 						periodLabel: year,
@@ -87,8 +85,8 @@ class StatsPostSummary extends Component {
 				}
 
 				const months = flatten(
-					Object.keys( stats.years ).map( year => {
-						return range( 1, 13 ).map( month => {
+					Object.keys( stats.years ).map( ( year ) => {
+						return range( 1, 13 ).map( ( month ) => {
 							const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
 							return {
 								period: firstDayOfMonth.format( 'MMM YYYY' ),
@@ -98,8 +96,8 @@ class StatsPostSummary extends Component {
 						} );
 					} )
 				);
-				const firstNotEmpty = findIndex( months, item => item.value !== 0 );
-				const lastNotEmpty = findLastIndex( months, item => item.value !== 0 );
+				const firstNotEmpty = findIndex( months, ( item ) => item.value !== 0 );
+				const lastNotEmpty = findLastIndex( months, ( item ) => item.value !== 0 );
 
 				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
 			}
@@ -108,7 +106,7 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				return stats.weeks.map( week => {
+				return stats.weeks.map( ( week ) => {
 					const firstDay = moment( week.days[ 0 ].day );
 					return {
 						period: firstDay.format( 'MMM D' ),
@@ -176,7 +174,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostSummary );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostSummary );

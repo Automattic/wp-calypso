@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
@@ -5,7 +7,7 @@ interface MagicWindow extends Window {
 // Don't complain about window.wp.data types in our debug function
 declare const window: undefined | MagicWindow;
 
-export const wpDataDebugMiddleware: PageJS.Callback = ( context, next ) => {
+export const setupWpDataDebug = () => {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( typeof window === 'object' ) {
 			if ( ! window.wp ) {
@@ -13,8 +15,16 @@ export const wpDataDebugMiddleware: PageJS.Callback = ( context, next ) => {
 			}
 			if ( ! window.wp.data ) {
 				window.wp.data = require( '@wordpress/data' );
+
+				const config = require( 'config' ).default;
+				const clientCreds = {
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				};
+
+				const { Site } = require( '@automattic/data-stores' );
+				Site.register( clientCreds );
 			}
 		}
 	}
-	next();
 };

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -138,14 +136,14 @@ class PromotionCreate extends React.Component {
 			);
 		};
 
-		const successAction = dispatch => {
+		const successAction = ( dispatch ) => {
 			this.props.clearPromotionEdits( site.ID );
 
 			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			this.setState( () => ( { busy: false } ) );
 			const errorSlug = ( error && error.error ) || undefined;
 
@@ -226,7 +224,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PromotionCreate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionCreate ) );

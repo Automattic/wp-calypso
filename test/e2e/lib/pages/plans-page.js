@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,6 +23,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		await driverHelper.ensureMobileMenuOpen( this.driver );
 		const selector = by.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
+	async openAdvancedPlansSegment() {
+		const selector = by.css(
+			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
 		);
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -78,7 +77,7 @@ class CartMessages extends PureComponent {
 			return [];
 		}
 
-		return messages.map( error => {
+		return messages.map( ( error ) => {
 			switch ( error.code ) {
 				case 'chargeback':
 					return Object.assign( error, { message: this.getChargebackErrorMessage() } );

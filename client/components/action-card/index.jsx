@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -29,10 +27,11 @@ const ActionCard = ( {
 	buttonOnClick,
 	children,
 	compact,
+	classNames,
 	buttonDisabled,
 	illustration,
 } ) => (
-	<Card className="action-card" compact={ compact }>
+	<Card className={ classnames( 'action-card', classNames ) } compact={ compact }>
 		{ illustration && (
 			<img
 				className="action-card__illustration"

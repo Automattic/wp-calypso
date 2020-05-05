@@ -1,15 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times } from 'lodash';
+import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
 import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,17 +26,10 @@ import {
 	domainManagementTransferIn,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
-import DomainListNotice from './domain-list-notice';
-import {
-	PRIMARY_DOMAIN_CHANGE_SUCCESS,
-	PRIMARY_DOMAIN_CHANGE_FAIL,
-	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS,
-} from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import EmptyContent from 'components/empty-content';
@@ -50,13 +42,26 @@ import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import DocumentHead from 'components/data/document-head';
-
+import FormattedHeader from 'components/formatted-header';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { successNotice, errorNotice } from 'state/notices/actions';
 /**
  * Style dependencies
  */
 import './style.scss';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export class List extends React.Component {
+	static propTypes = {
+		selectedSite: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
+		isRequestingDomains: PropTypes.bool,
+		cart: PropTypes.object,
+		context: PropTypes.object,
+		renderAllSites: PropTypes.bool,
+	};
+
 	static defaultProps = {
 		translate: identity,
 		enablePrimaryDomainMode: noop,
@@ -65,18 +70,10 @@ export class List extends React.Component {
 	};
 
 	state = {
+		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		notice: null,
 	};
-
-	componentDidUpdate( prevProps ) {
-		if (
-			get( this.props, 'selectedSite.ID', null ) !== get( prevProps, 'selectedSite.ID', null )
-		) {
-			this.hideNotice();
-		}
-	}
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -114,10 +111,11 @@ export class List extends React.Component {
 
 		return (
 			<Notice
-				status="is-info"
+				status="is-success"
 				showDismiss={ false }
 				text={ translate( 'Free domain available' ) }
-				icon="globe"
+				icon="info-outline"
+				className="domain-management__claim-free-domain"
 			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
@@ -133,8 +131,17 @@ export class List extends React.Component {
 		);
 	}
 
+	filterOutWpcomDomains( domains ) {
+		return domains.filter(
+			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+		);
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
+			if ( this.props.renderAllSites ) {
+				return null;
+			}
 			return (
 				<Main>
 					<SidebarNavigation />
@@ -150,37 +157,54 @@ export class List extends React.Component {
 			return null;
 		}
 
+		if ( this.props.selectedSite.jetpack && this.props.renderAllSites ) {
+			return null;
+		}
+
 		if ( this.props.isDomainOnly ) {
-			return (
-				<Main>
-					<DocumentHead title={ this.props.translate( 'Settings' ) } />
-					<SidebarNavigation />
-					<DomainOnly
-						hasNotice={ this.isFreshDomainOnlyRegistration() }
-						siteId={ this.props.selectedSite.ID }
-					/>
-				</Main>
-			);
+			if ( ! this.props.renderAllSites ) {
+				return (
+					<Main>
+						<DocumentHead title={ this.props.translate( 'Settings' ) } />
+						<SidebarNavigation />
+						<DomainOnly
+							hasNotice={ this.isFreshDomainOnlyRegistration() }
+							siteId={ this.props.selectedSite.ID }
+						/>
+					</Main>
+				);
+			}
+
+			if ( isEmpty( this.filterOutWpcomDomains( this.props.domains ) ) ) {
+				return null;
+			}
 		}
 
 		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
+		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				{ this.domainWarnings() }
+				{ ! this.props.renderAllSites && (
+					<FormattedHeader
+						className="domain-management__page-heading"
+						headerText={ this.props.translate( 'Domains' ) }
+						align="left"
+					/>
+				) }
+				{ ! this.props.renderAllSites && (
+					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+				) }
+				{ ! this.props.renderAllSites && this.domainWarnings() }
 
-				{ this.domainCreditsInfoNotice() }
+				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
 
-				<div className="domain-management-list__items">
-					{ this.notice() }
-					{ this.listItems() }
-				</div>
+				<div className="domain-management-list__items">{ this.listItems() }</div>
 
 				<DomainToPlanNudge />
 			</Main>
@@ -195,78 +219,13 @@ export class List extends React.Component {
 
 		return (
 			domain &&
-			domain.registrationMoment &&
+			domain.registrationDate &&
 			this.props
 				.moment()
-				.subtract( 1, 'day' )
-				.isBefore( domain.registrationMoment )
+				.subtract( 30, 'minutes' )
+				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
-
-	hideNotice = () => {
-		this.setState( { notice: null } );
-	};
-
-	notice() {
-		const { notice } = this.state;
-		if ( ! notice ) {
-			return null;
-		}
-
-		return (
-			<DomainListNotice
-				type={ notice.type }
-				errorMessage={ notice.error && notice.error.message }
-				onDismissClick={ this.hideNotice }
-				onUndoClick={ this.undoSetPrimaryDomain }
-				domainName={ notice.domainName }
-			/>
-		);
-	}
-
-	undoSetPrimaryDomain = () => {
-		if ( ! this.state.notice ) {
-			return;
-		}
-
-		const { previousDomainName } = this.state.notice;
-
-		this.setPrimaryDomain( previousDomainName ).then(
-			() => {
-				this.setState( {
-					primaryDomainIndex: -1,
-					settingPrimaryDomain: false,
-					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_REVERT_SUCCESS,
-						domainName: previousDomainName,
-					},
-				} );
-			},
-			error => {
-				this.setState( {
-					notice: {
-						primaryDomainIndex: -1,
-						settingPrimaryDomain: false,
-						changePrimaryDomainModeEnabled: false,
-						type: PRIMARY_DOMAIN_REVERT_FAIL,
-						domainName: previousDomainName,
-						error,
-					},
-				} );
-			}
-		);
-		const previousDomainIndex = findIndex( this.props.domains, { name: previousDomainName } );
-
-		this.setState( {
-			notice: null,
-			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: previousDomainIndex,
-			settingPrimaryDomain: true,
-		} );
-
-		this.props.undoChangePrimary( this.props.domains[ previousDomainIndex ] );
-	};
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
@@ -331,7 +290,7 @@ export class List extends React.Component {
 				className="domain-management-list__change-primary-button"
 				onClick={ this.enableChangePrimaryDomainMode }
 			>
-				{ this.props.translate( 'Change Primary', {
+				{ this.props.translate( 'Change primary', {
 					context: 'Button label for changing primary domain',
 				} ) }
 			</Button>
@@ -352,7 +311,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add Domain' ) }
+				{ this.props.translate( 'Add domain' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -372,6 +331,8 @@ export class List extends React.Component {
 	}
 
 	handleUpdatePrimaryDomain = ( index, domain ) => {
+		const { translate } = this.props;
+
 		if ( this.state.settingPrimaryDomain ) {
 			return;
 		}
@@ -398,35 +359,53 @@ export class List extends React.Component {
 				this.setState( {
 					settingPrimaryDomain: false,
 					changePrimaryDomainModeEnabled: false,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
-						domainName: domain.name,
-						previousDomainName: currentPrimaryName,
-					},
 				} );
+
+				this.props.successNotice(
+					translate(
+						'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
+						{ args: { domainName: domain.name }, components: { em: <em /> } }
+					),
+					{ duration: 10000, isPersistent: true }
+				);
 			},
-			error => {
+			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
-					notice: {
-						type: PRIMARY_DOMAIN_CHANGE_FAIL,
-						domainName: domain.name,
-						error,
-					},
 				} );
+				this.props.errorNotice(
+					error.message ||
+						translate( "Something went wrong and we couldn't change your primary domain." ),
+					{ duration: 10000, isPersistent: true }
+				);
 			}
 		);
 	};
 
+	shouldUpgradeToMakeDomainPrimary( domain ) {
+		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag } = this.props;
+
+		return (
+			hasNonPrimaryDomainsFlag &&
+			isOnFreePlan &&
+			( domain.type === type.REGISTERED || domain.type === type.MAPPED ) &&
+			! isDomainOnly &&
+			! domain.isPrimary &&
+			! domain.isWPCOMDomain &&
+			! domain.isWpcomStagingDomain
+		);
+	}
+
 	listItems() {
 		if ( this.isLoading() ) {
-			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const domains = this.props.selectedSite.jetpack
-			? this.props.domains.filter( domain => domain.type !== type.WPCOM )
-			: this.props.domains;
+		const domains =
+			this.props.selectedSite.jetpack || ( this.props.renderAllSites && this.props.isDomainOnly )
+				? this.filterOutWpcomDomains( this.props.domains )
+				: this.props.domains;
 
 		return domains.map( ( domain, index ) => {
 			return (
@@ -442,17 +421,24 @@ export class List extends React.Component {
 					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
+					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
+					onUpgradeClick={ this.goToPlans }
 				/>
 			);
 		} );
 	}
 
-	goToEditDomainRoot = domain => {
+	goToEditDomainRoot = ( domain ) => {
 		if ( domain.type !== type.TRANSFER ) {
 			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 		} else {
 			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
+	};
+
+	goToPlans = () => {
+		this.props.upsellUpgradeClick();
+		page( `/plans/${ this.props.selectedSite.slug }` );
 	};
 }
 
@@ -477,7 +463,10 @@ const disablePrimaryDomainMode = () =>
 		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
 	);
 
-const changePrimary = domain =>
+const upsellUpgradeClick = () =>
+	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
+
+const changePrimary = ( domain ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -490,32 +479,25 @@ const changePrimary = domain =>
 		} )
 	);
 
-const undoChangePrimary = domain =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Undo change Primary Domain in List',
-			'Domain Name (Reverted to)',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_list_undo_change_primary_domain_click', {
-			section: domain.type,
-		} )
-	);
-
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'selectedSite.ID', null );
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const selectedSite = get( ownProps, 'selectedSite', null );
+		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
+			isOnFreePlan,
 			userCanManageOptions,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
@@ -527,8 +509,10 @@ export default connect(
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-			changePrimary: domain => dispatch( changePrimary( domain ) ),
-			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
+			changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
+			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
-)( localize( List ) );
+)( localize( withLocalizedMoment( List ) ) );

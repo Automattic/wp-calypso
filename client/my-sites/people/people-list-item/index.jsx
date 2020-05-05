@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import {
@@ -76,7 +73,7 @@ class PeopleListItem extends React.PureComponent {
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
-	onResend = event => {
+	onResend = ( event ) => {
 		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
 
 		// Prevents navigation to invite-details screen and onClick event.

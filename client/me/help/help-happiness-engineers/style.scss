@@ -21,17 +21,3 @@
 		margin: -16px 0 20px;
 	}
 }
-
-.help-happiness-engineers__tray {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	width: calc( 100% + 10px );
-	height: 42px;
-	overflow: hidden;
-}
-
-.help-happiness-engineers__tray .gravatar {
-	margin-right: 10px;
-	height: 42px;
-}

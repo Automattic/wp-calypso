@@ -27,7 +27,7 @@ import './style.scss';
 
 class StatsNavigation extends Component {
 	static propTypes = {
-		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
+		interval: PropTypes.oneOf( intervalConstants.map( ( i ) => i.value ) ),
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
@@ -36,7 +36,7 @@ class StatsNavigation extends Component {
 		slug: PropTypes.string,
 	};
 
-	isValidItem = item => {
+	isValidItem = ( item ) => {
 		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
@@ -69,7 +69,7 @@ class StatsNavigation extends Component {
 					<NavTabs label={ 'Stats' } selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
-							.map( item => {
+							.map( ( item ) => {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,6 +15,7 @@ import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
+import ReaderSidebarNudges from './reader-sidebar-nudges';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
@@ -29,7 +29,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import getReaderTeams from 'state/selectors/get-reader-teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
@@ -60,7 +60,7 @@ export class ReaderSidebar extends React.Component {
 		this.openExpandableMenuForCurrentTagOrList();
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
@@ -70,7 +70,7 @@ export class ReaderSidebar extends React.Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function() {
+			defer( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
 			} );
@@ -146,17 +146,18 @@ export class ReaderSidebar extends React.Component {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
+					<ReaderSidebarNudges />
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/', path, {
+								className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 									'sidebar-streams__following': true,
 								} ) }
 								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link="/"
+								link="/read"
 							/>
 
 							<SidebarItem
@@ -252,7 +253,7 @@ ReaderSidebar.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,

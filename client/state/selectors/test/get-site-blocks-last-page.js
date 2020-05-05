@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
+import { getSiteBlocksLastPage } from 'state/reader/site-blocks/selectors';
 
 describe( 'getSiteBlocksLastPage()', () => {
 	test( 'should return the last page', () => {

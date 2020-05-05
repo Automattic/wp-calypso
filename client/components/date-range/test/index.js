@@ -30,7 +30,7 @@ describe( 'DateRange', () => {
 
 	beforeEach( () => {
 		// Mock matchMedia
-		window.matchMedia = jest.fn().mockImplementation( query => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 			return {
 				matches: true,
 				media: query,
@@ -282,7 +282,7 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should set 2 month calendar view on screens >480px by default', () => {
-			window.matchMedia = jest.fn().mockImplementation( query => {
+			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
 					matches: true, // > 480px
@@ -297,7 +297,7 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should set 1 month calendar view on screens <480px by default', () => {
-			window.matchMedia = jest.fn().mockImplementation( query => {
+			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
 					matches: false, // < 480px

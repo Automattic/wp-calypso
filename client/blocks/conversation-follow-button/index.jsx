@@ -1,7 +1,3 @@
-/**
- * @format
- */
-
 /*
  * External dependencies
  */
@@ -14,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import isFollowingReaderConversation from 'state/selectors/is-following-reader-conversation';
+import { isFollowingReaderConversation } from 'state/reader/conversations/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
 import { getTracksPropertiesForPost } from 'reader/stats';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -38,7 +34,7 @@ class ConversationFollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = isRequestingFollow => {
+	handleFollowToggle = ( isRequestingFollow ) => {
 		const { siteId, postId, post, followSource } = this.props;
 
 		const tracksProperties = assign( getTracksPropertiesForPost( post ), {

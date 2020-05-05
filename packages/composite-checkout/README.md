@@ -4,420 +4,113 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 ## Installation
 
-`npm install composite-checkout styled-components`
+**This package is still in development and not yet published.**
+
+Once published, you'll be able to install this package using npm with:
+
+`yarn add @automattic/composite-checkout`
 
 ## Description
 
-This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
+This package provides a context provider, `CheckoutProvider`, a default component, `Checkout`, and the `CheckoutStepArea` component which creates a checkout form.
 
-The form has three steps:
+The form has two default steps:
 
 1. Payment method
-2. Billing contact
-3. Review order
+2. Review order
 
-The steps can be customized using various props.
+These steps can be customized or replaced, and additional steps can be added.
 
-For more detailed customization, it's possible to build a custom form using the other components exported by this package.
+It's also possible to build an entirely custom form using the other components exported by this package.
 
-### Select payment method
+## How to use this package
 
-The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods listed in the optional `availablePaymentMethods` array. If the array is not set, no appropriate payment methods will be excluded.
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
+ - [createApplePayMethod](#createapplepaymethod)
+ - [createExistingCardMethod](#createExistingCardMethod)
+ - [createFullCreditsMethod](#createFullCreditsMethod)
+ - [createPayPalMethod](#createpaypalmethod)
+ - [createStripeMethod](#createstripemethod)
 
-![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
+Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
+ - [useAllPaymentMethods](#useAllPaymentMethods)
+ - [useEvents](#useEvents)
+ - [useFormStatus](#useFormStatus)
+ - [useMessages](#useMessages)
+ - [useDispatch](#useDispatch)
+ - [useLineItems](#useLineItems)
+ - [useLineItemsOfType](#useLineItemsOfType)
+ - [usePaymentMethod](#usePaymentMethodId)
+ - [usePaymentMethodId](#usePaymentMethodId)
+ - [useRegisterStore](#useRegisterStore)
+ - [useRegistry](#useRegistry)
+ - [useSelect](#useSelect)
+ - [useTotal](#useTotal)
 
-Any previously stored payment methods (eg: saved credit cards) will be fetched automatically and displayed in the relevant payment method section of this step.
+The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
+ - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+ - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
+ - [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
+ - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
+ - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+ - [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
 
-The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
+Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
-### Billing contact
+Any component within a `CheckoutStep` gets access to the custom hooks above as well as [useIsStepActive](#useIsStepActive) and [useIsStepComplete](#useIsStepComplete).
 
-This step contains various form fields to collect billing contact information from the customer.
+## Submitting the form
 
-![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
+When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `showErrorMessage` prop on `Checkout` will be called with an object describing the error.
 
-### Review order
+If the payment method succeeds, the `onPaymentComplete` prop will be called instead.
 
-The third step presents a simple list of line items and a total, followed by a purchase button.
+## Example
 
-![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
-
-### Customization slots
-
-Some content can be overridden using "customization slots" passed as props to the `Checkout` component. Each of these is a React element type (a component class or function) which will be rendered by `Checkout` in a particular place. The slot components can access all the custom hooks in the package and will also be passed props appropriate to that component; see each customization slot for details about what props are provided.
-
-There are several other optional props aside from `ReviewContent` which allow customizing the contents of the form. `UpSell` is a section at the bottom of the form, `CheckoutHeader` is the header of the form, `OrderReviewTOS` is displayed just below the payment button, and `OrderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
-
-![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/checkout-slots.png 'Highlighted component slots')
-
-Any component within `Checkout` can use the custom React Hook `useLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
-
-### Submitting the form
-
-When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
-
-If the payment method succeeds, the `onSuccess` prop will be called instead. It's important not to provision anything based on this callback, as it could be called by a malicious user. Instead, provisioning should be handled separately server-to-server.
-
-Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
-
-## Examples
-
-### Example 1
-
-Here is a very simple example of using the `Checkout` component with default options. Its review section is very basic and line items cannot be removed or added.
-
-```js
-import React, { useState } from 'react';
-import { Checkout, registerStore } from '@automattic/composite-checkout';
-import { formatValueForCurrency } from 'composite-checkout/wpcom';
-
-const initialItems = [
-	{
-		label: 'WordPress.com Personal Plan',
-		id: 'wpcom-personal',
-		type: 'plan',
-		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
-	},
-	{
-		label: 'Domain registration',
-		subLabel: 'example.com',
-		id: 'wpcom-domain',
-		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
-	},
-];
-
-// These are used only for non-redirect payment methods
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
-async function makePayPalExpressRequest() {
-	return 'https://paypal.com';
-}
-
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
-
-// This is the parent component which would be included on a host page
-export default function MyCheckout() {
-	const { items, total } = useShoppingCart();
-
-	return (
-		<CheckoutProvider
-			locale={ 'US' }
-			items={ items }
-			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ [ paypalMethod ] }
-		>
-			<Checkout />
-		</CheckoutProvider>
-	);
-}
-
-// This is a very simple shopping cart manager which can calculate totals
-function useShoppingCart() {
-	const [ items ] = useState( initialItems );
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
-		label: 'Total',
-		amount: {
-			currency,
-			value: lineItemTotal,
-			displayValue: formatValueForCurrency( currency, lineItemTotal ),
-		},
-	};
-
-	return { items, total };
-}
-```
-
-### Example 2
-
-The following bigger example demonstrates a checkout page using many of the options available. Notably this uses a custom review section and line items can be added, removed, and modified.
-
-```js
-import React, { useState } from 'react';
-import {
-	Checkout,
-	useLineItems,
-	OrderReviewLineItems,
-	OrderReviewSection,
-	OrderReviewTotal,
-	renderDisplayValueMarkdown,
-	registerStore,
-} from '@automattic/composite-checkout';
-import {
-	PlanLengthSelector,
-	formatValueForCurrency,
-	adjustItemPricesForCountry,
-	replacePlanWithDifferentLength,
-} from 'composite-checkout/wpcom';
-
-const initialItems = [
-	{
-		label: 'WordPress.com Personal Plan',
-		id: 'wpcom-personal',
-		type: 'plan',
-		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
-	},
-	{
-		label: 'Domain registration',
-		subLabel: 'example.com',
-		id: 'wpcom-domain',
-		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
-	},
-];
-
-// These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
-const availablePaymentMethods = [ 'apple-pay', 'card', 'paypal', 'ebanx', 'ideal' ];
-
-// These are used only for non-redirect payment methods
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-
-// These are used only for redirect payment methods
-const successRedirectUrl = window.location.href;
-const failureRedirectUrl = window.location.href;
-
-async function makePayPalExpressRequest() {
-	return 'https://paypal.com';
-}
-
-const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
-
-// This is the parent component which would be included on a host page
-export default function MyCheckout() {
-	const {
-		itemsWithTax,
-		total,
-		addItem,
-		deleteItem,
-		changePlanLength,
-		updatePricesForAddress,
-	} = useShoppingCart();
-
-	// Some parts of the checkout can be customized
-	const ReviewContent = () => (
-		<OrderReview onDeleteItem={ deleteItem } onChangePlanLength={ changePlanLength } />
-	);
-
-	// Modification of the line items must be done outside checkout
-	const quickStartItem = {
-		label: 'Quick Start',
-		id: 'quickstart',
-		type: 'quickstart',
-		amount: { currency: 'USD', value: 2500, displayValue: '~~$50~~ $25' },
-	};
-	const addQuickStart = () => addItem( quickStartItem );
-	const UpSell = () => <UpSellCoupon onClick={ addQuickStart } />;
-
-	return (
-		<CheckoutProvider
-			locale={ 'US' }
-			items={ itemsWithTax }
-			total={ total }
-			onSuccess={ onSuccess }
-			onFailure={ onFailure }
-			successRedirectUrl={ successRedirectUrl }
-			failureRedirectUrl={ failureRedirectUrl }
-			paymentMethods={ [ paypalMethod ] }
-		>
-			<Checkout
-				availablePaymentMethods={ availablePaymentMethods }
-				ReviewContent={ ReviewContent }
-				UpSell={ UpSell }
-			/>
-		</CheckoutProvider>
-	);
-}
-
-// This is a simple shopping cart manager which allows CRUD operations
-function useShoppingCart() {
-	const [ items, setItems ] = useState( initialItems );
-
-	// Tax calculation must be performed outside checkout
-	const lineItemTotalWithoutTax = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const taxRate = 0.09;
-	const taxValue = taxRate * lineItemTotalWithoutTax;
-	const taxItem = {
-		label: 'Taxes',
-		id: 'tax',
-		type: 'tax',
-		amount: {
-			currency: 'USD',
-			value: taxValue,
-			displayValue: formatValueForCurrency( currency, taxValue ),
-		},
-	};
-	const itemsWithTax = [ ...items, taxItem ];
-
-	// The checkout itself does not trigger any events apart from success/failure
-	const deleteItem = itemToDelete =>
-		setItems( items.filter( item => item.id !== itemToDelete.id ) );
-	const changePlanLength = ( plan, planLength ) =>
-		setItems( replacePlanWithDifferentLength( items, planLength ) );
-	const updatePricesForAddress = address =>
-		setItems( adjustItemPricesForCountry( items, address.country ) );
-	const addItem = item => setItems( [ ...items, item ] );
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = itemsWithTax.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
-		label: 'Total',
-		amount: {
-			currency,
-			value: lineItemTotal,
-			displayValue: formatValueForCurrency( currency, lineItemTotal ),
-		},
-	};
-
-	return {
-		items,
-		itemsWithTax,
-		total,
-		addItem,
-		deleteItem,
-		changePlanLength,
-		updatePricesForAddress,
-	};
-}
-
-function OrderReview( { onDeleteItem, onChangePlanLength } ) {
-	const [ items, total ] = useLineItems();
-	const planItems = items.filter( item => item.type === 'plan' );
-	const domainItems = items.filter( item => item.type === 'domain' );
-	const taxItems = items.filter( item => item.type === 'tax' );
-	const miscItems = items.filter( item => ! [ 'plan', 'domain', 'tax' ].includes( item.type ) );
-
-	return (
-		<React.Fragment>
-			<OrderReviewSection>
-				{ planItems.map( plan => (
-					<PlanItem
-						key={ plan.id }
-						plan={ plan }
-						onDeleteItem={ onDeleteItem }
-						onChangePlanLength={ onChangePlanLength }
-					/>
-				) ) }
-				<OrderReviewLineItems items={ miscItems } />
-			</OrderReviewSection>
-			<OrderReviewSection>
-				{ domainItems.map( item => (
-					<DomainItem key={ item.id } item={ item } onDeleteItem={ onDeleteItem } />
-				) ) }
-			</OrderReviewSection>
-			<OrderReviewSection>
-				<OrderReviewLineItems items={ taxItems } />
-				<OrderReviewTotal total={ total } />
-			</OrderReviewSection>
-		</React.Fragment>
-	);
-}
-
-function PlanItem( { plan, onDeleteItem, onChangePlanLength } ) {
-	const changePlanLength = planLength => onChangePlanLength( plan, planLength );
-	const deleteItem = () => onDeleteItem( plan );
-	return (
-		<React.Fragment>
-			<div>
-				<span>
-					<div>{ plan.label }</div>
-					{ plan.subLabel && <div>{ plan.subLabel }</div> }
-				</span>
-				<span>{ renderDisplayValueMarkdown( plan.amount.displayValue ) }</span>
-				<button onClick={ deleteItem } />
-			</div>
-			<PlanLengthSelector onChange={ changePlanLength } />
-		</React.Fragment>
-	);
-}
-
-function DomainItem( { item, onDeleteItem } ) {
-	const deleteItem = () => onDeleteItem( plan );
-	return (
-		<React.Fragment>
-			<div>
-				<span>
-					<div>{ item.label }</div>
-					{ item.subLabel && <div>{ item.subLabel }</div> }
-				</span>
-				<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
-				<button onClick={ deleteItem } />
-			</div>
-		</React.Fragment>
-	);
-}
-
-function UpSellCoupon( { onClick } ) {
-	return (
-		<div>
-			<h4>Exclusive offer</h4>
-			<p>Buy a quick start session and get 50% off.</p>
-			<a href="#" onClick={ onClick }>
-				Add to cart
-			</a>
-		</div>
-	);
-}
-```
+See the [demo](demo/index.js) for an example of using this package.
 
 ## Styles and Themes
 
-Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
+Each component will be styled using [@emotion/styled](https://emotion.sh/docs/styled) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
-When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the classNames from BEM and styled-components.
+When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the above.
 
 ## Payment Methods
 
-A payment method, in the context of this package, consists of the following pieces:
+Each payment method is an object with the following properties:
 
-- A unique id.
-- A data object that holds any data needed by the payment method, including data from any payment method components.
-- A component that displays that payment method selection button which can be as simple as the name and an icon. It will receive the props of the `CheckoutStep`.
-- A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It will receive the props of the `CheckoutStep`.
-- A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
-- A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
-- (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
-- A component that renders a summary of the selected payment method when the step is inactive.
-- A function to return the name of the Payment Method. It will receive the localize function as an argument.
+- `id: string`. A unique id.
+- `label: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
+- `activeContent: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
+- `submitButton: React.ReactNode`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
+- `inactiveContent: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
+- `getAriaLabel: (localize: () => string) => string`. A function to return the name of the Payment Method. It will receive the localize function as an argument.
 
-Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
+Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
-Each payment method has the following schema:
+When the `submitButton` component has been clicked, it should use the functions provided by [useFormStatus](#useFormStatus) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'complete', which will cause [Checkout](#Checkout) to call `onPaymentComplete` (see [CheckoutProvider](#CheckoutProvider)).
 
-```
-{
-	id: string,
-	LabelComponent: component,
-	PaymentMethodComponent: component,
-	BillingContactComponent: component,
-	SubmitButtonComponent: component,
-	CheckoutWrapper: ?component,
-	SummaryComponent: component,
-	getAriaLabel: function,
-}
-```
+## Line Items
 
-Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
+Each item is an object with the following properties:
+
+- `id: string`. A unique identifier for this line item within the array of line items. Do not use the product id; never assume that only one instance of a particular product is present.
+- `type: string`. Not used internally but can be used to organize line items (eg: `tax` for a VAT line item).
+- `label: string`. The displayed title of the line item.
+- `subLabel?: string`. An optional subtitle for the line item.
+- `amount: { currency: string, value: number, displayValue: string }`. The price of the line item. For line items without a price, set value to 0 and displayValue to an empty string.
+
+The `displayValue` property can use limited Markdown formatting, including the `~~` characters for strike-through text. When rendering `displayValue`, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
 ## Data Stores
 
-Each Payment Method (or anything at all, really) can access a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
+Each Payment Method or component can create a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. These functions can be accessed by calling the `useRegistry` hook. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
+
+In addition to the features of that package, we provide a `useRegisterStore` hook which takes the same arguments as `registerStore` and will allow creating a new store just before a component first renders.
+
+The registry used for these stores is created by default but you can use a custom one by including the `registry` prop on `CheckoutProvider`. If you want to use the default registry, you can import it directly from this package using [#defaultRegistry](defaultRegistry), and for convenience, [#registerStore](registerStore).
 
 ## API
 
@@ -425,22 +118,9 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 ### Checkout
 
-The main component in this package. It has the following props.
+The main wrapper component for Checkout. It has the following props.
 
-- availablePaymentMethods: array
-- ReviewContent: component
-- UpSell: component
-- CheckoutHeader: component
-- OrderReviewTOS: component
-- OrderReviewFeatures: component
-
-### CheckoutNextStepButton
-
-Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
-
-### CheckoutPaymentMethods
-
-Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
+- `className?: string`. The className for the component.
 
 ### CheckoutProvider
 
@@ -448,41 +128,88 @@ Renders its `children` prop and acts as a React Context provider. All of checkou
 
 It has the following props.
 
-- locale: string (required)
-- items: array (required)
-- total: object (required)
-- theme: object (optional)
-- onSuccess: function (required)
-- onFailure: function (required)
-- successRedirectUrl: string (required)
-- failureRedirectUrl: string (required)
-- paymentMethods: array (required)
-
-The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
-
-If any event in a customization slot causes the line items to change (for example, deleting something during the review step), the `items` array should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
+- `locale: string`. A [BCP 47 language tag](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locales_argument).
+- `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
+- `total: object`. A [line item object](#line-items) with the final total to be paid.
+- `theme?: object`. A [theme object](#styles-and-themes).
+- `onPaymentComplete: ({paymentMethodId: string}) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id.
+- `showErrorMessage: (string) => null`. A function that will display a message with an "error" type.
+- `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
+- `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
+- `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
+- `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
+- `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
+- `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
-The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
-
-`paymentMethods` is an array of Payment Method objects.
-
 ### CheckoutReviewOrder
 
-Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `SubmitButtonComponent` is in the current payment method.
+Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
 
-### CheckoutStep
+## CheckoutStep
 
-Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. There are two boolean props that can be used to control the step's current state: `isComplete` and `isActive`. Typically the step will be hidden when `isActive` is false and may have a different appearance when `isComplete` is true.
+A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
 
-Each should include in its `children` a `CheckoutNextStepButton` if there is a following step.
+This component's props are:
 
-If a step has the `onEdit` prop, it will include an "Edit" link when `isComplete` is true which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way (perhaps by setting `isActive` to true). The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+- `stepId: string`. A unique ID for the step.
+- `className?: string`. A className for the step wrapper.
+- `titleContent: React.ReactNode`. Displays as the title of the step.
+- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
+- `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
+- `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
+- `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
+- `editButtonText?: string`. Used in place of "Edit" on the edit step button.
+- `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
+- `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
+- `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
-### getPaymentMethods()
+## CheckoutArea
 
-A helper function that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
+Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
+
+## CheckoutStepBody
+
+A component that looks like a checkout step. Normally you don't need to use this directly, since [CheckoutStep](#CheckoutStep) creates this for you, but you can use it manually if you wish.
+
+- `stepId: string`. A unique ID for this step.
+- `isStepActive: boolean`. True if the step should be rendered as active. Renders `activeStepContent`.
+- `isStepComplete: boolean`. True if the step should be rendered as complete. Renders `completeStepContent`.
+- `stepNumber: number`. The step number to display for the step.
+- `totalSteps: number`. The total number of steps in the current connected group of steps.
+- `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
+- `onError?: (error: Error) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
+- `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
+- `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
+- `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.
+- `nextStepButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Continue" button.
+- `validatingButtonText?: string`. Like `editButtonText` but for the "Please wait…" button when `formStatus` is `validating`.
+- `validatingButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Please wait…" button.
+- `className?: string`. A className for the component.
+- `goToThisStep?: () => void`. A function to be called when the "Edit" button is pressed.
+- `goToNextStep?: () => void`. A function to be called when the "Continue" button is pressed.
+- `nextStepNumber?: number`. The step number of the step that will be active after the "Continue" button is pressed.
+- `formStatus?: string`. The current form status. See [useFormStatus](#useFormStatus).
+- `titleContent: React.ReactNode`. Displays as the title of the step.
+- `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
+- `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by `isStepComplete` and `isStepActive`.
+
+## CheckoutSteps
+
+A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout).
+
+### CheckoutSummaryArea
+
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
+
+- `className?: string`. The className for the component.
+
+### CheckoutSummaryCard
+
+Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
 
 ### OrderReviewLineItems
 
@@ -502,33 +229,163 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
-### formatValueForCurrency(currency, int)
+### createApplePayMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
+- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+
+### createRegistry
+
+Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
+
+### createExistingCardMethod
+
+Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
+- `cardholderName: string`. The cardholder's name. Used for display only.
+- `cardExpiry: string`. The card's expiry date. Used for display only.
+- `brand: string`. The card's brand (eg: `visa`). Used for display only.
+- `last4: string`. The card's last four digits. Used for display only.
+
+### createFullCreditsMethod
+
+Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
+- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
+- `label?: React.ReactNode`. An optional label React element to use in the payment method.
+- `buttonText?: string`. An optional string to display in the payment button.
+
+### createPayPalMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+
+The object returned by this function **must have** the following property added to it:
+
+- `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
+
+### createStripeMethod
+
+Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
+
+- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
+- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
+- `getCountry: () => string`. A function that returns the country to use for the transaction.
+- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `stripe: object`. The configured stripe object.
+- `stripeConfiguration: object`. The stripe configuration object.
+
+### defaultRegistry
+
+The default registry. See [#data-stores](Data Stores) for more details.
+
+### getDefaultOrderReviewStep
+
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display an itemized order review.
+
+### getDefaultOrderSummaryStep
+
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a brief order summary.
+
+### getDefaultPaymentMethodStep
+
+Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
+
+### registerStore
+
+The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
+
+### formatValueForCurrency
 
 Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
-### renderDisplayValueMarkdown(displayValue)
+### renderDisplayValueMarkdown
 
 Takes one argument, a displayValue string, and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
 
-### useCheckoutHandlers()
+### useAllPaymentMethods
 
-A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### useLineItems()
+### useDispatch
 
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).
 
-### useCheckoutRedirects()
+### useEvents
 
-A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
+A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### usePaymentMethod()
+### useFormStatus
 
-A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
+A React Hook that will return an object with the following properties:
 
-### usePaymentMethodId()
+- `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'validating', 'submitting', or 'complete'.
+- `setFormReady: () => void`. Function to change the form status to 'ready'.
+- `setFormLoading: () => void`. Function to change the form status to 'loading'.
+- `setFormValidating: () => void`. Function to change the form status to 'validating'.
+- `setFormSubmitting: () => void`. Function to change the form status to 'submitting'.
+- `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider).
 
-A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
+Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
+
+### useIsStepActive
+
+A React Hook that will return true if the current step is the currently active step. Only works within a step.
+
+### useIsStepComplete
+
+A React Hook that will return true if the current step is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
+
+### useLineItems
+
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` from the `CheckoutProvider`), and the second element is the current total (matching the `total` from the `CheckoutProvider`). Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useLineItemsOfType
+
+A React Hook taking one string argument that will return an array of [line items](#line-items) from the cart (derived from the same data returned by [useLineItems](#useLineItems)) whose `type` property matches that string. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useMessages
+
+A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentMethod
+
+A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentMethodId
+
+A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useRegisterStore
+
+A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useRegistry
+
+A React Hook that returns the `@wordpress/data` registry being used. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useSelect
+
+A React Hook that accepts a callback which is provided the `select` function from the [Data store](#data-stores). The `select()` function can be called with the name of a store and will return the bound selectors for that store. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### useTotal
+
+A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
 
 ## FAQ
 
@@ -546,8 +403,10 @@ The primary properties used in a line item by default are `id` (which must be un
 
 ### Can I add custom properties to line items?
 
-To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
+If you need specific custom data as part of a line item so that it can be used in another part of the form, you can add new properties to the line item objects.
 
 ## Development
 
-In the root of the monorepo, run `npm run composite-checkout-demo` which will start a local webserver that will display the component.
+In the root of the monorepo, run `yarn run composite-checkout-demo` which will start a local webserver that will display the component.
+
+To run the tests for this package, run `yarn run test-packages composite-checkout`.

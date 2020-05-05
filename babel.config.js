@@ -1,4 +1,4 @@
-const config = require( './server/config' );
+const config = require( './client/server/config' );
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 // Use commonjs for Node
@@ -10,8 +10,10 @@ const codeSplit = config.isEnabled( 'code-splitting' );
 const babelConfig = {
 	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
-
 	env: {
+		production: {
+			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],
+		},
 		build_pot: {
 			plugins: [
 				[

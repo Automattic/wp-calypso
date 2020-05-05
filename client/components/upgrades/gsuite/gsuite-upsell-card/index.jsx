@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,14 +9,12 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
 import QueryProducts from 'components/data/query-products-list';
-import { getProductCost } from 'state/products-list/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
@@ -27,10 +23,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import './style.scss';
 
 const GSuiteUpsellCard = ( {
-	currencyCode,
 	domain,
-	gSuiteCost,
-	gSuiteProductSlug,
+	productSlug,
 	onAddEmailClick,
 	onSkipClick,
 	recordTracksEvent,
@@ -40,7 +34,7 @@ const GSuiteUpsellCard = ( {
 	const canContinue = areAllUsersValid( users );
 	const translate = useTranslate();
 
-	const recordClickEvent = eventName => {
+	const recordClickEvent = ( eventName ) => {
 		recordTracksEvent( eventName, {
 			domain_name: domain,
 			user_count: users.length,
@@ -61,7 +55,7 @@ const GSuiteUpsellCard = ( {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_add_email_button_click` );
 
 		if ( canContinue ) {
-			onAddEmailClick( getItemsForCart( [ domain ], gSuiteProductSlug, users ) );
+			onAddEmailClick( getItemsForCart( [ domain ], productSlug, users ) );
 		}
 	};
 
@@ -71,14 +65,14 @@ const GSuiteUpsellCard = ( {
 		onSkipClick();
 	};
 
-	const handleReturnKeyPress = event => {
+	const handleReturnKeyPress = ( event ) => {
 		// Simulate an implicit submission for the add user form :)
 		if ( event.key === 'Enter' ) {
 			handleAddEmailClick();
 		}
 	};
 
-	const handleUsersChange = changedUsers => {
+	const handleUsersChange = ( changedUsers ) => {
 		recordUsersChangedEvent( users, changedUsers );
 
 		setUsers( changedUsers );
@@ -91,7 +85,7 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
+						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
 								domain,
 							},
@@ -105,15 +99,10 @@ const GSuiteUpsellCard = ( {
 			</CompactCard>
 
 			<CompactCard>
-				<GSuiteUpsellProductDetails
-					domain={ domain }
-					cost={ gSuiteCost }
-					currencyCode={ currencyCode }
-					plan={ gSuiteProductSlug }
-				/>
+				<GSuiteUpsellProductDetails domain={ domain } productSlug={ productSlug } />
 
 				<GSuiteNewUserList
-					extraValidation={ user => user }
+					extraValidation={ ( user ) => user }
 					selectedDomainName={ domain }
 					onUsersChange={ handleUsersChange }
 					users={ users }
@@ -140,18 +129,12 @@ const GSuiteUpsellCard = ( {
 };
 
 GSuiteUpsellCard.propTypes = {
-	currencyCode: PropTypes.string,
 	domain: PropTypes.string.isRequired,
-	gSuiteCost: PropTypes.number,
-	gSuiteProductSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
+	productSlug: GSUITE_SLUG_PROP_TYPES,
 	onAddEmailClick: PropTypes.func.isRequired,
 	onSkipClick: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, { gSuiteProductSlug } ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		gSuiteCost: getProductCost( state, gSuiteProductSlug ),
-	} ),
-	{ recordTracksEvent: recordTracksEventAction }
-)( GSuiteUpsellCard );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction,
+} )( GSuiteUpsellCard );

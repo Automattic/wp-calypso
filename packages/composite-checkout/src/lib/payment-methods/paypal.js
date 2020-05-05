@@ -2,63 +2,59 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
 import { useDispatch, useSelect } from '../../lib/registry';
-import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
+import { useMessages, useEvents } from '../../public-api';
+import { useFormStatus } from '../form-status';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
-export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
+const debug = debugFactory( 'composite-checkout:paypal' );
+
+export function createPayPalMethod( { registerStore } ) {
+	debug( 'creating new paypal payment method' );
+
+	const paymentMethod = {
+		id: 'paypal',
+		label: <PaypalLabel />,
+		submitButton: <PaypalSubmitButton />,
+		inactiveContent: <PaypalSummary />,
+		getAriaLabel: ( localize ) => localize( 'PayPal' ),
+	};
+
 	registerStore( 'paypal', {
 		controls: {
-			PAYPAL_TRANSACTION_BEGIN( action ) {
-				const {
-					items,
-					country,
-					subdivisionCode,
-					successUrl,
-					cancelUrl,
-					domainDetails,
-					postalCode,
-				} = action.payload;
-				const siteId = ''; // TODO: get site id
-				const couponId = null; // TODO: get couponId
-				const dataForApi = {
-					successUrl,
-					cancelUrl,
-					cart: createCartFromLineItems( {
-						siteId,
-						couponId,
-						items,
-						country,
-						postalCode,
-						subdivisionCode,
-					} ),
-					domainDetails,
-					'postal-code': postalCode,
-				};
-				return makePayPalExpressRequest( dataForApi );
+			PAYPAL_TRANSACTION_SUBMIT() {
+				if ( ! paymentMethod.submitTransaction ) {
+					throw new Error( 'PayPal payment method does not have a submitTransaction function' );
+				}
+				return paymentMethod.submitTransaction();
 			},
 		},
 		actions: {
 			*submitPaypalPayment( payload ) {
 				try {
-					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_BEGIN', payload };
+					yield { type: 'PAYPAL_TRANSACTION_BEGIN', payload };
+					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_SUBMIT' };
+					debug( 'received successful paypal endpoint response', paypalResponse );
 					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
 				} catch ( error ) {
-					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error };
+					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error.message };
 				}
 			},
 		},
 		reducer( state = {}, action ) {
 			switch ( action.type ) {
+				case 'PAYPAL_TRANSACTION_BEGIN':
+					return { ...state, paypalStatus: 'submitting' };
 				case 'PAYPAL_TRANSACTION_END':
-					return { ...state, paypalStatus: 'complete', paypalExpressUrl: action.payload };
+					return { ...state, paypalStatus: 'redirecting', paypalExpressUrl: action.payload };
 				case 'PAYPAL_TRANSACTION_ERROR':
 					return { ...state, paypalStatus: 'error', paypalError: action.payload };
 			}
@@ -77,18 +73,7 @@ export function createPayPalMethod( { registerStore, makePayPalExpressRequest } 
 		},
 	} );
 
-	return {
-		id: 'paypal',
-		LabelComponent: PaypalLabel,
-		PaymentMethodComponent: () => null,
-		BillingContactComponent: BillingFields,
-		SubmitButtonComponent: PaypalSubmitButton,
-		SummaryComponent: () => {
-			const localize = useLocalize();
-			return localize( 'PayPal' );
-		},
-		getAriaLabel: localize => localize( 'PayPal' ),
-	};
+	return paymentMethod;
 }
 
 export function PaypalLabel() {
@@ -97,58 +82,95 @@ export function PaypalLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Paypal' ) }</span>
-			<PaypalLogo />
+			<PaymentMethodLogos className="paypal__logo payment-logos">
+				<PaypalLogo />
+			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-export function PaypalSubmitButton() {
+export function PaypalSubmitButton( { disabled } ) {
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
-	const [ items ] = useLineItems();
-	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
-	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
-	const { billing = {} } = paymentData;
 	useTransactionStatusHandler();
-	const onClick = () =>
-		submitPaypalPayment( {
-			items,
-			country: billing.country || '',
-			subdivisionCode: billing.state || billing.province || '',
-			successUrl: successRedirectUrl,
-			cancelUrl: failureRedirectUrl,
-			postalCode: billing.zipCode || billing.postalCode,
-			domainDetails: getDomainDetailsFromPaymentData( paymentData ),
-		} );
+	const { formStatus } = useFormStatus();
+	const onEvent = useEvents();
+
+	const onClick = () => {
+		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
+		submitPaypalPayment();
+	};
 	return (
-		<Button onClick={ onClick } buttonState="primary" buttonType="paypal" fullWidth>
-			{ <ButtonPayPalIcon /> }
+		<Button
+			disabled={ disabled }
+			onClick={ onClick }
+			buttonState={ disabled ? 'disabled' : 'primary' }
+			buttonType="paypal"
+			isBusy={ 'submitting' === formStatus }
+			fullWidth
+		>
+			<PayPalButtonContents formStatus={ formStatus } />
 		</Button>
 	);
 }
 
+function PayPalButtonContents( { formStatus } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return <ButtonPayPalIcon />;
+	}
+	return localize( 'Please wait…' );
+}
+
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
-	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
+	const { showErrorMessage } = useMessages();
+	const transactionStatus = useSelect( ( select ) => select( 'paypal' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'paypal' ).getTransactionError() );
+	const { setFormReady, setFormSubmitting } = useFormStatus();
+	const paypalExpressUrl = useSelect( ( select ) => select( 'paypal' ).getRedirectUrl() );
+	const onEvent = useEvents();
 
 	useEffect( () => {
-		if ( transactionStatus === 'complete' ) {
-			onSuccess();
+		if ( transactionStatus === 'redirecting' ) {
+			debug( 'redirecting to paypal url', paypalExpressUrl );
+			// TODO: should this redirect go through the host page?
+			window.location.href = paypalExpressUrl;
+			return;
 		}
 		if ( transactionStatus === 'error' ) {
-			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+			setFormReady();
+			onEvent( { type: 'PAYPAL_TRANSACTION_ERROR', payload: transactionError || '' } );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
+			return;
 		}
-	}, [ localize, onSuccess, onFailure, transactionStatus, transactionError ] );
+		if ( transactionStatus === 'submitting' ) {
+			setFormSubmitting();
+			return;
+		}
+	}, [
+		onEvent,
+		localize,
+		showErrorMessage,
+		transactionStatus,
+		transactionError,
+		setFormReady,
+		setFormSubmitting,
+		paypalExpressUrl,
+	] );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
 	transform: translateY( 2px );
 `;
 
-export function PaypalSummary() {
+function PaypalSummary() {
 	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Paypal' ) }</React.Fragment>;
+	return localize( 'Paypal' );
 }
 
 function PaypalLogo( { className } ) {
@@ -161,6 +183,7 @@ function PaypalLogo( { className } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
+			focusable="false"
 		>
 			<g clipPath="url(#clip0)">
 				<path
@@ -201,38 +224,4 @@ function PaypalLogo( { className } ) {
 			</defs>
 		</svg>
 	);
-}
-
-// TODO: this is duplicated in stripe-credit-card-fields also
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.id,
-			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
-			currency: item.amount.currency,
-			volume: 1,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
 }

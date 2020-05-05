@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,15 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import Focusable from 'components/focusable';
+import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
 		buttonText: PropTypes.node,
 		collapsed: PropTypes.bool, // derived from ui state
 		completed: PropTypes.bool,
@@ -75,16 +72,12 @@ class Task extends PureComponent {
 
 		if ( onDismiss ) {
 			return (
-				<Focusable
-					className="checklist__task-icon"
-					onClick={ onDismiss }
-					aria-pressed={ completed ? 'true' : 'false' }
-				>
+				<div className="checklist__task-icon">
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ this.renderGridicon() }
-				</Focusable>
+				</div>
 			);
 		}
 
@@ -128,9 +121,11 @@ class Task extends PureComponent {
 
 	render() {
 		const {
+			action,
 			buttonText,
 			collapsed,
 			completed,
+			completedDescription,
 			completedButtonText,
 			completedTitle,
 			description,
@@ -190,10 +185,12 @@ class Task extends PureComponent {
 
 					{ ! _collapsed && (
 						<div className="checklist__task-content">
-							<p className="checklist__task-description">{ description }</p>
+							<p className="checklist__task-description">
+								{ completed && completedDescription ? completedDescription : description }
+							</p>
 
 							<div className="checklist__task-action-duration-wrapper">
-								{ duration && (
+								{ ! completed && duration && (
 									<small className="checklist__task-duration">
 										{ translate( 'Estimated time:' ) } { duration }
 									</small>
@@ -208,12 +205,13 @@ class Task extends PureComponent {
 											onClick={ onClick }
 											primary={ ! _collapsed }
 											target={ target }
+											data-e2e-action={ action }
 										>
 											{ taskActionButtonText }
 										</Button>
 									) }
 									{ ! completed && showSkip && (
-										<Button className="checklist__task-skip" onClick={ onDismiss }>
+										<Button className="checklist__task-skip" borderless onClick={ onDismiss }>
 											{ translate( 'Skip' ) }
 										</Button>
 									) }

@@ -42,7 +42,7 @@ class ExportCard extends Component {
 				loading={ this.props.shouldShowProgress }
 				isPrimary={ false }
 				onClick={ this.props.exportAll }
-				text={ translate( 'Export All' ) }
+				text={ translate( 'Export all' ) }
 				loadingText={ translate( 'Exporting…' ) }
 			/>
 		);
@@ -53,7 +53,7 @@ class ExportCard extends Component {
 					actionButtonIcon="cog"
 					header={
 						<div>
-							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
+							<h1 className="export-card__title">{ translate( 'Export content' ) }</h1>
 							<h2 className="export-card__subtitle">
 								{ translate(
 									'Export all (or specific) text content (pages, posts, feedback) from your site.'
@@ -87,14 +87,8 @@ const trackExportClick = ( scope = 'all' ) =>
 	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	advancedSettingsFetch: flowRight(
-		dispatch,
-		advancedSettingsFetch
-	),
-	setPostType: flowRight(
-		dispatch,
-		setPostType
-	),
+	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
 	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
@@ -104,7 +98,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ExportCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );

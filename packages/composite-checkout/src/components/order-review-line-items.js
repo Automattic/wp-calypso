@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -55,14 +55,14 @@ const LineItemUI = styled( LineItem )`
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' )};
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
-	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
+	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal) };
+	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit') };
+	font-size: ${( { total } ) => ( total ? '1.2em' : '1em') };
+	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0') };
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 
-	:first-child {
+	:first-of-type {
 		padding-top: 0;
 	}
 `;
@@ -78,7 +78,7 @@ export function OrderReviewTotal( { total, className } ) {
 export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
+			{ items.map( ( item ) => (
 				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
 		</div>

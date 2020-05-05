@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,7 +12,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 registerHandlers( 'state/data-layer/wpcom/wordads/status/index.js', {
 	[ WORDADS_STATUS_REQUEST ]: [
 		dispatchRequest( {
-			fetch: action =>
+			fetch: ( action ) =>
 				http(
 					{
 						method: 'GET',

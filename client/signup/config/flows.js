@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,19 @@ import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
+import { addQueryArgs } from 'lib/url';
 
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	return `/checkout/${ dependencies.siteSlug }?signup=1`;
+	return addQueryArgs(
+		{
+			signup: 1,
+			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+		},
+		`/checkout/${ dependencies.siteSlug }`
+	);
 }
 
 function dependenciesContainCartItem( dependencies ) {
@@ -50,7 +56,14 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	return `/home/${ dependencies.siteSlug }`;
+}
+
+function getLaunchDestination( dependencies ) {
+	if ( dependencies.source === 'editor' ) {
+		return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	}
+	return `/home/${ dependencies.siteSlug }?d=launched`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -58,15 +71,21 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }?d=theme`;
+}
+
+function getEditorDestination( dependencies ) {
+	return `/block-editor/page/${ dependencies.siteSlug }/home`;
 }
 
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
+	getLaunchDestination,
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
+	getEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -75,7 +94,7 @@ function removeUserStepFromFlow( flow ) {
 	}
 
 	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
+		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
 	} );
 }
 
@@ -102,8 +121,8 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * @param {String} flowName The name of the flow to return
-	 * @returns {Object} A flow object
+	 * @param {string} flowName The name of the flow to return
+	 * @returns {object} A flow object
 	 */
 	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -139,10 +158,10 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {String} step Name of the step to be excluded.
+	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -151,12 +170,20 @@ const Flows = {
 		}
 
 		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
 		} );
 	},
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
+	},
+
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
 	},
 
 	getFlows() {

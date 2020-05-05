@@ -25,7 +25,10 @@ describe( 'utils', () => {
 		unit: 'year',
 		quantity: '10',
 		fields: [ 'period', 'orders', 'currency' ],
-		data: [ [ 2016, 0, 'NZD' ], [ 2017, 14, 'NZD' ] ],
+		data: [
+			[ 2016, 0, 'NZD' ],
+			[ 2017, 14, 'NZD' ],
+		],
 		delta_fields: [
 			'period',
 			'delta',
@@ -127,7 +130,7 @@ describe( 'utils', () => {
 		test( 'should return a well-formed array of objects', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
 			expect( actualOrders ).toBeInstanceOf( Array );
-			actualOrders.forEach( item => expect( typeof item ).toBe( 'object' ) );
+			actualOrders.forEach( ( item ) => expect( typeof item ).toBe( 'object' ) );
 		} );
 
 		test( 'should return an array of objects as expected', () => {
@@ -1061,7 +1064,10 @@ describe( 'utils', () => {
 			test( 'should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
-						data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
+						data: [
+							[ '2016-11-12', 1 ],
+							[ '2016-11-13', 0 ],
+						],
 						pages: [
 							'https://vip.wordpress.com/category/themes/',
 							'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
@@ -1301,13 +1307,13 @@ describe( 'utils', () => {
 										{
 											icon:
 												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-											name: 'en.support.wordpress.com',
+											name: 'wordpress.com/support',
 											url: null,
 											views: 45,
 											children: [
 												{
-													name: 'en.support.wordpress.com',
-													url: 'https://en.support.wordpress.com/',
+													name: 'wordpress.com/support',
+													url: 'https://wordpress.com/support/',
 													views: 5,
 												},
 											],
@@ -1334,14 +1340,14 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'en.support.wordpress.com',
+								label: 'wordpress.com/support',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/',
+								link: 'https://wordpress.com/support/',
 								value: 5,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: null,
 						value: 45,
@@ -1367,13 +1373,13 @@ describe( 'utils', () => {
 									{
 										icon:
 											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
+										name: 'wordpress.com/support',
 										url: null,
 										views: 50,
 										children: [
 											{
-												name: 'en.support.wordpress.com',
-												url: 'https://en.support.wordpress.com/',
+												name: 'wordpress.com/support',
+												url: 'https://wordpress.com/support/',
 												views: 50,
 											},
 										],
@@ -1400,14 +1406,14 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'en.support.wordpress.com',
+								label: 'wordpress.com/support',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/',
+								link: 'https://wordpress.com/support/',
 								value: 50,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: null,
 						value: 50,
@@ -1456,13 +1462,13 @@ describe( 'utils', () => {
 										total: 500,
 									},
 									{
-										group: 'en.support.wordpress.com',
+										group: 'wordpress.com/support',
 										icon:
 											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
+										name: 'wordpress.com/support',
 										results: [
-											{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 200 },
-											{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 100 },
+											{ name: 'homepage', url: 'https://wordpress.com/support/', views: 200 },
+											{ name: 'start', url: 'https://wordpress.com/support/start/', views: 100 },
 										],
 										total: 300,
 									},
@@ -1493,7 +1499,7 @@ describe( 'utils', () => {
 						actions: [
 							{
 								data: {
-									domain: 'en.support.wordpress.com',
+									domain: 'wordpress.com/support',
 									siteID: 100,
 								},
 								type: 'spam',
@@ -1504,19 +1510,19 @@ describe( 'utils', () => {
 								children: undefined,
 								label: 'homepage',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/',
+								link: 'https://wordpress.com/support/',
 								value: 200,
 							},
 							{
 								children: undefined,
 								label: 'start',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/start/',
+								link: 'https://wordpress.com/support/start/',
 								value: 100,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: undefined,
 						value: 300,
@@ -1544,15 +1550,15 @@ describe( 'utils', () => {
 											total: 407,
 										},
 										{
-											group: 'en.support.wordpress.com',
+											group: 'wordpress.com/support',
 											icon:
 												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-											name: 'en.support.wordpress.com',
+											name: 'wordpress.com/support',
 											results: [
-												{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
+												{ name: 'homepage', url: 'https://wordpress.com/support/', views: 42 },
 												{
 													name: 'start',
-													url: 'https://en.support.wordpress.com/start/',
+													url: 'https://wordpress.com/support/start/',
 													views: 10,
 												},
 											],
@@ -1585,7 +1591,7 @@ describe( 'utils', () => {
 						actions: [
 							{
 								data: {
-									domain: 'en.support.wordpress.com',
+									domain: 'wordpress.com/support',
 									siteID: 100,
 								},
 								type: 'spam',
@@ -1596,19 +1602,19 @@ describe( 'utils', () => {
 								children: undefined,
 								label: 'homepage',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/',
+								link: 'https://wordpress.com/support/',
 								value: 42,
 							},
 							{
 								children: undefined,
 								label: 'start',
 								labelIcon: 'external',
-								link: 'https://en.support.wordpress.com/start/',
+								link: 'https://wordpress.com/support/start/',
 								value: 10,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: undefined,
 						value: 207,
@@ -1670,7 +1676,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 221,
 					},
 				] );
@@ -1716,7 +1722,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 400,
 					},
 				] );
@@ -1736,7 +1742,10 @@ describe( 'utils', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
-						data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
+						data: [
+							[ '2016-12-22', 0, 0 ],
+							[ '2016-12-23', 10, 6 ],
+						],
 						unit: 'week',
 					} )
 				).toEqual( [
@@ -1769,7 +1778,10 @@ describe( 'utils', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
-						data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
+						data: [
+							[ '2016W11W07', 0, 0 ],
+							[ '2016W10W31', 10, 6 ],
+						],
 						unit: 'day',
 					} )
 				).toEqual( [
@@ -1852,8 +1864,20 @@ describe( 'utils', () => {
 		describe( 'parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
-					{ date: '2018-04-10', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
-					{ date: '2018-04-09', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
+					{
+						date: '2018-04-10',
+						data: [
+							[ 'green', 4 ],
+							[ 'red', 8 ],
+						],
+					},
+					{
+						date: '2018-04-09',
+						data: [
+							[ 'orange', 12 ],
+							[ 'blue', 16 ],
+						],
+					},
 				],
 				fields: [ 'color', 'age' ],
 			};
@@ -1877,7 +1901,7 @@ describe( 'utils', () => {
 				const firstRecord = parsedData[ 0 ];
 
 				// Make sure all fields are present
-				firstRecord.data.forEach( d => {
+				firstRecord.data.forEach( ( d ) => {
 					expect( d[ fields[ 0 ] ] ).toBeDefined();
 					expect( d[ fields[ 1 ] ] ).toBeDefined();
 				} );

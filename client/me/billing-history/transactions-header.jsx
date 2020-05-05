@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import { find, isEqual } from 'lodash';
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setApp, setDate } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
@@ -26,11 +25,11 @@ class TransactionsHeader extends React.Component {
 		searchValue: '',
 	};
 
-	preventEnterKeySubmission = event => {
+	preventEnterKeySubmission = ( event ) => {
 		event.preventDefault();
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
@@ -38,7 +37,7 @@ class TransactionsHeader extends React.Component {
 		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -69,7 +68,7 @@ class TransactionsHeader extends React.Component {
 		this.togglePopover( 'apps' );
 	};
 
-	closePopoverIfClickedOutside = event => {
+	closePopoverIfClickedOutside = ( event ) => {
 		if ( closest( event.target, 'thead' ) ) {
 			return;
 		}
@@ -93,10 +92,22 @@ class TransactionsHeader extends React.Component {
 		);
 	}
 
+	getFilterTitle( filter ) {
+		if ( ! filter ) {
+			return this.props.translate( 'Date' );
+		}
+
+		if ( filter.older ) {
+			return this.props.translate( 'Older' );
+		}
+
+		return this.props.moment( filter.dateString ).format( 'MMM YYYY' );
+	}
+
 	renderDatePopover() {
 		const { dateFilters, filter, translate } = this.props;
 		const selectedFilter = find( dateFilters, { value: filter.date } );
-		const selectedText = selectedFilter ? selectedFilter.title : translate( 'Date' );
+		const selectedText = this.getFilterTitle( selectedFilter );
 
 		return (
 			<SelectDropdown
@@ -116,7 +127,7 @@ class TransactionsHeader extends React.Component {
 				) }
 				<SelectDropdown.Separator />
 				<SelectDropdown.Label>{ translate( 'By Month' ) }</SelectDropdown.Label>
-				{ dateFilters.map( function( { count, title, value }, index ) {
+				{ dateFilters.map( ( dateFilter, index ) => {
 					let analyticsEvent = 'Current Month';
 
 					if ( 1 === index ) {
@@ -125,8 +136,14 @@ class TransactionsHeader extends React.Component {
 						analyticsEvent = index + ' Months Before';
 					}
 
-					return this.renderDatePicker( index, title, value, count, analyticsEvent );
-				}, this ) }
+					return this.renderDatePicker(
+						index,
+						this.getFilterTitle( dateFilter ),
+						dateFilter.value,
+						dateFilter.count,
+						analyticsEvent
+					);
+				} ) }
 			</SelectDropdown>
 		);
 	}
@@ -162,7 +179,7 @@ class TransactionsHeader extends React.Component {
 	renderAppsPopover() {
 		const { appFilters, filter, translate } = this.props;
 		const selectedFilter = find( appFilters, { value: filter.app } );
-		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All Apps' );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All apps' );
 
 		return (
 			<SelectDropdown
@@ -170,9 +187,9 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
-				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
-				{ appFilters.map( function( { title, value, count } ) {
+				<SelectDropdown.Label>{ translate( 'App name' ) }</SelectDropdown.Label>
+				{ this.renderAppPicker( translate( 'All apps' ), 'all' ) }
+				{ appFilters.map( function ( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
 				}, this ) }
 			</SelectDropdown>
@@ -215,4 +232,4 @@ export default connect(
 		setApp,
 		setDate,
 	}
-)( localize( TransactionsHeader ) );
+)( localize( withLocalizedMoment( TransactionsHeader ) ) );

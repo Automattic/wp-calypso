@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,14 +24,14 @@ class StatsTabsTab extends React.Component {
 		format: PropTypes.func,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		if ( this.props.tabClick ) {
 			event.preventDefault();
 			this.props.tabClick( this.props );
 		}
 	};
 
-	ensureValue = value => {
+	ensureValue = ( value ) => {
 		const { loading, children, numberFormat, format } = this.props;
 		if ( children ) {
 			return null;

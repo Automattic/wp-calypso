@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ReaderShare from 'blocks/reader-share';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { posts } from 'blocks/reader-post-card/docs/fixtures';
 
 const ReaderShareExample = () => (

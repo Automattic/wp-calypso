@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 import ConnectedListItem from 'blocks/reader-list-item/connected';
 
@@ -50,7 +49,7 @@ export class RecommendedSites extends React.PureComponent {
 		const sites = isEmpty( this.props.sites ) ? placeholders : this.props.sites;
 
 		function recordRecommendationRender( index ) {
-			return function( railcar ) {
+			return function ( railcar ) {
 				recordTracksRailcarRender( 'recommended_site', railcar, {
 					ui_algo: 'following_manage_recommended_site',
 					ui_position: index,
@@ -62,7 +61,7 @@ export class RecommendedSites extends React.PureComponent {
 			<div className="reader-recommended-sites">
 				<h2 className="reader-recommended-sites__header text-subtitle">
 					<Gridicon icon="thumbs-up" size={ 18 } />
-					{ this.props.translate( 'Recommended Sites' ) }
+					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {
@@ -98,7 +97,4 @@ export class RecommendedSites extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ dismissSite }
-)( localize( RecommendedSites ) );
+export default connect( null, { dismissSite } )( localize( RecommendedSites ) );

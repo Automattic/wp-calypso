@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -63,7 +62,7 @@ export class TransferDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = suggestion => {
+	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
@@ -76,7 +75,7 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleRegisterDomain = suggestion => {
+	handleRegisterDomain = ( suggestion ) => {
 		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
 		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
 			this.setState( {
@@ -181,7 +180,7 @@ export class TransferDomain extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),

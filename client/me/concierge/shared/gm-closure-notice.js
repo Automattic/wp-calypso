@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'dddd, MMMM Do LT';

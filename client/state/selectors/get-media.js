@@ -2,9 +2,8 @@
  * Returns media for a specified site ID and query.
  *
  *
- * @format
- * @param {Object}  query  Query object
- * @return {?Array}         Media
+ * @param {object}  query  Query object
+ * @returns {?Array}         Media
  */
 
 export default function getMedia( state, siteId, query ) {

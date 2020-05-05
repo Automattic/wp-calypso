@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -47,7 +45,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
+				[ blogId ]: reject( state[ blogId ], ( sticker ) => sticker === stickerName ),
 			};
 		}
 	}

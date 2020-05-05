@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FormTextInput from 'components/forms/form-text-input';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -24,17 +23,17 @@ class DisconnectSurvey extends PureComponent {
 		hasOtherReasonFocus: false,
 	};
 
-	interceptOtherReasonClick = event => {
+	interceptOtherReasonClick = ( event ) => {
 		if ( ! this.state.otherReason || this.state.hasOtherReasonFocus ) {
 			event.preventDefault();
 		}
 	};
 
-	setOtherReason = event => {
+	setOtherReason = ( event ) => {
 		this.setState( { otherReason: event.target.value } );
 	};
 
-	setOtherReasonFocus = focus => () => {
+	setOtherReasonFocus = ( focus ) => () => {
 		this.setState( { hasOtherReasonFocus: focus } );
 	};
 
@@ -93,7 +92,7 @@ DisconnectSurvey.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		isPaidPlan: isSiteOnPaidPlan( state, siteId ),

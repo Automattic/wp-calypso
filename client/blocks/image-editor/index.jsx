@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -108,7 +106,7 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
 		let src,
@@ -134,7 +132,7 @@ class ImageEditor extends React.Component {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = ( blob ) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob
@@ -171,9 +169,7 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		const canvasComponent = this.editCanvasRef.current.getWrappedInstance();
-
-		canvasComponent.toBlob( this.convertBlobToImage );
+		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
 	};
 
 	onCancel = () => {

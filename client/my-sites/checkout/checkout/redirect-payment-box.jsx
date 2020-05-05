@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { localize, translate } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
@@ -20,10 +18,11 @@ import { Input, Select } from 'my-sites/domains/components/form';
 import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import wpcom from 'lib/wp';
 import notices from 'notices';
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import CountrySpecificPaymentFields from './country-specific-payment-fields';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
@@ -69,11 +68,11 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 	}
 
-	handleChange = event => this.updateFieldValues( event.target.name, event.target.value );
+	handleChange = ( event ) => this.updateFieldValues( event.target.name, event.target.value );
 
-	getErrorMessage = fieldName => this.state.errorMessages[ fieldName ];
+	getErrorMessage = ( fieldName ) => this.state.errorMessages[ fieldName ];
 
-	getFieldValue = fieldName => this.state.paymentDetails[ fieldName ];
+	getFieldValue = ( fieldName ) => this.state.paymentDetails[ fieldName ];
 
 	updateFieldValues = ( name, value ) => {
 		this.setState( {
@@ -124,8 +123,8 @@ export class RedirectPaymentBox extends PureComponent {
 		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment = event => {
-		const origin = getLocationOrigin( location );
+	redirectToPayment = ( event ) => {
+		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
 		const validation = validatePaymentDetails( this.state.paymentDetails, this.props.paymentType );
@@ -139,7 +138,7 @@ export class RedirectPaymentBox extends PureComponent {
 		}
 
 		this.setSubmitState( {
-			info: translate( 'Setting up your %(paymentProvider)s payment', {
+			info: this.props.translate( 'Setting up your %(paymentProvider)s payment', {
 				args: { paymentProvider: this.getPaymentProviderName() },
 			} ),
 			disabled: true,
@@ -154,9 +153,7 @@ export class RedirectPaymentBox extends PureComponent {
 			cancelUrl += this.props.selectedSite.slug;
 			successUrl =
 				origin +
-				`/checkout/thank-you/${
-					this.props.selectedSite.slug
-				}/pending?redirectTo=${ redirectPath }`;
+				`/checkout/thank-you/${ this.props.selectedSite.slug }/pending?redirectTo=${ redirectPath }`;
 		} else {
 			cancelUrl += 'no-site';
 			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
@@ -181,25 +178,29 @@ export class RedirectPaymentBox extends PureComponent {
 		wpcom
 			.undocumented()
 			.transactions( dataForApi )
-			.then( result => {
+			.then( ( result ) => {
 				if ( result.redirect_url ) {
 					this.setSubmitState( {
-						info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
+						info: this.props.translate(
+							'Redirecting you to the payment partner to complete the payment.'
+						),
 						disabled: true,
 					} );
-					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-					analytics.tracks.recordEvent(
+					gaRecordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					recordTracksEvent(
 						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
 					);
-					location.href = result.redirect_url;
+					window.location.href = result.redirect_url;
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				let errorMessage;
 				if ( error.message ) {
 					errorMessage = error.message;
 				} else {
-					errorMessage = translate( "We've encountered a problem. Please try again later." );
+					errorMessage = this.props.translate(
+						"We've encountered a problem. Please try again later."
+					);
 				}
 
 				this.setSubmitState( {
@@ -211,7 +212,7 @@ export class RedirectPaymentBox extends PureComponent {
 
 	renderButtonText() {
 		if ( hasRenewalItem( this.props.cart ) ) {
-			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
+			return this.props.translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
 				args: {
 					price: this.props.cart.total_cost_display,
 					paymentProvider: this.getPaymentProviderName(),
@@ -219,7 +220,7 @@ export class RedirectPaymentBox extends PureComponent {
 			} );
 		}
 
-		return translate( 'Pay %(price)s with %(paymentProvider)s', {
+		return this.props.translate( 'Pay %(price)s with %(paymentProvider)s', {
 			args: {
 				price: this.props.cart.total_cost_display,
 				paymentProvider: this.getPaymentProviderName(),
@@ -250,7 +251,7 @@ export class RedirectPaymentBox extends PureComponent {
 			],
 		};
 		return [
-			{ value: '', label: translate( 'Please select your bank.' ) },
+			{ value: '', label: this.props.translate( 'Please select your bank.' ) },
 			...banks[ paymentType ],
 		];
 	}
@@ -259,13 +260,25 @@ export class RedirectPaymentBox extends PureComponent {
 		switch ( this.props.paymentType ) {
 			case 'ideal':
 				return this.createField( 'ideal-bank', Select, {
-					label: translate( 'Bank' ),
+					label: this.props.translate( 'Bank' ),
 					options: this.getBankOptions( 'ideal' ),
 				} );
 			case 'p24':
 				return this.createField( 'email', Input, {
-					label: translate( 'Email Address' ),
+					label: this.props.translate( 'Email Address' ),
 				} );
+			case 'id_wallet':
+				return (
+					<CountrySpecificPaymentFields
+						countryCode="ID"
+						countriesList={ this.props.countriesList }
+						getErrorMessage={ this.getErrorMessage }
+						getFieldValue={ this.getFieldValue }
+						handleFieldChange={ this.updateFieldValues }
+						eventFormName={ this.eventFormName }
+						disableFields={ this.state.formDisabled }
+					/>
+				);
 			case 'netbanking':
 				return (
 					<CountrySpecificPaymentFields
@@ -282,7 +295,7 @@ export class RedirectPaymentBox extends PureComponent {
 				return (
 					<Fragment>
 						{ this.createField( 'tef-bank', Select, {
-							label: translate( 'Bank' ),
+							label: this.props.translate( 'Bank' ),
 							options: this.getBankOptions( 'brazil-tef' ),
 						} ) }
 						<CountrySpecificPaymentFields
@@ -310,7 +323,7 @@ export class RedirectPaymentBox extends PureComponent {
 				<form onSubmit={ this.redirectToPayment }>
 					<div className="checkout__payment-box-section">
 						{ this.createField( 'name', Input, {
-							label: translate( 'Your Name' ),
+							label: this.props.translate( 'Your Name' ),
 						} ) }
 						{ this.renderAdditionalFields() }
 					</div>
@@ -339,7 +352,7 @@ export class RedirectPaymentBox extends PureComponent {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ this.props.translate( 'Secure payment' ) }
 								</div>
 							</div>
 

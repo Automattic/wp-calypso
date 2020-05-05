@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,8 +15,8 @@ const REGEXP_IMG_CLASS_ALIGN = /\balign(left|center|right|none)\b/;
  * Given an <img /> HTMLElement, returns an object of parsed attributes.
  *
  * @param  {HTMLElement} node    <img /> HTMLElement
- * @param  {Object}      _parsed In recursion, the known values
- * @return {Object}              Object of all detected values
+ * @param  {object}      _parsed In recursion, the known values
+ * @returns {object}              Object of all detected values
  */
 function parseImage( node, _parsed ) {
 	_parsed.type = MediaTypes.IMAGE;
@@ -29,7 +27,7 @@ function parseImage( node, _parsed ) {
 	_parsed.media.transient = node.hasAttribute( 'data-istransient' );
 
 	// Parse dimensions
-	[ 'width', 'height' ].forEach( dimension => {
+	[ 'width', 'height' ].forEach( ( dimension ) => {
 		let natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
 			value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
 
@@ -65,8 +63,8 @@ function parseImage( node, _parsed ) {
  * values.
  *
  * @param  {HTMLElement} node    Media object to parse
- * @param  {Object}      _parsed In recursion, the known values
- * @return {Object}              Object of all detected values
+ * @param  {object}      _parsed In recursion, the known values
+ * @returns {object}              Object of all detected values
  */
 export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
 	switch ( node.nodeName ) {

@@ -8,7 +8,6 @@
  *
  * After every update the content will be scrolled to the bottom of the content.
  *
- * @format
  */
 
 export default {

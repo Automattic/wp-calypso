@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,17 +30,17 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
  * 		.map( endpoint => fetch( endpoint ) ) )
  *
  * @param {any} input - Anything. The world is your oyster.
- * @param {function} fn - A function expecting an array of size {0,1} and returning the same kind of array.
+ * @param {Function} fn - A function expecting an array of size {0,1} and returning the same kind of array.
  * @returns {?*} The value returned by `fn`, extracted from the array, or `null`.
  */
 const runMaybe = ( input, fn ) => get( fn( [ input ] ), 0, null );
 
-const normalizeForFields = fields => revision =>
-	runMaybe( revision, maybe =>
+const normalizeForFields = ( fields ) => ( revision ) =>
+	runMaybe( revision, ( maybe ) =>
 		maybe
 			.filter( Boolean )
 			.map( cloneDeep )
-			.map( post => decodeEntities( post, fields ) )
+			.map( ( post ) => decodeEntities( post, fields ) )
 	);
 
 const NORMALIZER_MAPPING = {
@@ -50,13 +48,13 @@ const NORMALIZER_MAPPING = {
 	editing: normalizeForFields( [ 'excerpt', 'title', 'site_name' ] ),
 };
 
-const injectAuthor = state => revision => {
+const injectAuthor = ( state ) => ( revision ) => {
 	const author = get( state.users.items, revision.post_author );
 	return author ? { ...revision, author } : revision;
 };
 
 export function hydrateRevision( state, revision ) {
-	return runMaybe( revision, maybe => maybe.filter( Boolean ).map( injectAuthor( state ) ) );
+	return runMaybe( revision, ( maybe ) => maybe.filter( Boolean ).map( injectAuthor( state ) ) );
 }
 
 export function normalizeRevision( normalizerName, revision ) {

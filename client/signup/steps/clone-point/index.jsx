@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { applySiteOffset } from 'lib/site/timezone';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
@@ -51,7 +50,7 @@ class ClonePointStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	selectedPoint = activityTs => {
+	selectedPoint = ( activityTs ) => {
 		this.props.submitSignupStep( { stepName: this.props.stepName }, { clonePoint: activityTs } );
 		this.props.goToNextStep();
 	};
@@ -65,7 +64,7 @@ class ClonePointStep extends Component {
 		return applySiteOffset( date, { timezone, gmtOffset } );
 	}
 
-	changePage = pageNumber => {
+	changePage = ( pageNumber ) => {
 		this.setState( { currentPage: pageNumber } );
 		window.scrollTo( 0, 0 );
 	};
@@ -108,7 +107,7 @@ class ClonePointStep extends Component {
 					<QuerySites siteId={ siteId } />
 					<QuerySiteSettings siteId={ siteId } />
 					<section className="clone-point__wrapper">
-						{ theseLogs.map( log => (
+						{ theseLogs.map( ( log ) => (
 							<Fragment key={ log.activityId }>
 								{ timePeriod( log ) }
 								<ActivityLogItem
@@ -118,7 +117,6 @@ class ClonePointStep extends Component {
 									cloneOnClick={ this.selectedPoint }
 									disableRestore
 									disableBackup
-									hideRestore
 									enableClone
 								/>
 							</Fragment>

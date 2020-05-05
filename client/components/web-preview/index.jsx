@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  */
 import AsyncLoad from 'components/async-load';
 
-const WebPreview = props => {
+const WebPreview = ( props ) => {
 	if ( ! props.showPreview ) {
 		return null;
 	}

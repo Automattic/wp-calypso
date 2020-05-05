@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -28,8 +26,8 @@ import 'state/data-layer/wpcom/sites/exports/media';
 /**
  * Sets the post type to export.
  *
- * @param  {Object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
- * @return {Object}            Action object
+ * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
+ * @returns {object}            Action object
  */
 export function setPostType( postType ) {
 	return {
@@ -50,8 +48,9 @@ export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
 
 /**
  * Fetches the available advanced settings for customizing export content
- * @param {Number} siteId The ID of the site to fetch
- * @return {thunk}        An action thunk for fetching the advanced settings
+ *
+ * @param {number} siteId The ID of the site to fetch
+ * @returns {thunk}        An action thunk for fetching the advanced settings
  */
 export function advancedSettingsFetch( siteId ) {
 	return ( dispatch, getState ) => {
@@ -68,10 +67,10 @@ export function advancedSettingsFetch( siteId ) {
 			siteId,
 		} );
 
-		const updateExportSettings = settings =>
+		const updateExportSettings = ( settings ) =>
 			dispatch( advancedSettingsReceive( siteId, settings ) );
 
-		const fetchFail = error => dispatch( advancedSettingsFail( siteId, error ) );
+		const fetchFail = ( error ) => dispatch( advancedSettingsFail( siteId, error ) );
 
 		return wpcom
 			.undocumented()
@@ -99,8 +98,9 @@ export function advancedSettingsFail( siteId, error ) {
 
 /**
  * Sends a request to the server to start an export.
- * @param  {Number}   siteId  The ID of the site to export
- * @return {Function}         Action thunk
+ *
+ * @param  {number}   siteId  The ID of the site to export
+ * @returns {Function}         Action thunk
  */
 export function startExport( siteId, { exportAll = true } = {} ) {
 	return ( dispatch, getState ) => {
@@ -118,7 +118,7 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 
 		const success = () => dispatch( exportStarted( siteId ) );
 
-		const failure = error => dispatch( exportFailed( siteId, error ) );
+		const failure = ( error ) => dispatch( exportFailed( siteId, error ) );
 
 		return wpcom
 			.undocumented()
@@ -136,13 +136,13 @@ export function exportStarted( siteId ) {
 }
 
 export function exportStatusFetch( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: EXPORT_STATUS_FETCH,
 			siteId,
 		} );
 
-		const failure = error => {
+		const failure = ( error ) => {
 			dispatch( exportFailed( siteId, error ) );
 		};
 
@@ -157,11 +157,7 @@ export function exportStatusFetch( siteId ) {
 			return failure( response );
 		};
 
-		return wpcom
-			.undocumented()
-			.getExport( siteId, 0 )
-			.then( success )
-			.catch( failure );
+		return wpcom.undocumented().getExport( siteId, 0 ).then( success ).catch( failure );
 	};
 }
 

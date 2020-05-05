@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -205,9 +203,7 @@ describe( 'reducer', () => {
 					data: newData,
 				} );
 
-				expect( result._contactDetailsCache )
-					.to.have.property( 'extra' )
-					.that.is.not.an( 'array' );
+				expect( result._contactDetailsCache ).to.have.property( 'extra' ).that.is.not.an( 'array' );
 
 				expect( result._contactDetailsCache ).to.have.nested.property( 'extra.newData', 'exists' );
 			} );

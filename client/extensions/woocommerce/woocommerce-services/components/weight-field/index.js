@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,7 +22,7 @@ const WeightField = ( {
 	className,
 	weightUnit,
 } ) => {
-	const handleChangeEvent = event => updateValue( event.target.value );
+	const handleChangeEvent = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>

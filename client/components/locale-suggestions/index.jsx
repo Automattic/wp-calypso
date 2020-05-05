@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -64,7 +62,7 @@ export class LocaleSuggestions extends Component {
 
 	dismiss = () => this.setState( { dismissed: true } );
 
-	getPathWithLocale = locale => addLocaleToPath( this.props.path, locale );
+	getPathWithLocale = ( locale ) => addLocaleToPath( this.props.path, locale );
 
 	render() {
 		if ( this.state.dismissed ) {
@@ -77,7 +75,7 @@ export class LocaleSuggestions extends Component {
 			return <QueryLocaleSuggestions />;
 		}
 
-		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
+		const usersOtherLocales = localeSuggestions.filter( function ( locale ) {
 			return ! startsWith( getLocaleSlug(), locale.locale );
 		} );
 
@@ -85,7 +83,7 @@ export class LocaleSuggestions extends Component {
 			return null;
 		}
 
-		const localeMarkup = usersOtherLocales.map( locale => {
+		const localeMarkup = usersOtherLocales.map( ( locale ) => {
 			return (
 				<LocaleSuggestionsListItem
 					key={ 'locale-' + locale.locale }
@@ -107,7 +105,7 @@ export class LocaleSuggestions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		localeSuggestions: getLocaleSuggestions( state ),
 	} ),
 	{ setLocale }

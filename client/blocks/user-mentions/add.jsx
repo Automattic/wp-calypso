@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,17 +17,18 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  *
  * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
  *
- * @example: addUserMentions( Component )
+ * @example addUserMentions( Component )
  *
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default WrappedComponent =>
+export default ( WrappedComponent ) =>
 	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withUserMentions( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		state = {
@@ -80,7 +80,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		handleKeyDown = event => {
+		handleKeyDown = ( event ) => {
 			if ( ! this.state.showPopover ) {
 				return;
 			}
@@ -116,7 +116,7 @@ export default WrappedComponent =>
 			this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
 		};
 
-		handleKeyUp = event => {
+		handleKeyUp = ( event ) => {
 			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
 				return;
 			}

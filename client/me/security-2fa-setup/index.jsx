@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ class Security2faSetup extends Component {
 		};
 	}
 
-	onCancelSetup = event => {
+	onCancelSetup = ( event ) => {
 		event.preventDefault();
 		this.setState( { step: 'initial-setup' } );
 	};
@@ -105,9 +103,6 @@ class Security2faSetup extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ successNotice },
-	null,
-	{ pure: false }
-)( localize( Security2faSetup ) );
+export default connect( null, { successNotice }, null, { pure: false } )(
+	localize( Security2faSetup )
+);

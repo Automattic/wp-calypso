@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -14,6 +13,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -25,6 +25,7 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -35,6 +36,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	addOrRemoveFromProgressStore = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -49,7 +51,8 @@ export function generateSteps( {
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
 		'portfolio-themes': {
@@ -61,13 +64,33 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
+		'template-first-themes': {
+			stepName: 'template-first-themes',
+			props: {
+				designType: 'template-first',
+				quantity: 18,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
+		'fse-themes': {
+			stepName: 'fse-themes',
+			props: {
+				designType: 'fse-compatible',
+				quantity: 6,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
+		},
+
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
 		'themes-site-selected': {
 			stepName: 'themes-site-selected',
 			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
@@ -82,6 +105,7 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
+				shouldShowDomainTestCopy: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
@@ -201,6 +225,17 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-ecommerce-fulfilled': {
+			stepName: 'plans-ecommerce-fulfilled',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE,
+			},
+		},
+
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
@@ -217,6 +252,23 @@ export function generateSteps( {
 			},
 		},
 
+		'upsell-plan': {
+			stepName: 'upsell-plan',
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+		},
+
+		'plans-plan-only': {
+			stepName: 'plans-plan-only',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
@@ -224,14 +276,39 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
+		'plans-with-domain': {
+			stepName: 'plans-with-domain',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
+			props: {
+				headerText: i18n.translate( 'Choose a plan' ),
+				subHeaderText: i18n.translate(
+					'Pick a plan that’s right for you. Switch plans as your needs change. {{br/}} There’s no risk, you can cancel for a full refund within 30 days.',
+					{
+						components: { br: <br /> },
+						comment:
+							'Subheader of the plans page where users land from onboarding after they picked a paid domain',
+					}
+				),
+			},
+		},
+
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -240,6 +317,7 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
 			},
 		},
 
@@ -257,7 +335,15 @@ export function generateSteps( {
 		'domains-theme-preselected': {
 			stepName: 'domains-theme-preselected',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'useThemeHeadstart',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -365,11 +451,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		'rewind-add-creds': {
-			stepName: 'rewind-add-creds',
-			providesDependencies: [],
-		},
-
 		'rewind-form-creds': {
 			stepName: 'rewind-form-creds',
 			providesDependencies: [ 'rewindconfig' ],
@@ -453,10 +534,22 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
+		'site-type-with-theme': {
+			stepName: 'site-type',
+			providesDependencies: [ 'siteType' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
+		},
+
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
+		},
+
+		'site-topic-with-theme': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
@@ -499,7 +592,14 @@ export function generateSteps( {
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				showSiteMockups: true,
 				isDomainOnly: false,
@@ -520,6 +620,7 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'isPreLaunch' ],
 		},
 
 		passwordless: {
@@ -527,6 +628,12 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'team-site': {
+			stepName: 'team-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
 		},
 	};
 }

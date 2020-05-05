@@ -1,5 +1,3 @@
-/** @format */
-
 const flows = {
 	simple_flow: {
 		steps: [ 'stepA', 'stepB' ],
@@ -12,7 +10,7 @@ const flows = {
 
 	flow_with_dependencies: {
 		steps: [ 'siteCreation', 'userCreation' ],
-		destination: function( dependencies ) {
+		destination: function ( dependencies ) {
 			return '/checkout/' + dependencies.siteSlug;
 		},
 	},

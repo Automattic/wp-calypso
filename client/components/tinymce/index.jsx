@@ -1,15 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import { assign, forEach } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import autosize from 'autosize';
 import tinymce from 'tinymce/tinymce';
+import { ReactReduxContext } from 'react-redux';
+
 import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
@@ -77,13 +77,12 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
-].forEach( initializePlugin => initializePlugin() );
+].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
  * Internal Dependencies
  */
 import i18n from './i18n';
-import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
@@ -170,9 +169,7 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap',
 ];
 
-export default class extends React.Component {
-	static displayName = 'TinyMCE';
-
+export default class TinyMCE extends React.Component {
 	static propTypes = {
 		isNew: PropTypes.bool,
 		mode: PropTypes.string,
@@ -200,10 +197,6 @@ export default class extends React.Component {
 		isVipSite: PropTypes.bool,
 	};
 
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static defaultProps = {
 		mode: 'tinymce',
 		isNew: false,
@@ -214,6 +207,8 @@ export default class extends React.Component {
 		content: '',
 		selection: null,
 	};
+
+	reduxStore = null;
 
 	_editor = null;
 
@@ -237,7 +232,7 @@ export default class extends React.Component {
 		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
-		const setup = function( editor ) {
+		const setup = ( editor ) => {
 			this._editor = editor;
 
 			if ( ! this.mounted ) {
@@ -246,14 +241,14 @@ export default class extends React.Component {
 			}
 
 			this.bindEditorEvents();
-			editor.on( 'SetTextAreaContent', event => this.setTextAreaContent( event.content ) );
+			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 			editor.once(
 				'PostRender',
 				this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } )
 			);
-		}.bind( this );
+		};
 
-		const store = this.context.store;
+		const store = this.reduxStore;
 		let isRtl = false;
 		let localeSlug = 'en';
 		let colorScheme = undefined;
@@ -323,7 +318,7 @@ export default class extends React.Component {
 			entity_encoding: 'raw',
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
-			redux_store: this.context.store,
+			redux_store: store,
 			textarea: this.textInput.current,
 
 			// Limit the preview styles in the menu/toolbar
@@ -376,7 +371,7 @@ export default class extends React.Component {
 	destroyEditor = () => {
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( this.props[ eventHandler ] ) {
 					this._editor.off( eventName, this.props[ eventHandler ] );
 				}
@@ -392,12 +387,12 @@ export default class extends React.Component {
 		autosize.update( this.textInput.current );
 	};
 
-	bindEditorEvents = prevProps => {
+	bindEditorEvents = ( prevProps ) => {
 		prevProps = prevProps || {};
 
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
 					if ( this.props[ eventHandler ] ) {
 						this._editor.on( eventName, this.props[ eventHandler ] );
@@ -449,7 +444,7 @@ export default class extends React.Component {
 		}
 	};
 
-	getContent = args => {
+	getContent = ( args ) => {
 		if ( this.props.mode === 'html' ) {
 			return this.state.content;
 		}
@@ -477,7 +472,7 @@ export default class extends React.Component {
 		return false;
 	};
 
-	setTextAreaContent = content => {
+	setTextAreaContent = ( content ) => {
 		this.setState(
 			{
 				content: decodeEntities( content ),
@@ -499,13 +494,13 @@ export default class extends React.Component {
 		this.setTextAreaContent( content );
 	};
 
-	setSelection = selection => {
+	setSelection = ( selection ) => {
 		this.setState( {
 			selection,
 		} );
 	};
 
-	selectTextInTextArea = selection => {
+	selectTextInTextArea = ( selection ) => {
 		// only valid in the text area mode and if we have selection
 		if ( ! selection ) {
 			return;
@@ -522,7 +517,7 @@ export default class extends React.Component {
 		this.setState( { selection: null } );
 	};
 
-	onTextAreaChange = event => {
+	onTextAreaChange = ( event ) => {
 		const content = event.target.value;
 
 		if ( this.props.onTextEditorChange ) {
@@ -532,7 +527,7 @@ export default class extends React.Component {
 		this.setState( { content: content }, this.doAutosizeUpdate );
 	};
 
-	onToolbarChangeContent = content => {
+	onToolbarChangeContent = ( content ) => {
 		if ( this.props.onTextEditorChange ) {
 			this.props.onTextEditorChange( content );
 		}
@@ -553,7 +548,7 @@ export default class extends React.Component {
 		tinymce.ScriptLoader.markDone( DUMMY_LANG_URL );
 	};
 
-	render() {
+	renderEditor() {
 		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
@@ -587,6 +582,17 @@ export default class extends React.Component {
 					value={ this.state.content }
 				/>
 			</div>
+		);
+	}
+
+	render() {
+		return (
+			<ReactReduxContext.Consumer>
+				{ ( { store } ) => {
+					this.reduxStore = store;
+					return this.renderEditor();
+				} }
+			</ReactReduxContext.Consumer>
 		);
 	}
 }

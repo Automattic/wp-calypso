@@ -1,24 +1,20 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
 import { BlockConfiguration } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
+import { Attributes } from './types';
 import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
-export interface Attributes {
-	align: 'full';
-}
-
 export const settings: BlockConfiguration< Attributes > = {
-	title: NO__( 'Onboarding' ),
-	category: 'layout', // @TODO
-	description: NO__( 'Onboarding wizard block' ),
+	title: 'WordPress.com onboarding block',
+	category: 'layout',
+	description: '',
 	attributes: {
 		align: {
 			type: 'string',
@@ -35,4 +31,7 @@ export const settings: BlockConfiguration< Attributes > = {
 	icon: 'universal-access-alt',
 	edit,
 	save: () => null,
+	getEditWrapperProps() {
+		return { tabIndex: -1 };
+	},
 };

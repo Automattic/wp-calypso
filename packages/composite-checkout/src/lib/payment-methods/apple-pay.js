@@ -1,25 +1,106 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import { useLineItems, useDispatch, useMessages, useSelect, useEvents } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
-import Button from '../../components/button';
-import BillingFields from '../../components/billing-fields';
+import PaymentRequestButton from '../../components/payment-request-button';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import { useFormStatus } from '../form-status';
 
-export function createApplePayMethod() {
+const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
+
+export function createApplePayMethod( {
+	registerStore,
+	submitTransaction,
+	getCountry,
+	getPostalCode,
+	stripe,
+	stripeConfiguration,
+} ) {
+	const actions = {
+		setStripeComplete( payload ) {
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload };
+		},
+		resetTransaction() {
+			debug( 'resetting transaction' );
+			return { type: 'STRIPE_TRANSACTION_RESET' };
+		},
+		*beginStripeTransaction( payload ) {
+			let stripeResponse;
+			try {
+				stripeResponse = yield {
+					type: 'STRIPE_TRANSACTION_BEGIN',
+					payload: {
+						...payload,
+						country: getCountry(),
+						postalCode: getPostalCode(),
+					},
+				};
+				debug( 'stripe transaction complete', stripeResponse );
+			} catch ( error ) {
+				debug( 'stripe transaction had an error', error.message );
+				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error.message };
+			}
+			debug( 'stripe transaction is successful' );
+			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
+		},
+	};
+
+	const selectors = {
+		getTransactionError( state ) {
+			return state.transactionError;
+		},
+		getTransactionStatus( state ) {
+			return state.transactionStatus;
+		},
+	};
+
+	registerStore( 'apple-pay', {
+		reducer( state = {}, action ) {
+			switch ( action.type ) {
+				case 'STRIPE_TRANSACTION_END':
+					return {
+						...state,
+						transactionStatus: 'complete',
+					};
+				case 'STRIPE_TRANSACTION_ERROR':
+					return {
+						...state,
+						transactionStatus: 'error',
+						transactionError: action.payload,
+					};
+				case 'STRIPE_TRANSACTION_RESET':
+					return {
+						...state,
+						transactionStatus: null,
+					};
+			}
+			return state;
+		},
+		actions,
+		selectors,
+		controls: {
+			STRIPE_TRANSACTION_BEGIN( action ) {
+				return submitTransaction( action.payload );
+			},
+		},
+	} );
+
 	return {
 		id: 'apple-pay',
-		LabelComponent: ApplePayLabel,
-		PaymentMethodComponent: () => null,
-		BillingContactComponent: BillingFields,
-		SubmitButtonComponent: ApplePaySubmitButton,
-		SummaryComponent: ApplePaySummary,
-		getAriaLabel: localize => localize( 'Apple Pay' ),
+		label: <ApplePayLabel />,
+		submitButton: (
+			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+		),
+		inactiveContent: <ApplePaySummary />,
+		getAriaLabel: ( localize ) => localize( 'Apple Pay' ),
 	};
 }
 
@@ -29,28 +110,102 @@ export function ApplePayLabel() {
 	return (
 		<React.Fragment>
 			<span>{ localize( 'Apple Pay' ) }</span>
-			<ApplePayIcon fill="black" />
+			<PaymentMethodLogos className="apple-pay__logo payment-logos">
+				<ApplePayIcon fill="black" />
+			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-export function ApplePaySubmitButton() {
+export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
+	const localize = useLocalize();
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
+	const [ items, total ] = useLineItems();
+	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
+	const { showErrorMessage } = useMessages();
+	const transactionStatus = useSelect( ( select ) => select( 'apple-pay' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'apple-pay' ).getTransactionError() );
+	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
+	const onEvent = useEvents();
+	const onSubmit = useCallback(
+		( { name, paymentMethodToken } ) =>
+			submitStripePayment( {
+				name,
+				paymentMethodToken,
+				items,
+				total,
+				stripe,
+				stripeConfiguration,
+				showErrorMessage,
+				beginStripeTransaction,
+				setFormSubmitting,
+				resetTransaction,
+				onEvent,
+			} ),
+		[
+			onEvent,
+			beginStripeTransaction,
+			items,
+			total,
+			stripe,
+			stripeConfiguration,
+			showErrorMessage,
+			setFormSubmitting,
+			resetTransaction,
+		]
+	);
+	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
+		paymentRequestOptions,
+		onSubmit,
+		stripe,
+	} );
+	debug( 'apple-pay button isLoading', isLoading );
+
+	useEffect( () => {
+		if ( transactionStatus === 'error' ) {
+			debug( 'showing error', transactionError );
+			showErrorMessage(
+				transactionError || localize( 'An error occurred during the transaction' )
+			);
+			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: transactionError || '' } );
+			resetTransaction();
+			setFormReady();
+		}
+		if ( transactionStatus === 'complete' ) {
+			debug( 'marking complete' );
+			setFormComplete();
+		}
+	}, [
+		onEvent,
+		resetTransaction,
+		setFormReady,
+		setFormComplete,
+		showErrorMessage,
+		transactionStatus,
+		transactionError,
+		localize,
+	] );
+
+	if ( ! isLoading && ! canMakePayment ) {
+		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
+		return (
+			<PaymentRequestButton
+				paymentRequest={ paymentRequest }
+				paymentType="apple-pay"
+				disabled
+				disabledReason={ localize( 'This payment type is not supported' ) }
+			/>
+		);
+	}
+
 	return (
-		<Button
-			onClick={ submitApplePayPayment }
-			buttonState="primary"
-			buttonType="apple-pay"
-			aria-label="Submit payment with Apple Pay"
-			fullWidth
-		>
-			<ButtonApplePayIcon fill="white" />
-		</Button>
+		<PaymentRequestButton
+			disabled={ isLoading ? true : disabled }
+			paymentRequest={ paymentRequest }
+			paymentType="apple-pay"
+		/>
 	);
 }
-
-const ButtonApplePayIcon = styled( ApplePayIcon )`
-	transform: translateY( 3px );
-`;
 
 export function ApplePaySummary() {
 	const localize = useLocalize();
@@ -66,6 +221,7 @@ function ApplePayIcon( { fill, className } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
+			focusable="false"
 			className={ className }
 		>
 			<path
@@ -91,7 +247,125 @@ function ApplePayIcon( { fill, className } ) {
 		</svg>
 	);
 }
+const PAYMENT_REQUEST_OPTIONS = {
+	requestPayerName: true,
+	requestPayerPhone: false,
+	requestPayerEmail: false,
+	requestShipping: false,
+};
 
-function submitApplePayPayment() {
-	alert( 'Thank you!' );
+function usePaymentRequestOptions( stripeConfiguration ) {
+	const [ items, total ] = useLineItems();
+	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
+	const currency = items.reduce(
+		( firstCurrency, item ) => firstCurrency || item.amount.currency,
+		null
+	);
+	const paymentRequestOptions = useMemo(
+		() => ( {
+			country: countryCode,
+			currency: currency && currency.toLowerCase(),
+			displayItems: getDisplayItemsForLineItems( items ),
+			total: getPaymentRequestTotalFromTotal( total ),
+			...PAYMENT_REQUEST_OPTIONS,
+		} ),
+		[ countryCode, currency, items, total ]
+	);
+	return paymentRequestOptions;
+}
+
+function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
+	const [ paymentRequest, setPaymentRequest ] = useState();
+
+	// We have to memoize this to prevent re-creating the paymentRequest
+	const callback = useCallback(
+		( paymentMethodResponse ) => {
+			completePaymentMethodTransaction( {
+				onSubmit,
+				...paymentMethodResponse,
+			} );
+		},
+		[ onSubmit ]
+	);
+
+	useEffect( () => {
+		let isSubscribed = true;
+		if ( ! stripe ) {
+			return;
+		}
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( ( result ) => {
+			debug( 'canMakePayment updating to', result );
+			isSubscribed && setCanMakePayment( !! result?.applePay );
+		} );
+		request.on( 'paymentmethod', callback );
+		setPaymentRequest( request );
+		return () => ( isSubscribed = false );
+	}, [ stripe, paymentRequestOptions, callback ] );
+
+	return {
+		paymentRequest,
+		canMakePayment: canMakePayment === 'loading' ? false : canMakePayment,
+		isLoading: canMakePayment === 'loading',
+	};
+}
+
+function getDisplayItemsForLineItems( items ) {
+	return items.map( ( { label, amount } ) => ( {
+		label,
+		amount: amount.value,
+	} ) );
+}
+
+function getPaymentRequestTotalFromTotal( total ) {
+	return {
+		label: total.label,
+		amount: total.amount.value,
+	};
+}
+
+function completePaymentMethodTransaction( { onSubmit, complete, paymentMethod, payerName } ) {
+	onSubmit( { paymentMethodToken: paymentMethod.id, name: payerName } );
+	complete( 'success' );
+}
+
+function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
+	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+}
+
+async function submitStripePayment( {
+	name,
+	paymentMethodToken,
+	items,
+	total,
+	stripe,
+	stripeConfiguration,
+	showErrorMessage,
+	beginStripeTransaction,
+	setFormSubmitting,
+	setFormReady,
+	resetTransaction,
+	onEvent,
+} ) {
+	debug( 'submitting stripe payment with key', paymentMethodToken );
+	try {
+		setFormSubmitting();
+		onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
+		beginStripeTransaction( {
+			stripe,
+			paymentMethodToken,
+			name,
+			items,
+			total,
+			stripeConfiguration,
+		} );
+	} catch ( error ) {
+		resetTransaction();
+		setFormReady();
+		debug( 'showing error for submit', error );
+		onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: error } );
+		showErrorMessage( error.message );
+		return;
+	}
 }

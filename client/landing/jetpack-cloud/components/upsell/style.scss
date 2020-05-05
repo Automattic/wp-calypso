@@ -1,0 +1,19 @@
+.upsell {
+	& > *:first-child {
+		margin-bottom: 32px;
+	}
+
+	& > *:not( :first-child ):not( :last-child ) {
+		margin-bottom: 24px;
+	}
+}
+
+.upsell__button {
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		text-align: auto;
+		width: auto;
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -57,7 +55,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	return (
 		<div className="post-actions-ellipsis-menu">
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>
-				{ actions.map( action => cloneElement( action, { globalId } ) ) }
+				{ actions.map( ( action ) => cloneElement( action, { globalId } ) ) }
 			</EllipsisMenu>
 		</div>
 	);

@@ -13,9 +13,10 @@ import { QUERY_FIELDS } from './constants';
 
 /**
  * Returns the updated count records state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const counts = withSchemaValidation(
 	countsSchema,
@@ -24,11 +25,19 @@ export const counts = withSchemaValidation(
 		keyedReducer( 'period', ( state = [], action ) => {
 			switch ( action.type ) {
 				case STATS_CHART_COUNTS_RECEIVE: {
+					// Workaround to prevent new data from being appended to previous data when range period differs.
+					// See https://github.com/Automattic/wp-calypso/pull/41441#discussion_r415918092
+					if ( action.data.length !== state.length ) {
+						return action.data;
+					}
+
 					let areThereChanges = false;
 
 					const newState = action.data.reduce(
 						( nextState, recordFromApi ) => {
-							const index = nextState.findIndex( entry => entry.period === recordFromApi.period );
+							const index = nextState.findIndex(
+								( entry ) => entry.period === recordFromApi.period
+							);
 							if ( index >= 0 ) {
 								const newRecord = { ...nextState[ index ], ...recordFromApi };
 								if ( ! isEqual( nextState[ index ], newRecord ) ) {
@@ -55,9 +64,10 @@ export const counts = withSchemaValidation(
 
 /**
  * Returns the loading state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isLoading = keyedReducer(
 	'siteId',

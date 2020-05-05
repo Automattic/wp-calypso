@@ -12,8 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import importerConfig from 'lib/importer/importer-config';
-import Button from '../../../components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 import StepWrapper from '../../step-wrapper';
 
@@ -128,7 +127,7 @@ class ImportPreview extends Component {
 		// The preceding steps always provide a value for importSiteEngine
 		const items = this.previewData[ importSiteEngine ].supported || [];
 
-		const listItems = items.map( item => {
+		const listItems = items.map( ( item ) => {
 			return (
 				<li className="import-preview__supported-item" key={ item }>
 					<Gridicon icon="checkmark" size={ 18 } className="import-preview__checkmark" />
@@ -202,10 +201,7 @@ class ImportPreview extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		saveSignupStep,
-		submitSignupStep,
-	}
-)( localize( ImportPreview ) );
+export default connect( null, {
+	saveSignupStep,
+	submitSignupStep,
+} )( localize( ImportPreview ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -120,7 +118,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		const selector = By.css( '.product-name' );
 		return await this.driver
 			.findElements( selector )
-			.then( products => promise.fullyResolved( products.map( e => e.getText() ) ) );
+			.then( ( products ) => promise.fullyResolved( products.map( ( e ) => e.getText() ) ) );
 	}
 
 	async numberOfProductsInCart() {
@@ -201,7 +199,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			By.css( 'button[data-e2e-type="apply-coupon"]' )
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.dismissNotice();
+		await noticesComponent.dismissNotice();
+		return await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.cart__remove-link' )
+		);
 	}
 
 	async enterCouponCode( couponCode ) {
@@ -221,17 +223,19 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async removeCoupon() {
 		// Desktop
 		if ( currentScreenSize() !== 'mobile' ) {
-			return await driverHelper.clickWhenClickable(
+			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.cart-body .cart__remove-link' )
 			);
+			return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 		}
 
 		// Mobile
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.payment-box__content .cart__remove-link' )
 		);
+		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
 	async removeFromCart() {
 		return await driverHelper.clickWhenClickable(

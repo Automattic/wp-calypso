@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -42,10 +39,9 @@ const getContentLink = ( state, siteId, page ) => {
 const ICON_SIZE = 12;
 
 function PageCardInfo( {
-	translate,
-	moment,
 	page,
 	showTimestamp,
+	showPublishedStatus,
 	isFront,
 	isPosts,
 	siteUrl,
@@ -53,32 +49,23 @@ function PageCardInfo( {
 	theme,
 	themeId,
 } ) {
-	const renderTimestamp = function() {
-		if ( page.status === 'future' ) {
-			return (
-				<PostRelativeTimeStatus
-					post={ page }
-					link={ contentLink.contentLinkURL }
-					target={ contentLink.contentLinkTarget }
-					gridiconSize={ ICON_SIZE }
-				/>
-			);
-		}
-
-		return (
-			<span className="page-card-info__item">
-				<Gridicon icon="time" size={ ICON_SIZE } className="page-card-info__item-icon" />
-				<span className="page-card-info__item-text">{ moment( page.modified ).fromNow() }</span>
-			</span>
-		);
-	};
+	const translate = useTranslate();
 
 	return (
 		<div className="page-card-info">
 			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
 			<div>
-				{ showTimestamp && renderTimestamp() }
+				{ showTimestamp && (
+					<PostRelativeTimeStatus
+						showPublishedStatus={ showPublishedStatus }
+						post={ page }
+						link={ contentLink.contentLinkURL }
+						target={ contentLink.contentLinkTarget }
+						gridiconSize={ ICON_SIZE }
+						includeBasicStatus={ true }
+					/>
+				) }
 				{ isFront && (
 					<span className="page-card-info__badge">
 						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
@@ -114,4 +101,4 @@ export default connect( ( state, props ) => {
 		themeId,
 		contentLink: getContentLink( state, props.page.site_ID, props.page ),
 	};
-} )( localize( PageCardInfo ) );
+} )( PageCardInfo );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,7 +33,7 @@ describe( 'actions', () => {
 	describe( '#fetchSetupChoices()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/123/calypso-preferences/woocommerce' )
@@ -103,7 +101,7 @@ describe( 'actions', () => {
 	describe( '#setFinishedInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -158,7 +156,7 @@ describe( 'actions', () => {
 	describe( '#setOptedOutOfShippingSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -213,7 +211,7 @@ describe( 'actions', () => {
 	describe( '#setOptedOutOfTaxesSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -268,7 +266,7 @@ describe( 'actions', () => {
 	describe( '#setTriedCustomizerDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -323,7 +321,7 @@ describe( 'actions', () => {
 	describe( '#setCreatedDefaultShippingZone', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -378,7 +376,7 @@ describe( 'actions', () => {
 	describe( '#setFinishedInstallOfRequiredPlugins', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -442,7 +440,7 @@ describe( 'actions', () => {
 			message: 'All missing WooCommerce pages successfully installed',
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
@@ -482,7 +480,7 @@ describe( 'actions', () => {
 	describe( '#setCheckedTaxSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
@@ -539,7 +537,7 @@ describe( 'actions', () => {
 	describe( '#setSetStoreAddressDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {

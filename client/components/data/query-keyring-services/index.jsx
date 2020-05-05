@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ QueryKeyringServices.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isRequesting: isKeyringServicesFetching( state ),
 	} ),
 	{ requestKeyringServices }

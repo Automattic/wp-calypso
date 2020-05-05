@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { shallow } from 'enzyme';
 import { PendingPayments, requestId } from '../index';
 
 jest.mock( 'state/data-layer/http-data', () => ( {
-	requestHttpData: x => x,
+	requestHttpData: ( x ) => x,
 } ) );
 
 describe( 'PendingPayments requestId', () => {
@@ -27,8 +25,8 @@ describe( 'PendingPayments requestId', () => {
 describe( 'PendingPayments', () => {
 	const defaultProps = {
 		userId: 1,
-		translate: x => x,
-		showErrorNotice: x => x,
+		translate: ( x ) => x,
+		showErrorNotice: ( x ) => x,
 		pendingPayments: [],
 		response: {
 			state: 'uninitialized',
@@ -45,7 +43,7 @@ describe( 'PendingPayments', () => {
 			'Connect(PurchasesSite)[isPlaceholder=true]',
 		];
 
-		rules.forEach( rule => {
+		rules.forEach( ( rule ) => {
 			test( rule, () => {
 				expect( wrapper.find( rule ) ).toHaveLength( 1 );
 			} );
@@ -63,7 +61,7 @@ describe( 'PendingPayments', () => {
 			'.pending-payments .pending-payments__no-content EmptyContent',
 		];
 
-		rules.forEach( rule => {
+		rules.forEach( ( rule ) => {
 			test( rule, () => {
 				expect( wrapper.find( rule ) ).toHaveLength( 1 );
 			} );
@@ -85,10 +83,10 @@ describe( 'PendingPayments', () => {
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
 			'Main.pending-payments Connect(Localized(PurchasesHeader))[section="pending"]',
-			'Main.pending-payments Connect(Localized(PendingListItem))',
+			'Main.pending-payments Connect(PendingListItem)',
 		];
 
-		rules.forEach( rule => {
+		rules.forEach( ( rule ) => {
 			test( rule, () => {
 				expect( wrapper.find( rule ) ).toHaveLength( 1 );
 			} );

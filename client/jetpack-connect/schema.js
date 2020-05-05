@@ -1,4 +1,3 @@
-/** @format */
 export const authorizeQueryDataSchema = {
 	type: 'object',
 	required: [

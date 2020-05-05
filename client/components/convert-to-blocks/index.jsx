@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ class ConvertToBlocksDialog extends Component {
 		handleConversionResponse: PropTypes.func,
 	};
 
-	close = action => {
+	close = ( action ) => {
 		this.props.handleResponse( action === 'convert' );
 	};
 

@@ -37,7 +37,8 @@
 			padding-right: 30px;
 		}
 
-		.product-domain {
+		.product-domain,
+		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
 			font-size: 12px;
@@ -66,6 +67,21 @@
 
 		.cart__free-text:first-child {
 			padding-left: 0;
+		}
+
+		.cart__gsuite-discount {
+			.cart__gsuite-discount-regular-price {
+				text-decoration: line-through;
+			}
+
+			.cart__gsuite-discount-discounted-price {
+				padding-left: 4px;
+			}
+
+			.cart__gsuite-discount-text {
+				color: var( --color-success );
+				padding-left: 8px;
+			}
 		}
 
 		.product-monthly-price {
@@ -125,13 +141,13 @@
 
 		.cart__total-label {
 			display: table-cell;
-			width: 100%;
+			width: auto;
 		}
 
 		.cart__total-amount {
 			display: table-cell;
 			text-align: right;
-			width: auto;
+			width: 100%;
 		}
 
 		.cart__total-amount.last-cell {
@@ -212,7 +228,7 @@
 
 	.button.is-borderless {
 		color: var( --color-link );
-		font-weight: initial;
+		font-weight: 600;
 	}
 }
 
@@ -404,8 +420,6 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	background: var( --color-surface );
-
 	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-left: 0;
@@ -417,9 +431,23 @@ div.popover-cart__popover {
 		top: 0;
 	}
 
+	.cart__upsell-body {
+		padding: 16px;
+	}
+}
+
+.secondary-cart__item {
+	background: var( --color-surface );
+	margin: 20px 0 0;
+	box-shadow: 0 1px 0 var( --color-border-subtle );
+
 	.jetpack-logo {
 		margin: 32px 0;
 	}
+}
+
+.secondary-cart__item:first-child {
+	margin-top: 0;
 }
 
 @include breakpoint( '<660px' ) {
@@ -438,7 +466,8 @@ div.popover-cart__popover {
 		width: 55%;
 	}
 
-	.product-domain {
+	.product-domain,
+	.product-domain-renewal-date {
 		width: 40%;
 	}
 

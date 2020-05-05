@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,21 +9,24 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
-import isFetchingSiteBlocks from 'state/selectors/is-fetching-site-blocks';
-import getSiteBlocksCurrentPage from 'state/selectors/get-site-blocks-current-page';
-import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
+import {
+	getBlockedSites,
+	isFetchingSiteBlocks,
+	getSiteBlocksCurrentPage,
+	getSiteBlocksLastPage,
+} from 'state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
 import SiteBlockListItemPlaceholder from './list-item-placeholder';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -44,7 +45,7 @@ class SiteBlockList extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( 2, i => (
+		return times( 2, ( i ) => (
 			<SiteBlockListItemPlaceholder key={ 'site-block-list-item-placeholder-' + i } />
 		) );
 	}
@@ -53,7 +54,7 @@ class SiteBlockList extends Component {
 		return <SiteBlockListItem key={ 'site-block-list-item-' + siteId } siteId={ siteId } />;
 	}
 
-	getItemRef = siteId => {
+	getItemRef = ( siteId ) => {
 		return 'site-block-' + siteId;
 	};
 
@@ -67,14 +68,14 @@ class SiteBlockList extends Component {
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
 				<MeSidebarNavigation />
-				<SectionHeader label={ translate( 'Blocked Sites' ) } />
+				<SectionHeader label={ translate( 'Blocked sites' ) } />
 				<Card className="site-blocks__intro">
 					<p>
 						{ translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
-						) }
-						<a href="https://en.support.wordpress.com/reader/#blocking-sites">
-							{ translate( ' Learn more.' ) }
+						) }{ ' ' }
+						<a href={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }>
+							{ translate( 'Learn more' ) }
 						</a>
 					</p>
 
@@ -100,7 +101,7 @@ class SiteBlockList extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			blockedSites: getBlockedSites( state ),
 			currentPage: getSiteBlocksCurrentPage( state ),

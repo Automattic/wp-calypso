@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,16 +29,13 @@ class QueryFeed extends PureComponent {
 		this.requestFeed( nextProps );
 	}
 
-	requestFeed = props => props.requestFeed( props.siteId, props.zoneId );
+	requestFeed = ( props ) => props.requestFeed( props.siteId, props.zoneId );
 
 	render() {
 		return null;
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ requestFeed }
-);
+const connectComponent = connect( null, { requestFeed } );
 
 export default connectComponent( QueryFeed );

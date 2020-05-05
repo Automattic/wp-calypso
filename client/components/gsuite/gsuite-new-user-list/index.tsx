@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import GSuiteNewUser from './new-user';
 import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
 
@@ -59,7 +59,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			{ users.map( ( user, index ) => (
 				<Fragment key={ index }>
 					<GSuiteNewUser
-						domains={ domains ? domains.map( domain => domain.name ) : [ selectedDomainName ] }
+						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
@@ -71,7 +71,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			<div className="gsuite-new-user-list__actions">
 				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
 					<Gridicon icon="plus" />
-					<span>{ translate( 'Add Another User' ) }</span>
+					<span>{ translate( 'Add another user' ) }</span>
 				</Button>
 				{ children }
 			</div>

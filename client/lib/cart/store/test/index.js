@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,10 +6,10 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import { recordUnrecognizedPaymentMethod } from '../cart-analytics';
+import { recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
 import { setTaxLocation } from 'lib/cart-values';
 
-jest.mock( '../cart-analytics', () => ( {
+jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
 	recordUnrecognizedPaymentMethod: jest.fn(),
 } ) );
@@ -29,7 +28,7 @@ jest.mock( 'lib/cart-values', () => {
 	return {
 		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
-		removeCoupon: jest.fn( () => i => i ),
+		removeCoupon: jest.fn( () => ( i ) => i ),
 	};
 } );
 jest.mock( 'lib/data-poller', () => ( {

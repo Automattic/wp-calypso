@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { union, includes, trim, debounce } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -52,7 +50,7 @@ class ProductCategories extends Component {
 		}
 	}
 
-	requestPages = pages => {
+	requestPages = ( pages ) => {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
@@ -63,7 +61,7 @@ class ProductCategories extends Component {
 		}
 		const requestedPages = this.state[ stateName ];
 
-		pages.forEach( page => {
+		pages.forEach( ( page ) => {
 			if ( ! includes( requestedPages, page ) ) {
 				this.props.fetchProductCategories( site.ID, { search: searchQuery, page } );
 			}
@@ -74,7 +72,7 @@ class ProductCategories extends Component {
 		} );
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -136,7 +134,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	searchProductCategories: ( siteId, query ) =>
 		withAnalytics(
 			recordTrack( 'calypso_woocommerce_product_category_search', query ),
@@ -145,7 +143,4 @@ const mapDispatchToProps = dispatch => ( {
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategories ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

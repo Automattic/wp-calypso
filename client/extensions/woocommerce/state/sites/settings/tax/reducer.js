@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ export default withoutPersistence( ( state = null, action ) => {
 
 			// go through each existing setting
 			// if an update is present in data, replace the setting with the update
-			const newSettings = settings.map( setting => {
+			const newSettings = settings.map( ( setting ) => {
 				const update = find( data.update, { id: setting.id } );
 				if ( update ) {
 					return update;
@@ -45,7 +43,7 @@ export default withoutPersistence( ( state = null, action ) => {
 			} );
 
 			// if update adds adds a new setting, append it to settings
-			data.update.forEach( update => {
+			data.update.forEach( ( update ) => {
 				if ( ! find( settings, { id: update.id } ) ) {
 					newSettings.push( update );
 				}

@@ -10,7 +10,7 @@ const mergedMetaData = ( a, b ) => [
 
 const joinAnalytics = ( analytics, action ) =>
 	isFunction( action )
-		? dispatch => {
+		? ( dispatch ) => {
 				dispatch( analytics );
 				dispatch( action );
 		  }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,15 +19,16 @@ let delayedNotices = [];
 const notices = {
 	/**
 	 * Creates a new notice
+	 *
 	 * @private
 	 *
-	 * @param {String} text The text of the notices
-	 * @param {Object} options Options for the notice
-	 * @param {String} status The status
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
+	 * @param {string} status The status
 	 *
-	 * @return {object} notice
+	 * @returns {object} notice
 	 */
-	new: function( text, options, status ) {
+	new: function ( text, options, status ) {
 		// Set container
 		const container = options.overlay ? 'overlay-notices' : 'notices';
 
@@ -47,13 +46,13 @@ const notices = {
 			container: container,
 			button: options.button,
 			href: options.href,
-			onClick: event => {
+			onClick: ( event ) => {
 				if ( typeof options.onClick === 'function' ) {
 					const closeFn = notices.removeNotice.bind( notices, noticeObject );
 					return options.onClick( event, closeFn );
 				}
 			},
-			onRemoveCallback: options.onRemoveCallback || function() {},
+			onRemoveCallback: options.onRemoveCallback || function () {},
 			arrow: options.arrow,
 			isCompact: options.isCompact,
 			showDismiss: options.showDismiss,
@@ -74,56 +73,60 @@ const notices = {
 
 	/**
 	 * Helper function for creating a new "Success" notice
+	 *
 	 * @public
 	 *
-	 * @param {String} text The text of the notices
-	 * @param {Object} options Options for the notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
 	 *
-	 * @return {object} notice
+	 * @returns {object} notice
 	 */
-	success: function( text, options ) {
+	success: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-success' );
 	},
 
 	/**
 	 * Helper function for creating a new "Error" notice
+	 *
 	 * @public
 	 *
-	 * @param {String} text The text of the notices
-	 * @param {Object} options Options for the notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
 	 *
-	 * @return {object} notice
+	 * @returns {object} notice
 	 */
-	error: function( text, options ) {
+	error: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-error' );
 	},
 
 	/**
 	 * Helper function for creating a new general "Info" notice
+	 *
 	 * @public
 	 *
-	 * @param {String} text The text of the notices
-	 * @param {Object} options Options for the notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
 	 *
-	 * @return {object} notice
+	 * @returns {object} notice
 	 */
-	info: function( text, options ) {
+	info: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-info' );
 	},
 
 	/**
 	 * Helper function for creating a new general "Info" notice
+	 *
 	 * @public
 	 *
-	 * @param {String} text The text of the notices
-	 * @param {Object} options Options for the notice
+	 * @param {string} text The text of the notices
+	 * @param {object} options Options for the notice
 	 *
-	 * @return {object} notice
+	 * @returns {object} notice
 	 */
-	warning: function( text, options ) {
+	warning: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-warning' );
 	},
@@ -135,9 +138,10 @@ const notices = {
 
 	/**
 	 * Removes a specific notice when you click its `X` button
+	 *
 	 * @param  {object} notice The data that was originally used to create the notice
 	 */
-	removeNotice: function( notice ) {
+	removeNotice: function ( notice ) {
 		if ( ! notice.container ) {
 			return;
 		}
@@ -153,14 +157,15 @@ const notices = {
 
 	/**
 	 * Callback handler to clear notices when a user leaves current page
+	 *
 	 * @public
-	 * @param {Object} context The page context
+	 * @param {object} context The page context
 	 * @param {Function} next The continuation
 	 */
-	clearNoticesOnNavigation: function( context, next ) {
+	clearNoticesOnNavigation: function ( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
 		let changed = false;
-		const isNoticePersistent = function( notice ) {
+		const isNoticePersistent = function ( notice ) {
 			return notice.persistent;
 		};
 
@@ -174,11 +179,12 @@ const notices = {
 
 		// Rotate in any delayed notices
 		if ( delayedNotices.length ) {
-			delayedNotices.forEach( function( noticeObject ) {
+			delayedNotices.forEach( function ( noticeObject ) {
 				list[ noticeObject.container ] = [];
 				list[ noticeObject.container ].push( noticeObject );
 			} );
 			delayedNotices = [];
+			changed = true;
 		}
 
 		if ( changed ) {
@@ -189,16 +195,17 @@ const notices = {
 
 	/**
 	 * Clear all notices at once for a given container
+	 *
 	 * @public
 	 *
 	 * @param  {string} container DOM ID of notices container to clear
 	 */
-	clearNotices: function( container ) {
+	clearNotices: function ( container ) {
 		list[ container ] = [];
 		list.emit( 'change' );
 	},
 
-	getStatusHelper: function( noticeObject ) {
+	getStatusHelper: function ( noticeObject ) {
 		if ( noticeObject.error ) {
 			return 'is-error';
 		}

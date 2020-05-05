@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 
 /**
@@ -58,19 +57,19 @@ class SplitButton extends PureComponent {
 
 	popoverContext = React.createRef();
 
-	handleMainClick = event => {
+	handleMainClick = ( event ) => {
 		event.stopPropagation();
 		return this.props.onClick( event );
 	};
 
-	handleMenuClick = event => {
+	handleMenuClick = ( event ) => {
 		event.stopPropagation();
 		return this.toggleMenu( ! this.state.isMenuVisible );
 	};
 
 	hideMenu = () => this.toggleMenu( false );
 
-	toggleMenu = isMenuVisible => {
+	toggleMenu = ( isMenuVisible ) => {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
 			this.props.onToggle( isMenuVisible );

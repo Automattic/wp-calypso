@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,10 +6,11 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import GMClosureNotice from '../shared/gm-closure-notice';
+import { Card } from '@automattic/components';
+import ClosureNotice from '../shared/closure-notice';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
+import { easterHolidayName } from 'me/help/contact-form-notice/live-chat-closure';
 import { localize } from 'i18n-calypso';
 import { CONCIERGE_SUPPORT } from 'lib/url/support';
 
@@ -21,10 +20,11 @@ class PrimaryHeader extends Component {
 
 		return (
 			<Fragment>
-				<GMClosureNotice
-					displayAt="2019-09-03 00:00Z"
-					closesAt="2019-09-10 00:00Z"
-					reopensAt="2019-09-19 04:00Z"
+				<ClosureNotice
+					displayAt="2020-04-09 00:00Z"
+					closesAt="2020-04-12 06:00Z"
+					reopensAt="2020-04-13 06:00Z"
+					holidayName={ easterHolidayName }
 				/>
 				<Card>
 					<img

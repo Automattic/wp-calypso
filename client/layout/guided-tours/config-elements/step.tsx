@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import {
@@ -26,7 +26,7 @@ import { TimestampMS } from 'client/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const anyFrom = obj => {
+const anyFrom = ( obj ) => {
 	const key = Object.keys( obj )[ 0 ];
 	return key && obj[ key ];
 };

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
@@ -48,7 +47,7 @@ describe( 'actions', () => {
 				],
 			};
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history' )
@@ -86,7 +85,7 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history' )
@@ -113,7 +112,7 @@ describe( 'actions', () => {
 		const receiptId = 12345678;
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
@@ -143,7 +142,7 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )

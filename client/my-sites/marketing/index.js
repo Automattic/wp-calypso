@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import {
 	layout,
 	marketingTools,
 	redirectConnections,
+	redirectDefaultConnectionsDomain,
 	redirectMarketingTools,
 	redirectSharingButtons,
 	sharingButtons,
@@ -21,7 +20,7 @@ import {
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	const paths = [
 		'/marketing',
 		'/marketing/connections',
@@ -32,7 +31,9 @@ export default function() {
 		'/sharing/buttons',
 	];
 
-	paths.forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
+	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
+
+	page( '/marketing/connection/:service', redirectDefaultConnectionsDomain );
 
 	page( '/sharing/:domain', redirectConnections );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );

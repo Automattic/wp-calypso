@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -59,7 +57,7 @@ class PostTypeOptions extends React.PureComponent {
 
 		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
 
-		const setRef = fieldName => c => {
+		const setRef = ( fieldName ) => ( c ) => {
 			if ( fieldName === 'start_date' ) {
 				this._startDate = c;
 			}
@@ -77,7 +75,7 @@ class PostTypeOptions extends React.PureComponent {
 				) }
 
 				<div className="export-card__option-fieldset-fields">
-					{ fields.map( fieldName => (
+					{ fields.map( ( fieldName ) => (
 						<Select
 							key={ fieldName }
 							ref={ setRef( fieldName ) }
@@ -104,7 +102,4 @@ class PostTypeOptions extends React.PureComponent {
 	}
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PostTypeOptions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

@@ -4,7 +4,6 @@
  * Adapted from WordPress.
  *
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  * @see https:
@@ -295,7 +294,7 @@ class CharMap extends React.Component {
 		];
 	};
 
-	renderCell = cell => {
+	renderCell = ( cell ) => {
 		return (
 			<div
 				key={ cell[ 0 ] }
@@ -309,7 +308,7 @@ class CharMap extends React.Component {
 		);
 	};
 
-	onCellClick = event => {
+	onCellClick = ( event ) => {
 		this.props.editor.execCommand( 'mceInsertContent', false, event.target.textContent.trim() );
 	};
 

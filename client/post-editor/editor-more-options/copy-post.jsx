@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
-import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';
@@ -58,7 +55,7 @@ class EditorMoreOptionsCopyPost extends Component {
 		} );
 	};
 
-	setPostToCopy = post => {
+	setPostToCopy = ( post ) => {
 		this.setState( {
 			selectedPostId: post.ID,
 		} );
@@ -142,7 +139,7 @@ class EditorMoreOptionsCopyPost extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const postId = getEditorPostId( state );
 	const siteId = getSelectedSiteId( state );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );

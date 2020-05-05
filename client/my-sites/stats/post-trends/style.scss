@@ -1,3 +1,4 @@
+client/my-sites/stats/post-trends/style.scss
 .post-trends {
 	display: inline-block;
 	user-select: none;
@@ -20,7 +21,6 @@
 .post-trends__value {
 	text-align: center;
 	font-size: 16px;
-	font-weight: 300;
 	color: var( --color-neutral-50 );
 	margin: 20px 0 30px;
 }

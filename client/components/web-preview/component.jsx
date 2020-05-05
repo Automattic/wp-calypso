@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,7 +12,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { hasTouch } from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { RootChild } from '@automattic/components';
 import { setPreviewShowing } from 'state/ui/actions';
@@ -180,10 +177,9 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect(
-	null,
-	{ setPreviewShowing }
-)( localize( WebPreviewModal ) );
+const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
+	localize( WebPreviewModal )
+);
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;

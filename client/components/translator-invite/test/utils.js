@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,7 +7,7 @@
  */
 import { isDefaultLocale, getCurrentNonDefaultLocale } from '../utils';
 
-jest.mock( 'config', () => key => {
+jest.mock( 'config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'it';
 	}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -61,7 +59,4 @@ class QuerySimplePayments extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestProduct, requestProducts }
-)( QuerySimplePayments );
+export default connect( null, { requestProduct, requestProducts } )( QuerySimplePayments );

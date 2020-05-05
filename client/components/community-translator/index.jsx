@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -57,7 +56,7 @@ class CommunityTranslator extends Component {
 		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
-		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
+		this.currentLocale = find( languages, ( lang ) => lang.langSlug === this.localeCode );
 	}
 
 	refresh = () => {
@@ -91,7 +90,7 @@ class CommunityTranslator extends Component {
 	 * @param { String } originalFromPage - original string
 	 * @param { String } displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
-	 * @returns {Object} DOM object
+	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {

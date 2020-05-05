@@ -13,7 +13,7 @@ import actions from '../state/actions';
  */
 import Gridicon from './gridicons';
 
-const routeBack = ( global, unselectNote ) => event => {
+const routeBack = ( global, unselectNote ) => ( event ) => {
 	event.stopPropagation();
 	event.preventDefault();
 	global.input.lastInputWasKeyboard = false;
@@ -46,7 +46,4 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( BackButton ) );
+export default connect( null, mapDispatchToProps )( localize( BackButton ) );

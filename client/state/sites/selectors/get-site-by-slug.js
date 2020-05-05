@@ -13,12 +13,12 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site object by its slug.
  *
- * @param  {Object}  state     Global state tree
- * @param  {String}  siteSlug  Site URL
- * @return {?Object}           Site object
+ * @param  {object}  state     Global state tree
+ * @param  {string}  siteSlug  Site URL
+ * @returns {?object}           Site object
  */
 export default createSelector(
 	( state, siteSlug ) =>
-		find( getSitesItems( state ), site => getSiteSlug( state, site.ID ) === siteSlug ) || null,
+		find( getSitesItems( state ), ( site ) => getSiteSlug( state, site.ID ) === siteSlug ) || null,
 	getSitesItems
 );

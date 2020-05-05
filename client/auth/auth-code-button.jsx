@@ -41,8 +41,9 @@ export class AuthCodeButton extends React.Component {
 
 		this.request = fetch( SMS_URL, {
 			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify( { username: this.props.username, password: this.props.password } ),
-		} ).then( response => response.json() );
+		} ).then( ( response ) => response.json() );
 
 		try {
 			this.handleSMSResponse( null, await this.request );

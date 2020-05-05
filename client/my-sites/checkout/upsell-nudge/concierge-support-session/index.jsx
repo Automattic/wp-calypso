@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import { CompactCard, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -181,7 +178,7 @@ export class ConciergeSupportSession extends PureComponent {
 										},
 									}
 								) }
-							</b>{' '}
+							</b>{ ' ' }
 							{ translate(
 								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
 							) }

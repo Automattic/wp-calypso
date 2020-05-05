@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,14 +11,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	CompositeDecorator,
-	Editor,
-	EditorState,
-	Entity,
-	Modifier,
-	SelectionState,
-} from 'draft-js';
+import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
@@ -32,7 +24,7 @@ import { localize } from 'i18n-calypso';
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 
-const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
+const Chip = ( onClick ) => ( props ) => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
@@ -51,7 +43,7 @@ export class TitleFormatEditor extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.storeEditorReference = r => ( this.editor = r );
+		this.storeEditorReference = ( r ) => ( this.editor = r );
 		this.focusEditor = () => this.editor.focus();
 
 		this.updateEditor = this.updateEditor.bind( this );
@@ -165,8 +157,10 @@ export class TitleFormatEditor extends Component {
 		return () => {
 			const { editorState } = this.state;
 			const currentSelection = editorState.getSelection();
+			const currentContent = editorState.getCurrentContent();
 
-			const tokenEntity = Entity.create( 'TOKEN', 'IMMUTABLE', { name } );
+			currentContent.createEntity( 'TOKEN', 'IMMUTABLE', { name } );
+			const tokenEntity = currentContent.getLastCreatedEntityKey();
 
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
@@ -214,15 +208,14 @@ export class TitleFormatEditor extends Component {
 		};
 	}
 
-	renderTokens( contentBlock, callback ) {
-		contentBlock.findEntityRanges( character => {
+	renderTokens( contentBlock, callback, contentState ) {
+		contentBlock.findEntityRanges( ( character ) => {
 			const entity = character.getEntity();
 
 			if ( null === entity ) {
 				return false;
 			}
-
-			return 'TOKEN' === Entity.get( entity ).getType();
+			return 'TOKEN' === contentState.getEntity( entity ).getType();
 		}, callback );
 	}
 
@@ -279,9 +272,7 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( get( site, 'lang', '' ) )
-		.format( 'MMMM YYYY' );
+	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return {

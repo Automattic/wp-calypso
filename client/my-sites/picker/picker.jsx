@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -72,7 +70,7 @@ class SitePicker extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	closePicker = selectedSiteId => {
+	closePicker = ( selectedSiteId ) => {
 		if ( this.props.currentLayoutFocus === 'sites' ) {
 			this.props.setLayoutFocus( 'sidebar' );
 			if ( selectedSiteId ) {
@@ -111,7 +109,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ setNextLayoutFocus, setLayoutFocus }
-)( wrapWithClickOutside( SitePicker ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	wrapWithClickOutside( SitePicker )
+);

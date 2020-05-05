@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';
@@ -28,7 +26,7 @@ class ImporterError extends React.PureComponent {
 		retryImport: PropTypes.func,
 	};
 
-	contactSupport = event => {
+	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
@@ -92,7 +90,7 @@ class ImporterError extends React.PureComponent {
 		return actionMessage;
 	};
 
-	retryImport = event => {
+	retryImport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.retryImport();

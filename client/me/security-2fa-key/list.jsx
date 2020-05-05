@@ -21,7 +21,7 @@ function Security2faKeyList( props ) {
 	return (
 		<div className="security-2fa-key__active-keys">
 			<ul className="security-2fa-key__list">
-				{ props.securityKeys.map( securityKey => (
+				{ props.securityKeys.map( ( securityKey ) => (
 					<li key={ securityKey.id } className="security-2fa-key__list-item">
 						<Security2faKeyItem securityKey={ securityKey } onDelete={ props.onDelete } />
 					</li>
@@ -36,9 +36,6 @@ Security2faKeyList.propTypes = {
 	onDelete: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKeyList ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKeyList ) );

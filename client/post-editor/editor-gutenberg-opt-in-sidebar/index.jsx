@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
@@ -30,7 +28,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 		optInEnabled: PropTypes.bool,
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			this.props.showDialog();
@@ -60,7 +58,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 } );
 

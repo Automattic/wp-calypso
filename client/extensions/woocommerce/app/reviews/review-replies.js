@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -71,5 +70,5 @@ export default connect(
 			replies,
 		};
 	},
-	dispatch => bindActionCreators( { fetchReviewReplies }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchReviewReplies }, dispatch )
 )( localize( ReviewReplies ) );

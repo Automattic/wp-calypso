@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 /**
  * Internal dependencies
@@ -9,7 +9,7 @@ import React, { useContext } from 'react';
 import LineItemsContext from './line-items-context';
 
 export function LineItemsProvider( { items, total, children } ) {
-	const value = { items, total };
+	const value = useMemo( () => ( { items, total } ), [ items, total ] );
 	return <LineItemsContext.Provider value={ value }>{ children }</LineItemsContext.Provider>;
 }
 
@@ -24,4 +24,12 @@ export function useLineItems() {
 export function useTotal() {
 	const [ , total ] = useLineItems();
 	return total;
+}
+
+export function useLineItemsOfType( itemType ) {
+	if ( ! itemType ) {
+		throw new Error( 'missing itemType for useLineItemsOfType' );
+	}
+	const [ items ] = useLineItems();
+	return items.filter( ( item ) => item.type === itemType );
 }

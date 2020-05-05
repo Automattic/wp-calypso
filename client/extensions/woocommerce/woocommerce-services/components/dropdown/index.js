@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ const Dropdown = ( {
 	disabled,
 	className,
 } ) => {
-	const onChange = event => updateValue( event.target.value );
+	const onChange = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>
@@ -39,7 +37,7 @@ const Dropdown = ( {
 				disabled={ Boolean( disabled ) }
 				isError={ Boolean( error ) }
 			>
-				{ Object.keys( valuesMap ).map( key => {
+				{ Object.keys( valuesMap ).map( ( key ) => {
 					return (
 						<option key={ key } value={ key }>
 							{ valuesMap[ key ] }

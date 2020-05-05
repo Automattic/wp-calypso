@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,52 +20,26 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const gutenbergUser =
+	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function() {
+describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Insert a Buttons block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+	describe( 'Insert a Click to Tweet block: @parallel', function () {
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Buttons block', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Buttons' );
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-buttons' )
-			);
-		} );
-
-		step( 'Can publish and view content', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
-		} );
-
-		step( 'Can see the Buttons block in our published post', async function() {
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-buttons' )
-			);
-		} );
-	} );
-
-	describe( 'Insert a Click to Tweet block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
-		} );
-
-		step( 'Can insert the Click to Tweet block', async function() {
+		step( 'Can insert the Click to Tweet block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Click to Tweet' );
 			return await driverHelper.waitTillPresentAndDisplayed(
@@ -76,7 +48,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can enter text to tweet', async function() {
+		step( 'Can enter text to tweet', async function () {
 			const textSelector = By.css( '.wp-block-coblocks-click-to-tweet__text' );
 			await driverHelper.waitTillPresentAndDisplayed( driver, textSelector );
 			return await driver
@@ -86,7 +58,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 				);
 		} );
 
-		step( 'Can publish and view content', async function() {
+		step( 'Can publish and view content', async function () {
 			// FIXME: hack based on `gEditorComponent.publish()`, which was closing the sidebar too fast in this test
 			// We're basically removing the `this.closePublishedPanel()` call.
 			const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
@@ -112,7 +84,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await driverHelper.acceptAlertIfPresent( driver );
 		} );
 
-		step( 'Can see the Click to Tweet block in our published post', async function() {
+		step( 'Can see the Click to Tweet block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-click-to-tweet' )
@@ -120,13 +92,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Dynamic HR block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+	describe( 'Insert a Dynamic HR block: @parallel', function () {
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Dynamic HR block', async function() {
+		step( 'Can insert the Dynamic HR block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Dynamic HR' );
 			return await driverHelper.waitTillPresentAndDisplayed(
@@ -135,12 +107,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can publish and view content', async function() {
+		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Dynamic HR block in our published post', async function() {
+		step( 'Can see the Dynamic HR block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-dynamic-separator' )
@@ -148,13 +120,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Hero block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+	describe( 'Insert a Hero block: @parallel', function () {
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Hero block', async function() {
+		step( 'Can insert the Hero block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Hero' );
 			return await driverHelper.waitTillPresentAndDisplayed(
@@ -163,12 +135,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can publish and view content', async function() {
+		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Hero block in our published post', async function() {
+		step( 'Can see the Hero block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-hero' )
@@ -176,33 +148,33 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Logos & Badges block: @parallel', function() {
+	describe( 'Insert a Logos & Badges block: @parallel', function () {
 		let fileDetails;
 
 		// Create image file for upload
-		before( async function() {
+		before( async function () {
 			fileDetails = await mediaHelper.createFile();
 			return fileDetails;
 		} );
 
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Logos & Badges block', async function() {
+		step( 'Can insert the Logos & Badges block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Logos' );
+			await gEditorComponent.addBlock( 'Logos & Badges' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
 			);
 		} );
 
-		step( 'Can select an image as a logo', async function() {
+		step( 'Can select an image as a logo', async function () {
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.editor-media-placeholder' )
+				By.css( '.block-editor-media-placeholder' )
 			);
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
@@ -218,12 +190,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can publish and view content', async function() {
+		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Logos & Badges block in our published post', async function() {
+		step( 'Can see the Logos & Badges block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
@@ -231,13 +203,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Pricing Table block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+	describe( 'Insert a Pricing Table block: @parallel', function () {
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Pricing Table block', async function() {
+		step( 'Can insert the Pricing Table block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Pricing Table' );
 			return await driverHelper.waitTillPresentAndDisplayed(
@@ -246,12 +218,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can publish and view content', async function() {
+		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Pricing Table block in our published post', async function() {
+		step( 'Can see the Pricing Table block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-pricing-table' )

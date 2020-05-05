@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { endsWith, omit } from 'lodash';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-followers-store' );
 
@@ -15,17 +12,17 @@ const debug = debugFactory( 'calypso:wpcom-followers-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
-	_followersBySite = {}, // store user objects
-	_totalFollowersByNamespace = {}, // store total found for params
-	_followersFetchedByNamespace = {}, // store fetch progress
-	_pageByNamespace = {}, // store fetch progress
-	_followerIDsByNamespace = {}, // store user order
-	_removingFromSite = {};
+const _fetchingFollowersByNamespace = {}; // store fetching state (boolean)
+const _followersBySite = {}; // store user objects
+const _totalFollowersByNamespace = {}; // store total found for params
+const _followersFetchedByNamespace = {}; // store fetch progress
+const _pageByNamespace = {}; // store fetch progress
+const _followerIDsByNamespace = {}; // store user order
+const _removingFromSite = {};
 
 const FollowersStore = {
 	// This data may help with infinite scrolling
-	getPaginationData: function( fetchOptions ) {
+	getPaginationData: function ( fetchOptions ) {
 		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
@@ -38,13 +35,13 @@ const FollowersStore = {
 		};
 	},
 
-	isRemoving: function( siteId ) {
+	isRemoving: function ( siteId ) {
 		return _removingFromSite[ siteId ];
 	},
 
-	getFollowers: function( fetchOptions ) {
-		let namespace = getNamespace( fetchOptions ),
-			siteId = fetchOptions.siteId;
+	getFollowers: function ( fetchOptions ) {
+		const namespace = getNamespace( fetchOptions );
+		const siteId = fetchOptions.siteId;
 
 		debug( 'getFollowers:', namespace );
 
@@ -55,7 +52,7 @@ const FollowersStore = {
 			return false;
 		}
 		const followers = [];
-		_followerIDsByNamespace[ namespace ].forEach( followerId => {
+		_followerIDsByNamespace[ namespace ].forEach( ( followerId ) => {
 			if ( _followersBySite[ siteId ][ followerId ] ) {
 				followers.push( _followersBySite[ siteId ][ followerId ] );
 			}
@@ -63,7 +60,7 @@ const FollowersStore = {
 		return followers;
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
@@ -86,8 +83,8 @@ function updateFollower( siteId, id, follower ) {
 }
 
 function updateFollowers( fetchOptions, followers, total ) {
-	let namespace = getNamespace( fetchOptions ),
-		page = fetchOptions.page;
+	const namespace = getNamespace( fetchOptions );
+	const page = fetchOptions.page;
 
 	debug( 'updateFollowers:', namespace );
 
@@ -96,7 +93,7 @@ function updateFollowers( fetchOptions, followers, total ) {
 		_followerIDsByNamespace[ namespace ] = new Set();
 	}
 
-	followers.forEach( function( follower ) {
+	followers.forEach( function ( follower ) {
 		_followerIDsByNamespace[ namespace ].add( follower.ID );
 		updateFollower( fetchOptions.siteId, follower.ID, follower );
 	} );
@@ -111,7 +108,7 @@ function getNamespace( fetchOptions ) {
 }
 
 function decrementPaginationData( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -124,7 +121,7 @@ function decrementPaginationData( siteId, followerId ) {
 }
 
 function incrementPaginationData( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -145,7 +142,7 @@ function removeFollowerFromSite( siteId, followerId ) {
 }
 
 function removeFollowerFromNamespaces( siteId, followerId ) {
-	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
+	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
 			endsWith( namespace, 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
@@ -155,9 +152,9 @@ function removeFollowerFromNamespaces( siteId, followerId ) {
 	} );
 }
 
-FollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	let action = payload.action,
-		namespace;
+FollowersStore.dispatchToken = Dispatcher.register( function ( payload ) {
+	const action = payload.action;
+	let namespace;
 	debug( 'register event Type', action.type, payload );
 
 	switch ( action.type ) {

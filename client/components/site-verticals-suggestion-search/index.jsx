@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -92,7 +90,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 *
 	 * @param {Array} results Incoming vertical results
 	 */
-	setSearchResults = results => {
+	setSearchResults = ( results ) => {
 		if ( results && results.length ) {
 			const candidateVerticals = this.getSuggestionsWithCategories( results );
 			this.setState( { candidateVerticals }, () =>
@@ -114,21 +112,21 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Searches the API results for a direct match on the user search query.
 	 *
-	 * @param {String} value       Search query array
-	 * @returns {Object|undefined} An object from the vertical results array
+	 * @param {string} value       Search query array
+	 * @returns {object|undefined} An object from the vertical results array
 	 */
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase().trim()
+			( item ) => item.verticalName.toLowerCase() === value.toLowerCase().trim()
 		);
 
 	/**
 	 * Callback to be passed to consuming component when the search value is updated.
 	 * TODO: once the siteVertical state got simplified, this can be removed.
 	 *
-	 * @param {Object} verticalData An object from the vertical results array
-	 * @param {String} value Search query array
+	 * @param {object} verticalData An object from the vertical results array
+	 * @param {string} value Search query array
 	 */
 	updateVerticalData = ( verticalData, value = '' ) => {
 		const trimmedValue = value.trim();
@@ -147,9 +145,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Callback to be passed to consuming component when the search field is updated.
 	 *
-	 * @param {String}  value                The new search value
+	 * @param {string}  value                The new search value
 	 */
-	onSiteTopicChange = value => {
+	onSiteTopicChange = ( value ) => {
 		const newState = {
 			inputValue: value,
 		};
@@ -178,13 +176,13 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const includeRelated = normalizedInput.length > 2;
 
 		return verticals
-			.map( vertical => ( {
+			.map( ( vertical ) => ( {
 				label: vertical.verticalName,
 				category: isRelatedVertical( vertical, normalizedInput )
 					? this.props.translate( 'Related' )
 					: undefined,
 			} ) )
-			.filter( suggestion => includeRelated || ! suggestion.category );
+			.filter( ( suggestion ) => includeRelated || ! suggestion.category );
 	}
 
 	render() {
@@ -234,18 +232,15 @@ function isRelatedVertical( vertical, normalizedInput ) {
 }
 
 export default localize(
-	connect(
-		( state, ownProps ) => {
-			const siteType = getSiteType( state );
-			const defaultVerticalSearchTerm =
-				getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
-			return {
-				siteType,
-				defaultVerticalSearchTerm,
-				verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
-				defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
-			};
-		},
-		null
-	)( SiteVerticalsSuggestionSearch )
+	connect( ( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		const defaultVerticalSearchTerm =
+			getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
+		return {
+			siteType,
+			defaultVerticalSearchTerm,
+			verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
+			defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
+		};
+	}, null )( SiteVerticalsSuggestionSearch )
 );

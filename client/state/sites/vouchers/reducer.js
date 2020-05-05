@@ -18,9 +18,9 @@ import { itemsSchema } from './schema';
 /**
  * vouchers `Reducer` function
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId, type, voucher, vouchers, serviceType } = action;
@@ -48,9 +48,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
 export const requesting = ( state = {}, { type, siteId } ) => {
 	switch ( type ) {
@@ -74,9 +74,9 @@ export const requesting = ( state = {}, { type, siteId } ) => {
 /**
  * `Reducer` function which handles ERRORs REST-API response actions
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
 export const errors = ( state = {}, { type, siteId, error } ) => {
 	switch ( type ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ QueryStoredCards.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequesting: isFetchingStoredCards( state ),
 		};

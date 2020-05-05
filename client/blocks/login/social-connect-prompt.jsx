@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { capitalize } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
@@ -40,7 +37,7 @@ class SocialConnectPrompt extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const { linkingSocialAuthInfo, linkingSocialService, onSuccess, redirectTo } = this.props;
 
 		event.preventDefault();
@@ -53,7 +50,7 @@ class SocialConnectPrompt extends Component {
 
 				onSuccess();
 			},
-			error => {
+			( error ) => {
 				this.props.recordTracksEvent( 'calypso_login_social_connect_failure', {
 					social_account_type: linkingSocialService,
 					error_code: error.code,
@@ -114,7 +111,7 @@ class SocialConnectPrompt extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		linkingSocialAuthInfo: getSocialAccountLinkAuthInfo( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		redirectTo: getRedirectToSanitized( state ),

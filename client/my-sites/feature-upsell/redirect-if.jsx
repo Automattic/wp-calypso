@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -61,11 +59,9 @@ export class UpsellRedirectWrapper extends React.Component {
 	}
 }
 
-export const createMapStateToProps = (
-	ComponentClass,
-	shouldRedirectCallback,
-	upsellPageURL
-) => state => {
+export const createMapStateToProps = ( ComponentClass, shouldRedirectCallback, upsellPageURL ) => (
+	state
+) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
@@ -82,7 +78,7 @@ export const createMapStateToProps = (
 };
 
 export const redirectIf = ( shouldRedirectCallback, upsellPageURL ) => {
-	return ComponentClass => {
+	return ( ComponentClass ) => {
 		const mapStateToProps = createMapStateToProps(
 			ComponentClass,
 			shouldRedirectCallback,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,7 +22,7 @@ export default function getGoogleMyBusinessLocations( state, siteId ) {
 		keyringConnectionId: googleMyBusinessSiteKeyring.keyring_id,
 	} );
 
-	externalUsers.forEach( externalUser => {
+	externalUsers.forEach( ( externalUser ) => {
 		externalUser.isConnected = externalUser.ID === googleMyBusinessSiteKeyring.external_user_id;
 	} );
 

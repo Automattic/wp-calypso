@@ -31,7 +31,7 @@ describe( 'getBillingTransactionsByType()', () => {
 			{
 				id: '12345678',
 				amount: '$1.23',
-				date: new Date( '2016-12-12T11:22:33+0000' ),
+				date: '2016-12-12T11:22:33+0000',
 			},
 		] );
 	} );
@@ -42,7 +42,7 @@ describe( 'getBillingTransactionsByType()', () => {
 			{
 				id: '87654321',
 				amount: '$4.56',
-				date: new Date( '2016-10-12T11:22:33+0000' ),
+				date: '2016-10-12T11:22:33+0000',
 			},
 		] );
 	} );

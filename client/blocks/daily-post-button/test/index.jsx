@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -24,11 +23,6 @@ jest.mock( 'reader/stats', () => ( {
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
-} ) );
-jest.mock( 'lib/analytics', () => ( {
-	mc: {
-		bumpStat: () => {},
-	},
 } ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
@@ -98,7 +92,7 @@ describe( 'DailyPostButton', () => {
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
-		test( 'shows the site selector if the user has more than one site', done => {
+		test( 'shows the site selector if the user has more than one site', () => {
 			const dailyPostButton = shallow(
 				<DailyPostButton
 					tagName="span"
@@ -110,8 +104,10 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			dailyPostButton.instance().renderSitesPopover = done;
-			dailyPostButton.simulate( 'click', { preventDefault: noop } );
+			return new Promise( ( resolve ) => {
+				dailyPostButton.instance().renderSitesPopover = resolve;
+				dailyPostButton.simulate( 'click', { preventDefault: noop } );
+			} );
 		} );
 	} );
 

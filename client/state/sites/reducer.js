@@ -7,6 +7,7 @@ import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import { products } from './products/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -32,11 +33,12 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
+	SITE_MIGRATION_STATUS_UPDATE,
 } from 'state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
 	combineReducers,
@@ -48,9 +50,9 @@ import {
 /**
  * Tracks all known site objects, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
@@ -131,7 +133,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'site_icon' ],
+				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
@@ -150,6 +152,19 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							nextSite = {
 								...nextSite,
 								is_private: isPrivate,
+							};
+							break;
+						}
+						case 'wpcom_coming_soon': {
+							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+
+							if ( site.is_coming_soon === isComingSoon ) {
+								return memo;
+							}
+
+							nextSite = {
+								...nextSite,
+								is_coming_soon: isComingSoon,
 							};
 							break;
 						}
@@ -242,6 +257,28 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 				} ),
 			};
 		}
+
+		case SITE_MIGRATION_STATUS_UPDATE: {
+			const { siteId, migrationStatus, lastModified } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				return state;
+			}
+
+			const siteMigrationMeta = state[ siteId ].site_migration || {};
+			const newMeta = { status: migrationStatus };
+			if ( lastModified ) {
+				newMeta.last_modified = lastModified;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					site_migration: merge( {}, siteMigrationMeta, newMeta ),
+				},
+			};
+		}
 	}
 
 	return state;
@@ -252,9 +289,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Requesting state tracks whether a network request is in progress for all
  * sites.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const requestingAll = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -273,9 +310,9 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -300,9 +337,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether a network request is in progress for a site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const deleting = keyedReducer(
 	'siteId',
@@ -323,9 +360,9 @@ export const deleting = keyedReducer(
 /**
  * Tracks whether all sites have been fetched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export const hasAllSitesList = withSchemaValidation(
 	hasAllSitesListSchema,
@@ -347,6 +384,7 @@ export default combineReducers( {
 	items,
 	mediaStorage,
 	plans,
+	products,
 	guidedTransfer,
 	monitor,
 	vouchers,

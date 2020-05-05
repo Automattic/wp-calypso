@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
@@ -73,24 +72,24 @@ class ProductSearchRow extends Component {
 		}
 
 		const selectedIds = intersection( newProps.value, newProps.product.variations );
-		const selectedVariations = selectedIds.map( id => find( newProps.variations, { id } ) );
+		const selectedVariations = selectedIds.map( ( id ) => find( newProps.variations, { id } ) );
 		this.setState( {
 			variations: filter( selectedVariations ) || [],
 		} );
 	}
 
-	isSelected = id => isProductSelected( this.props.value, id );
+	isSelected = ( id ) => isProductSelected( this.props.value, id );
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const productId = Number( event.target.value );
 		this.props.onChange( productId );
 	};
 
-	toggleCustomizeForm = event => {
+	toggleCustomizeForm = ( event ) => {
 		// This handler can be on the label, or button with the label, so we
 		// stop propagation to avoid immediate open-then-close behavior.
 		event.stopPropagation();
-		this.setState( prevState => ( { showForm: ! prevState.showForm } ) );
+		this.setState( ( prevState ) => ( { showForm: ! prevState.showForm } ) );
 	};
 
 	updateItem = ( attributes, callback ) => {
@@ -100,7 +99,7 @@ class ProductSearchRow extends Component {
 			return;
 		}
 		// Using filter instead of find to make sure we find exactly one match.
-		const matchingVariations = filter( variations, v => {
+		const matchingVariations = filter( variations, ( v ) => {
 			return reduce(
 				v.attributes,
 				( result, a ) => {
@@ -111,7 +110,7 @@ class ProductSearchRow extends Component {
 		} );
 		if ( matchingVariations.length === 1 ) {
 			// We found a match.
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				// For singular selects, we can replace the old selected variation, but for
 				// multi-selects, we want to merge the new variation into the existing list
 				const newVariations = this.props.singular
@@ -141,7 +140,7 @@ class ProductSearchRow extends Component {
 		if ( ! this.state.variations.length ) {
 			return null;
 		}
-		return this.state.variations.map( variation =>
+		return this.state.variations.map( ( variation ) =>
 			this.renderRow( { ...this.props.product, ...variation, isVariation: true } )
 		);
 	};
@@ -162,7 +161,7 @@ class ProductSearchRow extends Component {
 		);
 	};
 
-	renderInputComponent = product => {
+	renderInputComponent = ( product ) => {
 		const inputId = `product-search_select-${ product.id }`;
 		const { singular } = this.props;
 		const component = singular ? FormRadio : FormCheckbox;
@@ -180,7 +179,7 @@ class ProductSearchRow extends Component {
 		} );
 	};
 
-	renderInputName = product => {
+	renderInputName = ( product ) => {
 		const { currency, translate, showRegularPrice } = this.props;
 
 		let price;
@@ -218,7 +217,7 @@ class ProductSearchRow extends Component {
 		return <ImageThumb width={ 32 } height={ 32 } src={ imageSrc } alt="" />;
 	}
 
-	renderRow = product => {
+	renderRow = ( product ) => {
 		const id = product.id;
 		const inputId = `product-search_select-${ id }`;
 
@@ -262,5 +261,5 @@ export default connect(
 			variations,
 		};
 	},
-	dispatch => bindActionCreators( { fetchProductVariations }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchProductVariations }, dispatch )
 )( localize( ProductSearchRow ) );

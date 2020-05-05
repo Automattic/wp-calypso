@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,8 +18,8 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isMobile } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class EditorNotice extends Component {
@@ -245,7 +243,7 @@ export class EditorNotice extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const post = getEditedPost( state, siteId, getEditorPostId( state ) );
 		if ( ! post ) {
@@ -265,4 +263,4 @@ export default connect(
 		setLayoutFocus,
 		recordTracksEvent,
 	}
-)( localize( EditorNotice ) );
+)( localize( withLocalizedMoment( EditorNotice ) ) );

@@ -23,9 +23,9 @@ import { remoteValuesSchema } from './schema';
  * remote endpoint. If a local value is set and then later saved to the remote,
  * it will be removed from state.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const localValues = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -51,9 +51,9 @@ export const localValues = withoutPersistence( ( state = {}, action ) => {
  * The remote values state reflects preferences which are persisted to the REST
  * API current user settings endpoint.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = null, action ) => {
 	switch ( action.type ) {

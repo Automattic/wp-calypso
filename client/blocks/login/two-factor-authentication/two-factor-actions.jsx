@@ -11,8 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -29,6 +28,7 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
@@ -36,17 +36,24 @@ class TwoFactorActions extends Component {
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
-	sendSmsCode = event => {
+	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'sms', isJetpack: this.props.isJetpack } ) );
+		page(
+			login( {
+				isNative: true,
+				twoFactorAuthType: 'sms',
+				isJetpack: this.props.isJetpack,
+				isGutenboarding: this.props.isGutenboarding,
+			} )
+		);
 
 		this.props.sendSmsCode();
 	};
 
-	recordAuthenticatorLinkClick = event => {
+	recordAuthenticatorLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
@@ -56,10 +63,11 @@ class TwoFactorActions extends Component {
 				isNative: true,
 				twoFactorAuthType: 'authenticator',
 				isJetpack: this.props.isJetpack,
+				isGutenboarding: this.props.isGutenboarding,
 			} )
 		);
 	};
-	recordSecurityKey = event => {
+	recordSecurityKey = ( event ) => {
 		event.preventDefault();
 		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
 	};
@@ -107,7 +115,7 @@ class TwoFactorActions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -56,7 +55,7 @@ const LabelsSetupNotice = ( {
 	return null;
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	return {
 		wcsEnabled: isWcsEnabled( state, site.ID ),

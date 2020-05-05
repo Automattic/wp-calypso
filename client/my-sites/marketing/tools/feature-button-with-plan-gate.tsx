@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getPlan } from 'lib/plans';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -41,6 +41,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 	hasPlanFeature,
 	onDefaultButtonClick,
 	onUpgradeButtonClick,
+	feature,
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
@@ -52,7 +53,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 			onUpgradeButtonClick();
 		}
 
-		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page( addQueryArgs( { feature, plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {
@@ -65,7 +66,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 
 	return (
 		<Button compact onClick={ handleUpgradeClick }>
-			{ translate( 'Upgrade To %(plan)s', {
+			{ translate( 'Upgrade to %(plan)s', {
 				args: {
 					plan: planTitle,
 				},

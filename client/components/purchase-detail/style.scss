@@ -71,6 +71,7 @@
 .purchase-detail__button {
 	@include breakpoint( '<480px' ) {
 		display: block;
+		text-align: center;
 	}
 }
 

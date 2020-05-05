@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ function RelatedPosts( {
 
 	if ( ! posts ) {
 		// Placeholders
-		listItems = times( 2, i => {
+		listItems = times( 2, ( i ) => {
 			return (
 				/* eslint-disable */
 				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
@@ -43,7 +41,7 @@ function RelatedPosts( {
 	} else if ( posts.length === 0 ) {
 		return null;
 	} else {
-		listItems = posts.map( post_id => {
+		listItems = posts.map( ( post_id ) => {
 			return (
 				/* eslint-disable */
 				<li key={ post_id } className="reader-related-card__list-item">

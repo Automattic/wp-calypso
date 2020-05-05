@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -55,6 +54,7 @@ import ReaderFullPostUnavailable from './unavailable';
 import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import { keyForPost } from 'reader/post-key';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
@@ -63,8 +63,8 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
-import getNextItem from 'state/selectors/get-reader-stream-next-item';
-import getPreviousItem from 'state/selectors/get-reader-stream-prev-item';
+import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
+import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 
 /**
  * Style dependencies
@@ -126,13 +126,14 @@ export class FullPostView extends React.Component {
 	}
 
 	componentWillUnmount() {
+		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 	}
 
-	handleBack = event => {
+	handleBack = ( event ) => {
 		event.preventDefault();
 		recordAction( 'full_post_close' );
 		recordGaEvent( 'Closed Full Post Dialog' );
@@ -252,6 +253,9 @@ export class FullPostView extends React.Component {
 		) {
 			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
+
+			// mark post as currently viewing
+			this.props.setViewingFullPostKey( keyForPost( post ) );
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
@@ -294,7 +298,7 @@ export class FullPostView extends React.Component {
 			{
 				components: {
 					/* eslint-disable */
-					wpLink: <a href="/" className="reader-related-card__link" />,
+					wpLink: <a href="/read" className="reader-related-card__link" />,
 					/* eslint-enable */
 				},
 			}
@@ -509,5 +513,5 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen, likePost, unlikePost }
+	{ markPostSeen, setViewingFullPostKey, unsetViewingFullPostKey, likePost, unlikePost }
 )( FullPostView );

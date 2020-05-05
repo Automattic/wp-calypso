@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +14,7 @@ import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
+import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
 
 import sections from './sections';
@@ -70,7 +70,7 @@ function createPageDefinition( path, sectionDefinition ) {
 		page( pathRegex, controller.redirectLoggedOut );
 	}
 
-	page( pathRegex, async function( context, next ) {
+	page( pathRegex, async function ( context, next ) {
 		try {
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {
@@ -107,6 +107,10 @@ function createPageDefinition( path, sectionDefinition ) {
 
 export const setupRoutes = () => {
 	for ( const section of sections ) {
+		if ( ! isSectionEnabled( section ) ) {
+			continue;
+		}
+
 		for ( const path of section.paths ) {
 			createPageDefinition( path, section );
 		}

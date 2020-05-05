@@ -1,101 +1,80 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
-import { isEmpty, map } from 'lodash';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useCallback } from 'react';
+import { BlockEditProps } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
+import React, { FunctionComponent } from 'react';
+import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
-import { SiteType, isFilledFormValue } from '../store/types';
-import { STORE_KEY } from '../store';
-import VerticalSelect from './vertical-select';
+import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
+import DesignSelector from './design-selector';
+import CreateSite from './create-site';
+import { Attributes } from './types';
+import { Step, usePath, useNewQueryParam } from '../path';
+import AcquireIntent from './acquire-intent';
+import StylePreview from './style-preview';
+import { isEnabled } from '../../../config';
+
+import './colors.scss';
 import './style.scss';
 
-const siteTypeOptions: Record< SiteType, string > = {
-	[ SiteType.BLOG ]: NO__( 'with a blog.' ),
-	[ SiteType.STORE ]: NO__( 'for a store.' ),
-	[ SiteType.STORY ]: NO__( 'to write a story.' ),
-};
-
-export default function OnboardingEdit() {
-	const { siteTitle, siteType, siteVertical } = useSelect( select =>
+const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
+	const replaceHistory = useNewQueryParam();
 
-	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
+	const makePath = usePath();
 
-	const updateTitle = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteTitle( e.target.value ),
-		[ setSiteTitle ]
-	);
-	const updateSiteType = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
-		[ setSiteType ]
-	);
+	const { pathname } = useLocation();
+
+	React.useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [ pathname ] );
 
 	return (
-		<div className="onboarding-block__questions">
-			<h2 className="onboarding-block__questions-heading">
-				{ NO__( "Let's set up your website – it takes only a moment." ) }
-			</h2>
-
-			<div className="onboarding-block__question">
-				<span>{ NO__( 'I want to create a website ' ) }</span>
-				{ ! isFilledFormValue( siteType ) ? (
-					<ul className="onboarding-block__multi-question">
-						{ map( siteTypeOptions, ( label, value ) => (
-							<li key={ value }>
-								<label>
-									<input
-										name="onboarding_site_type"
-										onChange={ updateSiteType }
-										type="radio"
-										value={ value }
-									/>
-									<span className="onboarding-block__multi-question-choice">{ label }</span>
-								</label>
-							</li>
-						) ) }
-					</ul>
-				) : (
-					<div className="onboarding-block__multi-question">
-						<button className="onboarding-block__question-answered" onClick={ resetSiteType }>
-							{ siteTypeOptions[ siteType ] }
-						</button>
-					</div>
-				) }
-			</div>
-
-			{ ( isFilledFormValue( siteType ) || ! isEmpty( siteVertical ) ) && (
-				<div className="onboarding-block__question">
-					<span>{ NO__( 'My site is about' ) }</span>
-					<div className="onboarding-block__multi-question">
-						<VerticalSelect inputClass="onboarding-block__question-input" />
-					</div>
-				</div>
+		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
+			{ isCreatingSite && (
+				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
 			) }
+			<Switch>
+				<Route exact path={ makePath( Step.IntentGathering ) }>
+					<AcquireIntent />
+				</Route>
 
-			{ ( ! isEmpty( siteVertical ) || siteTitle ) && (
-				<>
-					<label className="onboarding-block__question">
-						<span>{ NO__( "It's called" ) }</span>
-						<input
-							className="onboarding-block__question-input"
-							onChange={ updateTitle }
-							value={ siteTitle }
-						/>
-					</label>
-					{ ! siteTitle && (
-						<Button className="onboarding-block__question-skip" isLink>
-							{ NO__( "Don't know yet" ) } →
-						</Button>
+				<Route path={ makePath( Step.DesignSelection ) }>
+					{ ! siteVertical && ! siteTitle && ! wasVerticalSkipped ? (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
+					) : (
+						<DesignSelector />
 					) }
-				</>
-			) }
+				</Route>
+
+				<Route path={ makePath( Step.Style ) }>
+					{
+						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
+						// eslint-disable-next-line no-nested-ternary
+						! selectedDesign ? (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						) : isEnabled( 'gutenboarding/style-preview' ) ? (
+							<StylePreview />
+						) : (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						)
+					}
+				</Route>
+
+				<Route path={ makePath( Step.CreateSite ) }>
+					<CreateSite />
+				</Route>
+			</Switch>
 		</div>
 	);
-}
+};
+
+export default OnboardingEdit;

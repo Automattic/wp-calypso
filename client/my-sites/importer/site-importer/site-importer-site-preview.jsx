@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -55,7 +54,7 @@ class SiteImporterSitePreview extends React.Component {
 			maxRetries: 30,
 			retryTimeout: 1000,
 		} )
-			.then( imageBlob => {
+			.then( ( imageBlob ) => {
 				this.setState( {
 					loadingPreviewImage: false,
 					sitePreviewImage: imageBlob,
@@ -161,7 +160,4 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteImporterSitePreview ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -34,12 +32,12 @@ class PostCard extends Component {
 		dispatch: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	viewPost = event => {
+	viewPost = ( event ) => {
 		const { dispatch, isPreviewable, previewUrl } = this.props;
 
 		event.preventDefault();
@@ -86,7 +84,4 @@ const connectComponent = connect( ( state, { postId, siteId } ) => ( {
 	previewUrl: getPostPreviewUrl( state, siteId, postId ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

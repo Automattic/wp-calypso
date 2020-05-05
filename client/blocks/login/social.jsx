@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -56,7 +54,13 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+		if ( ! response.getAuthResponse ) {
+			return;
+		}
+
+		const tokens = response.getAuthResponse();
+
+		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 			return;
 		}
 
@@ -75,8 +79,8 @@ class SocialLoginForm extends Component {
 
 		const socialInfo = {
 			service: 'google',
-			access_token: response.Zi.access_token,
-			id_token: response.Zi.id_token,
+			access_token: tokens.access_token,
+			id_token: tokens.id_token,
 		};
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(
@@ -85,11 +89,11 @@ class SocialLoginForm extends Component {
 
 				onSuccess();
 			},
-			error => {
+			( error ) => {
 				if ( error.code === 'unknown_user' ) {
 					return this.props.createSocialUser( socialInfo, 'login' ).then(
 						() => this.recordEvent( 'calypso_login_social_signup_success', 'google' ),
-						createAccountError =>
+						( createAccountError ) =>
 							this.recordEvent( 'calypso_login_social_signup_failure', 'google', {
 								error_code: createAccountError.code,
 								error_message: createAccountError.message,
@@ -107,7 +111,7 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	handleAppleResponse = response => {
+	handleAppleResponse = ( response ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
@@ -137,11 +141,11 @@ class SocialLoginForm extends Component {
 
 				onSuccess();
 			},
-			error => {
+			( error ) => {
 				if ( error.code === 'unknown_user' ) {
 					return this.props.createSocialUser( socialInfo, 'login' ).then(
 						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
-						createAccountError =>
+						( createAccountError ) =>
 							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
 								error_code: createAccountError.code,
 								error_message: createAccountError.message,
@@ -165,7 +169,7 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLoginAndRememberRedirect = service => {
+	trackLoginAndRememberRedirect = ( service ) => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
 		if ( this.props.redirectTo ) {
@@ -173,7 +177,7 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	getRedirectUrl = service => {
+	getRedirectUrl = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
@@ -244,7 +248,7 @@ class SocialLoginForm extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		redirectTo: getRedirectToOriginal( state ),
 		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),

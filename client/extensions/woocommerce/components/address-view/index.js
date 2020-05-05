@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
 import FormFieldSet from 'components/forms/form-fieldset';
@@ -66,7 +64,7 @@ class AddressView extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		// We allow address line 2 to unhide -- but once shown, we don't hide it
 		// because that's visually disturbing
 		if ( ! isEmpty( trim( newProps.address.street2 ) ) ) {
@@ -99,7 +97,7 @@ class AddressView extends Component {
 		);
 	};
 
-	onClickShowAddressLine2 = event => {
+	onClickShowAddressLine2 = ( event ) => {
 		event.preventDefault();
 		this.setState( { showAddressLine2: true } );
 	};

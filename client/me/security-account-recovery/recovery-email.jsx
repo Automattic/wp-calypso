@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ class RecoveryEmail extends Component {
 			<ManageContact
 				type="email"
 				isLoading={ isLoading }
-				title={ translate( 'Recovery Email Address' ) }
+				title={ translate( 'Recovery email address' ) }
 				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
 				onSave={ this.onSave }
@@ -33,14 +31,14 @@ class RecoveryEmail extends Component {
 		);
 	}
 
-	onSave = newEmail => {
+	onSave = ( newEmail ) => {
 		this.props.updateEmail( newEmail );
 	};
 
 	onDelete = () => {
 		const { translate, deleteEmail } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the email address?' ), accepted => {
+		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
 			if ( accepted ) {
 				deleteEmail();
 			}

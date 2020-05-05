@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const SummaryDetails = styled.ul`
 	margin: 8px 0 0 0;
 	padding: 0;
 
-	:first-child {
+	:first-of-type {
 		margin-top: 0;
 	}
 `;

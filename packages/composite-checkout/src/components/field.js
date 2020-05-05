@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 /**
@@ -26,8 +26,9 @@ export default function Field( {
 	description,
 	errorMessage,
 	autoComplete,
+	disabled,
 } ) {
-	const fieldOnChange = event => {
+	const fieldOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
 		}
@@ -41,7 +42,11 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			{ label && <Label htmlFor={ id }>{ label }</Label> }
+			{ label && (
+				<Label htmlFor={ id } disabled={ disabled }>
+					{ label }
+				</Label>
+			) }
 
 			<InputWrapper>
 				<Input
@@ -55,6 +60,7 @@ export default function Field( {
 					tabIndex={ tabIndex }
 					isError={ isError }
 					autoComplete={ autoComplete }
+					disabled={ disabled }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -83,17 +89,18 @@ Field.propTypes = {
 	description: PropTypes.string,
 	errorMessage: PropTypes.string,
 	autoComplete: PropTypes.string,
+	disabled: PropTypes.bool,
 };
 
 const Label = styled.label`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${( props ) => props.theme.colors.textColor};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: pointer;
+		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
 	}
 `;
 
@@ -102,13 +109,20 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
-	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-	padding: 12px ${props => ( props.icon ? '60px' : '10px' )} 12px 10px;
+
+	//override leaky styles from Calypso
+	&[type='text'],
+	&[type='number'] {
+		border: 1px solid
+			${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+		padding: 13px ${( props ) => ( props.icon ? '60px' : '10px') } 11px 10px;
+		line-height: 1.2;
+	}
 
 	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
-			auto 5px !important;
+		outline: ${( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline}
+			solid 2px !important;
 	}
 
 	::-webkit-inner-spin-button,
@@ -116,10 +130,21 @@ const Input = styled.input`
 		-webkit-appearance: none;
 	}
 
-	[type='number'],
-	[type='number'] {
+	&[type='number'],
+	&[type='number'] {
 		-moz-appearance: none;
 		appearance: none;
+	}
+
+	::placeholder {
+		color: ${( props ) => props.theme.colors.placeHolderTextColor};
+	}
+
+	&[type='text']:disabled,
+	&[type='number']:disabled {
+		border: 1px solid
+			${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+		background: ${( props ) => props.theme.colors.disabledField};
 	}
 `;
 
@@ -156,7 +181,7 @@ const ButtonIconUI = styled.div`
 
 const Description = styled.p`
 	margin: 8px 0 0 0;
-	color: ${props =>
+	color: ${( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
 	font-size: 14px;

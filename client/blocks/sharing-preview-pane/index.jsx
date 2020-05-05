@@ -59,14 +59,14 @@ class SharingPreviewPane extends PureComponent {
 		super( props );
 
 		const connectedServices = map( props.connections, 'service' );
-		const firstConnectedService = find( props.services, service => {
-			return find( connectedServices, connectedService => service === connectedService );
+		const firstConnectedService = find( props.services, ( service ) => {
+			return find( connectedServices, ( connectedService ) => service === connectedService );
 		} );
 		const selectedService = props.selectedService || firstConnectedService;
 		this.state = { selectedService };
 	}
 
-	selectPreview = selectedService => {
+	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
 	};
 
@@ -160,7 +160,7 @@ class SharingPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
-						{ services.map( service => (
+						{ services.map( ( service ) => (
 							<SocialItem { ...{ key: service, service } } />
 						) ) }
 					</VerticalMenu>

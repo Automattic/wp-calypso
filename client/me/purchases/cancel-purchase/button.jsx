@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
@@ -20,8 +19,8 @@ import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-fo
 import {
 	getName,
 	getSubscriptionEndDate,
+	hasAmountAvailableToRefund,
 	isOneTimePurchase,
-	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
 import { isDomainRegistration } from 'lib/products-values';
@@ -34,7 +33,8 @@ import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
+		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -47,7 +47,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	getCancellationFlowType = () => {
-		return isRefundable( this.props.purchase )
+		return hasAmountAvailableToRefund( this.props.purchase )
 			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
 			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	};
@@ -68,7 +68,7 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	onSurveyChange = update => {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
@@ -76,7 +76,7 @@ class CancelPurchaseButton extends Component {
 
 	goToCancelConfirmation = () => {
 		const { id } = this.props.purchase,
-			{ slug } = this.props.selectedSite;
+			slug = this.props.siteSlug;
 
 		page( confirmCancelDomain( slug, id ) );
 	};
@@ -86,7 +86,7 @@ class CancelPurchaseButton extends Component {
 
 		this.setDisabled( true );
 
-		cancelPurchase( purchase.id, success => {
+		cancelPurchase( purchase.id, ( success ) => {
 			const purchaseName = getName( purchase ),
 				subscriptionEndDate = getSubscriptionEndDate( purchase );
 
@@ -130,7 +130,7 @@ class CancelPurchaseButton extends Component {
 		this.setDisabled( false );
 	};
 
-	setDisabled = disabled => {
+	setDisabled = ( disabled ) => {
 		this.setState( { disabled } );
 	};
 
@@ -218,7 +218,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	submitCancelAndRefundPurchase = () => {
-		const refundable = isRefundable( this.props.purchase );
+		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
 		if ( refundable ) {
 			this.cancelAndRefund();
@@ -252,10 +252,9 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, selectedSite, translate } = this.props;
-
 		let text, onClick;
 
-		if ( isRefundable( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			onClick = this.handleCancelPurchaseClick;
 
 			if ( isDomainRegistration( purchase ) ) {
@@ -311,10 +310,7 @@ class CancelPurchaseButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		clearPurchases,
-		refreshSitePlans,
-	}
-)( localize( CancelPurchaseButton ) );
+export default connect( null, {
+	clearPurchases,
+	refreshSitePlans,
+} )( localize( CancelPurchaseButton ) );

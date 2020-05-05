@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -47,7 +45,7 @@ EditorRevisionsListViewButtons.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	diffView: getPostRevisionsDiffView( state ),
 } );
 
@@ -56,7 +54,4 @@ const mapDispatchToProps = {
 	viewSplit: splitPostRevisionsDiffView,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( EditorRevisionsListViewButtons );
+export default connect( mapStateToProps, mapDispatchToProps )( EditorRevisionsListViewButtons );

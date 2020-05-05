@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,7 +39,7 @@ class FollowButton extends React.Component {
 		};
 	}
 
-	toggleFollow = event => {
+	toggleFollow = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
 		}

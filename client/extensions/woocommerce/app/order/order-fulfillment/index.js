@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -32,9 +31,8 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
@@ -67,14 +65,14 @@ class OrderFulfillment extends Component {
 		trackingNumber: '',
 	};
 
-	toggleDialog = event => {
+	toggleDialog = ( event ) => {
 		event && event.preventDefault();
 		this.setState( {
 			showDialog: ! this.state.showDialog,
 		} );
 	};
 
-	updateTrackingNumber = event => {
+	updateTrackingNumber = ( event ) => {
 		this.setState( {
 			errorMessage: false,
 			trackingNumber: event.target.value,
@@ -316,5 +314,5 @@ export default connect(
 			storeAddress,
 		};
 	},
-	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
+	( dispatch ) => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );

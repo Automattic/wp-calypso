@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,7 +43,7 @@ export default class TermTreeSelector extends React.Component {
 		search: '',
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SiteSelector from 'components/site-selector';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -24,7 +23,6 @@ import { domainManagementList, domainManagementTransfer } from 'my-sites/domains
 import { getSelectedDomain } from 'lib/domains';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import wp from 'lib/wp';
@@ -52,7 +50,7 @@ export class TransferToOtherSite extends React.Component {
 		return ! this.props.isRequestingSiteDomains;
 	}
 
-	isSiteEligible = site => {
+	isSiteEligible = ( site ) => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = get( site, 'options.is_automated_transfer', false );
 
@@ -67,7 +65,7 @@ export class TransferToOtherSite extends React.Component {
 		);
 	};
 
-	handleSiteSelect = targetSiteId => {
+	handleSiteSelect = ( targetSiteId ) => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
@@ -76,10 +74,10 @@ export class TransferToOtherSite extends React.Component {
 
 	handleConfirmTransfer = ( targetSite, closeDialog ) => {
 		const { selectedDomainName } = this.props;
-		const targetSiteName = targetSite.name;
+		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
-			'%(selectedDomainName)s has been transferred to site: %(targetSiteName)s',
-			{ args: { selectedDomainName, targetSiteName } }
+			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
+			{ args: { selectedDomainName, targetSiteTitle } }
 		);
 		const defaultErrorMessage = this.props.translate(
 			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
@@ -102,7 +100,7 @@ export class TransferToOtherSite extends React.Component {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
 				},
-				error => {
+				( error ) => {
 					this.setState( { disableDialogButtons: false } );
 					closeDialog();
 					this.props.errorNotice( error.message || defaultErrorMessage );
@@ -160,7 +158,6 @@ export class TransferToOtherSite extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Site' ) } />
 				<Card className="transfer-to-other-site__card">
 					<p>{ message }</p>
 					<SiteSelector

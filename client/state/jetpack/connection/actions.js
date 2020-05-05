@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -23,8 +21,8 @@ import wp from 'lib/wp';
 
 import 'state/data-layer/wpcom/jetpack/connection/owner';
 
-export const requestJetpackConnectionStatus = siteId => {
-	return dispatch => {
+export const requestJetpackConnectionStatus = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_CONNECTION_STATUS_REQUEST,
 			siteId,
@@ -33,7 +31,7 @@ export const requestJetpackConnectionStatus = siteId => {
 		return wp
 			.undocumented()
 			.getJetpackConnectionStatus( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
@@ -44,7 +42,7 @@ export const requestJetpackConnectionStatus = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 					siteId,
@@ -54,8 +52,8 @@ export const requestJetpackConnectionStatus = siteId => {
 	};
 };
 
-export const requestJetpackUserConnectionData = siteId => {
-	return dispatch => {
+export const requestJetpackUserConnectionData = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_USER_CONNECTION_DATA_REQUEST,
 			siteId,
@@ -64,7 +62,7 @@ export const requestJetpackUserConnectionData = siteId => {
 		return wp
 			.undocumented()
 			.getJetpackUserConnectionData( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
@@ -75,7 +73,7 @@ export const requestJetpackUserConnectionData = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 					siteId,
@@ -85,8 +83,8 @@ export const requestJetpackUserConnectionData = siteId => {
 	};
 };
 
-export const disconnect = siteId => {
-	return dispatch => {
+export const disconnect = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_DISCONNECT_REQUEST,
 			siteId,
@@ -95,7 +93,7 @@ export const disconnect = siteId => {
 		return wp
 			.undocumented()
 			.disconnectJetpack( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_DISCONNECT_RECEIVE,
 					siteId,
@@ -106,7 +104,7 @@ export const disconnect = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
 					siteId,
@@ -122,7 +120,7 @@ export const disconnect = siteId => {
  * @param {number} siteId the site ID
  * @param {number} newOwnerWporgId the wporg user ID of the new owner
  * @param {string} newOwnerWpcomDisplayName display name for UI messages
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const changeOwner = ( siteId, newOwnerWporgId, newOwnerWpcomDisplayName ) => {
 	return {

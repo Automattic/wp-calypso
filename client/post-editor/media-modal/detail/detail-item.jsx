@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,8 +21,7 @@ import EditorMediaModalDetailPreviewImage from './detail-preview-image';
 import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
@@ -58,8 +55,8 @@ export class EditorMediaModalDetailItem extends Component {
 	/**
 	 * This function returns true if the video editor can be enabled/shown.
 	 *
-	 * @param  {Object}  item Media item
-	 * @return {Boolean} Whether the video editor can be enabled
+	 * @param  {object}  item Media item
+	 * @returns {boolean} Whether the video editor can be enabled
 	 */
 	shouldShowVideoEditingButtons( item ) {
 		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
@@ -88,7 +85,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 *
 	 * @param  {object} item - media item
 	 * @param  {object} site - current site
-	 * @return {boolean} `true` if the image-editor can be enabled.
+	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
 	shouldShowImageEditingButtons( item, site ) {
 		const { isSitePrivate } = this.props;
@@ -304,9 +301,11 @@ export class EditorMediaModalDetailItem extends Component {
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ isJetpack && (
-							<QueryJetpackModules siteId={ siteId } />
-						) /* Is the VideoPress module active? */ }
+						{
+							isJetpack && (
+								<QueryJetpackModules siteId={ siteId } />
+							) /* Is the VideoPress module active? */
+						}
 						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo item={ item } />
@@ -317,7 +316,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const canUserUploadFiles = canCurrentUser( state, siteId, 'upload_files' );
 
@@ -331,7 +330,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( EditorMediaModalDetailItem );
+export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );

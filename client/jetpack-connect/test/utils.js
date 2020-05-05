@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -13,7 +12,7 @@ import {
 	parseAuthorizationQuery,
 } from '../utils';
 
-jest.mock( 'config', () => input => {
+jest.mock( 'config', () => ( input ) => {
 	const lookupTable = {
 		env_id: 'mocked-test-env-id',
 	};

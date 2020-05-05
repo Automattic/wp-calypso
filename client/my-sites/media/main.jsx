@@ -11,9 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import MediaLibrary from 'my-sites/media-library';
 import QueryMedia from 'components/data/query-media';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -62,7 +64,7 @@ class Media extends Component {
 		} );
 	}
 
-	onFilterChange = filter => {
+	onFilterChange = ( filter ) => {
 		let redirect = '/media';
 
 		if ( filter ) {
@@ -80,7 +82,7 @@ class Media extends Component {
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = image => {
+	openDetailsModalForASingleImage = ( image ) => {
 		this.setState( {
 			currentDetail: 0,
 			selectedItems: [ image ],
@@ -126,7 +128,7 @@ class Media extends Component {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
 		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
@@ -221,7 +223,7 @@ class Media extends Component {
 		this.maybeRedirectToAll();
 	};
 
-	setDetailSelectedIndex = index => {
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
 	};
 
@@ -248,7 +250,7 @@ class Media extends Component {
 
 		accept(
 			confirmMessage,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -323,7 +325,7 @@ class Media extends Component {
 		return this.state.selectedItems;
 	};
 
-	getSelectedItem = defaultMediaItem => {
+	getSelectedItem = ( defaultMediaItem ) => {
 		const { media } = this.props;
 		if ( media ) {
 			return media;
@@ -366,7 +368,13 @@ class Media extends Component {
 			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
+				<DocumentHead title={ translate( 'Media' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="media__page-heading"
+					headerText={ translate( 'Media' ) }
+					align="left"
+				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
 						isVisible

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { flowRight, get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -235,7 +232,7 @@ class PreloadTab extends Component {
 									onChange={ handleSelect }
 									value={ preload_posts || 'all' }
 								>
-									{ this.getPreloadPostsOptions( post_count ).map( option => (
+									{ this.getPreloadPostsOptions( post_count ).map( ( option ) => (
 										<option key={ option } value={ option }>
 											{ option }
 										</option>
@@ -298,7 +295,7 @@ class PreloadTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -312,7 +309,7 @@ const connectComponent = connect(
 	}
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'is_preloading',
 		'minimum_preload_interval',
@@ -325,7 +322,4 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PreloadTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PreloadTab );

@@ -8,8 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import { purchasesRoot } from 'me/purchases/paths';
 
 /**
@@ -22,7 +21,7 @@ function DeleteSiteWarningDialog( { isVisible, onClose } ) {
 	const buttons = [
 		{ action: 'dismiss', label: translate( 'Dismiss' ) },
 		<Button primary href={ purchasesRoot }>
-			{ translate( 'Manage Purchases', { context: 'button label' } ) }
+			{ translate( 'Manage purchases', { context: 'button label' } ) }
 		</Button>,
 	];
 

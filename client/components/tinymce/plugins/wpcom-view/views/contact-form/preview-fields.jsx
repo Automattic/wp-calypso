@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -71,7 +69,7 @@ const fieldTypes = {
 	radio,
 };
 
-export default function( field ) {
+export default function ( field ) {
 	return fieldTypes.hasOwnProperty( field.type )
 		? fieldTypes[ field.type ].apply( this, arguments )
 		: null;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -42,7 +41,7 @@ const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => 
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteUrl: getSiteUrl( state, siteId ),

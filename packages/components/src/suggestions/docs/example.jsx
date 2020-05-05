@@ -10,13 +10,13 @@ import Suggestions from '..';
 
 export default function SuggestionsExample() {
 	const [ query, setQuery ] = useState( '' );
-	const updateInput = useCallback( e => setQuery( e.target.value ), [ setQuery ] );
+	const updateInput = useCallback( ( e ) => setQuery( e.target.value ), [ setQuery ] );
 
 	const suggestions = useMemo( () => {
 		if ( ! query ) {
 			return [];
 		}
-		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( s => ( { label: s } ) );
+		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( ( s ) => ( { label: s } ) );
 		const r = new RegExp( query, 'i' );
 		return allSuggestions.filter( ( { label } ) => r.test( label ) );
 	}, [ query ] );
@@ -38,7 +38,7 @@ export default function SuggestionsExample() {
 					<span role="img" aria-label="Warning">
 						⚠️
 					</span>
-					The above input is for demonstration. It is not part of the{' '}
+					The above input is for demonstration. It is not part of the{ ' ' }
 					<code>{ '<Suggestions />' }</code> component.
 				</p>
 				<p>
@@ -59,3 +59,4 @@ export default function SuggestionsExample() {
 		</div>
 	);
 }
+SuggestionsExample.displayName = 'SuggestionsExample';

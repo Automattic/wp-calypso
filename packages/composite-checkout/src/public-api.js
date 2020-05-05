@@ -1,60 +1,106 @@
 /**
  * Internal dependencies
  */
+import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
-	CheckoutProvider,
-	useCheckoutHandlers,
-	useCheckoutRedirects,
-} from './components/checkout-provider';
-import CheckoutStep from './components/checkout-step';
+	Checkout,
+	CheckoutStep,
+	CheckoutStepArea,
+	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
+	CheckoutSummaryCard,
+	useIsStepActive,
+	useIsStepComplete,
+} from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './components/order-review-line-items';
-import Checkout from './components/checkout';
+import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal } from './lib/line-items';
-import { useLocalize } from './lib/localize';
+import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
 	createRegistry,
-	useSelect,
-	useDispatch,
+	defaultRegistry,
 	registerStore,
-	subscribe,
-	dispatch,
-	select,
+	useDispatch,
+	useRegisterStore,
+	useRegistry,
+	useSelect,
 } from './lib/registry';
-import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
-import WPCheckoutOrderReview from './components/wp-checkout-order-review';
+import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
+import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
+import {
+	createStripeMethod,
+	createStripePaymentMethodStore,
+} from './lib/payment-methods/stripe-credit-card-fields';
+import { createApplePayMethod } from './lib/payment-methods/apple-pay';
+import { createPayPalMethod } from './lib/payment-methods/paypal';
+import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
+import CheckoutOrderSummaryStep, {
+	CheckoutOrderSummary,
+	CheckoutOrderSummaryStepTitle,
+} from './components/checkout-order-summary';
+import {
+	getDefaultOrderSummary,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	getDefaultOrderReviewStep,
+} from './components/default-steps';
+import { useFormStatus } from './lib/form-status';
+import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 
 // Re-export the public API
 export {
-	createRegistry,
 	Checkout,
+	CheckoutCheckIcon,
+	CheckoutModal,
+	CheckoutOrderSummaryStep,
+	CheckoutOrderSummary,
+	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
+	CheckoutStepArea,
+	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
+	CheckoutSummaryCard,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	createApplePayMethod,
+	createExistingCardMethod,
+	createFreePaymentMethod,
+	createFullCreditsMethod,
+	createPayPalMethod,
+	createRegistry,
+	createStripeMethod,
+	createStripePaymentMethodStore,
+	defaultRegistry,
+	getDefaultOrderSummary,
+	getDefaultOrderReviewStep,
+	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
+	registerStore,
 	renderDisplayValueMarkdown,
 	useAllPaymentMethods,
-	useCheckoutHandlers,
+	useDispatch,
+	useEvents,
+	useFormStatus,
+	useIsStepActive,
+	useIsStepComplete,
 	useLineItems,
-	useCheckoutRedirects,
+	useMessages,
 	usePaymentMethod,
 	usePaymentMethodId,
+	useRegisterStore,
+	useRegistry,
 	useSelect,
-	useDispatch,
-	registerStore,
-	subscribe,
-	dispatch,
-	select,
-	useLocalize,
+	useLineItemsOfType,
 	useTotal,
-	WPCheckoutOrderSummary,
-	WPCheckoutOrderReview,
 };

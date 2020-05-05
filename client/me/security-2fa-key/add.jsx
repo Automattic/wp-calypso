@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { errorNotice, warningNotice, successNotice } from 'state/notices/actions';
 import { registerSecurityKey } from 'lib/webauthn';
 import Security2faKeyAddName from './name';
@@ -29,19 +29,19 @@ class Security2faKeyAdd extends React.Component {
 		securityKeyName: '',
 	};
 
-	registerKey = securityKeyName => {
+	registerKey = ( securityKeyName ) => {
 		this.setState( { securityKeyName } );
 		registerSecurityKey( securityKeyName )
-			.then( data => {
+			.then( ( data ) => {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
-			.catch( e => {
+			.catch( ( e ) => {
 				this.handleError( e );
 			} );
 	};
 
-	handleError = e => {
+	handleError = ( e ) => {
 		if ( 'Canceled' === e.error ) {
 			this.props.warningNotice( e.message, {
 				showDismiss: true,
@@ -81,11 +81,8 @@ class Security2faKeyAdd extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		warningNotice,
-		successNotice,
-	}
-)( localize( Security2faKeyAdd ) );
+export default connect( null, {
+	errorNotice,
+	warningNotice,
+	successNotice,
+} )( localize( Security2faKeyAdd ) );

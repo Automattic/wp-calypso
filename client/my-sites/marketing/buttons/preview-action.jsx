@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { omit, startsWith, endsWith } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 
-const SharingButtonsPreviewAction = props => {
+const SharingButtonsPreviewAction = ( props ) => {
 	const { active, position, icon, children } = props;
 	const classes = classNames( 'sharing-buttons-preview-action', {
 		'is-active': active,

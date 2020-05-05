@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +17,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { deleteComment } from 'state/comments/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
@@ -68,7 +67,4 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, redirectToPo
 	},
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentDeleteWarning ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDeleteWarning ) );

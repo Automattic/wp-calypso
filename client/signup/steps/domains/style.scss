@@ -6,6 +6,10 @@
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
+	&.domains__step-content-domain-step-test {
+		margin-bottom: 20px;
+	}
+
 	.search .search__icon-navigation {
 		background: none;
 	}

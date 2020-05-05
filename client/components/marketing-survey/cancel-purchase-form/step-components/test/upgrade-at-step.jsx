@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ describe( 'UpgradeATStep', () => {
 
 	describe( 'rendering translated content', () => {
 		let wrapper;
-		const translate = content => `Translated: ${ content }`;
+		const translate = ( content ) => `Translated: ${ content }`;
 
 		beforeEach( () => {
 			wrapper = shallow(

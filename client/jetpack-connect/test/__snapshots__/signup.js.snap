@@ -40,7 +40,7 @@ exports[`JetpackSignup should render 1`] = `
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </LoggedOutFormLinks>
       }
       handleSocialResponse={[Function]}
@@ -99,7 +99,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </LoggedOutFormLinks>
       }
       handleSocialResponse={[Function]}

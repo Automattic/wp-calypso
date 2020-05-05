@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,6 @@ import page from 'page';
 import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
 import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { requestSite } from 'state/sites/actions';
 import { themeActivated } from 'state/themes/actions';
@@ -30,6 +27,9 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
+import { addItem } from 'lib/cart/actions';
+import { trackClick } from 'my-sites/themes/helpers';
+import { themeItem } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -92,7 +92,7 @@ class Customize extends React.Component {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
-	redirectIfNeeded = pathname => {
+	redirectIfNeeded = ( pathname ) => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
@@ -129,13 +129,15 @@ class Customize extends React.Component {
 	goBack = () => {
 		const path = this.getPreviousPath();
 
-		Actions.close( path );
+		if ( path.includes( '/themes' ) ) {
+			trackClick( 'customizer', 'close' );
+		}
 
 		debug( 'returning to previous page', path );
 		page.back( path );
 	};
 
-	navigateTo = destination => {
+	navigateTo = ( destination ) => {
 		if ( ! startsWith( destination, '/checkout' ) ) {
 			return;
 		}
@@ -214,7 +216,7 @@ class Customize extends React.Component {
 		window.addEventListener( 'message', this.onMessage, false );
 	};
 
-	onMessage = event => {
+	onMessage = ( event ) => {
 		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
@@ -270,11 +272,15 @@ class Customize extends React.Component {
 					this.setState( { iframeLoaded: true } );
 					break;
 				case 'activated':
-					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
+					trackClick( 'customizer', 'activate' );
+					page( '/themes/' + site.slug );
+					this.props.themeActivated( message.theme.stylesheet, site.ID, 'customizer' );
 					break;
 				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					Actions.purchase( themeSlug, site );
+					addItem( themeItem( themeSlug, 'customizer' ) );
+					trackClick( 'customizer', 'purchase' );
+					page( '/checkout/' + site.slug );
 					break;
 				}
 				case 'navigateTo': {
@@ -290,7 +296,7 @@ class Customize extends React.Component {
 		}
 	};
 
-	renderErrorPage = error => {
+	renderErrorPage = ( error ) => {
 		return (
 			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
@@ -312,7 +318,7 @@ class Customize extends React.Component {
 			return this.renderErrorPage( {
 				title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 				action: this.props.translate( 'Try again' ),
-				actionCallback: function() {
+				actionCallback: function () {
 					window.location.reload();
 				},
 			} );
@@ -367,7 +373,7 @@ class Customize extends React.Component {
 		return this.renderErrorPage( {
 			title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 			action: this.props.translate( 'Try again' ),
-			actionCallback: function() {
+			actionCallback: function () {
 				window.location.reload();
 			},
 		} );
@@ -375,7 +381,7 @@ class Customize extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
 		return {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,8 +21,8 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  *
  * This structure facilitates the creation of a select element.
  *
- * @param  {Object} state - Global state tree
- * @return {Array} Timezones arrays
+ * @param  {object} state - Global state tree
+ * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {
 	const continents = toPairs( get( state, 'timezones.byContinents', null ) );
@@ -33,8 +31,8 @@ export default function getTimezones( state ) {
 		return null;
 	}
 
-	return map( continents, zones => [
+	return map( continents, ( zones ) => [
 		zones[ 0 ],
-		map( zones[ 1 ], value => [ value, getTimezonesLabel( state, value ) ] ),
+		map( zones[ 1 ], ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
 	] );
 }

@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -20,7 +19,7 @@ import { useFakeTimers } from 'test/helpers/use-sinon';
 describe( 'PageViewTracker', () => {
 	let clock;
 
-	useFakeTimers( fakeClock => {
+	useFakeTimers( ( fakeClock ) => {
 		clock = fakeClock;
 	} );
 

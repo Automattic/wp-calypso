@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 
@@ -45,7 +43,7 @@ class PieChartExample extends Component {
 		} );
 	};
 
-	changeShow = event => {
+	changeShow = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: {
 				name: this.state[ event.target.name ].name,
@@ -56,7 +54,7 @@ class PieChartExample extends Component {
 		} );
 	};
 
-	changeValue = event => {
+	changeValue = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: {
 				name: this.state[ event.target.name ].name,
@@ -99,7 +97,7 @@ class PieChartExample extends Component {
 
 				{ this.state.showDataControls && (
 					<Card>
-						{ [ 'direct', 'discovery', 'referral' ].map( seriesName => {
+						{ [ 'direct', 'discovery', 'referral' ].map( ( seriesName ) => {
 							return (
 								<div key={ seriesName }>
 									<h2>{ this.state[ seriesName ].name }</h2>
@@ -109,7 +107,7 @@ class PieChartExample extends Component {
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-									<label>{ 'Show' }</label>{' '}
+									<label>{ 'Show' }</label>{ ' ' }
 									<input
 										name={ seriesName }
 										type="checkbox"

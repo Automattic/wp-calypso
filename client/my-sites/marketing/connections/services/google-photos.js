@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,8 @@ import { SharingService, connectFor } from 'my-sites/marketing/connections/servi
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
@@ -92,7 +92,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( connection => ( {
+			siteUserConnections: props.keyringConnections.map( ( connection ) => ( {
 				...connection,
 				keyring_connection_ID: connection.ID,
 			} ) ),

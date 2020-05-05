@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -47,7 +45,7 @@ class AllSites extends Component {
 		onMouseLeave: PropTypes.func,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event );
 	};
 

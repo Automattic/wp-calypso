@@ -20,7 +20,7 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 	}
 
 	if ( typeof action === 'function' ) {
-		const newDispatch = actionValue =>
+		const newDispatch = ( actionValue ) =>
 			dispatch(
 				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
 			);

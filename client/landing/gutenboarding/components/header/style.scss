@@ -1,4 +1,10 @@
-@import 'assets/stylesheets/gutenberg-base-styles/style';
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
+@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+@import '../../variables.scss';
+
+$margin-left--gutenboarding__header-section-item: 13px; // matches design
+$padding--gutenboarding__header: $grid-unit-10;
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -6,67 +12,50 @@
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: 1px solid $light-gray-500;
-	height: $header-height;
+	height: $gutenboarding-header-height;
 	background: $white;
-	z-index: z-index( '.edit-post-header' );
-
+	z-index: z-index( '.block-editor-editor-skeleton__header' );
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
 	top: 0;
 	position: sticky;
+	padding: $padding--gutenboarding__header;
 
 	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
 	@include break-small {
 		position: fixed;
-		padding: $grid-size;
 	}
 }
 
-.gutenboarding__header-site {
+.gutenboarding__header-section {
 	display: flex;
-	flex-direction: row;
-	margin-left: 20px;
+	width: 100%;
+	align-items: center;
 	font-size: 14px;
-	align-items: center;
-
-	span {
-		margin-left: 20px;
-	}
-}
-.gutenboarding__header-site-heading {
-	font-weight: bold;
-
 }
 
-.gutenboarding__header-actions {
-	padding: 0 20px;
+.gutenboarding__header-section-item {
+	margin-left: $margin-left--gutenboarding__header-section-item;
 
-	// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-	display: inline-flex;
-	align-items: center;
-	flex-wrap: wrap;
-
-	> * {
-		margin-left: 20px;
+	&--right {
+		margin-left: auto;
 	}
 }
 
-// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
-.gutenboarding__header .components-button {
-	// Header toggle buttons.
-	&.is-toggled {
-		color: $white;
-		background: $dark-gray-500;
-		margin: 1px;
-		padding: 7px;
-	}
+.gutenboarding__header-wp-logo {
+	margin-left: 24px - $padding--gutenboarding__header -
+		$margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	color: var( --studio-black );
+	display: flex;
+}
 
-	// The !important in this ruleset need to override the pile of :not() selectors used in the icon-button.
-	&.is-toggled:hover,
-	&.is-toggled:focus {
-		box-shadow: 0 0 0 $border-width $dark-gray-500, inset 0 0 0 $border-width $white !important;
-		color: $white !important;
-		background: $dark-gray-500 !important;
+.gutenboarding__header-domain-picker-button {
+	padding: 0.3em 0.5em;
+}
+
+.gutenboarding__header-domain-picker-button-domain {
+	&.placeholder {
+		@include placeholder();
 	}
 }

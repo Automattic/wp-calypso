@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -26,7 +25,7 @@ describe( 'redirectIf', () => {
 	};
 	describe( 'Wrapper - unit tests', () => {
 		test( 'shouldRedirect() should return true if and only if plan is already available', () => {
-			const test = props => new UpsellRedirectWrapper( props ).shouldRedirect();
+			const test = ( props ) => new UpsellRedirectWrapper( props ).shouldRedirect();
 			expect( test( { shouldRedirect: true, loadingPlan: true } ) ).toBe( false );
 			expect( test( { shouldRedirect: false, loadingPlan: true } ) ).toBe( false );
 			expect( test( { shouldRedirect: false, loadingPlan: false } ) ).toBe( false );

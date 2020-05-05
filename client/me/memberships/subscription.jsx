@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, CompactCard } from '@automattic/components';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'components/main';
@@ -21,9 +20,9 @@ import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
-import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -123,7 +122,7 @@ class Subscription extends React.Component {
 
 const getSubscription = ( state, subscriptionId ) =>
 	get( state, 'memberships.subscriptions.items', [] )
-		.filter( sub => sub.ID === subscriptionId )
+		.filter( ( sub ) => sub.ID === subscriptionId )
 		.pop();
 
 export default connect(
@@ -138,4 +137,4 @@ export default connect(
 	{
 		requestSubscriptionStop,
 	}
-)( localize( Subscription ) );
+)( localize( withLocalizedMoment( Subscription ) ) );

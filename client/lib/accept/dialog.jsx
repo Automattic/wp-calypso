@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +30,7 @@ class AcceptDialog extends Component {
 
 	state = { isVisible: true };
 
-	onClose = action => {
+	onClose = ( action ) => {
 		this.setState( { isVisible: false } );
 		this.props.onClose( 'accept' === action );
 	};

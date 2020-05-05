@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -48,8 +46,8 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	getNoticeSeverity() {
 		const { moment } = this.props;
 
-		const subscribedDaysAgo = days => {
-			return domain =>
+		const subscribedDaysAgo = ( days ) => {
+			return ( domain ) =>
 				moment( domain.googleAppsSubscription.subscribedDate ).isBefore(
 					moment().subtract( days, 'days' )
 				);
@@ -218,7 +216,7 @@ const recordShowPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains
 		} )
 	);
 
-const finishSetupNoticeClick = siteSlug =>
+const finishSetupNoticeClick = ( siteSlug ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -231,10 +229,7 @@ const finishSetupNoticeClick = siteSlug =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		finishSetupNoticeClick,
-		recordShowPendingAccountNotice,
-	}
-)( localize( PendingGSuiteTosNotice ) );
+export default connect( null, {
+	finishSetupNoticeClick,
+	recordShowPendingAccountNotice,
+} )( localize( withLocalizedMoment( PendingGSuiteTosNotice ) ) );

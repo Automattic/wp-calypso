@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import Gridicon from 'components/gridicon';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
@@ -98,11 +96,11 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	initiateFromDrop = event => {
+	initiateFromDrop = ( event ) => {
 		this.startUpload( event[ 0 ] );
 	};
 
-	initiateFromForm = event => {
+	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -120,14 +118,14 @@ class UploadingPane extends React.PureComponent {
 		this.fileSelectorRef.current.click();
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		// Open file selector on Enter or Space
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.openFileSelector();
 		}
 	};
 
-	startUpload = file => {
+	startUpload = ( file ) => {
 		startUpload( this.props.importerStatus, file );
 	};
 
@@ -176,7 +174,7 @@ class UploadingPane extends React.PureComponent {
 }
 
 export default flow(
-	connect( state => ( {
+	connect( ( state ) => ( {
 		filename: get( state, 'imports.uploads.filename' ),
 		percentComplete: get( state, 'imports.uploads.percentComplete' ),
 	} ) ),

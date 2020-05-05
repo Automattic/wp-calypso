@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -42,7 +40,7 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
+	onSiteTopicChange = ( verticalData ) => {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
@@ -54,7 +52,7 @@ class SiteTopicForm extends Component {
 		} );
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		const {
 			isUserInput,
 			siteSlug,
@@ -118,7 +116,7 @@ class SiteTopicForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteType = getSiteType( state );
 		const siteTopic = getSiteVerticalName( state );
 		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );

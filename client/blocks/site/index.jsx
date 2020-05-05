@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,7 @@ import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -63,19 +63,19 @@ class Site extends React.Component {
 		compact: PropTypes.bool,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event, this.props.site.ID );
 	};
 
-	onMouseEnter = event => {
+	onMouseEnter = ( event ) => {
 		this.props.onMouseEnter( event, this.props.site.ID );
 	};
 
-	onMouseLeave = event => {
+	onMouseLeave = ( event ) => {
 		this.props.onMouseLeave( event, this.props.site.ID );
 	};
 
-	onViewSiteClick = event => {
+	onViewSiteClick = ( event ) => {
 		const { isPreviewable, siteSlug } = this.props;
 
 		if ( ! isPreviewable ) {
@@ -153,7 +153,11 @@ class Site extends React.Component {
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && (
-							<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
+							<span className="site__badge site__badge-private">
+								{ this.props.site.is_coming_soon
+									? translate( 'Coming Soon' )
+									: translate( 'Private' ) }
+							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
 							<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
@@ -169,7 +173,9 @@ class Site extends React.Component {
 						</span>
 					) }
 				</a>
-				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
+				{ this.props.indicator && isEnabled( 'site-indicator' ) ? (
+					<SiteIndicator site={ site } />
+				) : null }
 			</div>
 		);
 	}
@@ -187,10 +193,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( Site ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( Site ) );

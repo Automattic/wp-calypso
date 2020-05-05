@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,15 +7,12 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import config from 'config';
+import Button from '..';
+import Card from '../../card';
 import DocsExample from 'devdocs/docs-example';
 
-Button.displayName = 'Button';
-
-class Buttons extends React.PureComponent {
-	static displayName = 'Button';
+export default class ButtonExample extends React.PureComponent {
+	static displayName = 'ButtonExample';
 
 	static defaultProps = {
 		exampleCode: (
@@ -176,26 +171,6 @@ class Buttons extends React.PureComponent {
 	};
 
 	render() {
-		return config.isEnabled( 'devdocs/components-usage-stats' )
-			? this.renderDocsExampleWithUsageStats()
-			: this.renderDocsExample();
+		return <DocsExample>{ this.props.exampleCode }</DocsExample>;
 	}
-
-	renderDocsExample = () => {
-		return <DocsExample>{ this.renderButtons() }</DocsExample>;
-	};
-
-	renderDocsExampleWithUsageStats = () => {
-		return (
-			<DocsExample componentUsageStats={ this.props.componentUsageStats }>
-				{ this.renderButtons() }
-			</DocsExample>
-		);
-	};
-
-	renderButtons = () => {
-		return this.props.exampleCode;
-	};
 }
-
-export default Buttons;

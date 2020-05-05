@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.1.1
+
+* Updated the color palette to the most recent version.
+* Updated `--color-simplenote` with the new brand color.
+
 ## 2.1.0
 
 * Updated the color palette to the most recent version.

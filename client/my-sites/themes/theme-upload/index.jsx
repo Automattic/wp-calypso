@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,12 +12,11 @@ import { includes, find, isEmpty, flowRight } from 'lodash';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import { Card, ProgressBar, Button } from '@automattic/components';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import EmptyContent from 'components/empty-content';
-import ProgressBar from 'components/progress-bar';
-import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
@@ -269,6 +266,7 @@ class Upload extends React.Component {
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
+				<AutoLoadingHomepageModal source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 				{ upgradeJetpack && (
 					<JetpackManageErrorPage
@@ -289,12 +287,12 @@ class Upload extends React.Component {
 
 const ConnectedUpload = connectOptions( Upload );
 
-const UploadWithOptions = props => {
+const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );
@@ -332,10 +330,7 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-	),
+	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
 	localize,
 ];
 

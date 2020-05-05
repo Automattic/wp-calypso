@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,12 +42,12 @@ QueryLabelSettings.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		loaded: areSettingsLoaded( state ),
 		fetching: areSettingsFetching( state ),
 		error: areSettingsErrored( state ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				fetchSettings,

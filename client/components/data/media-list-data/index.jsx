@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,7 @@ export default class extends React.Component {
 		}
 	}
 
-	getQuery = props => {
+	getQuery = ( props ) => {
 		const query = {};
 
 		props = props || this.props;

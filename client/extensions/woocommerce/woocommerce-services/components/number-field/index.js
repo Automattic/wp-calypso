@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,7 @@ const NumberField = ( {
 	error,
 	className,
 } ) => {
-	const onChange = event => updateValue( parseNumber( event.target.value ) );
+	const onChange = ( event ) => updateValue( parseNumber( event.target.value ) );
 
 	return (
 		<FormFieldset className={ className }>

@@ -21,7 +21,7 @@ describe( 'Directly data layer', () => {
 	let simulateInitializationSuccess;
 	let simulateInitializationError;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		store = {
 			dispatch: sandbox.spy(),
 		};
@@ -79,7 +79,7 @@ describe( 'Directly data layer', () => {
 			);
 		} );
 
-		test( 'should dispatch a success action if initialization completes', done => {
+		test( 'should dispatch a success action if initialization completes', ( done ) => {
 			initialize( store )
 				.then( () =>
 					expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -91,7 +91,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationSuccess();
 		} );
 
-		test( 'should dispatch an analytics event if initialization completes', done => {
+		test( 'should dispatch an analytics event if initialization completes', ( done ) => {
 			initialize( store )
 				.then( () =>
 					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
@@ -103,7 +103,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationSuccess();
 		} );
 
-		test( 'should dispatch an error action if initialization fails', done => {
+		test( 'should dispatch an error action if initialization fails', ( done ) => {
 			initialize( store )
 				.then( () =>
 					expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -115,7 +115,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationError();
 		} );
 
-		test( 'should dispatch an analytics event if initialization fails', done => {
+		test( 'should dispatch an analytics event if initialization fails', ( done ) => {
 			initialize( store )
 				.then( () =>
 					expect( analytics.recordTracksEvent ).to.have.been.calledWith(

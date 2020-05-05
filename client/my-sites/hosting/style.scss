@@ -1,113 +1,70 @@
-.hosting__cards {
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-	align-items: flex-start;
-
-	@include breakpoint( '>1280px' ) {
-		flex-direction: row;
+.hosting {
+	.card > .material-icon {
+		display: inline-block;
+		margin-right: 16px;
+		margin-bottom: 16px;
+		vertical-align: middle;
 	}
 
-	.card {
+	.card > .card-heading {
+		display: inline-block;
+		margin-top: 0;
+		margin-bottom: 16px;
+		vertical-align: middle;
+		line-height: 32px;
+	}
+
+	&__layout {
 		display: flex;
-		flex-direction: row;
-		width: calc( 100% - 10px );
+		flex-wrap: wrap;
+	}
 
-		.card-heading {
-			margin-top: 0;
-		}
+	&__layout-col {
+		flex-basis: 100%;
+	}
 
-		@include breakpoint( '>1280px' ) {
-			width: calc( 40% - 10px );
+	@include breakpoint( '>1280px' ) {
+		&__layout-col:first-child {
+			box-sizing: border-box;
+			flex-basis: 70%;
+			padding-right: 8px;
 
-			&:first-child {
-				width: calc( 60% - 10px );
+			.card {
+				padding-left: 72px;
+
+				> .material-icon {
+					display: block;
+					position: absolute;
+					left: 24px;
+				}
 			}
 		}
 
-		.spinner {
-			width: 100%;
+		&__layout-col:last-child {
+			box-sizing: border-box;
+			flex-basis: 30%;
+			padding-left: 8px;
 		}
 	}
 
-	.sftp-card {
-		flex-wrap: wrap;
-
-		.sftp-card__body {
-			width: calc( 100% - 24px - 32px );
-		}
+	.spinner {
+		width: 100%;
 	}
 }
 
-.phpmyadmin-card__icon, .sftp-card__icon {
-	margin-right: 24px;
-}
-
-.sftp-card__info-table {
-	border: 1px solid var( --color-border-subtle );
-	margin: 0;
-	table-layout: fixed;
-
-	th {
-		text-align: right;
-		width: 20%;
-		background-color: var( --color-surface-backdrop );
-
-		@include breakpoint( '<960px' ) {
-			width: 100px;
-		}
-	}
-
-	th, td {
-		padding: 10px;
-	}
-
-	p {
-		margin-bottom: 0.5em;
-	}
-
-	.sftp-card__hidden-overflow {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.sftp-card__password-warning {
-		color: var( --color-text-subtle );
-		margin-top: 1.5em;
-	}
-
-	&.is-placeholder span {
-		padding: 0 35%;
-		background-color: var( --color-surface-backdrop );
+.hosting__activating-notice {
+	.gridicons-sync > use:first-child,
+	.gridicons-sync > g:first-child {
+		animation: spinning-sync-icon linear 2s infinite;
+		transform-origin: center;
 	}
 }
 
-.phpmyadmin-card button {
-	svg {
-		vertical-align: text-bottom;
-		margin-left: 10px;
+@keyframes spinning-sync-icon {
+	from {
+		transform: rotate( 0deg );
 	}
-
-	&:disabled svg {
-		opacity: 0.4;
-	}
-}
-
-.phpmyadmin-card__restore-password {
-	margin-top: 16px;
-	color: var( --color-text-subtle );
-	font-size: 13px;
-	font-style: italic;
-
-	button.is-compact.is-borderless {
-		text-decoration: underline;
-		color: var( --color-primary );
-		font-style: inherit;
-		font-weight: 400;
-		line-height: inherit;
-		padding: 0;
-		font-size: inherit;
+	to {
+		transform: rotate( 360deg );
 	}
 }

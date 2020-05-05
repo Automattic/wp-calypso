@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,7 @@ class SharingButtonsAppearance extends Component {
 		);
 	}
 
-	onReblogsLikesCheckboxClicked = event => {
+	onReblogsLikesCheckboxClicked = ( event ) => {
 		this.props.onChange( event.target.name, ! event.target.checked );
 
 		const { path } = this.props;
@@ -155,7 +153,7 @@ class SharingButtonsAppearance extends Component {
 						text={ translate(
 							'Give your readers the ability to show appreciation for your posts.'
 						) }
-						link="https://support.wordpress.com/likes/"
+						link="https://wordpress.com/support/likes/"
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>
@@ -165,6 +163,8 @@ class SharingButtonsAppearance extends Component {
 	}
 
 	render() {
+		// Disable classname namespace because `sharing-buttons` makes the most sense here
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const changeButtonStyle = partial( this.props.onChange, 'sharing_button_style' );
 		return (
 			<div className="sharing-buttons__panel sharing-buttons-appearance">
@@ -192,15 +192,16 @@ class SharingButtonsAppearance extends Component {
 				>
 					{ this.props.saving
 						? this.props.translate( 'Saving…' )
-						: this.props.translate( 'Save Changes' ) }
+						: this.props.translate( 'Save changes' ) }
 				</button>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );
@@ -214,7 +215,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsAppearance );
+export default flowRight( connectComponent, localize )( SharingButtonsAppearance );

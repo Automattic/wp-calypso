@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { addStoredCard } from 'state/stored-cards/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { concatTitle } from 'lib/react-helpers';
 import { createCardToken } from 'lib/store-transactions';
 import CreditCardForm from 'blocks/credit-card-form';
@@ -26,8 +25,7 @@ import { StripeHookProvider } from 'lib/stripe';
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
 	const goToBillingHistory = () => page( billingHistory );
-	const recordFormSubmitEvent = () =>
-		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
+	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 
 	return (
 		<Main>
@@ -56,7 +54,4 @@ const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( AddCreditCard );
+export default connect( null, mapDispatchToProps )( AddCreditCard );

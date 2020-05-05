@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -64,7 +62,7 @@ class ThemeSetup extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteSlug = getSelectedSiteSlug( state ) || '';
@@ -79,7 +77,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ toggleDialog }
-)( localize( ThemeSetup ) );
+export default connect( mapStateToProps, { toggleDialog } )( localize( ThemeSetup ) );

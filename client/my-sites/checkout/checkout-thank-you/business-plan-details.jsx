@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
@@ -28,7 +26,7 @@ import themeImage from 'assets/images/illustrations/themes.svg';
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {

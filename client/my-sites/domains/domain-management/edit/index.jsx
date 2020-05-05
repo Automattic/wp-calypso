@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,18 +9,18 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
-import MappedDomain from './mapped-domain';
 import { domainManagementList } from 'my-sites/domains/paths';
-import RegisteredDomain from './registered-domain';
 import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
-import Transfer from './transfer';
-import WpcomDomain from './wpcom-domain';
+import WpcomDomainType from './domain-types/wpcom-domain-type';
+import RegisteredDomainType from './domain-types/registered-domain-type';
+import MappedDomainType from './domain-types/mapped-domain-type';
+import TransferInDomainType from './domain-types/transfer-in-domain-type';
 
 /**
  * Style dependencies
@@ -32,6 +30,7 @@ import './style.scss';
 class Edit extends React.Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
+
 		const Details = this.getDetailsForType( domain && domain.type );
 
 		if ( ! domain || ! Details ) {
@@ -44,29 +43,33 @@ class Edit extends React.Component {
 					onClick={ this.goToDomainManagement }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ this.props.translate( 'Domain Settings' ) }
+					{ this.props.translate( '%(domainType)s Settings', {
+						args: {
+							domainType: getDomainTypeText( domain ),
+						},
+					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
 	}
 
-	getDetailsForType = type => {
+	getDetailsForType = ( type ) => {
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return MappedDomain;
+				return MappedDomainType;
 
 			case domainTypes.REGISTERED:
-				return RegisteredDomain;
+				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
 
 			case domainTypes.TRANSFER:
-				return Transfer;
+				return TransferInDomainType;
 
 			case domainTypes.WPCOM:
-				return WpcomDomain;
+				return WpcomDomainType;
 
 			default:
 				return null;

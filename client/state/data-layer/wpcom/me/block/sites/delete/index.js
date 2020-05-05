@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -10,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SITE_UNBLOCK } from 'state/action-types';
+import { READER_SITE_UNBLOCK } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'state/notices/actions';
@@ -46,7 +45,7 @@ export function receiveSiteUnblock() {
 }
 
 // need to dispatch multiple times so use a redux-thunk
-export const receiveSiteUnblockError = ( { payload: { siteId } } ) => dispatch => {
+export const receiveSiteUnblockError = ( { payload: { siteId } } ) => ( dispatch ) => {
 	dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
 	dispatch( bypassDataLayer( blockSite( siteId ) ) );
 };

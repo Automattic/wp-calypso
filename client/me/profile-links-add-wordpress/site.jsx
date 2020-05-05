@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,11 +23,11 @@ class ProfileLinksAddWordPressSite extends Component {
 		checked: false,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event, this.getInputName() );
 	};
 
-	getCheckboxEventHandler = checkboxName => event => {
+	getCheckboxEventHandler = ( checkboxName ) => ( event ) => {
 		const action = 'Clicked ' + checkboxName + ' checkbox';
 		const value = event.target.checked ? 1 : 0;
 
@@ -62,9 +60,6 @@ class ProfileLinksAddWordPressSite extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLinksAddWordPressSite );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLinksAddWordPressSite );

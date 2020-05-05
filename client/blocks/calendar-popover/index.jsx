@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -59,7 +57,7 @@ class CalendarPopover extends Component {
 		date: this.props.selectedDay || null,
 	};
 
-	setDate = date => {
+	setDate = ( date ) => {
 		this.setState( { date } );
 		this.props.onDateChange( date );
 	};

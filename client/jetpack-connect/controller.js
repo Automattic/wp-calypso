@@ -1,43 +1,37 @@
-/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, isEmpty, some, dropRight } from 'lodash';
+import { get, some, dropRight } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
-import JetpackUserType from './user-type/index';
-import JetpackSiteTopic from './site-topic';
-import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import versionCompare from 'lib/version-compare';
-import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
+import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
-import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
+import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
-import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
-import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -46,6 +40,17 @@ import {
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
+
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
+} from 'lib/products-values/constants';
 
 /**
  * Module variables
@@ -56,10 +61,13 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
+	realtimebackup: 'Jetpack Realtime Backup',
+	backup: 'Jetpack Daily Backup',
+	jetpack_search: 'Jetpack Search',
+	scan: 'Jetpack Scan',
 };
 
-const removeSidebar = context =>
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -67,11 +75,19 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			personal: PLAN_JETPACK_PERSONAL,
 			premium: PLAN_JETPACK_PREMIUM,
 			pro: PLAN_JETPACK_BUSINESS,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH,
+			scan: PRODUCT_JETPACK_SCAN,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
 			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
 			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
+			scan: PRODUCT_JETPACK_SCAN_MONTHLY,
 		},
 	};
 
@@ -89,30 +105,8 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	next();
 }
 
-export function maybeOnboard( { query, store }, next ) {
-	if ( ! isEmpty( query ) && query.onboarding ) {
-		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.9', '<' ) ) {
-			return externalRedirect( query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard' );
-		}
-
-		const siteId = parseInt( query.client_id, 10 );
-		const siteSlug = urlToSlug( query.site_url );
-		const credentials = {
-			token: query.onboarding,
-			siteUrl: query.site_url,
-			userEmail: query.user_email,
-		};
-
-		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
-
-		return page.redirect( '/jetpack/start/' + siteSlug );
-	}
-
-	next();
-}
-
 export function newSite( context, next ) {
-	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
+	recordPageView( '/jetpack/new', 'Add a new site (Jetpack)' );
 	removeSidebar( context );
 	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
@@ -122,7 +116,9 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
+			some( MOBILE_APP_REDIRECT_URL_WHITELIST, ( pattern ) =>
+				pattern.test( query.mobile_redirect )
+			)
 		) {
 			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
 			persistMobileRedirect( query.mobile_redirect );
@@ -145,15 +141,11 @@ export function connect( context, next ) {
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	debug( 'entered connect flow with params %o', params );
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
-
-	analytics.pageView.record( pathname, analyticsPageTitle );
+	recordPageView( pathname, analyticsPageTitle );
 
 	removeSidebar( context );
 
@@ -165,16 +157,14 @@ export function connect( context, next ) {
 			path={ path }
 			type={ type }
 			url={ query.url }
+			forceRemoteInstall={ query.forceInstall }
 		/>
 	);
 	next();
 }
 
 export function instructions( context, next ) {
-	analytics.pageView.record(
-		'jetpack/connect/instructions',
-		'Jetpack Manual Install Instructions'
-	);
+	recordPageView( 'jetpack/connect/instructions', 'Jetpack Manual Install Instructions' );
 
 	const url = context.query.url;
 	if ( ! url ) {
@@ -185,7 +175,7 @@ export function instructions( context, next ) {
 }
 
 export function signupForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
@@ -216,7 +206,7 @@ export function credsForm( context, next ) {
 }
 
 export function authorizeForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
 	removeSidebar( context );
 
@@ -237,7 +227,7 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<JetpackSsoForm
@@ -257,8 +247,8 @@ export function plansLanding( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordTracksEvent( 'calypso_plans_view' );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<PlansLanding
@@ -277,8 +267,8 @@ export function plansSelection( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordTracksEvent( 'calypso_plans_view' );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<Plans
@@ -295,38 +285,13 @@ export function plansSelection( context, next ) {
 	next();
 }
 
-export function userType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/user-type', 'Jetpack Site User Type Category' );
-
-	context.primary = <JetpackUserType />;
-
-	next();
-}
-
-export function siteType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
-
-	context.primary = <JetpackSiteType />;
-
-	next();
-}
-
-export function siteTopic( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-topic', 'Jetpack Site Topic Selection' );
-
-	context.primary = <JetpackSiteTopic />;
-
-	next();
-}
-
 /**
  * Checks for a locale fragment at the end of context.path
  * and switches to that locale if the user is logged out.
  * If the user is logged in we remove the fragment and defer to the user's settings.
  *
- * @param {Object} context -- Middleware context
+ * @param {object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
- * @returns {Undefined} next()
  */
 export function setLoggedOutLocale( context, next ) {
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );

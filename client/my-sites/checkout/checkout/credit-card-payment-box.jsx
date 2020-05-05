@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,7 @@ import {
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
@@ -156,7 +154,7 @@ class CreditCardPaymentBox extends React.Component {
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ translate( 'Secure Payment' ) }
+						{ translate( 'Secure payment' ) }
 					</div>
 				</div>
 
@@ -171,7 +169,7 @@ class CreditCardPaymentBox extends React.Component {
 		);
 	};
 
-	submit = event => {
+	submit = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.stripe ) {

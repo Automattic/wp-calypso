@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { defer, get, has, omit } from 'lodash';
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -45,7 +43,7 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-const calculateProgress = progress => {
+const calculateProgress = ( progress ) => {
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
@@ -57,26 +55,26 @@ const calculateProgress = progress => {
 	}
 
 	const percentages = Object.keys( progress )
-		.map( k => progress[ k ] ) // get the inner objects themselves
+		.map( ( k ) => progress[ k ] ) // get the inner objects themselves
 		.filter( ( { total } ) => total > 0 ) // skip ones with no objects to import
 		.map( ( { completed, total } ) => completed / total ); // compute the individual percentages
 
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-const resourcesRemaining = progress =>
+const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
-		.map( k => progress[ k ] )
+		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-const hasProgressInfo = progress => {
+const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}
 
 	const types = Object.keys( progress )
-		.map( k => progress[ k ] )
+		.map( ( k ) => progress[ k ] )
 		.filter( ( { total } ) => total > 0 );
 
 	if ( ! types.length ) {
@@ -137,7 +135,7 @@ class ImportingPane extends React.PureComponent {
 		return this.props.translate( 'Success! Your content has been imported.' );
 	};
 
-	getImportMessage = numResources => {
+	getImportMessage = ( numResources ) => {
 		if ( 0 === numResources ) {
 			return this.props.translate( 'Finishing up the import.' );
 		}
@@ -168,7 +166,7 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.UPLOAD_PROCESSING );
 	};
 
-	isInState = state => {
+	isInState = ( state ) => {
 		return state === this.props.importerStatus.importerState;
 	};
 
@@ -296,7 +294,4 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ loadTrackingTool }
-)( localize( ImportingPane ) );
+export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );

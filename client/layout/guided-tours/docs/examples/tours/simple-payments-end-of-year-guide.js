@@ -1,9 +1,8 @@
 /**
  * External dependencies
  *
- * @format
  */
-
+import { isDesktop } from '@automattic/viewport';
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
 import Gridicon from 'components/gridicon';
@@ -22,7 +21,6 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
-import { isDesktop } from 'lib/viewport';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour
@@ -62,13 +60,14 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<img
 							src="/calypso/images/illustrations/illustration-shopping-bags.svg"
 							style={ { width: '210px', height: '160px', marginBottom: '10px' } }
+							alt=""
 						/>
 					</div>
 					<ButtonRow>
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments/">
+					<Link href="https://wordpress.com/support/simple-payments/">
 						{ translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>
@@ -187,7 +186,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/menus/">
+					<Link href="https://wordpress.com/support/menus/">
 						{ translate( 'Learn about managing menus' ) }
 					</Link>
 				</Fragment>

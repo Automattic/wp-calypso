@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,7 +43,4 @@ class QueryFeedSearch extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestFeedSearch }
-)( QueryFeedSearch );
+export default connect( null, { requestFeedSearch } )( QueryFeedSearch );

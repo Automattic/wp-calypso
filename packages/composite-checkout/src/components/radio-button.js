@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export default function RadioButton( {
 	checked,
@@ -16,6 +16,7 @@ export default function RadioButton( {
 	ariaLabel,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
+
 	return (
 		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
 			<Radio
@@ -37,7 +38,7 @@ export default function RadioButton( {
 			<Label checked={ checked } htmlFor={ id }>
 				{ label }
 			</Label>
-			{ children }
+			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
 		</RadioButtonWrapper>
 	);
 }
@@ -60,7 +61,7 @@ const RadioButtonWrapper = styled.div`
 	width: 100%;
 	outline: ${getOutline};
 
-	:first-child {
+	:first-of-type {
 		margin: 0;
 	}
 
@@ -78,7 +79,15 @@ const RadioButtonWrapper = styled.div`
 	}
 
 	:hover:before {
-		border: 3px solid ${props => props.theme.colors.highlight};
+		border: 3px solid ${( props ) => props.theme.colors.highlight};
+	}
+
+	.payment-logos {
+		display: none;
+
+		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+			display: block;
+		}
 	}
 
 	svg {
@@ -104,40 +113,57 @@ const Label = styled.label`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	font-size: 14px;
 
 	:hover {
 		cursor: pointer;
 	}
 
-	:after {
+	:before {
 		display: block;
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: ${getRadioBorderWidth} solid ${getBorderColor};
+		border: 1px solid ${( props ) => props.theme.colors.borderColor};
 		border-radius: 100%;
-		top: 50%;
-		transform: translateY( -50% );
+		top: 19px;
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.surface};
+		background: ${( props ) => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
+
+	:after {
+		display: block;
+		width: 8px;
+		height: 8px;
+		content: '';
+		border-radius: 100%;
+		top: 23px;
+		left: 20px;
+		position: absolute;
+		background: ${getRadioColor};
+		box-sizing: border-box;
+		z-index: 3;
+	}
+`;
+
+const RadioButtonChildren = styled.div`
+	display: ${( props ) => ( props.checked ? 'block' : 'none') };
 `;
 
 function getBorderColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
 
-function getBorderWidth( { checked } ) {
-	return checked ? '3px' : '1px';
+function getRadioColor( { checked, theme } ) {
+	return checked ? theme.colors.highlight : theme.colors.surface;
 }
 
-function getRadioBorderWidth( { checked } ) {
-	return checked ? '5px' : '1px';
+function getBorderWidth( { checked } ) {
+	return checked ? '3px' : '1px';
 }
 
 function getGrayscaleValue( { checked } ) {
@@ -146,7 +172,7 @@ function getGrayscaleValue( { checked } ) {
 
 function getOutline( { isFocused, theme } ) {
 	if ( isFocused ) {
-		return theme.colors.outline + ' auto 5px';
+		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';
 }

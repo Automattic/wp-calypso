@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,7 +38,7 @@ function updateCachedVariation( variations, variation ) {
 
 	let found = false;
 	const newVariations = compact(
-		variations.map( v => {
+		variations.map( ( v ) => {
 			if ( isEqual( v.id, variationId ) ) {
 				found = true;
 				return newVariation;

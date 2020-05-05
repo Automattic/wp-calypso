@@ -145,10 +145,7 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( PluginActivateToggle ) );
+export default connect( null, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( PluginActivateToggle ) );

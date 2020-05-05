@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -50,7 +48,7 @@ class RedirectWhenLoggedIn extends React.Component {
 		return true;
 	}
 
-	storageEventHandler = e => {
+	storageEventHandler = ( e ) => {
 		if ( e.key === 'wpcom_user_id' && e.newValue != null ) {
 			debug( 'detected change of wpcom_user_id, redirecting' );
 			this.doTheRedirect();
@@ -84,7 +82,7 @@ class RedirectWhenLoggedIn extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 	};

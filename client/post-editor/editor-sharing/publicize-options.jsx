@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,6 +8,7 @@ import { connect } from 'react-redux';
 import { includes, map } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import PopupMonitor from '@automattic/popup-monitor';
 
 /**
  * Internal dependencies
@@ -18,8 +18,7 @@ import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
 import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
-import PopupMonitor from 'lib/popup-monitor';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -96,7 +95,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
 			targeted = this.hasConnections()
 				? this.props.connections.filter(
-						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
+						( connection ) => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
 				  )
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
@@ -118,7 +117,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		);
 	};
 
-	onMessageChange = message => {
+	onMessageChange = ( message ) => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, '_wpas_mess', message );
 	};
 
@@ -146,7 +145,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		}
 
 		return (
-			<p className="editor-drawer__description">
+			<p className="editor-sharing__publicize-options-description">
 				{ this.props.translate(
 					'Connect and select social media services to automatically share this post.'
 				) }
@@ -177,7 +176,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );

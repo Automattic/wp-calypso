@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -117,7 +115,7 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	primarySiteId: getPrimarySiteId( state ),
 	hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
 } ) )( SitesDropdown );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -75,7 +73,7 @@ export default class Dropdown extends Component {
 	};
 
 	toggle = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			collapsed: ! state.collapsed,
 		} ) );
 	};

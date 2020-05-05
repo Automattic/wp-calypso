@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const eventName = 'cart_theme_to_plan_upsell';
 
 class CartPlanAdTheme extends Component {
-	addToCartAndRedirect = event => {
+	addToCartAndRedirect = ( event ) => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 			cta_name: eventName,
@@ -71,7 +69,7 @@ class CartPlanAdTheme extends Component {
 						cta_name: eventName,
 					} }
 				/>
-				Get this theme for FREE when you upgrade to a Premium plan!{' '}
+				Get this theme for FREE when you upgrade to a Premium plan!{ ' ' }
 				<button className={ className } onClick={ this.addToCartAndRedirect }>
 					{ 'Upgrade Now' }
 				</button>
@@ -86,7 +84,7 @@ CartPlanAdTheme.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
@@ -99,7 +97,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( localize( CartPlanAdTheme ) );
+export default connect( mapStateToProps, { recordTracksEvent } )( localize( CartPlanAdTheme ) );

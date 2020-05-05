@@ -76,3 +76,4 @@ The following props are available:
 - `query`: (string) The search query that the suggestions are based on. Will be highlighted in the suggestions.
 - `suggestions`: ({label: string, category?: string, ...otherProps}[]) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label', category: 'This is optional' }
 - `suggest`: A function that is called when the suggestion is selected.
+- `title`: A string that gets inserted between the input and the list of suggestions, as a title. 

@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-sources';
 import InfiniteStream from 'reader/components/reader-infinite-stream';
@@ -30,14 +30,14 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		width: PropTypes.number,
 	};
 
-	hasNextPage = offset => {
+	hasNextPage = ( offset ) => {
 		if ( this.props.showMoreResults ) {
 			return offset < this.props.searchResultsCount;
 		}
 		return false;
 	};
 
-	fetchNextPage = offset =>
+	fetchNextPage = ( offset ) =>
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -62,7 +62,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		if ( ! searchResults ) {
 			return (
 				<div className={ classNames }>
-					{ times( 10, i => (
+					{ times( 10, ( i ) => (
 						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
 					) ) }
 				</div>
@@ -108,7 +108,6 @@ class FollowingManageSearchFeedsResults extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestFeedSearch }
-)( localize( FollowingManageSearchFeedsResults ) );
+export default connect( null, { requestFeedSearch } )(
+	localize( FollowingManageSearchFeedsResults )
+);

@@ -22,9 +22,9 @@ import {
  * Returns the updated generating state after an action has been dispatched.
  * Generating state tracks whether the stats for a site are currently being generated.
  *
- * @param  {Object} state Current generating state
- * @param  {Object} action Action object
- * @return {Object} Updated generating state
+ * @param  {object} state Current generating state
+ * @param  {object} action Action object
+ * @returns {object} Updated generating state
  */
 export const generating = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -57,9 +57,9 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether a cached file for a site is currently being deleted.
  *
- * @param  {Object} state Current deleting state
- * @param  {Object} action Action object
- * @return {Object} Updated deleting state
+ * @param  {object} state Current deleting state
+ * @param  {object} action Action object
+ * @returns {object} Updated deleting state
  */
 const deleting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -91,9 +91,9 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
 /**
  * Tracks the stats for a particular site.
  *
- * @param  {Object} state Current stats
- * @param  {Object} action Action object
- * @return {Object} Updated stats
+ * @param  {object} state Current stats
+ * @param  {object} action Action object
+ * @returns {object} Updated stats
  */
 const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ export class QuerySegments extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		segments: getSegments( state ),
 	} ),
 	{ requestSegments }

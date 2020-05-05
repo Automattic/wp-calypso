@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
@@ -100,10 +98,7 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent: recordGoogleEventAction,
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( localize( DisconnectJetpackButton ) );
+export default connect( null, {
+	recordGoogleEvent: recordGoogleEventAction,
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( DisconnectJetpackButton ) );

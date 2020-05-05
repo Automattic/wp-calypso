@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,12 +5,12 @@ import { login } from '../';
 
 jest.mock( 'config', () => ( {
 	__esModule: true,
-	default: jest.fn( key => {
+	default: jest.fn( ( key ) => {
 		if ( 'login_url' === key ) {
 			return 'https://wordpress.com/wp-login.php';
 		}
 	} ),
-	isEnabled: jest.fn( key => {
+	isEnabled: jest.fn( ( key ) => {
 		if ( 'login/wp-login' === key ) {
 			return true;
 		}
@@ -76,10 +74,15 @@ describe( 'index', () => {
 			expect( url ).toEqual( '/log-in/jetpack' );
 		} );
 
+		test( 'should return the login url for Gutenboarding specific login', () => {
+			const url = login( { isNative: true, isGutenboarding: true } );
+			expect( url ).toMatchSnapshot();
+		} );
+
 		test( 'should return the login url with WooCommerce from handler', () => {
 			const url = login( { isNative: true, isJetpack: true, isWoo: true } );
 
-			expect( url ).toEqual( '/log-in/jetpack?from=woocommerce-setup-wizard' );
+			expect( url ).toEqual( '/log-in/jetpack?from=woocommerce-onboarding' );
 		} );
 
 		test( 'should return the login url with WooCommerce.com handler', () => {

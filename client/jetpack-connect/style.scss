@@ -128,7 +128,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__site-url-entry-container {
 	margin: 0 auto;
 	max-width: 400px;
+
+	.formatted-header {
+		text-align: center;
+	}
 }
+
 
 .jetpack-connect__wp-admin-dialog.dialog.card {
 	max-width: 400px;
@@ -169,6 +174,41 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-top: 16px;
 		word-wrap: nowrap;
 	}
+}
+
+.jetpack-connect__site-address {
+		padding: 0 24px 24px;
+		margin: 0 -24px;
+		border-bottom: 1px solid var( --color-border-subtle );
+		display: flex;
+}
+
+.jetpack-connect__globe {
+		width: 32px;
+		height: 28px;
+		margin-top: -4px;
+		background-color: var( --color-neutral );
+		margin-right: 8px;
+		padding-top: 4px;
+		text-align: center;
+
+		.gridicons-globe {
+			fill: var( --color-neutral-0 );
+		}
+}
+.jetpack-connect__wordpress-logo {
+	margin: 32px auto;
+	text-align: center;
+
+	.wordpress-logo {
+		margin: 0;
+		fill: var( --color-neutral );
+	}
+}
+
+.jetpack-connect__note {
+	font-size: 12px;
+	text-align: center;
 }
 
 .jetpack-connect__authorize-form {
@@ -229,7 +269,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__install-step-title {
 	font-size: 21px;
-	font-weight: 300;
 }
 
 .jetpack-connect__install-step-text {
@@ -434,7 +473,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__sso-log-in-as {
 	font-family: $sans;
 	font-size: 21px;
-	font-weight: 300;
 	text-align: center;
 }
 
@@ -611,7 +649,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.plan-features .plan-price.is-discounted {
+		display: block;
 		margin-right: 0;
+		font-size: 24px;
 	}
 
 	.plan-pill {
@@ -622,6 +662,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.formatted-header,
 	.formatted-header.is-without-subhead {
 		margin-bottom: 8px;
+	}
+
+	.formatted-header a {
+		color: var( --color-neutral-20 );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-primary-20 );
+			text-decoration: underline;
+		}
 	}
 
 	.jetpack-connect__happychat-button {
@@ -665,10 +716,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.plan-features__graphic {
 			display: none;
-		}
-
-		.plan-features__pricing {
-			padding-top: 16px;
 		}
 	}
 }
@@ -725,8 +772,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__creds-form-spinner {
-	margin-top: -10px;
-	margin-bottom: -10px;
+	margin-top: 0;
+	margin-bottom: -20px;
 }
 
 .jetpack-connect__navigation {
@@ -904,6 +951,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 			svg > g {
 				transform: translateX( 25% );
+			}
+
+			@include breakpoint( '<660px' ) {
+				margin-top: 0;
 			}
 		}
 
@@ -1099,42 +1150,25 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 
 // ProductSelector and ProductCard overrides
 .is-section-jetpack-connect .product-selector {
+	max-width: 984px;
+	margin-left: auto;
+	margin-right: auto;
 	padding-left: 16px;
 	padding-right: 16px;
 }
 
 .is-section-jetpack-connect .product-card {
-	@include breakpoint( '>660px' ) {
-		text-align: left;
-	}
-
 	.product-card__header {
+		padding: 12px 0;
+
 		@include breakpoint( '<660px' ) {
-			border-bottom: none;
+			padding: 16px 0;
 		}
 	}
 
 	.product-card__header-primary {
-		padding-top: 13px;
-		padding-bottom: 14px;
-
 		@include breakpoint( '<660px' ) {
 			justify-content: center;
-		}
-	}
-
-	.product-card__header-secondary {
-		padding-top: 20px;
-		padding-bottom: 20px;
-
-		@include breakpoint( '<660px' ) {
-			padding-bottom: 8px;
-			border-top: solid 2px var( --color-jetpack-plan-free );
-		}
-
-		&::after {
-			bottom: auto;
-			top: 0;
 		}
 	}
 
@@ -1142,14 +1176,6 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	.product-card__title:not( .is-purchased ) {
 		font-size: 20px;
 		color: var( --color-neutral-70 );
-
-		@include breakpoint( '>660px' ) {
-			font-size: 22px;
-		}
-	}
-
-	.product-card__price-group {
-		justify-content: center;
 	}
 
 	.plan-price,

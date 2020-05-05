@@ -1,22 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { getSiteStatsQueryDate, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -85,14 +82,8 @@ class StatsDatePicker extends Component {
 					context: 'Date range for which stats are being displayed',
 					args: {
 						// LL is a date localized by momentjs
-						startDate: localizedDate
-							.startOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
-						endDate: localizedDate
-							.endOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
+						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
 					},
 				} );
 				break;
@@ -134,7 +125,7 @@ class StatsDatePicker extends Component {
 		);
 	}
 
-	bindStatusIndicator = ref => {
+	bindStatusIndicator = ( ref ) => {
 		this.statusIndicator = ref;
 	};
 
@@ -200,7 +191,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDatePicker );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDatePicker );

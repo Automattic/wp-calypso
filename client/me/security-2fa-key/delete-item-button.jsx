@@ -9,10 +9,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import { Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 class Security2faKeyDeleteButton extends Component {
@@ -43,7 +42,7 @@ class Security2faKeyDeleteButton extends Component {
 		this.setState( { showDialog: false } );
 	};
 
-	onDeleteKey = closeDialog => {
+	onDeleteKey = ( closeDialog ) => {
 		// Actually delete the key
 		if ( this.props.onDelete ) {
 			this.props.onDelete( this.props.securityKey );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import config from 'config';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';

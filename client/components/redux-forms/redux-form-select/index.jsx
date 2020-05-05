@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import FormSelect from 'components/forms/form-select';
 
 const SelectRenderer = ( { input, meta, ...props } ) => <FormSelect { ...input } { ...props } />;
 
-const ReduxFormSelect = props => <Field component={ SelectRenderer } { ...props } />;
+const ReduxFormSelect = ( props ) => <Field component={ SelectRenderer } { ...props } />;
 
 ReduxFormSelect.propTypes = {
 	name: PropTypes.string.isRequired,

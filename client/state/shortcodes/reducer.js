@@ -20,7 +20,7 @@ import { parse } from 'lib/shortcode';
 registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
 registerActionForward( 'RECEIVE_MEDIA_ITEM' );
 
-const createRequestingReducer = requesting => {
+const createRequestingReducer = ( requesting ) => {
 	return ( state, { siteId, shortcode } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -35,9 +35,9 @@ const createRequestingReducer = requesting => {
  * state maps site ID keys to the object with the site's shortcodes. Each shortcode
  * is true if it's being currently requested, false otherwise.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const requesting = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -61,11 +61,11 @@ function mediaItemsReducer( state, { siteId, data } ) {
 		return state;
 	}
 	const media = Array.isArray( data.media ) ? data.media : [ data ];
-	const updatedIds = media.map( item => String( item.ID ) );
+	const updatedIds = media.map( ( item ) => String( item.ID ) );
 
 	return {
 		...state,
-		[ siteId ]: pickBy( state[ siteId ], shortcode => {
+		[ siteId ]: pickBy( state[ siteId ], ( shortcode ) => {
 			const parsed = parse( shortcode.shortcode );
 			if (
 				parsed.tag !== 'gallery' ||
@@ -86,9 +86,9 @@ function mediaItemsReducer( state, { siteId, data } ) {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site shortcodes.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( shortcodesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

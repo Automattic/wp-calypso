@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -49,7 +47,7 @@ class PublicizeMessage extends Component {
 
 	userHasEditedMessage = false;
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.userHasEditedMessage = true;
 		this.props.onChange( event.target.value );
 	};
@@ -138,7 +136,6 @@ class PublicizeMessage extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordEditorStat, recordEditorEvent }
-)( localize( PublicizeMessage ) );
+export default connect( null, { recordEditorStat, recordEditorEvent } )(
+	localize( PublicizeMessage )
+);

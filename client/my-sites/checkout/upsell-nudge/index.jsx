@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -175,7 +173,7 @@ export class UpsellNudge extends React.Component {
 		handleCheckoutCompleteRedirect();
 	};
 
-	handleClickAccept = buttonAction => {
+	handleClickAccept = ( buttonAction ) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
@@ -188,7 +186,7 @@ export class UpsellNudge extends React.Component {
 	};
 }
 
-const trackUpsellButtonClick = eventName => {
+const trackUpsellButtonClick = ( eventName ) => {
 	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };

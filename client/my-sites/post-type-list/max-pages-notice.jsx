@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,7 @@ class PostTypeListMaxPagesNotice extends Component {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}
 
-	focusSiteSelector = event => {
+	focusSiteSelector = ( event ) => {
 		event.preventDefault();
 
 		this.props.setLayoutFocus( 'sites' );
@@ -69,7 +67,6 @@ class PostTypeListMaxPagesNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent, setLayoutFocus }
-)( localize( PostTypeListMaxPagesNotice ) );
+export default connect( null, { recordTracksEvent, setLayoutFocus } )(
+	localize( PostTypeListMaxPagesNotice )
+);

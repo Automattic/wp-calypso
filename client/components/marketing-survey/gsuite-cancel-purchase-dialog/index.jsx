@@ -70,13 +70,13 @@ class GSuiteCancelPurchaseDialog extends Component {
 		this.setState( { step: prevStep } );
 	};
 
-	cancelButtonClick = closeDialog => {
+	cancelButtonClick = ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
 		closeDialog();
 		this.resetState();
 	};
 
-	removeButtonClick = async closeDialog => {
+	removeButtonClick = async ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 
 		this.setState( {
@@ -94,7 +94,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	saveSurveyResults = async () => {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText } = this.state;
 		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
 		const surveyData = {
@@ -104,7 +104,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, site, purchase ) );
+		survey.addResponses( enrichedSurveyData( surveyData, purchase ) );
 
 		const response = await survey.submit();
 		if ( ! response.success ) {

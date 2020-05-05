@@ -1,6 +1,5 @@
 /**
  *
- * @format
  */
 
 /**
@@ -14,12 +13,10 @@ import React from 'react';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 
-Accordion.displayName = 'Accordion';
-Gridicon.displayName = 'Gridicon';
-
-function AccordionExample( props ) {
+export default function AccordionExample( props ) {
 	return props.exampleCode;
 }
+AccordionExample.displayName = 'AccordionExample';
 
 AccordionExample.defaultProps = {
 	exampleCode: (
@@ -93,5 +90,3 @@ AccordionExample.defaultProps = {
 		</div>
 	),
 };
-
-export default AccordionExample;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ class LocationSearchExample extends Component {
 		createNotice: PropTypes.func.isRequired,
 	};
 
-	handlePredictionClick = prediction => {
+	handlePredictionClick = ( prediction ) => {
 		this.props.createNotice(
 			'is-info',
 			`You clicked the '${ prediction.structured_formatting.main_text }' location`
@@ -52,9 +50,6 @@ class LocationSearchExample extends Component {
 	}
 }
 
-const ConnectedLocationSearchExample = connect(
-	null,
-	{ createNotice }
-)( LocationSearchExample );
+const ConnectedLocationSearchExample = connect( null, { createNotice } )( LocationSearchExample );
 ConnectedLocationSearchExample.displayName = 'LocationSearch';
 export default ConnectedLocationSearchExample;

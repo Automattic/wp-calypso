@@ -1,9 +1,11 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import { authAttempts, reducer } from '../jetpack-auth-attempts';
-import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import {
+	JETPACK_CONNECT_COMPLETE_FLOW,
+	JETPACK_CONNECT_RETRY_AUTH,
+} from 'state/jetpack-connect/action-types';
 
 describe( '#authAttempts()', () => {
 	test( 'should update the timestamp when adding an existent slug with stale timestamp', () => {

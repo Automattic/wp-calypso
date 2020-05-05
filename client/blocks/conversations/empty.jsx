@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +34,7 @@ class ConversationsEmptyContent extends React.Component {
 					onClick={ this.recordAction }
 					href="/read/search"
 				>
-					{ this.props.translate( 'Find Posts to Follow' ) }
+					{ this.props.translate( 'Find posts to follow' ) }
 				</a>
 			),
 			secondaryAction = null;

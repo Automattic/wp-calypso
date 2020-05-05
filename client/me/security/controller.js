@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ import { getSocialServiceFromClientId } from 'lib/login';
 export function password( context, next ) {
 	if ( context.query && context.query.updated === 'password' ) {
 		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
-			displayOnNextPage: true,
+			persistent: true,
 		} );
 
 		page.replace( window.location.pathname );

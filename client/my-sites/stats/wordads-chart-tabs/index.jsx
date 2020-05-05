@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -103,7 +101,7 @@ class WordAdsChartTabs extends Component {
 			'label' +
 			this.props.period.period.charAt( 0 ).toUpperCase() +
 			this.props.period.period.slice( 1 );
-		return data.map( record => {
+		return data.map( ( record ) => {
 			let recordClassName;
 			if ( record.classNames && record.classNames.length ) {
 				recordClassName = record.classNames.join( ' ' );
@@ -196,7 +194,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	localize,
-	connectComponent
-)( WordAdsChartTabs );
+export default flowRight( localize, connectComponent )( WordAdsChartTabs );

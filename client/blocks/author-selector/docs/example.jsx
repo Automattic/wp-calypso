@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AuthorSelector from '../';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 function AuthorSelectorExample( { primarySiteId, displayName } ) {
@@ -24,7 +22,7 @@ function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	);
 }
 
-const ConnectedAuthorSelectorExample = connect( state => {
+const ConnectedAuthorSelectorExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return {};

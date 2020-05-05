@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -12,7 +10,6 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import { useMobileBreakpoint } from 'lib/viewport/react';
 
 /**
  * Style dependencies

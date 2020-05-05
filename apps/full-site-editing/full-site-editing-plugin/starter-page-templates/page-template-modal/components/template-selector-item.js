@@ -9,12 +9,16 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import BlockPreview from './block-template-preview';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const TemplateSelectorItem = props => {
+/**
+ * Internal dependencies
+ */
+import BlockIframePreview from './block-iframe-preview';
+
+const TemplateSelectorItem = ( props ) => {
 	const {
 		id,
 		value,
@@ -25,7 +29,6 @@ const TemplateSelectorItem = props => {
 		staticPreviewImgAlt = '',
 		blocks = [],
 		isSelected,
-		handleTemplateConfirmation,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
@@ -39,7 +42,7 @@ const TemplateSelectorItem = props => {
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
+			<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
@@ -51,19 +54,8 @@ const TemplateSelectorItem = props => {
 
 	const labelId = `label-${ id }-${ value }`;
 
-	/**
-	 * Determines (based on whether the large preview is able to be visible at the
-	 * current breakpoint) whether or not the Template selection UI interaction model
-	 * should be select _and_ confirm or simply a single "tap to confirm".
-	 */
 	const handleLabelClick = () => {
-		const largeTplPreviewVisible = window.matchMedia( '(min-width: 660px)' ).matches;
-		// In both cases set the template as being selected
 		onSelect( value );
-		// Confirm the template when large preview isn't visible
-		if ( ! largeTplPreviewVisible ) {
-			handleTemplateConfirmation( value );
-		}
 	};
 
 	return (
@@ -76,10 +68,7 @@ const TemplateSelectorItem = props => {
 			onClick={ handleLabelClick }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			<span className="template-selector-item__template-title" id={ labelId }>
-				{ label }
-			</span>
+			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
 		</button>
 	);
 };

@@ -1,10 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
+
+export function domainAddNew( siteName, searchTerm ) {
+	const path = `/domains/add/${ siteName }`;
+
+	if ( searchTerm ) {
+		return `${ path }?suggestion=${ searchTerm }`;
+	}
+
+	return path;
+}
 
 export function domainManagementRoot() {
 	return '/domains/manage';
@@ -67,6 +75,10 @@ export function domainManagementEmail( siteName, domainName ) {
 
 export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
+}
+
+export function domainManagementChangeSiteAddress( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'change-site-address' );
 }
 
 export function domainManagementNameServers( siteName, domainName ) {

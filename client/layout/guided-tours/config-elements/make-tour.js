@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import { contextTypes } from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const makeTour = tree => {
+const makeTour = ( tree ) => {
 	return class TourContext extends Component {
 		static propTypes = {
 			isValid: PropTypes.func.isRequired,

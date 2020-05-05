@@ -1,15 +1,9 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import moment from 'moment-timezone';
-
 /**
  * Internal dependencies
  */
 import { combineReducers, withoutPersistence } from 'state/utils';
 import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
+import guessTimezone from 'lib/i18n-utils/guess-timezone';
 
 export const message = withoutPersistence( ( state = '', action ) => {
 	switch ( action.type ) {
@@ -20,7 +14,7 @@ export const message = withoutPersistence( ( state = '', action ) => {
 	return state;
 } );
 
-export const timezone = withoutPersistence( ( state = moment.tz.guess(), action ) => {
+export const timezone = withoutPersistence( ( state = guessTimezone() || 'UTC', action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_SIGNUP_FORM_UPDATE:
 			return action.signupForm.timezone;

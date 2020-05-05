@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
@@ -34,7 +32,7 @@ export class Translatable extends Component {
 		return ! isEmpty( this.state.originalData ) || ! isEmpty( this.state.error );
 	}
 
-	handleTranslationChange = event => {
+	handleTranslationChange = ( event ) => {
 		const { name, value } = event.target;
 		this.setState( {
 			formState: {
@@ -55,7 +53,7 @@ export class Translatable extends Component {
 		} );
 	};
 
-	openDialog = event => {
+	openDialog = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { showDialog: true } );
@@ -64,7 +62,7 @@ export class Translatable extends Component {
 
 		if ( ! this.hasDataLoaded() ) {
 			getSingleTranslationData( locale, { singular, context, plural } )
-				.then( originalData =>
+				.then( ( originalData ) =>
 					this.setState( {
 						originalData,
 						translationUrl: getTranslationPermaLink( originalData.originalId, locale ),
@@ -87,7 +85,7 @@ export class Translatable extends Component {
 			submitting: true,
 		} );
 		submitTranslation( this.state.originalData.originalId, this.state.formState, this.props.locale )
-			.then( originalData => {
+			.then( ( originalData ) => {
 				this.setState( {
 					error: originalData.error,
 					originalData,

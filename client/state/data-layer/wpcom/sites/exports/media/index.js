@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { errorNotice } from 'state/notices/actions';
 import { setMediaExportData } from 'state/exporter/actions';
 import { EXPORT_MEDIA_REQUEST } from 'state/action-types';
 
-export const fetch = action =>
+export const fetch = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -35,7 +33,7 @@ export const onError = () =>
 		translate( "We couldn't export your media library at the moment. Please try again later." )
 	);
 
-export const fromApi = response => ( {
+export const fromApi = ( response ) => ( {
 	mediaExportUrl: response.media_export_url,
 } );
 

@@ -43,11 +43,11 @@ class ConfirmDisconnection extends PureComponent {
 	];
 
 	submitSurvey = () => {
-		const { purchase, reason, site, siteId, text } = this.props;
+		const { purchase, reason, siteId, text } = this.props;
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.reasonWhitelist, r => r === reason ),
+				response: find( this.constructor.reasonWhitelist, ( r ) => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
 			source: {
@@ -58,7 +58,7 @@ class ConfirmDisconnection extends PureComponent {
 		submitSurvey(
 			'calypso-disconnect-jetpack-july2019',
 			siteId,
-			enrichedSurveyData( surveyData, site, purchase )
+			enrichedSurveyData( surveyData, purchase )
 		);
 	};
 
@@ -90,7 +90,7 @@ class ConfirmDisconnection extends PureComponent {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		purchase: getCurrentPlan( state, siteId ),

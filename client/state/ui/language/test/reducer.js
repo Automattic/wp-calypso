@@ -6,7 +6,7 @@ import { LOCALE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'returns default state with undefined state and empty action', () => {
-		expect( reducer( undefined, {} ) ).toEqual( { localeSlug: null, localeVariant: null } );
+		expect( reducer( undefined, {} ) ).toEqual( { localeSlug: 'en', localeVariant: null } );
 	} );
 
 	test( 'returns previous state with empty action', () => {

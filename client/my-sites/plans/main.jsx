@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,7 @@ import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/plans/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
@@ -40,6 +39,7 @@ class Plans extends React.Component {
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
+		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
 
@@ -144,23 +144,27 @@ class Plans extends React.Component {
 						/>
 					) }
 					{ canAccessPlans && (
-						<div id="plans" className="plans plans__has-sidebar">
-							<CartData>
-								<PlansNavigation path={ this.props.context.path } />
-							</CartData>
-							<PlansFeaturesMain
-								displayJetpackPlans={ displayJetpackPlans }
-								hideFreePlan={ true }
-								customerType={ this.props.customerType }
-								intervalType={ this.props.intervalType }
-								selectedFeature={ this.props.selectedFeature }
-								selectedPlan={ this.props.selectedPlan }
-								withDiscount={ this.props.withDiscount }
-								discountEndDate={ this.props.discountEndDate }
-								site={ selectedSite }
-								plansWithScroll={ false }
-							/>
-						</div>
+						<>
+							<FormattedHeader headerText={ translate( 'Plans' ) } align="left" />
+							<div id="plans" className="plans plans__has-sidebar">
+								<CartData>
+									<PlansNavigation path={ this.props.context.path } />
+								</CartData>
+								<PlansFeaturesMain
+									displayJetpackPlans={ displayJetpackPlans }
+									hideFreePlan={ true }
+									customerType={ this.props.customerType }
+									intervalType={ this.props.intervalType }
+									selectedFeature={ this.props.selectedFeature }
+									selectedPlan={ this.props.selectedPlan }
+									redirectTo={ this.props.redirectTo }
+									withDiscount={ this.props.withDiscount }
+									discountEndDate={ this.props.discountEndDate }
+									site={ selectedSite }
+									plansWithScroll={ false }
+								/>
+							</div>
+						</>
 					) }
 				</Main>
 			</div>
@@ -168,7 +172,7 @@ class Plans extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );

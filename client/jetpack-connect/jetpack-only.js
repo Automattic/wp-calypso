@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const jetpackOnly = WrappedComponent => {
+const jetpackOnly = ( WrappedComponent ) => {
 	class JetpackOnlyWrapper extends Component {
 		componentDidMount() {
 			this.verifyJetpackSite();
@@ -47,7 +47,7 @@ const jetpackOnly = WrappedComponent => {
 		}
 	}
 
-	return connect( state => {
+	return connect( ( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

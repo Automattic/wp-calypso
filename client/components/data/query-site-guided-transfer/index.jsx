@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -55,10 +53,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	isRequesting: isRequestingGuidedTransferStatus( state, ownProps.siteId ),
 } );
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = ( dispatch ) =>
 	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( QuerySiteGuidedTransfer );
+export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -72,7 +70,7 @@ class SiteTopicStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteType: getSiteType( state ),
 		isUserInput: getSiteVerticalIsUserInput( state ),
 	} ),

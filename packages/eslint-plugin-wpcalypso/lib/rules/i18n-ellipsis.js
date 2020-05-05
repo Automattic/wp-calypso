@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow using three dots in translate strings
+ * @file Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -26,7 +25,7 @@ function replaceThreeDotsWithEllipsis( string ) {
 }
 
 function makeFixerFunction( arg ) {
-	return fixer => {
+	return ( fixer ) => {
 		switch ( arg.type ) {
 			case 'TemplateLiteral':
 				return arg.quasis.reduce( ( fixes, quasi ) => {
@@ -53,9 +52,9 @@ function makeFixerFunction( arg ) {
 	};
 }
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			let argsToProcess = [];
 
 			switch ( getCallee( node ).name ) {
@@ -76,7 +75,7 @@ const rule = ( module.exports = function( context ) {
 					break;
 			}
 
-			argsToProcess.forEach( function( arg ) {
+			argsToProcess.forEach( function ( arg ) {
 				const argumentString = getTextContentFromNode( arg );
 				if ( argumentString && containsThreeDots( argumentString ) ) {
 					context.report( {

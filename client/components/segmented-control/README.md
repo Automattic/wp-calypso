@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Segmented Control
 
 Segmented Control manipulates the content shown following an exclusive or “either/or” pattern.

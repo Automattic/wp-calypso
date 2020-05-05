@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
@@ -32,7 +30,7 @@ class RemoveButton extends PureComponent {
 		}
 
 		const selected = MediaLibrarySelectedStore.getAll( siteId );
-		const items = reject( selected, item => item.ID === itemId );
+		const items = reject( selected, ( item ) => item.ID === itemId );
 
 		MediaActions.setLibrarySelectedItems( siteId, items );
 	};
@@ -43,7 +41,7 @@ class RemoveButton extends PureComponent {
 		return (
 			<button
 				onClick={ this.remove }
-				onMouseDown={ event => event.stopPropagation() }
+				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
 				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>

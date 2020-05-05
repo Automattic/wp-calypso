@@ -1,203 +1,146 @@
-.customer-home {
-	&__box-action {
-		margin-bottom: 16px;
-		width: 100%;
+@mixin display-grid {
+	display: -ms-grid;
+	display: grid;
+}
+@mixin grid-template-columns( $cols, $gap, $fr ) {
+	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr;
+	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
+	grid-column-gap: $gap;
+}
+@mixin grid-row( $row-start, $span ) {
+	-ms-grid-row: $row-start;
+	-ms-grid-row-span: $span;
+		grid-row: $row-start / span $span;
+}
+@mixin grid-column( $col-start, $span ) {
+	-ms-grid-column: $col-start * 2 - 1;
+	-ms-grid-column-span: $span + ($span - 1);
+		grid-column: $col-start / span $span;
+}
+
+@font-face {
+	font-display: swap;
+	font-family: 'Recoleta';
+	font-weight: 400;
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+	url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' );
+}
+
+.customer-home__heading {
+	display: flex;
+
+	@include breakpoint( '<660px' ) {
+		padding-right: 16px;
+	}
+
+	.formatted-header {
+		margin-right: 12px;
+	}
+
+	.formatted-header__title {
+		font-family: 'Recoleta', $serif;
+	}
+
+	.formatted-header__subtitle {
+		margin: 0;
+	}
+
+	.customer-home__view-site-button {
+		margin: auto;
+		margin-right: 0;
 
 		.button {
-			border-width: 1px;
-			display: block;
-			min-height: 85px;
-			min-width: 100%;
-			padding: 24px;
 			text-align: center;
-		}
-		.button:hover {
-			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
-		}
-
-		span {
-			display: block;
-		}
-
-		@mixin box-action-two-col {
-			margin-bottom: 24px;
-			width: 50%;
-
-			.button {
-				margin: 0 12px;
-				min-height: 105px;
-				min-width: 90%;
-				padding: 30px 24px;
-			}
-		}
-		@include breakpoint('>1280px') {
-			@include box-action-two-col;
-		}
-		@include breakpoint('800px-960px') {
-			@include box-action-two-col;
+			white-space: nowrap;
 		}
 	}
-	&__boxes {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
+}
+
+.customer-home__layout {
+	@include grid-row( 4, 1 );
+	@include breakpoint( '>1040px' ) {
+		@include grid-column( 1, 12 );
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 24px;
 	}
-	&__card-boxes {
-		margin-top: rem( -15px );
-		padding: 24px 24px 0;
+}
 
-		@include breakpoint('>1280px') {
-			padding: 24px 12px 0;
-		}
-		@include breakpoint('800px-960px') {
-			padding: 24px 12px 0;
-		}
+.customer-home__layout-col-left {
+	@include breakpoint( '>1040px' ) {
+		@include grid-column( 1, 8 );
 	}
-	&__card-col {
-		display: block;
+}
 
-		.button {
-			display: block;
-			text-align:center;
-			width: 100%;
-		}
-
-		@mixin card-col-two-col {
-			align-items: center;
-			display: flex;
-			justify-content: space-between;
-
-			.button {
-				width: auto;
-			}
-		}
-		@include breakpoint('>1040px') {
-			@include card-col-two-col;
-		}
-		@include breakpoint('800px-960px') {
-			@include card-col-two-col;
-		}
+.customer-home__layout-col-right {
+	@include breakpoint( '>1040px' ) {
+		@include grid-column( 9, 4 );
 	}
-	&__card-col-left {
-		margin-bottom: 16px;
-		width: 100%;
+}
 
-		@mixin card-col-left-two-col {
-			margin-bottom: 0;
-			width: 50%;
+.customer-home__loading-placeholder {
+	@include placeholder();
+	@include grid-column( 1, 12 );
+}
 
-			.button {
-				margin-right: 12px;
-			}
-		}
-		@include breakpoint('>1040px') {
-			@include card-col-left-two-col;
-		}
-		@include breakpoint('800px-960px') {
-			@include card-col-left-two-col;
-		}
+.customer-home__section-heading {
+	font-family: 'Recoleta', serif;
+	font-size: 1.25rem;
+	margin: 32px 0 16px;
+
+	@include breakpoint( '<660px' ) {
+		padding: 0 16px;
 	}
-	&__card-col-right {
-		width: 100%;
+}
 
-		@mixin card-col-right-two-col {
-			width: 50%;
+.customer-home__main .card-heading {
+	line-height: 1.3;
+	margin-top: -8px;
+}
 
-			.button {
-				margin-left: 12px;
-			}
-		}
-		@include breakpoint('>1040px') {
-			@include card-col-right-two-col;
-		}
-		@include breakpoint('800px-960px') {
-			@include card-col-right-two-col;
+.customer-home__card-subheader {
+	color: var( --color-text-subtle );
+	font-size: 0.85rem;
+	margin: -0.5rem 0 1rem;
+}
+
+
+.customer-home__main .vertical-nav {
+	margin: -0.5rem 0;
+
+	.vertical-nav-item {
+		border-bottom: 1px solid var( --color-neutral-5 );
+		box-shadow: none;
+		padding: 12px 0;
+
+		.gridicon {
+			right: 0;
 		}
 	}
-	&__card-mobile {
-		justify-content: space-around;
+
+	a:last-child .vertical-nav-item {
+		border-bottom: none;
 	}
-	&__card-subheader {
-		color: var( --color-text-subtle );
-		font-size: 0.85rem;
-		margin: -0.5rem 0 1rem;
+}
+
+.customer-home__main.is-experimental {
+	.customer-home__heading {
+		border-bottom: 1px solid var( --color-neutral-5 );
 	}
-	&__card-support {
-		display: flex;
-		justify-content: space-between;
 
-		img {
-			margin: 0 7%;
-			height: 119px;
-			width: 137px;
-		}
-
-		.vertical-nav {
-			width: 50%;
-		}
+	.card-heading,
+	.foldable-card__header {
+		margin-top: 0;
+		font-size: inherit;
+		font-weight: 600;
 	}
-	&__go-mobile,
-	&__grow-earn {
-		padding-bottom: 12px;
+
+	.card-heading {
+		margin-bottom: 8px;
 	}
-	&__layout {
-		@include breakpoint('>960px') {
-			display: flex;
-			justify-content: space-between;
-		}
-	}
-	&__layout-col {
-		.card-heading {
-			margin-top: -8px;
-		}
 
-		a:last-child .vertical-nav-item {
-			border-bottom: none;
-		}
-
-		@include breakpoint('>960px') {
-			width: 50%;
-		}
-	}
-	&__layout-col-left {
-		@include breakpoint('>960px') {
-			.card {
-				margin-right: 8px;
-			}
-		}
-	}
-	&__layout-col-right {
-		h6 {
-			margin-bottom: 6px;
-		}
-
-		.vertical-nav {
-			margin-top: 0;
-		}
-
-		.vertical-nav-item {
-			border-bottom: 1px solid var( --color-neutral-5 );
-			box-shadow: none;
-			padding: 12px 0;
-
-			.gridicon {
-				right: 0;
-			}
-		}
-
-		@include breakpoint('>960px') {
-			.card {
-				margin-left: 8px;
-			}
-
-			.card.vertical-nav-item {
-				margin-left: 0;
-			}
-		}
-		@include breakpoint('960px-1040px') {
-			.android-app-badge {
-				margin-left: -8px;
-			}
-		}
+	.customer-home__card-subheader {
+		margin: 0 0 1rem;
+		font-size: inherit;
 	}
 }

@@ -95,7 +95,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <Connect(Localized(JetpackConnectHappychatButton))
           eventName="calypso_jpc_authorize_chat_initiated"
         >
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </Connect(Localized(JetpackConnectHappychatButton))>
       </LoggedOutFormLinks>
     </div>

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
+"import { baz, combineReducersWithPersistence as bar, createReducer } from \\"state/utils\\";
+
+"
+`;

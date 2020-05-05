@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,11 +23,11 @@ import {
 /**
  * Triggers a network request to fetch invites for the specified site.
  *
- * @param  {?Number}  siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {?number}  siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function requestSiteInvites( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INVITES_REQUEST,
 			siteId,
@@ -46,7 +44,7 @@ export function requestSiteInvites( siteId ) {
 					invites,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: INVITES_REQUEST_FAILURE,
 					siteId,
@@ -57,7 +55,7 @@ export function requestSiteInvites( siteId ) {
 }
 
 export function resendInvite( siteId, inviteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'resendInvite Action', siteId, inviteId );
 		dispatch( {
 			type: INVITE_RESEND_REQUEST,
@@ -68,7 +66,7 @@ export function resendInvite( siteId, inviteId ) {
 		wpcom
 			.undocumented()
 			.resendInvite( siteId, inviteId )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: INVITE_RESEND_REQUEST_SUCCESS,
 					siteId,
@@ -76,7 +74,7 @@ export function resendInvite( siteId, inviteId ) {
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: INVITE_RESEND_REQUEST_FAILURE,
 					siteId,
@@ -92,7 +90,7 @@ export function deleteInvite( siteId, inviteId ) {
 }
 
 export function deleteInvites( siteId, inviteIds ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'deleteInvites Action', siteId, inviteIds );
 		dispatch( {
 			type: INVITES_DELETE_REQUEST,
@@ -104,7 +102,7 @@ export function deleteInvites( siteId, inviteIds ) {
 			.undocumented()
 			.site( siteId )
 			.deleteInvites( inviteIds )
-			.then( data => {
+			.then( ( data ) => {
 				if ( data.deleted.length > 0 ) {
 					dispatch( {
 						type: INVITES_DELETE_REQUEST_SUCCESS,
@@ -124,7 +122,7 @@ export function deleteInvites( siteId, inviteIds ) {
 					} );
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: INVITES_DELETE_REQUEST_FAILURE,
 					siteId,

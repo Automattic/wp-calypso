@@ -13,7 +13,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  */
 import config from 'config';
 import { submitSurvey } from 'lib/purchases/actions';
-import { Dialog } from '@automattic/components';
+import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
@@ -25,7 +25,6 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
@@ -78,13 +77,21 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const {
+			purchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+			downgradeClick,
+		} = this.props;
+		const downgradePossible = !! downgradeClick;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable
+			precancellationChatAvailable,
+			downgradePossible
 		);
 	};
 
@@ -140,7 +147,7 @@ class CancelPurchaseForm extends React.Component {
 			value,
 		} );
 
-	onRadioOneChange = event => {
+	onRadioOneChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_1', event.currentTarget.value );
 
 		const newState = {
@@ -152,7 +159,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextOneChange = event => {
+	onTextOneChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionOneText: event.currentTarget.value,
@@ -161,7 +168,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onRadioTwoChange = event => {
+	onRadioTwoChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
 
 		const newState = {
@@ -173,7 +180,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextTwoChange = event => {
+	onTextTwoChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionTwoText: event.currentTarget.value,
@@ -182,7 +189,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextThreeChange = event => {
+	onTextThreeChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionThreeText: event.currentTarget.value,
@@ -191,7 +198,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportRadioChange = event => {
+	onImportRadioChange = ( event ) => {
 		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
 
 		const newState = {
@@ -203,7 +210,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportTextChange = event => {
+	onImportTextChange = ( event ) => {
 		const newState = {
 			...this.state,
 			importQuestionText: event.currentTarget.value,
@@ -229,9 +236,9 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) && selectedSite ) {
+		if ( ! isGoogleApps( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -252,8 +259,8 @@ class CancelPurchaseForm extends React.Component {
 
 			submitSurvey(
 				'calypso-remove-purchase',
-				selectedSite.ID,
-				enrichedSurveyData( surveyData, selectedSite, purchase )
+				purchase.siteId,
+				enrichedSurveyData( surveyData, purchase )
 			).then( () => {
 				this.setState( {
 					isSubmitting: false,
@@ -342,7 +349,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( question => reasons[ question ] ) }
+				{ questionOneOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -404,7 +411,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( question => reasons[ question ] ) }
+				{ questionTwoOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -623,7 +630,7 @@ class CancelPurchaseForm extends React.Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
-	changeSurveyStep = stepFunction => {
+	changeSurveyStep = ( stepFunction ) => {
 		const allSteps = this.getAllSurveySteps();
 		const newStep = stepFunction( this.state.surveyStep, allSteps );
 

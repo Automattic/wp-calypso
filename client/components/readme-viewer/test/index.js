@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { shallow } from 'enzyme';
  */
 import ReadmeViewer from 'components/readme-viewer';
 
-ReadmeViewer.prototype.componentDidMount = jest.fn( function() {
+ReadmeViewer.prototype.componentDidMount = jest.fn( function () {
 	this.setState( {
 		readme: 'foo',
 	} );

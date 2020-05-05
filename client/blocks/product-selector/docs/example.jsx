@@ -13,14 +13,8 @@ import ProductSelector from '../';
 const products = [
 	{
 		title: 'Jetpack Backup',
-		description: (
-			<Fragment>
-				Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-				<a href="https://jetpack.com/upgrade/backup/" target="_blank" rel="noopener noreferrer">
-					Which one do I need?
-				</a>
-			</Fragment>
-		),
+		description:
+			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.',
 		id: 'jetpack_backup',
 		options: {
 			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
@@ -70,7 +64,7 @@ class ProductSelectorExample extends Component {
 
 				<div style={ { maxWidth: 520, margin: '0 auto' } }>
 					<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
-						<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
+						<SitesDropdown onSiteSelect={ ( siteId ) => this.setState( { siteId } ) } />
 					</div>
 
 					{ this.state.siteId ? (

@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable jest/no-identical-title */
 /**
  * External dependencies

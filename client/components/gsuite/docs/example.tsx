@@ -8,8 +8,9 @@ import React from 'react';
  */
 import GSuiteNewUserListExample from './new-user-list';
 
-const GSuiteExamples = () => {
+const GSuiteExample = () => {
 	return <GSuiteNewUserListExample />;
 };
+GSuiteExample.displayName = 'GSuiteExample';
 
-export default GSuiteExamples;
+export default GSuiteExample;

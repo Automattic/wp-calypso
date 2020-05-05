@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ import {
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
-const createItemsReducer = active => {
+const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -45,7 +43,7 @@ const createItemsListReducer = () => {
 	};
 };
 
-const createRequestsReducer = data => {
+const createRequestsReducer = ( data ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -55,7 +53,7 @@ const createRequestsReducer = data => {
 	};
 };
 
-const createModuleListRequestReducer = fetchingModules => {
+const createModuleListRequestReducer = ( fetchingModules ) => {
 	return ( state, { siteId } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -93,8 +91,8 @@ const createSettingsItemsReducer = () => {
  * concerning Jetpack modules data updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
- * @return {Array}         Updated state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
  */
 export const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -117,9 +115,9 @@ export const items = withoutPersistence( ( state = {}, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules-related requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const requests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

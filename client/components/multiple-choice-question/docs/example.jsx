@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card/compact';
+import { Button, CompactCard as Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import MultipleChoiceQuestion from '../';
 import notices from 'notices';

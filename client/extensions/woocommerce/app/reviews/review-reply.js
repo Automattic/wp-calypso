@@ -1,7 +1,6 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -15,7 +14,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import accept from 'lib/accept';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { decodeEntities, removep } from 'lib/formatting';
 import {
 	deleteReviewReply,
@@ -52,7 +51,7 @@ class ReviewReply extends Component {
 		this.props.clearReviewReplyEdits( siteId );
 	};
 
-	onTextChange = event => {
+	onTextChange = ( event ) => {
 		const { value } = event.target;
 		const { siteId, reviewId, replyId } = this.props;
 		this.props.editReviewReply( siteId, reviewId, { id: replyId, content: value } );
@@ -61,7 +60,7 @@ class ReviewReply extends Component {
 	onDelete = () => {
 		const { siteId, reviewId, replyId, translate } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this reply?' );
-		accept( areYouSure, accepted => {
+		accept( areYouSure, ( accepted ) => {
 			if ( ! accepted ) {
 				return;
 			}
@@ -159,18 +158,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	( state, props ) => {
-		const reply = getReviewReply( state, props.reviewId, props.replyId );
-		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
-		const replyEdits = getReviewReplyEdits( state );
-		const editContent = replyEdits.content || '';
-		return {
-			reply,
-			isEditing,
-			replyEdits,
-			editContent,
-		};
-	},
-	mapDispatchToProps
-)( localize( ReviewReply ) );
+export default connect( ( state, props ) => {
+	const reply = getReviewReply( state, props.reviewId, props.replyId );
+	const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+	const replyEdits = getReviewReplyEdits( state );
+	const editContent = replyEdits.content || '';
+	return {
+		reply,
+		isEditing,
+		replyEdits,
+		editContent,
+	};
+}, mapDispatchToProps )( localize( ReviewReply ) );

@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';
@@ -35,7 +34,7 @@ class Security2faKey extends React.Component {
 	};
 
 	getClickHandler = ( action, callback ) => {
-		return event => {
+		return ( event ) => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
 			if ( callback ) {
@@ -44,7 +43,7 @@ class Security2faKey extends React.Component {
 		};
 	};
 
-	addKeyStart = event => {
+	addKeyStart = ( event ) => {
 		event.preventDefault();
 		this.setState( { addingKey: true } );
 	};
@@ -53,7 +52,7 @@ class Security2faKey extends React.Component {
 		this.getKeysFromServer();
 	};
 
-	deleteKeyRegister = keyData => {
+	deleteKeyRegister = ( keyData ) => {
 		wpcom.req.get(
 			'/me/two-step/security-key/delete',
 			{ credential_id: keyData.id },
@@ -106,7 +105,7 @@ class Security2faKey extends React.Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Register Key' ) }
+							{ translate( 'Register key' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -143,9 +142,6 @@ class Security2faKey extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKey ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKey ) );

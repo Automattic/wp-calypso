@@ -1,12 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { compact, find, flow, get, includes, reduce } from 'lodash';
+import { compact, find, flow, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +13,7 @@ import { compact, find, flow, get, includes, reduce } from 'lodash';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import { getPostTypeLabel } from 'state/post-types/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
@@ -26,7 +25,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -147,7 +146,7 @@ export class PostTypeFilter extends Component {
 			siteId,
 			statusSlug,
 			isMultiSelectEnabled: isMultiSelectButtonEnabled,
-			typeLabel,
+			searchPagesPlaceholder,
 		} = this.props;
 
 		if ( ! query ) {
@@ -192,7 +191,7 @@ export class PostTypeFilter extends Component {
 						selectedText={ selectedItem.children }
 						selectedCount={ selectedItem.count }
 					>
-						{ navItems.map( props => (
+						{ navItems.map( ( props ) => (
 							<NavItem { ...props } />
 						) ) }
 					</NavTabs>
@@ -205,12 +204,9 @@ export class PostTypeFilter extends Component {
 							pinned
 							fitsContainer
 							initialValue={ query.search }
+							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
-							placeholder={ this.props.translate( 'Search %(postTypes)s…', {
-								args: {
-									postTypes: typeLabel,
-								},
-							} ) }
+							placeholder={ `${ searchPagesPlaceholder }…` }
 							delaySearch={ true }
 						/>
 					) }
@@ -251,9 +247,18 @@ export default flow(
 				return props;
 			}
 
+			const localeSlug = getLocaleSlug( state );
+			const searchPagesPlaceholder = getPostTypeLabel(
+				state,
+				siteId,
+				query.type,
+				'search_items',
+				localeSlug
+			);
+
 			return {
 				...props,
-				typeLabel: get( getPostType( state, siteId, query.type ), 'labels.name' ),
+				searchPagesPlaceholder,
 				counts: query.author
 					? getNormalizedMyPostCounts( state, siteId, query.type )
 					: getNormalizedPostCounts( state, siteId, query.type ),

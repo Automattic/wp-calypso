@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,18 +25,18 @@ const doBypassDataLayer = {
 	},
 };
 
-export const bypassDataLayer = action => extendAction( action, doBypassDataLayer );
+export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataLayer );
 
 /**
  * Deeply converts keys of an object using provided function.
  *
- * @param {Object} obj object to convert
+ * @param {object} obj object to convert
  * @param  {Function} fn function to apply to each key of the object
- * @returns {Object} a new object with all keys converted
+ * @returns {object} a new object with all keys converted
  */
 export function convertKeysBy( obj, fn ) {
 	if ( isArray( obj ) ) {
-		return map( obj, v => convertKeysBy( v, fn ) );
+		return map( obj, ( v ) => convertKeysBy( v, fn ) );
 	}
 
 	if ( isPlainObject( obj ) ) {
@@ -59,15 +57,15 @@ export function convertKeysBy( obj, fn ) {
 /**
  * Deeply converts keys from the specified object to camelCase notation.
  *
- * @param {Object} obj object to convert
- * @returns {Object} a new object with all keys converted
+ * @param {object} obj object to convert
+ * @returns {object} a new object with all keys converted
  */
-export const convertToCamelCase = obj => convertKeysBy( obj, camelCase );
+export const convertToCamelCase = ( obj ) => convertKeysBy( obj, camelCase );
 
 /**
  * Deeply convert keys of an object to snake_case.
  *
- * @param {Object} obj Object to convert
- * @return {Object} a new object with snake_cased keys
+ * @param {object} obj Object to convert
+ * @returns {object} a new object with snake_cased keys
  */
-export const convertToSnakeCase = obj => convertKeysBy( obj, snakeCase );
+export const convertToSnakeCase = ( obj ) => convertKeysBy( obj, snakeCase );

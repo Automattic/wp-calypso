@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -8,14 +7,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'state/action-types';
+import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import getReaderFollowForBlog from 'state/selectors/get-reader-follow-for-blog';
+import { getReaderFollowForBlog } from 'state/reader/follows/selectors';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 

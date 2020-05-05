@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ const BulkSelect = ( {
 	const inputClasses = classNames( 'bulk-select__box', { 'is-checked': hasAllElementsSelected } );
 	const iconClasses = classNames( 'bulk-select__some-checked-icon', { 'is-disabled': disabled } );
 	const containerClasses = classNames( 'bulk-select', className );
-	const handleToggle = event => {
+	const handleToggle = ( event ) => {
 		if ( readOnly ) {
 			return;
 		}

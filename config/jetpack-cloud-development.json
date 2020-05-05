@@ -1,0 +1,41 @@
+{
+	"env": "development",
+	"env_id": "jetpack-cloud-development",
+	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "jetpack.cloud.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"rtl": false,
+	"login_url": "https://wordpress.com/wp-login.php",
+	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
+	"site_name": "Jetpack.com",
+	"features": {
+		"current-site/domain-warning": false,
+		"current-site/notice": false,
+		"current-site/stale-cart-notice": false,
+		"jetpack-cloud": true,
+		"jetpack-cloud/backups": true,
+		"jetpack-cloud/backups-restore": true,
+		"jetpack-cloud/settings": true,
+		"jetpack-cloud/scan": true,
+		"jetpack-cloud/scan-history": true,
+		"jetpack-cloud/on-demand-scan": true,
+		"layout/app-banner": false,
+		"layout/guided-tours": false,
+		"layout/nps-survey-notice": false,
+		"layout/support-article-dialog": false,
+		"layout/query-selected-editor": false,
+		"site-indicator": false
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"jetpack-cloud": true,
+		"scan": true,
+		"backups": true,
+		"jetpack-cloud-settings": true
+	},
+	"site_filter": [ "jetpack" ],
+	"theme": "jetpack-cloud"
+}

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,14 +11,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Popover from 'components/popover';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import getSiteSetting from 'state/selectors/get-site-setting';
 import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
 import {
@@ -42,7 +41,7 @@ export class CommentAuthorMoreInfo extends Component {
 		showPopover: false,
 	};
 
-	storePopoverButtonRef = button => ( this.popoverButton = button );
+	storePopoverButtonRef = ( button ) => ( this.popoverButton = button );
 
 	closePopover = () => this.setState( { showPopover: false } );
 
@@ -75,7 +74,7 @@ export class CommentAuthorMoreInfo extends Component {
 		if ( isAuthorBlacklisted ) {
 			const newBlacklist = siteBlacklist
 				.split( '\n' )
-				.filter( item => item !== authorEmail )
+				.filter( ( item ) => item !== authorEmail )
 				.join( '\n' );
 
 			updateBlacklist( siteId, newBlacklist, analytics );
@@ -86,7 +85,7 @@ export class CommentAuthorMoreInfo extends Component {
 			);
 		}
 
-		const newBlacklist = !! siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+		const newBlacklist = siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
 
 		updateBlacklist( siteId, newBlacklist, analytics );
 
@@ -225,7 +224,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	showNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	updateBlacklist: ( siteId, blacklist_keys, analytics ) =>
 		dispatch(
@@ -254,7 +253,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentAuthorMoreInfo ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentAuthorMoreInfo ) );

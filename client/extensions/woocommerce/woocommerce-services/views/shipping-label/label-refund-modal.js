@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { withLocalizedMoment } from 'components/localized-moment';
 import {
 	closeRefundDialog,
 	confirmRefund,
@@ -24,7 +23,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const RefundDialog = props => {
+const RefundDialog = ( props ) => {
 	const {
 		orderId,
 		siteId,
@@ -101,11 +100,11 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( RefundDialog ) );
+)( localize( withLocalizedMoment( RefundDialog ) ) );

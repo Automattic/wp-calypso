@@ -22,7 +22,7 @@ import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import flows from 'signup/config/flows';
 import untypedSteps from 'signup/config/steps';
 import wpcom from 'lib/wp';
@@ -33,7 +33,6 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
-import { abtest } from 'lib/abtest';
 
 interface Dependencies {
 	[ other: string ]: any;
@@ -163,7 +162,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._flow.steps ), step => {
+		forEach( pick( steps, this._flow.steps ), ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -195,7 +194,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
 
-		forEach( pick( steps, this._flow.steps ), step => {
+		forEach( pick( steps, this._flow.steps ), ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -229,18 +228,18 @@ export default class SignupFlowController {
 	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
 	 *
-	 * @return {array} a list of dependency names
+	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
 		return flatMap(
 			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
 		const currentSteps = this._flow.steps;
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), step =>
+		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
@@ -302,17 +301,14 @@ export default class SignupFlowController {
 		/*
 			AB Test: passwordlessSignup
 
-			`isPasswordlessSignupForm` in this check is for the `onboarding` flow.
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
 
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
 		*/
-		if (
-			'onboarding' === this._flowName &&
-			get( step, 'isPasswordlessSignupForm' ) &&
-			'passwordless' === abtest( 'passwordlessSignup' )
-		) {
+		if ( get( step, 'isPasswordlessSignupForm' ) ) {
 			this._processingSteps.delete( step.stepName );
-			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
+			recordTracksEvent( 'calypso_signup_actions_complete_step', {
 				step: step.stepName,
 			} );
 			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
@@ -332,13 +328,14 @@ export default class SignupFlowController {
 		apiFunction(
 			( errors, providedDependencies ) => {
 				this._processingSteps.delete( step.stepName );
-				analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
-					step: step.stepName,
-				} );
 
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					recordTracksEvent( 'calypso_signup_actions_complete_step', {
+						step: step.stepName,
+						flow: this._flowName,
+					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
 			},
@@ -359,7 +356,7 @@ export default class SignupFlowController {
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap(
 			this._flow.steps,
-			stepName => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 
 		return reduce(

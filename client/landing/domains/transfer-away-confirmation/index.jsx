@@ -49,7 +49,7 @@ class TransferAwayConfirmationPage extends Component {
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
-			error => {
+			( error ) => {
 				this.setErrorState( error );
 			}
 		);
@@ -197,7 +197,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	getRunningMaintenanceErrorState = error => {
+	getRunningMaintenanceErrorState = ( error ) => {
 		const { translate } = this.props;
 
 		const message = getMaintenanceMessageFromError( error, translate );
@@ -234,7 +234,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setErrorState = error => {
+	setErrorState = ( error ) => {
 		let errorState;
 
 		switch ( error.error ) {
@@ -312,7 +312,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setSuccessState = success => {
+	setSuccessState = ( success ) => {
 		let successState;
 
 		switch ( success ) {

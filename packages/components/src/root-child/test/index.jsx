@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -40,7 +39,7 @@ class Greeting extends React.Component {
 describe( 'RootChild', () => {
 	let container;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );

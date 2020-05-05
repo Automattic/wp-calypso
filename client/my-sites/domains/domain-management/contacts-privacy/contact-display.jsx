@@ -1,17 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { getWhoisData } from 'state/domains/management/selectors';
 import { requestWhois } from 'state/domains/management/actions';
-import { isEmpty } from 'lodash';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
@@ -25,11 +25,9 @@ class ContactDisplay extends React.PureComponent {
 	};
 
 	render() {
-		const { privateDomain, translate, whoisData } = this.props;
+		const { whoisData } = this.props;
 
-		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( whoisData )
-			: findRegistrantWhois( whoisData );
+		const contactInformation = findRegistrantWhois( whoisData );
 
 		if ( isEmpty( contactInformation ) ) {
 			this.fetchWhois();
@@ -38,8 +36,6 @@ class ContactDisplay extends React.PureComponent {
 
 		return (
 			<div className="contact-display">
-				<h2>{ translate( 'Public Record Preview' ) }</h2>
-
 				<div className="contact-display__content">
 					<p>
 						{ contactInformation.fname } { contactInformation.lname }
@@ -71,4 +67,4 @@ export default connect(
 	{
 		requestWhois,
 	}
-)( localize( ContactDisplay ) );
+)( ContactDisplay );

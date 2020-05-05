@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import classnames from 'classnames';
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import SegmentedControl from 'components/segmented-control';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
@@ -28,7 +27,7 @@ import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searc
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import { getReaderAliasedFollowFeedUrl } from 'state/reader/follows/selectors';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -41,10 +40,10 @@ import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
-const updateQueryArg = params =>
+const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE) ;
 
 const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
@@ -67,7 +66,7 @@ class SearchStream extends React.Component {
 		selected: SEARCH_TYPES.POSTS,
 	};
 
-	updateQuery = newValue => {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
@@ -102,9 +101,9 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
-	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
+	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
-	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
+	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
@@ -139,7 +138,7 @@ class SearchStream extends React.Component {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 		const suggestionList = initial(
-			flatMap( suggestions, suggestion => [
+			flatMap( suggestions, ( suggestion ) => [
 				<Suggestion
 					suggestion={ suggestion.text }
 					source="search"
@@ -253,7 +252,7 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props => (
+const wrapWithMain = ( Component ) => ( props ) => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
 	</ReaderMain>

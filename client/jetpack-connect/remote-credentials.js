@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Component which handle remote credentials for installing Jetpack
  */
@@ -12,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
@@ -28,7 +26,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs } from 'lib/route';
 import {
@@ -49,6 +46,7 @@ import {
 	INVALID_PERMISSIONS,
 	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
+import WordPressLogo from 'components/wordpress-logo';
 
 export class OrgCredentialsForm extends Component {
 	state = {
@@ -57,7 +55,7 @@ export class OrgCredentialsForm extends Component {
 		isSubmitting: false,
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
@@ -129,22 +127,20 @@ export class OrgCredentialsForm extends Component {
 		return form;
 	}
 
-	getChangeHandler = field => event => {
+	getChangeHandler = ( field ) => ( event ) => {
 		this.setState( { [ field ]: event.target.value } );
 	};
 
 	getHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Add your website credentials' );
+		return translate( 'Add your self-hosted WordPress credentials (wp-admin)' );
 	}
 
 	getSubHeaderText() {
 		const { translate } = this.props;
 		const subheader = translate(
-			'Add your WordPress administrator credentials ' +
-				'for this site. Your credentials will not be stored and are used for the purpose ' +
-				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
+			'Your login credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
 		);
 		return <span>{ subheader }</span>;
 	}
@@ -203,10 +199,19 @@ export class OrgCredentialsForm extends Component {
 		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
 			'is-error': this.isInvalidPassword(),
 		} );
-
+		const removedProtocolURL = this.props.siteToConnect.replace( /(^\w+:|^)\/\//, '' );
 		return (
 			<Fragment>
-				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
+				<div className="jetpack-connect__site-address">
+					<div className="jetpack-connect__globe">
+						<Gridicon size={ 24 } icon="globe" />
+					</div>{ ' ' }
+					{ removedProtocolURL }
+				</div>
+				<div className="jetpack-connect__wordpress-logo">
+					<WordPressLogo size="72" />
+				</div>
+				<FormLabel htmlFor="username">{ translate( 'WordPress username or email' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
 					<FormTextInput
@@ -222,12 +227,12 @@ export class OrgCredentialsForm extends Component {
 					{ this.isInvalidUsername() && (
 						<FormInputValidation
 							isError
-							text={ translate( 'Username does not exist. Please try again.' ) }
+							text={ translate( 'Username or email does not exist. Please try again.' ) }
 						/>
 					) }
 				</div>
 				<div className="jetpack-connect__password-container">
-					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'WordPress password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
@@ -245,6 +250,12 @@ export class OrgCredentialsForm extends Component {
 							/>
 						) }
 					</div>
+				</div>
+				<div className="jetpack-connect__note">
+					{ translate(
+						'Note: WordPress credentials are not the same as WordPress.com credentials. ' +
+							'Be sure to enter the username and password for your self-hosted WordPress site.'
+					) }
 				</div>
 			</Fragment>
 		);
@@ -305,7 +316,6 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					// eslint-disable-next-line react/no-jsx-bind
 					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -366,7 +376,7 @@ export class OrgCredentialsForm extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		const siteToConnect = siteData.urlAfterRedirects || jetpackConnectSite.url;
@@ -385,8 +395,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( OrgCredentialsForm );
+export default flowRight( connectComponent, localize )( OrgCredentialsForm );

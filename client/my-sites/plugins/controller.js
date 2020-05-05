@@ -10,15 +10,15 @@ import { includes, some } from 'lodash';
  */
 import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { setSection } from 'state/ui/actions';
-import { getSelectedSite, getSection } from 'state/ui/selectors';
+import { hideSidebar } from 'state/ui/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 
 /**
@@ -74,7 +74,7 @@ function renderPluginList( context, basePath ) {
 	} );
 
 	if ( search ) {
-		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
+		gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
 }
 
@@ -115,10 +115,7 @@ function renderPluginWarnings( context ) {
 }
 
 function renderProvisionPlugins( context ) {
-	const state = context.store.getState();
-	const section = getSection( state );
-
-	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
+	context.store.dispatch( hideSidebar() );
 
 	context.primary = React.createElement( PlanSetup, {
 		whitelist: context.query.only || false,
@@ -176,7 +173,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function( site ) {
+		redirectToPlugins = ! some( selectedSites, function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

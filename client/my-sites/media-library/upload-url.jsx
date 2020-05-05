@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import MediaActions from 'lib/media/actions';
 
 /**
@@ -42,7 +40,7 @@ class MediaLibraryUploadUrl extends Component {
 		isError: false,
 	};
 
-	upload = event => {
+	upload = ( event ) => {
 		event.preventDefault();
 
 		const isError = ! event.target.checkValidity();
@@ -58,17 +56,17 @@ class MediaLibraryUploadUrl extends Component {
 		this.setState( { value: '', isError: false } );
 		this.props.onAddMedia();
 		this.props.onClose();
-		analytics.mc.bumpStat( 'editor_upload_via', 'url' );
+		bumpStat( 'editor_upload_via', 'url' );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			isError: false,
 			value: event.target.value,
 		} );
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( event.key === 'Escape' ) {
 			return this.props.onClose( event );
 		}

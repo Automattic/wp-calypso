@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -55,7 +53,7 @@ export const SimplePaymentsTour = makeTour(
 							<span>{ translate( 'Upgrade' ) }</span>
 						</SiteLink>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments">
+					<Link href="https://wordpress.com/support/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>

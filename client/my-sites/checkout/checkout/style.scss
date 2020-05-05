@@ -1,22 +1,22 @@
 @import 'jetpack-connect/colors.scss';
 
-@mixin section-border ( $position ) {
-  &::before {
-  	display: block;
-  	content: '';
-  	position: absolute;
-  	#{ $position }: 0;
-  	left: -8px;
-  	width: calc( 100% + 16px );
-  	height: 1px;
-  	box-sizing: border-box;
-  	background: var( --color-border-subtle );
-  	
-  	@include breakpoint( '>660px' ) {
-  		width: calc( 100% + 60px );
-  		left: -30px;
-  	}
-  }
+@mixin section-border( $position ) {
+	&::before {
+		display: block;
+		content: '';
+		position: absolute;
+		#{ $position }: 0;
+		left: -8px;
+		width: calc( 100% + 16px );
+		height: 1px;
+		box-sizing: border-box;
+		background: var( --color-border-subtle );
+
+		@include breakpoint( '>660px' ) {
+			width: calc( 100% + 60px );
+			left: -30px;
+		}
+	}
 }
 
 .checkout {
@@ -463,6 +463,34 @@
 		}
 	}
 
+	// Redirect Payment Box
+	// -----------------------------------
+	.redirect-payment-box,
+	.wechat-payment-box {
+		 .checkout__payment-box-section {
+			 .checkout__checkout-field {
+				 padding: 0 15px 15px;
+			 }
+
+			 .checkout__country-payment-fields {
+				 .checkout__checkout-field {
+					 padding-left: 0;
+					 flex-basis: calc( 100% - 30px );
+				 }
+				 .checkout__checkout-field.pan, .checkout__checkout-field.gstin {
+					 flex-basis: calc( 50% - 30px );
+					 .form-label {
+						 max-height: 21px;
+					 }
+				 }
+
+				 .checkout__pan-number-popover svg {
+					 max-height: 16px;
+				 }
+			 }
+		 }
+	}
+
 	// Credits Payment Box
 	// -----------------------------------
 	.credits-payment-box {
@@ -482,7 +510,6 @@
 			}
 
 			.checkout__payment-box-section-content {
-
 				> h6 {
 					color: var( --color-primary );
 					font-size: 18px;
@@ -785,7 +812,6 @@
 	}
 }
 
-
 .checkout__payment-chat-button.is-borderless {
 	color: var( --color-accent );
 	text-align: left;
@@ -999,6 +1025,15 @@
 			margin: -5px 0;
 		}
 	}
+
+	.checkout__ovo {
+		height: 35px;
+
+		@include breakpoint( '>480px' ) {
+			margin: -5px 0;
+		}
+	}
+
 	.select-dropdown__container {
 		.checkout__apple-pay {
 			margin: 0;
@@ -1035,13 +1070,13 @@
 	}
 }
 
-// Ebanx checkout fields
+// country-specific checkout fields
 // -----------------------------------
 .checkout__country-payment-fields {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin: 15px 0 0 -15px;
+	margin-top: 15px;
 	.checkout__checkout-field,
 	.checkout__form-state-field {
 		flex-basis: calc( 100% - 15px );
@@ -1188,117 +1223,21 @@
 	}
 }
 
-/* Payment Methods Test
-======================================= */
-.payment-box__pm-test-wrapper {
-	background: var( --color-surface );
-	padding: 10px 8px 0;
-
-	@include breakpoint( '>660px' ) {
-		padding: 25px 30px 0;
+.composite-checkout__testing-banner {
+	@media ( min-width: 700px ) {
+		margin: auto;
+		max-width: 556px;
 	}
 }
 
-.payment-box__pm-title {
-	font-size: 16px;
-	margin-bottom: 8px;
-}
-
-.payment-box__pm-wrapper {
-	margin: 0;
-	padding: 0;
-
-	.section-nav-tab {
-		list-style: none;
-		border: 0;
-		margin: 8px 0 0;
-		position: relative;
-		z-index: z-index( 'root', '.payment-box__pm-wrapper .section-nav-tab' );
-
-		&:first-child {
-			margin-top: 0 !important;
-		}
-
-		&::after {
-			display: block;
-			content: '';
-			position: absolute;
-			top: 50%;
-			transform: translateY( -50% );
-			left: 15px;
-			width: 21px;
-			height: 21px;
-			border: 1px solid var( --color-neutral-10 );
-			border-radius: 50%;
-			box-sizing: border-box;
-			z-index: z-index( 'root', '.payment-box__pm-wrapper .section-nav-tab::after' );
-		}
-
-		&::before {
-			display: block;
-			content: '';
-			position: absolute;
-			top: 50%;
-			transform: translateY( -50% ) scale( 0.8 );
-			left: 19px;
-			width: 13px;
-			height: 13px;
-			background: var( --color-surface );
-			border-radius: 50%;
-			box-sizing: border-box;
-			transition: transform 0.3s ease;
-		}
-
-		&.is-selected::before {
-			transform: translateY( -50% ) scale( 1 );
-			background: var( --color-primary );
-		}
-
-		&.is-selected .section-nav-tab__link::before {
-			border: 3px solid var( --color-primary );
-		}
+.is-section-checkout.is-new-launch-flow {
+	.layout__content {
+		padding-top: 48px;
 	}
-
-	.section-nav-tab__link {
-		color: var( --color-text );
-		font-weight: 400;
-		position: relative;
-		padding: 16px 16px 16px 47px;
-		background: transparent !important;
-
-		&::before {
-			display: block;
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			box-sizing: border-box;
-			border: 1px solid var( --color-border );
-			border-radius: 3px;
-		}
-
-		&:hover::before {
-			border: 3px solid var( --color-primary );
-		}
+	.navigation-link.button.back {
+		position: absolute;
+		top: 6px;
+		left: 11px;
+		padding: 0;
 	}
-}
-
-.payment-box--payment-methods-test {
-	box-shadow: none;
-}
-
-.checkout__payment-information-title {
-	font-size: 16px;
-	margin-bottom: 8px;
-	padding-top: 10px;
-	position: relative;
-
-	@include breakpoint( '>660px' ) {
-		margin: 20px 0 8px;
-		padding-top: 20px;
-	}
-
-	@include section-border( top );
 }

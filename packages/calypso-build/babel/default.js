@@ -16,7 +16,7 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
-				corejs: 2,
+				corejs: 3.6,
 				modules: modulesOption( opts ),
 				useBuiltIns: 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
@@ -28,7 +28,6 @@ module.exports = ( api, opts ) => ( {
 	],
 	plugins: [
 		require.resolve( '@babel/plugin-proposal-class-properties' ),
-		require.resolve( '@babel/plugin-syntax-dynamic-import' ),
 		[
 			require.resolve( '@babel/plugin-transform-runtime' ),
 			{

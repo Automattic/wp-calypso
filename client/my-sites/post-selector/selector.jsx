@@ -1,17 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -29,7 +25,7 @@ import {
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
@@ -39,7 +35,6 @@ import {
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
@@ -141,7 +136,7 @@ class PostSelectorPosts extends React.Component {
 		}
 	};
 
-	setListRef = ref => {
+	setListRef = ( ref ) => {
 		// Ref callback can be called with null reference, which is desirable
 		// since we'll want to know elsewhere if we can call recompute height
 		this.list = ref;
@@ -168,17 +163,15 @@ class PostSelectorPosts extends React.Component {
 
 	hasNoSearchResults = () => {
 		return (
-			! this.props.loading &&
-			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm
+			! this.props.loading && this.props.posts && ! this.props.posts.length && this.state.searchTerm
 		);
 	};
 
 	hasNoPosts = () => {
-		return ! this.props.loading && ( this.props.posts && ! this.props.posts.length );
+		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
-	getItem = index => {
+	getItem = ( index ) => {
 		if ( this.props.posts ) {
 			return this.props.posts[ index ];
 		}
@@ -206,7 +199,7 @@ class PostSelectorPosts extends React.Component {
 		return includes( requestedPages, lastPage ) && ! loading;
 	};
 
-	getPostChildren = postId => {
+	getPostChildren = ( postId ) => {
 		const { posts } = this.props;
 		return filter( posts, ( { parent } ) => parent && parent.ID === postId );
 	};
@@ -243,7 +236,7 @@ class PostSelectorPosts extends React.Component {
 		}, 0 );
 	};
 
-	getPageForIndex = index => {
+	getPageForIndex = ( index ) => {
 		const { queryWithVersion, lastPage } = this.props;
 		const perPage = queryWithVersion.number || DEFAULT_POSTS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
@@ -284,7 +277,7 @@ class PostSelectorPosts extends React.Component {
 		} );
 	};
 
-	onSearch = event => {
+	onSearch = ( event ) => {
 		const searchTerm = event.target.value;
 		if ( this.state.searchTerm && ! searchTerm ) {
 			this.props.onSearch( '' );
@@ -296,7 +289,7 @@ class PostSelectorPosts extends React.Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
 		}
 
 		this.setState( { searchTerm } );
@@ -332,7 +325,7 @@ class PostSelectorPosts extends React.Component {
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+									paddingRight: this.isCompact() ? 0 : scrollbarSize(),
 								} }
 							>
 								{ decodeEntities(
@@ -344,7 +337,7 @@ class PostSelectorPosts extends React.Component {
 				</label>
 				{ children.length > 0 && (
 					<div className="post-selector__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -421,7 +414,7 @@ class PostSelectorPosts extends React.Component {
 			'is-type-labels-visible': isTypeLabelsVisible,
 		} );
 
-		const pagesToRequest = filter( requestedPages, page => {
+		const pagesToRequest = filter( requestedPages, ( page ) => {
 			if ( page !== 1 || ! suppressFirstPageLoad ) {
 				return true;
 			}
@@ -430,7 +423,7 @@ class PostSelectorPosts extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ pagesToRequest.map( page => (
+				{ pagesToRequest.map( ( page ) => (
 					<QueryPosts
 						key={ `page-${ page }` }
 						siteId={ siteId }
@@ -463,12 +456,7 @@ class PostSelectorPosts extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
-
-	const apiVersion =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
-			? '1.2'
-			: undefined;
-	const queryWithVersion = { ...query, apiVersion };
+	const queryWithVersion = { ...query, apiVersion: '1.2' };
 
 	return {
 		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),

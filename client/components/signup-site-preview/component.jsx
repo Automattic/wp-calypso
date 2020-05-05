@@ -94,8 +94,8 @@ export class SignupSitePreview extends Component {
 		}
 	}
 
-	setIsLoaded = isLoaded => this.setState( { isLoaded } );
-	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
+	setIsLoaded = ( isLoaded ) => this.setState( { isLoaded } );
+	setWrapperHeight = ( wrapperHeight ) => this.setState( { wrapperHeight } );
 
 	render() {
 		const { isDesktop, isPhone, screenshotUrl } = this.props;

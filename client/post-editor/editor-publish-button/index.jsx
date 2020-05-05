@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { noop } from 'lodash';
  */
 import { recordEditorEvent } from 'state/posts/stats';
 import * as postUtils from 'state/posts/utils';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
@@ -152,7 +150,7 @@ export class EditorPublishButton extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const currentPost = getSitePost( state, siteId, postId );

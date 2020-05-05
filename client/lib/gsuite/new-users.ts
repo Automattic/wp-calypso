@@ -108,7 +108,7 @@ const validateOverallEmailAgainstExistingEmails = (
  * Clear all previous errors from all fields on a User
  */
 const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
-	return users.map( user => mapValues( user, field => removePreviousErrors( field ) ) );
+	return users.map( ( user ) => mapValues( user, ( field ) => removePreviousErrors( field ) ) );
 };
 
 /*
@@ -150,7 +150,7 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
  */
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
-	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
+	const { domain, mailBox, firstName, lastName } = mapValues( user, ( field ) =>
 		requiredField( field )
 	);
 
@@ -167,7 +167,7 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
  */
 const validateUsers = (
 	users: GSuiteNewUser[],
-	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = user => user
+	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = ( user ) => user
 ) => {
 	// 1. scrub all previous errors with clearPreviousErrors
 	// 2. first check for uniqueness with validateNewUsersAreUnique
@@ -243,7 +243,7 @@ const getItemsForCart = (
 ) => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
-		groupedUsers => groupedUsers.map( transformUserForCart )
+		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {

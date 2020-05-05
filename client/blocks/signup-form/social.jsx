@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
-	handleAppleResponse = response => {
+	handleAppleResponse = ( response ) => {
 		if ( ! response.id_token ) {
 			return;
 		}
@@ -46,7 +44,13 @@ class SocialSignupForm extends Component {
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+		if ( ! response.getAuthResponse ) {
+			return;
+		}
+
+		const tokens = response.getAuthResponse();
+
+		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 			return;
 		}
 
@@ -54,10 +58,10 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
-	trackSocialLogin = service => {
+	trackSocialLogin = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
 			social_account_type: service,
 		} );
@@ -139,7 +143,7 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 	} ),
 	{ recordTracksEvent }

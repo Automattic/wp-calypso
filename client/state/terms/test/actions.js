@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -52,7 +50,7 @@ const categoryTaxonomyName = 'category';
 
 describe( 'actions', () => {
 	describe( 'addTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
@@ -189,7 +187,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteTerms()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms` )
@@ -218,7 +216,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
+			return requestSiteTerms(
+				siteId,
+				taxonomyName
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -232,7 +233,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
+			return requestSiteTerms(
+				siteId,
+				taxonomyName
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId: siteId,
@@ -244,7 +248,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
 			const spy = jest.fn();
-			return requestSiteTerms( 12345, 'chicken-and-ribs' )( spy ).then( () => {
+			return requestSiteTerms(
+				12345,
+				'chicken-and-ribs'
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_FAILURE,
 					siteId: 12345,
@@ -257,7 +264,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:rib` )
@@ -406,7 +413,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteTerm()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wp/v2/sites/${ siteId }/taxonomies/${ taxonomyName }/` )
@@ -457,7 +464,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				taxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -522,7 +534,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				categoryTaxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
@@ -571,7 +588,12 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+			return deleteTerm(
+				siteId,
+				categoryTaxonomyName,
+				10,
+				'ribs'
+			)( spy, getState ).then( () => {
 				expect( spy ).not.toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,

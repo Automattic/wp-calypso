@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ const POPULAR_TOPICS = {
 		translate( 'Website Designer' ),
 		translate( 'Real Estate Agent' ),
 		translate( 'Cameras & Photography' ),
-		translate( 'Restaurants' ),
+		translate( 'Restaurant' ),
 	],
 	blog: [
 		translate( 'People' ),
@@ -56,7 +54,7 @@ class PopularTopics extends PureComponent {
 		onSelect: PropTypes.func.isRequired,
 	};
 
-	onClick = index => event => {
+	onClick = ( index ) => ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect( event.currentTarget.value );
@@ -96,7 +94,7 @@ class PopularTopics extends PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		popularTopics: POPULAR_TOPICS[ getSiteType( state ) || 'blog' ] || [],
 	} ),
 	{

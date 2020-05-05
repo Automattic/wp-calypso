@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
  */
 import { loadTrackingTool } from 'state/analytics/actions';
 
-export default trackingTool => EnhancedComponent => {
+export default ( trackingTool ) => ( EnhancedComponent ) => {
 	class WithTrackingTool extends Component {
-		static displayName = `WithTrackingTool( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name ||
-			'' } )`;
+		static displayName = `WithTrackingTool( ${
+			EnhancedComponent.displayName || EnhancedComponent.name || ''
+		} )`;
 
 		componentDidMount() {
 			this.props.loadTrackingTool( trackingTool );
@@ -24,10 +24,7 @@ export default trackingTool => EnhancedComponent => {
 		}
 	}
 
-	return connect(
-		null,
-		{
-			loadTrackingTool,
-		}
-	)( WithTrackingTool );
+	return connect( null, {
+		loadTrackingTool,
+	} )( WithTrackingTool );
 };

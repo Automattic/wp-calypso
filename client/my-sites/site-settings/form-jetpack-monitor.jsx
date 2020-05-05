@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { isEmpty, partial } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -40,13 +38,13 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		}
 	}
 
-	recordEvent = event => {
+	recordEvent = ( event ) => {
 		return () => {
 			this.props.trackEvent( event );
 		};
 	};
 
-	handleToggle = name => () => {
+	handleToggle = ( name ) => () => {
 		this.props.trackEvent( `Toggled ${ name }` );
 		this.setState(
 			{
@@ -134,7 +132,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
@@ -166,7 +164,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

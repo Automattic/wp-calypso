@@ -21,7 +21,7 @@ import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {
@@ -66,7 +66,7 @@ class MediaModalSecondaryActions extends Component {
 
 		const canDeleteItems =
 			selectedItems.length &&
-			every( selectedItems, item => {
+			every( selectedItems, ( item ) => {
 				return canUserDeleteItem( item, user, site );
 			} );
 
@@ -91,7 +91,7 @@ class MediaModalSecondaryActions extends Component {
 
 		return (
 			<div>
-				{ this.getButtons().map( button => (
+				{ this.getButtons().map( ( button ) => (
 					<Button
 						className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
 						data-e2e-button={ button.key }

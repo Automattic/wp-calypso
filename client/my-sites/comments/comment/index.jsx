@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,7 +13,7 @@ import { debounce, get, isEqual, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentEdit from 'my-sites/comments/comment/comment-edit';
@@ -22,9 +22,8 @@ import CommentReply from 'my-sites/comments/comment/comment-reply';
 import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
 import scrollTo from 'lib/scroll-to';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
-import getSiteComment from 'state/selectors/get-site-comment';
+import { getSiteComment } from 'state/comments/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -88,9 +87,9 @@ export class Comment extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	storeCardRef = card => ( this.commentCard = card );
+	storeCardRef = ( card ) => ( this.commentCard = card );
 
-	keyDownHandler = event => {
+	keyDownHandler = ( event ) => {
 		const { isBulkMode } = this.props;
 		const commentHasFocus =
 			document &&

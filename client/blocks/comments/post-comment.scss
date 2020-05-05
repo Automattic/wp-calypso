@@ -60,7 +60,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 
 	.gravatar {
 		border-radius: 48px;
@@ -133,7 +133,7 @@ a.comments__comment-username {
 
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: var( --color-text-subtle );
-	font-weight: normal;
+	font-weight: 400;
 	margin-left: -2px;
 
 	&:hover {
@@ -143,7 +143,7 @@ a.comments__comment-username {
 
 .comments__comment-timestamp a {
 	color: var( --color-text-subtle );
-	font-weight: normal;
+	font-weight: 400;
 	text-decoration: none;
 
 	&:hover {

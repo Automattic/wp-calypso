@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCard from '..';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const CREDIT_CARD_EXAMPLES = [
 	{
@@ -55,6 +53,14 @@ const CREDIT_CARD_EXAMPLES = [
 		cardType: 'visa',
 		name: 'Holly Baker',
 		expiry: '2027-11-30',
+	},
+	{
+		lastDigits: '',
+		cardType: '',
+		paymentPartner: 'paypal_express',
+		name: 'Eduardo Aute',
+		email: 'mail@example.org',
+		expiry: '0000-00-00',
 	},
 ];
 

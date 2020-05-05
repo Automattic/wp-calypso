@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -39,12 +37,12 @@ QueryReaderLists.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestSubscribedLists,

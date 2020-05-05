@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,6 +18,7 @@ import reducer, {
 	activeThemeRequests,
 	themeInstalls,
 	completedActivationRequests,
+	recommendedThemes,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
 import {
@@ -39,9 +38,11 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+	RECOMMENDED_THEMES_FETCH,
+	RECOMMENDED_THEMES_SUCCESS,
+	RECOMMENDED_THEMES_FAIL,
+} from 'state/themes/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -87,6 +88,7 @@ describe( 'reducer', () => {
 				'themeRequests',
 				'themesUI',
 				'uploadTheme',
+				'recommendedThemes',
 			] )
 		);
 	} );
@@ -964,6 +966,49 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				2916284: false,
 			} );
+		} );
+	} );
+
+	describe( '#recommendedThemes()', () => {
+		test( 'should default to isLoading and empty themes array', () => {
+			const state = recommendedThemes( undefined, {} );
+			expect( state ).toEqual( { isLoading: true, themes: [] } );
+		} );
+
+		test( 'should update isLoading when fetch is called', () => {
+			const state = recommendedThemes(
+				{ isLoading: false, themes: [] },
+				{
+					type: RECOMMENDED_THEMES_FETCH,
+				}
+			);
+			expect( state ).toEqual( { isLoading: true, themes: [] } );
+		} );
+
+		test( 'should update isLoading and themes on fetch success', () => {
+			const state = recommendedThemes(
+				{ isLoading: true, themes: [] },
+				{
+					type: RECOMMENDED_THEMES_SUCCESS,
+					payload: {
+						themes: [ 'a', 'b', 'c' ],
+					},
+				}
+			);
+			expect( state ).toEqual( {
+				isLoading: false,
+				themes: [ 'a', 'b', 'c' ],
+			} );
+		} );
+
+		test( 'should update isLoading on fetch fail', () => {
+			const state = recommendedThemes(
+				{ isLoading: true, themes: [] },
+				{
+					type: RECOMMENDED_THEMES_FAIL,
+				}
+			);
+			expect( state ).toEqual( { isLoading: false, themes: [] } );
 		} );
 	} );
 } );

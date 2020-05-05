@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -25,6 +24,8 @@ import AsyncLoad from 'components/async-load';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -32,6 +33,10 @@ import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-use
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 import WordPressWordmark from 'components/wordpress-wordmark';
+import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
+import { updateSiteMigrationMeta } from 'state/sites/actions';
+import { requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -47,6 +52,41 @@ class MasterbarLoggedIn extends React.Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 		this.props.setNextLayoutFocus( 'sidebar' );
+
+		/**
+		 * Site Migration: Reset a failed migration when clicking on My Sites
+		 *
+		 * If the site migration has failed, clicking on My Sites sends the customer in a loop
+		 * until they click the Try Again button on the migration screen.
+		 *
+		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
+		 */
+		if ( config.isEnabled( 'tools/migrate' ) ) {
+			const { migrationStatus, currentSelectedSiteId } = this.props;
+
+			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+				/**
+				 * Reset the in-memory site lock for the currently selected site
+				 */
+				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+
+				/**
+				 * Reset the migration on the backend
+				 */
+				requestHttpData(
+					'site-migration',
+					http( {
+						apiNamespace: 'wpcom/v2',
+						method: 'POST',
+						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+						body: {},
+					} ),
+					{
+						freshness: 0,
+					}
+				);
+			}
+		}
 	};
 
 	clickReader = () => {
@@ -70,7 +110,7 @@ class MasterbarLoggedIn extends React.Component {
 		preload( 'me' );
 	};
 
-	isActive = section => {
+	isActive = ( section ) => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
@@ -114,7 +154,7 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, isCheckout } = this.props;
+		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
 
 		if ( isCheckout === true ) {
 			return (
@@ -135,7 +175,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
-					url="/"
+					url="/read"
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
@@ -148,7 +188,7 @@ class MasterbarLoggedIn extends React.Component {
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
-				{ ! domainOnlySite && (
+				{ ! domainOnlySite && ! isMigrationInProgress && (
 					<Publish
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
@@ -188,10 +228,15 @@ class MasterbarLoggedIn extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+		const currentSelectedSiteId = getSelectedSiteId( state );
+		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+
+		const isMigrationInProgress =
+			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
+			isSiteMigrationActiveRoute( state );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -201,7 +246,10 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
+			isMigrationInProgress,
+			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
+			currentSelectedSiteId,
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent }
+	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
 )( localize( MasterbarLoggedIn ) );

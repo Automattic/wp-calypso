@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -29,14 +27,17 @@ export function uploadGravatar( action ) {
 			path: '/gravatar-upload',
 			body: {},
 			apiNamespace: 'wpcom/v2',
-			formData: [ [ 'account', email ], [ 'filedata', file ] ],
+			formData: [
+				[ 'account', email ],
+				[ 'filedata', file ],
+			],
 		},
 		action
 	);
 }
 
 export function announceSuccess( { file } ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const fileReader = new FileReader();
 		fileReader.addEventListener( 'load', () => {
 			dispatch( {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,13 +9,13 @@ import { decodeEntities } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { localizeUrl } from 'lib/i18n-utils';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';
 
-	onClick = event => {
+	onClick = ( event ) => {
 		if ( this.props.helpLink.disabled ) {
 			return event.preventDefault();
 		}

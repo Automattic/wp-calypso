@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import { keyBy, merge, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/action-types';
+import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/reader/action-types';
 import { withoutPersistence } from 'state/utils';
 
 /*
@@ -26,7 +25,7 @@ export const items = withoutPersistence( ( state = null, action ) => {
 				return merge( {}, state, keyBy( tags, 'id' ) );
 			}
 
-			const allTagsUnfollowed = mapValues( state, tag => ( { ...tag, isFollowing: false } ) );
+			const allTagsUnfollowed = mapValues( state, ( tag ) => ( { ...tag, isFollowing: false } ) );
 
 			return merge( {}, allTagsUnfollowed, keyBy( tags, 'id' ) );
 		}

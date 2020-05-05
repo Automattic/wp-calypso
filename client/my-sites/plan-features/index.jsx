@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,6 +28,7 @@ import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plan
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
@@ -40,8 +39,8 @@ import {
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
+	isWpComEcommercePlan,
 	getPlanClass,
-	planHasFeature,
 } from 'lib/plans';
 import {
 	getCurrentPlan,
@@ -62,8 +61,6 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
-	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -73,6 +70,7 @@ import {
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -82,6 +80,7 @@ import { Dialog } from '@automattic/components';
 
 const defaultState = {
 	checkoutUrl: '/checkout',
+	settingPublic: false,
 	showingSiteLaunchDialog: false,
 	choosingPlanSlug: '',
 };
@@ -91,6 +90,37 @@ export class PlanFeatures extends Component {
 
 	setDefaultState = () => {
 		this.setState( defaultState );
+	};
+
+	onLaunchDialogClose = async ( action ) => {
+		const { currentSitePlanSlug, siteId } = this.props;
+		const { checkoutUrl, choosingPlanSlug } = this.state;
+
+		if ( action !== 'continue' ) {
+			this.setDefaultState();
+			return;
+		}
+
+		this.setState( { settingPublic: true } );
+
+		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
+			current_plan: currentSitePlanSlug,
+			upgrading_to: choosingPlanSlug,
+		} );
+
+		try {
+			const setPublicResult = await this.props.saveSiteSettings( siteId, {
+				blog_public: 1,
+			} );
+			if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
+				this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
+					current_plan: currentSitePlanSlug,
+					upgrading_to: choosingPlanSlug,
+				} );
+			}
+		} catch ( e ) {}
+
+		page( checkoutUrl );
 	};
 
 	UNSAFE_componentWillReceiveProps( { siteId } ) {
@@ -153,6 +183,7 @@ export class PlanFeatures extends Component {
 								</tbody>
 							</table>
 						</PlanFeaturesScroller>
+						<PerformanceTrackerStop />
 					</div>
 				</div>
 			</div>
@@ -196,7 +227,7 @@ export class PlanFeatures extends Component {
 
 	renderSiteLaunchDialog() {
 		const { currentSitePlanSlug, translate } = this.props;
-		const { checkoutUrl, choosingPlanSlug, showingSiteLaunchDialog } = this.state;
+		const { choosingPlanSlug, settingPublic, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
@@ -212,28 +243,22 @@ export class PlanFeatures extends Component {
 				additionalClassNames="plan-features__upgrade-launch-dialog"
 				isVisible
 				buttons={ [
-					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{ action: 'cancel', disabled: settingPublic, label: translate( 'Cancel' ) },
 					{
 						action: 'continue',
+						disabled: settingPublic,
 						label: translate( "Let's do it!" ),
 						isPrimary: true,
-						onClick: () => {
-							this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
-								current_plan: currentSitePlanSlug,
-								upgrading_to: choosingPlanSlug,
-							} );
-							page( checkoutUrl );
-						},
 					},
 				] }
-				onClose={ this.setDefaultState }
+				onClose={ this.onLaunchDialogClose }
 			>
 				<h1>{ translate( 'Site Privacy' ) }</h1>
 				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
 				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
 				<InlineSupportLink
 					showIcon={ false }
-					supportLink="https://support.wordpress.com/settings/privacy-settings/"
+					supportLink="https://wordpress.com/support/settings/privacy-settings/"
 					supportPostId={ 1507 }
 				/>
 			</Dialog>
@@ -323,7 +348,9 @@ export class PlanFeatures extends Component {
 		}
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
-				{ translate( 'You need to be the plan owner to manage this site.' ) }
+				{ translate(
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+				) }
 			</Notice>,
 			bannerContainer
 		);
@@ -345,7 +372,7 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
-		const reorderedPlans = planProperties.filter( properties => {
+		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
 				return false;
@@ -357,7 +384,7 @@ export class PlanFeatures extends Component {
 			reorderedPlans.push( freePlanProperties );
 		}
 
-		return map( reorderedPlans, properties => {
+		return map( reorderedPlans, ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -443,7 +470,7 @@ export class PlanFeatures extends Component {
 			withScroll,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -522,7 +549,7 @@ export class PlanFeatures extends Component {
 	renderPlanDescriptions() {
 		const { planProperties, withScroll } = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
 			const classes = classNames( 'plan-features__table-item', {
@@ -548,7 +575,7 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
 
 		const {
 			availableForPurchase,
@@ -567,20 +594,27 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
+		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
+
 		if ( siteIsPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
 				return;
 			}
+			if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+				// When coming soon feature is enabled, we don't want to show any warnings
+				page( checkoutUrlWithArgs );
+				return;
+			}
 			this.setState( {
-				checkoutUrl,
+				checkoutUrl: checkoutUrlWithArgs,
 				choosingPlanSlug: productSlug,
 				showingSiteLaunchDialog: true,
 			} );
 			return;
 		}
 
-		page( checkoutUrl );
+		page( checkoutUrlWithArgs );
 	}
 
 	renderTopButtons() {
@@ -596,7 +630,7 @@ export class PlanFeatures extends Component {
 			translate,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -696,7 +730,7 @@ export class PlanFeatures extends Component {
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			const { features, planName } = properties;
 
 			const featureKeys = Object.keys( features ),
@@ -732,7 +766,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map( planProperties, ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -843,8 +877,8 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 		} )
 		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
 
-const hasPlaceholders = planProperties =>
-	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
+const hasPlaceholders = ( planProperties ) =>
+	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
@@ -875,7 +909,7 @@ export default connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
 		let planProperties = compact(
-			map( plans, plan => {
+			map( plans, ( plan ) => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
@@ -943,10 +977,7 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const siteIsPrivateAndGoingAtomic =
-					siteIsPrivate &&
-					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
-						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
+				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 
 				return {
 					availableForPurchase,
@@ -984,8 +1015,10 @@ export default connect(
 		const planCredits = calculatePlanCredits( state, siteId, planProperties );
 
 		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
+			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
+
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
 
 		return {
 			canPurchase,
@@ -1002,12 +1035,13 @@ export default connect(
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
 				planCredits &&
-				! isJetpack &&
+				! isJetpackNotAtomic &&
 				! isInSignup,
 		};
 	},
 	{
 		recordTracksEvent,
+		saveSiteSettings,
 	}
 )( localize( PlanFeatures ) );
 

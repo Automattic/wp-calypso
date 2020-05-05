@@ -10,11 +10,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { Dialog } from '@automattic/components';
 import { errorNotice } from 'state/notices/actions';
 import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
 import VerticalNav from 'components/vertical-nav';
@@ -66,14 +65,14 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		);
 	};
 
-	const onPasswordClick = event => {
+	const onPasswordClick = ( event ) => {
 		event.preventDefault();
 
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
-			data => {
+			( data ) => {
 				setPassword( data.password );
 			},
 			() => {
@@ -214,10 +213,7 @@ const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		trackEvent,
-	}
-)( PendingGSuiteTosNoticeDialog );
+export default connect( null, {
+	errorNotice,
+	trackEvent,
+} )( PendingGSuiteTosNoticeDialog );

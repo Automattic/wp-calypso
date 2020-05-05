@@ -1,23 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
+import getMediaErrors from 'state/selectors/get-media-errors';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
@@ -56,20 +53,20 @@ class TinyMCEDropZone extends React.Component {
 		}
 	}
 
-	redirectEditorDragEvent = event => {
+	redirectEditorDragEvent = ( event ) => {
 		// When an item is dragged over the iframe container, we need to copy
 		// and dispatch the event to the parent window. We use the CustomEvent
 		// constructor rather than MouseEvent because MouseEvent may lose some
 		// vital properties that were part of the original event.
 		//
 		// See: https://core.trac.wordpress.org/ticket/19845#comment:36
-		window.dispatchEvent( new CustomEvent( event.type, { detail: event } ) );
+		window.dispatchEvent( new window.CustomEvent( event.type, { detail: event } ) );
 		this.setState( {
 			isDragging: true,
 		} );
 	};
 
-	fakeDragEnterIfNecessary = event => {
+	fakeDragEnterIfNecessary = ( event ) => {
 		// It was found that Chrome only triggered the `dragenter` event on
 		// every odd drag over the iframe element. The logic here ensures that
 		// if the more frequent `dragover` event occurs while not aware of a
@@ -92,7 +89,7 @@ class TinyMCEDropZone extends React.Component {
 	};
 
 	insertMedia = () => {
-		const { site, onInsertMedia, onRenderModal } = this.props;
+		const { site, onInsertMedia, onRenderModal, mediaValidationErrors } = this.props;
 
 		if ( ! site ) {
 			return;
@@ -104,7 +101,7 @@ class TinyMCEDropZone extends React.Component {
 		const isSingleImage =
 			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
-		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
+		if ( isSingleImage && isEmpty( mediaValidationErrors ) ) {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
@@ -118,7 +115,7 @@ class TinyMCEDropZone extends React.Component {
 			onRenderModal( { visible: true } );
 		}
 
-		analytics.mc.bumpStat( 'editor_upload_via', 'editor_drop' );
+		bumpStat( 'editor_upload_via', 'editor_drop' );
 	};
 
 	render() {
@@ -140,8 +137,13 @@ class TinyMCEDropZone extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-	} ),
+	( state ) => {
+		const site = getSelectedSite( state );
+
+		return {
+			site,
+			mediaValidationErrors: getMediaErrors( state, site?.ID ),
+		};
+	},
 	{ blockSave }
 )( TinyMCEDropZone );

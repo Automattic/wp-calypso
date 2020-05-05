@@ -3,7 +3,10 @@
  */
 import { AUTH_ATTEMPS_TTL } from '../constants';
 import { isStale } from '../utils';
-import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import {
+	JETPACK_CONNECT_COMPLETE_FLOW,
+	JETPACK_CONNECT_RETRY_AUTH,
+} from 'state/jetpack-connect/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
 import { keyedReducer, withSchemaValidation } from 'state/utils';
 

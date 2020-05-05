@@ -72,6 +72,8 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table.has-1-cols {
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 337px;
 }
 
@@ -307,7 +309,7 @@ $plan-features-sidebar-width: 272px;
 	border-radius: 10px;
 	color: var( --color-text-inverted );
 	background: var( --color-success );
-	font-weight: normal;
+	font-weight: 400;
 	vertical-align: middle;
 	padding: 0 8px;
 	margin-bottom: 4px;
@@ -505,7 +507,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__item-title-outlined {
-	font-weight: bold;
+	font-weight: 600;
 	display: block;
 }
 
@@ -856,7 +858,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__header-title {
 		color: var( --color-text );
-		font-weight: 700;
+		font-weight: 600;
 		font-size: 24px;
 		margin-bottom: 6px;
 	}
@@ -874,7 +876,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		border-top: solid 1px var( --color-neutral-10 );
 
 		.plan-price {
-			font-weight: bold;
+			font-weight: 600;
 			margin-right: 10px;
 			font-size: 52px;
 			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
@@ -939,7 +941,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__item {
 		align-items: center;
 		font-size: inherit;
-		font-weight: 500;
+		font-weight: 600;
 		min-height: 42px;
 		margin: 0;
 		padding: 0 8px 0 16px;

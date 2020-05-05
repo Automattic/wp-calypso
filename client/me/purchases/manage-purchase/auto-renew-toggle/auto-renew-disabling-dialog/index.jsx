@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { getSite } from 'state/sites/selectors';
@@ -57,9 +56,9 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	getCopy( variation ) {
-		const { planName, siteDomain, purchase, translate } = this.props;
+		const { planName, siteDomain, purchase, translate, moment } = this.props;
 
-		const expiryDate = purchase.expiryMoment.format( 'LL' );
+		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
 		switch ( variation ) {
 			case 'plan':
@@ -193,18 +192,29 @@ class AutoRenewDisablingDialog extends Component {
 		const { isVisible, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
+		const buttons = [
+			{
+				action: 'close',
+				label: translate( "I'll keep it" ),
+				onClick: this.closeAndCleanup,
+			},
+			{
+				action: 'confirm',
+				label: translate( 'Confirm cancellation' ),
+				onClick: this.onClickGeneralConfirm,
+				isPrimary: true,
+			},
+		];
+
 		return (
 			<Dialog
 				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog"
 				onClose={ this.closeAndCleanup }
+				buttons={ buttons }
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
-				<Button onClick={ this.onClickGeneralConfirm } primary>
-					{ translate( 'Confirm cancellation' ) }
-				</Button>
 			</Dialog>
 		);
 	};
@@ -237,4 +247,4 @@ class AutoRenewDisablingDialog extends Component {
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 	selectedSite: getSite( state, purchase.siteId ),
-} ) )( localize( AutoRenewDisablingDialog ) );
+} ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

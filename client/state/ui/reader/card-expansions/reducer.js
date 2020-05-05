@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
 import { withoutPersistence } from 'state/utils';
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/reader/action-types';
 import { keyToString } from 'reader/post-key';
 
 export default withoutPersistence( ( state = {}, action ) => {

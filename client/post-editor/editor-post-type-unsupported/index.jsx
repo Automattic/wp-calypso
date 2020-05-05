@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,8 +16,7 @@ import { getEditorPostId, getEditorNewPostPath } from 'state/ui/editor/selectors
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypes, getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -105,7 +102,7 @@ function EditorPostTypeUnsupported( {
 					'For more information, visit our {{supportLink}}support page on custom content types{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <a href="https://support.wordpress.com/custom-post-types/" />,
+							supportLink: <a href="https://wordpress.com/support/custom-post-types/" />,
 						},
 					}
 				) }

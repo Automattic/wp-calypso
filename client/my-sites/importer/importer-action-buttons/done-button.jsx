@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -83,7 +82,7 @@ export class DoneButton extends React.PureComponent {
 
 export default flow(
 	connect(
-		state => ( {
+		( state ) => ( {
 			isSignup: isImportingFromSignupFlow( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 		} ),

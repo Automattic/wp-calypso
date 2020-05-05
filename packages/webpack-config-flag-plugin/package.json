@@ -6,6 +6,7 @@
 	"peerDependencies": {
 		"webpack": "^4.29.6"
 	},
+	"author": "Automattic Inc.",
 	"private": true,
 	"repository": {
 		"type": "git",

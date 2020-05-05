@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { infoNotice, errorNotice } from 'state/notices/actions';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -57,7 +55,7 @@ export class WechatPaymentBox extends Component {
 		this.props.reset();
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { showInfoNotice, translate, createRedirect } = this.props;
@@ -73,7 +71,7 @@ export class WechatPaymentBox extends Component {
 		createRedirect( this.state.name );
 	};
 
-	handleChange = event => this.setState( { name: event.target.value, errorMessage: '' } );
+	handleChange = ( event ) => this.setState( { name: event.target.value, errorMessage: '' } );
 
 	componentDidUpdate( prevProps ) {
 		const {
@@ -198,7 +196,7 @@ export class WechatPaymentBox extends Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 							{ showPaymentChatButton && (
@@ -216,7 +214,7 @@ export class WechatPaymentBox extends Component {
 	}
 }
 
-export const requestId = cart => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
+export const requestId = ( cart ) => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
 
 export const requestRedirect = ( cart, domain_details, payment ) => {
 	return requestHttpData(
@@ -253,7 +251,7 @@ export default connect(
 		};
 	},
 	( dispatch, { cart, transaction, selectedSite, redirectTo } ) => ( {
-		createRedirect: name => {
+		createRedirect: ( name ) => {
 			const origin = getLocationOrigin( window.location );
 
 			const slug = get( selectedSite, 'slug', 'no-site' );

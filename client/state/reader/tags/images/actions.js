@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,9 @@ import {
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
 	READER_TAG_IMAGES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+
+import 'state/reader/init';
 
 /**
  * Module variables
@@ -23,9 +24,9 @@ const debug = debugModule( 'calypso:redux:reader-tags-images' );
 /**
  * Returns an action object to signal that image objects have been received.
  *
- * @param {String} tag The tag slug the images are for
+ * @param {string} tag The tag slug the images are for
  * @param  {Array}  images Images received
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export function receiveTagImages( tag, images ) {
 	return {
@@ -38,12 +39,12 @@ export function receiveTagImages( tag, images ) {
 /**
  * Triggers a network request to fetch tag images.
  *
- * @param  {Integer} tag Tag name
- * @param  {Integer} limit Maximum number of results to return
- * @return {Function} Action thunk
+ * @param  {number} tag Tag name
+ * @param  {number} limit Maximum number of results to return
+ * @returns {Function} Action thunk
  */
 export function requestTagImages( tag, limit = 5 ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_TAG_IMAGES_REQUEST,
 			tag,
@@ -60,7 +61,7 @@ export function requestTagImages( tag, limit = 5 ) {
 			.undocumented()
 			.readTagImages( query )
 			.then(
-				data => {
+				( data ) => {
 					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
 
 					dispatch( {
@@ -69,7 +70,7 @@ export function requestTagImages( tag, limit = 5 ) {
 						data,
 					} );
 				},
-				error => {
+				( error ) => {
 					// dispatch an empty array so we stop requesting it
 					dispatch( receiveTagImages( tag, [] ) );
 

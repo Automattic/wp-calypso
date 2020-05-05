@@ -1,18 +1,15 @@
-// Placeholder selectors
-%product-card-link-plain {
-	color: var( --color-link-light );
+.product-card {
+	width: 100%;
 
-	&:hover,
-	&:focus,
-	&:active {
-		color: var( --color-link-dark );
+	@include breakpoint( '>480px' ) {
+		min-width: 460px;
 	}
 }
-
 // Header
 .product-card__header {
 	margin: -16px -16px 16px;
-	border-bottom: solid 2px var( --color-jetpack-plan-free );
+	padding: 16px 0;
+	border-bottom: solid 2px var( --color-jetpack );
 
 	@include breakpoint( '>480px' ) {
 		margin: -24px -24px 24px;
@@ -20,12 +17,13 @@
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
+		flex-flow: row wrap;
 		align-items: baseline;
 	}
 }
 
 .product-card__header-primary,
-.product-card__header-secondary {
+.product-card__secondary {
 	padding-left: 40px;
 	padding-right: 40px;
 
@@ -37,17 +35,14 @@
 
 .product-card__header-primary {
 	display: flex;
-	padding-top: 16px;
-	padding-bottom: 8px;
-
-	@include breakpoint( '>480px' ) {
-		padding-top: 24px;
-	}
+	justify-content: center;
 
 	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
-		padding-top: 12px;
-		padding-bottom: 0;
+	}
+
+	.product-card:not( .has-secondary-header ) & {
+		justify-content: center;
 	}
 
 	.gridicon {
@@ -60,54 +55,36 @@
 			margin-left: 0;
 		}
 	}
+	.gridicons-checkmark {
+		fill: var( --color-jetpack );
+	}
 }
 
-.product-card__header-secondary {
-	position: relative;
-	padding-bottom: 16px;
-
-	@include breakpoint( '>480px' ) {
-		padding-bottom: 24px;
-	}
-
-	@include breakpoint( '>660px' ) {
-		padding-bottom: 12px;
-	}
+.product-card__secondary {
+	margin-top: 16px;
+	text-align: center;
 }
 
 .product-card__title {
-	font-size: 22px;
+	font-size: 20px;
 	line-height: 24px;
 
-	@include breakpoint( '>660px' ) {
-		font-size: 17px;
+	@include breakpoint( '>960px' ) {
+		font-size: 22px;
 	}
 
 	em,
 	strong,
 	span {
-		font-weight: 600;
 		font-style: italic;
-	}
-
-	.product-card:not( .is-purchased ) & {
-		color: var( --color-primary-50 );
-
-		@include breakpoint( '>660px' ) {
-			font-weight: 600;
-		}
 	}
 }
 
 .product-card__subtitle {
-	font-size: 12px;
+	font-size: 14px;
 	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
-
-	a {
-		@extend %product-card-link-plain;
-	}
 }
 
 // Price group
@@ -144,12 +121,6 @@
 	@include breakpoint( '>960px' ) {
 		font-size: 12px;
 	}
-
-	.is-discounted & {
-		@include breakpoint( '>660px' ) {
-			color: var( --color-success );
-		}
-	}
 }
 
 // Adjust price group styles when part of product card header
@@ -185,16 +156,13 @@
 		}
 	}
 
-	.is-discounted .product-card__billing-timeframe {
-		color: var( --color-success );
+	.plan-price.is-discounted {
+		margin-right: 4px;
 	}
 
-	@include breakpoint( '>960px' ) {
-		.plan-price.is-discounted,
-		.plan-price.is-discounted *,
-		.is-discounted .product-card__billing-timeframe {
-			color: var( --color-text-subtle );
-		}
+	.plan-price.is-discounted,
+	.plan-price.is-discounted .plan-price__currency-symbol {
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -204,10 +172,6 @@
 	line-height: 20px;
 	color: var( --color-text-subtle );
 
-	a {
-		@extend %product-card-link-plain;
-	}
-
 	p:last-child {
 		margin: 0;
 	}
@@ -215,62 +179,93 @@
 
 // Product options
 .product-card__options {
-	padding: 10px 0 0;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-around; // IE11 fallback.
+	justify-content: space-evenly;
 
-	@include breakpoint( '>960px' ) {
-		display: flex;
+	@include breakpoint( '>480px' ) {
 		flex-flow: row wrap;
-		justify-content: space-around; // IE11 fallback.
-		justify-content: space-evenly;
 	}
 }
 
 .product-card__options-label {
-	margin: 8px 0;
-	padding: 6px 0;
+	margin-top: 16px;
 	font-size: 14px;
+	text-align: center;
 	color: var( --color-text-subtle );
-	border-bottom: 1px solid var( --color-border-subtle );
 
 	@include breakpoint( '>960px' ) {
 		flex: 0 0 100%;
 	}
-}
 
-.product-card__option,
-.product-card__option-description {
-	display: flex;
-	align-items: center;
+	.info-popover {
+		margin-left: 4px;
+		vertical-align: middle;
+	}
 }
 
 // We need a higher specificity here to override .form-label styles
 .product-card__option.form-label {
-	margin: 16px 0 0;
-	padding: 8px 0;
+	display: flex;
+	flex: 1;
+	flex-direction: row;
+	align-items: center;
+	margin: 16px 0 8px;
+	padding: 16px;
+	border: 1px solid var( --color-neutral-20 );
+	border-radius: 4px;
+	cursor: pointer;
 
-	@include breakpoint( '>960px' ) {
-		flex: 0 0 40%;
-		align-items: flex-start;
+	@include breakpoint( '>480px' ) {
+		flex-direction: column;
+	}
+
+	&.is-selected {
+		// Matches the feature highlight on the plans tables
+		background-color: rgba( var( --color-primary-rgb ), 0.1 );
+		border-color: var( --color-primary );
+	}
+
+	& + .product-card__option.form-label {
+		margin-top: 0;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: 16px;
+			margin-left: 8px;
+		}
 	}
 }
 
 .product-card__option-description {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-start;
 	margin-left: 8px;
-	flex-grow: 1;
-	flex-wrap: wrap;
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+		margin-top: 6px;
+		margin-left: 0;
+	}
+
+	@include breakpoint( '>960px' ) {
+		margin-top: 0;
+	}
+}
+
+.product-card__radio.form-radio {
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 10px;
+	}
 }
 
 .product-card__option-name {
-	flex-grow: 1;
-	font-size: 16px;
-	font-weight: 700;
-
-	@include breakpoint( '>960px' ) {
-		margin-bottom: 2px;
-		flex: 0 0 100%;
-		font-size: 14px;
-		line-height: 20px;
-	}
+	margin-bottom: 2px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	text-align: center;
 }
 
 // Action
@@ -289,6 +284,63 @@
 .product-card__action-button {
 	width: 100%;
 	max-width: 320px;
+}
+
+// Promo nudge
+.product-card__promo-nudge {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-items: center;
+	margin: 24px auto 8px;
+
+	& + .product-card__options-label {
+		margin-top: 8px;
+	}
+}
+
+.product-card__promo-nudge-badge {
+	box-sizing: border-box;
+	position: relative;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	width: 92px;
+	height: 92px;
+	padding: 12px 16px 16px;
+	transform: rotate( -10deg );
+	color: var( --studio-white );
+	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
+	background-size: contain;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 17px;
+	text-align: center;
+}
+
+.product-card__promo-nudge-text {
+	width: 100%;
+	padding: 7px 24px;
+	border-radius: 16px;
+	background-color: var( --color-neutral-0 );
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	line-height: 18px;
+	text-align: left;
+	text-transform: uppercase;
+
+	strong {
+		display: block;
+		color: var( --color-text );
+		font-size: 14px;
+		font-weight: 600;
+		text-transform: none;
+	}
+
+	.has-badge & {
+		margin-left: -46px;
+		padding-left: 62px;
+	}
 }
 
 // Loading state

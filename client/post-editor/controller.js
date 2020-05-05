@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +27,7 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -140,7 +139,7 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 };
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -191,13 +190,17 @@ async function redirectIfBlockEditor( context, next ) {
 
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
-	const url = getGutenbergEditorUrl( state, siteId, postId, postType );
 	// pass along parameters, for example press-this
-	return window.location.replace( addQueryArgs( context.query, url ) );
+	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const url = addQueryArgs( context.query, gutenbergUrl );
+	if ( shouldRedirectGutenberg( state, siteId ) ) {
+		return window.location.replace( url );
+	}
+	return page.redirect( url );
 }
 
 export default {
-	post: function( context, next ) {
+	post: function ( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const postToCopyId = context.query[ 'jetpack-copy' ];
@@ -216,17 +219,21 @@ export default {
 				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
 			} else if ( postId ) {
 				const contextPath = context.path;
-				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
-					if ( contextPath !== page.current ) {
-						// browser navigated elsewhere while the load was in progress
-						return;
-					}
+				context.store
+					.dispatch( startEditingExistingPost( siteId, postId ) )
+					.then( ( editedPost ) => {
+						if ( contextPath !== page.current ) {
+							// browser navigated elsewhere while the load was in progress
+							return;
+						}
 
-					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
-						// incorrect post type in URL
-						page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
-					}
-				} );
+						if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+							// incorrect post type in URL
+							page.redirect(
+								getEditURL( editedPost, getSite( context.store.getState(), siteId ) )
+							);
+						}
+					} );
 			} else {
 				const post = { type: postType };
 
@@ -282,7 +289,7 @@ export default {
 		next();
 	},
 
-	exitPost: function( context, next ) {
+	exitPost: function ( context, next ) {
 		const postId = getPostID( context );
 		const siteId = getSelectedSiteId( context.store.getState() );
 		if ( siteId ) {
@@ -291,7 +298,7 @@ export default {
 		next();
 	},
 
-	pressThis: function( context, next ) {
+	pressThis: function ( context, next ) {
 		if ( ! context.query.url ) {
 			// not pressThis, early return
 			return next();

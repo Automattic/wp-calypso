@@ -1,5 +1,3 @@
-/** @format */
-
 export const SITE_REQUEST_FIELDS = [
 	'ID',
 	'URL',
@@ -7,6 +5,7 @@ export const SITE_REQUEST_FIELDS = [
 	'icon',
 	'is_multisite',
 	'is_private',
+	'is_coming_soon',
 	'is_vip',
 	'jetpack',
 	'jetpack_modules',
@@ -17,7 +16,10 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
+	'site_migration',
 	'is_fse_active',
+	'is_fse_eligible',
+	'is_core_site_editor_enabled',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -41,6 +43,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_redirect',
 	'is_wpcom_atomic',
 	'is_wpcom_store',
+	'is_wpforteams_site',
 	'woocommerce_is_active',
 	'jetpack_frame_nonce',
 	'jetpack_version',
@@ -63,4 +66,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'videopress_enabled',
 	'woocommerce_is_active',
 	'wordads',
+	'site_creation_flow',
 ].join();

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ function GuidedTours( { shouldShow } ) {
 	return <AsyncLoad require="layout/guided-tours/component" />;
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const tourState = getGuidedTourState( state );
 	return {
 		shouldShow: tourState && tourState.shouldShow,

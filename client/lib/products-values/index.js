@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,14 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { JETPACK_BACKUP_PRODUCTS } from './constants';
+import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
+import {
+	getJetpackProductsDisplayNames,
+	getJetpackProductsTaglines,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
+} from './constants';
+import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -170,11 +175,15 @@ export function isEnterprise( product ) {
 	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
 }
 
+export function isJetpackPlanSlug( productSlug ) {
+	return planMatches( productSlug, { group: GROUP_JETPACK } );
+}
+
 export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return planMatches( product.product_slug, { group: GROUP_JETPACK } );
+	return isJetpackPlanSlug( product.product_slug );
 }
 
 export function isJetpackBusiness( product ) {
@@ -202,13 +211,33 @@ export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-export function isJetpackProduct( product ) {
-	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+export function isJetpackBackupSlug( productSlug ) {
+	return includes( JETPACK_BACKUP_PRODUCTS, productSlug );
+}
 
+export function isJetpackBackup( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return includes( jetpackProducts, product.product_slug );
+	return isJetpackBackupSlug( product.product_slug );
+}
+
+export function isJetpackProductSlug( productSlug ) {
+	return includes( JETPACK_PRODUCTS_LIST, productSlug );
+}
+
+export function isJetpackProduct( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackProductSlug( product.product_slug );
+}
+
+export function getProductFromSlug( productSlug ) {
+	if ( PRODUCTS_LIST[ productSlug ] ) {
+		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+	}
+	return productSlug; // Consistent behavior with `getPlan`.
 }
 
 export function isMonthly( rawProduct ) {
@@ -355,6 +384,46 @@ export function getDomain( product ) {
 	return product.meta;
 }
 
+export function getProductsSlugs() {
+	return JETPACK_PRODUCTS_LIST;
+}
+
+export function getProductClass( productSlug ) {
+	if ( isJetpackBackupSlug( productSlug ) ) {
+		return 'is-jetpack-backup';
+	}
+
+	return '';
+}
+
+/**
+ * Get Jetpack product display name based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|object} Product display name
+ */
+export function getJetpackProductDisplayName( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+
+	return jetpackProductsDisplayNames?.[ product.productSlug ];
+}
+
+/**
+ * Get Jetpack product tagline based on the product purchase object.
+ *
+ * @param   product {object}             Product purchase object
+ * @returns         {string|object} Product tagline
+ */
+export function getJetpackProductTagline( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+	const jetpackProductsTaglines = getJetpackProductsTaglines();
+
+	return jetpackProductsTaglines?.[ product.productSlug ];
+}
+
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	let isPlansOnlyDependent = false;
 
@@ -389,11 +458,7 @@ export function isGoogleApps( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return (
-		'gapps' === product.product_slug ||
-		'gapps_unlimited' === product.product_slug ||
-		'gapps_extra_license' === product.product_slug
-	);
+	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGuidedTransfer( product ) {
@@ -468,50 +533,3 @@ export function isConciergeSession( product ) {
 
 	return 'concierge-session' === product.product_slug;
 }
-
-export default {
-	formatProduct,
-	getDomainProductRanking,
-	getIncludedDomainPurchaseAmount,
-	includesProduct,
-	isBusiness,
-	isChargeback,
-	isCredits,
-	isCustomDesign,
-	isDependentProduct,
-	isDelayedDomainTransfer,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainTransferProduct,
-	isBundled,
-	isDotComPlan,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isFreePlan,
-	isPersonal,
-	isFreeTrial,
-	isFreeWordPressComDomain,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackBusiness,
-	isJetpackPlan,
-	isJetpackPremium,
-	isJetpackMonthlyPlan,
-	isVipPlan,
-	isMonthly,
-	isJpphpBundle,
-	isNoAds,
-	isPlan,
-	isPremium,
-	isSiteRedirect,
-	isSpaceUpgrade,
-	isTheme,
-	isUnlimitedSpace,
-	isUnlimitedThemes,
-	isVideoPress,
-	whitelistAttributes,
-	isConciergeSession,
-};

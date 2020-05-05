@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { includes } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 import { isPublished } from 'state/posts/utils';
 import Tooltip from 'components/tooltip';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -89,7 +87,7 @@ class EditorViewLink extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const currentPost = getSitePost( state, siteId, postId );

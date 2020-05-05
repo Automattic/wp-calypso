@@ -26,7 +26,7 @@ render() {
 
 For more information about `PageViewTracker`, refer to [its own documentation](https://github.com/Automattic/wp-calypso/tree/master/client/lib/analytics/page-view-tracker).
 
-### `recordPageView( path, title )`
+### `recordPageView( path, title )` action
 
 _Note: Unless you have a strong reason to record a page view with Redux, you should use the `PageViewTracker` component instead._
 
@@ -36,12 +36,14 @@ import { recordPageView } from 'state/analytics/actions';
 dispatch( recordPageView( '/section/page', 'My Cool Section > My Cool Page' ) );
 ```
 
-### `analytics.pageView.record( path, title )` (Deprecated)
+### `recordPageView( path, title )` method (Deprecated)
 
 _Note: Unless you have a strong reason to directly record a page view, you should use the `PageViewTracker` component instead._
 
 ```js
-analytics.pageView.record( '/section/page', 'My Cool Section > My Cool Page' );
+import { recordPageView } from 'lib/analytics/page-view';
+
+recordPageView( '/section/page', 'My Cool Section > My Cool Page' );
 ```
 
 ## Paths Conventions

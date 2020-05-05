@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import FormInput from 'components/forms/form-text-input-with-affixes';
@@ -164,7 +162,7 @@ class SiteVerification extends Component {
 	}
 
 	handleVerificationCodeChange( serviceCode ) {
-		return event => {
+		return ( event ) => {
 			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
 				return;
 			}
@@ -205,7 +203,7 @@ class SiteVerification extends Component {
 		);
 	}
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		const { path, siteId, translate, trackSiteVerificationUpdated } = this.props;
 		const { dirtyFields } = this.state;
 
@@ -292,7 +290,7 @@ class SiteVerification extends Component {
 					isSaving={ isSubmittingForm }
 					onButtonClick={ this.handleFormSubmit }
 					showButton
-					title={ translate( 'Site Verification Services' ) }
+					title={ translate( 'Site verification services' ) }
 				/>
 				<Card>
 					{ siteIsJetpack && (
@@ -327,7 +325,7 @@ class SiteVerification extends Component {
 										<ExternalLink
 											icon={ true }
 											target="_blank"
-											href="https://en.support.wordpress.com/webmaster-tools/"
+											href="https://wordpress.com/support/webmaster-tools/"
 										/>
 									),
 									google: (
@@ -431,7 +429,7 @@ class SiteVerification extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 

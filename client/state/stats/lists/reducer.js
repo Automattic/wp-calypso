@@ -20,9 +20,9 @@ import {
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const requests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -68,9 +68,9 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, statType and and serialized query key to the stat payload.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

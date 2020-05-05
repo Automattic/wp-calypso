@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +25,8 @@ import NavigationComponent from 'my-sites/navigation';
 import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -34,6 +34,7 @@ import getSiteId from 'state/selectors/get-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	domainManagementContactsPrivacy,
@@ -63,9 +64,9 @@ import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
-const getStore = context => ( {
+const getStore = ( context ) => ( {
 	getState: () => context.store.getState(),
-	dispatch: action => context.store.dispatch( action ),
+	dispatch: ( action ) => context.store.dispatch( action ),
 } );
 
 /**
@@ -97,12 +98,7 @@ function createNavigation( context ) {
 }
 
 function removeSidebar( context ) {
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
 }
 
 function renderEmptySites( context ) {
@@ -177,7 +173,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => {
+	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
 		if ( pathFactory === emailManagementNewGSuiteAccount ) {
 			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
 			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
@@ -187,13 +183,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
-			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
+			allPaths.map( ( pathFactory ) => pathFactory( slug, primaryDomain.name ) )
 		);
 	}
 
 	const startsWithPaths = [ '/checkout/', `/me/purchases/${ slug }` ];
 
-	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
 		return true;
 	}
 
@@ -208,6 +204,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
+	// If migration is in progress, only /migrate paths should be loaded for the site
+	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+
+	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+		page.redirect( `/migrate/${ selectedSite.slug }` );
+		return false;
+	}
+
 	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
@@ -221,8 +225,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginIstallURL;
+		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
 		return false;
@@ -249,7 +253,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			//also filter recent sites if not available locally
 			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
 				.slice( 0, 5 )
-				.filter( recentId => !! getSite( state, recentId ) );
+				.filter( ( recentId ) => !! getSite( state, recentId ) );
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
@@ -269,7 +273,7 @@ function createSitesComponent( context ) {
 	// This path sets the URL to be visited once a site is selected
 	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
-	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
+	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
 	return (
 		<SitesComponent
@@ -296,12 +300,9 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 				href: `${ currentUser.primary_blog_url }/wp-admin`,
 			} )
 		);
-		analytics.tracks.recordEvent(
-			'calypso_mysites_single_site_jetpack_connection_error',
-			tracksPayload
-		);
+		recordTracksEvent( 'calypso_mysites_single_site_jetpack_connection_error', tracksPayload );
 	} else {
-		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+		recordTracksEvent( 'calypso_mysites_single_site_error', tracksPayload );
 	}
 }
 
@@ -324,7 +325,7 @@ export function siteSelection( context, next ) {
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+		return recordPageView( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
 			base_path: basePath,
 		} );
 	}
@@ -332,11 +333,9 @@ export function siteSelection( context, next ) {
 	// The user has all sites set as hidden: render help message with how to make them visible
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
-		return analytics.pageView.record(
-			'/no-sites',
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
-			{ base_path: basePath }
-		);
+		return recordPageView( '/no-sites', `${ sitesPageTitleForAnalytics } > All Sites Hidden`, {
+			base_path: basePath,
+		} );
 	}
 
 	/*
@@ -351,7 +350,7 @@ export function siteSelection( context, next ) {
 	if ( hasOneSite && ! siteFragment ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
-		const redirectToPrimary = primarySiteSlug => {
+		const redirectToPrimary = ( primarySiteSlug ) => {
 			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
@@ -418,7 +417,7 @@ export function siteSelection( context, next ) {
 }
 
 export function jetpackModuleActive( moduleId, redirect ) {
-	return function( context, next ) {
+	return function ( context, next ) {
 		const { getState } = getStore( context );
 		const siteId = getSelectedSiteId( getState() );
 		const isJetpack = isJetpackSite( getState(), siteId );
@@ -446,7 +445,7 @@ export function navigation( context, next ) {
  * Middleware that adds the site selector screen to the layout.
  *
  * @param {object} context -- Middleware context
- * @param {function} next -- Call next middleware in chain
+ * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
@@ -458,12 +457,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.store.dispatch(
-		setSection( {
-			group: 'sites',
-			secondary: false,
-		} )
-	);
+	removeSidebar( context );
 
 	context.primary = createSitesComponent( context );
 	next();

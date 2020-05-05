@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ export default class PopoverMenuItem extends Component {
 		itemComponent: 'button',
 	};
 
-	handleMouseOver = event => {
+	handleMouseOver = ( event ) => {
 		const { focusOnHover } = this.props;
 
 		if ( focusOnHover ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ function getCombination( translateArg ) {
 }
 
 function getTranslateArg( logs, sampleLog, typeFilter ) {
-	const filteredLogs = logs.filter( log => {
+	const filteredLogs = logs.filter( ( log ) => {
 		return log.status === typeFilter ? typeFilter : sampleLog.type;
 	} );
 

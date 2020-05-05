@@ -7,13 +7,19 @@ import { mapValues, omit, map } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withSchemaValidation,
+	withStorageKey,
+	withoutPersistence,
+} from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
+	RECOMMENDED_THEMES_FAIL,
+	RECOMMENDED_THEMES_FETCH,
+	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -31,7 +37,11 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-} from 'state/action-types';
+	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+} from 'state/themes/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,
@@ -48,9 +58,9 @@ import { decodeEntities } from 'lib/formatting';
  * dispatched. The state reflects a mapping of site ID to theme ID where
  * theme ID represents active theme for the site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -80,9 +90,9 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
  * dispatched. The state reflects a mapping of site ID to a boolean
  * reflecting whether a theme is being activated on that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function activationRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -103,9 +113,9 @@ export function activationRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of site ID to boolean, reflecting whether
  * activation request has finished or has been cleared.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const completedActivationRequests = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -135,9 +145,9 @@ export const completedActivationRequests = withoutPersistence( ( state = {}, act
  * dispatched. The state reflects a mapping of site ID to a boolean
  * reflecting whether a request for active theme is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function activeThemeRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -158,9 +168,9 @@ export function activeThemeRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * boolean reflecting whether a request for the theme is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function themeRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -182,9 +192,9 @@ export function themeRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * boolean reflecting whether a request for the theme install is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function themeInstalls( state = {}, action ) {
 	switch ( action.type ) {
@@ -206,9 +216,9 @@ export function themeInstalls( state = {}, action ) {
  * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
  * object describing request error. If there is no error null is stored.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const themeRequestErrors = withSchemaValidation(
 	themeRequestErrorsSchema,
@@ -244,9 +254,9 @@ export const themeRequestErrors = withSchemaValidation(
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	let serializedQuery;
@@ -269,9 +279,9 @@ export function queryRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of site ID, query ID pairing to an
  * object containing the request error. If there is no error null is stored.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -304,9 +314,9 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
  * The state reflects a mapping of serialized query key to an array of theme IDs
  * for the query, if a query response was successfully received.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
@@ -387,9 +397,9 @@ export const queries = ( () => {
  * Returns the updated themes last query state.
  * The state reflects a mapping of site Id to last query that was issued on that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const lastQuery = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -410,9 +420,9 @@ export const lastQuery = withoutPersistence( ( state = {}, action ) => {
  * Returns the updated previewing theme state
  * The state holds information about primary and secondary theme actions usable in preview.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const themePreviewOptions = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -433,15 +443,44 @@ export const themePreviewOptions = withoutPersistence( ( state = {}, action ) =>
  * Returns the updated previewing theme state
  * The state reflects if Theme Preview component should be visible or not.
  *
- * @param  {Bool}   state  Current state
- * @param  {Object} action Action payload
- * @return {Bool}          Updated state
+ * @param  {boolean}   state  Current state
+ * @param  {object} action Action payload
+ * @returns {boolean}          Updated state
  */
 export const themePreviewVisibility = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_STATE: {
 			const { themeId } = action;
 			return themeId;
+		}
+	}
+
+	return state;
+} );
+
+export const themeHasAutoLoadingHomepageWarning = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: true,
+				accepted: false,
+			};
+		}
+
+		case THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: false,
+				accepted: true,
+			};
+		}
+
+		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_SUCCESS:
+		case THEME_ACTIVATE_FAILURE:
+		case THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return null;
 		}
 	}
 
@@ -459,7 +498,28 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 	return state;
 } );
 
-export default combineReducers( {
+/**
+ * Returns updated state for recommended themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function recommendedThemes( state = { isLoading: true, themes: [] }, action ) {
+	switch ( action.type ) {
+		case RECOMMENDED_THEMES_FETCH:
+			return { ...state, isLoading: true };
+		case RECOMMENDED_THEMES_SUCCESS:
+			return { ...state, isLoading: false, themes: action.payload.themes };
+		case RECOMMENDED_THEMES_FAIL:
+			return { ...state, isLoading: false };
+	}
+
+	return state;
+}
+
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
@@ -476,4 +536,9 @@ export default combineReducers( {
 	themePreviewOptions,
 	themePreviewVisibility,
 	themeFilters,
+	recommendedThemes,
+	themeHasAutoLoadingHomepageWarning,
 } );
+const themesReducer = withStorageKey( 'themes', combinedReducer );
+
+export default themesReducer;

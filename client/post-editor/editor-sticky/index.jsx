@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -112,7 +110,7 @@ class EditorSticky extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
 		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );

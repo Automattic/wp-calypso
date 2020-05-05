@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,10 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
 import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
@@ -34,7 +30,7 @@ class Locked extends React.Component {
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, error => {
+		requestTransferCode( options, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			}
@@ -65,8 +61,6 @@ class Locked extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain' ) } />
-
 				<Card className="transfer-out__card">
 					<p>
 						{ privateDomain
@@ -74,7 +68,7 @@ class Locked extends React.Component {
 									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
 										'Your contact information will be publicly available during the transfer period.'
 							  )
-							: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
+							: translate( 'To transfer your domain, we must unlock it.' ) }{ ' ' }
 						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Learn More.' ) }
 						</a>
@@ -86,7 +80,7 @@ class Locked extends React.Component {
 						primary
 						disabled={ this.state.submitting }
 					>
-						{ translate( 'Update Settings And Continue' ) }
+						{ translate( 'Update settings and continue' ) }
 					</Button>
 				</Card>
 			</div>

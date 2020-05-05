@@ -10,9 +10,9 @@ import { Moment } from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 interface Props {
 	startDate: Date | Moment | null | undefined;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { noop, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 
 class FormClickToEditInput extends Component {
@@ -60,7 +58,7 @@ class FormClickToEditInput extends Component {
 		} );
 	};
 
-	onInputChange = e => {
+	onInputChange = ( e ) => {
 		this.setState( {
 			value: e.target.value,
 		} );

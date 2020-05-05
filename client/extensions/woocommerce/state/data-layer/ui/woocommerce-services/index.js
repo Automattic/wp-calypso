@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -80,7 +78,7 @@ const getSavePackagesActionListSteps = ( state, siteId ) => {
 	];
 };
 
-const getSaveSettingsActionListSteps = state => {
+const getSaveSettingsActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return [
@@ -93,8 +91,9 @@ export default {
 	[ WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE ]: [
 		/**
 		 * Creates and executes a WCS shipping settings action list
-		 * @param {Object} store -
-		 * @param {Object} action - an action containing successAction and failureAction
+		 *
+		 * @param {object} store -
+		 * @param {object} action - an action containing successAction and failureAction
 		 */
 		( store, action ) => {
 			const { successAction, failureAction, noLabelsPaymentAction } = action;
@@ -107,17 +106,19 @@ export default {
 
 			/**
 			 * A callback issued after a successful request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
 			/**
 			 * A callback issued after a failed request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
@@ -135,7 +136,7 @@ export default {
 			const methodSchema = getShippingMethodSchema( getState(), methodType, siteId ).formSchema;
 			const methodValues = coerceFormValues( methodSchema, method );
 
-			const updatedAction = data => {
+			const updatedAction = ( data ) => {
 				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
 
 				const props = {
@@ -148,7 +149,7 @@ export default {
 			api
 				.post( siteId, api.url.serviceSettings( methodType, methodId ), methodValues )
 				.then( updatedAction )
-				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
+				.catch( ( error ) => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
 		},
 	],
 };

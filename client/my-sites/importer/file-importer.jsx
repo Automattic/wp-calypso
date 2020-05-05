@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { isEnabled as isConfigEnabled } from 'config';
 import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
@@ -68,13 +67,15 @@ class FileImporter extends React.PureComponent {
 		} ),
 	};
 
-	handleClick = () => {
+	handleClick = ( shouldStartImport ) => {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		if ( shouldStartImport ) {
+			startImport( siteId, type );
+		}
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -83,7 +84,13 @@ class FileImporter extends React.PureComponent {
 	};
 
 	render() {
-		const { title, icon, description, uploadDescription } = this.props.importerData;
+		const {
+			title,
+			icon,
+			description,
+			overrideDestination,
+			uploadDescription,
+		} = this.props.importerData;
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
@@ -94,9 +101,19 @@ class FileImporter extends React.PureComponent {
 		} );
 		const cardProps = {
 			displayAsLink: true,
-			onClick: this.handleClick,
+			onClick: this.handleClick.bind( this, true ),
 			tagName: 'button',
 		};
+
+		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+			/**
+			 * Override where the user lands when they click the importer.
+			 *
+			 * This is used for the new Migration logic for the moment.
+			 */
+			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
+			cardProps.onClick = this.handleClick.bind( this, false );
+		}
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
@@ -121,7 +138,4 @@ class FileImporter extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( FileImporter );
+export default connect( null, { recordTracksEvent } )( FileImporter );
