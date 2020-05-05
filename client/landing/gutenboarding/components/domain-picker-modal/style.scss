@@ -87,7 +87,9 @@
 
 		// Space to accomodate sticky footer
 		.domain-picker__panel-row-main {
-			margin-bottom: 85px;
+			&.components-panel__row {
+				margin-bottom: 85px;
+			}
 		}
 	}
 
