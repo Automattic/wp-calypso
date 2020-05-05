@@ -152,10 +152,10 @@ const Header: React.FunctionComponent = () => {
 	};
 
 	React.useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username ) {
+		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
 			handleCreateSite( newUser.username, newUser.bearerToken );
 		}
-	}, [ newUser, handleCreateSite ] );
+	}, [ newSite, newUser, handleCreateSite ] );
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call

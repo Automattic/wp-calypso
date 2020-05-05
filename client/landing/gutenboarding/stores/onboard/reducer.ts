@@ -133,7 +133,7 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 		return action.isRedirecting;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		// return false
+		return false;
 	}
 	return state;
 };
