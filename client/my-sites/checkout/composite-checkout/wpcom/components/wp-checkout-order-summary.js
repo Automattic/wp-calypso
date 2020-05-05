@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import {
 	CheckoutCheckIcon,
@@ -12,11 +13,19 @@ import {
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import { showInlineHelpPopover } from 'state/inline-help/actions';
+
 export default function WPCheckoutOrderSummary() {
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
 	const total = useTotal();
+
+	const handleHelpButtonClicked = () => reduxDispatch( showInlineHelpPopover() );
 
 	return (
 		<CheckoutSummaryCard>
@@ -35,6 +44,13 @@ export default function WPCheckoutOrderSummary() {
 						{ translate( 'Money back guarantee' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</CheckoutSummaryFeaturesList>
+				<CheckoutSummaryHelp>
+					{ translate( 'Questions? {{link}}Ask a Happiness Engineer.{{/link}}', {
+						components: {
+							link: <button onClick={ handleHelpButtonClicked } />,
+						},
+					} ) }
+				</CheckoutSummaryHelp>
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
 				{ coupons.map( ( coupon ) => (
@@ -83,6 +99,15 @@ const CheckoutSummaryFeaturesList = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
+`;
+
+const CheckoutSummaryHelp = styled.div`
+	margin-top: 16px;
+
+	button {
+		cursor: pointer;
+		text-decoration: underline;
+	}
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
