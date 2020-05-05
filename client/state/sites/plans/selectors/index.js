@@ -9,7 +9,6 @@ import moment from 'moment';
  */
 import { planHasFeature } from 'lib/plans';
 
-import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
 
 export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
@@ -20,11 +19,7 @@ export { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors/get-plan-
 export { getSitePlanRawPrice } from 'state/sites/plans/selectors/get-site-plan-raw-price';
 export { getPlanRawDiscount } from 'state/sites/plans/selectors/get-plan-raw-discount';
 export { hasDomainCredit } from 'state/sites/plans/selectors/has-domain-credit';
-
-export function isRequestingSitePlans( state, siteId ) {
-	const plans = getPlansBySiteId( state, siteId );
-	return plans.isRequesting;
-}
+export { isRequestingSitePlans } from 'state/sites/plans/selectors/is-requesting-site-plans';
 
 export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
