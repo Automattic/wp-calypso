@@ -11,6 +11,11 @@
 			"packages/*",
 			"test/e2e",
 			"test/e2e/lib/reporter"
+		],
+		"nohoist": [
+			"**/config",
+			"**/testarmada-magellan",
+			"**/testarmada-magellan-*"
 		]
 	},
 	"license": "GPL-2.0-or-later",
