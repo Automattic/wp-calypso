@@ -22,7 +22,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
-import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
+import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
 
 /**

@@ -233,7 +233,7 @@ class ScanPage extends Component< Props > {
 				<ScanThreats
 					className="scan__threats"
 					threats={ threats }
-					error={ true || errorFound }
+					error={ errorFound }
 					site={ site }
 				/>
 			);
@@ -269,17 +269,9 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
-<<<<<<< HEAD
 		const scanState = getSiteScanState( state, siteID );
 		const scanProgress = getSiteScanProgress( state, siteID );
 		const isInitialScan = getSiteScanIsInitial( state, siteID );
-=======
-		const scanState = getSiteScanState( state, siteId );
-		const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
-		const nextScanTimestamp = Date.now() + 5700000;
-		const scanProgress = getSiteScanProgress( state, siteId );
-		const isInitialScan = getSiteScanIsInitial( state, siteId );
->>>>>>> 963c99b1ca... Display error message for the case 'threats + scan failed'
 
 		return {
 			site,

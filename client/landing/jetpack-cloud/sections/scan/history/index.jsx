@@ -23,7 +23,7 @@ import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpac
 import getSiteScanHistory from 'state/selectors/get-site-scan-history';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
+import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
 
 /**
  * Style dependencies
