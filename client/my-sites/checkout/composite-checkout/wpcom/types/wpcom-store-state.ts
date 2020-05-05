@@ -535,6 +535,7 @@ export function prepareDomainContactValidationRequest(
 	if ( details.tldExtraFields?.fr ) {
 		extra.fr = {
 			registrant_type: details.tldExtraFields.fr.registrantType.value,
+			registrant_vat_id: details.vatId.value,
 			trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
 			siren_sirat: details.tldExtraFields.fr.sirenSirat.value,
 		};
