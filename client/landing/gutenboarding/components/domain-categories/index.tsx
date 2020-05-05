@@ -2,9 +2,10 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -24,15 +25,29 @@ export interface Props {
 
 const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
 	const { __ } = useI18n();
+	const [ isOpen, setIsOpen ] = useState( false );
+
+	const handleSelect = ( domainCategory?: DomainCategory ) => {
+		setIsOpen( false );
+		onSelect( domainCategory );
+	};
+
 	return (
-		<div className="domain-categories">
+		<div className={ classNames( 'domain-categories', { 'is-open': isOpen } ) }>
+			<Button
+				className="domain-categories__dropdown-button"
+				onClick={ () => setIsOpen( ! isOpen ) }
+			>
+				<span>{ ! selected ? __( 'All Categories' ) : selected }</span>
+				<Icon icon="arrow-down-alt2" size={ 12 }></Icon>
+			</Button>
 			<ul className="domain-categories__item-group">
 				<li
 					className={ classNames( 'domain-categories__item', {
 						'is-selected': ! selected,
 					} ) }
 				>
-					<Button onClick={ () => onSelect() }>
+					<Button onClick={ () => handleSelect() }>
 						{
 							/* translators: Domain categories filtering. Option to disable the filter and view all categories. */
 							__( 'View all' )
@@ -46,7 +61,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 							'is-selected': domainCategory === selected,
 						} ) }
 					>
-						<Button onClick={ () => onSelect( domainCategory ) }>{ domainCategory }</Button>
+						<Button onClick={ () => handleSelect( domainCategory ) }>{ domainCategory }</Button>
 					</li>
 				) ) }
 			</ul>

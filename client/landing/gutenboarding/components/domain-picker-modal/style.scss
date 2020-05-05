@@ -53,6 +53,13 @@
 		@include onboarding-heading-text;
 	}
 
+	// Move the confirm button slightly lower
+	// to align with the larger heading.
+	.domain-picker__confirm-button {
+		position: relative;
+		top: 5px;
+	}
+
 	// Do not display domain picker footer which contains
 	// the confirm button when showing inside a modal.
 	.domain-picker__panel-row-footer {
@@ -70,6 +77,11 @@
 		svg {
 			top: 9px;
 			right: 12px;
+		}
+
+		// To accomodate domain category dropdown
+		@media ( max-width: $break-mobile ) {
+			margin-bottom: 8px;
 		}
 	}
 
