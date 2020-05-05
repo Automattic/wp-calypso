@@ -142,18 +142,15 @@ function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
 			.map( ( char ) => /\D/.test( char ) )
 			.filter( ( x ) => x ).length;
 
-		let newCursorPoint = oldCursorPosition;
-		if ( oldValue.current !== displayValue ) {
-			if ( oldCursorPosition >= oldValue.current.length ) {
-				newCursorPoint = displayValue.length;
-			} else {
-				newCursorPoint = oldCursorPosition + nonDigitCountNew - nonDigitCountOld;
-			}
-		}
+		const newCursorPosition =
+			oldCursorPosition >= oldValue.current.length
+				? displayValue.length
+				: oldCursorPosition + nonDigitCountNew - nonDigitCountOld;
 
 		oldValue.current = displayValue;
 		oldCountry.current = countryCode;
-		numberInputRef.current?.setSelectionRange( newCursorPoint, newCursorPoint );
+		debug( 'moving cursor from', oldCursorPosition, 'to', newCursorPosition );
+		numberInputRef.current?.setSelectionRange( newCursorPosition, newCursorPosition );
 	}, [ displayValue, numberInputRef, countryCode ] );
 }
 
