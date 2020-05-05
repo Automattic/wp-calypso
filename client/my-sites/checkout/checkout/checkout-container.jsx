@@ -76,6 +76,7 @@ class CheckoutContainer extends React.Component {
 			shouldShowCart = true,
 			clearTransaction,
 			isComingFromGutenboarding,
+			isGutenboardingCreate,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -111,6 +112,7 @@ class CheckoutContainer extends React.Component {
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
 							hideNudge={ isComingFromGutenboarding }
+							returnToBlockEditor={ isComingFromGutenboarding || isGutenboardingCreate }
 						>
 							{ this.props.children }
 						</Checkout>
