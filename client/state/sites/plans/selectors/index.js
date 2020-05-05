@@ -14,24 +14,14 @@ import { createSitePlanObject } from 'state/sites/plans/assembler';
 import createSelector from 'lib/create-selector';
 import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 
+import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
+
+export { getPlansBySite, getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
+
 /**
  * Module dependencies
  */
 const debug = debugFactory( 'calypso:state:sites:plans:selectors' );
-
-export function getPlansBySite( state, site ) {
-	if ( ! site ) {
-		return initialSiteState;
-	}
-	return getPlansBySiteId( state, site.ID );
-}
-
-export function getPlansBySiteId( state, siteId ) {
-	if ( ! siteId ) {
-		return initialSiteState;
-	}
-	return state.sites.plans[ siteId ] || initialSiteState;
-}
 
 export const getCurrentPlan = ( state, siteId ) => {
 	const plans = getPlansBySiteId( state, siteId );
