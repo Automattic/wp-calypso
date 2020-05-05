@@ -12,9 +12,9 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
-import * as plans from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { freePlan, defaultPaidPlan, getPlanSlugByPath, getPlanTitle } from '../../lib/plans';
+import { usePlanRouteParam } from '../../path';
 
 /**
  * Style dependencies
@@ -23,16 +23,16 @@ import './style.scss';
 
 const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
 	const { __ } = useI18n();
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
-	const planLabel = sprintf(
-		/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
-		__( '%s Plan' ),
-		getPlan( hasPaidDomain ? plans.PLAN_PREMIUM : plans.PLAN_FREE ).getTitle()
-	);
+	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
+	const planPath = usePlanRouteParam();
+	const plan = getPlanSlugByPath( planPath ) || ( hasPaidDomain ? defaultPaidPlan : freePlan );
+
+	/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
+	const planLabel = sprintf( __( '%s Plan' ), getPlanTitle( plan ) );
 
 	return (
 		<Button disabled label={ __( planLabel ) } className="plans-button" { ...buttonProps }>
