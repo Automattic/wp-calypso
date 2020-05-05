@@ -29,6 +29,7 @@ const FreePhotoLibrary = () => {
 					postId: 145498,
 					url: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
 					text: translate( 'Learn more' ),
+					icon: 'video',
 					tracksEvent: 'calypso_customer_home_free_photo_library_video_support_page_view',
 					statsName: 'view_free_photo_library_video',
 				},
