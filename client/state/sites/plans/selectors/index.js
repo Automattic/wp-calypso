@@ -7,7 +7,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { initialSiteState } from 'state/sites/plans/reducer';
 import { planHasFeature } from 'lib/plans';
 
 import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
@@ -20,14 +19,7 @@ export { isSitePlanDiscounted } from 'state/sites/plans/selectors/is-site-plan-d
 export { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors/get-plan-discounted-raw-price';
 export { getSitePlanRawPrice } from 'state/sites/plans/selectors/get-site-plan-raw-price';
 export { getPlanRawDiscount } from 'state/sites/plans/selectors/get-plan-raw-discount';
-
-export function hasDomainCredit( state, siteId ) {
-	if ( ! siteId ) {
-		return initialSiteState;
-	}
-	const currentPlan = getCurrentPlan( state, siteId );
-	return get( currentPlan, 'hasDomainCredit', null );
-}
+export { hasDomainCredit } from 'state/sites/plans/selectors/has-domain-credit';
 
 export function isRequestingSitePlans( state, siteId ) {
 	const plans = getPlansBySiteId( state, siteId );
