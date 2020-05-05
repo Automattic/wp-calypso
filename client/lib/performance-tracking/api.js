@@ -10,7 +10,7 @@ const getLux = () => {
 
 	// Don't send the first navigation automatically, we'll do it.
 	lux.auto = false;
-	lux.debug = true;
+	lux.debug = false;
 	return lux;
 };
 
