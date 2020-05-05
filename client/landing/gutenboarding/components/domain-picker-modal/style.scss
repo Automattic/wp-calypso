@@ -79,7 +79,8 @@
 			right: 12px;
 		}
 
-		@media ( max-width: $break-medium ) {
+		// To accomodate domain category dropdown
+		@media ( max-width: $break-mobile ) {
 			margin-bottom: 8px;
 		}
 	}

@@ -228,7 +228,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 	// When in mobile, domain categories appear above
 	// the list of domain suggestions.
-	@media ( max-width: $break-medium ) {
+	@media ( max-width: $break-mobile ) {
 		display: block;
 
 		.domain-picker__aside {
@@ -244,12 +244,6 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__more-button {
-	visibility: hidden; // @TODO: remove this once mobile layout is ready
-
-	@include break-mobile {
-		visibility: visible;
-	}
-
 	&.components-button.is-tertiary {
 		@include onboarding-medium-text;
 		color: var( --color-neutral-100 );
