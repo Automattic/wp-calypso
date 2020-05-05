@@ -176,7 +176,6 @@ export class ContactDetailsFormFields extends Component {
 		);
 
 	getMainFieldValues( form ) {
-		form = form || this.state.form;
 		const mainFieldValues = formState.getAllFieldValues( form );
 		const { needsFax } = this.props;
 		const { countryCode } = mainFieldValues;
@@ -208,6 +207,11 @@ export class ContactDetailsFormFields extends Component {
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
 	}
+
+	getFormState = () => {
+		// Primarily for tests to use
+		return this.state.form;
+	};
 
 	setStateAndUpdateParent = ( newState ) => {
 		this.setState( newState, () => {
