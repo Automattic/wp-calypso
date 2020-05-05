@@ -39,7 +39,7 @@ export type DomainContactValidationRequestExtraFields = {
 	fr?: {
 		registrant_type: string;
 		trademark_number: string;
-		siren_sirat: string;
+		siren_siret: string;
 	};
 };
 
@@ -78,7 +78,7 @@ export type DomainContactValidationResponse = {
 			fr?: {
 				registrantType?: string[];
 				trademarkNumber?: string[];
-				sirenSirat?: string[];
+				sirenSiret?: string[];
 			};
 		};
 	};
