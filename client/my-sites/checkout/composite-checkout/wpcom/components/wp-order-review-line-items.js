@@ -59,7 +59,9 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta>
-					{ item.sublabel }: { translate( 'billed yearly' ) }
+					{ item.sublabel }
+					{ ( 'plan' !== item.type || ! shouldShowVariantSelector ) &&
+						': ' + translate( 'billed yearly' ) }
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
 					) }
