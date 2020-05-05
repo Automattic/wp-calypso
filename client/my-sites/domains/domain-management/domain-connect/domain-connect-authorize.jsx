@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
@@ -47,14 +45,14 @@ class DomainConnectAuthorize extends Component {
 		wpcom
 			.getDnsTemplateRecords( domain, providerId, serviceId, params )
 			.then(
-				data => {
+				( data ) => {
 					this.setState( {
 						action: actionType.READY_TO_SUBMIT,
 						dnsTemplateConflicts: data && data.conflicting_records,
 						dnsTemplateRecords: data && data.new_records,
 					} );
 				},
-				error => {
+				( error ) => {
 					const errorMessage =
 						error.message ||
 						translate(
@@ -87,7 +85,7 @@ class DomainConnectAuthorize extends Component {
 		} );
 
 		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			result => {
+			( result ) => {
 				let action = actionType.CLOSE;
 				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
 				if ( result.redirect_uri ) {
@@ -103,7 +101,7 @@ class DomainConnectAuthorize extends Component {
 					noticeType: noticeType.SUCCESS,
 				} );
 			},
-			error => {
+			( error ) => {
 				const errorMessage =
 					error.message ||
 					translate(

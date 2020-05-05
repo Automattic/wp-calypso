@@ -1,4 +1,3 @@
-/** @format */
 export const PUBLICIZE_SERVICES_LABEL_ICON = {
 	twitter: {
 		label: 'Twitter',

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  */
 import BackButton from 'components/back-button';
 
-const BackButtonExample = props => props.exampleCode;
+const BackButtonExample = ( props ) => props.exampleCode;
 
 BackButtonExample.displayName = 'BackButton';
 

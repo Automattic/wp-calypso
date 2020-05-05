@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,11 +5,11 @@
 import React from 'react';
 import { noop } from 'lodash';
 
-const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => event => {
+const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => ( event ) => {
 	onMouseEnter( date, modifiers, event );
 };
 
-const handleDayMouseLeave = ( date, modifiers, onMouseLeave = noop ) => event => {
+const handleDayMouseLeave = ( date, modifiers, onMouseLeave = noop ) => ( event ) => {
 	onMouseLeave( date, modifiers, event );
 };
 

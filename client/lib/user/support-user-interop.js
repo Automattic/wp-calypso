@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { noop } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import localforage from 'lib/localforage';
+import { bypassPersistentStorage } from 'lib/browser-storage';
 import { supportSessionActivate } from 'state/support/actions';
 import localStorageBypass from 'lib/local-storage-bypass';
 
@@ -31,12 +29,12 @@ const STORAGE_KEY = 'boot_support_user';
 const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;
-const reduxStoreReady = new Promise( resolve => {
+const reduxStoreReady = new Promise( ( resolve ) => {
 	if ( ! isEnabled() ) {
 		return;
 	}
 
-	_setReduxStore = reduxStore => resolve( reduxStore );
+	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
 } );
 export const setSupportSessionReduxStore = _setReduxStore;
 
@@ -104,7 +102,7 @@ export const rebootNormally = () => {
 };
 
 // Called when an API call fails due to a token error
-const onTokenError = error => {
+const onTokenError = ( error ) => {
 	debug( 'Deactivating support user and rebooting due to token error', error.message );
 	rebootNormally();
 };
@@ -112,7 +110,7 @@ const onTokenError = error => {
 /**
  * Inject the support user token into all following API calls
  */
-export const supportUserBoot = () => {
+export async function supportUserBoot() {
 	if ( ! isEnabled() ) {
 		return;
 	}
@@ -125,7 +123,7 @@ export const supportUserBoot = () => {
 	onBeforeUnload = storeUserAndToken( user, token );
 	window.addEventListener( 'beforeunload', onBeforeUnload );
 
-	localforage.bypass();
+	bypassPersistentStorage( true );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
@@ -135,15 +133,16 @@ export const supportUserBoot = () => {
 	wpcom.setSupportUserToken( user, token, onTokenError );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
-	reduxStoreReady.then( reduxStore => reduxStore.dispatch( supportSessionActivate() ) );
-};
+	const reduxStore = await reduxStoreReady;
+	reduxStore.dispatch( supportSessionActivate() );
+}
 
-export const supportNextBoot = () => {
+export async function supportNextBoot() {
 	if ( ! isEnabled() ) {
 		return;
 	}
 
-	localforage.bypass();
+	bypassPersistentStorage( true );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
@@ -151,5 +150,6 @@ export const supportNextBoot = () => {
 	localStorageBypass( allowedKeys );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
-	reduxStoreReady.then( reduxStore => reduxStore.dispatch( supportSessionActivate() ) );
-};
+	const reduxStore = await reduxStoreReady;
+	reduxStore.dispatch( supportSessionActivate() );
+}

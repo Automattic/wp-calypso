@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -60,7 +58,7 @@ export default class extends React.Component {
 		} );
 	};
 
-	updateImageState = callback => {
+	updateImageState = ( callback ) => {
 		const image = MediaStore.get( this.props.siteId, this.props.itemId );
 		this.setState( { image }, () => {
 			if ( 'function' === typeof callback ) {

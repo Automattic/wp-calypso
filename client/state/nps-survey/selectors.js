@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,8 @@ const SECTION_NAME_WHITELIST = [
 	'menus',
 	'people',
 	'plugins',
-	'posts-pages',
+	'posts',
+	'pages',
 	'reader',
 	'reader-activities',
 	'reader-list',

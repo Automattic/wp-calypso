@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -19,9 +17,9 @@ import {
 /**
  * Returns an action object to be used in signalling that sharing buttons have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The sharing buttons object
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The sharing buttons object
+ * @returns {object}        Action object
  */
 export function receiveSharingButtons( siteId, settings ) {
 	return {
@@ -34,9 +32,9 @@ export function receiveSharingButtons( siteId, settings ) {
 /**
  * Returns an action object to be used in signalling that some sharing buttons have been updated.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The updated sharing buttons
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The updated sharing buttons
+ * @returns {object}        Action object
  */
 export function updateSharingButtons( siteId, settings ) {
 	return {
@@ -50,11 +48,11 @@ export function updateSharingButtons( siteId, settings ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve sharing buttons
  *
- * @param  {Number} siteId Site ID
- * @return {Function}      Action thunk
+ * @param  {number} siteId Site ID
+ * @returns {Function}      Action thunk
  */
 export function requestSharingButtons( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_REQUEST,
 			siteId,
@@ -70,7 +68,7 @@ export function requestSharingButtons( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_REQUEST_FAILURE,
 					siteId,
@@ -84,12 +82,12 @@ export function requestSharingButtons( siteId ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * update the sharing buttons
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The sharing buttons to save
- * @return {Function}      Action thunk
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The sharing buttons to save
+ * @returns {Function}      Action thunk
  */
 export function saveSharingButtons( siteId, settings ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_SAVE,
 			siteId,
@@ -106,7 +104,7 @@ export function saveSharingButtons( siteId, settings ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_SAVE_FAILURE,
 					siteId,

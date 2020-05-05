@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,6 @@ import { get, includes, map, noop } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import { sectionify } from 'lib/route';
 import Main from 'components/main';
-import { addItem } from 'lib/upgrades/actions';
-import productsFactory from 'lib/products-list';
 import getSites from 'state/selectors/get-sites';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -25,7 +22,7 @@ import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
-import GoogleApps from 'components/upgrades/gsuite';
+import GSuiteUpgrade from 'components/upgrades/gsuite';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
@@ -38,11 +35,6 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isGSuiteRestricted } from 'lib/gsuite';
-
-/**
- * Module variables
- */
-const productsList = productsFactory();
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -60,7 +52,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-const redirectToDomainSearchSuggestion = context => {
+const redirectToDomainSearchSuggestion = ( context ) => {
 	return page.redirect(
 		`/domains/add/${ context.params.domain }?suggestion=${ context.params.suggestion }`
 	);
@@ -114,6 +106,9 @@ const mapDomain = ( context, next ) => {
 };
 
 const transferDomain = ( context, next ) => {
+	const useStandardBack =
+		context.query.useStandardBack === 'true' || context.query.useStandardBack === '1';
+
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker
@@ -125,7 +120,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
-					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
+					useStandardBack={ useStandardBack }
 				/>
 			</CartData>
 		</Main>
@@ -153,7 +148,6 @@ const useYourDomain = ( context, next ) => {
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
-					isDomainTransferrable={ context.query.isDomainTransferrable === 'true' }
 					goBack={ handleGoBack }
 				/>
 			</CartData>
@@ -170,7 +164,6 @@ const transferDomainPrecheck = ( context, next ) => {
 	const handleGoBack = () => {
 		page( domainManagementTransferIn( siteSlug, domain ) );
 	};
-
 	context.primary = (
 		<Main>
 			<PageViewTracker
@@ -192,52 +185,29 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
-	if ( isGSuiteRestricted() ) {
-		next();
+	if ( ! isGSuiteRestricted() ) {
+		context.primary = (
+			<Main>
+				<PageViewTracker
+					path="/domains/add/:domain/google-apps/:site"
+					title="Domain Search > Domain Registration > Google Apps"
+				/>
+				<DocumentHead
+					title={ translate( 'Register %(domain)s', {
+						args: { domain: context.params.registerDomain },
+					} ) }
+				/>
+				<CartData>
+					<GSuiteUpgrade domain={ context.params.registerDomain } />
+				</CartData>
+			</Main>
+		);
 	}
 
-	const state = context.store.getState();
-	const siteSlug = getSelectedSiteSlug( state ) || '';
-
-	const handleAddGoogleApps = googleAppsCartItem => {
-		addItem( googleAppsCartItem );
-		page( '/checkout/' + siteSlug );
-	};
-
-	const handleGoBack = () => {
-		page( '/domains/add/' + siteSlug );
-	};
-
-	const handleClickSkip = () => {
-		page( '/checkout/' + siteSlug );
-	};
-
-	context.primary = (
-		<Main>
-			<PageViewTracker
-				path="/domains/add/:domain/google-apps/:site"
-				title="Domain Search > Domain Registration > Google Apps"
-			/>
-			<DocumentHead
-				title={ translate( 'Register %(domain)s', {
-					args: { domain: context.params.registerDomain },
-				} ) }
-			/>
-			<CartData>
-				<GoogleApps
-					productsList={ productsList }
-					domain={ context.params.registerDomain }
-					onGoBack={ handleGoBack }
-					onAddGoogleApps={ handleAddGoogleApps }
-					onClickSkip={ handleClickSkip }
-				/>
-			</CartData>
-		</Main>
-	);
 	next();
 };
 
-const redirectIfNoSite = redirectTo => {
+const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
@@ -255,17 +225,19 @@ const redirectIfNoSite = redirectTo => {
 	};
 };
 
-const redirectToUseYourDomainIfVipSite = ( context, next ) => {
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
+const redirectToUseYourDomainIfVipSite = () => {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const selectedSite = getSelectedSite( state );
 
-	if ( selectedSite && selectedSite.is_vip ) {
-		return page.redirect(
-			domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
-		);
-	}
+		if ( selectedSite && selectedSite.is_vip ) {
+			return page.redirect(
+				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+			);
+		}
 
-	next();
+		next();
+	};
 };
 
 const jetpackNoDomainsWarning = ( context, next ) => {

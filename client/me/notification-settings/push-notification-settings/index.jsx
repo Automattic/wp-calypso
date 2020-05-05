@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,16 +7,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
 import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
 import {
 	getStatus,
 	isApiReady,
@@ -625,7 +620,7 @@ class PushNotificationSettings extends React.Component {
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.props.translate( 'Enable Browser Notifications' ) }
+							{ this.props.translate( 'Enable browser notifications' ) }
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
@@ -774,7 +769,7 @@ class PushNotificationSettings extends React.Component {
 						className="notification-settings-push-notification-settings__settings-icon"
 						icon="bell"
 					/>
-					{ this.props.translate( 'Browser Notifications' ) }
+					{ this.props.translate( 'Browser notifications' ) }
 					<small
 						className={ classNames(
 							'notification-settings-push-notification-settings__settings-state',
@@ -811,7 +806,7 @@ class PushNotificationSettings extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			apiReady: isApiReady( state ),
 			isEnabled: isEnabled( state ),

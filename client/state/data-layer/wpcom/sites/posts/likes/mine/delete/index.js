@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External Dependencies
  */
@@ -25,7 +23,7 @@ export function fromApi( response ) {
 	};
 }
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const query = {};
 	if ( action.source ) {
 		query.source = action.source;

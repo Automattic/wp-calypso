@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { identity } from 'lodash';
 import React from 'react';
 
@@ -34,9 +33,7 @@ describe( 'PostStatus', () => {
 				expect( wrapper ).to.have.className( 'is-sticky' );
 				expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 				expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'bookmark-outline' );
-				expect( wrapper.childAt( 1 ) )
-					.to.have.tagName( 'span' )
-					.to.have.text( 'Sticky' );
+				expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Sticky' );
 			} );
 		} );
 
@@ -52,9 +49,7 @@ describe( 'PostStatus', () => {
 					expect( wrapper ).to.have.className( 'is-pending' );
 					expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 					expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'aside' );
-					expect( wrapper.childAt( 1 ) )
-						.to.have.tagName( 'span' )
-						.to.have.text( 'Pending Review' );
+					expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Pending Review' );
 				} );
 			} );
 
@@ -74,9 +69,7 @@ describe( 'PostStatus', () => {
 						expect( wrapper ).to.have.className( 'is-scheduled' );
 						expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 						expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'calendar' );
-						expect( wrapper.childAt( 1 ) )
-							.to.have.tagName( 'span' )
-							.to.have.text( 'Scheduled' );
+						expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Scheduled' );
 					} );
 				} );
 
@@ -108,9 +101,7 @@ describe( 'PostStatus', () => {
 						expect( wrapper ).to.have.className( 'is-trash' );
 						expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 						expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'trash' );
-						expect( wrapper.childAt( 1 ) )
-							.to.have.tagName( 'span' )
-							.to.have.text( 'Trashed' );
+						expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Trashed' );
 					} );
 				} );
 
@@ -142,9 +133,7 @@ describe( 'PostStatus', () => {
 						expect( wrapper ).to.have.className( 'is-draft' );
 						expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 						expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'aside' );
-						expect( wrapper.childAt( 1 ) )
-							.to.have.tagName( 'span' )
-							.to.have.text( 'Draft' );
+						expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Draft' );
 					} );
 				} );
 
@@ -176,9 +165,7 @@ describe( 'PostStatus', () => {
 						expect( wrapper ).to.have.className( 'is-published' );
 						expect( wrapper.childAt( 0 ).is( Gridicon ) ).to.be.true;
 						expect( wrapper.childAt( 0 ) ).to.have.prop( 'icon', 'aside' );
-						expect( wrapper.childAt( 1 ) )
-							.to.have.tagName( 'span' )
-							.to.have.text( 'Published' );
+						expect( wrapper.childAt( 1 ) ).to.have.tagName( 'span' ).to.have.text( 'Published' );
 					} );
 				} );
 

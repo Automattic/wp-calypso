@@ -1,11 +1,11 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * External dependencies
  */
+import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
@@ -41,31 +41,12 @@ describe( 'flow-controller', () => {
 	describe( 'setup', () => {
 		test( 'should have a redux store attached', () => {
 			const store = createSignupStore();
-			signupFlowController = SignupFlowController( {
-				flowName: 'simple_flow',
-				onComplete: () => {},
-				reduxStore: store,
-			} );
-			expect( signupFlowController._reduxStore ).toBe( store );
-		} );
-
-		test( 'should remove steps not needed by the current flow on init', () => {
-			const store = createSignupStore( {
-				signup: {
-					progress: [ { stepName: 'stepA' }, { stepName: 'stepB' }, { stepName: 'stepC' } ],
-				},
-			} );
-			expect( getSignupProgress( store.getState() ) ).toHaveLength( 3 );
-
 			signupFlowController = new SignupFlowController( {
 				flowName: 'simple_flow',
 				onComplete: () => {},
 				reduxStore: store,
 			} );
-
-			const progress = getSignupProgress( store.getState() );
-			expect( progress ).toHaveLength( 2 );
-			expect( progress.map( step => step.stepName ) ).toEqual( [ 'stepA', 'stepB' ] );
+			expect( signupFlowController._reduxStore ).toBe( store );
 		} );
 
 		test( 'should reset stores if there are processing steps in the state upon instantitaion', () => {
@@ -85,7 +66,7 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( getSignupProgress( store.getState() ) ).toHaveLength( 0 );
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
 		} );
 
 		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
@@ -101,17 +82,17 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( getSignupProgress( store.getState() ) ).toHaveLength( 0 );
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
 		} );
 	} );
 
 	describe( 'controlling a simple flow', () => {
-		test( 'should run the onComplete callback with the flow destination when the flow is completed', done => {
+		test( 'should run the onComplete callback with the flow destination when the flow is completed', ( done ) => {
 			const store = createSignupStore();
 
 			signupFlowController = new SignupFlowController( {
 				flowName: 'simple_flow',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/' );
 					done();
 				},
@@ -127,18 +108,18 @@ describe( 'flow-controller', () => {
 		let store;
 		beforeEach( () => {
 			store = createSignupStore();
-			signupFlowController = SignupFlowController( {
+			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_async',
 				reduxStore: store,
 			} );
 		} );
 
-		test( 'should call apiRequestFunction on steps with that property', done => {
+		test( 'should call apiRequestFunction on steps with that property', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 		} );
 
-		test( 'should not call apiRequestFunction multiple times', done => {
+		test( 'should not call apiRequestFunction multiple times', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 
@@ -149,11 +130,11 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow w/ dependencies', () => {
-		test( 'should call the apiRequestFunction callback with its dependencies', done => {
+		test( 'should call the apiRequestFunction callback with its dependencies', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_dependencies',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/checkout/testsite.wordpress.com' );
 					done();
 				},
@@ -163,7 +144,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'siteCreation',
-					stepCallback: function( dependencies ) {
+					stepCallback: function ( dependencies ) {
 						expect( dependencies ).toEqual( { bearer_token: 'TOKEN' } );
 					},
 				} )
@@ -176,7 +157,7 @@ describe( 'flow-controller', () => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
-				onComplete: function() {},
+				onComplete: function () {},
 				reduxStore: store,
 			} );
 
@@ -188,7 +169,7 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow w/ a delayed step', () => {
-		test( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', done => {
+		test( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithDelay',
@@ -199,9 +180,9 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
-						expect( progress ).toHaveLength( 2 );
+						expect( size( progress ) ).toBe( 2 );
 					},
 				} )
 			);
@@ -209,7 +190,7 @@ describe( 'flow-controller', () => {
 			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
 		} );
 
-		test( 'should not submit delayed steps if some steps are in-progress', done => {
+		test( 'should not submit delayed steps if some steps are in-progress', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithDelay',
@@ -220,9 +201,10 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
-						expect( progress[ 1 ].status ).toBe( 'completed' );
+						const step = progress.stepA;
+						expect( step.status ).toBe( 'completed' );
 					},
 				} )
 			);
@@ -245,7 +227,7 @@ describe( 'flow-controller', () => {
 			} ).toThrow();
 		} );
 
-		test( 'should run `onComplete` once all steps are submitted without an error', done => {
+		test( 'should run `onComplete` once all steps are submitted without an error', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithProvidedDependencies',
@@ -255,6 +237,78 @@ describe( 'flow-controller', () => {
 			} );
 
 			store.dispatch( submitSignupStep( { stepName: 'stepRequiringSiteSlug' } ) );
+		} );
+	} );
+
+	describe( 'controlling a flow with optional dependencies', () => {
+		test( 'should run `onComplete` once all steps are submitted, including optional dependency', ( done ) => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => done(),
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+			store.dispatch(
+				submitSignupStep(
+					{
+						stepName: 'site-topic-with-optional-theme',
+					},
+					{
+						siteTopic: 'foo',
+						themeSlugWithRepo: 'bar',
+					}
+				)
+			);
+		} );
+
+		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', ( done ) => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => done(),
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+			store.dispatch(
+				submitSignupStep(
+					{
+						stepName: 'site-topic-with-optional-theme',
+					},
+					{
+						siteTopic: 'foo',
+					}
+				)
+			);
+		} );
+
+		test( "should throw if step doesn't provide required dependency", () => {
+			const store = createSignupStore();
+			signupFlowController = new SignupFlowController( {
+				flowName: 'flowWithSiteTopicWithOptionalTheme',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			store.dispatch( submitSignupStep( { stepName: 'stepA' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'stepB' } ) );
+
+			expect( () =>
+				store.dispatch(
+					submitSignupStep(
+						{
+							stepName: 'site-topic-with-optional-theme',
+						},
+						{
+							themeSlugWithRepo: 'foo',
+						}
+					)
+				)
+			).toThrow( /the dependencies .* were not provided/i );
 		} );
 	} );
 } );

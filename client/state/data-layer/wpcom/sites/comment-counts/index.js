@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchCommentCounts = action => {
+export const fetchCommentCounts = ( action ) => {
 	const { siteId, postId } = action;
 
 	return http(
@@ -31,7 +29,7 @@ export const fetchCommentCounts = action => {
 };
 
 export const updateCommentCounts = ( action, response ) => {
-	const intResponse = mapValues( response, value => parseInt( value ) );
+	const intResponse = mapValues( response, ( value ) => parseInt( value ) );
 	const {
 		all,
 		approved,

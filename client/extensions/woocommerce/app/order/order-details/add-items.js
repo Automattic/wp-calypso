@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import OrderFeeDialog from './fee-dialog';
 import OrderProductDialog from './product-dialog';
 
@@ -24,7 +23,7 @@ class OrderAddItems extends Component {
 		showDialog: false,
 	};
 
-	toggleDialog = type => () => {
+	toggleDialog = ( type ) => () => {
 		this.setState( { showDialog: type } );
 	};
 
@@ -38,10 +37,10 @@ class OrderAddItems extends Component {
 					primary={ isNewOrder }
 					onClick={ this.toggleDialog( 'product' ) }
 				>
-					{ translate( 'Add Product' ) }
+					{ translate( 'Add product' ) }
 				</Button>
 				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					{ translate( 'Add Fee' ) }
+					{ translate( 'Add fee' ) }
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }

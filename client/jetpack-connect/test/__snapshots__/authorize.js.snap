@@ -20,6 +20,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             "authApproved": false,
             "blogname": "Example Blog",
             "clientId": 98765,
+            "closeWindowAfterLogin": false,
             "from": "banner-44-slide-1-dashboard",
             "homeUrl": "http://an.example.site",
             "jpVersion": "5.4",
@@ -39,8 +40,6 @@ exports[`JetpackAuthorize renders as expected 1`] = `
       />
       <Card
         className="jetpack-connect__logged-in-card"
-        highlight={false}
-        tagName="div"
       >
         <Connect(Gravatar)
           size={64}
@@ -75,7 +74,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"
         >
-          <t
+          <Memo([object Object])
             icon="arrow-left"
             size={18}
           />
@@ -84,6 +83,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
           href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F"
+          onClick={[Function]}
         >
           Sign in as a different user
         </LoggedOutFormLinkItem>
@@ -95,7 +95,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <Connect(Localized(JetpackConnectHappychatButton))
           eventName="calypso_jpc_authorize_chat_initiated"
         >
-          <Connect(Localized(JetpackConnectHelpButton)) />
+          <JetpackConnectHelpButton />
         </Connect(Localized(JetpackConnectHappychatButton))>
       </LoggedOutFormLinks>
     </div>

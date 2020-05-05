@@ -1,17 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import config from 'config';
 import FormattedHeader from 'components/formatted-header';
 import safeImageUrl from 'lib/safe-image-url';
@@ -67,6 +65,9 @@ export class AuthFormHeader extends Component {
 				break;
 			case 'bluehost':
 				host = 'Bluehost';
+				break;
+			case 'eurodns':
+				host = 'EuroDNS';
 				break;
 		}
 
@@ -137,8 +138,8 @@ export class AuthFormHeader extends Component {
 		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
 		const icon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( homeUrl );
-		const parsedUrl = urlModule.parse( url );
-		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
+		const parsedUrl = new URL( url );
+		const path = parsedUrl.pathname === '/' ? '' : parsedUrl.pathname;
 		const site = {
 			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
 			domain: parsedUrl.host + path,
@@ -169,7 +170,7 @@ export class AuthFormHeader extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),

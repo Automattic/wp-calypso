@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ class LineChartLegend extends Component {
 		onDataSeriesSelected: noop,
 	};
 
-	handleMouseOver = dataSeriesIndex => {
+	handleMouseOver = ( dataSeriesIndex ) => {
 		this.props.onDataSeriesSelected( dataSeriesIndex );
 	};
 

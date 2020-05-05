@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { SIGNUP_STEPS_SURVEY_SET } from 'state/action-types';
 import {
 	composeAnalytics,
@@ -11,6 +8,8 @@ import {
 	recordCustomFacebookConversionEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
+
+import 'state/signup/init';
 
 export function setSurvey( survey ) {
 	const vertical = survey.vertical;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -32,7 +30,7 @@ class PostActionCounts extends PureComponent {
 		globalId: PropTypes.string,
 	};
 
-	onActionClick = action => () => {
+	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
 		record( 'calypso_post_list_action_click', {
@@ -42,7 +40,7 @@ class PostActionCounts extends PureComponent {
 		} );
 	};
 
-	onLikesClick = event => {
+	onLikesClick = ( event ) => {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
@@ -53,7 +51,7 @@ class PostActionCounts extends PureComponent {
 		this.props.hideActiveLikesPopover();
 	};
 
-	setLikesPopoverContext = element => {
+	setLikesPopoverContext = ( element ) => {
 		this.setState( { likesPopoverContext: element } );
 	};
 
@@ -77,10 +75,13 @@ class PostActionCounts extends PureComponent {
 					href={ `/comments/all/${ siteSlug }/${ postId }` }
 					onClick={ this.onActionClick( 'comments' ) }
 				>
-					{ translate( '%(count)s Comment', '%(count)s Comments', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of comments, eg 5 Comments
+						translate( '%(count)s Comment', '%(count)s Comments', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 			</li>
 		);
@@ -149,10 +150,13 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li ref={ this.setLikesPopoverContext }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
-					{ translate( '%(count)s Like', '%(count)s Likes', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of likes
+						translate( '%(count)s Like', '%(count)s Likes', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 				{ isCurrentLikesPopoverOpen && (
 					<PostLikesPopover

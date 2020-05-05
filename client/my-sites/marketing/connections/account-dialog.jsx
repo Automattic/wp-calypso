@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import Notice from 'components/notice';
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { warningNotice } from 'state/notices/actions';
 
 /**
@@ -24,7 +22,6 @@ import { warningNotice } from 'state/notices/actions';
  */
 import './account-dialog.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
@@ -59,7 +56,7 @@ class AccountDialog extends Component {
 		return null;
 	}
 
-	onClose = action => {
+	onClose = ( action ) => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
 			this.props.service.multiple_external_user_ID_support &&
@@ -79,7 +76,7 @@ class AccountDialog extends Component {
 		}
 	};
 
-	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
+	onSelectedAccountChanged = ( account ) => this.setState( { selectedAccount: account } );
 
 	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
@@ -116,7 +113,7 @@ class AccountDialog extends Component {
 		return (
 			selectedAccount &&
 			this.props.accounts.some(
-				maybeConnectedAccount =>
+				( maybeConnectedAccount ) =>
 					maybeConnectedAccount.isConnected &&
 					this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
 			)
@@ -128,7 +125,7 @@ class AccountDialog extends Component {
 		const defaultAccountIcon =
 			this.props.service.ID === 'google_my_business' ? 'institution' : null;
 
-		return accounts.map( account => (
+		return accounts.map( ( account ) => (
 			<AccountDialogAccount
 				key={ [ account.keyringConnectionId, account.ID ].join() }
 				account={ account }
@@ -213,7 +210,6 @@ class AccountDialog extends Component {
 				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
 			];
 
-		/*eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -234,12 +230,7 @@ class AccountDialog extends Component {
 				{ this.getConnectedAccountsContent() }
 			</Dialog>
 		);
-		/*eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default connect(
-	null,
-	{ warningNotice }
-)( localize( AccountDialog ) );
+export default connect( null, { warningNotice } )( localize( AccountDialog ) );

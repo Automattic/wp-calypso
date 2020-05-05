@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
 function getCommonHandlers( {
@@ -36,7 +35,7 @@ function getCommonHandlers( {
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a
@@ -64,6 +63,14 @@ export default function() {
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
 		domainManagementController.domainManagementEmailForwardingRedirect
+	);
+
+	page(
+		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementChangeSiteAddress,
+		makeLayout,
+		clientRender
 	);
 
 	page(
@@ -154,7 +161,17 @@ export default function() {
 		clientRender
 	);
 
-	page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	if ( config.isEnabled( 'manage/all-domains' ) ) {
+		page(
+			paths.domainManagementRoot(),
+			...getCommonHandlers( { noSitePath: false } ),
+			domainManagementController.domainManagementListAllSites,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+	}
 
 	page(
 		paths.domainManagementList( ':site' ),
@@ -190,7 +207,7 @@ export default function() {
 			'/domains/add',
 			siteSelection,
 			domainsController.domainsAddHeader,
-			domainsController.redirectToUseYourDomainIfVipSite,
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
@@ -232,7 +249,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite,
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.domainSearch,
 			makeLayout,
@@ -244,7 +261,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite,
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.redirectToDomainSearchSuggestion
 		);

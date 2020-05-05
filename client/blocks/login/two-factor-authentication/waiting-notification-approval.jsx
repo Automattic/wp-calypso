@@ -1,55 +1,42 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
+import Divider from '../divider';
 
-class WaitingTwoFactorNotificationApproval extends Component {
-	static propTypes = {
-		translate: PropTypes.func.isRequired,
-	};
+/**
+ * Style dependencies
+ */
+import './waiting-notification-approval.scss';
 
-	render() {
-		const { translate } = this.props;
+export default function WaitingTwoFactorNotificationApproval( { isJetpack, isGutenboarding } ) {
+	const translate = useTranslate();
 
-		return (
-			<form>
-				<Card className="two-factor-authentication__push-notification-screen is-compact">
-					<p className="two-factor-authentication__info">
-						{ translate(
-							'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-
-					<PushNotificationIllustration />
-				</Card>
-
-				<div className="two-factor-authentication__actions">
-					<div className="two-factor-authentication__actions-divider">
-						<span>{ this.props.translate( 'or' ) }</span>
-					</div>
-
-					<TwoFactorActions twoFactorAuthType="push" />
-				</div>
-			</form>
-		);
-	}
+	return (
+		<Fragment>
+			<Card compact>
+				<p className="two-factor-authentication__info">
+					{ translate(
+						'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+				<PushNotificationIllustration />
+			</Card>
+			<Divider>{ translate( 'or' ) }</Divider>
+			<TwoFactorActions
+				twoFactorAuthType="push"
+				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
+			/>
+		</Fragment>
+	);
 }
-
-export default localize( WaitingTwoFactorNotificationApproval );

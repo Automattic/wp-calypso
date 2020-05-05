@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -41,7 +39,7 @@ export class AddLinkDialog extends Component {
 		selectedPost: { id: null, url: null },
 	};
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.setState( {
 			linkUrl: this.inferUrl( newProps.selectedText ),
 			linkText: newProps.selectedText,
@@ -68,11 +66,11 @@ export class AddLinkDialog extends Component {
 		return '';
 	}
 
-	bindLinkUrlRef = input => {
+	bindLinkUrlRef = ( input ) => {
 		this.linkUrl = input;
 	};
 
-	setLinkUrl = event => {
+	setLinkUrl = ( event ) => {
 		const { selectedPost } = this.state;
 		this.setState( {
 			linkUrl: event.target.value,
@@ -81,15 +79,15 @@ export class AddLinkDialog extends Component {
 		} );
 	};
 
-	setLinkText = event => {
+	setLinkText = ( event ) => {
 		this.setState( { linkText: event.target.value } );
 	};
 
-	setLinkNewTab = event => {
+	setLinkNewTab = ( event ) => {
 		this.setState( { linkNewTab: event.target.checked } );
 	};
 
-	onSelectPost = post => {
+	onSelectPost = ( post ) => {
 		this.setState( {
 			linkUrl: post.URL,
 			selectedPost: { id: post.ID, url: post.URL },
@@ -193,6 +191,6 @@ export class AddLinkDialog extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( AddLinkDialog ) );

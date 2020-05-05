@@ -1,0 +1,116 @@
+.happychat__conversation {
+	flex: 1 1 auto;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	padding-bottom: 6px;
+
+	&::before {
+		content: '';
+		flex: 1 1 auto;
+	}
+}
+
+.happychat__welcome {
+	flex: 1 auto;
+	padding: 16px;
+	color: var( --color-neutral-70 );
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	p {
+		margin: 0;
+		padding: 0;
+	}
+}
+.happychat__message-text {
+	font-size: 14px;
+	flex: 1;
+	padding: 8px 12px;
+	border-radius: 8px 8px 8px 0;
+	color: var( --color-neutral-70 );
+	background: var( --color-surface );
+	position: relative;
+
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
+
+	white-space: pre-wrap;
+
+	p {
+		margin: 8px 0;
+		&:first-child {
+			margin-top: 0;
+		}
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&::after {
+		content: '';
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: -8px;
+
+		// draw a triangle
+		width: 0;
+		height: 0;
+		border-bottom: 8px solid var( --color-border-inverted );
+		border-left: 8px solid transparent;
+	}
+
+	.is-user-message & {
+		color: var( --color-primary-dark );
+		background: var( --color-primary-5 );
+		border-radius: 8px 8px 0;
+
+		&::after {
+			left: auto;
+			right: -8px;
+
+			// draw a triangle
+			width: 0;
+			height: 0;
+			border-bottom: 8px solid var( --color-primary-5 );
+			border-left: none;
+			border-right: 8px solid transparent;
+		}
+	}
+}
+
+.happychat__timeline-message {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row-reverse;
+	padding: 0 10px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-right: auto;
+	margin-left: 0;
+
+	a {
+		color: var( --color-accent );
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	&.is-user-message {
+		flex-direction: row;
+		margin-left: auto;
+		margin-right: 0;
+
+		a {
+			color: var( --color-accent );
+		}
+
+	}
+}

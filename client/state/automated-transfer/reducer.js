@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -12,10 +10,12 @@ import {
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+} from 'state/action-types';
+import {
 	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 export const status = ( state = null, action ) => {
 	switch ( action.type ) {
@@ -56,4 +56,8 @@ export const siteReducer = combineReducers( {
 
 // state is a map of transfer sub-states
 // keyed by the associated site id
-export default withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+const validatedReducer = withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+
+const automatedTransferReducer = withStorageKey( 'automatedTransfer', validatedReducer );
+
+export default automatedTransferReducer;

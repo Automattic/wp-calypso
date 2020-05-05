@@ -2,12 +2,12 @@
 	display: inline-flex;
 	padding: 0 12px;
 	line-height: 32px;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	border-radius: 4px;
 
 	&.is-processing {
-		background: var( --color-success-200 );
-		color: var( --color-success-800 );
+		background: var( --color-success-20 );
+		color: var( --color-success-90 );
 
 		span + span {
 			border-color: var( --color-success );
@@ -15,8 +15,8 @@
 	}
 
 	&.is-failed {
-		background: var( --color-error-200 );
-		color: var( --color-error-800 );
+		background: var( --color-error-20 );
+		color: var( --color-error-90 );
 
 		span + span {
 			border-color: var( --color-error );
@@ -27,15 +27,15 @@
 	&.is-refunded,
 	&.is-completed {
 		background: var( --color-neutral-0 );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		span + span {
-			border-color: var( --color-neutral-100 );
+			border-color: var( --color-neutral-10 );
 		}
 	}
 
 	&.is-on-hold {
-		background: var( --color-warning-50 );
+		background: var( --color-warning-5 );
 		color: var( --color-warning-dark );
 
 		span + span {

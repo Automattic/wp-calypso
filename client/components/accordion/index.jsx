@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -63,7 +61,7 @@ export default class Accordion extends Component {
 		this.setExpandedStatus( ! this.state.isExpanded );
 	};
 
-	setExpandedStatus = isExpanded => {
+	setExpandedStatus = ( isExpanded ) => {
 		this.setState( { isExpanded } );
 		this.props.onToggle( isExpanded );
 	};

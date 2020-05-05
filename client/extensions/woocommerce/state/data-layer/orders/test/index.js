@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +65,10 @@ describe( 'handlers', () => {
 
 	describe( '#receivedOrders', () => {
 		test( 'should dispatch a success action on a good response', () => {
-			const orders = [ { id: 1, total: '50.00' }, { id: 2, total: '12.50' } ];
+			const orders = [
+				{ id: 1, total: '50.00' },
+				{ id: 2, total: '12.50' },
+			];
 			const data = {
 				status: 200,
 				body: orders,
@@ -306,7 +308,7 @@ describe( 'handlers', () => {
 			const dispatch = jest.fn();
 			const order = { id: 42, total: '50.00' };
 			const action = saveOrderSuccess( 123, 42, order );
-			action.onSuccess = localDispatch => {
+			action.onSuccess = ( localDispatch ) => {
 				localDispatch( { type: NOTICE_CREATE, notice: {} } );
 			};
 			onOrderSaveSuccess( action, { data: order } )( dispatch );
@@ -348,7 +350,7 @@ describe( 'handlers', () => {
 				message: 'No route was found matching the URL and request method',
 			};
 			const action = saveOrderError( 123, 1, response );
-			action.onFailure = localDispatch => {
+			action.onFailure = ( localDispatch ) => {
 				localDispatch( { type: NOTICE_CREATE, notice: {} } );
 			};
 			onOrderSaveFailure( action, response )( dispatch );

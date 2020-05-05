@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import {
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import useNock from 'test/helpers/use-nock';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts( posts ) {
@@ -24,7 +23,7 @@ jest.mock( 'state/reader/posts/actions', () => ( {
 
 describe( 'actions', () => {
 	describe( 'success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/site/1/post/1/related?meta=site' )
 				.reply( 200, {
@@ -92,7 +91,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/site/1/post/1/related?meta=site' )
 				.reply( 400, {} );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { find, uniqBy, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
@@ -83,7 +81,7 @@ class OrderProductDialog extends Component {
 		products: [],
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {
@@ -92,7 +90,7 @@ class OrderProductDialog extends Component {
 		}
 	}
 
-	handleChange = products => {
+	handleChange = ( products ) => {
 		this.setState( {
 			products,
 		} );
@@ -100,12 +98,12 @@ class OrderProductDialog extends Component {
 
 	handleProductSave = () => {
 		const { allProducts, order, siteId } = this.props;
-		const products = this.state.products.map( p => {
+		const products = this.state.products.map( ( p ) => {
 			return find( allProducts, { id: p } );
 		} );
 
 		const lineItems = order.line_items || [];
-		const newLineItems = products.map( item => {
+		const newLineItems = products.map( ( item ) => {
 			const existingLineItem = getExistingLineItem( item, order );
 			if ( existingLineItem ) {
 				return existingLineItem;
@@ -128,7 +126,7 @@ class OrderProductDialog extends Component {
 
 		// Fake 1 so the string is already at singular when the first item is selected
 		const productsCount = this.state.products.length ? this.state.products.length : 1;
-		const buttonLabel = translate( 'Add Product', 'Add Products', {
+		const buttonLabel = translate( 'Add product', 'Add products', {
 			count: productsCount,
 		} );
 
@@ -159,7 +157,7 @@ class OrderProductDialog extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const order = getOrderWithEdits( state );
@@ -171,5 +169,5 @@ export default connect(
 			order,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder }, dispatch )
 )( localize( OrderProductDialog ) );

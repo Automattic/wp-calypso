@@ -27,7 +27,7 @@ export class StatusBar extends React.Component {
 	 * in here, there is no need to have an explicit
 	 * `show()` function.
 	 */
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( '' == nextProps.statusMessage ) return;
 
 		if ( nextProps.statusMessage == this.props.statusMessage ) return;
@@ -36,7 +36,7 @@ export class StatusBar extends React.Component {
 
 		/* We only want this to appear for a bit, then disappear */
 		var timeout = window.setTimeout(
-			function() {
+			function () {
 				component.disappear();
 			},
 			nextProps.statusTimeout ? nextProps.statusTimeout : this.props.statusTimeout

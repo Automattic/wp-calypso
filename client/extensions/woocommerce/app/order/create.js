@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSettingsGeneralLoaded,
 	getPaymentCurrencySettings,
@@ -49,7 +48,7 @@ class Order extends Component {
 		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}
@@ -79,7 +78,7 @@ class Order extends Component {
 
 	triggerInvoice = ( siteId, orderId ) => {
 		const { translate } = this.props;
-		const onSuccess = dispatch => {
+		const onSuccess = ( dispatch ) => {
 			dispatch(
 				successNotice( translate( 'An invoice has been sent to the customer.' ), {
 					duration: 8000,
@@ -114,7 +113,7 @@ class Order extends Component {
 			}
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
-		const onFailure = dispatch => {
+		const onFailure = ( dispatch ) => {
 			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
@@ -130,7 +129,7 @@ class Order extends Component {
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
-			<span>{ translate( 'New Order' ) }</span>,
+			<span>{ translate( 'New order' ) }</span>,
 		];
 
 		return (
@@ -143,7 +142,7 @@ class Order extends Component {
 						busy={ isSaving }
 						disabled={ ! hasOrderEdits || isSaving }
 					>
-						{ translate( 'Save Order' ) }
+						{ translate( 'Save order' ) }
 					</Button>
 				</ActionHeader>
 
@@ -158,7 +157,7 @@ class Order extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const orderId = getCurrentlyEditingOrderId( state );
@@ -185,7 +184,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				clearOrderEdits,

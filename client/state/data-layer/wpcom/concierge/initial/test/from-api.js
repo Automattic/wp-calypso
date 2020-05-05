@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -12,6 +10,7 @@ describe( 'fromApi()', () => {
 			appointment_timespan: 999,
 			next_appointment: { begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 },
 			schedule_id: 123,
+			has_available_concierge_sessions: true,
 		};
 
 		const expectedResult = {
@@ -19,6 +18,7 @@ describe( 'fromApi()', () => {
 			appointmentTimespan: 999,
 			nextAppointment: { beginTimestamp: 1000, endTimestamp: 2000, scheduleId: 3 },
 			scheduleId: 123,
+			hasAvailableConciergeSessions: true,
 		};
 
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );

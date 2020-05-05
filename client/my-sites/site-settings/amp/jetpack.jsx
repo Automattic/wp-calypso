@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { addQueryArgs } from 'lib/url';
@@ -67,7 +65,7 @@ const AmpJetpack = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const customizerUrl = getCustomizerUrl( state, siteId );
 	const customizerAmpPanelUrl = !! customizerUrl

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { includes } from 'lodash';
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -44,7 +42,7 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	isUserExcludedFromSelector = user => {
+	isUserExcludedFromSelector = ( user ) => {
 		const { currentUser } = this.props;
 		return (
 			user.linked_user_ID === false ||
@@ -57,7 +55,7 @@ class SiteOwnership extends Component {
 		return { ...user.linked_user_info, ...{ ID: user.ID } };
 	}
 
-	onSelectConnectionOwner = user => {
+	onSelectConnectionOwner = ( user ) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
@@ -79,7 +77,7 @@ class SiteOwnership extends Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.changeOwner( this.props.siteId, user.ID, user.name );
 					this.props.recordTracksEvent( 'calypso_jetpack_connection_ownership_changed' );
@@ -91,7 +89,7 @@ class SiteOwnership extends Component {
 		);
 	};
 
-	onSelectPlanOwner = user => {
+	onSelectPlanOwner = ( user ) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
@@ -113,7 +111,7 @@ class SiteOwnership extends Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.transferPlanOwnership( this.props.siteId, user.linked_user_ID );
 					this.props.recordTracksEvent( 'calypso_jetpack_plan_ownership_changed' );
@@ -269,7 +267,7 @@ class SiteOwnership extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isPaidPlan = isCurrentPlanPaid( state, siteId );
 		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner( state, siteId );

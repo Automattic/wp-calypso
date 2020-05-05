@@ -1,0 +1,98 @@
+// SASS placeholder selectors for form styles
+
+%form {
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+}
+
+%form-field {
+	margin: 0;
+	padding: 7px 14px;
+	width: 100%;
+	color: var( --color-neutral-70 );
+	font-size: 16px;
+	line-height: 1.5;
+	border: 1px solid var( --color-neutral-10 );
+	background-color: var( --color-surface );
+	transition: all 0.15s ease-in-out;
+	box-sizing: border-box;
+
+	&::placeholder {
+		color: var( --color-neutral-50 );
+	}
+
+	&:hover {
+		border-color: var( --color-neutral-20 );
+	}
+
+	&:focus {
+		border-color: var( --color-primary );
+		outline: none;
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
+		}
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
+
+	&:disabled {
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-20 );
+		opacity: 1;
+		-webkit-text-fill-color: var( --color-neutral-20 );
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var( --color-neutral-20 );
+		}
+	}
+
+	&.is-valid {
+		border-color: var( --color-success );
+	}
+
+	&.is-valid:hover {
+		border-color: var( --color-success-dark );
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
+
+	&.is-error:hover {
+		border-color: var( --color-error-dark );
+	}
+
+	&:focus {
+		&.is-valid {
+			box-shadow: 0 0 0 2px var( --color-success-10 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px var( --color-success-20 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var( --color-error-10 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var( --color-error-20 );
+		}
+	}
+}
+
+%textarea {
+	min-height: 92px;
+}

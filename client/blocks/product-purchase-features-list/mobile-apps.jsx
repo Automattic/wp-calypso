@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,11 +12,16 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { addQueryArgs } from 'lib/route';
 
-export default localize( ( { translate } ) => {
+/**
+ * Image dependencies
+ */
+import appsImage from 'assets/images/illustrations/apps.svg';
+
+export default localize( ( { translate, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/apps.svg" /> }
+				icon={ <img alt="" src={ appsImage } /> }
 				title={ translate( 'Download our mobile apps' ) }
 				description={ translate(
 					'Manage all your sites from a single dashboard: publish content, ' +
@@ -33,6 +37,7 @@ export default localize( ( { translate } ) => {
 					'https://apps.wordpress.com/get?'
 				) }
 				target="_blank"
+				onClick={ onClick }
 			/>
 		</div>
 	);

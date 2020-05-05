@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -56,7 +54,7 @@ class SharingButtons extends Component {
 		translate: PropTypes.func,
 	};
 
-	saveChanges = event => {
+	saveChanges = ( event ) => {
 		const { isJetpack, isLikesModuleActive, siteId, path } = this.props;
 
 		event.preventDefault();
@@ -88,12 +86,12 @@ class SharingButtons extends Component {
 		} );
 	};
 
-	handleButtonsChange = buttons => {
+	handleButtonsChange = ( buttons ) => {
 		this.props.markChanged();
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Save request has been performed
 		if ( this.props.isSaving && ! nextProps.isSaving ) {
 			if (
@@ -136,7 +134,7 @@ class SharingButtons extends Component {
 			<form
 				onSubmit={ this.saveChanges }
 				id="sharing-buttons"
-				className="sharing-settings sharing-buttons"
+				className="buttons__sharing-settings buttons__sharing-buttons"
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"
@@ -164,7 +162,7 @@ class SharingButtons extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
@@ -199,8 +197,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	protectForm,
-	localize
-)( SharingButtons );
+export default flowRight( connectComponent, protectForm, localize )( SharingButtons );

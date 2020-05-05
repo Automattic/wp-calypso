@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,6 +27,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
+	async openAdvancedPlansSegment() {
+		const selector = by.css(
+			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
 	async waitForComparison() {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -38,6 +43,15 @@ export default class PlansPage extends AsyncBaseContainer {
 
 	async returnFromComparison() {
 		return await driverHelper.clickWhenClickable( this.driver, by.css( '.header-cake__back' ) );
+	}
+
+	async onePrimaryButtonShown() {
+		const selector =
+			currentScreenSize() === 'mobile'
+				? '.plan-features__mobile .plan-features__actions-button.is-primary'
+				: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
+		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
+		return count === 1;
 	}
 
 	async confirmCurrentPlan( planName ) {

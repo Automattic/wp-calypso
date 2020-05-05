@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { without } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Timezone from 'components/timezone';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -43,7 +41,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = ( timestamp ) => {
 		const { appointmentDetails, appointmentId, scheduleId } = this.props;
 
 		this.props.rescheduleConciergeAppointment(
@@ -54,7 +52,7 @@ class CalendarStep extends Component {
 		);
 	};
 
-	setTimezone = timezone => {
+	setTimezone = ( timezone ) => {
 		const { appointmentDetails, appointmentId } = this.props;
 		this.props.updateConciergeAppointmentDetails( appointmentId, {
 			...appointmentDetails,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -15,10 +14,10 @@ import {
 	READER_FOLLOW_ERROR,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 jest.mock( 'state/reader/posts/actions', () => ( {
-	receivePosts: posts => Promise.resolve( posts ),
+	receivePosts: ( posts ) => Promise.resolve( posts ),
 } ) );
 
 describe( 'actions', () => {

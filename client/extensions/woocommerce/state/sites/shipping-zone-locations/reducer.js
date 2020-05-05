@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
@@ -12,18 +9,16 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 
-const reducers = {};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST ] = ( state, { zoneId } ) => {
+function handleLocationsRequest( state, { zoneId } ) {
 	return {
 		...state,
 		[ zoneId ]: LOADING,
 	};
-};
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { data, zoneId } ) => {
+function handleLocationsRequestSuccess( state, { data, zoneId } ) {
 	const locations = {
 		continent: [],
 		country: [],
@@ -35,19 +30,13 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { dat
 		...state,
 		[ zoneId ]: locations,
 	};
-};
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = (
-	state,
-	{ data, originatingAction: { zoneId } }
-) => {
-	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ]( state, { data, zoneId } );
-};
+function handleLocationsUpdated( state, { data, originatingAction: { zoneId } } ) {
+	return handleLocationsRequestSuccess( state, { data, zoneId } );
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = (
-	state,
-	{ data, originatingAction: { zone } }
-) => {
+function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
 	if ( 'number' === typeof zone.id ) {
 		return state;
 	}
@@ -61,12 +50,30 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = (
 			postcode: [],
 		},
 	};
-};
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
+function handleZoneDeleted( state, { originatingAction: { zone } } ) {
 	const newState = { ...state };
 	delete newState[ zone.id ];
 	return newState;
-};
+}
 
-export default createReducer( {}, reducers );
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST:
+			return handleLocationsRequest( state, action );
+
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS:
+			return handleLocationsRequestSuccess( state, action );
+
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
+			return handleLocationsUpdated( state, action );
+
+		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED:
+			return handleZoneUpdated( state, action );
+
+		case WOOCOMMERCE_SHIPPING_ZONE_DELETED:
+			return handleZoneDeleted( state, action );
+	}
+	return state;
+} );

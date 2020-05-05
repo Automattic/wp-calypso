@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -27,7 +26,7 @@ export class ReaderSidebarListsList extends React.Component {
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
-		return map( this.props.lists, function( list ) {
+		return map( this.props.lists, function ( list ) {
 			return (
 				<ReaderSidebarListsListItem
 					key={ list.ID }
@@ -45,13 +44,13 @@ export class ReaderSidebarListsList extends React.Component {
 		const { translate, lists } = this.props;
 		if ( ! lists || lists.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">
+				<div key="empty" className="sidebar__menu-empty">
 					{ translate( 'Collect sites together by adding a list.' ) }
-				</li>
+				</div>
 			);
 		}
 
-		return <div>{ this.renderItems() }</div>;
+		return <ul className="sidebar__menu-list">{ this.renderItems() }</ul>;
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }

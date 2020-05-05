@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	const origin = Object.assign( {}, defaultProps, newProps.origin );
 	const destination = Object.assign( {}, defaultProps, newProps.destination );
 
-	return function() {
+	return function () {
 		return {
 			extensions: {
 				woocommerce: {
@@ -340,10 +338,11 @@ describe( 'Shipping label Actions', () => {
 			// Mock a successful response
 			mockNormalizationRequest( true );
 
-			return submitAddressForNormalization( orderId, siteId, 'destination' )(
-				dispatchSpy,
-				getState
-			).then( () => {
+			return submitAddressForNormalization(
+				orderId,
+				siteId,
+				'destination'
+			)( dispatchSpy, getState ).then( () => {
 				expect(
 					dispatchSpy.calledWith( {
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
@@ -359,10 +358,12 @@ describe( 'Shipping label Actions', () => {
 			// Mock an unsuccessful response
 			mockNormalizationRequest( false );
 
-			return new Promise( resolve => {
-				submitAddressForNormalization( orderId, siteId, 'destination' )( () => {}, getState ).catch(
-					resolve
-				);
+			return new Promise( ( resolve ) => {
+				submitAddressForNormalization(
+					orderId,
+					siteId,
+					'destination'
+				)( () => {}, getState ).catch( resolve );
 			} );
 		} );
 	} );

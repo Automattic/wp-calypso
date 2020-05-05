@@ -9,10 +9,10 @@ import getSiteOption from './get-site-option';
  *
  * @see https://developer.wordpress.org/reference/functions/get_admin_url/
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {?String} path   Admin screen path
- * @return {?String}        Admin URL
+ * @param  {object}  state  Global state tree
+ * @param  {?number}  siteId Site ID
+ * @param  {?string} path   Admin screen path
+ * @returns {?string}        Admin URL
  */
 export default function getSiteAdminUrl( state, siteId, path = '' ) {
 	const adminUrl = getSiteOption( state, siteId, 'admin_url' );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,10 +11,9 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
@@ -23,13 +21,9 @@ import {
 	emailManagement,
 } from 'my-sites/email/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import {
-	getEligibleGSuiteDomain,
-	getGSuiteSupportedDomains,
-	hasGSuiteSupportedDomain,
-} from 'lib/gsuite';
+import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -37,6 +31,7 @@ import {
 	validateAgainstExistingUsers,
 } from 'lib/gsuite/new-users';
 import { getSelectedSite } from 'state/ui/selectors';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import Main from 'components/main';
 import Notice from 'components/notice';
@@ -82,7 +77,11 @@ class GSuiteAddUsers extends React.Component {
 
 		if ( canContinue ) {
 			addItems(
-				getItemsForCart( domains, 'business' === planType ? 'gapps_unlimited' : 'gapps', users )
+				getItemsForCart(
+					domains,
+					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
+					users
+				)
 			);
 			page( '/checkout/' + selectedSite.slug );
 		}
@@ -93,7 +92,14 @@ class GSuiteAddUsers extends React.Component {
 		this.goToEmail();
 	};
 
-	handleUsersChange = changedUsers => {
+	handleReturnKeyPress = ( event ) => {
+		// Simulate an implicit submission for the add user form :)
+		if ( event.key === 'Enter' ) {
+			this.handleContinue();
+		}
+	};
+
+	handleUsersChange = ( changedUsers ) => {
 		const { users: previousUsers } = this.state;
 
 		this.recordUsersChangedEvent( previousUsers, changedUsers );
@@ -103,7 +109,7 @@ class GSuiteAddUsers extends React.Component {
 		} );
 	};
 
-	recordClickEvent = eventName => {
+	recordClickEvent = ( eventName ) => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
 		const { users } = this.state;
 		recordTracksEvent( eventName, {
@@ -125,21 +131,21 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	componentDidMount() {
-		const { domains, isRequestingDomains } = this.props;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName } = this.props;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		const { domains, isRequestingDomains } = nextProps;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName } = nextProps;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 		if ( isRequestingDomains || ! domains.length ) {
 			return false;
 		}
 		return true;
 	}
 
-	redirectIfCannotAddEmail( domains, isRequestingDomains ) {
-		if ( isRequestingDomains || hasGSuiteSupportedDomain( domains ) ) {
+	redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName ) {
+		if ( isRequestingDomains || '' !== getEligibleGSuiteDomain( selectedDomainName, domains ) ) {
 			return;
 		}
 		this.goToEmail();
@@ -161,7 +167,9 @@ class GSuiteAddUsers extends React.Component {
 
 		const { users } = this.state;
 
-		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
+			( { domainName } ) => selectedDomainName === domainName
+		);
 		const canContinue = areAllUsersValid( users );
 
 		return (
@@ -172,7 +180,7 @@ class GSuiteAddUsers extends React.Component {
 							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
 						) }
 						<ul>
-							{ domainsWithForwards.map( domainName => {
+							{ domainsWithForwards.map( ( domainName ) => {
 								return <li key={ domainName }>{ domainName }</li>;
 							} ) }
 						</ul>
@@ -180,18 +188,19 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
-				{ gSuiteSupportedDomains.map( domain => {
+				{ selectedDomainInfo.map( ( domain ) => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
+				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
-							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
-							domains={ gSuiteSupportedDomains }
+							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
+							onReturnKeyPress={ this.handleReturnKeyPress }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
@@ -252,10 +261,10 @@ GSuiteAddUsers.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDecoratedSiteDomains( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 		return {
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),

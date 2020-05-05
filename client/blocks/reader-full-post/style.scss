@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Styles targeted at story content
 @import './_content.scss';
@@ -45,10 +45,10 @@
 }
 
 .reader-full-post__visit-site-container {
-	background: var( --color-white );
+	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
 	font-size: 11px;
-	font-weight: 500;
+	font-weight: 600;
 	height: 46px;
 	margin: 0;
 	position: fixed;
@@ -68,7 +68,7 @@
 	}
 
 	.external-link .gridicons-external {
-		fill: var( --color-neutral-400 );
+		fill: var( --color-neutral-40 );
 		top: 5px;
 
 		@include breakpoint( '>660px' ) {
@@ -77,7 +77,7 @@
 	}
 
 	.external-link {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -139,13 +139,17 @@
 }
 
 .reader-full-post__story-content {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 17px;
 	line-height: 28px;
 }
 
 .reader-full-post__story-content img {
 	margin-bottom: 12px;
+
+	&.latex {
+		margin-bottom: 0;
+	}
 }
 
 .reader-full-post__story-content figure img {
@@ -240,13 +244,13 @@
 		}
 
 		.reader-author-link {
-			font-weight: 700;
+			font-weight: 600;
 			display: inline;
 			margin-right: 5px;
 
 			&::after {
 				content: ',';
-				font-weight: normal;
+				font-weight: 400;
 			}
 		}
 
@@ -414,7 +418,7 @@
 
 .reader-full-post__header-title {
 	clear: none;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -444,7 +448,7 @@
 
 	.reader-full-post__header-title-link,
 	.reader-full-post__header-title-link:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 

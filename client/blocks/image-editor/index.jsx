@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -82,7 +80,7 @@ class ImageEditor extends React.Component {
 
 	editCanvasRef = React.createRef();
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -108,7 +106,7 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
 		let src,
@@ -134,7 +132,7 @@ class ImageEditor extends React.Component {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = ( blob ) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob
@@ -171,9 +169,7 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		const canvasComponent = this.editCanvasRef.current.getWrappedInstance();
-
-		canvasComponent.toBlob( this.convertBlobToImage );
+		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
 	};
 
 	onCancel = () => {
@@ -257,8 +253,6 @@ class ImageEditor extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ noticeText && this.renderNotice() }
-
 				<CloseOnEscape onEscape={ this.onCancel } />
 				<QuerySites siteId={ siteId } />
 
@@ -277,6 +271,8 @@ class ImageEditor extends React.Component {
 						/>
 					</div>
 				</figure>
+
+				{ noticeText && this.renderNotice() }
 			</div>
 		);
 	}

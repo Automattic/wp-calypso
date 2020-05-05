@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -27,7 +26,7 @@ import ReaderVisitLink from 'blocks/reader-visit-link';
  */
 import './style.scss';
 
-const ReaderPostActions = props => {
+const ReaderPostActions = ( props ) => {
 	const {
 		post,
 		site,

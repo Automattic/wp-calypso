@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -83,7 +81,7 @@ export class EditorWordCount extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	localeSlug: getCurrentUserLocale( state ) || 'en',
 	rawContent: getEditorRawContent( state ),
 } ) )( localize( EditorWordCount ) );

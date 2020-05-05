@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchOrderTransaction = action =>
+export const fetchOrderTransaction = ( action ) =>
 	http(
 		{
 			path: `/me/transactions/order/${ action.orderId }`,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -69,7 +67,7 @@ class Notices extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
 	exportDownloadURL: state.exporter.downloadURL,

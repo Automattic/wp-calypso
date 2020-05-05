@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, CompactCard } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
@@ -25,6 +22,7 @@ import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
 import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -38,7 +36,7 @@ class GSuiteUsersCard extends React.Component {
 
 	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
-			domain =>
+			( domain ) =>
 				domain &&
 				domain.name === domainName &&
 				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
@@ -46,10 +44,7 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	isNewUser( user, subscribedDate ) {
-		return this.props
-			.moment()
-			.subtract( 1, 'day' )
-			.isBefore( subscribedDate );
+		return this.props.moment().subtract( 1, 'day' ).isBefore( subscribedDate );
 	}
 
 	generateClickHandler( user ) {
@@ -63,9 +58,14 @@ class GSuiteUsersCard extends React.Component {
 	};
 
 	renderDomain( domain, users ) {
+		// The product name is same for all users as product license is associated to domain
+		// Hence a snapshot of the product name from the first user is sufficient
+		const license = users[ 0 ].product_name;
+		// This ensures display consistency if the API is not ready yet
+		const label = license ? `${ license }: ${ domain }` : domain;
 		return (
 			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
-				<SectionHeader label={ domain }>
+				<SectionHeader label={ label }>
 					{ this.canAddUsers( domain ) && (
 						<Button
 							primary
@@ -73,7 +73,7 @@ class GSuiteUsersCard extends React.Component {
 							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
-							{ this.props.translate( 'Add G Suite User' ) }
+							{ this.props.translate( 'Add New User' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -147,18 +147,18 @@ class GSuiteUsersCard extends React.Component {
 				) }
 
 				{ Object.keys( usersByDomain )
-					.filter( domain => ! selectedDomainName || domain === selectedDomainName )
-					.map( domain => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
+					.filter( ( domain ) => ! selectedDomainName || domain === selectedDomainName )
+					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
 			</div>
 		);
 	}
 }
 
-const addGoogleAppsUserClick = domainName =>
+const addGoogleAppsUserClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add G Suite User" Button in G Suite',
+			'Clicked "Add New User" Button in G Suite',
 			'Domain Name',
 			domainName
 		),
@@ -192,9 +192,9 @@ GSuiteUsersCard.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		user: getCurrentUser( state ),
 	} ),
 	{ addGoogleAppsUserClick, manageClick }
-)( localize( GSuiteUsersCard ) );
+)( localize( withLocalizedMoment( GSuiteUsersCard ) ) );

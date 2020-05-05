@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -114,7 +113,7 @@ QuickSaveButtons.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

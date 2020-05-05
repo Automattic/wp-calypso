@@ -36,7 +36,7 @@ describe( '#httpHandler', () => {
 
 	beforeEach( () => {
 		fetch.resetMocks();
-		completed = new Promise( resolve => {
+		completed = new Promise( ( resolve ) => {
 			dispatch = jest.fn( () => resolve( true ) );
 		} );
 	} );
@@ -115,7 +115,10 @@ describe( '#httpHandler', () => {
 	} );
 
 	test( 'should set appropriate headers', () => {
-		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
+		const headers = [
+			[ 'Auth', 'something' ],
+			[ 'Bearer', 'secret' ],
+		];
 		const data = {};
 
 		fetch.mockResponse( JSON.stringify( data ) );

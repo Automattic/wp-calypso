@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -168,15 +165,12 @@ const ExpiryTime = ( {
 		);
 	};
 
-	const formatUnixTimestamp = timestamp => {
+	const formatUnixTimestamp = ( timestamp ) => {
 		if ( ! timestamp ) {
 			return;
 		}
 
-		return moment
-			.unix( timestamp )
-			.utc()
-			.format( 'YYYY-MM-DD H:mm:ss' );
+		return moment.unix( timestamp ).utc().format( 'YYYY-MM-DD H:mm:ss' );
 	};
 
 	return (
@@ -188,10 +182,7 @@ const ExpiryTime = ( {
 			</SectionHeader>
 			<Card>
 				<p>
-					{ translate( 'UTC time is ' ) +
-						moment()
-							.utc()
-							.format( 'YYYY-MM-DD H:mm:ss' ) }
+					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD H:mm:ss' ) }
 					<br />
 					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD H:mm:ss' ) }
 				</p>
@@ -222,7 +213,7 @@ const ExpiryTime = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_gc_email_me',
 		'cache_max_time',

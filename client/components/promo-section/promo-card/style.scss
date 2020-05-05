@@ -1,0 +1,58 @@
+.promo-card {
+	display: flex;
+	flex-direction: column;
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+	}
+
+	.action-panel__figure {
+		margin-top: 3px;
+
+		@include breakpoint( '>480px' ) {
+			max-width: 24px;
+			order: 1;
+
+			&.align-left {
+				order: -1;
+			}
+		}
+	}
+
+	.action-panel__body {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		
+		p {
+			flex-grow: 1;
+		}
+	}
+
+	&.is-primary {
+		@include breakpoint( '>480px' ) {
+			.action-panel__figure {
+				max-width: 310px;
+			}
+		}
+
+		.action-panel__body {
+			justify-content: center;
+			p {
+				flex-grow: 0;
+			}
+		}
+
+		background-color: var( --color-primary-0 );
+	}
+
+	.action-panel__cta {
+		.button {
+			margin: 0 1em 4px 0;
+		}
+	}
+	.promo-card__title-badge {
+		margin-left: 48px;
+		background-color: var( --color-accent-60 );
+		color: var( --color-text-inverted );
+	}
+}

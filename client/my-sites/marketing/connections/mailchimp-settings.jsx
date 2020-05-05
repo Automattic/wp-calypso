@@ -15,9 +15,10 @@ import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isJetpackMinimumVersion, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -27,11 +28,9 @@ const MailchimpSettings = ( {
 	mailchimpListId,
 	isJetpack,
 	isJetpackConnectionBroken,
-	isJetpackTooOld,
-	siteSlug,
 	translate,
 } ) => {
-	const chooseMailchimpList = event => {
+	const chooseMailchimpList = ( event ) => {
 		if ( event.target.value === '0' ) {
 			// This means we want to turn off sharing for this site.
 			requestSettingsUpdateAction(
@@ -44,7 +43,7 @@ const MailchimpSettings = ( {
 			);
 			return;
 		}
-		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		const list = mailchimpLists.filter( ( mcList ) => mcList.id === event.target.value )[ 0 ];
 		requestSettingsUpdateAction(
 			siteId,
 			{
@@ -64,7 +63,7 @@ const MailchimpSettings = ( {
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 					) }
 					<a
-						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -74,25 +73,6 @@ const MailchimpSettings = ( {
 			</div>
 		</div>
 	);
-	if ( isJetpackTooOld ) {
-		return (
-			<div>
-				<Notice
-					status="is-warning"
-					text={ translate(
-						'Please update Jetpack plugin to version 7.1 in order to use the Mailchimp block'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
-				{ common }
-			</div>
-		);
-	}
 
 	if ( isJetpackConnectionBroken ) {
 		return (
@@ -140,7 +120,7 @@ const MailchimpSettings = ( {
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
 				{ mailchimpLists &&
-					mailchimpLists.map( list => (
+					mailchimpLists.map( ( list ) => (
 						<option key={ list.id } value={ list.id }>
 							{ list.name }
 						</option>
@@ -169,14 +149,13 @@ export const renderMailchimpLogo = () => (
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
-			siteId: siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-			isJetpackTooOld: isJetpackMinimumVersion( state, siteId, '7.1' ) === false,
-			isJetpack: isJetpack,
+			siteId,
+			isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
 			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(

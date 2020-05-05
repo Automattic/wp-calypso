@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,12 +31,12 @@ class SharingButtonsLabelEditor extends React.Component {
 	static defaultProps = {
 		active: false,
 		value: '',
-		onChange: function() {},
-		onClose: function() {},
+		onChange: function () {},
+		onClose: function () {},
 		hasEnabledButtons: true,
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( -1 !== closeKeyCodes.indexOf( event.keyCode ) ) {
 			event.target.blur();
 			event.preventDefault();
@@ -46,7 +44,7 @@ class SharingButtonsLabelEditor extends React.Component {
 		}
 	};
 
-	onInputChange = event => {
+	onInputChange = ( event ) => {
 		this.props.onChange( event.target.value );
 	};
 

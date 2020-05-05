@@ -30,9 +30,6 @@ class QuerySiteRecommendedPlugins extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		fetchRecommendedPlugins,
-	}
-)( QuerySiteRecommendedPlugins );
+export default connect( null, {
+	fetchRecommendedPlugins,
+} )( QuerySiteRecommendedPlugins );

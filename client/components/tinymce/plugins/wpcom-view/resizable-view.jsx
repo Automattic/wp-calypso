@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-export default function( Component ) {
+export default function ( Component ) {
 	const componentName = Component.displayName || Component.name || '';
 
 	return class extends PureComponent {

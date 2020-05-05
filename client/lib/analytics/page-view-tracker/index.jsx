@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -93,7 +91,7 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const currentSlug =
@@ -114,7 +112,4 @@ const mapDispatchToProps = {
 	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );

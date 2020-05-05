@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ class PostSelectorExample extends Component {
 		} );
 	};
 
-	setSelected = post => {
+	setSelected = ( post ) => {
 		this.setState( {
 			selectedPostId: post.ID,
 		} );
@@ -59,7 +57,7 @@ class PostSelectorExample extends Component {
 	}
 }
 
-const ConnectedPostSelectorExample = connect( state => ( {
+const ConnectedPostSelectorExample = connect( ( state ) => ( {
 	primarySiteId: getPrimarySiteId( state ),
 } ) )( PostSelectorExample );
 

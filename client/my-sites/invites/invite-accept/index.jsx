@@ -19,7 +19,7 @@ import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -33,6 +33,11 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import './style.scss';
 
 /**
+ * Image dependencies
+ */
+import whoopsImage from 'assets/images/illustrations/whoops.svg';
+
+/**
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
@@ -44,7 +49,7 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
 			fetchInvite( this.props.siteId, this.props.inviteKey );
@@ -81,7 +86,7 @@ class InviteAccept extends React.Component {
 	};
 
 	clickedNoticeSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_notice_site_link_click' );
 	};
 
 	decline = () => {
@@ -117,6 +122,7 @@ class InviteAccept extends React.Component {
 
 	renderForm = () => {
 		const { invite } = this.state;
+
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
@@ -124,8 +130,8 @@ class InviteAccept extends React.Component {
 		debug( 'Rendering invite' );
 
 		const props = {
-			invite: this.state.invite,
-			redirectTo: getRedirectAfterAccept( this.state.invite ),
+			invite,
+			redirectTo: getRedirectAfterAccept( invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
 			forceMatchingEmail: this.isMatchEmailError(),
@@ -149,7 +155,7 @@ class InviteAccept extends React.Component {
 			line: this.props.translate( "We weren't able to verify that invitation.", {
 				context: 'Message that is displayed to users when an invitation is invalid.',
 			} ),
-			illustration: '/calypso/images/illustrations/whoops.svg',
+			illustration: whoopsImage,
 		};
 
 		if ( error.error && error.message ) {
@@ -237,7 +243,7 @@ class InviteAccept extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		user: getCurrentUser( state ),
 	} ),
 	{ successNotice, infoNotice }

@@ -1,28 +1,32 @@
-/** @format */
+/* 1. For some images, `background-image` is set inline by the component logic */
 
 .payment-logo {
-	background-position: 0 center;
-	background-repeat: no-repeat;
-	background-size: 35px auto;
+	background-position: 0 center; /* 1 */
+	background-repeat: no-repeat; /* 1 */
+	background-size: 35px auto; /* 1 */
 	display: inline-block;
 	height: 20px;
 	vertical-align: middle;
 	width: 35px;
 
-	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 	$payment-types: 'alipay', 'apple-pay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking', 'paypal', 'p24',
 					'brazil-tef', 'wechat', 'sofort';
-
-	@each $brand in $payment-cc-brands {
-		&.is-#{$brand} {
-			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
-		}
-	}
 
 	@each $type in $payment-types {
 		&.is-#{$type} {
 			background-image: url( '/calypso/images/upgrades/#{$type}.svg' );
 		}
+	}
+
+	&.is-amex,
+	&.is-diners,
+	&.is-discover,
+	&.is-jcb,
+	&.is-mastercard,
+	&.is-unionpay,
+	&.is-visa {
+		background-size: 30px 19px;
+		width: 30px;
 	}
 
 	&.is-paypal {

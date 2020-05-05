@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -12,11 +10,10 @@ import { find, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { languages } from 'languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import User from 'lib/user';
-import { isMobile } from 'lib/viewport';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
@@ -35,7 +32,7 @@ const user = new User(),
 		contentChangedCallback() {},
 		glotPress: {
 			url: 'https://translate.wordpress.com',
-			project: 'test',
+			project: 'wpcom',
 			translation_set_slug: 'default',
 		},
 	};
@@ -178,8 +175,6 @@ const communityTranslatorJumpstart = {
 	},
 
 	updateTranslationData( localeCode, languageJson, localeVariant = null ) {
-		const languages = config( 'languages' );
-
 		if ( translationDataFromPage.localeCode === localeCode ) {
 			// if the locale code has already been assigned then assume it is up to date
 			debug( 'skipping updating translation data with same localeCode' );
@@ -195,7 +190,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
@@ -204,11 +199,7 @@ const communityTranslatorJumpstart = {
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
-		if ( process.env.NODE_ENV === 'production' ) {
-			translationDataFromPage.glotPress.project = 'wpcom';
-		} else {
-			translationDataFromPage.glotPress.project = 'test';
-		}
+
 		translationDataFromPage.glotPress.translation_set_slug =
 			translateSetSlugs[ localeVariant ] || 'default';
 	},
@@ -255,7 +246,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
+			loadjQueryDependentScriptDesktopWrapper( injectUrl, function ( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;
@@ -332,7 +323,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		analytics.tracks.recordEvent( tracksEvent, { locale: user.data.localeSlug } );
+		recordTracksEvent( tracksEvent, { locale: user.data.localeSlug } );
 	}
 
 	_isTranslatorEnabled = newSetting;
@@ -340,6 +331,5 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 // re-initialize when new locale data is loaded
 i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
-user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
 export default communityTranslatorJumpstart;

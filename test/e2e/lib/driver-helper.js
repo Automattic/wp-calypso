@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import webdriver, { until } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -16,18 +14,28 @@ import * as dataHelper from './data-helper';
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
+export async function highlightElement( driver, element ) {
+	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
+		return await driver.executeScript(
+			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+			element
+		);
+	}
+}
+
 export function clickWhenClickable( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				async function ( element ) {
+					await highlightElement( driver, element );
 					return element.click().then(
-						function() {
+						function () {
 							return true;
 						},
-						function() {
+						function () {
 							// Flaky response back from IE, so assume success and hope for the best
 							if ( global.browserName === 'Internet Explorer' ) {
 								console.log(
@@ -40,15 +48,13 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
 	);
 }
 
@@ -57,16 +63,13 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 	const timeoutPolling = pollingOverride ? pollingOverride : explicitWaitMS;
 
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				async function( element ) {
+				async function ( element ) {
 					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
 					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
 						const isFocused =
-							( await driver
-								.switchTo()
-								.activeElement()
-								.getId() ) === ( await element.getId() );
+							( await driver.switchTo().activeElement().getId() ) === ( await element.getId() );
 						if ( isFocused ) {
 							return true;
 						}
@@ -74,7 +77,7 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 					}
 					return false;
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
@@ -87,20 +90,20 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 export function followLinkWhenFollowable( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				function ( element ) {
 					return element.getAttribute( 'href' ).then(
-						function( href ) {
+						function ( href ) {
 							driver.get( href );
 							return true;
 						},
-						function() {
+						function () {
 							return false;
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
@@ -114,27 +117,25 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				function ( element ) {
 					return element.isDisplayed().then(
-						function() {
+						function () {
 							return true;
 						},
-						function() {
+						function () {
 							return false;
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be present and displayed`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
 	);
 }
 
@@ -142,19 +143,19 @@ export function waitTillSelected( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				function ( element ) {
 					return element.isSelected().then(
-						function() {
+						function () {
 							return true;
 						},
-						function() {
+						function () {
 							return false;
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
@@ -168,25 +169,25 @@ export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride 
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver
-		.wait( function() {
+		.wait( function () {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				function ( element ) {
 					return element.isDisplayed().then(
-						function() {
+						function () {
 							return true;
 						},
-						function() {
+						function () {
 							return false;
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
 		}, timeoutWait )
 		.then(
-			shown => {
+			( shown ) => {
 				return shown;
 			},
 			() => {
@@ -201,21 +202,27 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 	for ( let x = 0; x < attempts; x++ ) {
 		driver.findElement( selector ).then(
-			function( element ) {
+			async function ( element ) {
+				await highlightElement( driver, element );
 				element.click().then(
-					function() {
+					function () {
 						return true;
 					},
-					function() {
+					function () {
 						return true;
 					}
 				);
 			},
-			function() {
+			function () {
 				return true;
 			}
 		);
 	}
+}
+
+export async function getElementCount( driver, selector ) {
+	const elements = await driver.findElements( selector );
+	return elements.length || 0;
 }
 
 export async function isElementPresent( driver, selector ) {
@@ -223,37 +230,36 @@ export async function isElementPresent( driver, selector ) {
 	return !! elements.length;
 }
 
-export function elementIsNotPresent( driver, cssSelector ) {
-	return this.isElementPresent( driver, by.css( cssSelector ) ).then( function( isPresent ) {
+export function elementIsNotPresent( driver, selector ) {
+	return this.isElementPresent( driver, selector ).then( function ( isPresent ) {
 		return ! isPresent;
 	} );
 }
 
 export function waitForFieldClearable( driver, selector ) {
 	return driver.wait(
-		function() {
+		function () {
 			return driver.findElement( selector ).then(
-				element => {
+				async ( element ) => {
+					await driver.executeScript( "arguments[0].value = '';", element );
 					return element.clear().then(
-						function() {
-							return element.getAttribute( 'value' ).then( value => {
+						function () {
+							return element.getAttribute( 'value' ).then( ( value ) => {
 								return value === '';
 							} );
 						},
-						function() {
+						function () {
 							return false;
 						}
 					);
 				},
-				function() {
+				function () {
 					return false;
 				}
 			);
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clearable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
 	);
 }
 
@@ -265,13 +271,12 @@ export function setWhenSettable(
 ) {
 	const self = this;
 	const logValue = secureValue === true ? '*********' : value;
-	if ( global.browserName === 'chrome' && pauseBetweenKeysMS === 0 ) {
-		pauseBetweenKeysMS = 1;
-	}
+
 	return driver.wait(
-		async function() {
+		async function () {
 			await self.waitForFieldClearable( driver, selector );
 			const element = await driver.findElement( selector );
+			await highlightElement( driver, element );
 			if ( pauseBetweenKeysMS === 0 ) {
 				await element.sendKeys( value );
 			} else {
@@ -285,15 +290,13 @@ export function setWhenSettable(
 			return actualValue === value;
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be settable to: '${ logValue }'`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
 	);
 }
 
 export function setCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( checkbox => {
-		checkbox.getAttribute( 'checked' ).then( checked => {
+	return driver.findElement( selector ).then( ( checkbox ) => {
+		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked !== 'true' ) {
 				return this.clickWhenClickable( driver, selector );
 			}
@@ -302,8 +305,8 @@ export function setCheckbox( driver, selector ) {
 }
 
 export function unsetCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( checkbox => {
-		checkbox.getAttribute( 'checked' ).then( checked => {
+	return driver.findElement( selector ).then( ( checkbox ) => {
+		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked === 'true' ) {
 				return this.clickWhenClickable( driver, selector );
 			}
@@ -316,22 +319,21 @@ export function waitTillNotPresent( driver, selector, waitOverride ) {
 	const self = this;
 
 	return driver.wait(
-		function() {
-			return self.isElementPresent( driver, selector ).then( function( isPresent ) {
+		function () {
+			return self.isElementPresent( driver, selector ).then( function ( isPresent ) {
 				return ! isPresent;
 			} );
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to NOT be present`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
 	);
 }
 
 /**
  * Check whether an image is actually visible - that is rendered to the screen - not just having a reference in the DOM
- * @param {webdriver} driver - Browser context in which to search
- * @param {WebElement} webElement - Element to search for
+ *
+ * @param {object} driver - Browser context in which to search
+ * @param {object} webElement - Element to search for
  * @returns {Promise} - Resolved when the script is done executing
  */
 export function imageVisible( driver, webElement ) {
@@ -347,9 +349,9 @@ export function checkForConsoleErrors( driver ) {
 			.manage()
 			.logs()
 			.get( 'browser' )
-			.then( function( logs ) {
+			.then( function ( logs ) {
 				if ( logs.length > 0 ) {
-					forEach( logs, log => {
+					forEach( logs, ( log ) => {
 						// Ignore chrome cast errors in Chrome - http://stackoverflow.com/questions/24490323/google-chrome-cast-sender-error-if-chrome-cast-extension-is-not-installed-or-usi/26095117#26095117
 						// Also ignore post message errors - this is a known limitation at present
 						// Also ignore 404 errors for viewing sites or posts/pages that are private
@@ -358,7 +360,7 @@ export function checkForConsoleErrors( driver ) {
 							log.message.indexOf( '404' ) === -1 &&
 							log.message.indexOf( "Failed to execute 'postMessage' on 'DOMWindow'" ) === -1
 						) {
-							driver.getCurrentUrl().then( url => {
+							driver.getCurrentUrl().then( ( url ) => {
 								SlackNotifier.warn( `Found console error: "${ log.message }" on url '${ url }'`, {
 									suppressDuplicateMessages: true,
 								} );
@@ -376,8 +378,8 @@ export function logPerformance( driver ) {
 			.manage()
 			.logs()
 			.get( 'performance' )
-			.then( browserLogs => {
-				browserLogs.forEach( browserLog => {
+			.then( ( browserLogs ) => {
+				browserLogs.forEach( ( browserLog ) => {
 					const message = JSON.parse( browserLog.message ).message;
 					if (
 						message.method === 'Network.responseReceived' ||
@@ -397,12 +399,12 @@ export async function ensureMobileMenuOpen( driver ) {
 	return driver
 		.findElement( mobileHeaderSelector )
 		.isDisplayed()
-		.then( mobileDisplayed => {
+		.then( ( mobileDisplayed ) => {
 			if ( mobileDisplayed ) {
 				driver
 					.findElement( by.css( '.section-nav' ) )
 					.getAttribute( 'class' )
-					.then( classNames => {
+					.then( ( classNames ) => {
 						if ( classNames.includes( 'is-open' ) === false ) {
 							self.clickWhenClickable( driver, mobileHeaderSelector );
 						}
@@ -412,8 +414,8 @@ export async function ensureMobileMenuOpen( driver ) {
 }
 
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
-	return driver.wait( function() {
-		return driver.findElements( elementSelector ).then( elements => {
+	return driver.wait( function () {
+		return driver.findElements( elementSelector ).then( ( elements ) => {
 			return elements.length >= numElements;
 		} );
 	} );
@@ -433,7 +435,7 @@ export async function waitForNumberOfWindows( driver, numberWindows, waitOverrid
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return await driver.wait(
-		async function() {
+		async function () {
 			const handles = await driver.getAllWindowHandles();
 			return handles.length === numberWindows;
 		},
@@ -487,9 +489,9 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
  * @description
  * Scroll element on a page to desired position
  *
- * @param {Object} driver WebDriver
- * @param {Object} selector A element's selector
- * @param {String} position An element's position. Can be 'start', 'end' and 'center'
+ * @param {object} driver WebDriver
+ * @param {object} selector A element's selector
+ * @param {string} position An element's position. Can be 'start', 'end' and 'center'
  * @returns {Promise<void>} Promise
  */
 export async function scrollIntoView( driver, selector, position = 'center' ) {
@@ -504,7 +506,10 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 export async function selectElementByText( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 	return await this.clickWhenClickable( driver, element );
 }
@@ -512,7 +517,10 @@ export async function selectElementByText( driver, selector, text ) {
 export async function verifyTextPresent( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 	return await this.isElementPresent( driver, element );
 }
@@ -520,7 +528,10 @@ export async function verifyTextPresent( driver, selector, text ) {
 export function getElementByText( driver, selector, text ) {
 	return async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 }
 
@@ -536,10 +547,7 @@ export async function clearTextArea( driver, selector ) {
 
 export async function dismissAlertIfPresent( driver ) {
 	try {
-		await driver
-			.switchTo()
-			.alert()
-			.dismiss();
+		await driver.switchTo().alert().dismiss();
 		return true;
 	} catch ( error ) {
 		return false;
@@ -548,12 +556,13 @@ export async function dismissAlertIfPresent( driver ) {
 
 export async function acceptAlertIfPresent( driver ) {
 	try {
-		await driver
-			.switchTo()
-			.alert()
-			.accept();
+		await driver.switchTo().alert().accept();
 		return true;
 	} catch ( error ) {
 		return false;
 	}
+}
+
+export async function waitForAlertPresent( driver ) {
+	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }

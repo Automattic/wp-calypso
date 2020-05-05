@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -69,7 +68,4 @@ class ReaderExportButton extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ errorNotice }
-)( localize( ReaderExportButton ) );
+export default connect( null, { errorNotice } )( localize( ReaderExportButton ) );

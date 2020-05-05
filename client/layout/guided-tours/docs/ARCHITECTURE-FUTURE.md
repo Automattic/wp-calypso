@@ -14,8 +14,8 @@ In the interest of keeping Calypso's main bundles small and free of pieces that 
 As of August 2017, Guided Tours impacts Calypso's main bundle `build` as follows:
 
 - `layout/guided-tours`, which includes the view layer and its helpers, as well as individual tour configs: 76 KB stat size, 43 KB parsed, 9 KB gzipped
-- `state/ui/action-log`, for which `npm run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 2.5 KB or 1 KB gzipped
-- `state/ui/guided-tours`, for which `npm run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 15 KB or 4 KB gzipped
+- `state/ui/action-log`, for which `yarn run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 2.5 KB or 1 KB gzipped
+- `state/ui/guided-tours`, for which `yarn run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 15 KB or 4 KB gzipped
 
 We don't yet support lazy loading of branches of state, and ultimately `state/ui/action-log` has to be gathering information and `state/ui/guided-tours` has to be running selectors to determine if there is a tour to trigger — luckily, it is also the smaller piece.
 

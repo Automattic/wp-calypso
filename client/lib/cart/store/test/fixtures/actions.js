@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -64,7 +63,7 @@ export const payments = {
 		},
 	},
 	creditCard: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			country: 'US1',
 			name: 'Albert A. User',
@@ -91,7 +90,7 @@ export const payments = {
 		},
 	},
 	newCardNoPostalCode: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			country: 'AI',
 			name: 'Albert A. User',
@@ -102,7 +101,7 @@ export const payments = {
 		},
 	},
 	newCardNoCountryCode: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			name: 'Albert A. User',
 			'postal-code': '90314',
@@ -114,7 +113,7 @@ export const payments = {
 	},
 };
 
-export const transactionPaymentSetActions = mapValues( payments, payment => ( {
+export const transactionPaymentSetActions = mapValues( payments, ( payment ) => ( {
 	type: 'TRANSACTION_PAYMENT_SET',
 	payment,
 } ) );

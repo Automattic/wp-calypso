@@ -1,37 +1,6 @@
 /**
  * Sidebar Navigation Header in Sections
  */
-.current-section {
-	position: relative;
-	margin: 0 0 8px;
-
-	@include breakpoint( '>660px' ) {
-		display: none;
-	}
-
-	a {
-		display: flex;
-		justify-content: flex-start;
-		cursor: pointer;
-		padding: 8px 0;
-		color: var( --color-neutral-700 );
-		background: var( --color-white );
-		border-bottom: 1px solid var( --color-neutral-100 );
-	}
-
-	.current-section__site-title {
-		font-size: 10px;
-		color: var( --color-neutral-400 );
-		margin: 2px 0 -3px;
-	}
-
-	.site-icon {
-		margin-right: 8px;
-	}
-
-	.gridicons-chevron-left {
-		color: var( --color-neutral-light );
-		margin: 0 8px;
-		align-self: center;
-	}
+.current-section .site-icon {
+	margin-right: 8px;
 }

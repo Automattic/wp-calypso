@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
@@ -385,7 +384,7 @@ describe( 'index', () => {
 			'telnet://localhost',
 			'feed://example.com',
 		];
-		badLinks.forEach( badLink => {
+		badLinks.forEach( ( badLink ) => {
 			test( 'can remove javascript: links', () => {
 				const post = { content: '<a href="' + badLink + '">hi there</a>' };
 				const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
@@ -500,14 +499,14 @@ describe( 'index', () => {
 				loadingImage = {
 					complete: false,
 					src: 'http://example.com/two',
-					load: function() {
+					load: function () {
 						this.onload();
 					},
 				},
 				erroringImage = {
 					complete: false,
 					src: 'http://example.com/three',
-					error: function() {
+					error: function () {
 						this.onerror();
 					},
 				};
@@ -794,7 +793,9 @@ describe( 'index', () => {
 				'http://foobaryoutube.com/',
 				'https://notspotify.com/',
 			];
-			const badContent = badSrcs.map( src => '<iframe src="' + src + '"></iframe>' ).join( '\n' );
+			const badContent = badSrcs
+				.map( ( src ) => '<iframe src="' + src + '"></iframe>' )
+				.join( '\n' );
 			const post = {
 				content: badContent,
 			};
@@ -826,7 +827,7 @@ describe( 'index', () => {
 
 		test.each( [ [ 'pd-embed' ], [ 'cs-embed' ] ] )(
 			'links to embedded Crowdsignal surveys',
-			className => {
+			( className ) => {
 				const post = {
 					content:
 						'<div class="embed-polldaddy">' +

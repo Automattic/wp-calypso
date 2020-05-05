@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -20,7 +19,7 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import QueryMembershipsConnectedAccounts from 'components/data/query-memberships-connected-accounts';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { authorizeStripeAccount } from 'state/memberships/connected-accounts/actions';
 import getEditedSimplePaymentsStripeAccount from 'state/selectors/get-edited-simple-payments-stripe-account';
 import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-connected-accounts';
@@ -28,9 +27,9 @@ import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-con
 export const REDUX_FORM_NAME = 'membershipsForm';
 
 // Export some selectors that are needed by the code that submits the form
-export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
-export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
-export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
+export const getProductFormValues = ( state ) => getFormValues( REDUX_FORM_NAME )( state );
+export const isProductFormValid = ( state ) => isValid( REDUX_FORM_NAME )( state );
+export const isProductFormDirty = ( state ) => isDirty( REDUX_FORM_NAME )( state );
 
 // https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
 const SUPPORTED_CURRENCY_LIST = [
@@ -60,7 +59,7 @@ const SUPPORTED_CURRENCY_LIST = [
 	'THB',
 ];
 
-const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
+const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( ( code ) => {
 	const { symbol } = getCurrencyDefaults( code );
 	// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
 	// trim the dot at the end, e.g., 'kr.' becomes 'kr'
@@ -197,7 +196,7 @@ class ProductForm extends Component {
 					label={ translate( 'Stripe account' ) }
 					component={ FormSelect }
 					children={ Object.values( this.props.membershipsConnectedAccounts )
-						.map( acct => (
+						.map( ( acct ) => (
 							<option
 								value={ acct.connected_destination_account_id }
 								key={ acct.connected_destination_account_id }
@@ -251,7 +250,7 @@ export default compose(
 		validate,
 	} ),
 	connect(
-		state => {
+		( state ) => {
 			return {
 				isChoosingToAuthorizeStripeAccount:
 					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'authorize',

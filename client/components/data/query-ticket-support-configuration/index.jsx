@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { ticketSupportConfigurationRequest } from 'state/help/ticket/actions';
 import { isRequestingTicketSupportConfiguration } from 'state/help/ticket/selectors';
 
 class QueryTicketSupportConfiguration extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.ticketSupportConfigurationRequest();
 		}
@@ -27,7 +25,7 @@ class QueryTicketSupportConfiguration extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isRequesting: isRequestingTicketSupportConfiguration( state ),
 	} ),
 	{ ticketSupportConfigurationRequest }

@@ -1,30 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { REFUNDS } from 'lib/url/support';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { hasDomainBeingUsedForPlan, hasDomainRegistration } from 'lib/cart-values/cart-items';
 
 class DomainRegistrationRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Refund Support Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Refund Support Link' );
 	};
 
 	renderPolicy = () => {
 		let message = this.props.translate(
-			'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration.',
+			'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
 			{
 				components: {
 					refundsSupportPage: (
@@ -41,7 +38,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 
 		if ( hasDomainBeingUsedForPlan( this.props.cart ) ) {
 			message = this.props.translate(
-				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{
 					components: {
 						refundsSupportPage: (

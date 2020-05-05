@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
 
 const initialState = {
@@ -15,12 +13,20 @@ const initialState = {
 	locale: null,
 };
 
-export default createReducer( initialState, {
-	[ IMMEDIATE_LOGIN_SAVE_INFO ]: ( state, { success, reason, email, locale } ) => ( {
-		attempt: true,
-		success: !! success,
-		reason: reason || null,
-		email: email || null,
-		locale: locale || null,
-	} ),
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case IMMEDIATE_LOGIN_SAVE_INFO: {
+			const { success, reason, email, locale } = action;
+
+			return {
+				attempt: true,
+				success: !! success,
+				reason: reason || null,
+				email: email || null,
+				locale: locale || null,
+			};
+		}
+	}
+
+	return state;
 } );

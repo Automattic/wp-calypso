@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -73,7 +71,7 @@ class ProductCategoryUpdate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
 		const categoryId = Number( params.category_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -111,7 +109,7 @@ class ProductCategoryUpdate extends React.Component {
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: category.name },
 		} );
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, function ( accepted ) {
 			if ( ! accepted ) {
 				return;
 			}
@@ -172,7 +170,8 @@ class ProductCategoryUpdate extends React.Component {
 		const saveEnabled =
 			hasEdits &&
 			category &&
-			( category.name && category.name.length ) &&
+			category.name &&
+			category.name.length &&
 			! isNull( category.parent ) &&
 			! isUploading;
 
@@ -233,7 +232,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategoryUpdate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategoryUpdate ) );

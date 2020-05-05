@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -55,7 +53,7 @@ export const SimplePaymentsTour = makeTour(
 							<span>{ translate( 'Upgrade' ) }</span>
 						</SiteLink>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments">
+					<Link href="https://wordpress.com/support/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>

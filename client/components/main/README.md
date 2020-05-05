@@ -1,16 +1,16 @@
 Main (jsx)
 ==========
 
-Component used to declare the main area of any given section — it's the main wrapper that gets render first inside `#primary`.
+Component used to declare the main area of any given section —- it's the main wrapper that gets rendered first inside `#primary`.
 
 #### How to use:
 
-```js
+```jsx
 import Main from 'components/main';
 
 render() {
 	return (
-		<Main (optional) className="your-component">
+		<Main className="your-component">
 			Your section content...
 		</Main>
 	);
@@ -19,4 +19,5 @@ render() {
 
 #### Props
 
-* `className`: Add your own class to the wrapper.
+* `className`: Add your own CSS class to the wrapper.
+* `wideLayout`: Use wide layout (larger `max-width`) for the section.

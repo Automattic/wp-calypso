@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import {
 
 describe( 'HappinessSupport', () => {
 	let wrapper;
-	const translate = content => `Translated: ${ content }`;
+	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
@@ -39,7 +38,7 @@ describe( 'HappinessSupport', () => {
 		const content = wrapper.find( 'p.happiness-support__description' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.'
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
 		);
 	} );
 
@@ -62,12 +61,7 @@ describe( 'HappinessSupport', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
-		expect(
-			wrapper
-				.find( 'Button' )
-				.last()
-				.prop( 'href' )
-		).to.equal( JETPACK_SUPPORT );
+		expect( wrapper.find( 'Button' ).last().prop( 'href' ) ).to.equal( JETPACK_SUPPORT );
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {

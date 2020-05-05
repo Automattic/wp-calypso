@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { isEmpty, isEqual, compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PAYMENT_METHOD_CANCEL,
 	WOOCOMMERCE_PAYMENT_METHOD_CLOSE,
@@ -38,7 +36,7 @@ function cancelAction( state ) {
 function changeEnabledAction( state, { methodId, enabled } ) {
 	const bucket = getBucket( { id: methodId } );
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( methodId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them
@@ -72,7 +70,7 @@ function closeAction( state ) {
 	}
 	const bucket = getBucket( { id: currentlyEditingId } );
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( currentlyEditingId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them
@@ -122,7 +120,7 @@ function paymentMethodUpdatedAction( state, { data } ) {
 		const prevBucketEdits = prevEdits[ bucket ] || [];
 
 		const newBucketEdits = compact(
-			prevBucketEdits.map( paymentEdit => {
+			prevBucketEdits.map( ( paymentEdit ) => {
 				return isEqual( data.id, paymentEdit.id ) ? undefined : paymentEdit;
 			} )
 		);
@@ -136,11 +134,21 @@ function paymentMethodUpdatedAction( state, { data } ) {
 	return state;
 }
 
-export default createReducer( initialState, {
-	[ WOOCOMMERCE_PAYMENT_METHOD_CANCEL ]: cancelAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_CLOSE ]: closeAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD ]: editFieldAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED ]: changeEnabledAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_OPEN ]: openAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS ]: paymentMethodUpdatedAction,
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PAYMENT_METHOD_CANCEL:
+			return cancelAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_CLOSE:
+			return closeAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD:
+			return editFieldAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED:
+			return changeEnabledAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_OPEN:
+			return openAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS:
+			return paymentMethodUpdatedAction( state, action );
+	}
+
+	return state;
 } );

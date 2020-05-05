@@ -1,5 +1,5 @@
 .card.upgrade-nudge {
-	border-left: 3px solid var( --color-plan-premium );
+	border-left: 3px solid var( --color-accent );
 	display: flex;
 	margin: 16px 0;
 	padding: 12px 16px;
@@ -18,14 +18,23 @@
 
 	&.is-card-link {
 		padding-right: 48px;
+		transition: all 100ms ease-in-out;
+
+		&:hover {
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
+
+			.card__link-indicator {
+				color: var( --color-neutral-dark );
+			}
+		}
 	}
 }
 
 .upgrade-nudge__icon {
-	background: var( --color-plan-premium );
+	background: var( --color-accent );
 	border-radius: 50%;
 	margin-right: 16px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	padding: 5px 7px 7px 5px;
 	align-self: center;
 	flex: 0 0 auto;
@@ -37,7 +46,7 @@
 	display: inline-flex;
 
 	.upgrade-nudge__icon {
-		background: var( --color-success );
+		background: var( --color-accent );
 	}
 
 	&.is-full-width {
@@ -49,8 +58,8 @@
 }
 
 .upgrade-nudge__title {
-	color: var( --color-neutral-700 );
-	font-weight: 500;
+	color: var( --color-neutral-70 );
+	font-weight: 600;
 }
 
 .upgrade-nudge__message {

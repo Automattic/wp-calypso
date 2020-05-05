@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,25 +8,26 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
+import { CART_ITEM_REMOVE } from 'lib/cart/action-types';
 import {
-	CART_ITEM_REMOVE,
 	TRANSACTION_DOMAIN_DETAILS_SET,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
 	TRANSACTION_RESET,
 	TRANSACTION_STEP_SET,
-} from 'lib/upgrades/action-types';
+	TRANSACTION_STRIPE_SET,
+} from './action-types';
+import { hasDomainDetails } from './selectors';
 import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
 import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
-import { hasDomainDetails } from 'lib/store-transactions';
 
 let _transaction = createInitialTransaction();
 
 const TransactionStore = {
-	get: function() {
+	get: function () {
 		return _transaction;
 	},
 };
@@ -60,6 +59,10 @@ function setDomainDetails( domainDetails ) {
 
 function setPayment( payment ) {
 	replaceData( assign( {}, _transaction, { payment: payment } ) );
+}
+
+function setStripeObject( stripe, stripeConfiguration ) {
+	replaceData( assign( {}, _transaction, { stripe, stripeConfiguration } ) );
 }
 
 function setStep( step ) {
@@ -94,7 +97,7 @@ function setNewCreditCardDetails( options ) {
 	replaceData( newTransaction );
 }
 
-TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
+TransactionStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {
@@ -104,6 +107,10 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
+			break;
+
+		case TRANSACTION_STRIPE_SET:
+			setStripeObject( action.stripe, action.stripeConfiguration );
 			break;
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:

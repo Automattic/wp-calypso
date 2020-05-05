@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable */
 
 export default {

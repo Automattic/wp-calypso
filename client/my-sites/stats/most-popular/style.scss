@@ -19,7 +19,7 @@
 	float: left;
 	text-align: center;
 	padding: 20px 0;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	@include breakpoint( '<960px' ) {
 		width: 100%;
@@ -47,7 +47,7 @@
 .most-popular__day,
 .most-popular__hour {
 	display: block;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 20px;
 	margin: 6px 0 22px;
 }

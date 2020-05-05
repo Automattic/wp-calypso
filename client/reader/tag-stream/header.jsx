@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { sample } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -100,7 +99,7 @@ class TagStreamHeader extends React.Component {
 					<div className="tag-stream__header-follow">
 						<FollowButton
 							followLabel={ translate( 'Follow Tag' ) }
-							followingLabel={ translate( 'Following Tag' ) }
+							followingLabel={ translate( 'Following tag' ) }
 							iconSize={ 24 }
 							following={ following }
 							onFollowToggle={ onFollowToggle }

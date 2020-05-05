@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
@@ -22,7 +20,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = props => {
+const DetailsDialog = ( props ) => {
 	const {
 		orderId,
 		siteId,
@@ -45,7 +43,11 @@ const DetailsDialog = props => {
 		}
 
 		return (
-			<a href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` } target="_blank">
+			<a
+				href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				{ translate( 'Receipt' ) }
 			</a>
 		);
@@ -104,11 +106,8 @@ const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( DetailsDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DetailsDialog ) );

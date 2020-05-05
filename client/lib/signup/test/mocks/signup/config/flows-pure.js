@@ -1,5 +1,3 @@
-/** @format */
-
 const flows = {
 	simple_flow: {
 		steps: [ 'stepA', 'stepB' ],
@@ -12,7 +10,7 @@ const flows = {
 
 	flow_with_dependencies: {
 		steps: [ 'siteCreation', 'userCreation' ],
-		destination: function( dependencies ) {
+		destination: function ( dependencies ) {
 			return '/checkout/' + dependencies.siteSlug;
 		},
 	},
@@ -40,6 +38,14 @@ const flows = {
 
 	flowWithSiteTopicAndSurvey: {
 		steps: [ 'stepA', 'stepB', 'site-topic', 'survey' ],
+	},
+
+	flowWithSiteTopicWithOptionalTheme: {
+		steps: [ 'stepA', 'stepB', 'site-topic-with-optional-theme' ],
+	},
+
+	flowWithSiteTopicWithOptionalSurveyQuestion: {
+		steps: [ 'stepA', 'stepB', 'site-topic-with-optional-survey-question' ],
 	},
 };
 export default flows;

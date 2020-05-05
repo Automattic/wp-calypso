@@ -10,7 +10,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies

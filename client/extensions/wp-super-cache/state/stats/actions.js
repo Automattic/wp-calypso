@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,10 +22,10 @@ import { getSiteTitle } from 'state/sites/selectors';
 /*
  * Retrieves stats for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests stats for a given site
  */
-export const generateStats = siteId => {
+export const generateStats = ( siteId ) => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS, siteId } );
 		dispatch( removeNotice( 'wpsc-cache-stats' ) );
@@ -60,14 +58,14 @@ export const generateStats = siteId => {
 /*
  * Deletes a cached file for a site.
  *
- * @param  {Number} siteId Site ID
- * @param  {String} url URL of cached file to delete
- * @param  {Boolean} isSupercache Whether this is a supercache file
- * @param  {Boolean} isCached Whether this is a cached file
+ * @param  {number} siteId Site ID
+ * @param  {string} url URL of cached file to delete
+ * @param  {boolean} isSupercache Whether this is a supercache file
+ * @param  {boolean} isCached Whether this is a cached file
  * @returns {Function} Action thunk that deletes the cached file for a given site
  */
 export const deleteFile = ( siteId, url, isSupercache, isCached ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'wpsc-delete-cached-file' ) );
 		dispatch( { type: WP_SUPER_CACHE_DELETE_FILE, siteId } );
 

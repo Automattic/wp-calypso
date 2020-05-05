@@ -6,3 +6,10 @@
 	}
 
 }
+.transfer-to-other-user__confirmation-dialog {
+	width: 90%;
+
+	@include breakpoint('>480px') {
+		max-width: 500px;
+	}
+}

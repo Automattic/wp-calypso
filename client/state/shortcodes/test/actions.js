@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,14 +18,14 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#fetchShortcode()', () => {
 		const siteId = 12345678;
 		const shortcode = '[gallery ids="1,2,3"]';
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com' )
 					.persist()
 					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
@@ -43,7 +41,10 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should return a fetch action object when called', () => {
-				return fetchShortcode( siteId, shortcode )( spy ).then( () => {
+				return fetchShortcode(
+					siteId,
+					shortcode
+				)( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST,
 						siteId,
@@ -53,7 +54,10 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should return a receive action when request successfully completes', () => {
-				return fetchShortcode( siteId, shortcode )( spy ).then( () => {
+				return fetchShortcode(
+					siteId,
+					shortcode
+				)( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST_SUCCESS,
 						siteId,
@@ -76,7 +80,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com' )
 					.persist()
 					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
@@ -89,7 +93,10 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should return a receive action when an error occurs', () => {
-				return fetchShortcode( siteId, shortcode )( spy ).catch( () => {
+				return fetchShortcode(
+					siteId,
+					shortcode
+				)( spy ).catch( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST_FAILURE,
 						siteId,

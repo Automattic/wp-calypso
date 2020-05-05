@@ -1,9 +1,7 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { pick } from 'lodash';
 
 /**
@@ -15,17 +13,17 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
  * Tracks media-storage information, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_MEDIA_STORAGE_RECEIVE:
 			const mediaStorage = pick( action.mediaStorage, [
@@ -37,15 +35,14 @@ export function items( state = {}, action ) {
 			} );
 	}
 	return state;
-}
-items.schema = itemsSchema;
+} );
 
 /**
  * Tracks media-storage fetching state, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function fetchingItems( state = {}, action ) {
 	switch ( action.type ) {

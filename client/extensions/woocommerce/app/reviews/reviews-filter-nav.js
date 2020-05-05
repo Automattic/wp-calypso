@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class ReviewsFilterNav extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site, productId } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -55,7 +53,7 @@ class ReviewsFilterNav extends Component {
 		}
 	}
 
-	doSearch = search => {
+	doSearch = ( search ) => {
 		const { productId } = this.props;
 		const updatedStateQuery = { search, status: 'any' };
 		if ( productId ) {
@@ -167,5 +165,5 @@ export default connect(
 		search: getReviewsCurrentSearch( state ),
 		product: ownProps.productId && getProduct( state, ownProps.productId ),
 	} ),
-	dispatch => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
+	( dispatch ) => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
 )( localize( ReviewsFilterNav ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,9 +28,9 @@ import { getSiteTitle } from 'state/sites/selectors';
 /**
  * Returns an action object to be used in signalling that settings have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings Settings object
- * @return {Object} Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings Settings object
+ * @returns {object} Action object
  */
 export const receiveSettings = ( siteId, settings ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -43,11 +41,11 @@ export const receiveSettings = ( siteId, settings ) => ( {
 /*
  * Retrieves settings for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests settings for a given site
  */
-export const requestSettings = siteId => {
-	return dispatch => {
+export const requestSettings = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_REQUEST_SETTINGS,
 			siteId,
@@ -65,7 +63,7 @@ export const requestSettings = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 					siteId,
@@ -78,12 +76,12 @@ export const requestSettings = siteId => {
 /**
  * Saves settings for a site.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings Updated settings
+ * @param  {number} siteId Site ID
+ * @param  {object} settings Updated settings
  * @returns {Function} Action thunk that updates the settings for a given site
  */
 export const saveSettings = ( siteId, settings ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS, siteId } );
 
 		return wp.req
@@ -100,7 +98,7 @@ export const saveSettings = ( siteId, settings ) => {
 				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId } );
 				dispatch( requestStatus( siteId ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, siteId, error } );
 			} );
 	};
@@ -109,10 +107,10 @@ export const saveSettings = ( siteId, settings ) => {
 /**
  * Restores settings for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that restores the settings for a given site
  */
-export const restoreSettings = siteId => {
+export const restoreSettings = ( siteId ) => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS, siteId } );
 		dispatch( removeNotice( 'wpsc-restore-defaults' ) );

@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -59,7 +57,7 @@ function PaymentMethods( { translate, cart } ) {
 			} ) }
 
 			<div className="payment-methods__methods">
-				{ methods.map( method => (
+				{ methods.map( ( method ) => (
 					<PaymentLogo type={ method } key={ method } />
 				) ) }
 			</div>

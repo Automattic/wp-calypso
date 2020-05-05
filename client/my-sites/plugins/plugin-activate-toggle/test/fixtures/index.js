@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	site: {
 		slug: 'test',
@@ -12,5 +11,5 @@ export default {
 		completed: [],
 		errors: [],
 	},
-	action: function() {},
+	action: function () {},
 };

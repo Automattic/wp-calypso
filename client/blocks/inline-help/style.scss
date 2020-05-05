@@ -18,7 +18,7 @@
 		border: 1px solid var( --color-primary );
 
 		.gridicon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: var( --color-primary-400 );
+			border-color: var( --color-primary-40 );
 		}
 	}
 
@@ -68,7 +68,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		margin: 0;
 		top: 0;
 		height: 36px;
@@ -88,13 +88,13 @@
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: var( --color-primary-400 );
+		border-color: var( --color-primary-40 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-accent-300 );
-		border: 2px solid var( --color-white );
+		background-color: var( --color-accent-30 );
+		border: 2px solid var( --color-border-inverted );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -105,26 +105,20 @@
 	}
 }
 
+.inline-help__mobile-overlay {
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	bottom: 0;
+	height: 100%;
+	position: fixed;
+	right: 0;
+	left: 0;
+	z-index: z-index( 'root', '.inline-help__mobile-overlay' );
+}
+
 .inline-help__popover.popover {
 	@include breakpoint( '<660px' ) {
-		top: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		left: 0 !important;
-		position: fixed;
-		background: rgba( var( --color-neutral-0-rgb ), 0.8 );
-
-		.popover__arrow {
-			display: none;
-		}
-
-		.popover__inner {
-			top: auto !important;
-			right: auto !important;
-			bottom: auto !important;
-			left: auto !important;
-			margin: 16px;
-		}
+		margin-top: -5px;
+		width: calc( 100% - 28px );
 	}
 
 	p {
@@ -222,10 +216,6 @@
 	}
 }
 
-.inline-help__checklist {
-	min-height: 0;
-}
-
 .inline-help__view-heading {
 	display: block;
 	font-size: 14px;
@@ -290,7 +280,7 @@
 
 .inline-help__footer {
 	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
 	display: flex;
 	flex-direction: row;
@@ -299,7 +289,6 @@
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
-	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
 		position: relative;
@@ -333,8 +322,7 @@
 	}
 
 	// Hide/Show buttons as needed
-	.inline-help__cancel-button,
-	.inline-help__back-to-help-button {
+	.inline-help__cancel-button {
 		display: none;
 	}
 
@@ -346,17 +334,6 @@
 
 		.inline-help__cancel-button {
 			display: block;
-		}
-	}
-
-	.is-onboarding-welcome-active & {
-		.inline-help__cancel-button,
-		.inline-help__more-button {
-			display: none;
-		}
-		.inline-help__contact-button,
-		.inline-help__back-to-help-button {
-			display: inline-block;
 		}
 	}
 }
@@ -399,10 +376,10 @@
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			&:hover {
 				background: none;
 			}
@@ -485,17 +462,5 @@
 	100% {
 		opacity: 0.3;
 		width: 65%;
-	}
-}
-
-// Upwork AB Test Link
-.inline-help__upwork {
-	border-bottom: 1px solid var( --color-neutral-100 );
-	padding: 12px 16px;
-	text-align: left;
-
-	p {
-		font-size: 12px;
-		margin-bottom: 0;
 	}
 }

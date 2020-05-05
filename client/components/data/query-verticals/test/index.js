@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,15 @@ describe( 'QueryVerticals', () => {
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
 
-	test( 'should call request on update if isFetched is false.', () => {
+	test( 'should not call request on mount if a matching fetched result is found in state.', () => {
+		const requestVerticals = jest.fn();
+
+		shallow( <QueryVerticals requestVerticals={ requestVerticals } isFetched={ true } /> );
+
+		expect( requestVerticals ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call request on update if no matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
 		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
@@ -55,7 +61,7 @@ describe( 'QueryVerticals', () => {
 		);
 	} );
 
-	test( 'should not call request on update if isFetched is true.', () => {
+	test( 'should not call request on update if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
 		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );

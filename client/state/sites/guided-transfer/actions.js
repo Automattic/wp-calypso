@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,8 +22,8 @@ import {
  * Receives the status of a guided transfer for a particular site
  *
  * @param {number} siteId The site id to which the status belongs
- * @param {Object} guidedTransferStatus The current status of the guided transfer
- * @returns {Object} An action object
+ * @param {object} guidedTransferStatus The current status of the guided transfer
+ * @returns {object} An action object
  */
 export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
 	return {
@@ -42,10 +40,10 @@ export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
  * @returns {Thunk} Action thunk
  */
 export function requestGuidedTransferStatus( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST, siteId } );
 
-		const success = response => {
+		const success = ( response ) => {
 			const guidedTransferStatus = omit( response, '_headers' );
 
 			dispatch( {
@@ -56,7 +54,7 @@ export function requestGuidedTransferStatus( siteId ) {
 			dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) );
 		};
 
-		const failure = error =>
+		const failure = ( error ) =>
 			dispatch( {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 				siteId,
@@ -85,21 +83,21 @@ export function saveHostDetailsFailure( siteId, error = {} ) {
  * a guided transfer to that host
  *
  * @param {number} siteId The id of the source site to transfer
- * @param {Object} data The form data containing the target host details
+ * @param {object} data The form data containing the target host details
  * @returns {Thunk} Action thunk
  */
 export function saveHostDetails( siteId, data ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 			siteId,
 		} );
 
-		const failure = error => {
+		const failure = ( error ) => {
 			dispatch( saveHostDetailsFailure( siteId, error ) );
 		};
 
-		const success = response => {
+		const success = ( response ) => {
 			// The success response is the updated status of the guided transfer
 			dispatch( receiveGuidedTransferStatus( siteId, omit( response, '_headers' ) ) );
 

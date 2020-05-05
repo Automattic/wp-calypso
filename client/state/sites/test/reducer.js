@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, {
-	items as unwrappedItems,
-	requestingAll,
-	requesting,
-	deleting,
-	hasAllSitesList,
-} from '../reducer';
+import reducer, { items, requestingAll, requesting, deleting, hasAllSitesList } from '../reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE,
@@ -33,19 +25,16 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
-
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -58,6 +47,7 @@ describe( 'reducer', () => {
 			'items',
 			'mediaStorage',
 			'plans',
+			'products',
 			'guidedTransfer',
 			'monitor',
 			'vouchers',

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,10 +10,10 @@ import validUrl from 'valid-url';
  * This only looks at the name of the tag to
  * determine if it's white-listed.
  *
- * @param {String} tagName name of tag under inspection
- * @returns {Boolean} whether the tag is allowed
+ * @param {string} tagName name of tag under inspection
+ * @returns {boolean} whether the tag is allowed
  */
-const isAllowedTag = tagName => {
+const isAllowedTag = ( tagName ) => {
 	switch ( tagName ) {
 		case '#text':
 		case 'a':
@@ -52,9 +51,9 @@ const isAllowedTag = tagName => {
  *       snippet of code to execute, such
  *       as `onclick` or `onmouseover`
  *
- * @param {String} tagName name of tag on which attribute is found
- * @param {String} attrName name of attribute under inspection
- * @returns {Boolean} whether the attribute is allowed
+ * @param {string} tagName name of tag on which attribute is found
+ * @param {string} attrName name of attribute under inspection
+ * @returns {boolean} whether the attribute is allowed
  */
 const isAllowedAttr = ( tagName, attrName ) => {
 	switch ( tagName ) {
@@ -87,7 +86,7 @@ const isAllowedAttr = ( tagName, attrName ) => {
 	}
 };
 
-const isValidYoutubeEmbed = node => {
+const isValidYoutubeEmbed = ( node ) => {
 	if ( node.nodeName.toLowerCase() !== 'iframe' ) {
 		return false;
 	}
@@ -109,7 +108,7 @@ const isValidYoutubeEmbed = node => {
 	);
 };
 
-const replacementFor = node => {
+const replacementFor = ( node ) => {
 	const tagName = node.nodeName.toLocaleLowerCase();
 
 	switch ( tagName ) {
@@ -125,10 +124,10 @@ const replacementFor = node => {
 /**
  * Sanitizes input HTML for security and styling
  *
- * @param {String} content unverified HTML
+ * @param {string} content unverified HTML
  * @returns {string} sanitized HTML
  */
-export const sanitizeSectionContent = content => {
+export const sanitizeSectionContent = ( content ) => {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
@@ -218,7 +217,7 @@ export const sanitizeSectionContent = content => {
 
 	// remove the unwanted tags and transfer
 	// their children up a level in their place
-	removeList.forEach( node => {
+	removeList.forEach( ( node ) => {
 		const parent = node.parentNode;
 		let child;
 

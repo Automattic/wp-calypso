@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -26,12 +24,12 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const ReprintDialog = props => {
+const ReprintDialog = ( props ) => {
 	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;
 
 	const onClose = () => props.closeReprintDialog( orderId, siteId );
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
-	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
@@ -97,11 +95,8 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ReprintDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReprintDialog ) );

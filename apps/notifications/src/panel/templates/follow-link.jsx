@@ -24,21 +24,19 @@ export const FollowLink = createReactClass( {
 		reblog: 'note_reblog_post',
 	},
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			isFollowing: this.props.isFollowing,
 		};
 	},
 
-	toggleFollowStatus: function( event ) {
+	toggleFollowStatus: function ( event ) {
 		var isFollowing = this.state.isFollowing;
 
-		var follower = wpcom()
-			.site( this.props.site )
-			.follow();
+		var follower = wpcom().site( this.props.site ).follow();
 		var component = this;
 
-		var updateState = function( error, data ) {
+		var updateState = function ( error, data ) {
 			if ( error ) throw error;
 
 			if ( component.isMounted() ) {
@@ -65,7 +63,7 @@ export const FollowLink = createReactClass( {
 		} );
 	},
 
-	render: function() {
+	render: function () {
 		var gridicon_icon, link_text;
 
 		if ( this.state.isFollowing ) {

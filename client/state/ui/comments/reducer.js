@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -38,7 +37,7 @@ const deepUpdateComments = ( state, comments, query ) => {
 	};
 };
 
-const sortDescending = function( a, b ) {
+const sortDescending = function ( a, b ) {
 	if ( a < b ) {
 		return 1;
 	}
@@ -48,7 +47,7 @@ const sortDescending = function( a, b ) {
 	return 0;
 };
 
-const sortAscending = function( a, b ) {
+const sortAscending = function ( a, b ) {
 	if ( a < b ) {
 		return -1;
 	}
@@ -103,7 +102,7 @@ export const queries = ( state = {}, action ) => {
 	}
 };
 
-export const pendingActions = function( state = [], action ) {
+export const pendingActions = function ( state = [], action ) {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE:

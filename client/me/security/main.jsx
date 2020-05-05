@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AccountPassword from 'me/account-password';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -65,8 +63,11 @@ class Security extends React.Component {
 					</p>
 
 					<AccountPassword
-						userSettings={ this.props.userSettings }
 						accountPasswordData={ this.props.accountPasswordData }
+						autocomplete="new-password"
+						// Hint to LastPass not to attempt autofill
+						data-lpignore="true"
+						userSettings={ this.props.userSettings }
 					/>
 				</Card>
 			</Main>

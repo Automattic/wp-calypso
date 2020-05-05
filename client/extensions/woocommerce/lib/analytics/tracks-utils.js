@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -24,7 +22,7 @@ export const recordTrack = ( tracks, debug, tracksStore ) => ( eventName, eventP
 		return;
 	}
 
-	tracks.recordEvent( eventName, eventProperties );
+	tracks.recordTracksEvent( eventName, eventProperties );
 };
 
 export const bumpMCStat = ( debug, tracksStore ) => ( group, name ) => {

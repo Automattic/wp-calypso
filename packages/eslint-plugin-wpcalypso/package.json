@@ -13,7 +13,7 @@
 		"eslintplugin",
 		"eslint-plugin"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"main": "lib/index.js",
 	"files": [
 		"lib/"

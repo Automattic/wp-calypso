@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestProductsList()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/products' )
 				.twice()

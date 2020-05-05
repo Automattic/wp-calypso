@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,7 @@ class RecentPostsDropdown extends PureComponent {
 		exclude: [],
 	};
 
-	handleSelect = option => {
+	handleSelect = ( option ) => {
 		const { onSelect, posts } = this.props;
 		const slug = option.value;
 
@@ -74,7 +72,4 @@ const connectComponent = connect( ( state, { exclude } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( RecentPostsDropdown );
+export default flowRight( connectComponent, localize )( RecentPostsDropdown );

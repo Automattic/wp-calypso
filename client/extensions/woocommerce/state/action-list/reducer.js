@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,15 +7,21 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_ACTION_LIST_CLEAR ]: handleActionListClear,
-	[ WOOCOMMERCE_ACTION_LIST_ANNOTATE ]: handleActionListAnnotate,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ACTION_LIST_CLEAR:
+			return handleActionListClear( state, action );
+		case WOOCOMMERCE_ACTION_LIST_ANNOTATE:
+			return handleActionListAnnotate( state, action );
+	}
+
+	return state;
 } );
 
 function handleActionListClear() {
@@ -30,8 +34,8 @@ function handleActionListAnnotate( actionlist, action ) {
 	const pickNames = [ 'description', 'startTime', 'endTime' ];
 
 	return {
-		prevSteps: ( prevSteps || [] ).map( step => pick( step, pickNames ) ),
+		prevSteps: ( prevSteps || [] ).map( ( step ) => pick( step, pickNames ) ),
 		currentStep: currentStep ? pick( currentStep, pickNames ) : null,
-		nextSteps: nextSteps.map( step => pick( step, pickNames ) ),
+		nextSteps: nextSteps.map( ( step ) => pick( step, pickNames ) ),
 	};
 }

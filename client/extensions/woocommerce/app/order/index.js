@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -105,6 +104,6 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch )
 )( localize( Order ) );

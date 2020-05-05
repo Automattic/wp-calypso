@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,6 +46,6 @@ VideoView.propTypes = {
 	width: PropTypes.number,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( resizableView( VideoView ) );

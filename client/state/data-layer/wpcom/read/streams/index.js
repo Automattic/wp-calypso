@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { random, map, includes, get, noop } from 'lodash';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
-import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
+import { READER_STREAMS_PAGE_REQUEST } from 'state/reader/action-types';
 import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';
@@ -34,8 +32,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
  *
- * @param  {String} streamKey The stream ID to break apart
- * @return {String}          The stream ID suffix
+ * @param  {string} streamKey The stream ID to break apart
+ * @returns {string}          The stream ID suffix
  */
 function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
@@ -51,11 +49,11 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 
 	const eventName = 'calypso_traintracks_render';
 	const analyticsActions = posts
-		.filter( post => !! post.railcar )
-		.map( post => recordTracksEvent( eventName, post.railcar ) );
+		.filter( ( post ) => !! post.railcar )
+		.map( ( post ) => recordTracksEvent( eventName, post.railcar ) );
 	return analyticsActions;
 }
-const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
+const getAlgorithmForStream = ( streamKey ) => analyticsAlgoMap.get( streamKey );
 
 export const PER_FETCH = 7;
 export const INITIAL_FETCH = 4;
@@ -127,7 +125,7 @@ const streamApis = {
 	'conversations-a8c': {
 		path: () => '/read/conversations',
 		dateProperty: 'last_comment_date_gmt',
-		query: extras => getQueryString( { ...extras, index: 'a8c' } ),
+		query: ( extras ) => getQueryString( { ...extras, index: 'a8c' } ),
 		pollQuery: () =>
 			getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], { index: 'a8c' } ),
 	},
@@ -146,7 +144,7 @@ const streamApis = {
 	custom_recs_posts_with_images: {
 		path: () => '/read/recommendations/posts',
 		dateProperty: 'date',
-		query: extras =>
+		query: ( extras ) =>
 			getQueryString( {
 				...extras,
 				seed,
@@ -168,6 +166,7 @@ const streamApis = {
 
 /**
  * Request a page for the given stream
+ *
  * @param  {object}   action   Action being handled
  * @returns {object} http action for data-layer to dispatch
  */
@@ -230,7 +229,7 @@ export function handlePage( action, data ) {
 
 	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
 
-	const streamItems = posts.map( post => ( {
+	const streamItems = posts.map( ( post ) => ( {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations

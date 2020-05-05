@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
@@ -49,18 +48,8 @@ describe( '<CountrySpecificPaymentFields />', () => {
 
 	test( 'should disable fields', () => {
 		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		expect(
-			wrapper
-				.find( 'Input' )
-				.first()
-				.props().disabled
-		).toEqual( false );
+		expect( wrapper.find( 'Input' ).first().props().disabled ).toEqual( false );
 		wrapper.setProps( { disableFields: true } );
-		expect(
-			wrapper
-				.find( 'Input' )
-				.first()
-				.props().disabled
-		).toEqual( true );
+		expect( wrapper.find( 'Input' ).first().props().disabled ).toEqual( true );
 	} );
 } );

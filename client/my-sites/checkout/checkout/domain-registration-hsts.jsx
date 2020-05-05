@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { isEmpty, join, merge, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getDomainRegistrations, getDomainTransfers } from 'lib/cart-values/cart-items';
 import { HTTPS_SSL } from 'lib/url/support';
 import { getProductsList } from 'state/products-list/selectors';
@@ -30,7 +28,11 @@ class DomainRegistrationHsts extends React.PureComponent {
 			domains,
 			( tlds, domain ) => {
 				if ( isHstsRequired( domain.product_slug, productsList ) ) {
-					tlds.push( '.' + getTld( domain.meta ) );
+					const tld = '.' + getTld( domain.meta );
+
+					if ( tlds.indexOf( tld ) === -1 ) {
+						tlds.push( tld );
+					}
 				}
 
 				return tlds;
@@ -57,7 +59,7 @@ class DomainRegistrationHsts extends React.PureComponent {
 					{ translate(
 						'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 							'to host a website. When you host this domain at WordPress.com an SSL ' +
-							'certificate is included in your paid plan. {{a}}Learn more{{/a}}.',
+							'certificate is included. {{a}}Learn more{{/a}}.',
 						{
 							args: {
 								tld: tlds,
@@ -74,6 +76,6 @@ class DomainRegistrationHsts extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	productsList: getProductsList( state ),
 } ) )( localize( DomainRegistrationHsts ) );

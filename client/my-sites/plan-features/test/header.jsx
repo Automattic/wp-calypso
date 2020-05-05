@@ -1,26 +1,26 @@
-/** @format */
+/**
+ * @jest-environment jsdom
+ */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
-jest.mock( 'components/info-popover', () => 'InfoPopover' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	numberFormat: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -35,6 +35,7 @@ import { identity } from 'lodash';
  */
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import { PlanFeaturesHeader } from '../header';
+import PlanPill from 'components/plans/plan-pill';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -56,7 +57,7 @@ import {
 import PlanPrice from 'my-sites/plan-price/';
 
 const props = {
-	translate: x => x,
+	translate: ( x ) => x,
 	planType: PLAN_FREE,
 	currentSitePlan: { productSlug: PLAN_FREE },
 	isJetpack: null,
@@ -70,7 +71,7 @@ describe( 'PlanFeaturesHeader basic tests', () => {
 } );
 
 describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( productSlug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
 		test( `Should return a particular message for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe( 'Price for the next 12 months' );
@@ -92,7 +93,7 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `Should render different message for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe(
@@ -100,6 +101,169 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 			);
 		} );
 	} );
+} );
+
+describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( ( productSlug ) => {
+		test( `Should not render "Your Plan" plan pill (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				currentSitePlan: { productSlug },
+				planType: PLAN_PREMIUM,
+				popular: false,
+				newPlan: false,
+				bestValue: false,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeaderNoTabs() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( false );
+		} );
+
+		test( `Should render "Popular" plan pill (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				currentSitePlan: { productSlug },
+				planType: PLAN_PREMIUM,
+				popular: true,
+				newPlan: false,
+				bestValue: false,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeaderNoTabs() );
+
+			expect( pfh.contains( <PlanPill>Popular</PlanPill> ) ).toBe( true );
+		} );
+	} );
+} );
+
+describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( ( productSlug ) => {
+		test( `Should render "Your Plan" plan pill and no other plan pills for a paid plan in /plans page (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: false,
+				currentSitePlan: { productSlug },
+				planType: productSlug,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
+
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
+				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
+			} );
+		} );
+		test( `Should render "Your Plan" plan pill only, even if plan is Popular (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: false,
+				currentSitePlan: { productSlug },
+				planType: PLAN_PREMIUM,
+				popular: true,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
+
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
+				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
+			} );
+		} );
+
+		test( `Should not render "Your Plan" plan pill in Signup flow (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: true,
+				currentSitePlan: { productSlug },
+				planType: PLAN_PREMIUM,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( false );
+		} );
+
+		test( `Should render "Popular" plan pill in Signup flow (${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: true,
+				planType: PLAN_PREMIUM,
+				popular: true,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Popular</PlanPill> ) ).toBe( true );
+
+			[ 'New', 'Your Plan', 'Best Value' ].forEach( ( planPillLabel ) => {
+				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
+			} );
+		} );
+	} );
+
+	[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ].forEach( ( productSlug ) => {
+		test( `Should render "Your Plan" plan pill only even if plan is Best Value in /plans page(${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: false,
+				currentSitePlan: { productSlug },
+				planType: productSlug,
+				popular: false,
+				newPlan: false,
+				bestValue: true,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
+
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
+				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
+			} );
+		} );
+
+		test( `Should render "Best Value" plan pill if in signup flow(${ productSlug })`, () => {
+			const myProps = {
+				...props,
+				isPlaceholder: false,
+				isInSignup: true,
+				planType: productSlug,
+				popular: false,
+				newPlan: false,
+				bestValue: true,
+			};
+			const comp = new PlanFeaturesHeader( { ...myProps } );
+			const pfh = shallow( comp.renderPlansHeader() );
+
+			expect( pfh.contains( <PlanPill>Best Value</PlanPill> ) ).toBe( true );
+
+			[ 'New', 'Popular', 'Your Plan' ].forEach( ( planPillLabel ) => {
+				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
+			} );
+		} );
+	} );
+
+	[ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM ].forEach(
+		( productSlug ) => {
+			test( `Should not render "Your Plan" plan pill if currently on the free plan`, () => {
+				const myProps = { ...props, isInSignup: false, planType: productSlug };
+				const comp = new PlanFeaturesHeader( { ...myProps } );
+				const pfh = shallow( comp.renderPlansHeader() );
+
+				expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( false );
+			} );
+		}
+	);
 } );
 
 describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
@@ -110,7 +274,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		currentSitePlan: { productSlug: PLAN_PREMIUM },
 	};
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( productSlug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
@@ -122,11 +286,11 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		} );
 	} );
 
-	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( productSlug => {
+	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				isSiteJetpack: false,
+				isJetpack: false,
 				planType: productSlug,
 			} );
 			const tf = shallow( comp.getBillingTimeframe() );
@@ -136,7 +300,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				isSiteJetpack: true,
+				isJetpack: true,
 				isSiteAT: true,
 				planType: productSlug,
 			} );
@@ -147,7 +311,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
-				isSiteJetpack: true,
+				isJetpack: true,
 				hideMonthly: true,
 				planType: productSlug,
 			} );
@@ -169,7 +333,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `Should not render InfoPopover for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
@@ -225,11 +389,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
 
 		// We need the dive() here to pick up defaultProps
-		const myProps = wrapper
-			.find( PlanPrice )
-			.first()
-			.dive()
-			.props();
+		const myProps = wrapper.find( PlanPrice ).first().dive().props();
 		expect( myProps.rawPrice ).toBe( 15 );
 		expect( myProps.discounted ).toBe( false );
 		expect( myProps.original ).toBe( false );
@@ -242,11 +402,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
 
 		// We need the dive() here to pick up defaultProps
-		const props1 = wrapper
-			.find( PlanPrice )
-			.at( 0 )
-			.dive()
-			.props();
+		const props1 = wrapper.find( PlanPrice ).at( 0 ).dive().props();
 		expect( props1.rawPrice ).toBe( 15 );
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
@@ -254,11 +410,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.isInSignup ).toBe( false );
 
 		// We need the dive() here to pick up defaultProps
-		const props2 = wrapper
-			.find( PlanPrice )
-			.at( 1 )
-			.dive()
-			.props();
+		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
 		expect( props2.rawPrice ).toBe( 13 );
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
@@ -493,6 +645,8 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		rawPrice: 100,
 		discountPrice: 80,
 		translate: identity,
+		isJetpack: false,
+		isSiteAT: false,
 	};
 
 	test( 'Should display credit label for discounted higher-tier plans that are available for purchase', () => {
@@ -528,6 +682,27 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 
 	test( 'Should not display credit label when discount price is higher than rawPrice', () => {
 		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 101 } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should display credit label for atomic site on Business plan ', () => {
+		const instance = new PlanFeaturesHeader( {
+			...baseProps,
+			planType: PLAN_BUSINESS,
+			isJetpack: true,
+			isSiteAT: true,
+		} );
+		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
+		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+	} );
+
+	test( 'Should not display credit label for Jetpack site ', () => {
+		const instance = new PlanFeaturesHeader( {
+			...baseProps,
+			planType: PLAN_JETPACK_PREMIUM,
+			isJetpack: true,
+			isSiteAT: false,
+		} );
 		expect( instance.renderCreditLabel() ).toBe( null );
 	} );
 } );

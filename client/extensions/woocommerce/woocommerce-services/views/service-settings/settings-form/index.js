@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,8 +18,8 @@ import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shippin
 import { getSite } from 'state/sites/selectors';
 import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
-const SettingsForm = props => {
-	const renderGroup = index => {
+const SettingsForm = ( props ) => {
+	const renderGroup = ( index ) => {
 		return <SettingsGroup { ...props } group={ props.layout[ index ] } key={ index } />;
 	};
 
@@ -62,7 +60,4 @@ function mapDispatchToProps( dispatch, ownProps ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( SettingsForm );
+export default connect( mapStateToProps, mapDispatchToProps )( SettingsForm );

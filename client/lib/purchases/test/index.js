@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -120,9 +118,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
-						.subtract( 1, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 1, 'days' ).format(),
 				} )
 			).to.be.true;
 		} );
@@ -131,9 +127,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
-						.subtract( 2, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 2, 'days' ).format(),
 				} )
 			).to.be.true;
 		} );
@@ -143,9 +137,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
-						.subtract( 71, 'hours' )
-						.format(),
+					subscribedDate: moment().subtract( 71, 'hours' ).format(),
 				} )
 			).to.be.true;
 		} );
@@ -154,9 +146,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
-						.subtract( 3, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 3, 'days' ).format(),
 				} )
 			).to.be.false;
 		} );
@@ -165,9 +155,7 @@ describe( 'index', () => {
 				maybeWithinRefundPeriod( {
 					isRefundable: true,
 					refundPeriodInDays: 2,
-					subscribedDate: moment()
-						.subtract( 3, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 3, 'days' ).format(),
 				} )
 			).to.be.true;
 		} );
@@ -175,9 +163,7 @@ describe( 'index', () => {
 			expect(
 				maybeWithinRefundPeriod( {
 					isRefundable: false,
-					subscribedDate: moment()
-						.subtract( 1, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 1, 'days' ).format(),
 				} )
 			).to.be.false;
 		} );
@@ -197,18 +183,14 @@ describe( 'index', () => {
 		test( 'should return false when subscribed more than 1 week ago', () => {
 			expect(
 				subscribedWithinPastWeek( {
-					subscribedDate: moment()
-						.subtract( 8, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 8, 'days' ).format(),
 				} )
 			).to.be.false;
 		} );
 		test( 'should return true when subscribed less than 1 week ago', () => {
 			expect(
 				subscribedWithinPastWeek( {
-					subscribedDate: moment()
-						.subtract( 3, 'days' )
-						.format(),
+					subscribedDate: moment().subtract( 3, 'days' ).format(),
 				} )
 			).to.be.true;
 		} );

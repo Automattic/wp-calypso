@@ -5,7 +5,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import moment from 'moment';
 
 declare namespace i18nCalypso {
 	type NormalizedTranslateArgs =
@@ -16,15 +15,15 @@ declare namespace i18nCalypso {
 				count: number;
 		  } );
 
-	export type Substitution = string | number;
+	export type Substitution = string | number | React.ReactFragment;
 
 	export type Substitutions =
 		| Substitution
 		| Substitution[]
-		| { [placeholder: string]: Substitution };
+		| { [ placeholder: string ]: Substitution };
 
 	export interface ComponentInterpolations {
-		[placeholder: string]: React.ReactElement;
+		[ placeholder: string ]: React.ReactElement;
 	}
 
 	export interface TranslateOptions {
@@ -74,14 +73,13 @@ declare namespace i18nCalypso {
 		thousandsSep?: string;
 	}
 
-	export function numberFormat( number: number, numberOfDecimalPlaces: number );
-	export function numberFormat( number: number, options: NumberFormatOptions );
+	export function numberFormat( number: number, numberOfDecimalPlaces: number ): string;
+	export function numberFormat( number: number, options: NumberFormatOptions ): string;
 
 	export interface LocalizeProps {
 		locale: string;
 		translate: typeof translate;
 		numberFormat: typeof numberFormat;
-		moment: typeof moment;
 	}
 
 	// Infers prop type from component C

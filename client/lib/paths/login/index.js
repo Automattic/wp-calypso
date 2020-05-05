@@ -1,15 +1,14 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export function login( {
 	isJetpack,
+	isGutenboarding,
 	isWoo,
 	isNative,
 	locale,
@@ -19,6 +18,9 @@ export function login( {
 	emailAddress,
 	socialService,
 	oauth2ClientId,
+	wccomFrom,
+	site,
+	useMagicLink,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -27,12 +29,20 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
+		} else if ( twoFactorAuthType && isJetpack ) {
+			url += '/jetpack/' + twoFactorAuthType;
+		} else if ( twoFactorAuthType && isGutenboarding ) {
+			url += `/${ GUTENBOARDING_BASE_NAME }/` + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
 			url += '/social-connect';
 		} else if ( isJetpack ) {
 			url += '/jetpack';
+		} else if ( isGutenboarding ) {
+			url += `/${ GUTENBOARDING_BASE_NAME }`;
+		} else if ( useMagicLink ) {
+			url += '/link';
 		}
 	}
 
@@ -42,6 +52,10 @@ export function login( {
 		} else {
 			url = localizeUrl( url, locale );
 		}
+	}
+
+	if ( site ) {
+		url = addQueryArgs( { site }, url );
 	}
 
 	if ( redirectTo ) {
@@ -57,7 +71,11 @@ export function login( {
 	}
 
 	if ( isWoo ) {
-		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
+		url = addQueryArgs( { from: 'woocommerce-onboarding' }, url );
+	}
+
+	if ( wccomFrom ) {
+		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
 	}
 
 	return url;

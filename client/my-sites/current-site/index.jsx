@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,20 +5,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 
@@ -38,7 +36,7 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 	};
 
-	switchSites = event => {
+	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -85,23 +83,29 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				<AsyncLoad
-					require="my-sites/current-site/notice"
-					placeholder={ null }
-					site={ selectedSite }
-				/>
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+				{ isEnabled( 'current-site/domain-warning' ) && (
+					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				) }
+				{ isEnabled( 'current-site/stale-cart-notice' ) && (
+					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+				) }
+				{ isEnabled( 'current-site/notice' ) && (
+					<AsyncLoad
+						require="my-sites/current-site/notice"
+						placeholder={ null }
+						site={ selectedSite }
+					/>
+				) }
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getVisibleSites( state ).length,
+		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 	} ),
 	{ recordGoogleEvent, setLayoutFocus }

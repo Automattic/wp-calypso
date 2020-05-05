@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,11 @@ import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelCta from 'components/action-panel/cta';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActionPanelExample = () => (
 	<div className="design-assets__group">
 		<div>
@@ -41,8 +41,33 @@ const ActionPanelExample = () => (
 				</ActionPanelFooter>
 			</ActionPanel>
 		</div>
+		<div>
+			<ActionPanel>
+				<ActionPanelBody>
+					<ActionPanelFigure inlineBodyText={ true } align="left">
+						<img
+							src="/calypso/images/wordpress/logo-stars.svg"
+							width="170"
+							height="143"
+							alt="WordPress logo"
+						/>
+					</ActionPanelFigure>
+					<ActionPanelTitle>Action panel with left aligned image</ActionPanelTitle>
+					<p>
+						This is a description of the action. It gives a bit more detail and explains what we are
+						inviting the user to do.
+					</p>
+					<ActionPanelCta>
+						<Button className="action-panel__support-button" href="/help/contact">
+							Call to action!
+						</Button>
+					</ActionPanelCta>
+				</ActionPanelBody>
+			</ActionPanel>
+		</div>
 	</div>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 ActionPanelExample.displayName = 'ActionPanel';
 

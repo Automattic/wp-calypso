@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import HelpResult from './item';
 import SectionHeader from 'components/section-header';
 
@@ -29,7 +27,7 @@ export default class extends React.PureComponent {
 		return (
 			<div className="help-results">
 				<SectionHeader label={ this.props.header } />
-				{ this.props.helpLinks.map( helpLink => (
+				{ this.props.helpLinks.map( ( helpLink ) => (
 					<HelpResult
 						key={ helpLink.link }
 						helpLink={ helpLink }

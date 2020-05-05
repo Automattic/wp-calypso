@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,15 +7,15 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
 import SidebarItem from 'layout/sidebar/item';
-import config from 'config';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { decodeEntities } from 'lib/formatting';
 import compareProps from 'lib/compare-props';
 import {
@@ -27,6 +25,7 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
@@ -34,6 +33,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import isVipSite from 'state/selectors/is-vip-site';
 import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -44,11 +44,13 @@ class SiteMenu extends PureComponent {
 		allSingleSites: PropTypes.bool,
 		canCurrentUser: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isSiteAtomic: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -96,7 +98,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'upload_files',
+				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -116,9 +118,9 @@ class SiteMenu extends PureComponent {
 		];
 	}
 
-	onNavigate = postType => () => {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
 			menu_item: postType,
@@ -140,6 +142,11 @@ class SiteMenu extends PureComponent {
 			return null;
 		}
 
+		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
+		if ( 'wp_template_part' === menuItem.name ) {
+			return null;
+		}
+
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
@@ -155,42 +162,14 @@ class SiteMenu extends PureComponent {
 		}
 
 		let preload;
-		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
-			preload = 'posts-pages';
+		if ( 'post' === menuItem.name ) {
+			preload = 'posts';
+		} else if ( 'page' === menuItem.name ) {
+			preload = 'pages';
 		} else if ( 'comments' === menuItem.name ) {
 			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
-		}
-
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post':
-				icon = 'posts';
-				break;
-			case 'page':
-				icon = 'pages';
-				break;
-			case 'import':
-				icon = 'cloud-upload';
-				break;
-			case 'jetpack-portfolio':
-				icon = 'folder';
-				break;
-			case 'jetpack-testimonial':
-				icon = 'quote';
-				break;
-			case 'media':
-				icon = 'image';
-				break;
-			case 'comments':
-				icon = 'chat';
-				break;
-			case 'plugins':
-				icon = 'plugins';
-				break;
-			default:
-				icon = 'custom-post-type';
 		}
 
 		return (
@@ -200,7 +179,6 @@ class SiteMenu extends PureComponent {
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
-				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
@@ -211,7 +189,7 @@ class SiteMenu extends PureComponent {
 	}
 
 	getCustomMenuItems() {
-		const { isVip } = this.props;
+		const { isVip, isJetpack, isSiteAtomic } = this.props;
 		//reusable blocks are not shown in the sidebar on wp-admin either
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
 		return reduce(
@@ -223,9 +201,17 @@ class SiteMenu extends PureComponent {
 					return memo;
 				}
 
-				//Special handling for feedback (contact form entries), let's calypsoify except for VIP
-				//It doesn't make sense for the author to use the generic CPT handling in Calypso
-				if ( postTypeSlug === 'feedback' ) {
+				// Hide "Feedback" for WP for Teams sites.
+				if (
+					config.isEnabled( 'signup/wpforteams' ) &&
+					this.props.isSiteWPForTeams &&
+					postTypeSlug === 'feedback'
+				) {
+					return memo;
+				} else if ( postTypeSlug === 'feedback' ) {
+					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
+					//It doesn't make sense for the author to use the generic CPT handling in Calypso
+
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
@@ -240,10 +226,11 @@ class SiteMenu extends PureComponent {
 						// Required to build the menu item class name. Must be discernible from other
 						// items' paths in the same section for item highlighting to work properly.
 						link: '/types/' + postType.name,
-						// don't calypsoify for VIP
-						wpAdminLink: isVip
-							? 'edit.php?post_type=feedback'
-							: 'edit.php?post_type=feedback&calypsoify=1',
+						// don't calypsoify for VIP or Jetpack
+						wpAdminLink:
+							isVip || ( isJetpack && ! isSiteAtomic )
+								? 'edit.php?post_type=feedback&calypsoify=0'
+								: 'edit.php?post_type=feedback&calypsoify=1',
 						showOnAllMySites: false,
 					} );
 				}
@@ -287,12 +274,14 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,

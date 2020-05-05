@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -48,7 +47,7 @@ export default class EmailFollowersData extends Component {
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}
@@ -73,7 +72,7 @@ export default class EmailFollowersData extends Component {
 		pollers.remove( this._poller );
 	}
 
-	fetchIfEmpty = fetchOptions => {
+	fetchIfEmpty = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;
@@ -84,7 +83,7 @@ export default class EmailFollowersData extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		const defer = function() {
+		const defer = function () {
 			const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingFollowers ) {
 				return;
@@ -115,7 +114,7 @@ export default class EmailFollowersData extends Component {
 		return false;
 	};
 
-	refreshFollowers = fetchOptions => {
+	refreshFollowers = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		debug( 'Refreshing followers: ' + JSON.stringify( fetchOptions ) );
 		this.setState( {

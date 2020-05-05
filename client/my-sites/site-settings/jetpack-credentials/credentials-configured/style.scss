@@ -46,10 +46,10 @@
 	top: -5px;
 
 	&:hover .credentials-configured__revoke-icon {
-		color: var( --color-error-600 );
+		color: var( --color-error-60 );
 	}
 
 	&:disabled .credentials-configured__revoke-icon {
-		color: var( --color-error-50 );
+		color: var( --color-error-5 );
 	}
 }

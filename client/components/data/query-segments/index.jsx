@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ export class QuerySegments extends Component {
 		segments: PropTypes.array,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.segments ) {
 			this.props.requestSegments();
 		}
@@ -32,7 +30,7 @@ export class QuerySegments extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		segments: getSegments( state ),
 	} ),
 	{ requestSegments }

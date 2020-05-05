@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	cancelEditingPaymentMethod,
 	changePaymentMethodEnabled,
@@ -82,7 +80,7 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	};
 
-	onChangeEnabled = e => {
+	onChangeEnabled = ( e ) => {
 		const { method, site } = this.props;
 
 		this.props.onChange();
@@ -173,7 +171,7 @@ class PaymentMethodItem extends Component {
 		);
 	};
 
-	renderEnabledField = method => {
+	renderEnabledField = ( method ) => {
 		const { translate } = this.props;
 		let showEnableField = true;
 		if ( method.id === 'stripe' ) {
@@ -220,7 +218,7 @@ class PaymentMethodItem extends Component {
 					{ method.informationUrl && (
 						<p className="payments__method-information">
 							<ExternalLink icon href={ method.informationUrl } target="_blank">
-								{ translate( 'More Information' ) }
+								{ translate( 'More information' ) }
 							</ExternalLink>
 						</p>
 					) }
@@ -263,9 +261,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodItem )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );

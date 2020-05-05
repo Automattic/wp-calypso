@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,6 +11,12 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: SITE_LAUNCH,
 				siteId: 123,
+				meta: {
+					dataLayer: {
+						requestKey: 'SITE_LAUNCH-123',
+						trackRequest: true,
+					},
+				},
 			} );
 		} );
 	} );

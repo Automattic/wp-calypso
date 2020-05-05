@@ -37,11 +37,11 @@ export default class FormToggle extends PureComponent {
 
 	static idNum = 0;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.id = this.constructor.idNum++;
 	}
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( this.props.disabled ) {
 			return;
 		}
@@ -54,7 +54,7 @@ export default class FormToggle extends PureComponent {
 		this.props.onKeyDown( event );
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		if ( event ) {
 			event.stopPropagation && event.stopPropagation();
 		}
@@ -64,7 +64,7 @@ export default class FormToggle extends PureComponent {
 		}
 	};
 
-	onLabelClick = event => {
+	onLabelClick = ( event ) => {
 		if ( this.props.disabled ) {
 			return;
 		}

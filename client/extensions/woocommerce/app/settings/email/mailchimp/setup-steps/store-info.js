@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { languages } from 'languages';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
@@ -26,7 +24,7 @@ const fields = [
 ];
 
 const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
-	const onTimezoneSelect = value => {
+	const onTimezoneSelect = ( value ) => {
 		const e = {
 			target: {
 				name: 'store_timezone',
@@ -36,7 +34,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		onChange( e );
 	};
 
-	const selectLanguage = e => {
+	const selectLanguage = ( e ) => {
 		const event = {
 			target: {
 				name: 'store_locale',
@@ -46,7 +44,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 		onChange( event );
 	};
 
-	const isError = name => {
+	const isError = ( name ) => {
 		if ( name === 'store_phone' ) {
 			return validateFields && ! ( storeData.name && storeData[ name ].length >= 6 );
 		}
@@ -87,7 +85,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 				<FormLabel>
 					{ translate( 'Locale' ) }
 					<LanguagePicker
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						valueKey="langSlug"
 						value={ storeData.store_locale }
 						onChange={ selectLanguage }

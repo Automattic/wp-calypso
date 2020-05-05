@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,6 +10,7 @@ import { capitalize, includes } from 'lodash';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
@@ -50,7 +48,7 @@ export class DateTimeFormat extends Component {
 		isLoadingSettings: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;
@@ -66,7 +64,7 @@ export class DateTimeFormat extends Component {
 		} );
 	}
 
-	setFormat = ( name, defaultFormats ) => event => {
+	setFormat = ( name, defaultFormats ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -78,7 +76,7 @@ export class DateTimeFormat extends Component {
 
 	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
 
-	setCustomFormat = name => event => {
+	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -109,10 +107,10 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<div>
-				<div className="date-time-format__title">{ translate( 'Date and Time Format' ) }</div>
+				<div className="date-time-format__title">{ translate( 'Date and time format' ) }</div>
 				<div className="date-time-format__info">
-					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{' '}
-					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{' '}
+					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{ ' ' }
+					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{ ' ' }
 					{ translate( 'Week starts on %s', { args: weekday } ) }
 				</div>
 			</div>
@@ -168,4 +166,4 @@ export class DateTimeFormat extends Component {
 	}
 }
 
-export default localize( DateTimeFormat );
+export default localize( withLocalizedMoment( DateTimeFormat ) );

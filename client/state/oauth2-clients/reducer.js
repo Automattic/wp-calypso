@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { createReducer } from 'state/utils';
-import { OAUTH2_CLIENT_DATA_REQUEST_SUCCESS } from 'state/action-types';
+import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
 
 export const initialClientsData = {
 	930: {
@@ -52,10 +48,17 @@ export const initialClientsData = {
 	},
 };
 
-export default createReducer( initialClientsData, {
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		const newData = Object.assign( {}, state[ data.id ], data );
-
-		return Object.assign( {}, state, { [ data.id ]: newData } );
-	},
-} );
+export default function oauth2Clients( state = initialClientsData, action ) {
+	switch ( action.type ) {
+		case OAUTH2_CLIENT_DATA_RECEIVE:
+			return {
+				...state,
+				[ action.data.id ]: {
+					...state[ action.data.id ],
+					...action.data,
+				},
+			};
+		default:
+			return state;
+	}
+}

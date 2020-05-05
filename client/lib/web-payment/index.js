@@ -1,14 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import { abtest } from 'lib/abtest';
 
 /**
  * Web Payment method identifiers.
@@ -59,7 +52,7 @@ export function isApplePayAvailable() {
  *                         if none can be detected.
  */
 export function detectWebPaymentMethod() {
-	if ( isApplePayAvailable() && abtest( 'showApplePay' ) === 'show' ) {
+	if ( isApplePayAvailable() ) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}
 
@@ -77,7 +70,7 @@ export function detectWebPaymentMethod() {
  *                                        (expecting one of the
  *                                        `WEB_PAYMENT_*_METHOD`
  *                                        constant).
- * @param {function} translate            Localization function to translate the label.
+ * @param {Function} translate            Localization function to translate the label.
  * @returns {string|null}                 A user-friendly payment name
  *                                        or the given payment method
  *                                        if none matches.

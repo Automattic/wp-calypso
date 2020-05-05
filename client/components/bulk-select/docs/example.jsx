@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,19 +7,22 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import BulkSelect from 'components/bulk-select';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';
 
 	state = {
-		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
+		elements: [
+			{ title: 'Apples', selected: true },
+			{ title: 'Oranges', selected: false },
+		],
 	};
 
-	handleToggleAll = checkedState => {
+	handleToggleAll = ( checkedState ) => {
 		let newElements = [];
-		this.state.elements.forEach( element => {
+		this.state.elements.forEach( ( element ) => {
 			if ( typeof checkedState !== 'undefined' ) {
 				element.selected = checkedState;
 			} else {
@@ -33,14 +34,14 @@ export default class extends React.Component {
 	};
 
 	getSelectedElementsNumber = () => {
-		return this.state.elements.filter( function( element ) {
+		return this.state.elements.filter( function ( element ) {
 			return element.selected;
 		} ).length;
 	};
 
 	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
-			const onClick = function() {
+			const onClick = function () {
 				element.selected = ! element.selected;
 				this.forceUpdate();
 			}.bind( this );

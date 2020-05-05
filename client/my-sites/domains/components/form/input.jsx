@@ -1,26 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-export default class extends React.Component {
-	static displayName = 'Input';
+export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
+
+	inputRef = ( element ) => {
+		this.inputElement = element;
+
+		if ( ! this.props.inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			this.props.inputRef( element );
+		} else {
+			this.props.inputRef.current = element;
+		}
+	};
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
@@ -28,9 +36,9 @@ export default class extends React.Component {
 	}
 
 	setupInputModeHandlers = () => {
-		const inputElement = ReactDom.findDOMNode( this.refs.input );
+		const inputElement = this.inputRef.current;
 
-		if ( this.props.inputMode === 'numeric' ) {
+		if ( inputElement && this.props.inputMode === 'numeric' ) {
 			// This forces mobile browsers to use a numeric keyboard. We have to
 			// toggle the pattern on and off to avoid getting errors against the
 			// masked value (which could contain characters other than digits).
@@ -39,7 +47,7 @@ export default class extends React.Component {
 			// http://stackoverflow.com/a/19998430/821706
 			inputElement.addEventListener( 'touchstart', () => ( inputElement.pattern = '\\d*' ) );
 
-			[ 'keydown', 'blur' ].forEach( eventName =>
+			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
 				inputElement.addEventListener( eventName, () => ( inputElement.pattern = '.*' ) )
 			);
 		}
@@ -54,9 +62,14 @@ export default class extends React.Component {
 	}
 
 	focus = () => {
-		const node = ReactDom.findDOMNode( this.refs.input );
-		node.focus();
-		scrollIntoViewport( node );
+		const node = this.inputElement;
+		if ( node ) {
+			node.focus();
+			scrollIntoViewport( node, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
 	};
 
 	autoFocusInput = () => {
@@ -67,11 +80,7 @@ export default class extends React.Component {
 
 	recordFieldClick = () => {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent(
-				'Upgrades',
-				`Clicked ${ this.props.eventFormName } Field`,
-				this.props.name
-			);
+			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
 	};
 
@@ -97,7 +106,6 @@ export default class extends React.Component {
 					id={ this.props.name }
 					value={ this.props.value }
 					name={ this.props.name }
-					ref="input"
 					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
@@ -106,7 +114,7 @@ export default class extends React.Component {
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
-					inputRef={ this.props.inputRef }
+					inputRef={ this.inputRef }
 				/>
 				{ this.props.errorMessage && (
 					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />

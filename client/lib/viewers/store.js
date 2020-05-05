@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ let _fetchingViewers = {},
 
 const ViewersStore = {
 	// This data may help with infinite scrolling
-	getPaginationData: function( siteId ) {
+	getPaginationData: function ( siteId ) {
 		return {
 			totalViewers: _totalViewers[ siteId ] || 0,
 			fetchingViewers: _fetchingViewers[ siteId ],
@@ -32,7 +30,7 @@ const ViewersStore = {
 		};
 	},
 
-	getViewers: function( siteId ) {
+	getViewers: function ( siteId ) {
 		if ( ! _viewersBySite[ siteId ] ) {
 			return false;
 		}
@@ -40,11 +38,11 @@ const ViewersStore = {
 		return values( _viewersBySite[ siteId ] );
 	},
 
-	isRemoving: function( siteId ) {
+	isRemoving: function ( siteId ) {
 		return _removingFromSite[ siteId ];
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
@@ -72,7 +70,7 @@ function updateViewers( siteId, viewers, page, total ) {
 		_numViewersFetched[ siteId ] = 0;
 	}
 
-	viewers.forEach( function( viewer ) {
+	viewers.forEach( function ( viewer ) {
 		_numViewersFetched[ siteId ]++;
 		updateViewer( siteId, viewer.ID, viewer );
 	} );
@@ -98,7 +96,7 @@ function removeViewerFromSite( siteId, viewerId ) {
 	decrementPaginationData( siteId );
 }
 
-ViewersStore.dispatchToken = Dispatcher.register( function( payload ) {
+ViewersStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 	debug( 'register event Type', action.type, payload );
 

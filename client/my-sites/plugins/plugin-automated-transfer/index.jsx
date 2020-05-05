@@ -14,9 +14,11 @@ import wrapWithClickOutside from 'react-click-outside';
 import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
-import isAutomatedTransferFailed from 'state/selectors/is-automated-transfer-failed';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+	isAutomatedTransferFailed,
+} from 'state/automated-transfer/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
@@ -47,7 +49,7 @@ class PluginAutomatedTransfer extends Component {
 		transferComplete: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, isFailedTransfer, transferState } = this.props;
 
@@ -62,7 +64,7 @@ class PluginAutomatedTransfer extends Component {
 		clearInterval( this.interval );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
@@ -176,7 +178,7 @@ class PluginAutomatedTransfer extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
@@ -187,9 +189,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		requestSite,
-	}
-)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect( mapStateToProps, {
+	requestSite,
+} )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

@@ -1,22 +1,12 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
 import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
-import {
-	getCurrentUserLocale as getCurrentUserLocaleMock,
-	getCurrentUserLocaleVariant as getCurrentUserLocaleVariantMock,
-} from 'state/current-user/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 
-jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserLocale: jest.fn(),
-	getCurrentUserLocaleVariant: jest.fn(),
-} ) );
+jest.mock( 'state/selectors/get-current-locale-slug' );
+jest.mock( 'state/selectors/get-current-locale-variant' );
 
 describe( 'index', () => {
 	beforeEach( () => {
@@ -27,29 +17,27 @@ describe( 'index', () => {
 		test( 'should not modify params if locale unknown', () => {
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
-			expect( params ).to.eql( { query: 'search=foo' } );
+			expect( params ).toEqual( { query: 'search=foo' } );
 		} );
 
 		test( 'should not modify params if locale is default', () => {
 			setLocale( 'en' );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
-			expect( params ).to.eql( { query: 'search=foo' } );
+			expect( params ).toEqual( { query: 'search=foo' } );
 		} );
 
 		test( 'should include the locale query parameter for a non-default locale', () => {
 			setLocale( 'fr' );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
-			expect( params ).to.eql( {
-				query: 'search=foo&locale=fr',
-			} );
+			expect( params ).toEqual( { query: 'search=foo&locale=fr' } );
 		} );
 
 		test( 'should prefer and set initial variant locale from state', () => {
-			getCurrentUserLocaleVariantMock.mockReturnValueOnce( 'fr_formal' );
+			getCurrentLocaleVariant.mockReturnValueOnce( 'fr_formal' );
 			bindState( { subscribe() {}, getState() {} } );
-			expect( getLocale() ).to.equal( 'fr_formal' );
+			expect( getLocale() ).toBe( 'fr_formal' );
 		} );
 	} );
 
@@ -58,7 +46,7 @@ describe( 'index', () => {
 			const wpcom = { request() {} };
 			injectLocalization( wpcom );
 
-			expect( wpcom.localized ).to.exist;
+			expect( wpcom ).toHaveProperty( 'localized' );
 		} );
 
 		test( 'should override the default request method', () => {
@@ -66,28 +54,27 @@ describe( 'index', () => {
 			const wpcom = { request };
 			injectLocalization( wpcom );
 
-			expect( wpcom.request ).to.not.equal( request );
+			expect( wpcom.request ).not.toBe( request );
 		} );
 
-		test( 'should modify params by default', done => {
+		test( 'should modify params by default', async () => {
 			setLocale( 'fr' );
 			const wpcom = {
-				request( params ) {
-					expect( params.query ).to.equal( 'search=foo&locale=fr' );
-					done();
+				async request( params ) {
+					expect( params.query ).toBe( 'search=foo&locale=fr' );
 				},
 			};
 
 			injectLocalization( wpcom );
-			wpcom.request( { query: 'search=foo' } );
+			await wpcom.request( { query: 'search=foo' } );
 		} );
 	} );
 
 	describe( '#bindState()', () => {
 		test( 'should set initial locale from state', () => {
-			getCurrentUserLocaleMock.mockReturnValueOnce( 'fr' );
+			getCurrentLocaleSlug.mockReturnValueOnce( 'fr' );
 			bindState( { subscribe() {}, getState() {} } );
-			expect( getLocale() ).to.equal( 'fr' );
+			expect( getLocale() ).toBe( 'fr' );
 		} );
 
 		test( 'should subscribe to the store, setting locale on change', () => {
@@ -98,10 +85,10 @@ describe( 'index', () => {
 				},
 				getState() {},
 			} );
-			getCurrentUserLocaleMock.mockReturnValueOnce( 'de' );
+			getCurrentLocaleSlug.mockReturnValueOnce( 'de' );
 			listener();
 
-			expect( getLocale() ).to.equal( 'de' );
+			expect( getLocale() ).toBe( 'de' );
 		} );
 	} );
 } );

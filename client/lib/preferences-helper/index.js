@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import { Provider } from 'react-redux';
  * Internal dependencies
  */
 import PreferenceList from './preference-list';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function injectPreferenceHelper( element, store ) {
 	ReactDom.render(

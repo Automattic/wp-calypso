@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ReaderAvatar from 'blocks/reader-avatar';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
@@ -37,7 +36,7 @@ class CrossPost extends PureComponent {
 		feed: PropTypes.object,
 	};
 
-	handleTitleClick = event => {
+	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
@@ -46,11 +45,11 @@ class CrossPost extends PureComponent {
 		this.props.handleClick( this.props.xMetadata );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
@@ -80,11 +79,11 @@ class CrossPost extends PureComponent {
 		}
 	};
 
-	getSiteNameFromURL = siteURL => {
+	getSiteNameFromURL = ( siteURL ) => {
 		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
-	getDescription = authorFirstName => {
+	getDescription = ( authorFirstName ) => {
 		let label;
 		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
 		const isCrossComment = !! this.props.xMetadata.commentURL;
@@ -134,7 +133,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, xPostUrl => {
+			forEach( postKey.xPostUrls, ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),
@@ -149,11 +148,11 @@ class CrossPost extends PureComponent {
 					{ index + 2 < array.length && <span>, </span> }
 					{ index + 2 === array.length && (
 						<span>
-							{' '}
+							{ ' ' }
 							{ translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
-							} ) }{' '}
+							} ) }{ ' ' }
 						</span>
 					) }
 				</span>

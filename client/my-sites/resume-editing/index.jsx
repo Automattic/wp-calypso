@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -24,7 +21,8 @@ import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat } from 'lib/analytics/mc';
 import QueryPosts from 'components/data/query-posts';
 import SiteIcon from 'blocks/site-icon';
 
@@ -44,7 +42,7 @@ class ResumeEditing extends React.Component {
 		translate: PropTypes.func,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed.
 		if ( get( nextProps.draft, 'status', 'draft' ) !== 'draft' ) {
@@ -53,8 +51,8 @@ class ResumeEditing extends React.Component {
 	}
 
 	trackAnalytics = () => {
-		analytics.ga.recordEvent( 'Master Bar', 'Resumed Editing' );
-		analytics.mc.bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
+		gaRecordEvent( 'Master Bar', 'Resumed Editing' );
+		bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
 	};
 
 	render() {
@@ -81,7 +79,7 @@ class ResumeEditing extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getEditorLastDraftSiteId( state );
 		const postId = getEditorLastDraftPostId( state );
 

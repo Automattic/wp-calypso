@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -29,17 +28,15 @@ export class ReaderSidebarLists extends Component {
 	};
 
 	render() {
-		const { translate, lists, isOpen, onClick } = this.props;
-		const listCount = lists ? lists.length : 0;
+		const { translate, isOpen, onClick, ...passedProps } = this.props;
 		return (
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Lists' ) }
-				count={ listCount }
 				onClick={ onClick }
-				hideAddButton={ true }
+				hideAddButton
 			>
-				<ReaderSidebarListsList { ...this.props } />
+				<ReaderSidebarListsList { ...passedProps } />
 			</ExpandableSidebarMenu>
 		);
 	}

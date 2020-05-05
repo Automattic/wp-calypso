@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -42,48 +41,31 @@ describe( 'index', () => {
 		} );
 
 		test( 'should execute toggleDropdown when clicked', () => {
-			const toggleDropdownStub = sinon.stub( SelectDropdown.prototype, 'toggleDropdown' );
-
 			const dropdown = shallowRenderDropdown();
-			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
 
-			sinon.assert.calledOnce( toggleDropdownStub );
-			toggleDropdownStub.restore();
+			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should not respond when clicked when disabled', () => {
-			const toggleDropdownSpy = sinon.spy( SelectDropdown.prototype, 'toggleDropdown' );
-
-			const dropdown = shallowRenderDropdown( {
-				disabled: true,
-			} );
+			const dropdown = shallowRenderDropdown( { disabled: true } );
 
 			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).to.have.lengthOf( 1 );
 
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-
-			sinon.assert.called( toggleDropdownSpy );
-
 			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
 
 			// Repeat to be sure
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-
-			sinon.assert.called( toggleDropdownSpy );
-
 			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
-
-			toggleDropdownSpy.restore();
 		} );
 
-		test( 'should be possible to control the dropdown via keyboard', () => {
-			const navigateItemStub = sinon.stub( SelectDropdown.prototype, 'navigateItem' );
-
+		test( 'should be possible to open the dropdown via keyboard', () => {
 			const dropdown = shallowRenderDropdown();
-			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown' );
 
-			sinon.assert.calledOnce( navigateItemStub );
-			navigateItemStub.restore();
+			// simulate pressing 'space' key
+			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', createKeyEvent( 32 ) );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.have.lengthOf( 1 );
 		} );
 	} );
 
@@ -119,88 +101,35 @@ describe( 'index', () => {
 			expect( initialSelectedText ).to.equal( 'Published' );
 		} );
 
-		test( "should return the `label` associated to the initial selected option, when there isn't any selected option", () => {
-			const getInitialSelectedItemStub = sinon.stub(
-				SelectDropdown.prototype,
-				'getInitialSelectedItem'
-			);
-			getInitialSelectedItemStub.returns( undefined );
-
-			const dropdown = shallowRenderDropdown();
-
-			getInitialSelectedItemStub.resetHistory().returns( 'scheduled' );
-
+		test( 'should return the `label` associated to the initial selected option', () => {
+			const dropdown = shallowRenderDropdown( { initialSelected: 'scheduled' } );
 			const initialSelectedText = dropdown.instance().getSelectedText();
-
-			sinon.assert.calledOnce( getInitialSelectedItemStub );
 			expect( initialSelectedText ).to.equal( 'Scheduled' );
-
-			getInitialSelectedItemStub.restore();
 		} );
 	} );
 
 	describe( 'selectItem', () => {
 		test( 'should run the `onSelect` hook, and then update the state', () => {
-			const setStateStub = sinon.stub( React.Component.prototype, 'setState' );
-
 			const dropdownOptions = getDropdownOptions();
 			const onSelectSpy = sinon.spy();
 			const dropdown = mount(
 				<SelectDropdown options={ dropdownOptions } onSelect={ onSelectSpy } />
 			);
 
-			setStateStub.resetHistory();
-
 			const newSelectedOption = dropdownOptions[ 2 ];
 			dropdown.instance().selectItem( newSelectedOption );
-
-			sinon.assert.calledOnce( onSelectSpy );
-			sinon.assert.calledOnce( setStateStub );
-			sinon.assert.calledWith( setStateStub, { selected: newSelectedOption.value } );
-
-			setStateStub.restore();
-		} );
-	} );
-
-	describe( 'disabled', () => {
-		test( 'should ignore all toggling when disabled', () => {
-			function runToggleDropdownTest( isCurrentlyOpen ) {
-				const setStateSpy = sinon.spy();
-				const fakeContext = {
-					setState: setStateSpy,
-					props: {
-						disabled: true,
-					},
-					state: {
-						isOpen: isCurrentlyOpen,
-					},
-				};
-
-				SelectDropdown.prototype.toggleDropdown.call( fakeContext );
-
-				sinon.assert.notCalled( setStateSpy );
-			}
-
-			runToggleDropdownTest( true );
-			runToggleDropdownTest( false );
+			expect( dropdown.state( 'selected' ) ).to.equal( newSelectedOption.value );
 		} );
 	} );
 
 	describe( 'toggleDropdown', () => {
 		test( 'should toggle the `isOpen` state property', () => {
 			function runToggleDropdownTest( isCurrentlyOpen ) {
-				const setStateSpy = sinon.spy();
-				const fakeContext = {
-					setState: setStateSpy,
-					state: {
-						isOpen: isCurrentlyOpen,
-					},
-				};
+				const dropdown = shallowRenderDropdown();
+				dropdown.setState( { isOpen: isCurrentlyOpen } );
 
-				SelectDropdown.prototype.toggleDropdown.call( fakeContext );
-
-				sinon.assert.calledOnce( setStateSpy );
-				sinon.assert.calledWith( setStateSpy, { isOpen: ! isCurrentlyOpen } );
+				dropdown.instance().toggleDropdown();
+				expect( dropdown.state( 'isOpen' ) ).to.equal( ! isCurrentlyOpen );
 			}
 
 			runToggleDropdownTest( true );
@@ -210,73 +139,52 @@ describe( 'index', () => {
 
 	describe( 'openDropdown', () => {
 		test( 'should set the `isOpen` state property equal `true`', () => {
-			const setStateSpy = sinon.spy();
-			const fakeContext = {
-				setState: setStateSpy,
-			};
-
-			SelectDropdown.prototype.openDropdown.call( fakeContext );
-
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { isOpen: true } );
+			const dropdown = shallowRenderDropdown();
+			dropdown.instance().openDropdown();
+			expect( dropdown.state( 'isOpen' ) ).to.equal( true );
 		} );
 	} );
 
 	describe( 'closeDropdown', () => {
 		test( "shouldn't do anything when the dropdown is already closed", () => {
-			const setStateSpy = sinon.spy();
-			const fakeContext = {
-				setState: setStateSpy,
-				state: {
-					isOpen: false,
-				},
-			};
-
-			SelectDropdown.prototype.closeDropdown.call( fakeContext );
-
-			sinon.assert.notCalled( setStateSpy );
+			const dropdown = shallowRenderDropdown();
+			dropdown.instance().closeDropdown();
+			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
 		} );
 
 		test( 'should set the `isOpen` state property equal `false`', () => {
-			const setStateSpy = sinon.spy();
-			const fakeContext = {
-				focused: 1,
-				setState: setStateSpy,
-				state: {
-					isOpen: true,
-				},
-			};
+			const dropdown = shallowRenderDropdown();
+			dropdown.setState( { isOpen: true } );
+			dropdown.instance().focused = 1;
 
-			SelectDropdown.prototype.closeDropdown.call( fakeContext );
-
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { isOpen: false } );
-
-			expect( fakeContext.focused ).to.be.undefined;
+			dropdown.instance().closeDropdown();
+			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
+			expect( dropdown.instance().focused ).to.be.undefined;
 		} );
 	} );
 
 	describe( 'navigateItem', () => {
 		test( "permits to navigate through the dropdown's options by pressing the TAB key", () => {
 			const tabKeyCode = 9;
-			const fakeEvent = prepareFakeEvent( tabKeyCode );
-			const fakeContext = prepareFakeContext();
+			const tabEvent = createKeyEvent( tabKeyCode );
 
-			SelectDropdown.prototype.navigateItem.call( fakeContext, fakeEvent );
+			const dropdown = mountDropdown();
+			dropdown.setState( { isOpen: true } );
 
-			sinon.assert.calledOnce( fakeContext.navigateItemByTabKey );
-			sinon.assert.calledWith( fakeContext.navigateItemByTabKey, fakeEvent );
+			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', tabEvent );
+			expect( dropdown.instance().focused ).to.equal( 1 );
 		} );
 
 		test( 'permits to select an option by pressing ENTER, or SPACE', () => {
 			function runNavigateItemTest( keyCode ) {
-				const fakeEvent = prepareFakeEvent( keyCode );
-				const fakeContext = prepareFakeContext();
+				const dropdown = shallowRenderDropdown();
+				const activateItemSpy = sinon.spy( dropdown.instance(), 'activateItem' );
+				const keyEvent = createKeyEvent( keyCode );
 
-				SelectDropdown.prototype.navigateItem.call( fakeContext, fakeEvent );
-
-				sinon.assert.calledOnce( fakeEvent.preventDefault );
-				sinon.assert.calledOnce( fakeContext.activateItem );
+				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
+				expect( dropdown.state( 'isOpen' ) ).to.equal( true );
+				sinon.assert.calledOnce( keyEvent.preventDefault );
+				sinon.assert.calledOnce( activateItemSpy );
 			}
 
 			const enterKeyCode = 13;
@@ -287,65 +195,37 @@ describe( 'index', () => {
 
 		test( 'permits to close the dropdown by pressing ESCAPE', () => {
 			const escapeKeyCode = 27;
-			const fakeEvent = prepareFakeEvent( escapeKeyCode );
-			const fakeContext = prepareFakeContext();
+			const escEvent = createKeyEvent( escapeKeyCode );
 
-			SelectDropdown.prototype.navigateItem.call( fakeContext, fakeEvent );
+			const dropdown = mountDropdown();
+			dropdown.setState( { isOpen: true } );
 
-			sinon.assert.calledOnce( fakeEvent.preventDefault );
-
-			const {
-				refs: {
-					dropdownContainer: { focus: focusSpy },
-				},
-				closeDropdown: closeDropdownSpy,
-			} = fakeContext;
-			sinon.assert.calledOnce( closeDropdownSpy );
-			sinon.assert.calledOnce( focusSpy );
+			const container = dropdown.find( '.select-dropdown__container' );
+			container.simulate( 'keydown', escEvent );
+			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
+			sinon.assert.calledOnce( escEvent.preventDefault );
+			// check that container was focused
+			expect( container.instance() ).to.equal( document.activeElement );
 		} );
 
-		test( "permits to open the dropdown, and navigate through the dropdown's options by pressing the arrow UP/DOWN keys", () => {
-			function runNavigateItemTest( { keyCode, direction } ) {
-				const fakeEvent = prepareFakeEvent( keyCode );
-				const fakeContext = prepareFakeContext();
+		describe( "permits to open the dropdown, and navigate through the dropdown's options by ", () => {
+			function runNavigateItemTest( { keyCode, nextFocused } ) {
+				const keyEvent = createKeyEvent( keyCode );
+				const dropdown = mountDropdown();
+				dropdown.instance().focused = 1;
 
-				SelectDropdown.prototype.navigateItem.call( fakeContext, fakeEvent );
+				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
+				expect( dropdown.state( 'isOpen' ) ).to.equal( true );
 
-				sinon.assert.calledOnce( fakeEvent.preventDefault );
-
-				sinon.assert.calledOnce( fakeContext.focusSibling );
-				sinon.assert.calledWith( fakeContext.focusSibling, direction );
-
-				sinon.assert.calledOnce( fakeContext.openDropdown );
+				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
+				expect( dropdown.instance().focused ).to.equal( nextFocused );
 			}
 
-			const arrowUp = { keyCode: 38, direction: 'previous' };
-			const arrowDown = { keyCode: 40, direction: 'next' };
+			const arrowUp = { keyCode: 38, nextFocused: 0 };
+			const arrowDown = { keyCode: 40, nextFocused: 2 };
 
 			[ arrowUp, arrowDown ].forEach( runNavigateItemTest );
 		} );
-
-		function prepareFakeContext() {
-			return {
-				refs: {
-					dropdownContainer: {
-						focus: sinon.spy(),
-					},
-				},
-				activateItem: sinon.spy(),
-				closeDropdown: sinon.spy(),
-				focusSibling: sinon.spy(),
-				navigateItemByTabKey: sinon.spy(),
-				openDropdown: sinon.spy(),
-			};
-		}
-
-		function prepareFakeEvent( keyCode ) {
-			return {
-				keyCode,
-				preventDefault: sinon.spy(),
-			};
-		}
 	} );
 
 	/**
@@ -371,5 +251,12 @@ describe( 'index', () => {
 			null,
 			{ value: 'trashed', label: 'Trashed' },
 		];
+	}
+
+	function createKeyEvent( keyCode ) {
+		return {
+			keyCode,
+			preventDefault: sinon.spy(),
+		};
 	}
 } );

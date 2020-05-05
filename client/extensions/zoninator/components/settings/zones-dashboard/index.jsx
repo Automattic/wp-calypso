@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -38,8 +36,8 @@ const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 		</SectionHeader>
 		{ isRequesting &&
 			zones.length === 0 &&
-			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
-		{ zones.map( zone => (
+			times( placeholderCount, ( i ) => <ZonePlaceholder key={ i } /> ) }
+		{ zones.map( ( zone ) => (
 			<ZoneItem key={ zone.slug } zone={ zone } />
 		) ) }
 	</div>
@@ -50,7 +48,7 @@ ZonesDashboard.propTypes = {
 	zones: PropTypes.array,
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
@@ -60,7 +58,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( ZonesDashboard );
+export default flowRight( connectComponent, localize )( ZonesDashboard );

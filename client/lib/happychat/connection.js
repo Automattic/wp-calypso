@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,7 @@ import {
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
-const buildConnection = socket =>
+const buildConnection = ( socket ) =>
 	isString( socket )
 		? new IO( socket ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
@@ -38,7 +36,7 @@ class Connection {
 	 *
 	 * @param  { Function } dispatch Redux dispatch function
 	 * @param  { Promise } auth Authentication promise, will return the user info upon fulfillment
-	 * @return { Promise } Fulfilled (returns the opened socket)
+	 * @returns { Promise } Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
 	init( dispatch, auth ) {
@@ -55,7 +53,7 @@ class Connection {
 
 					socket
 						.once( 'connect', () => dispatch( receiveConnect() ) )
-						.on( 'token', handler => {
+						.on( 'token', ( handler ) => {
 							dispatch( receiveToken() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
@@ -69,14 +67,14 @@ class Connection {
 							dispatch( receiveUnauthorized( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', reason => dispatch( receiveDisconnect( reason ) ) )
+						.on( 'disconnect', ( reason ) => dispatch( receiveDisconnect( reason ) ) )
 						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
-						.on( 'status', status => dispatch( receiveStatus( status ) ) )
-						.on( 'accept', accept => dispatch( receiveAccept( accept ) ) )
-						.on( 'localized-support', accept => dispatch( receiveLocalizedSupport( accept ) ) )
-						.on( 'message', message => dispatch( receiveMessage( message ) ) );
+						.on( 'status', ( status ) => dispatch( receiveStatus( status ) ) )
+						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
+						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
+						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) );
 				} )
-				.catch( e => reject( e ) );
+				.catch( ( e ) => reject( e ) );
 		} );
 
 		return this.openSocket;
@@ -85,13 +83,13 @@ class Connection {
 	/**
 	 * Given a Redux action, emits a SocketIO event.
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                    {
 	 *                  		event: SocketIO event name,
 	 *                  	  payload: contents to be sent,
 	 *                  	  error: message to be shown should the event fails to be sent,
 	 *                  	}
-	 * @return { Promise } Fulfilled (returns nothing)
+	 * @returns { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
 	send( action ) {
@@ -99,8 +97,8 @@ class Connection {
 			return;
 		}
 		return this.openSocket.then(
-			socket => socket.emit( action.event, action.payload ),
-			e => {
+			( socket ) => socket.emit( action.event, action.payload ),
+			( e ) => {
 				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
@@ -119,15 +117,15 @@ class Connection {
 	 * - request was unsucessful: would dispatch receiveError
 	 * - request timeout: would dispatch action.callbackTimeout
 	 *
-	 * @param  { Object } action A Redux action with props
+	 * @param  {object} action A Redux action with props
 	 *                  	{
 	 *                  		event: SocketIO event name,
 	 *                  		payload: contents to be sent,
 	 *                  		callback: a Redux action creator,
 	 *                  		callbackTimeout: a Redux action creator,
 	 *                  	}
-	 * @param  { Number } timeout How long (in milliseconds) has the server to respond
-	 * @return { Promise } Fulfilled (returns the transcript response)
+	 * @param  {number} timeout How long (in milliseconds) has the server to respond
+	 * @returns { Promise } Fulfilled (returns the transcript response)
 	 *                     or rejected (returns an error message)
 	 */
 	request( action, timeout ) {
@@ -136,7 +134,7 @@ class Connection {
 		}
 
 		return this.openSocket.then(
-			socket => {
+			( socket ) => {
 				const promiseRace = Promise.race( [
 					new Promise( ( resolve, reject ) => {
 						socket.emit( action.event, action.payload, ( e, result ) => {
@@ -155,8 +153,8 @@ class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					result => this.dispatch( action.callback( result ) ),
-					e =>
+					( result ) => this.dispatch( action.callback( result ) ),
+					( e ) =>
 						e.message === 'timeout'
 							? this.dispatch( action.callbackTimeout() )
 							: this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) )
@@ -164,7 +162,7 @@ class Connection {
 
 				return promiseRace;
 			},
-			e => {
+			( e ) => {
 				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );

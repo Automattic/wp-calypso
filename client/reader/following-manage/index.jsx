@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -13,19 +12,25 @@ import { stringify } from 'qs';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import HeaderCake from 'components/header-cake';
 import ReaderMain from 'reader/components/reader-main';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
-import getDismissedSites from 'state/selectors/get-dismissed-sites';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
-import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
-import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
-import getReaderFollowsCount from 'state/selectors/get-reader-follows-count';
-import getReaderRecommendedSites from 'state/selectors/get-reader-recommended-sites';
-import getReaderRecommendedSitesPagingOffset from 'state/selectors/get-reader-recommended-sites-paging-offset';
+import { getBlockedSites } from 'state/reader/site-blocks/selectors';
+import { getDismissedSites } from 'state/reader/site-dismissals/selectors';
+import {
+	getReaderFeedsCountForQuery,
+	getReaderFeedsForQuery,
+} from 'state/reader/feed-searches/selectors';
+import {
+	getReaderAliasedFollowFeedUrl,
+	getReaderFollowsCount,
+} from 'state/reader/follows/selectors';
+import {
+	getReaderRecommendedSites,
+	getReaderRecommendedSitesPagingOffset,
+} from 'state/reader/recommended-sites/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
 import RecommendedSites from 'blocks/reader-recommended-sites';
@@ -70,7 +75,7 @@ class FollowingManage extends Component {
 	};
 
 	// TODO make this common between our different search pages?
-	updateQuery = newValue => {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
@@ -100,9 +105,9 @@ class FollowingManage extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	handleStreamMounted = ref => ( this.streamRef = ref );
-	handleSearchBoxMounted = ref => ( this.searchBoxRef = ref );
-	handleWindowScrollerMounted = ref => ( this.windowScrollerRef = ref );
+	handleStreamMounted = ( ref ) => ( this.streamRef = ref );
+	handleSearchBoxMounted = ( ref ) => ( this.searchBoxRef = ref );
+	handleWindowScrollerMounted = ( ref ) => ( this.windowScrollerRef = ref );
 
 	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
@@ -141,7 +146,7 @@ class FollowingManage extends Component {
 		return (
 			reject(
 				recommendedSites,
-				site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+				( site ) => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 			).length <= 4
 		);
 	};
@@ -198,14 +203,14 @@ class FollowingManage extends Component {
 
 		const filteredRecommendedSites = reject(
 			recommendedSites,
-			site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+			( site ) => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 		);
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref={ '/' }>
+					<HeaderCake backHref={ '/read' }>
 						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>

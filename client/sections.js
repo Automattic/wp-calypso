@@ -6,6 +6,14 @@ const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 const sections = [
 	{
+		name: 'root',
+		paths: [ '/' ],
+		module: 'root',
+		group: 'root',
+		secondary: true,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
@@ -35,7 +43,7 @@ const sections = [
 	},
 	{
 		name: 'account-close',
-		paths: [ '/me/account/close' ],
+		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'me/account-close',
 		group: 'me',
 		secondary: true,
@@ -111,14 +119,14 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'posts-pages',
+		name: 'pages',
 		paths: [ '/pages' ],
 		module: 'my-sites/pages',
 		secondary: true,
 		group: 'sites',
 	},
 	{
-		name: 'posts-pages',
+		name: 'posts',
 		paths: [ '/posts' ],
 		module: 'my-sites/posts',
 		secondary: true,
@@ -174,13 +182,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'jetpack-onboarding',
-		paths: [ '/jetpack/start' ],
-		module: 'jetpack-onboarding',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-	{
 		name: 'signup',
 		paths: [ '/start' ],
 		module: 'signup',
@@ -194,13 +195,6 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
-	},
-	{
-		name: 'checklist',
-		paths: [ '/checklist' ],
-		module: 'my-sites/checklist',
-		secondary: true,
-		group: 'checklist',
 	},
 	{
 		name: 'google-my-business',
@@ -277,7 +271,9 @@ const sections = [
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
+		secondary: false,
 		enableLoggedOut: true,
+		group: 'me',
 	},
 	{
 		name: 'feature-upsell',
@@ -293,19 +289,10 @@ const sections = [
 		group: 'editor',
 		secondary: true,
 	},
-
-	{
-		name: 'account-recovery',
-		paths: [ '/account-recovery' ],
-		module: 'account-recovery',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
-		paths: [ '/', '/read' ],
+		paths: [ '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -382,14 +369,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'login',
-		paths: [ '/log-in' ],
-		module: 'login',
-		enableLoggedOut: true,
-		secondary: false,
-		isomorphic: true,
-	},
-	{
 		name: 'auth',
 		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
@@ -432,7 +411,7 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-editor',
-		paths: [ '/block-editor' ],
+		paths: [ '/block-editor', '/site-editor' ],
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
@@ -452,6 +431,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'migrate',
+		paths: [ '/migrate' ],
+		module: 'my-sites/migrate',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'devdocs',
@@ -463,6 +449,52 @@ const sections = [
 		paths: [ '/devdocs/start' ],
 		module: 'devdocs',
 		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
+		name: 'home',
+		paths: [ '/home' ],
+		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'hosting',
+		paths: [ '/hosting-config' ],
+		module: 'my-sites/hosting',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'backups',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-settings',
+		paths: [ '/settings' ],
+		module: 'landing/jetpack-cloud/sections/settings',
+		secondary: true,
+		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 	},
 ];

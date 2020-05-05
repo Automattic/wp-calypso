@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	site: {
 		slug: 'test',
@@ -14,5 +13,5 @@ export default {
 		errors: [],
 	},
 	wporg: true,
-	action: function() {},
+	action: function () {},
 };

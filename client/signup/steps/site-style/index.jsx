@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
@@ -38,7 +36,6 @@ export class SiteStyleStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		showSiteMockups: PropTypes.bool,
-		signupProgress: PropTypes.array,
 		styleOptions: PropTypes.array.isRequired,
 		stepName: PropTypes.string,
 		siteStyle: PropTypes.string,
@@ -49,10 +46,10 @@ export class SiteStyleStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	handleStyleOptionChange = event =>
+	handleStyleOptionChange = ( event ) =>
 		this.props.setSiteStyle( this.getSelectedStyleDataById( event.currentTarget.value ).id );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
 		this.submitSiteStyle( selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label );
@@ -121,14 +118,7 @@ export class SiteStyleStep extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			showSiteMockups,
-			signupProgress,
-			stepName,
-			translate,
-		} = this.props;
+		const { flowName, positionInFlow, showSiteMockups, stepName, translate } = this.props;
 		const headerText = translate( 'Choose a style' );
 		// for the time being we just want to fall back to the default value.
 		// If we come to add segment specific copy for this item, update the first 2 args.
@@ -144,7 +134,6 @@ export class SiteStyleStep extends Component {
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ signupProgress }
 					stepContent={ this.renderContent() }
 					showSiteMockups={ showSiteMockups }
 				/>
@@ -154,7 +143,7 @@ export class SiteStyleStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteStyle: getSiteStyle( state ),
 		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
 	} ),

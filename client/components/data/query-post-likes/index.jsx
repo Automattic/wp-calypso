@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
 import { requestPostLikes } from 'state/posts/likes/actions';
 import getPostLikeLastUpdated from 'state/selectors/get-post-like-last-updated';
 import getPostLikes from 'state/selectors/get-post-likes';
-import Interval from 'lib/interval';
+import { Interval } from 'lib/interval';
 
 class QueryPostLikes extends Component {
 	static propTypes = {
@@ -35,7 +33,7 @@ class QueryPostLikes extends Component {
 		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
 			this.request( nextProps );
 		}

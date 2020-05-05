@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ class PeopleNavTabs extends React.Component {
 	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
-				{ this.props.filters.map( function( filterItem ) {
+				{ this.props.filters.map( function ( filterItem ) {
 					return (
 						<NavItem
 							key={ filterItem.id }
@@ -97,7 +95,7 @@ class PeopleSectionNav extends Component {
 		}
 
 		return this.getFilters().filter(
-			filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
+			( filter ) => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
 		);
 	}
 

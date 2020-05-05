@@ -1,4 +1,3 @@
-/** @format */
 function createDomainObject( status ) {
 	return {
 		locked: status.locked,

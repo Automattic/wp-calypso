@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,18 @@ import { localize } from 'i18n-calypso';
  */
 import { isPaidForFullyInCredits } from 'lib/cart-values';
 import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'lib/cart-values/cart-items';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	RECEIVED_AUTHORIZATION_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
+	REDIRECTING_FOR_AUTHORIZATION,
+	MODAL_AUTHORIZATION,
 } from 'lib/store-transactions/step-types';
 
 export class PayButton extends React.Component {
@@ -47,6 +48,7 @@ export class PayButton extends React.Component {
 				state = this.sending();
 				break;
 
+			case REDIRECTING_FOR_AUTHORIZATION:
 			case RECEIVED_PAYMENT_KEY_RESPONSE:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
@@ -56,9 +58,11 @@ export class PayButton extends React.Component {
 				break;
 
 			case SUBMITTING_WPCOM_REQUEST:
+			case MODAL_AUTHORIZATION:
 				state = this.completing();
 				break;
 
+			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();

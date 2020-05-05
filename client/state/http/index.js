@@ -3,14 +3,14 @@
  */
 import { fromPairs, identity, toPairs } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
 import { extendAction } from 'state/utils';
 import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 
-const encodeQueryParameters = queryParams => {
+const encodeQueryParameters = ( queryParams ) => {
 	return queryParams
 		.map(
 			( [ queryKey, queryValue ] ) =>
@@ -19,28 +19,28 @@ const encodeQueryParameters = queryParams => {
 		.join( '&' );
 };
 
-const isAllHeadersValid = headers =>
+const isAllHeadersValid = ( headers ) =>
 	headers.every(
-		headerPair =>
+		( headerPair ) =>
 			Array.isArray( headerPair ) &&
 			headerPair.length === 2 &&
 			typeof headerPair[ 0 ] === 'string' &&
 			typeof headerPair[ 1 ] === 'string'
 	);
 
-/***
+/**
  * Handler to perform an http request based on `HTTP_REQUEST` action parameters:
- * {String} url the url to request
- * {String} method the method we should use in the request: GET, POST etc.
+ * {string} url the url to request
+ * {string} method the method we should use in the request: GET, POST etc.
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
- * {Object|String} body data send as body
- * {Boolean} withCredentials allows the remote server to view & set cookies (for its domain)
+ * {object|string} body data send as body
+ * {boolean} withCredentials allows the remote server to view & set cookies (for its domain)
  * {Action} onSuccess action to dispatch on success with data meta
  * {Action} onFailure action to dispatch on failure with error meta
  *
  * @param {Function} dispatch redux store dispatch
- * @param {Object} action dispatched action we need to handle
+ * @param {object} action dispatched action we need to handle
  */
 export const httpHandler = async ( { dispatch }, action ) => {
 	const {
@@ -68,7 +68,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 	let serialize;
 
 	if ( contentType === 'application/x-www-form-urlencoded' ) {
-		serialize = data => encodeQueryParameters( toPairs( data ) );
+		serialize = ( data ) => encodeQueryParameters( toPairs( data ) );
 	} else if ( typeof body !== 'string' ) {
 		serialize = JSON.stringify.bind( JSON );
 	} else {

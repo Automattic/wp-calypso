@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import Popover from 'components/popover';
 
-const isInvalidTarget = target => {
+const isInvalidTarget = ( target ) => {
 	return target.tagName === 'HR';
 };
 
@@ -21,8 +20,7 @@ class PopoverMenu extends Component {
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
-		rootClassName: PropTypes.string,
-		popoverComponent: PropTypes.func,
+		popoverComponent: PropTypes.elementType,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
 	};
@@ -50,7 +48,6 @@ class PopoverMenu extends Component {
 			isVisible,
 			popoverTitle,
 			position,
-			rootClassName,
 		} = this.props;
 
 		return (
@@ -64,7 +61,6 @@ class PopoverMenu extends Component {
 				isVisible={ isVisible }
 				popoverTitle={ popoverTitle }
 				position={ position }
-				rootClassName={ rootClassName }
 			>
 				<div
 					ref={ this.menu }
@@ -79,7 +75,7 @@ class PopoverMenu extends Component {
 		);
 	}
 
-	_setPropsOnChild = child => {
+	_setPropsOnChild = ( child ) => {
 		if ( child == null ) {
 			return child;
 		}
@@ -135,7 +131,7 @@ class PopoverMenu extends Component {
 			: sibling;
 	};
 
-	_onKeyDown = event => {
+	_onKeyDown = ( event ) => {
 		const target = event.target;
 		let handled = false;
 		let elementToFocus;
@@ -166,7 +162,7 @@ class PopoverMenu extends Component {
 		}
 	};
 
-	_onClose = action => {
+	_onClose = ( action ) => {
 		if ( this._previouslyFocusedElement ) {
 			this._previouslyFocusedElement.focus();
 			this._previouslyFocusedElement = null;

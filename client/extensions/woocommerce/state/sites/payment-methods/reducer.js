@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
@@ -14,26 +12,27 @@ import {
 
 // TODO: Handle error
 
-export default createReducer(
-	{},
-	{
-		[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS ]: ( state, { data } ) => {
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS: {
+			const { data } = action;
 			const methods = state || [];
-			const newMethods = methods.map( method => {
+			const newMethods = methods.map( ( method ) => {
 				if ( method.id === data.id ) {
 					return data;
 				}
 				return method;
 			} );
 			return newMethods;
-		},
-
-		[ WOOCOMMERCE_PAYMENT_METHODS_REQUEST ]: () => {
+		}
+		case WOOCOMMERCE_PAYMENT_METHODS_REQUEST: {
 			return LOADING;
-		},
-
-		[ WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		}
+		case WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS: {
+			const { data } = action;
 			return data;
-		},
+		}
 	}
-);
+
+	return state;
+} );

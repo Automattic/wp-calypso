@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEmpty, reduce, snakeCase } from 'lodash';
+import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,11 +12,13 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
-	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+	SIGNUP_PROGRESS_REMOVE_STEP,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+import 'state/signup/init';
 
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
@@ -38,6 +40,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
+				 *
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';
@@ -45,9 +48,18 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			// Ensure we don't capture identifiable user data we don't need.
-			if ( includes( [ 'email', 'address', 'phone' ], propName ) ) {
+			if ( includes( [ 'email' ], propName ) ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
+			}
+
+			if (
+				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				typeof propValue !== 'string'
+			) {
+				propValue = toPairs( propValue )
+					.map( ( pair ) => pair.join( ':' ) )
+					.join( ',' );
 			}
 
 			return {
@@ -120,9 +132,9 @@ export function invalidateStep( step, errors ) {
 	};
 }
 
-export function removeUnneededSteps( flowName ) {
+export function removeStep( step ) {
 	return {
-		type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
-		flowName,
+		type: SIGNUP_PROGRESS_REMOVE_STEP,
+		step,
 	};
 }

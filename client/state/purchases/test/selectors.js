@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -12,6 +10,7 @@ import {
 	isFetchingSitePurchases,
 	isFetchingUserPurchases,
 	isUserPaid,
+	siteHasBackupProductPurchase,
 } from '../selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -60,7 +59,7 @@ describe( 'selectors', () => {
 				purchases: {
 					data: [
 						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
+						{ ID: 2, product_name: 'premium plan', blog_id: 1337, is_rechargable: true },
 					],
 					error: null,
 					isFetchingSitePurchases: false,
@@ -88,18 +87,17 @@ describe( 'selectors', () => {
 				domainRegistrationAgreementUrl: null,
 				error: null,
 				expiryDate: undefined,
-				expiryMoment: null,
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
 				isCancelable: false,
 				isDomainRegistration: false,
+				isRechargeable: true,
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
-				mostRecentRenewMoment: null,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -114,7 +112,6 @@ describe( 'selectors', () => {
 				refundAmount: NaN,
 				refundText: undefined,
 				renewDate: undefined,
-				renewMoment: null,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
@@ -194,6 +191,43 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'siteHasBackupProductPurchase', () => {
+		test( 'should return true if a site has a Jetpack Backup purchase, false otherwise', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							blog_id: '1234',
+							active: true,
+							product_slug: 'jetpack_personal',
+						},
+						{
+							ID: '82867',
+							blog_id: '1234',
+							active: true,
+							product_slug: 'something',
+						},
+						{
+							ID: '105103',
+							blog_id: '123',
+							active: true,
+							product_slug: 'jetpack_backup_daily',
+						},
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				},
+			};
+
+			expect( siteHasBackupProductPurchase( state, 1234 ) ).toBe( false );
+			expect( siteHasBackupProductPurchase( state, 123 ) ).toBe( true );
+		} );
+	} );
+
 	describe( 'getIncludedDomainPurchase', () => {
 		test( 'should return included domain with subscription', () => {
 			const state = {
@@ -228,7 +262,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
@@ -268,7 +302,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();

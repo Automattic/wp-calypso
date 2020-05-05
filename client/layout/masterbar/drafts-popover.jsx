@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import Count from 'components/count';
 import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
@@ -74,7 +73,7 @@ class MasterbarDraftsPopover extends Component {
 			return null;
 		}
 
-		return drafts.map( draft => (
+		return drafts.map( ( draft ) => (
 			<Draft
 				key={ draft.global_ID }
 				post={ draft }
