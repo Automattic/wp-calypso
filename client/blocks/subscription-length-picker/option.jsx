@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -185,7 +183,7 @@ export class SubscriptionLengthOption extends React.Component {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		if ( e.target.checked ) {
 			this.props.onCheck( {
 				value: this.props.value,

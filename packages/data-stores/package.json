@@ -1,0 +1,47 @@
+{
+	"name": "@automattic/data-stores",
+	"version": "1.0.0-alpha.1",
+	"description": "Calypso Data Stores",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/data-stores"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"autocomplete.gif",
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "check-npm-client && yarn run clean",
+		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@wordpress/data-controls": "^1.4.0",
+		"@wordpress/url": "^2.8.2",
+		"fast-json-stable-stringify": "^2.1.0",
+		"qs": "^6.9.1",
+		"redux": "^4.0.4",
+		"tslib": "^1.10.0",
+		"utility-types": "^3.10.0",
+		"wpcom-proxy-request": "^6.0.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4"
+	}
+}

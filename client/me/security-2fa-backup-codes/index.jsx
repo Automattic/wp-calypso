@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
@@ -53,9 +50,7 @@ class Security2faBackupCodes extends React.Component {
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain backup codes.  Please try again later.'
-				),
+				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
 			} );
 			return;
 		}
@@ -144,13 +139,13 @@ class Security2faBackupCodes extends React.Component {
 	render() {
 		return (
 			<div className="security-2fa-backup-codes">
-				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+				<SectionHeader label={ this.props.translate( 'Backup codes' ) }>
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
 						onClick={ this.handleGenerateButtonClick }
 					>
-						{ this.props.translate( 'Generate New Backup Codes' ) }
+						{ this.props.translate( 'Generate new backup codes' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
@@ -163,9 +158,6 @@ class Security2faBackupCodes extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faBackupCodes ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faBackupCodes ) );

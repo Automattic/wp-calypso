@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -74,7 +72,7 @@ export class EditorDiscussion extends React.Component {
 		return {};
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
 		const newStatus = booleanToStatus( event.target.checked );
 		const discussionType = event.target.name;
@@ -152,16 +150,16 @@ export class EditorDiscussion extends React.Component {
 									components: {
 										pingbacksLink: (
 											<ExternalLink
-												href="https://support.wordpress.com/comments/pingbacks/"
+												href="https://wordpress.com/support/comments/pingbacks/"
 												target="_blank"
-												icon="true"
+												icon
 											/>
 										),
 										trackbacksLink: (
 											<ExternalLink
-												href="https://support.wordpress.com/comments/trackbacks/"
+												href="https://wordpress.com/support/comments/trackbacks/"
 												target="_blank"
-												icon="true"
+												icon
 											/>
 										),
 									},
@@ -176,7 +174,7 @@ export class EditorDiscussion extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const isNew = isEditorNewPost( state );

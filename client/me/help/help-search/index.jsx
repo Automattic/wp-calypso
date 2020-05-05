@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
@@ -30,7 +28,7 @@ export class HelpSearch extends React.PureComponent {
 		searchQuery: '',
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		this.setState( {
 			searchQuery,
 		} );
@@ -96,7 +94,7 @@ export class HelpSearch extends React.PureComponent {
 					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
+					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Community Forum…' ) }
@@ -136,7 +134,7 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		helpLinks: getHelpLinks( state ),
 	} ),
 	{

@@ -1,14 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import scrollIntoView from 'dom-scroll-into-view';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 class SuggestionsList extends React.PureComponent {
 	static propTypes = {
@@ -23,14 +20,14 @@ class SuggestionsList extends React.PureComponent {
 	static defaultProps = {
 		isExpanded: false,
 		match: '',
-		onHover: function() {},
-		onSelect: function() {},
+		onHover: function () {},
+		onSelect: function () {},
 		suggestions: Object.freeze( [] ),
 	};
 
-	componentDidUpdate( prevProps ) {
-		let node;
+	listRef = React.createRef();
 
+	componentDidUpdate( prevProps ) {
 		// only have to worry about scrolling selected suggestion into view
 		// when already expanded
 		if (
@@ -40,14 +37,18 @@ class SuggestionsList extends React.PureComponent {
 			this.props.scrollIntoView
 		) {
 			this._scrollingIntoView = true;
-			node = this.refs.list;
+			const node = this.listRef.current;
 
-			scrollIntoView( node.children[ this.props.selectedIndex ], node, {
-				onlyScrollIfNeeded: true,
-			} );
+			const child = node && node.children[ this.props.selectedIndex ];
+			if ( child ) {
+				scrollIntoViewport( child, {
+					block: 'nearest',
+					scrollMode: 'if-needed',
+				} );
+			}
 
 			setTimeout(
-				function() {
+				function () {
 					this._scrollingIntoView = false;
 				}.bind( this ),
 				100
@@ -55,16 +56,15 @@ class SuggestionsList extends React.PureComponent {
 		}
 	}
 
-	_computeSuggestionMatch = suggestion => {
-		let match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
-			indexOfMatch;
+	_computeSuggestionMatch = ( suggestion ) => {
+		const match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase();
 
 		if ( match.length === 0 ) {
 			return null;
 		}
 
 		suggestion = this.props.displayTransform( suggestion );
-		indexOfMatch = suggestion.toLocaleLowerCase().indexOf( match );
+		const indexOfMatch = suggestion.toLocaleLowerCase().indexOf( match );
 
 		return {
 			suggestionBeforeMatch: suggestion.substring( 0, indexOfMatch ),
@@ -83,7 +83,7 @@ class SuggestionsList extends React.PureComponent {
 		// why, since usually a div isn't focusable by default
 		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
-			<ul ref="list" className={ classes } tabIndex="-1">
+			<ul ref={ this.listRef } className={ classes } tabIndex="-1">
 				{ this._renderSuggestions() }
 			</ul>
 		);
@@ -92,13 +92,14 @@ class SuggestionsList extends React.PureComponent {
 	_renderSuggestions = () => {
 		return map(
 			this.props.suggestions,
-			function( suggestion, index ) {
-				let match = this._computeSuggestionMatch( suggestion ),
-					classes = classNames( 'token-field__suggestion', {
-						'is-selected': index === this.props.selectedIndex,
-					} );
+			function ( suggestion, index ) {
+				const match = this._computeSuggestionMatch( suggestion );
+				const classes = classNames( 'token-field__suggestion', {
+					'is-selected': index === this.props.selectedIndex,
+				} );
 
 				return (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
 					<li
 						className={ classes }
 						key={ suggestion }
@@ -121,21 +122,21 @@ class SuggestionsList extends React.PureComponent {
 		);
 	};
 
-	_handleHover = suggestion => {
-		return function() {
+	_handleHover = ( suggestion ) => {
+		return function () {
 			if ( ! this._scrollingIntoView ) {
 				this.props.onHover( suggestion );
 			}
 		}.bind( this );
 	};
 
-	_handleClick = suggestion => {
-		return function() {
+	_handleClick = ( suggestion ) => {
+		return function () {
 			this.props.onSelect( suggestion );
 		}.bind( this );
 	};
 
-	_handleMouseDown = e => {
+	_handleMouseDown = ( e ) => {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
 		e.preventDefault();
 	};

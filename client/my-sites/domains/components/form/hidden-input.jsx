@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ export class HiddenInput extends PureComponent {
 		this.inputField = null;
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		this.setState(
@@ -33,8 +31,11 @@ export class HiddenInput extends PureComponent {
 		);
 	};
 
-	assignInputFieldRef = input => {
+	assignInputFieldRef = ( input ) => {
 		this.inputField = input;
+		if ( this.props.inputRef ) {
+			this.props.inputRef( input );
+		}
 	};
 
 	render() {

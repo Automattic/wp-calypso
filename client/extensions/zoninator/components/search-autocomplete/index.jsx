@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Search from 'components/search';
 import PostSuggestions from './post-suggestions';
 
@@ -31,7 +29,7 @@ class SearchAutocomplete extends Component {
 		searchIsOpen: false,
 	};
 
-	handleSearch = term => {
+	handleSearch = ( term ) => {
 		if ( this.state.search === term ) {
 			return;
 		}
@@ -41,24 +39,24 @@ class SearchAutocomplete extends Component {
 		} );
 	};
 
-	setSearch = ref => ( this.searchRef = ref );
+	searchRef = React.createRef();
 
-	setSuggestions = ref => ( this.suggestionsRef = ref && ref.getWrappedInstance() );
+	suggestionsRef = React.createRef();
 
 	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
 
 	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 		}
 
-		this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
+		this.suggestionsRef.current && this.suggestionsRef.current.handleKeyEvent( event );
 	};
 
-	handleSelect = item => {
-		this.searchRef.clear();
+	handleSelect = ( item ) => {
+		this.searchRef.current.clear();
 		this.props.onSelect( item );
 	};
 
@@ -80,7 +78,7 @@ class SearchAutocomplete extends Component {
 						fitsContainer
 						delaySearch
 						disableAutocorrect
-						ref={ this.setSearch }
+						ref={ this.searchRef }
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
@@ -89,7 +87,7 @@ class SearchAutocomplete extends Component {
 					/>
 					{ this.state.search && (
 						<PostSuggestions
-							ref={ this.setSuggestions }
+							ref={ this.suggestionsRef }
 							search={ this.state.search }
 							exclude={ exclude }
 							suggest={ this.handleSelect }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,11 @@ import { findIndex, merge, remove } from 'lodash';
 import { getBucket } from 'woocommerce/state/ui/helpers';
 
 /**
- * @param {Object} zoneMethodEdits Pre-existing edits made to the zone methods.
+ * @param {object} zoneMethodEdits Pre-existing edits made to the zone methods.
  * It's in the format { creates: [], updates: [], deletes: [] }
- * @param {Object} [currentMethodEdits] Edits made to the zone's methods, but not committed yet
+ * @param {object} [currentMethodEdits] Edits made to the zone's methods, but not committed yet
  * (i.e. the "Edit Zone" modal is still open). Same format as zoneMethodEdits
- * @return {Object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
+ * @returns {object} A merge of the 2 edit objects, or just zoneMethodEdits if currentMethodEdits is omitted
  */
 export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 	if ( ! currentMethodEdits ) {
@@ -48,7 +46,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		remove( mergedState[ bucket ], { id } );
 	} );
 
-	currentCreates.forEach( create => {
+	currentCreates.forEach( ( create ) => {
 		const index = findIndex( creates, { id: create.id } );
 		if ( -1 === index ) {
 			mergedState.creates.push( create );
@@ -57,7 +55,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		}
 	} );
 
-	currentUpdates.forEach( update => {
+	currentUpdates.forEach( ( update ) => {
 		const index = findIndex( updates, { id: update.id } );
 		if ( -1 === index ) {
 			mergedState.updates.push( update );

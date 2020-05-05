@@ -13,8 +13,8 @@
 
 		.stripe__connect-account-logo-container {
 			align-items: center;
-			background: var( --color-white );
-			border: 1px solid var( --color-neutral-100 );
+			background: var( --color-surface );
+			border: 1px solid var( --color-neutral-10 );
 			display: flex;
 			height: 46px;
 			justify-content: center;
@@ -44,7 +44,7 @@
 
 			.stripe__connect-account-status {
 				border-radius: 3px;
-				color: var( --color-white );
+				color: var( --color-text-inverted );
 				font-size: 12px;
 				margin-right: 8px;
 				padding: 3px 8px;
@@ -71,12 +71,16 @@
 	ul {
 		margin-bottom: 16px;
 	}
+	.form-fieldset {
+		margin-left: 40px;
+	}
 }
 
 .stripe__method-edit-header {
 	font-size: 18px;
 	justify-content: space-between;
 	padding: 0 0 16px;
+	font-weight: 600;
 
 	&.placeholder {
 		margin-bottom: 16px;

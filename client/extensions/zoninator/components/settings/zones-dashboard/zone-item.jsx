@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { settingsPath } from '../../../app/util';
 
@@ -37,7 +35,7 @@ ZoneItem.defaultProps = {
 	siteSlug: '',
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) );
 

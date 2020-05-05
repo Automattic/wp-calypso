@@ -8,7 +8,7 @@
 	list-style: none;
 	margin: 0;
 	max-width: 620px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .keyboard-shortcuts__category {
@@ -50,7 +50,7 @@
 }
 
 .keyboard-shortcuts__key {
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 	border: solid 1px var( --color-neutral-light );
 	padding: 0 5px;
 	min-width: 8px;

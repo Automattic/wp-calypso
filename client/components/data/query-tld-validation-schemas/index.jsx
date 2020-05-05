@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,7 @@ export class QueryTldValidationSchemas extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		validationSchemas: getValidationSchemas( state ),
 	} ),
 	{ requestValidationSchemas }

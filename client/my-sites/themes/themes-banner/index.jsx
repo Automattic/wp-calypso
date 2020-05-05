@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -14,7 +12,7 @@ import Gridicon from 'gridicons';
 
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -56,7 +54,7 @@ class ThemesBanner extends PureComponent {
 	};
 
 	// eslint-disable-next-line no-undef
-	handleBannerClose = e => {
+	handleBannerClose = ( e ) => {
 		this.props.hideThemesBanner();
 		e.preventDefault();
 	};
@@ -125,10 +123,7 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		recordTracksEvent: recordTracksEventAction,
-		hideThemesBanner: hideThemesBannerAction,
-	}
-)( localize( ThemesBanner ) );
+export default connect( mapStateToProps, {
+	recordTracksEvent: recordTracksEventAction,
+	hideThemesBanner: hideThemesBannerAction,
+} )( localize( ThemesBanner ) );

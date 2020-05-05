@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,7 +34,7 @@ class EditorMediaModalGalleryCaption extends React.Component {
 		}
 	};
 
-	setCaption = event => {
+	setCaption = ( event ) => {
 		this.setState( {
 			caption: event.target.value,
 		} );
@@ -64,7 +62,7 @@ class EditorMediaModalGalleryCaption extends React.Component {
 				placeholder={ this.props.translate( 'Caption this image…' ) }
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
-				onMouseDown={ event => event.stopPropagation() }
+				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__caption"
 			/>
 		);

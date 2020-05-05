@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import { sectionify } from 'lib/route';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { isMobile } from 'lib/viewport';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
@@ -64,11 +63,13 @@ class PlansNavigation extends React.Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
+		const cartToggleButton = this.cartToggleButton();
+		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
 		return (
 			site && (
 				<SectionNav
-					hasPinnedItems={ isMobile() }
+					hasPinnedItems={ hasPinnedItems }
 					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
@@ -103,17 +104,13 @@ class PlansNavigation extends React.Component {
 							</NavItem>
 						) }
 					</NavTabs>
-					{ this.cartToggleButton() }
+					{ cartToggleButton }
 				</SectionNav>
 			)
 		);
 	}
 
-	toggleCartVisibility = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	};
 
@@ -139,7 +136,7 @@ class PlansNavigation extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );

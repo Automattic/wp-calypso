@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -59,7 +56,7 @@ class AcceptedFilenames extends Component {
 		);
 	};
 
-	handleToggle = fieldName => {
+	handleToggle = ( fieldName ) => {
 		return () => {
 			const { fields, setFieldValue } = this.props;
 			const groupName = 'pages';
@@ -177,7 +174,7 @@ class AcceptedFilenames extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_acceptable_files', 'cache_rejected_uri', 'pages' ] );
 };
 

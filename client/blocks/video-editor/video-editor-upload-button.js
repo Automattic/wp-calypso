@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FilePicker from 'components/file-picker';
 
 class VideoEditorUploadButton extends Component {
@@ -27,7 +25,7 @@ class VideoEditorUploadButton extends Component {
 		onUploadImage: noop,
 	};
 
-	uploadImage = files => {
+	uploadImage = ( files ) => {
 		const file = files[ 0 ];
 
 		if ( file ) {

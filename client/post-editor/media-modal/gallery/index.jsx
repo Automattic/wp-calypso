@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class EditorMediaModalGallery extends React.Component {
 		invalidItemDropped: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.settings ) {
 			this.maybeUpdateColumnsSetting();
 			this.reconcileSettingsItems( this.props.settings, this.props.items );
@@ -73,15 +71,15 @@ class EditorMediaModalGallery extends React.Component {
 		// set are similarly appended to the settings set.
 		// Finally, make sure that all items are the latest version
 		const newItems = settings.items
-			.filter( item => {
+			.filter( ( item ) => {
 				return some( items, { ID: item.ID } );
 			} )
 			.concat(
-				items.filter( item => {
+				items.filter( ( item ) => {
 					return ! some( settings.items, { ID: item.ID } );
 				} )
 			)
-			.map( item => {
+			.map( ( item ) => {
 				return MediaStore.get( this.props.site.ID, item.ID );
 			} );
 
@@ -123,7 +121,7 @@ class EditorMediaModalGallery extends React.Component {
 
 		// Merge object of settings with existing set
 		let updatedSettings = assign( {}, this.props.settings, setting );
-		updatedSettings = omitBy( updatedSettings, updatedValue => null === updatedValue );
+		updatedSettings = omitBy( updatedSettings, ( updatedValue ) => null === updatedValue );
 		this.props.onUpdateSettings( updatedSettings );
 	};
 
@@ -163,9 +161,6 @@ class EditorMediaModalGallery extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	}
-)( localize( EditorMediaModalGallery ) );
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+} )( localize( EditorMediaModalGallery ) );

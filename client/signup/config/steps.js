@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import {
 	addPlanToCart,
 	createAccount,
 	createSite,
+	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
@@ -22,6 +21,7 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	addOrRemoveFromProgressStore,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
@@ -30,6 +30,7 @@ export default generateSteps( {
 	addPlanToCart,
 	createAccount,
 	createSite,
+	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
@@ -40,11 +41,12 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	addOrRemoveFromProgressStore,
 } );
 
 export function isDomainStepSkippable( flowName ) {
 	return (
-		( flowName === 'onboarding' || flowName === 'onboarding-blog' ) &&
-		abtest( 'skippableDomainStep' ) === 'skippable'
+		flowName === 'test-fse' ||
+		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
 	);
 }

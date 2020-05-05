@@ -8,7 +8,7 @@ export const keys = {
 	KEY_T: 84,
 };
 
-export const modifierKeyIsActive = e => {
+export const modifierKeyIsActive = ( e ) => {
 	return e.altKey || e.ctrlKey || e.metaKey;
 };
 

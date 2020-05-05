@@ -1,5 +1,3 @@
-/** @format */
-
 function preventScrollBounceOSX( body, event ) {
 	if (
 		( event.deltaY < 0 && body.scrollTop === 0 ) ||
@@ -9,7 +7,7 @@ function preventScrollBounceOSX( body, event ) {
 	}
 }
 
-export default function( body ) {
+export default function ( body ) {
 	if (
 		window &&
 		window.navigator &&

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isMonthly } from 'lib/plans/constants';
@@ -60,7 +58,7 @@ const PlanFeaturesActions = ( {
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
+				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	} else if ( availableForPurchase || isPlaceholder ) {

@@ -1,17 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.Component {
 	static displayName = 'NoticeAction';
 
 	static propTypes = {
+		'aria-label': PropTypes.string,
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		external: PropTypes.bool,
@@ -24,6 +28,7 @@ export default class extends React.Component {
 
 	render() {
 		const attributes = {
+			'aria-label': this.props[ 'aria-label' ],
 			className: 'notice__action',
 			href: this.props.href,
 			onClick: this.props.onClick,

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -29,7 +28,6 @@ class CloneCredentialsStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -72,7 +70,7 @@ class CloneCredentialsStep extends Component {
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( 'success' === nextProps.updateStatus && ! this.state.gotSuccess ) {
 			this.setState( { gotSuccess: true } );
 			this.goToNextStep();
@@ -80,14 +78,7 @@ class CloneCredentialsStep extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			destinationSiteName,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, destinationSiteName } = this.props;
 
 		const headerText = translate( 'Enter your server credentials' );
 		const subHeaderText = translate(
@@ -105,7 +96,6 @@ class CloneCredentialsStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

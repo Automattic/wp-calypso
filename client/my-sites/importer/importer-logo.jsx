@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -29,7 +28,7 @@ const ImporterLogo = ( { icon } ) => {
 	}
 
 	if ( 'godaddy-gocentral' === icon ) {
-		return <GoDaddyGoCentralLogo size={ 48 } />;
+		return <GoDaddyGoCentralLogo />;
 	}
 
 	if ( 'medium' === icon ) {

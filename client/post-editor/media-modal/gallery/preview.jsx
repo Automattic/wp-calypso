@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,6 @@ import { noop } from 'lodash';
  */
 import Notice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
@@ -46,18 +43,18 @@ class EditorMediaModalGalleryPreview extends Component {
 
 		return (
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ ! this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: false } ) }
 				>
 					{ translate( 'Preview' ) }
-				</SegmentedControlItem>
-				<SegmentedControlItem
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
 					selected={ this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: true } ) }
 				>
 					{ translate( 'Edit' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -108,7 +105,5 @@ class EditorMediaModalGalleryPreview extends Component {
 		);
 	}
 }
-
-EditorMediaModalGalleryPreview.displayName = 'EditorMediaModalGalleryPreview';
 
 export default localize( EditorMediaModalGalleryPreview );

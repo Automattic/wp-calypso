@@ -19,11 +19,7 @@
 	}
 
 	.conversations__intro-character {
-		background: url( '/calypso/images/reader/reader-conversations-characters.svg' ) no-repeat 8px
-			bottom;
-		background-size: 97%;
-		flex: 0 0 245px;
-		min-height: 140px;
+		height: 140px;
 		margin-right: -8px; // prevent right crop of illustration
 
 		// Hides the character when main content column gets too narrow
@@ -64,7 +60,7 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
@@ -73,7 +69,7 @@
 
 		&:hover {
 			cursor: pointer;
-			fill: var( --color-neutral-500 );
+			fill: var( --color-neutral-50 );
 		}
 	}
 }

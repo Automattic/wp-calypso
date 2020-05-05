@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,25 +24,27 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {ValueLabelRecord[]} pairs - timezone values and display labels
  * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
  */
-const timezonePairsToMap = pairs =>
+const timezonePairsToMap = ( pairs ) =>
 	fromPairs( map( pairs, ( { label, value } ) => [ value, label ] ) );
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
  *
- * @param {Object} data - REST-API response
- * @return {Object} normalized timezones data.
+ * @param {object} data - REST-API response
+ * @returns {object} normalized timezones data.
  */
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {
 	rawOffsets: timezonePairsToMap( manual_utc_offsets ),
 	labels: timezonePairsToMap( timezones ),
-	byContinents: mapValues( timezones_by_continent, zones => map( zones, ( { value } ) => value ) ),
+	byContinents: mapValues( timezones_by_continent, ( zones ) =>
+		map( zones, ( { value } ) => value )
+	),
 } );
 
 /*
  * Start a request to WordPress.com server to get the timezones data
  */
-export const fetchTimezones = action =>
+export const fetchTimezones = ( action ) =>
 	http(
 		{
 			method: 'GET',

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,6 +8,7 @@ import {
 	SIGNUP_COMPLETE_RESET,
 } from 'state/action-types';
 import { dependencyStoreSchema } from './schema';
+import { withSchemaValidation } from 'state/utils';
 
 const EMPTY = {};
 
@@ -35,6 +34,4 @@ function reducer( state = EMPTY, action ) {
 	}
 }
 
-reducer.schema = dependencyStoreSchema;
-
-export default reducer;
+export default withSchemaValidation( dependencyStoreSchema, reducer );

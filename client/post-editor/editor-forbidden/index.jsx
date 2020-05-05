@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -56,7 +53,7 @@ EditorForbidden.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 	const typeObject = getPostType( state, siteId, type );

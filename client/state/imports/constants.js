@@ -1,4 +1,3 @@
-/** @format */
 export const appStates = Object.freeze( {
 	CANCEL_PENDING: 'importer-canceling',
 	DEFUNCT: 'importer-defunct',
@@ -16,10 +15,3 @@ export const appStates = Object.freeze( {
 	UPLOADING: 'importer-uploading',
 	IMPORT_CLEAR: 'importer-clear',
 } );
-
-export const WORDPRESS = 'importer-type-wordpress';
-export const MEDIUM = 'importer-type-medium';
-export const BLOGGER = 'importer-type-blogger';
-export const WIX = 'importer-type-wix';
-export const SQUARESPACE = 'importer-type-squarespace';
-export const GODADDY_GOCENTRAL = 'importer-type-godaddy-gocentral';

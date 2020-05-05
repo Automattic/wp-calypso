@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,11 +28,11 @@ class QueryUserPurchases extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestUserPurchases();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.requestUserPurchases( nextProps );
 	}
 
@@ -51,7 +49,7 @@ QueryUserPurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),

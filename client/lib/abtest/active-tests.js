@@ -1,15 +1,4 @@
-/** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -37,13 +26,13 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	ATUpgradeOnCancel: {
-		datestamp: '20170515',
+	showCompositeCheckout: {
+		datestamp: '20200326',
 		variations: {
-			hide: 20,
-			show: 80,
+			composite: 50,
+			regular: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -72,14 +61,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -91,48 +72,65 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	popularPlanBy: {
-		datestamp: '20190529',
+	skippableDomainStep: {
+		datestamp: '20290717',
 		variations: {
-			siteType: 0,
-			customerType: 100,
+			skippable: 0,
+			notSkippable: 100,
 		},
-		defaultVariation: 'siteType',
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
 	},
-	hideBloggerPlan2: {
-		datestamp: '20190627',
+	passwordlessSignup: {
+		datestamp: '20291029',
 		variations: {
-			hide: 50,
-			control: 50,
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 100,
+			control: 0,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	ATPrivacy: {
+		datestamp: '20200331',
+		variations: {
+			variant: 5,
+			control: 95,
 		},
 		defaultVariation: 'control',
-		localeTargets: 'any',
+		allowExistingUsers: false,
 	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
+	domainStepPlanStepSwap: {
+		datestamp: '20200415',
 		variations: {
+			variantShowSwapped: 50,
 			control: 50,
-			variant: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	skippableDomainStep: {
-		datestamp: '20190702',
+	showActiveTicketsNotice: {
+		datestamp: '20200430',
 		variations: {
-			skippable: 50,
-			notSkippable: 50,
+			showNotice: 50,
+			control: 50,
 		},
-		defaultVariation: 'notSkippable',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -19,7 +18,7 @@ class PostPhoto extends React.Component {
 		cardWidth: 800,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( this.props.isExpanded ) {
 			this.props.onClick( event );
 			return;
@@ -51,7 +50,7 @@ class PostPhoto extends React.Component {
 		}
 	};
 
-	handleWidthDivLoaded = ref => {
+	handleWidthDivLoaded = ( ref ) => {
 		this.widthDivRef = ref;
 	};
 

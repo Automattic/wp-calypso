@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,9 +22,9 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
 /**
  * Returns an action object to be used in signalling that WPSC plugins have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} plugins Plugins object
- * @return {Object} Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} plugins Plugins object
+ * @returns {object} Action object
  */
 export const receivePlugins = ( siteId, plugins ) => ( {
 	type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
@@ -37,11 +35,11 @@ export const receivePlugins = ( siteId, plugins ) => ( {
 /*
  * Retrieves WPSC plugins for a site.
  *
- * @param  {Number} siteId Site ID
+ * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests plugins for a given site
  */
-export const requestPlugins = siteId => {
-	return dispatch => {
+export const requestPlugins = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_REQUEST_PLUGINS,
 			siteId,
@@ -59,7 +57,7 @@ export const requestPlugins = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
 					siteId,
@@ -72,13 +70,13 @@ export const requestPlugins = siteId => {
 /**
  * Toggle WPSC plugin activation status on a given site.
  *
- * @param  {Number}    siteId Site ID
- * @param  {String}    plugin Plugin to enable or disable
- * @param  {Boolean}   activationStatus True to enable, false to disable
+ * @param  {number}    siteId Site ID
+ * @param  {string}    plugin Plugin to enable or disable
+ * @param  {boolean}   activationStatus True to enable, false to disable
  * @returns {Function} Action thunk that toggles the plugin on a given site
  */
 export const togglePlugin = ( siteId, plugin, activationStatus ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN, siteId, plugin } );
 		dispatch( removeNotice( 'wpsc-toggle-plugin' ) );
 
@@ -99,7 +97,7 @@ export const togglePlugin = ( siteId, plugin, activationStatus ) => {
 				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS, siteId, plugin } );
 				dispatch( successNotice( notice, { id: 'wpsc-toggle-plugin' } ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, siteId, plugin, error } );
 				dispatch(
 					errorNotice(

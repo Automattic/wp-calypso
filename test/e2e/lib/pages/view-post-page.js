@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -50,9 +48,14 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async paymentButtonDisplayed() {
-		const paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect(
-			this.driver
-		);
+		let paymentButtonFrontEndComponent;
+		try {
+			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+		} catch ( e ) {
+			this.driver.navigate().refresh();
+			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+		}
+
 		return await paymentButtonFrontEndComponent.displayed();
 	}
 
@@ -82,7 +85,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	async imageDisplayed( fileDetails ) {
 		return await this.driver
 			.findElement( By.css( `img[alt='${ fileDetails.imageName }']` ) )
-			.then( imageElement => {
+			.then( ( imageElement ) => {
 				return driverHelper.imageVisible( this.driver, imageElement );
 			} );
 	}

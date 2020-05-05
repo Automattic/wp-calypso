@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {
@@ -66,7 +64,7 @@ class ReviewsList extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { currentPage, currentSearch, currentStatus, siteId, productId } = this.props;
 
 		const hasAnythingChanged =
@@ -115,7 +113,7 @@ class ReviewsList extends Component {
 	}
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( i => {
+		return range( 5 ).map( ( i ) => {
 			return (
 				<Card key={ i } className="reviews__card">
 					<div className="reviews__placeholder" />
@@ -170,7 +168,7 @@ class ReviewsList extends Component {
 		);
 	};
 
-	onPageClick = nextPage => {
+	onPageClick = ( nextPage ) => {
 		const { productId } = this.props;
 		const updatedStateQuery = {
 			page: nextPage,
@@ -244,5 +242,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchReviews, updateCurrentReviewsQuery }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchReviews, updateCurrentReviewsQuery }, dispatch )
 )( localize( ReviewsList ) );

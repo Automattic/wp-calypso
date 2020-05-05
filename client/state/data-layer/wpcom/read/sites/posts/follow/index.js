@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -10,14 +9,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_CONVERSATION_FOLLOW } from 'state/action-types';
+import { READER_CONVERSATION_FOLLOW } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestConversationFollow = action => {
+export const requestConversationFollow = ( action ) => {
 	return http(
 		{
 			method: 'POST',

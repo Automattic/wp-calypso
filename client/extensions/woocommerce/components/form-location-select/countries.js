@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,11 +42,11 @@ class FormCountrySelectFromApi extends Component {
 		value: PropTypes.string.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}
@@ -66,7 +64,7 @@ class FormCountrySelectFromApi extends Component {
 		}
 	};
 
-	renderOption = option => {
+	renderOption = ( option ) => {
 		return (
 			<option key={ `${ option.continent }-${ option.code }` } value={ option.code }>
 				{ option.name }
@@ -101,10 +99,10 @@ class FormCountrySelectFromApi extends Component {
 // https://github.com/Automattic/wp-calypso/pull/24571#discussion_r185268996
 const getContinentsWithCountries = ( state, continents, siteId ) => {
 	const locationsList = [];
-	continents.forEach( continent => {
+	continents.forEach( ( continent ) => {
 		const countries = getCountriesByContinent( state, continent.code, siteId );
 		locationsList.push(
-			...countries.map( country => ( {
+			...countries.map( ( country ) => ( {
 				...country,
 				continent: continent.code,
 			} ) )
@@ -133,5 +131,5 @@ export default connect(
 			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( FormCountrySelectFromApi ) );

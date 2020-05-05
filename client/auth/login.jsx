@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,6 +24,7 @@ import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class Auth extends Component {
 	state = {
@@ -43,21 +42,23 @@ export class Auth extends Component {
 		AuthStore.off( 'change', this.refreshData );
 	}
 
-	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	getClickHandler = ( action ) => () =>
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
-	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	getFocusHandler = ( action ) => () =>
+		this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
 	refreshData = () => {
 		this.setState( AuthStore.get() );
 	};
 
-	focusInput = input => {
+	focusInput = ( input ) => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
 			input.focus();
 		}
 	};
 
-	submitForm = event => {
+	submitForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -69,33 +70,15 @@ export class Auth extends Component {
 		this.setState( { showInstructions: isShowing } );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 
 		this.setState( { [ name ]: value } );
 	};
 
-	hasLoginDetails() {
-		if ( this.state.login === '' || this.state.password === '' ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	canSubmitForm() {
 		// No submission until the ajax has finished
-		if ( this.state.inProgress ) {
-			return false;
-		}
-
-		// If we have 2fa set then don't allow submission until a code is entered
-		if ( this.state.requires2fa ) {
-			return parseInt( this.state.auth_code, 10 ) > 0;
-		}
-
-		// Don't allow submission until username+password is entered
-		return this.hasLoginDetails();
+		return ! this.state.inProgress;
 	}
 
 	render() {
@@ -169,7 +152,7 @@ export class Auth extends Component {
 						target="_blank"
 						rel="noopener noreferrer"
 						title={ translate( 'Visit the WordPress.com support site for help' ) }
-						href="https://en.support.wordpress.com/"
+						href={ localizeUrl( 'https://wordpress.com/support/' ) }
 					>
 						<Gridicon icon="help" />
 					</a>
@@ -188,9 +171,6 @@ export class Auth extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Auth ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Auth ) );

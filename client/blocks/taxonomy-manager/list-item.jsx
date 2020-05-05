@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,13 +9,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Count from 'components/count';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
@@ -72,7 +70,7 @@ class TaxonomyManagerListItem extends Component {
 		page( `/posts/${ siteSlug }?${ taxonomy }=${ term.slug }` );
 	};
 
-	closeDeleteDialog = action => {
+	closeDeleteDialog = ( action ) => {
 		if ( action === 'delete' ) {
 			const { siteId, taxonomy, term } = this.props;
 			this.props.recordGoogleEvent( 'Taxonomy Manager', `Deleted ${ taxonomy }` );

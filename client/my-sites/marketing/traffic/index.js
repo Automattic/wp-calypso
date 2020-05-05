@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  * Internal dependencies
  */
 import Main from 'components/main';
+import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
@@ -26,6 +25,7 @@ import RelatedPosts from 'my-sites/site-settings/related-posts';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
 import Shortlinks from 'my-sites/site-settings/shortlinks';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -39,7 +39,8 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingToggle,
 	handleAutosavingRadio,
 	handleSubmitForm,
-	isJetpack,
+	isAdmin,
+	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
@@ -47,11 +48,17 @@ const SiteSettingsTraffic = ( {
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
-    <PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
+		<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
+		{ ! isAdmin && (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'You are not authorized to view this page' ) }
+			/>
+		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpack && (
+		{ isJetpackAdmin && (
 			<JetpackAds
 				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
@@ -59,16 +66,19 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
-		<SeoSettingsMain />
-		<RelatedPosts
-			onSubmitForm={ handleSubmitForm }
-			handleAutosavingToggle={ handleAutosavingToggle }
-			isSavingSettings={ isSavingSettings }
-			isRequestingSettings={ isRequestingSettings }
-			fields={ fields }
-		/>
-		{ isJetpack && (
+		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
+		{ isAdmin && <SeoSettingsMain /> }
+		{ isAdmin && (
+			<RelatedPosts
+				onSubmitForm={ handleSubmitForm }
+				handleAutosavingToggle={ handleAutosavingToggle }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+		) }
+
+		{ isJetpackAdmin && (
 			<JetpackSiteStats
 				handleAutosavingToggle={ handleAutosavingToggle }
 				setFieldValue={ setFieldValue }
@@ -77,8 +87,8 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		<AnalyticsSettings />
-		{ isJetpack && (
+		{ isAdmin && <AnalyticsSettings /> }
+		{ isJetpackAdmin && (
 			<Shortlinks
 				handleAutosavingRadio={ handleAutosavingRadio }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -88,18 +98,28 @@ const SiteSettingsTraffic = ( {
 				onSubmitForm={ handleSubmitForm }
 			/>
 		) }
-		<Sitemaps
-			isSavingSettings={ isSavingSettings }
-			isRequestingSettings={ isRequestingSettings }
-			fields={ fields }
-		/>
-		<SiteVerification />
+		{ isAdmin && (
+			<Sitemaps
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+		) }
+		{ isAdmin && <SiteVerification /> }
 	</Main>
 );
 
-const connectComponent = connect( state => ( {
-	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-} ) );
+const connectComponent = connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpackAdmin = isJetpack && isAdmin;
+
+	return {
+		isAdmin,
+		isJetpackAdmin,
+	};
+} );
 
 const getFormSettings = partialRight( pick, [
 	'stats',

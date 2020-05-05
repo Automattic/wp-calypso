@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
-import { isMobile } from 'lib/viewport';
 import TranslatableString from 'components/translatable/proptype';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -110,13 +109,13 @@ class Search extends Component {
 		this.openListener = keyListener.bind( this, 'openSearch' );
 	}
 
-	setOpenIconRef = openIcon => ( this.openIcon = openIcon );
+	setOpenIconRef = ( openIcon ) => ( this.openIcon = openIcon );
 
-	setSearchInputRef = input => ( this.searchInput = input );
+	setSearchInputRef = ( input ) => ( this.searchInput = input );
 
-	setOverlayRef = overlay => ( this.overlay = overlay );
+	setOverlayRef = ( overlay ) => ( this.overlay = overlay );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch
@@ -126,7 +125,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
@@ -187,7 +186,7 @@ class Search extends Component {
 	//This is fix for IE11. Does not work on Edge.
 	//On IE11 scrollLeft value for input is always 0.
 	//We are calculating it manually using TextRange object.
-	getScrollLeft = inputElement => {
+	getScrollLeft = ( inputElement ) => {
 		//TextRange is IE11 specific so this checks if we are not on IE11.
 		if ( ! inputElement.createTextRange ) {
 			return inputElement.scrollLeft;
@@ -215,7 +214,7 @@ class Search extends Component {
 
 	clear = () => this.setState( { keyword: '' } );
 
-	onBlur = event => {
+	onBlur = ( event ) => {
 		if ( this.props.onBlur ) {
 			this.props.onBlur( event );
 		}
@@ -223,23 +222,23 @@ class Search extends Component {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			keyword: event.target.value,
 		} );
 	};
 
-	openSearch = event => {
+	openSearch = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
 			isOpen: true,
 		} );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
 	};
 
-	closeSearch = event => {
+	closeSearch = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -260,10 +259,10 @@ class Search extends Component {
 
 		this.props.onSearchClose( event );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	};
 
-	keyUp = event => {
+	keyUp = ( event ) => {
 		if ( event.key === 'Enter' && isMobile() ) {
 			//dismiss soft keyboards
 			this.blur();
@@ -279,7 +278,7 @@ class Search extends Component {
 		this.scrollOverlay();
 	};
 
-	keyDown = event => {
+	keyDown = ( event ) => {
 		this.scrollOverlay();
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );

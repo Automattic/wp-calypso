@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { blogPost, feedPost } from './controller';
 import { updateLastRoute, unmountSidebar } from 'reader/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	// Feed full post
 	page(
 		'/read/feeds/:feed/posts/:post',

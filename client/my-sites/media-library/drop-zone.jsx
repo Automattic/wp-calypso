@@ -1,22 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
+import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 
-export default class extends React.Component {
+class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
 
 	static propTypes = {
@@ -32,8 +31,8 @@ export default class extends React.Component {
 		trackStats: true,
 	};
 
-	uploadFiles = files => {
-		if ( ! this.props.site ) {
+	uploadFiles = ( files ) => {
+		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return;
 		}
 
@@ -42,11 +41,11 @@ export default class extends React.Component {
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
-			analytics.mc.bumpStat( 'editor_upload_via', 'drop' );
+			bumpStat( 'editor_upload_via', 'drop' );
 		}
 	};
 
-	isValidTransfer = transfer => {
+	isValidTransfer = ( transfer ) => {
 		if ( ! transfer ) {
 			return false;
 		}
@@ -70,16 +69,26 @@ export default class extends React.Component {
 	};
 
 	render() {
-		if ( ! userCan( 'upload_files', this.props.site ) ) {
-			return null;
-		}
-
+		const { site, fullScreen, translate } = this.props;
+		const canUploadFiles = userCan( 'upload_files', site );
+		const textLabel = ! canUploadFiles
+			? translate( 'You are not authorized to upload files to this site' )
+			: null;
+		const icon = ! canUploadFiles ? (
+			<Gridicon icon="cross" size={ 48 } />
+		) : (
+			<Gridicon icon="cloud-upload" size={ 48 } />
+		);
 		return (
 			<DropZone
-				fullScreen={ this.props.fullScreen }
+				fullScreen={ fullScreen }
 				onVerifyValidTransfer={ this.isValidTransfer }
 				onFilesDrop={ this.uploadFiles }
+				textLabel={ textLabel }
+				icon={ icon }
 			/>
 		);
 	}
 }
+
+export default localize( MediaLibraryDropZone );

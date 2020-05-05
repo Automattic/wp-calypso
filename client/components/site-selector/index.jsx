@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
-import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
 /**
@@ -30,6 +28,12 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -78,7 +82,7 @@ class SiteSelector extends Component {
 		isKeyboardEngaged: false,
 	};
 
-	onSearch = terms => {
+	onSearch = ( terms ) => {
 		this.props.searchSites( terms );
 
 		this.setState( {
@@ -117,8 +121,9 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		scrollIntoView( highlightedSiteElem, selectorElement, {
-			onlyScrollIfNeeded: true,
+		scrollIntoViewport( highlightedSiteElem, {
+			block: 'nearest',
+			scrollMode: 'if-needed',
 		} );
 	}
 
@@ -135,7 +140,7 @@ class SiteSelector extends Component {
 			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
 			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
-			debug( 'reseting highlight as mouse left site selector' );
+			debug( 'resetting highlight as mouse left site selector' );
 			highlightedSiteId = null;
 			highlightedIndex = -1;
 		}
@@ -143,7 +148,7 @@ class SiteSelector extends Component {
 		return { highlightedSiteId, highlightedIndex };
 	}
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -209,7 +214,7 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = event => {
+	onAllSitesSelect = ( event ) => {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -232,7 +237,7 @@ class SiteSelector extends Component {
 		this.lastMouseHover = null;
 	};
 
-	onMouseMove = event => {
+	onMouseMove = ( event ) => {
 		// we need to test here if cursor position was actually moved, because
 		// mouseMove event can also be triggered by scrolling the parent element
 		// and we scroll that element via keyboard access
@@ -267,7 +272,7 @@ class SiteSelector extends Component {
 		return this.props.groups;
 	}
 
-	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
+	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
 		let sites;
@@ -283,7 +288,7 @@ class SiteSelector extends Component {
 		}
 
 		if ( this.props.hideSelected && this.props.selected ) {
-			sites = sites.filter( site => site.slug !== this.props.selected );
+			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
 
 		return sites;
@@ -409,8 +414,6 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
-					// eslint-disable-next-line react/no-string-refs
-					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
@@ -508,11 +511,16 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			}
 		}
 
+		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+		if ( path.match( /^\/backups\/.*\/(download|restore|detail)/ ) ) {
+			path = '/backups';
+		}
+
 		return path;
 	}
 };
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
@@ -533,8 +541,5 @@ const mapState = state => {
 export default flow(
 	localize,
 	searchSites,
-	connect(
-		mapState,
-		{ navigateToSite }
-	)
+	connect( mapState, { navigateToSite } )
 )( SiteSelector );

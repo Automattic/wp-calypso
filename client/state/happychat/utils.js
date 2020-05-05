@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -21,7 +19,7 @@ const request = ( ...args ) =>
 		} );
 	} );
 
-const sign = payload =>
+const sign = ( payload ) =>
 	request( {
 		method: 'POST',
 		path: '/jwt/sign',
@@ -34,7 +32,7 @@ const startSession = () =>
 		path: '/happychat/session',
 	} );
 
-export const getHappychatAuth = state => () => {
+export const getHappychatAuth = ( state ) => () => {
 	const url = config( 'happychat_url' );
 
 	const locale = getCurrentUserLocale( state );
@@ -69,5 +67,5 @@ export const getHappychatAuth = state => () => {
 			return sign( { user, session_id } );
 		} )
 		.then( ( { jwt } ) => ( { url, user: { jwt, ...happychatUser } } ) )
-		.catch( e => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
+		.catch( ( e ) => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
 };

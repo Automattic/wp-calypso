@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,9 +9,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans';
@@ -57,7 +54,7 @@ class AtomicStoreThankYouCard extends Component {
 
 		this.setState( { resendStatus: RESEND_PENDING } );
 
-		user.sendVerificationEmail( error => {
+		user.sendVerificationEmail( ( error ) => {
 			if ( error ) {
 				this.props.errorNotice(
 					translate( "Couldn't resend verification email. Please try again." ),
@@ -165,7 +162,7 @@ class AtomicStoreThankYouCard extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		const plan = getCurrentPlan( state, siteId );

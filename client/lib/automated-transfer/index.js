@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import { userCan } from 'lib/site/utils';
 
 /**
  * Returns true if Automated Transfer is enabled for the given site
+ *
  * @param { object } site - a full site object
  * @returns { boolean } - true if AT is enabled for the site
  */

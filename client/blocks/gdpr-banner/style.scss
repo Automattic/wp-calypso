@@ -3,8 +3,8 @@
 	bottom: 0;
 	width: 100%;
 	padding: 16px;
-	background-color: var( --color-neutral-700 );
-	color: var( --color-white );
+	background-color: var( --color-neutral-70 );
+	color: var( --color-text-inverted );
 	z-index: z-index( 'root', '.gdpr-banner' );
 
 	animation-duration: 0.5s;
@@ -29,7 +29,7 @@
 	}
 
 	a {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		text-decoration: underline;
 		&:hover {
 			text-decoration: none;

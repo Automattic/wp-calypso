@@ -1,32 +1,30 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
 /** Internal dependencies */
-import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Get the list of available jitms for the current site/section
+ *
  * @param {object} state The application state
- * @return {array} An array of jitms
+ * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
+ * @returns {Array} An array of jitms
  */
-export const getJITM = state =>
-	get(
-		state,
-		[ 'jitm', 'sitePathJITM', getSectionName( state ) + getSelectedSiteId( state ) ],
-		[]
-	);
+export const getJITM = ( state, messagePath ) =>
+	get( state, [ 'jitm', 'sitePathJITM', messagePath + getSelectedSiteId( state ) ], [] );
 
 /**
  * Get the top jitm available for the current site/section
+ *
  * @param {object} state Thee application state
- * @return {object} A jitm
+ * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
+ * @returns {object} A jitm
  */
-export const getTopJITM = state => {
-	const jitms = getJITM( state );
+export const getTopJITM = ( state, messagePath ) => {
+	const jitms = getJITM( state, messagePath );
 
 	if ( jitms.length === 0 ) {
 		return null;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { identity, includes, noop, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 import TranslatableString from 'components/translatable/proptype';
 
@@ -117,8 +115,8 @@ export class DropZone extends React.Component {
 		delete this.observer;
 	};
 
-	detectNodeRemoval = mutations => {
-		mutations.forEach( mutation => {
+	detectNodeRemoval = ( mutations ) => {
+		mutations.forEach( ( mutation ) => {
 			if ( ! mutation.removedNodes.length ) {
 				return;
 			}
@@ -127,7 +125,7 @@ export class DropZone extends React.Component {
 		} );
 	};
 
-	toggleDraggingOverDocument = event => {
+	toggleDraggingOverDocument = ( event ) => {
 		// Track nodes that have received a drag event. So long as nodes exist
 		// in the set, we can assume that an item is being dragged on the page.
 		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
@@ -164,7 +162,7 @@ export class DropZone extends React.Component {
 		);
 	};
 
-	toggleDropZoneReduxState = isVisible => {
+	toggleDropZoneReduxState = ( isVisible ) => {
 		if ( this.state.lastVisibleState !== isVisible ) {
 			if ( isVisible ) {
 				this.props.showDropZone( this.props.dropZoneName );
@@ -178,7 +176,7 @@ export class DropZone extends React.Component {
 		}
 	};
 
-	preventDefault = event => {
+	preventDefault = ( event ) => {
 		event.preventDefault();
 	};
 
@@ -197,7 +195,7 @@ export class DropZone extends React.Component {
 		return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 	};
 
-	onDrop = event => {
+	onDrop = ( event ) => {
 		// This seemingly useless line has been shown to resolve a Safari issue
 		// where files dragged directly from the dock are not recognized
 		event.dataTransfer && event.dataTransfer.files.length;
@@ -273,7 +271,4 @@ const mapDispatch = {
 	hideDropZone,
 };
 
-export default connect(
-	null,
-	mapDispatch
-)( localize( DropZone ) );
+export default connect( null, mapDispatch )( localize( DropZone ) );

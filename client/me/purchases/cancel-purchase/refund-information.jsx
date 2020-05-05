@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,7 @@ const CancelPurchaseRefundInformation = ( {
 	const { refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
-	const onCancelBundledDomainChange = event => {
+	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain: newCancelBundledDomainValue,
@@ -45,7 +43,7 @@ const CancelPurchaseRefundInformation = ( {
 		} );
 	};
 
-	const onConfirmCancelBundledDomainChange = event => {
+	const onConfirmCancelBundledDomainChange = ( event ) => {
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,
@@ -118,7 +116,7 @@ const CancelPurchaseRefundInformation = ( {
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
 								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
-								'experience difficulties acessing it.',
+								'experience difficulties accessing it.',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,

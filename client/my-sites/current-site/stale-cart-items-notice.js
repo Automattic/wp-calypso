@@ -40,7 +40,7 @@ class StaleCartItemsNotice extends React.Component {
 				id: staleCartItemNoticeId,
 				isPersistent: false,
 				duration: 10000,
-				button: this.props.translate( 'Complete your purchase' ),
+				button: this.props.translate( 'View your cart' ),
 				href: '/checkout/' + this.props.selectedSiteSlug,
 				onClick: this.clickStaleCartItemsNotice,
 			} );
@@ -65,7 +65,7 @@ class StaleCartItemsNotice extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, staleCartItemNoticeId ),
 		sectionName: getSectionName( state ),

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,7 +35,7 @@ import './style.scss';
 const PREVIEW_IMAGE_WIDTH = 512;
 const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
-const largeBlavatar = site => {
+const largeBlavatar = ( site ) => {
 	const siteIcon = get( site, 'icon.img' );
 	if ( ! siteIcon ) {
 		return null;
@@ -46,7 +44,7 @@ const largeBlavatar = site => {
 	return `${ siteIcon }?s=${ PREVIEW_IMAGE_WIDTH }`;
 };
 
-const getPostImage = post => {
+const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -72,7 +70,7 @@ const getPostImage = post => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-const getSeoExcerptForPost = post => {
+const getSeoExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -82,7 +80,7 @@ const getSeoExcerptForPost = post => {
 	);
 };
 
-const getSeoExcerptForSite = site => {
+const getSeoExcerptForSite = ( site ) => {
 	if ( ! site ) {
 		return null;
 	}
@@ -95,7 +93,7 @@ const getSeoExcerptForSite = site => {
 	);
 };
 
-const ComingSoonMessage = translate => (
+const ComingSoonMessage = ( translate ) => (
 	<div className="seo-preview-pane__message">{ translate( 'Coming Soon!' ) }</div>
 );
 
@@ -221,7 +219,7 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => (
+						{ services.map( ( service ) => (
 							<SocialItem { ...{ key: service, service } } />
 						) ) }
 					</VerticalMenu>
@@ -274,12 +272,9 @@ const mapStateToProps = ( state, { overridePost } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackPreviewService: service =>
+const mapDispatchToProps = ( dispatch ) => ( {
+	trackPreviewService: ( service ) =>
 		dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SeoPreviewPane ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );

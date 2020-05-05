@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ class InlineHelpCompactResult extends Component {
 		helpLink: {},
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		invoke( this.props, 'onClick', event, this.props.helpLink );
 	};
 

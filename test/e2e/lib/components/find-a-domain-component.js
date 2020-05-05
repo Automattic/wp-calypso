@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,8 @@ import AsyncBaseContainer from '../async-base-container';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
+const searchInputSelector = By.className( 'search__input' );
+
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
@@ -22,10 +22,10 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.domain-suggestion.is-placeholder' );
 		await driver.wait(
-			function() {
+			function () {
 				return driverHelper
 					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},
@@ -43,8 +43,11 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getSearchInputValue() {
+		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
+	}
+
 	async searchForBlogNameAndWaitForResults( blogName ) {
-		const searchInputSelector = By.className( 'search__input' );
 		await driverHelper.setWhenSettable( this.driver, searchInputSelector, blogName );
 		return await this.waitForResults();
 	}

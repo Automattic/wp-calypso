@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ class FollowingManageSortControls extends React.Component {
 		sortOrder: 'date-followed',
 	};
 
-	handleSelectChange = event => {
+	handleSelectChange = ( event ) => {
 		this.props.onSortChange( event.target.value );
 	};
 

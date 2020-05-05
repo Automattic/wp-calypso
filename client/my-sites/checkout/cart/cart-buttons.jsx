@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 export class CartButtons extends React.Component {
@@ -39,14 +37,11 @@ export class CartButtons extends React.Component {
 		);
 	}
 
-	goToCheckout = event => {
+	goToCheckout = ( event ) => {
 		event.preventDefault();
 		this.props.recordGoogleEvent( 'Domain Search', 'Click "Checkout" Button on Popup Cart' );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( CartButtons ) );
+export default connect( null, { recordGoogleEvent } )( localize( CartButtons ) );

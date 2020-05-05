@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,14 +13,20 @@ import { receiveSiteChecklist } from 'state/checklist/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchChecklist = action =>
+// The checklist API requests use the http_envelope query param, however on
+// desktop the envelope is not being unpacked for some reason. This conversion
+// ensures the payload has been unpacked.
+const fromApi = ( payload ) => get( payload, 'body', payload );
+
+export const fetchChecklist = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
+			apiNamespace: 'rest/v1.2',
 			query: {
 				http_envelope: 1,
+				with_domain_verification: action.isSiteEligibleForFSE ? 1 : 0,
 			},
 		},
 		action
@@ -36,7 +39,7 @@ export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
 	if ( ! Array.isArray( receivedChecklist.tasks ) ) {
 		checklist = {
 			...receivedChecklist,
-			tasks: Object.keys( receivedChecklist.tasks ).map( taskId => {
+			tasks: Object.keys( receivedChecklist.tasks ).map( ( taskId ) => {
 				const { completed, ...rest } = receivedChecklist.tasks[ taskId ];
 				return {
 					id: taskId,
@@ -54,14 +57,15 @@ const dispatchChecklistRequest = dispatchRequest( {
 	fetch: fetchChecklist,
 	onSuccess: receiveChecklistSuccess,
 	onError: noop,
+	fromApi,
 } );
 
-export const updateChecklistTask = action =>
+export const updateChecklistTask = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
+			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
 			},
@@ -74,6 +78,7 @@ const dispatchChecklistTaskUpdate = dispatchRequest( {
 	fetch: updateChecklistTask,
 	onSuccess: receiveChecklistSuccess,
 	onError: noop,
+	fromApi,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/checklist/index.js', {

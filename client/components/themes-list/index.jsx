@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isEqual, noop, times } from 'lodash';
+import { connect } from 'react-redux';
+import { isEqual, isEmpty, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,6 +14,7 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies
@@ -39,6 +38,10 @@ export class ThemesList extends React.Component {
 		// i18n function provided by localize()
 		translate: PropTypes.func,
 		placeholderCount: PropTypes.number,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -53,7 +56,7 @@ export class ThemesList extends React.Component {
 		isInstalling: () => false,
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		this.props.fetchNextPage( options );
 	};
 
@@ -69,6 +72,13 @@ export class ThemesList extends React.Component {
 	}
 
 	renderTheme( theme, index ) {
+		if ( isEmpty( theme ) ) {
+			return null;
+		}
+		// Decide if we should pass ref for bookmark.
+		const { themesBookmark } = this.props;
+		const bookmarkRef = themesBookmark === theme.id ? this.props.bookmarkRef : null;
+
 		return (
 			<Theme
 				key={ 'theme-' + theme.id }
@@ -85,12 +95,13 @@ export class ThemesList extends React.Component {
 				price={ this.props.getPrice( theme.id ) }
 				installing={ this.props.isInstalling( theme.id ) }
 				upsellUrl={ this.props.upsellUrl }
+				bookmarkRef={ bookmarkRef }
 			/>
 		);
 	}
 
 	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function( i ) {
+		return times( this.props.placeholderCount, function ( i ) {
 			return (
 				<Theme
 					key={ 'placeholder-' + i }
@@ -104,7 +115,7 @@ export class ThemesList extends React.Component {
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
+		return times( NUM_SPACERS, function ( i ) {
 			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
 	}
@@ -137,4 +148,8 @@ export class ThemesList extends React.Component {
 	}
 }
 
-export default localize( ThemesList );
+const mapStateToProps = ( state ) => ( {
+	themesBookmark: getThemesBookmark( state ),
+} );
+
+export default connect( mapStateToProps )( localize( ThemesList ) );

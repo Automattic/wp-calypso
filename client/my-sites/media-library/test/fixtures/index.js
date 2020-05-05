@@ -38,7 +38,6 @@
  *     }
  * }
  *
- * @format
  */
 
 export default {

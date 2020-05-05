@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,15 +5,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isHttps } from 'lib/url';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
@@ -56,7 +53,7 @@ class EasyTab extends Component {
 		isDeletingAll: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
 			this.setState( {
 				isDeleting: false,
@@ -155,7 +152,7 @@ class EasyTab extends Component {
 										{ translate( 'Results' ) }
 									</span>
 									<ul className="wp-super-cache__cache-test-results">
-										{ Object.keys( attempts ).map( key => (
+										{ Object.keys( attempts ).map( ( key ) => (
 											<li className="wp-super-cache__cache-test-results-item" key={ key }>
 												{ key === 'prime'
 													? translate( 'Fetching %(url)s to prime cache', {
@@ -223,7 +220,7 @@ class EasyTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
@@ -240,11 +237,8 @@ const connectComponent = connect(
 	{ testCache }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( EasyTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( EasyTab );

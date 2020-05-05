@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 import Gravatar from 'components/gravatar';
 import InfoPopover from 'components/info-popover';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { requestExternalContributors } from 'state/data-getters';
 /**
  * Style dependencies
@@ -42,7 +41,7 @@ class PeopleProfile extends Component {
 		return;
 	};
 
-	getRoleBadgeText = role => {
+	getRoleBadgeText = ( role ) => {
 		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
@@ -87,12 +86,12 @@ class PeopleProfile extends Component {
 		return text;
 	};
 
-	getRoleBadgeClass = role => {
+	getRoleBadgeClass = ( role ) => {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	};
 
-	handleLinkToReaderSiteStream = event => {
+	handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
 			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 
@@ -282,4 +281,4 @@ export default connect( ( _state, { siteId, user } ) => {
 			undefined !== linkedUserId ? linkedUserId : userId
 		),
 	};
-} )( localize( PeopleProfile ) );
+} )( localize( withLocalizedMoment( PeopleProfile ) ) );

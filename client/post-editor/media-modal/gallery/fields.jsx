@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import EditorMediaModalFieldset from '../fieldset';
 import SelectDropdown from 'components/select-dropdown';
-import SelectDropdownItem from 'components/select-dropdown/item';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 import { isModuleActive } from 'lib/site/utils';
@@ -86,10 +83,10 @@ export class EditorMediaModalGalleryFields extends React.Component {
 
 	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return fromPairs( times( max, n => [ n + 1, ( n + 1 ).toString() ] ) );
+		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	};
 
-	updateRandomOrder = event => {
+	updateRandomOrder = ( event ) => {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	};
 
@@ -103,11 +100,11 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		return (
 			<EditorMediaModalFieldset legend={ legend } className={ 'for-setting-' + settingName }>
 				<SelectDropdown selectedText={ options[ settings[ settingName ] ] }>
-					{ Object.keys( options ).map( value => {
+					{ Object.keys( options ).map( ( value ) => {
 						const label = options[ value ];
 
 						return (
-							<SelectDropdownItem
+							<SelectDropdown.Item
 								key={ 'value-' + value }
 								selected={ value === settings[ settingName ] }
 								onClick={ () =>
@@ -115,7 +112,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 								}
 							>
 								{ label }
-							</SelectDropdownItem>
+							</SelectDropdown.Item>
 						);
 					} ) }
 				</SelectDropdown>

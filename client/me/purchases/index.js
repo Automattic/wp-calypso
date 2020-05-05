@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 
-export default function( router ) {
+export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
@@ -99,10 +97,13 @@ export default function( router ) {
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
 		sidebar,
-		siteSelection,
 		controller.cancelPurchase,
 		makeLayout,
 		clientRender
@@ -162,4 +163,4 @@ export default function( router ) {
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
-}
+};

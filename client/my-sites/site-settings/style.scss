@@ -41,7 +41,7 @@
 	label {
 		margin-bottom: 5px;
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	legend + label,
@@ -51,7 +51,7 @@
 	input[type='radio'] + label,
 	label input[type='checkbox'],
 	label input[type='radio'] {
-		font-weight: normal;
+		font-weight: 400;
 	}
 
 	label a,
@@ -155,7 +155,7 @@
 
 	.verification-code-error {
 		color: var( --color-error );
-		font-weight: bold;
+		font-weight: 700;
 	}
 
 	.seo-settings__seo-form .counted-textarea {
@@ -215,7 +215,7 @@
 
 	.card {
 		&.is-placeholder div {
-			@include placeholder;
+			@include placeholder();
 		}
 	}
 
@@ -224,7 +224,16 @@
 	}
 
 	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 600;
+		font-weight: 700;
+	}
+
+	.eligibility-warnings {
+		margin-top: 0;
+		margin-bottom: 16px;
+
+		.is-primary {
+			float: none;
+		}
 	}
 }
 
@@ -293,7 +302,7 @@
 
 	.site-settings__moderation-settings {
 		.form-label {
-			font-weight: normal;
+			font-weight: 400;
 		}
 	}
 }
@@ -314,6 +323,15 @@
 	@include breakpoint( '>660px' ) {
 		flex: 0 1 100%;
 		order: 2;
+	}
+}
+
+.site-settings__visibility-label {
+	&:not( :first-child ) {
+		margin-top: 15px;
+	}
+	&.is-checkbox:not( :only-child ) {
+		margin-left: 25px;
 	}
 }
 
@@ -410,7 +428,7 @@
 
 	&.is-expanded .foldable-card__content {
 		padding: 8px 24px 24px;
-		border-top: 1px var( --color-neutral-100 ) solid;
+		border-top: 1px var( --color-neutral-10 ) solid;
 	}
 
 	&.is-expanded.is-top-level .foldable-card__content {
@@ -459,7 +477,7 @@
 }
 
 .site-settings__placeholder-item {
-	@include placeholder;
+	@include placeholder();
 
 	& + & {
 		margin-top: 24px;
@@ -496,6 +514,17 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__search-block {
 	margin-bottom: 16px;
+
+	.site-settings__jetpack-instant-search-toggle {
+		margin-left: 36px;
+	}
+
+	.search__module-settings {
+		margin-top: 0;
+		&:not( :last-child ) {
+			margin-bottom: 1em;
+		}
+	}
 }
 
 .site-settings__speed-up-site-settings {
@@ -523,4 +552,19 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__disable-privacy-settings {
 	opacity: 0.33;
 	pointer-events: none;
+}
+
+.site-settings__writing-settings {
+	.theme-enhancements__card {
+		.form-fieldset.minileven {
+			&.inactive {
+				p,
+				.form-toggle__label,
+				.support-info {
+					opacity: 0.3;
+					transition: all 0.75s;
+				}
+			}
+		}
+	}
 }

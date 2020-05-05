@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
@@ -20,7 +20,7 @@ import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -43,11 +43,13 @@ export class RewindCredentialsForm extends Component {
 		siteUrl: PropTypes.string,
 		labels: PropTypes.object,
 		requirePath: PropTypes.bool,
+		showNotices: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labels: {},
 		requirePath: false,
+		showNotices: true,
 	};
 
 	state = {
@@ -125,7 +127,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
 
@@ -146,12 +148,32 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const { formIsSubmitting, labels, onCancel, requirePath, siteId, translate } = this.props;
+		const {
+			formIsSubmitting,
+			labels,
+			showNotices,
+			onCancel,
+			requirePath,
+			siteId,
+			translate,
+		} = this.props;
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
 			<div className="rewind-credentials-form">
 				<QueryRewindState siteId={ siteId } />
+				{ showNotices && (
+					<div className="rewind-credentials-form__instructions">
+						{ translate(
+							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Check out our handy guide for more info{{/link}}.',
+							{
+								components: {
+									link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,
+								},
+							}
+						) }
+					</div>
+				) }
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					<FormSelect
@@ -296,6 +318,14 @@ export class RewindCredentialsForm extends Component {
 					) }
 				</FormFieldset>
 
+				{ showNotices && (
+					<div className="rewind-credentials-form__tos">
+						{ translate(
+							'By adding credentials, you are providing us with access to your server to perform automatic actions (such as backing up or restoring your site), manually access your site in case of an emergency, and troubleshoot your support requests.'
+						) }
+					</div>
+				) }
+
 				<FormFieldset>
 					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
 						{ labels.save || translate( 'Save' ) }
@@ -333,7 +363,6 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	rewindState: getRewindState( state, siteId ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ deleteCredentials, updateCredentials }
-)( localize( RewindCredentialsForm ) );
+export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
+	localize( RewindCredentialsForm )
+);

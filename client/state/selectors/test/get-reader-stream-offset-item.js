@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +6,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import getOffsetItem from 'state/selectors/get-reader-stream-offset-item';
+import { getOffsetItem } from 'state/reader/streams/selectors';
 
 jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( 'reader/stream/utils' );
-jest.mock( 'state/selectors/get-reader-follows' );
+jest.mock( 'state/reader/follows/selectors/get-reader-follows' );
 
 const postKey1 = { postId: 1, feedId: 1 };
 const postKey2 = { postId: 1, blogId: 1 };

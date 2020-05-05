@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, difference, flatten, map } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import EditPackage from './edit-package';
 import checkInputs from './modal-errors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import inputFilters from './input-filters';
@@ -24,7 +22,7 @@ import PredefinedPackages from './predefined-packages';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
-const AddPackageDialog = props => {
+const AddPackageDialog = ( props ) => {
 	const {
 		siteId,
 		form,
@@ -59,8 +57,13 @@ const AddPackageDialog = props => {
 
 		//get reserved box names:
 		const boxNames = concat(
-			difference( customPackages.map( boxPackage => boxPackage.name ), [ editName ] ), //existing custom boxes
-			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
+			difference(
+				customPackages.map( ( boxPackage ) => boxPackage.name ),
+				[ editName ]
+			), //existing custom boxes
+			flatten(
+				map( predefinedSchema, ( predef ) => map( predef, ( group ) => group.definitions ) )
+			), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);
 
@@ -85,7 +88,7 @@ const AddPackageDialog = props => {
 	const onClose = () => dismissModal( siteId );
 	const onRemove = () => removePackage( siteId, index );
 
-	const switchMode = option => {
+	const switchMode = ( option ) => {
 		setAddMode( siteId, option.value );
 	};
 
@@ -166,6 +169,6 @@ AddPackageDialog.propTypes = {
 	setAddMode: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	predefinedPackagesSummary: getPredefinedPackagesChangesSummary( state ),
 } ) )( localize( AddPackageDialog ) );

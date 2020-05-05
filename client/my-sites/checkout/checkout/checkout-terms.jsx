@@ -11,6 +11,7 @@ import TermsOfService from './terms-of-service';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
+import ConciergeRefundPolicy from './concierge-refund-policy';
 import { localize } from 'i18n-calypso';
 
 class CheckoutTerms extends React.Component {
@@ -30,6 +31,7 @@ class CheckoutTerms extends React.Component {
 				<DomainRegistrationAgreement cart={ cart } />
 				<DomainRegistrationHsts cart={ cart } />
 				<DomainRegistrationRefundPolicy cart={ cart } />
+				<ConciergeRefundPolicy cart={ cart } />
 			</Fragment>
 		);
 	}

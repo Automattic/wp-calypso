@@ -1,11 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
-import { moment, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ function isValidParameters( context ) {
 	if ( config.isEnabled( 'woocommerce/extension-referrers' ) ) {
 		validParameters.type.push( 'referrers' );
 	}
-	return Object.keys( validParameters ).every( param =>
+	return Object.keys( validParameters ).every( ( param ) =>
 		includes( validParameters[ param ], context.params[ param ] )
 	);
 }
@@ -90,7 +90,7 @@ export default function StatsController( context, next ) {
 				/>
 			);
 			break;
-		case 'referrers':
+		case 'referrers': {
 			const { referrerQuery } = getQueries( props.unit, props.queryDate );
 			asyncComponent = (
 				<AsyncLoad
@@ -101,6 +101,7 @@ export default function StatsController( context, next ) {
 				/>
 			);
 			break;
+		}
 		default:
 			asyncComponent = (
 				<AsyncLoad

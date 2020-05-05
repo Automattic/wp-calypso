@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -141,7 +139,7 @@ class SiteOrDomain extends Component {
 		goToStep( 'user' );
 	}
 
-	handleClickChoice = designType => {
+	handleClickChoice = ( designType ) => {
 		const { goToStep, goToNextStep } = this.props;
 
 		this.submitDomain( designType );
@@ -177,7 +175,6 @@ class SiteOrDomain extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ headerText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
 				/>
 			);
 		}
@@ -191,7 +188,6 @@ class SiteOrDomain extends Component {
 				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderScreen() }
 			/>
 		);
@@ -199,7 +195,7 @@ class SiteOrDomain extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 

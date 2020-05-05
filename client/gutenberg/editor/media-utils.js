@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +10,12 @@ import { parseWithAttributeSchema } from '@wordpress/blocks';
 
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
- * @param {Object} media Calypso media modal output
  *
- * @returns {Array|Object} Gutenberg media blocks input
+ * @param {object} media Calypso media modal output
+ *
+ * @returns {Array|object} Gutenberg media blocks input
  */
-export const mediaCalypsoToGutenberg = media => {
+export const mediaCalypsoToGutenberg = ( media ) => {
 	return {
 		id: get( media, 'ID' ),
 		url: get( media, 'URL' ),
@@ -48,7 +48,7 @@ export const mediaCalypsoToGutenberg = media => {
 	};
 };
 
-export const getDisabledDataSources = allowedTypes => {
+export const getDisabledDataSources = ( allowedTypes ) => {
 	// Additional data sources are enabled for all blocks supporting images.
 	// The File block supports images, but doesn't explicitly allow any media type:
 	// its `allowedTypes` prop can be either undefined or an empty array.
@@ -68,8 +68,8 @@ const enabledFiltersMap = {
 	video: 'videos',
 };
 
-export const getEnabledFilters = allowedTypes => {
+export const getEnabledFilters = ( allowedTypes ) => {
 	return isArray( allowedTypes ) && allowedTypes.length
-		? allowedTypes.map( type => enabledFiltersMap[ type ] )
+		? allowedTypes.map( ( type ) => enabledFiltersMap[ type ] )
 		: undefined;
 };

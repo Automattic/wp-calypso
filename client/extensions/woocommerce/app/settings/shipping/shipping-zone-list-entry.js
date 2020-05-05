@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-zone/shipping-methods/utils';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -57,7 +55,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 		);
 	};
 
-	const renderMethod = methodKey => {
+	const renderMethod = ( methodKey ) => {
 		const method = methods[ methodKey ];
 		let summary = getMethodSummary( method, currency );
 		if ( ! method.enabled ) {
@@ -71,7 +69,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 
 	const icon = 0 === id ? 'globe' : 'location';
 
-	const onEditClick = event => {
+	const onEditClick = ( event ) => {
 		if ( ! isValid ) {
 			event.preventDefault();
 		}

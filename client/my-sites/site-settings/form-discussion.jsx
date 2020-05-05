@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { flowRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -267,7 +265,7 @@ class SiteSettingsFormDiscussion extends Component {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onClick={ eventTracker( 'Selected Comment Nesting Level' ) }
 			>
-				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( level => (
+				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( ( level ) => (
 					<option value={ level } key={ 'comment-depth-' + level }>
 						{ level }
 					</option>
@@ -477,7 +475,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset className="site-settings__moderation-settings">
-				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
+				<FormLegend>{ translate( 'Comment moderation' ) }</FormLegend>
 				<p>
 					{ translate(
 						'Hold a comment in the queue if it contains {{numberOfLinks /}} or more links. ' +
@@ -527,7 +525,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
+				<FormLegend>{ translate( 'Comment blacklist' ) }</FormLegend>
 				<FormLabel htmlFor="blacklist_keys">
 					{ translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
@@ -588,7 +586,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
-				<SettingsSectionHeader title={ translate( 'Default Article Settings' ) } />
+				<SettingsSectionHeader title={ translate( 'Default article settings' ) } />
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>
@@ -633,7 +631,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
@@ -648,7 +646,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',

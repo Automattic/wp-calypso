@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -13,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AutoDirection } from '..';
+import AutoDirection from '..';
 import Emojify from 'components/emojify';
 
 describe( 'AutoDirection', () => {

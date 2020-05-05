@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -36,18 +34,18 @@ class NpsSurveyExample extends PureComponent {
 		isBusinessUser: false,
 	};
 
-	handleClose = afterClose => {
+	handleClose = ( afterClose ) => {
 		this.setState( {
 			isClosed: true,
 		} );
 		afterClose();
 	};
 
-	toggleBusinessUser = event => {
+	toggleBusinessUser = ( event ) => {
 		this.setState( { isBusinessUser: event.target.checked } );
 	};
 
-	toggleConciergeSessionAvailability = event => {
+	toggleConciergeSessionAvailability = ( event ) => {
 		this.setState( { hasAvailableConciergeSession: event.target.checked } );
 	};
 
@@ -104,7 +102,7 @@ class NpsSurveyExample extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isSubmitted: isNpsSurveySubmitted( state ),
 		isSubmitFailure: isNpsSurveySubmitFailure( state ),
@@ -123,10 +121,7 @@ const mapDispatchToProp = {
 	successNotice,
 };
 
-const ConnectedNpsSurveyExample = connect(
-	mapStateToProps,
-	mapDispatchToProp
-)( NpsSurveyExample );
+const ConnectedNpsSurveyExample = connect( mapStateToProps, mapDispatchToProp )( NpsSurveyExample );
 
 ConnectedNpsSurveyExample.displayName = 'NpsSurvey';
 

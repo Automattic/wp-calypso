@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
@@ -21,7 +19,7 @@ import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import RemoveButton from 'components/remove-button';
 import getMediaItem from 'state/selectors/get-media-item';
 import { getFeaturedImageId } from 'state/posts/utils';
@@ -79,7 +77,7 @@ class EditorFeaturedImage extends Component {
 		} );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		this.hideMediaModal();
 		this.props.onImageSelected();
 
@@ -109,7 +107,7 @@ class EditorFeaturedImage extends Component {
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = imageId => {
+	onImageChange = ( imageId ) => {
 		if ( imageId !== this.props.featuredImageId ) {
 			this.props.editPost( this.props.siteId, this.props.postId, {
 				featured_image: imageId,
@@ -185,7 +183,7 @@ class EditorFeaturedImage extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

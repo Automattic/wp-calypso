@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-voucher';
@@ -92,7 +92,7 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userInUsa = getCurrentUserCountryCode( state ) === 'US';
 		const userInCa = getCurrentUserCountryCode( state ) === 'CA';
 		const site = getSelectedSite( state );

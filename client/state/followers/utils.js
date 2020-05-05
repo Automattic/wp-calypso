@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 
 /**
  * Converts an object of query parameters into an alphebetically ordered string
  * that is used as a unique identifier for the query.
  *
- * @param  {Object} query A list of query parameters
- * @return {String}       Alphabetically ordered string of query parameters and values
+ * @param  {object} query A list of query parameters
+ * @returns {string}       Alphabetically ordered string of query parameters and values
  */
 export function getSerializedQuery( query ) {
 	return deterministicStringify( omit( query, [ 'page', 'max' ] ) );
@@ -22,8 +19,8 @@ export function getSerializedQuery( query ) {
  * Normalizes a follower object. Changes 'avatar' to 'avatar_URL' allowing a follower
  * object to be used with the Gravatar component.
  *
- * @param  {Object} follower A follower ojbect
- * @return {Object}          A normalized follower object
+ * @param  {object} follower A follower ojbect
+ * @returns {object}          A normalized follower object
  */
 export function normalizeFollower( follower ) {
 	follower.avatar_URL = follower.avatar;

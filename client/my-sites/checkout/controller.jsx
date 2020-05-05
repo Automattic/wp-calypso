@@ -1,10 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -13,20 +13,34 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import CartData from 'components/data/cart';
+import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import ConciergeSessionNudge from './concierge-session-nudge';
+import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { getRememberedCoupon } from 'lib/cart/actions';
+import { sites } from 'my-sites/controller';
+import CartData from 'components/data/cart';
 
 export function checkout( context, next ) {
-	const { feature, plan, product, purchaseId } = context.params;
+	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+		sites( context, next );
+		return;
+	}
+
+	let product;
+	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
+		product = domainOrProduct;
+	} else {
+		product = context.params.product;
+	}
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -37,19 +51,27 @@ export function checkout( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
 	context.primary = (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
-			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ context.store }
-			redirectTo={ context.query.redirect_to }
-			clearTransaction={ false }
-		/>
+		<CartData>
+			<CheckoutSystemDecider
+				product={ product }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromSignup={ !! context.query.signup }
+				isComingFromGutenboarding={ !! context.query.preLaunch }
+				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				reduxStore={ context.store }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				clearTransaction={ false }
+			/>
+		</CartData>
 	);
 
 	next();
@@ -61,7 +83,13 @@ export function checkoutPending( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }
@@ -85,6 +113,9 @@ export function checkoutThankYou( context, next ) {
 			gsuiteReceiptId={ gsuiteReceiptId }
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
+			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
+			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>
@@ -110,29 +141,39 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CartData>
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CartData>
+		</CheckoutContainer>
 	);
 
 	next();
 }
 
-export function conciergeSessionNudge( context, next ) {
+export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let conciergeSessionType;
+	let upsellType, upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		conciergeSessionType = 'concierge-quickstart-session';
+		upsellType = 'concierge-quickstart-session';
+		upgradeItem = 'concierge-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		conciergeSessionType = 'concierge-support-session';
+		upsellType = 'concierge-support-session';
+		upgradeItem = 'concierge-session';
+	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
+		upsellType = 'plan-upgrade-upsell';
+		upgradeItem = context.params.upgradeItem;
 	}
-	context.store.dispatch( setSection( { name: conciergeSessionType }, { hasSidebar: false } ) );
+
+	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (
 		<CheckoutContainer
@@ -140,13 +181,24 @@ export function conciergeSessionNudge( context, next ) {
 			clearTransaction={ true }
 			purchaseId={ Number( receiptId ) }
 		>
-			<ConciergeSessionNudge
+			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
-				conciergeSessionType={ conciergeSessionType }
+				upsellType={ upsellType }
+				upgradeItem={ upgradeItem }
 			/>
 		</CheckoutContainer>
 	);
 
 	next();
+}
+
+export function redirectToSupportSession( context ) {
+	const { receiptId, site } = context.params;
+
+	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
+	if ( context.params.receiptId ) {
+		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
+	}
+	page.redirect( `/checkout/offer-support-session/${ site }` );
 }

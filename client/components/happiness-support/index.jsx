@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
@@ -31,6 +29,11 @@ import { preventWidows } from 'lib/formatting';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import supportImage from 'assets/images/illustrations/dotcom-support.svg';
 
 export class HappinessSupport extends Component {
 	static propTypes = {
@@ -133,7 +136,7 @@ export class HappinessSupport extends Component {
 		return (
 			<div className="happiness-support__image">
 				<div className="happiness-support__icon">
-					<img alt="" src="/calypso/images/illustrations/dotcom-support.svg" />
+					<img alt="" src={ supportImage } />
 				</div>
 			</div>
 		);
@@ -180,7 +183,7 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		liveChatAvailable: isHappychatAvailable( state ),
 	} ),
 	{ recordTracksEvent }

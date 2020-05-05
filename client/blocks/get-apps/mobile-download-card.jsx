@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import AppsBadge from './apps-badge';
 import ReauthRequired from 'me/reauth-required';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import getCountries from 'state/selectors/get-countries';
@@ -32,6 +29,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import phoneValidation from 'lib/phone-validation';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { sendEmailLogin } from 'state/auth/actions';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -156,7 +155,7 @@ class MobileDownloadCard extends React.Component {
 	}
 
 	numericCountryCodeForCountryCode( code ) {
-		const element = this.props.countriesList.find( item => {
+		const element = this.props.countriesList.find( ( item ) => {
 			return item.code === code;
 		} );
 
@@ -248,11 +247,28 @@ class MobileDownloadCard extends React.Component {
 						</div>
 					</div>
 				) }
+
+				<div className="get-apps__magic-link-subpanel">
+					<div className="get-apps__card-text">
+						<p>
+							<strong>{ translate( 'Instantly log in to the mobile app' ) }</strong>
+							<br />
+							{ translate(
+								'Send yourself links to download the app and instantly log in on your mobile device.'
+							) }
+						</p>
+					</div>
+					<div className="get-apps__link-button-wrapper">
+						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
+							{ translate( 'Email me a log in link' ) }
+						</Button>
+					</div>
+				</div>
 			</Card>
 		);
 	}
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		this.setState( {
 			phoneNumber: {
 				countryCode: phoneNumber.countryData.code,
@@ -264,7 +280,7 @@ class MobileDownloadCard extends React.Component {
 		} );
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSubmit( event );
 		}
@@ -274,15 +290,26 @@ class MobileDownloadCard extends React.Component {
 		const phoneNumber = this.getPreferredNumber().numberFull;
 		this.props.sendSMS( phoneNumber );
 	};
+
+	onSubmitLink = () => {
+		const email = this.props.userSettings.user_email;
+		this.props.sendMagicLink( email );
+	};
 }
 
+const sendMagicLink = ( email ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
+		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+	);
+
 export default connect(
-	state => ( {
+	( state ) => ( {
 		countriesList: getCountries( state, 'sms' ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
 		userSettings: getUserSettings( state ),
 		hasUserSettings: hasUserSettings( state ),
 	} ),
-	{ sendSMS, fetchUserSettings, accountRecoverySettingsFetch }
+	{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
 )( localize( MobileDownloadCard ) );

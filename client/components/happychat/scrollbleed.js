@@ -1,12 +1,10 @@
 /**
- * /*
  * A mixin that prevents scrolling events triggered by the mousewheel from moving scrollable containers
  * not directly under the mouse.
  *
  * By default when scrolling a scrollable HTML element, once the boundary is reached the scrolling events
  * will continue up the DOM tree and ultimately end up scrolling the page.
  *
- * @format
  */
 
 export default {

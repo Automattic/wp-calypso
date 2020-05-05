@@ -21,7 +21,7 @@ function FilterBarController( refreshFunction ) {
 	this.refreshFunction = refreshFunction;
 }
 
-FilterBarController.prototype.selectFilter = function( filterName ) {
+FilterBarController.prototype.selectFilter = function ( filterName ) {
 	if ( Object.keys( Filters ).indexOf( filterName ) === -1 ) {
 		return;
 	}
@@ -35,7 +35,7 @@ FilterBarController.prototype.selectFilter = function( filterName ) {
 	bumpStat( 'notes-filter-select', filterName );
 };
 
-FilterBarController.prototype.getFilteredNotes = function( notes ) {
+FilterBarController.prototype.getFilteredNotes = function ( notes ) {
 	const state = store.getState();
 	const filterName = getFilterName( state );
 	const activeTab = Filters[ filterName ];
@@ -43,7 +43,7 @@ FilterBarController.prototype.getFilteredNotes = function( notes ) {
 		return [];
 	}
 
-	const filterFunction = note =>
+	const filterFunction = ( note ) =>
 		some( [
 			'unread' === filterName && noteHasFilteredRead( state, note.id ),
 			activeTab().filter( note ),

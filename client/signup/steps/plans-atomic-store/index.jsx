@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -49,7 +48,7 @@ export class PlansAtomicStoreStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
@@ -109,7 +108,7 @@ export class PlansAtomicStoreStep extends Component {
 				PLAN_BUSINESS,
 				PLAN_ECOMMERCE,
 			],
-			value => !! value
+			( value ) => !! value
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {
@@ -134,14 +133,7 @@ export class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			designType,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, designType } = this.props;
 
 		let headerText = translate( "Pick a plan that's right for you." );
 
@@ -156,7 +148,6 @@ export class PlansAtomicStoreStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 			/>

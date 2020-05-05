@@ -4,15 +4,16 @@
 import { isHttps } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
+import { isSectionNameEnabled } from 'sections-filter';
 
 /**
  * Returns true if the site can be previewed, false if the site cannot be
  * previewed, or null if preview ability cannot be determined. This indicates
  * whether it is safe to embed iframe previews for the site.
  *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is previewable
+ * @param  {object}   state  Global state tree
+ * @param  {number}   siteId Site ID
+ * @returns {?boolean}        Whether site is previewable
  */
 export default function isSitePreviewable( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -21,6 +22,10 @@ export default function isSitePreviewable( state, siteId ) {
 	}
 
 	if ( site.is_vip ) {
+		return false;
+	}
+
+	if ( ! isSectionNameEnabled( 'preview' ) ) {
 		return false;
 	}
 

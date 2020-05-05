@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import config from 'config';
 import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
@@ -75,7 +73,7 @@ class ReadingWidget extends Component {
 				<QueryPosts query={ query } siteId={ siteId } />
 				<ul className="reading-widget__article-list">
 					{ posts &&
-						posts.map( post => {
+						posts.map( ( post ) => {
 							const { date, ID, title, URL } = post;
 							return (
 								<li key={ ID }>
@@ -96,7 +94,7 @@ class ReadingWidget extends Component {
 		);
 	};
 
-	renderSubscriptionFormExplanation = expanded => {
+	renderSubscriptionFormExplanation = ( expanded ) => {
 		const { translate } = this.props;
 
 		return (
@@ -124,13 +122,13 @@ class ReadingWidget extends Component {
 		} );
 	};
 
-	onEmailChange = e => {
+	onEmailChange = ( e ) => {
 		this.setState( {
 			emailAddress: e.target.value,
 		} );
 	};
 
-	onRolesChange = e => {
+	onRolesChange = ( e ) => {
 		this.setState( {
 			roles: e.value,
 		} );
@@ -150,7 +148,7 @@ class ReadingWidget extends Component {
 		} );
 	};
 
-	renderSubscriptionFormFields = expanded => {
+	renderSubscriptionFormFields = ( expanded ) => {
 		const { translate } = this.props;
 		return (
 			<div className="reading-widget__subscription-form-fields">

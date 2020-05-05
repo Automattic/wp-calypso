@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,7 @@ class PushNotificationApprovalPoller extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		pushSuccess: getTwoFactorPushPollSuccess( state ),
 	} ),
 	{

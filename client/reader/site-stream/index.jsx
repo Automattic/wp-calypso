@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +17,7 @@ import Stream from 'reader/stream';
 import FeedError from 'reader/feed-error';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
-import isSiteBlocked from 'state/selectors/is-site-blocked';
+import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
 import SiteBlocked from 'reader/site-blocked';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';

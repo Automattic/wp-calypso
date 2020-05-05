@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import { mapValues, reduce, reduceRight } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
+import { get, mapValues, pick, reduce, reduceRight } from 'lodash';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
-import { withSchemaValidation } from './schema-utils';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ *
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
- * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
+ * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @return {Function} The function to be attached as `addReducer` method to the
+ * @returns {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
 export function addReducer( origReducer, reducers ) {
@@ -75,9 +75,7 @@ export function addReducer( origReducer, reducers ) {
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
- *
- * To mark that a reducer's state should be persisted, add the related JSON
- * schema as a property on the reducer.
+ * *
  *
  * @example
  * const age = ( state = 0, action ) =>
@@ -88,9 +86,6 @@ export function addReducer( origReducer, reducers ) {
  *     GROW === action.type
  *         ? state + 1
  *         : state
- * const schema = { type: 'number', minimum: 0 };
- *
- * age.schema = schema;
  *
  * const combinedReducer = combineReducers( {
  *     age,
@@ -136,7 +131,7 @@ export function addReducer( origReducer, reducers ) {
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  *
  * @param {object} reducers - object containing the reducers to merge
- * @returns {function} - Returns the combined reducer function
+ * @returns {Function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
 	// set up persistence of reducers passed from app and then create a combined one
@@ -153,7 +148,7 @@ function applyStoredState( reducers, state, action ) {
 		}
 
 		// Descend into nested state levels, possibly the storageKey will be found there?
-		const prevStateForKey = state[ key ];
+		const prevStateForKey = get( state, key );
 		const nextStateForKey = reducer( prevStateForKey, action );
 		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
 		return nextStateForKey;
@@ -171,6 +166,9 @@ function createCombinedReducer( reducers ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
 
+			case DESERIALIZE:
+				return combined( pick( state, Object.keys( reducers ) ), action );
+
 			case APPLY_STORED_STATE:
 				return applyStoredState( reducers, state, action );
 
@@ -187,7 +185,7 @@ function createCombinedReducer( reducers ) {
 }
 
 function getStorageKeys( reducers ) {
-	return function*() {
+	return function* () {
 		for ( const reducer of Object.values( reducers ) ) {
 			if ( reducer.storageKey ) {
 				yield { storageKey: reducer.storageKey, reducer };
@@ -238,8 +236,6 @@ function serializeState( reducers, state, action ) {
 /*
  * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
  * it means it's already set up and we don't need to make any changes.
- * If the reducer has a `schema` property, it means that persistence is requested and we
- * wrap it with code that validates the schema when loading persisted state.
  */
 function setupReducerPersistence( reducer ) {
 	if ( reducer.hasCustomPersistence ) {
@@ -247,7 +243,9 @@ function setupReducerPersistence( reducer ) {
 	}
 
 	if ( reducer.schema ) {
-		return withSchemaValidation( reducer.schema, reducer );
+		throw new Error(
+			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
+		);
 	}
 
 	return withoutPersistence( reducer );

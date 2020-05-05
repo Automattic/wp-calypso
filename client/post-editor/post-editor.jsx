@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
@@ -24,19 +24,19 @@ import EditorTitle from 'post-editor/editor-title';
 import EditorPageSlug from 'post-editor/editor-page-slug';
 import TinyMCE from 'components/tinymce';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
 	saveConfirmationSidebarPreference,
 	editorEditRawContent,
 	editorResetRawContent,
+	setEditorIframeLoaded,
 } from 'state/ui/editor/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
@@ -66,6 +66,7 @@ import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported'
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
+import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -77,19 +78,38 @@ import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
-import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/*
+ * Throttle and debounce and callback. Used for autosave.
+ * - run the callback at most every `throttleMs` milliseconds (don't autosave too often)
+ * - wait for at least `debounceMs` before first call (don't autosave while still typing)
+ */
+function throttleAndDebounce( fn, throttleMs, debounceMs ) {
+	const throttled = throttle( fn, throttleMs );
+	const debounced = debounce( throttled, debounceMs );
+
+	const throttledAndDebounced = function () {
+		return debounced.apply( this, arguments );
+	};
+
+	throttledAndDebounced.cancel = () => {
+		throttled.cancel();
+		debounced.cancel();
+	};
+
+	return throttledAndDebounced;
+}
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -100,6 +120,7 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
+		setEditorIframeLoaded: PropTypes.func,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -133,28 +154,20 @@ export class PostEditor extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.throttledAutosave = throttle( this.autosave, 20000 );
-		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
+		this.debouncedAutosave = throttleAndDebounce( this.doAutosave, 20000, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.useDefaultSidebarFocus();
-		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false,
 		} );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
-		// Cancel pending changes or autosave when user initiates a save. These
-		// will have been reflected in the save payload.
-		if ( nextState.isSaving && ! this.state.isSaving ) {
-			this.debouncedAutosave.cancel();
-			this.throttledAutosave.cancel();
-		}
-
-		if ( nextProps.isDirty ) {
+	componentDidUpdate() {
+		if ( this.props.isDirty ) {
 			this.props.markChanged();
 		} else {
 			this.props.markSaved();
@@ -169,16 +182,16 @@ export class PostEditor extends React.Component {
 
 		// record the initial value of the editor mode preference
 		if ( this.props.editorModePreference ) {
-			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
+			bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
 	componentWillUnmount() {
 		this.debouncedAutosave.cancel();
-		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
+		this.props.setEditorIframeLoaded( false );
 		clearTimeout( this._switchEditorTimeout );
 	}
 
@@ -192,7 +205,7 @@ export class PostEditor extends React.Component {
 		this.onEditedPostChange( nextProps );
 	}
 
-	storeEditor = ref => {
+	storeEditor = ( ref ) => {
 		this.editor = ref;
 	};
 
@@ -236,7 +249,7 @@ export class PostEditor extends React.Component {
 		}
 	};
 
-	handleConfirmationSidebarPreferenceChange = event => {
+	handleConfirmationSidebarPreferenceChange = ( event ) => {
 		this.setState( { confirmationSidebarPreference: event.target.checked } );
 	};
 
@@ -246,7 +259,7 @@ export class PostEditor extends React.Component {
 			: this.props.openEditorSidebar();
 	};
 
-	loadRevision = revision => {
+	loadRevision = ( revision ) => {
 		this.restoreRevision( {
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
@@ -286,7 +299,7 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				<EditorGutenbergBlocksWarningDialog />
+				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
@@ -336,20 +349,20 @@ export class PostEditor extends React.Component {
 									<EditorTitle onChange={ this.onEditorTitleChange } />
 									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
-										<SegmentedControlItem
+										<SegmentedControl.Item
 											selected={ mode === 'tinymce' }
 											onClick={ this.switchEditorVisualMode }
 											title={ this.props.translate( 'Edit with a visual editor' ) }
 										>
 											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-										</SegmentedControlItem>
-										<SegmentedControlItem
+										</SegmentedControl.Item>
+										<SegmentedControl.Item
 											selected={ mode === 'html' }
 											onClick={ this.switchEditorHtmlMode }
 											title={ this.props.translate( 'Edit the raw HTML code' ) }
 										>
 											HTML
-										</SegmentedControlItem>
+										</SegmentedControl.Item>
 									</SegmentedControl>
 								</div>
 								<hr className="post-editor__header-divider" />
@@ -422,7 +435,7 @@ export class PostEditor extends React.Component {
 		this.restoreRevision( get( this.props.post, 'meta.data.autosave' ) );
 	};
 
-	restoreRevision = revision => {
+	restoreRevision = ( revision ) => {
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			excerpt: revision.excerpt,
 			title: revision.title,
@@ -441,7 +454,7 @@ export class PostEditor extends React.Component {
 		this.setState( { showVerifyEmailDialog: false } );
 	};
 
-	onEditedPostChange = nextProps => {
+	onEditedPostChange = ( nextProps ) => {
 		if ( nextProps.loadingError ) {
 			return;
 		}
@@ -463,6 +476,8 @@ export class PostEditor extends React.Component {
 
 	onEditorInitialized = () => {
 		this.setState( { isEditorInitialized: true } );
+		// Notify external listeners that the iframe has loaded
+		this.props.setEditorIframeLoaded();
 	};
 
 	onEditorTitleChange = () => {
@@ -525,11 +540,7 @@ export class PostEditor extends React.Component {
 		}
 	}
 
-	autosave = async () => {
-		// If debounced / throttled autosave was pending, consider it flushed
-		this.throttledAutosave.cancel();
-		this.debouncedAutosave.cancel();
-
+	async doAutosave() {
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
@@ -554,14 +565,20 @@ export class PostEditor extends React.Component {
 				this.onSaveDraftFailure( error );
 			}
 		}
-	};
+	}
+
+	autosave() {
+		// If debounced autosave was pending, consider it done
+		this.debouncedAutosave.cancel();
+		return this.doAutosave();
+	}
 
 	onClose = () => {
 		// go back if we can, if not, hit all posts
 		page.back( this.getAllPostsUrl() );
 	};
 
-	getAllPostsUrl = context => {
+	getAllPostsUrl = ( context ) => {
 		const { type, selectedSite } = this.props;
 		const site = selectedSite;
 
@@ -610,7 +627,7 @@ export class PostEditor extends React.Component {
 		page( this.getAllPostsUrl( 'trashed' ) );
 	};
 
-	onSave = status => {
+	onSave = ( status ) => {
 		// Refuse to save if the current edits would mean that an unpublished post gets published.
 		// That's an exclusive resposibility of the `onPublish` method.
 		if (
@@ -619,6 +636,10 @@ export class PostEditor extends React.Component {
 		) {
 			return;
 		}
+
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
 
 		this.setState( { isSaving: true } );
 
@@ -657,7 +678,7 @@ export class PostEditor extends React.Component {
 		);
 	}
 
-	onPreview = async event => {
+	onPreview = async ( event ) => {
 		this.recordPreviewButtonClick();
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
@@ -683,7 +704,7 @@ export class PostEditor extends React.Component {
 
 	iframePreview = async () => {
 		if ( this.props.isDirty ) {
-			this.autosave();
+			await this.autosave();
 		}
 
 		this.setState( { showPreview: true } );
@@ -720,11 +741,11 @@ export class PostEditor extends React.Component {
 		return false;
 	};
 
-	onSaveDraftFailure = error => {
+	onSaveDraftFailure = ( error ) => {
 		this.onSaveFailure( error, 'saveFailure' );
 	};
 
-	onSaveDraftSuccess = saveResult => {
+	onSaveDraftSuccess = ( saveResult ) => {
 		this.onSaveSuccess( saveResult, 'save' );
 	};
 
@@ -753,6 +774,10 @@ export class PostEditor extends React.Component {
 			}
 		}
 
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
+
 		this.setState( {
 			isSaving: true,
 			isPublishing: true,
@@ -765,7 +790,7 @@ export class PostEditor extends React.Component {
 		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
-	onPublishFailure = error => {
+	onPublishFailure = ( error ) => {
 		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
@@ -773,7 +798,7 @@ export class PostEditor extends React.Component {
 		this.onSaveFailure( error, 'publishFailure' );
 	};
 
-	onPublishSuccess = saveResult => {
+	onPublishSuccess = ( saveResult ) => {
 		if ( ! this.state.confirmationSidebarPreference ) {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
@@ -797,7 +822,7 @@ export class PostEditor extends React.Component {
 		} );
 	};
 
-	setPostDate = date => {
+	setPostDate = ( date ) => {
 		const { siteId, postId } = this.props;
 		const dateValue = date ? date.format() : false;
 
@@ -893,7 +918,7 @@ export class PostEditor extends React.Component {
 		return null;
 	};
 
-	getCursorMarkerSpan = type => {
+	getCursorMarkerSpan = ( type ) => {
 		const tagType = type ? type : 'start';
 
 		return `<span
@@ -947,7 +972,7 @@ export class PostEditor extends React.Component {
 		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
 	};
 
-	focusHTMLBookmarkInVisualEditor = ed => {
+	focusHTMLBookmarkInVisualEditor = ( ed ) => {
 		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
 		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
 
@@ -978,10 +1003,10 @@ export class PostEditor extends React.Component {
 	 *
 	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
 	 *
-	 * @param {Object} editor The editor where we must find the selection
-	 * @returns {null | Object} The selection range position in the editor
+	 * @param {object} editor The editor where we must find the selection
+	 * @returns {null | object} The selection range position in the editor
 	 */
-	findBookmarkedPosition = editor => {
+	findBookmarkedPosition = ( editor ) => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
 		const TinyMCEWIndow = editor.getWin();
 
@@ -995,6 +1020,7 @@ export class PostEditor extends React.Component {
 		/**
 		 * The ID is used to avoid replacing user generated content, that may coincide with the
 		 * format specified below.
+		 *
 		 * @type {string}
 		 */
 		const selectionID = 'SELRES_' + uuid();
@@ -1096,7 +1122,7 @@ export class PostEditor extends React.Component {
 		};
 	};
 
-	switchEditorMode = mode => {
+	switchEditorMode = ( mode ) => {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
@@ -1132,7 +1158,7 @@ const enhance = flow(
 	localize,
 	protectForm,
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const postId = getEditorPostId( state );
 			const userId = getCurrentUserId( state );
@@ -1177,6 +1203,7 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
+			setEditorIframeLoaded,
 			pauseGuidedTour,
 		}
 	)

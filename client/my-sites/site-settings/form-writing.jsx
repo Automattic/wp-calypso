@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -63,7 +61,7 @@ class SiteSettingsFormWriting extends Component {
 			<form
 				id="site-settings"
 				onSubmit={ handleSubmitForm }
-				className="site-settings__general-settings"
+				className="site-settings__writing-settings"
 			>
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
@@ -192,7 +190,7 @@ class SiteSettingsFormWriting extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -213,7 +211,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	const formSettings = pick( settings, [
 		'posts_per_page',
 		'posts_per_rss',

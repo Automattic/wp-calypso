@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,15 +9,13 @@ import { get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarAddForm from './expandable-add-form';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
-import TranslatableString from 'components/translatable/proptype';
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
+	React.Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -37,20 +34,8 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
-	const {
-		className,
-		title,
-		count,
-		onClick,
-		icon,
-		materialIcon,
-		hideAddButton,
-		addLabel,
-		addPlaceholder,
-		onAddClick,
-		onAddSubmit,
-	} = props;
+export const ExpandableSidebarMenu = ( props ) => {
+	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
 
 	let { expanded } = props;
 
@@ -65,21 +50,6 @@ export const ExpandableSidebarMenu = props => {
 
 	const menuId = uniqueId( 'menu' );
 
-	const renderAddForm = onAddClick || onAddSubmit || addLabel || addPlaceholder;
-	let addForm = null;
-
-	if ( renderAddForm ) {
-		addForm = (
-			<ExpandableSidebarAddForm
-				hideAddButton={ hideAddButton }
-				addLabel={ addLabel }
-				addPlaceholder={ addPlaceholder }
-				onAddClick={ onAddClick }
-				onAddSubmit={ onAddSubmit }
-			/>
-		);
-	}
-
 	return (
 		<SidebarMenu className={ classes }>
 			<ExpandableSidebarHeading
@@ -88,13 +58,18 @@ export const ExpandableSidebarMenu = props => {
 				onClick={ onClick }
 				icon={ icon }
 				materialIcon={ materialIcon }
+				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
 			/>
-			{ addForm }
-			<ul role="region" id={ menuId } className="sidebar__menu-list" hidden={ ! expanded }>
+			<div
+				role="region"
+				id={ menuId }
+				className="sidebar__expandable-content"
+				hidden={ ! expanded }
+			>
 				{ props.children }
-			</ul>
+			</div>
 		</SidebarMenu>
 	);
 };
@@ -102,18 +77,11 @@ export const ExpandableSidebarMenu = props => {
 ExpandableSidebarMenu.propTypes = {
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
-	addLabel: TranslatableString,
-	addPlaceholder: TranslatableString,
-	onAddSubmit: PropTypes.func,
-	onAddClick: PropTypes.func,
 	onClick: PropTypes.func,
-	hideAddButton: PropTypes.bool,
 	icon: PropTypes.string,
+	materialIcon: PropTypes.string,
+	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
-};
-
-ExpandableSidebarMenu.defaultProps = {
-	hideAddButton: false,
 };
 
 export default ExpandableSidebarMenu;

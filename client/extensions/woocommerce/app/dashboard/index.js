@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -154,7 +152,7 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
-	onRequestRedirect = redirectURL => {
+	onRequestRedirect = ( redirectURL ) => {
 		this.setState( { redirectURL } );
 	};
 
@@ -296,7 +294,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchCounts }
-)( localize( Dashboard ) );
+export default connect( mapStateToProps, { fetchCounts } )( localize( Dashboard ) );

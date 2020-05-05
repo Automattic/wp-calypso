@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,7 +46,7 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 	}
 };
 
-const getUpdateErrorMessage = target => {
+const getUpdateErrorMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
 			return translate( 'An error occurred while updating your account recovery phone number.' );
@@ -62,7 +60,7 @@ const getUpdateErrorMessage = target => {
 	}
 };
 
-const getDeleteSuccessMessage = target => {
+const getDeleteSuccessMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
 			return translate( 'Successfully removed recovery SMS number.' );
@@ -76,7 +74,7 @@ const getDeleteSuccessMessage = target => {
 	}
 };
 
-const getDeleteErrorMessage = target => {
+const getDeleteErrorMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
 			return translate( 'An error occurred while deleting your account recovery phone number.' );
@@ -90,7 +88,7 @@ const getDeleteErrorMessage = target => {
 	}
 };
 
-const getResentSuccessMessage = target => {
+const getResentSuccessMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
 			return translate(
@@ -105,7 +103,7 @@ const getResentSuccessMessage = target => {
 	}
 };
 
-const getResentFailedMessage = target => {
+const getResentFailedMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
 			return translate(

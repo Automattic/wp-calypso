@@ -63,7 +63,7 @@
 .packages-step__list-package-count {
 	display: inline-block;
 	padding: 1px 6px;
-	border: solid 1px var( --color-neutral-200 );
+	border: solid 1px var( --color-neutral-20 );
 	border-radius: 12px;
 	font-size: 11px;
 	font-weight: 600;
@@ -131,13 +131,9 @@
 	margin-bottom: 10px;
 	float: left;
 	margin-right: 15px;
-}
 
-@-moz-document url-prefix('') {
-	/* fix the width in Firefox */
-	.packages-step__package-weight {
-		width: 135px;
-		margin-right: 65px;
+	input {
+		min-width: 0;
 	}
 }
 

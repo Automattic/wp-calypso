@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ class ContactFormDialogFieldList extends React.Component {
 								key={ index }
 								{ ...field }
 								onRemove={ () => this.props.onFieldRemove( index ) }
-								onUpdate={ newField => this.props.onFieldUpdate( index, newField ) }
+								onUpdate={ ( newField ) => this.props.onFieldUpdate( index, newField ) }
 							/>
 						);
 					} ) }

@@ -1,4 +1,3 @@
-/** @format */
 export const siteKeyrings = {
 	type: 'object',
 	additionalProperties: false,

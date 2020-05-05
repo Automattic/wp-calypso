@@ -1,5 +1,3 @@
-/** @format */
-
 export const site = {
 	ID: 1,
 	options: {

@@ -3,32 +3,42 @@
  */
 import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isFunction, times } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ChecklistHeader from './header';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
+import { Card } from '@automattic/components';
 
-export default class Checklist extends PureComponent {
+class Checklist extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
-		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onExpandTask: PropTypes.func,
-		progressText: PropTypes.string,
+		showChecklistHeader: PropTypes.bool,
+		checklistFooter: PropTypes.node,
 		updateCompletion: PropTypes.func,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
 	};
 
 	state = {
-		hideCompleted: false,
 		expandedTaskIndex: undefined,
 	};
 
 	componentDidMount() {
 		this.notifyCompletion();
+	}
+
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
+		if ( siteId !== this.props.siteId ) {
+			this.setState( { expandedTaskIndex: undefined } );
+		}
 	}
 
 	componentDidUpdate() {
@@ -46,7 +56,7 @@ export default class Checklist extends PureComponent {
 		const { children } = this.props;
 		const childrenArray = Children.toArray( children ).filter( Boolean );
 		const completedCount = childrenArray.reduce(
-			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
+			( count, task ) => ( true === task.props.completed ? count + 1 : count) ,
 			0
 		);
 		const total = childrenArray.length;
@@ -61,11 +71,11 @@ export default class Checklist extends PureComponent {
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
 		return Children.toArray( this.props.children ).findIndex(
-			task => task && ! task.props.completed && ! task.props.inProgress
+			( task ) => task && ! task.props.completed && ! task.props.inProgress
 		);
 	}
 
-	setExpandedTask = newExpandedTaskIndex =>
+	setExpandedTask = ( newExpandedTaskIndex ) =>
 		void this.setState( ( { expandedTaskIndex } ) => {
 			if ( newExpandedTaskIndex === expandedTaskIndex ) {
 				return { expandedTaskIndex: null }; // Collapse
@@ -80,17 +90,25 @@ export default class Checklist extends PureComponent {
 			return { expandedTaskIndex: newExpandedTaskIndex }; // Expand
 		} );
 
-	toggleCompleted = () =>
-		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
+	renderChecklistHeader = () => {
+		return (
+			<Card compact className="checklist__header">
+				<h2>{ this.props.translate( 'Your setup list' ) }</h2>
+			</Card>
+		);
+	};
 
 	render() {
+		const { showChecklistHeader, checklistFooter } = this.props;
 		const [ completed, total ] = this.calculateCompletion();
+
 		if ( this.props.isPlaceholder ) {
 			return (
 				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
-					<ChecklistHeader completed={ completed } total={ total } />
+					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+
 					<div className="checklist__tasks">
-						{ times( total, index => (
+						{ times( total, ( index ) => (
 							<TaskPlaceholder key={ index } />
 						) ) }
 					</div>
@@ -101,20 +119,9 @@ export default class Checklist extends PureComponent {
 		let skippedChildren = 0;
 
 		return (
-			<div
-				className={ classNames( 'checklist', this.props.className, {
-					'is-expanded': ! this.state.hideCompleted,
-					'hide-completed': this.state.hideCompleted,
-					'checklist-phase2': this.props.phase2,
-				} ) }
-			>
-				<ChecklistHeader
-					completed={ completed }
-					hideCompleted={ this.state.hideCompleted }
-					onClick={ this.toggleCompleted }
-					total={ total }
-					progressText={ this.props.progressText }
-				/>
+			<div className={ classNames( 'checklist', this.props.className ) }>
+				{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+
 				<div className="checklist__tasks">
 					{ Children.map( this.props.children, ( child, index ) => {
 						if ( ! child ) {
@@ -129,8 +136,20 @@ export default class Checklist extends PureComponent {
 							onTaskClick: () => this.setExpandedTask( realIndex ),
 						} );
 					} ) }
+
+					{ checklistFooter }
+
+					{ completed > 0 && completed < total && (
+						<div className="checklist__tasks-completed-title">
+							{ this.props.translate( 'Completed' ) }
+						</div>
+					) }
 				</div>
 			</div>
 		);
 	}
 }
+
+export default connect( ( state ) => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( localize( Checklist ) );

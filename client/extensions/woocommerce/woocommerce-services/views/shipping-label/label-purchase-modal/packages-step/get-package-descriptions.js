@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { mapValues } from 'lodash';
 export default ( selected, all, addNames ) => {
 	let pckgCount = 0;
 
-	return mapValues( selected, pckg => {
+	return mapValues( selected, ( pckg ) => {
 		if ( 'individual' === pckg.box_id ) {
 			return pckg.items[ 0 ].name;
 		}

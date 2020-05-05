@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDomServer from 'react-dom/server';
@@ -47,7 +44,7 @@ export class Mentions extends Component {
 		this.top = top;
 	}
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		// Update position of popover if going from invisible to visible state.
 		if ( ! this.state.showPopover && nextState.showPopover ) {
 			this.updatePosition( nextState );
@@ -287,7 +284,7 @@ Mentions.defaultProps = {
 	suggestions: [],
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

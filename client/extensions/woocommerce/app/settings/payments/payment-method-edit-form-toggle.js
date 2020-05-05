@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { omit } from 'lodash';
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 
-const PaymentMethodEditFormToggle = props => {
+const PaymentMethodEditFormToggle = ( props ) => {
 	const { checked, name, onChange } = props;
 	const onChangeHandler = () => {
 		const fakeEvent = {

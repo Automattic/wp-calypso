@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -42,7 +41,7 @@ class EmailedLoginLinkExpired extends React.Component {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 	}
 
-	onClickTryAgainLink = event => {
+	onClickTryAgainLink = ( event ) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
@@ -83,7 +82,4 @@ const mapDispatchToProps = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( EmailedLoginLinkExpired ) );
+export default connect( null, mapDispatchToProps )( localize( EmailedLoginLinkExpired ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { defer, flow, get, includes, noop, truncate } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -18,7 +16,7 @@ import Gridicon from 'gridicons';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
@@ -98,11 +96,11 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	initiateFromDrop = event => {
+	initiateFromDrop = ( event ) => {
 		this.startUpload( event[ 0 ] );
 	};
 
-	initiateFromForm = event => {
+	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -120,24 +118,28 @@ class UploadingPane extends React.PureComponent {
 		this.fileSelectorRef.current.click();
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		// Open file selector on Enter or Space
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.openFileSelector();
 		}
 	};
 
-	startUpload = file => {
+	startUpload = ( file ) => {
 		startUpload( this.props.importerStatus, file );
 	};
 
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
 		const isReadyForImport = this.isReadyForImport();
+		const importerStatusClasses = classNames(
+			'importer__upload-content',
+			this.props.importerStatus.importerState
+		);
 
 		return (
 			<div>
-				<p>{ this.props.description }</p>
+				<p className="importer__uploading-pane-description">{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
 					role="button"
@@ -145,7 +147,7 @@ class UploadingPane extends React.PureComponent {
 					onClick={ isReadyForImport ? this.openFileSelector : null }
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
-					<div className="importer__upload-content">
+					<div className={ importerStatusClasses }>
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
@@ -172,7 +174,7 @@ class UploadingPane extends React.PureComponent {
 }
 
 export default flow(
-	connect( state => ( {
+	connect( ( state ) => ( {
 		filename: get( state, 'imports.uploads.filename' ),
 		percentComplete: get( state, 'imports.uploads.percentComplete' ),
 	} ) ),

@@ -116,7 +116,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 	);
 };
 
-const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === type;
+const itemTypeIs = ( type ) => ( { item: [ firstItem ] } ) => firstItem.type === type;
 
 /*
  * Renders a chat bubble with multiple messages grouped by user.
@@ -126,7 +126,7 @@ const renderGroupedTimelineItem = first(
 	( { item: [ firstItem ] } ) => debug( 'no handler for message type', firstItem.type, firstItem )
 );
 
-const groupMessages = messages => {
+const groupMessages = ( messages ) => {
 	const grouped = messages.reduce(
 		( { user_id, type, group, groups, source }, message ) => {
 			const message_user_id = message.user_id;
@@ -181,7 +181,7 @@ const renderTimeline = ( {
 		onMouseEnter={ scrollbleedLock }
 		onMouseLeave={ scrollbleedUnlock }
 	>
-		{ groupMessages( timeline ).map( item =>
+		{ groupMessages( timeline ).map( ( item ) =>
 			renderGroupedTimelineItem( {
 				item,
 				isCurrentUser: isCurrentUser( item[ 0 ] ),

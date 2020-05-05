@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,6 @@ export default class TestStep extends React.Component {
 					positionInFlow={ this.props.positionInFlow }
 					headerText="This is a test step"
 					subHeaderText="Go ahead and click the button to continue. It'll blow your mind!"
-					signupProgress={ this.props.signupProgress }
 					goToNextStep={ this.props.goToNextStep }
 				/>
 				<SubmitStepButton

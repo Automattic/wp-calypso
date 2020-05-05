@@ -1,11 +1,7 @@
 /**
- * @format
- */
-
-/**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/import-no-redux-combine-reducers
+// eslint-disable-next-line no-restricted-imports
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import nock from 'nock';
@@ -54,13 +50,13 @@ function createEditorStore() {
 function responseTrigger( response ) {
 	let trigger;
 
-	const triggerPromise = new Promise( resolve => {
+	const triggerPromise = new Promise( ( resolve ) => {
 		trigger = resolve;
 	} );
 
 	return {
 		trigger,
-		get: cb => triggerPromise.then( () => cb( null, response ) ),
+		get: ( cb ) => triggerPromise.then( () => cb( null, response ) ),
 	};
 }
 

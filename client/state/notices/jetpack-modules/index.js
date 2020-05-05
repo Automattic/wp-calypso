@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,10 @@ export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, sile
 		return null;
 	}
 
-	const noticeSettings = { duration: 10000 };
+	const noticeSettings = {
+		duration: 10000,
+		id: 'site-settings-save',
+	};
 	let message = MODULE_NOTICES[ moduleSlug ] && MODULE_NOTICES[ moduleSlug ][ type ];
 	let messageType;
 

@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
@@ -20,6 +20,7 @@ interface Props {
 	domains: any[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
+	onReturnKeyPress: ( event: Event ) => void;
 	user: NewUser;
 }
 
@@ -27,6 +28,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	domains,
 	onUserRemove,
 	onUserValueChange,
+	onReturnKeyPress,
 	user: {
 		firstName: { value: firstName, error: firstNameError },
 		lastName: { value: lastName, error: lastNameError },
@@ -39,8 +41,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
 	const wasValidated =
-		[ firstName, lastName, mailBox ].some( value => '' !== value ) ||
-		[ firstNameError, lastNameError, mailBoxError, domainError ].some( value => null !== value );
+		[ firstName, lastName, mailBox ].some( ( value ) => '' !== value ) ||
+		[ firstNameError, lastNameError, mailBoxError, domainError ].some(
+			( value ) => null !== value
+		);
 
 	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
 	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
@@ -67,6 +71,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				onBlur={ () => {
 					setMailBoxFieldTouched( wasValidated );
 				} }
+				onKeyUp={ onReturnKeyPress }
 				suffix={ `@${ domain }` }
 			/>
 		);
@@ -85,10 +90,11 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onBlur={ () => {
 						setMailBoxFieldTouched( wasValidated );
 					} }
+					onKeyUp={ onReturnKeyPress }
 				/>
 				<GSuiteDomainsSelect
 					domains={ domains }
-					onChange={ event => {
+					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
 					value={ domain }
@@ -110,7 +116,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				<div className="gsuite-new-user-list__new-user-name">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'First Name' ) }
+							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }
 							isError={ hasFirstNameError }
@@ -120,12 +126,13 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setFirstNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
-							placeholder={ translate( 'Last Name' ) }
+							placeholder={ translate( 'Last name' ) }
 							value={ lastName }
 							maxLength={ 60 }
 							isError={ hasLastNameError }
@@ -135,6 +142,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setLastNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
@@ -144,7 +152,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onClick={ onUserRemove }
 						>
 							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove User' ) }</span>
+							<span>{ translate( 'Remove user' ) }</span>
 						</Button>
 					</div>
 				</div>

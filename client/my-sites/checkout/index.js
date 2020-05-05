@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,8 @@ import {
 	checkoutPending,
 	checkoutThankYou,
 	gsuiteNudge,
-	conciergeSessionNudge,
+	upsellNudge,
+	redirectToSupportSession,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
@@ -20,19 +20,14 @@ import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		page(
-			'/checkout/:site/offer-quickstart-session',
-			conciergeSessionNudge,
-			makeLayout,
-			clientRender
-		);
+		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 
@@ -99,40 +94,45 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+		// For backwards compatibility, retaining the old URL structure.
+		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
+
 		page(
-			'/checkout/:site/(add|offer)-support-session/pending/:orderId',
+			'/checkout/offer-support-session/:site?',
 			siteSelection,
-			checkoutPending,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
 
 		page(
-			'/checkout/:site/(add|offer)-support-session/:receiptId?',
+			'/checkout/offer-support-session/:receiptId/:site',
 			siteSelection,
-			conciergeSessionNudge,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
 
 		page(
-			'/checkout/:site/offer-quickstart-session/pending/:orderId',
+			'/checkout/offer-quickstart-session/:site?',
 			siteSelection,
-			checkoutPending,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
 
 		page(
-			'/checkout/:site/offer-quickstart-session/:receiptId?',
+			'/checkout/offer-quickstart-session/:receiptId/:site',
 			siteSelection,
-			conciergeSessionNudge,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
 	}
 
-	page( '/checkout/:domain/:product?', siteSelection, checkout, makeLayout, clientRender );
+	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+
+	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
@@ -155,4 +155,12 @@ export default function() {
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
+
+	page(
+		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
 }

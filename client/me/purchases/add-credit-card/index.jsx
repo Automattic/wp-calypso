@@ -1,18 +1,16 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { curry } from 'lodash';
 import page from 'page';
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import { addStoredCard } from 'state/stored-cards/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { concatTitle } from 'lib/react-helpers';
 import { createCardToken } from 'lib/store-transactions';
 import CreditCardForm from 'blocks/credit-card-form';
@@ -22,50 +20,38 @@ import Main from 'components/main';
 import titles from 'me/purchases/titles';
 import { billingHistory } from 'me/purchases/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { StripeHookProvider } from 'lib/stripe';
 
-class AddCreditCard extends Component {
-	static propTypes = {
-		addStoredCard: PropTypes.func.isRequired,
-	};
+function AddCreditCard( props ) {
+	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
+	const goToBillingHistory = () => page( billingHistory );
+	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 
-	constructor( props ) {
-		super( props );
-		this.createCardToken = curry( createCardToken )( 'card_add' );
-	}
+	return (
+		<Main>
+			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
+			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
-	goToBillingHistory() {
-		page( billingHistory );
-	}
-
-	recordFormSubmitEvent() {
-		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
-	}
-
-	render() {
-		return (
-			<Main>
-				<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
-				<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
-
-				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-
+			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
 				<CreditCardForm
-					createCardToken={ this.createCardToken }
-					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					saveStoredCard={ this.props.addStoredCard }
-					successCallback={ this.goToBillingHistory }
+					createCardToken={ createAddCardToken }
+					recordFormSubmitEvent={ recordFormSubmitEvent }
+					saveStoredCard={ props.addStoredCard }
+					successCallback={ goToBillingHistory }
 					showUsedForExistingPurchasesInfo={ true }
 				/>
-			</Main>
-		);
-	}
+			</StripeHookProvider>
+		</Main>
+	);
 }
+
+AddCreditCard.propTypes = {
+	addStoredCard: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( AddCreditCard );
+export default connect( null, mapDispatchToProps )( AddCreditCard );

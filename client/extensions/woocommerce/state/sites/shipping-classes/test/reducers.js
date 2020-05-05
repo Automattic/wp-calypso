@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import initialState from './data/initial-state';
 
 const siteId = 123;
 
-const dispatchFn = action => action;
+const dispatchFn = ( action ) => action;
 
 const getState = () => ( {
 	extensions: {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ function PieChartLegendPlaceholder( { dataSeriesInfo } ) {
 
 	return (
 		<div className="pie-chart__placeholder-legend">
-			{ dataSeriesInfo.map( datumInfo => {
+			{ dataSeriesInfo.map( ( datumInfo ) => {
 				return (
 					<LegendItemPlaceholder
 						key={ datumInfo.name }

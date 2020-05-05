@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * An enum set of possible media validation errors.
  *
- * @type {Object}
+ * @type {object}
  * @typedef MediaValidationError
  */
 export const ValidationErrors = {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import SegmentedControlItem from './item';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class SegmentedControl extends React.Component {
+	static Item = SegmentedControlItem;
+
 	static propTypes = {
-		children: PropTypes.node.isRequired,
 		className: PropTypes.string,
 		compact: PropTypes.bool,
-		onSelect: PropTypes.func,
+		primary: PropTypes.bool,
 		style: PropTypes.object,
+		children: PropTypes.node.isRequired,
 	};
 
 	render() {

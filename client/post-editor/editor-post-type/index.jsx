@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -76,7 +74,7 @@ EditorPostType.propTypes = {
 	isSettings: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const props = {};
 	const siteId = getSelectedSiteId( state );
 	if ( ! siteId ) {

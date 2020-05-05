@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -21,7 +19,7 @@ import {
 	getDimensionsUnitSetting,
 } from './selectors';
 
-export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
+export const fetchSettingsProducts = ( siteId ) => ( dispatch, getState ) => {
 	if (
 		areSettingsProductsLoaded( getState(), siteId ) ||
 		areSettingsProductsLoading( getState(), siteId )
@@ -38,14 +36,14 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'settings/products' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
@@ -53,11 +51,11 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 /**
  * Updates change setting stored in Redux store
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  setting, single setting object { id: '', value: '' }
- * @return {Object} Action object
+ * @returns {object} Action object
  */
-export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => {
+export const changeSettingsProductsSetting = ( siteId, setting ) => ( dispatch ) => {
 	dispatch( {
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 		siteId,
@@ -70,18 +68,18 @@ export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => 
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
+ * @param {number} siteId wpcom site id.
  * @param {Mixed}  settingsData, either single object { id: '', value: '' }, or array of settings objects
  * @param {Mixed}  successAction, either action object or empty (null)
  * @param {Mixed}  failureAction, either action object or empty (null)
- * @return {Object} Action object
+ * @returns {object} Action object
  */
 export const updateSettingsProducts = (
 	siteId,
 	settingsData,
 	successAction = null,
 	failureAction = null
-) => dispatch => {
+) => ( dispatch ) => {
 	const updateData = Array.isArray( settingsData ) ? settingsData : [ settingsData ];
 	const updateAction = {
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
@@ -93,7 +91,7 @@ export const updateSettingsProducts = (
 
 	return request( siteId )
 		.post( 'settings/products/batch', { update: updateData } )
-		.then( data => {
+		.then( ( data ) => {
 			if ( successAction ) {
 				dispatch( successAction );
 			}
@@ -103,7 +101,7 @@ export const updateSettingsProducts = (
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			if ( failureAction ) {
 				dispatch( failureAction );
 			}
@@ -119,10 +117,10 @@ export const updateSettingsProducts = (
 /**
  * Updates settings/products via batch endpoint.
  *
- * @param {Number} siteId wpcom site id.
- * @param {Object}  successAction, success action object
- * @param {Object}  failureAction, failure action object
- * @return {Object} Action object
+ * @param {number} siteId wpcom site id.
+ * @param {object}  successAction, success action object
+ * @param {object}  failureAction, failure action object
+ * @returns {object} Action object
  */
 export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureAction ) => (
 	dispatch,

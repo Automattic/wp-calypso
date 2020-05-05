@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,7 @@ class QueryMembershipsConnectedAccounts extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFetching: get( state, [ 'memberships', 'connectedAccounts', 'isFetching' ], false ),
 	} ),
 	{ listMembershipsConnectedAccounts }

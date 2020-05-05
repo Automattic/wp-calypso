@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,7 +17,7 @@ export default class extends React.PureComponent {
 		rangeValue: 24,
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			rangeValue: event.target.value,
 		} );

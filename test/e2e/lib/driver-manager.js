@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
+import { readFileSync } from 'fs';
 
 import * as remote from 'selenium-webdriver/remote';
 
@@ -88,6 +87,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
 		const caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
+		builder = new webdriver.Builder();
 
 		caps.username = config.get( 'sauceUsername' );
 		caps.accessKey = config.get( 'sauceAccessKey' );
@@ -108,22 +108,23 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( process.env.CIRCLE_BUILD_NUM ) {
 			caps.name += ' - CircleCI Build #' + process.env.CIRCLE_BUILD_NUM;
 		}
+		if ( caps.browserName === 'chrome' ) {
+			options = new chrome.Options();
+			options.addArguments( '--app=https://www.wordpress.com' );
+			builder.setChromeOptions( options );
+		}
 
 		global._sauceLabs = new SauceLabs( {
 			username: caps.username,
 			password: caps.accessKey,
 		} );
 
-		builder = new webdriver.Builder();
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder
-			.usingServer( sauceURL )
-			.withCapabilities( caps )
-			.build();
+		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
-		driver.getSession().then( function( sessionid ) {
+		driver.getSession().then( function ( sessionid ) {
 			driver.allPassed = true;
 			driver.sessionID = sessionid.id_;
 		} );
@@ -138,12 +139,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( getChromeWindowSize( screenSize ) );
 
 				if ( useCustomUA ) {
-					options.addArguments(
-						'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-					);
+					const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
+					const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
+					options.addArguments( userAgent );
 				}
 				if (
 					process.env.HEADLESS ||
@@ -159,10 +159,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 					options.addArguments( `--display=:${global.displayNum}` );
 				}
 
-				if ( process.env.CI === 'true' ) {
-					options.addArguments( '--kiosk' );
-					options.addArguments( '--app=https://www.wordpress.com' );
-				}
+				options.addArguments( '--app=https://www.wordpress.com' );
 
 				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
 				chrome.setDefaultService( service );
@@ -207,7 +204,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	await driver
 		.manage()
 		.setTimeouts( { implicit: webDriverImplicitTimeOutMS, pageLoad: webDriverPageLoadTimeOutMS } );
-	if ( resizeBrowserWindow && browser.toLowerCase() !== 'chrome' ) {
+	if ( resizeBrowserWindow ) {
 		await resizeBrowser( driver, screenSize );
 	}
 
@@ -218,28 +215,16 @@ export async function resizeBrowser( driver, screenSize ) {
 	if ( typeof screenSize === 'string' ) {
 		switch ( screenSize.toLowerCase() ) {
 			case 'mobile':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 400, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 400, height: 1000 } );
 				break;
 			case 'tablet':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1024, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
 				break;
 			case 'desktop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1440, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
 				break;
 			case 'laptop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1400, height: 790 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1400, height: 790 } );
 				break;
 			default:
 				throw new Error(
@@ -255,39 +240,6 @@ export async function resizeBrowser( driver, screenSize ) {
 				'). Supported values are desktop, tablet and mobile.'
 		);
 	}
-}
-
-export function getChromeWindowSize( screenSize ) {
-	let windowSize;
-	if ( typeof screenSize === 'string' ) {
-		switch ( screenSize.toLowerCase() ) {
-			case 'mobile':
-				windowSize = '--window-size=400,1000';
-				break;
-			case 'tablet':
-				windowSize = '--window-size=1024,1000';
-				break;
-			case 'desktop':
-				windowSize = '--window-size=1440,1000';
-				break;
-			case 'laptop':
-				windowSize = '--window-size=1400,790';
-				break;
-			default:
-				throw new Error(
-					'Unsupported screen size specified (' +
-						screenSize +
-						'). Supported values are desktop, tablet and mobile.'
-				);
-		}
-	} else {
-		throw new Error(
-			'Unsupported screen size specified (' +
-				screenSize +
-				'). Supported values are desktop, tablet and mobile.'
-		);
-	}
-	return windowSize;
 }
 
 export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null ) {
@@ -320,9 +272,10 @@ export async function ensureNotLoggedIn( driver ) {
 		await driver.executeScript( 'window.document.cookie = "sensitive_pixel_option=no;";' );
 	}
 
-	return await driver.executeScript(
+	await driver.executeScript(
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com";'
 	);
+	return driver.sleep( 500 );
 }
 
 export async function dismissAllAlerts( driver ) {

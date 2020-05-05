@@ -36,11 +36,11 @@
 	height: 24px;
 	line-height: 24px;
 	text-align: center;
-	font-weight: 700;
+	font-weight: 600;
 	cursor: pointer;
 }
 
 .wpcom-charmap__character:hover {
-	background-color: var( --color-neutral-500 );
-	color: var( --color-white );
+	background-color: var( --color-neutral-50 );
+	color: var( --color-text-inverted );
 }

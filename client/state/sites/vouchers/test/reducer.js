@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import vouchersReducer, {
-	items,
+	items as itemsReducer,
 	requesting as requestReducer,
 	errors as errorsReducer,
 } from '../reducer';
@@ -36,15 +34,12 @@ import {
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-
-const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

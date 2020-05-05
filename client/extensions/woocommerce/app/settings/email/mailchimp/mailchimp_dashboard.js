@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -44,11 +43,11 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 		onChange( { mailchimp_checkbox_defaults: nextValue } );
 	};
 
-	const onNewsletterLabelChange = e => {
+	const onNewsletterLabelChange = ( e ) => {
 		onChange( { newsletter_label: e.target.value } );
 	};
 
-	const onToggleSubscribeMessage = e => {
+	const onToggleSubscribeMessage = ( e ) => {
 		// check if we had previously selected something in checked/unchecked area
 		// this way we can use old value on toggling visibility,
 		// this is just to improve UX
@@ -126,7 +125,7 @@ class MailChimpDashboard extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { translate } = nextProps;
 		if ( false === nextProps.isSaving && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {
@@ -142,7 +141,7 @@ class MailChimpDashboard extends React.Component {
 		}
 	}
 
-	onSettingsChange = change => {
+	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
 		if ( this.props.onChange ) {
 			this.props.onChange();

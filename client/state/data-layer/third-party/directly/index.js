@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -28,7 +26,7 @@ export function initialize( { dispatch } ) {
 				)
 			)
 		)
-		.catch( error =>
+		.catch( ( error ) =>
 			dispatch(
 				withAnalytics(
 					recordTracksEvent( 'calypso_directly_initialization_error', {

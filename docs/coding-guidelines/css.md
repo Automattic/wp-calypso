@@ -1,7 +1,7 @@
 CSS/Sass Coding Guidelines
 ==========================
 
-Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. These files are all imported via `stylesheets/_components.scss`.
+Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. These files are all imported into the React components' JavaScript sources and then bundled by webpack to the production CSS files.
 
 This is an example of a declaration:
 
@@ -92,10 +92,9 @@ Calypso already provides helpers for many common solutions. Please, use them! We
 
 ## Sass Guidelines
 
-Currently, all component based Sass files are imported in `assets/stylesheets/_components`. They are compiled as part of `npm run build-css` into a single file together with the other general purpose stylesheets: `public/style.css`. Remember that all styles end up in a single file, so **all styles will apply to every page, all the time**. Make sure you namespace your styles for the page you are working on.
-Under the hood, we are using `node-sass` to handle the compiling of Sass, which is working on parity with the reference ruby implementation.
+Currently, all component based Sass files are imported into the respective JavaScript sources (using `import './style.scss'` statements). They are compiled by webpack as part of the bundling process into CSS chunks that are then loaded into the browser at runtime. Remember that all styles, even when loaded at different times, eventually end up on one page as part of a single HTML document. Make sure you namespace your styles for the page you are working on.
 
-The structure of files will be changing as we move remaining section-specific code to their relevant components. In the end, the only Sass files living in a general assets folder would be style-guide related.
+Under the hood, we are using webpack and its `sass-loader`, for compiling the styles with `node-sass` (a C++ implementation of the Sass compiler which is working on parity with the reference Ruby implementation) and `mini-css-extract-plugin`, for creating the CSS chunks to be loaded as `<style>` tags into the browser.
 
 ## Media Queries
 
@@ -142,14 +141,14 @@ Good:
 }
 ```
 
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `npm start`.
+The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `yarn start`.
 
 Adding additional breakpoints should not be undertaken lightly.
 
 
 ### Adding a new Sass file
 
-If you are adding a new Sass file to `assets/stylesheets` you will need to reference the file in `assets/stylesheets/style.scss` for it to load. If you're adding a new component reference it in `assets/stylesheets/_components.scss` instead.
+If you are adding a new Sass file (global or component-specific), you need to import it in some JavaScript source file. Try to avoid creating global styles and favor of styling particular components. JS and CSS code is async-loaded just in time when a particular section or an async-loaded React component is loaded.
 
 ### Imports
 
@@ -205,7 +204,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ## Right-To-Left (RTL)
 
-We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `npm run build-css`.
+We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `yarn run build-css`.
 
 - If your css code refers to a filename with ‘left’ or ‘right’ in it, for example background: `url(arrow-left.png)`: the RTL version will reference a different file, e.g. `background: url(arrow-right.png)`. Please make sure that file exists.
 - Same goes for ‘ltr’ and ‘rtl’ in it, for example background: url(icons-ltr.png): the RTL version will link to the other direction, e.g `background: url(icons-ltr.png)`. Please make sure that file exists.

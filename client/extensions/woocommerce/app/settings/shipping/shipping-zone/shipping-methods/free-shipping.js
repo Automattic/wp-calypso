@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,8 +22,8 @@ import {
 } from 'woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
 
 const FreeShippingMethod = ( { id, requires, min_amount, currency, translate, actions } ) => {
-	const onConditionChange = event => actions.setFreeShippingCondition( id, event.target.value );
-	const onMinAmountChange = event => actions.setFreeShippingMinCost( id, event.target.value );
+	const onConditionChange = ( event ) => actions.setFreeShippingCondition( id, event.target.value );
+	const onMinAmountChange = ( event ) => actions.setFreeShippingMinCost( id, event.target.value );
 
 	const isAdvancedSettings = 'coupon' === requires || 'either' === requires || 'both' === requires;
 
@@ -96,16 +94,13 @@ FreeShippingMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect(
-	null,
-	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId(
-			{
-				setFreeShippingCondition,
-				setFreeShippingMinCost,
-			},
-			dispatch,
-			ownProps.siteId
-		),
-	} )
-)( localize( FreeShippingMethod ) );
+export default connect( null, ( dispatch, ownProps ) => ( {
+	actions: bindActionCreatorsWithSiteId(
+		{
+			setFreeShippingCondition,
+			setFreeShippingMinCost,
+		},
+		dispatch,
+		ownProps.siteId
+	),
+} ) )( localize( FreeShippingMethod ) );

@@ -21,7 +21,7 @@ export default function JetpackLogoExample() {
 
 #### Props
 
+* `className` : (string) Custom class name to be added to the SVG element
 * `full` : (bool) Whether or not to show the Jetpack text alongside the icon
-* `size` : (number) The height of the SVG
-
-All other props are passed to the underlying `Button`.
+* `monochrome` : (bool) Show a monochrome Jetpack logo. Default is `false`
+* `size` : (number) The height of the SVG. Default is `32`

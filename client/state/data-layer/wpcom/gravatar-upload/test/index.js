@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,10 @@ describe( '#uploadGravatar()', () => {
 					method: 'POST',
 					body: {},
 					path: '/gravatar-upload',
-					formData: [ [ 'account', 'email' ], [ 'filedata', 'file' ] ],
+					formData: [
+						[ 'account', 'email' ],
+						[ 'filedata', 'file' ],
+					],
 				},
 				action
 			)
@@ -53,7 +54,7 @@ describe( '#announceSuccess()', () => {
 		} ) );
 		global.FileReader = jest.fn( () => ( {
 			readAsDataURL: noop,
-			addEventListener: function( event, callback ) {
+			addEventListener: function ( event, callback ) {
 				this.result = tempImageSrc;
 				callback();
 			},

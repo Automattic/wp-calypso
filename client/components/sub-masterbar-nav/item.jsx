@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
-export const Item = props => {
+export const Item = ( props ) => {
 	const { isSelected, onClick, label, icon, href } = props;
 
 	const classes = classNames( 'sub-masterbar-nav__item', { 'is-selected': isSelected } );

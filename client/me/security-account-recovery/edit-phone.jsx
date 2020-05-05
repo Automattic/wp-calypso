@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -93,11 +91,11 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		return true;
 	};
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		this.setState( { phoneNumber } );
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
@@ -133,6 +131,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	countriesList: getCountries( state, 'sms' ),
 } ) )( localize( SecurityAccountRecoveryRecoveryPhoneEdit ) );

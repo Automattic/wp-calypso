@@ -16,6 +16,7 @@ import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
 import { getSiteOption } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
 
@@ -26,7 +27,7 @@ import './style.scss';
 
 class StatsNavigation extends Component {
 	static propTypes = {
-		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
+		interval: PropTypes.oneOf( intervalConstants.map( ( i ) => i.value ) ),
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
@@ -35,7 +36,7 @@ class StatsNavigation extends Component {
 		slug: PropTypes.string,
 	};
 
-	isValidItem = item => {
+	isValidItem = ( item ) => {
 		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
@@ -68,7 +69,7 @@ class StatsNavigation extends Component {
 					<NavTabs label={ 'Stats' } selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
-							.map( item => {
+							.map( ( item ) => {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
@@ -103,7 +104,9 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds: getSiteOption( state, siteId, 'wordads' ),
+		isWordAds:
+			getSiteOption( state, siteId, 'wordads' ) &&
+			canCurrentUser( state, siteId, 'manage_options' ),
 		siteId,
 	};
 } )( StatsNavigation );

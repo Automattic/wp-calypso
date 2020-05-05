@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,7 +39,7 @@ class QuerySettingsGeneral extends Component {
 		);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId, loaded, error } = this.props;
 
 		if ( siteId ) {
@@ -53,7 +51,7 @@ class QuerySettingsGeneral extends Component {
 		}
 	}
 
-	componentWillReceiveProps( { siteId, loaded, error } ) {
+	UNSAFE_componentWillReceiveProps( { siteId, loaded, error } ) {
 		if ( ! siteId ) {
 			return;
 		}
@@ -76,11 +74,11 @@ QuerySettingsGeneral.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		loaded: areSettingsGeneralLoaded( state ),
 		error: areSettingsGeneralLoadError( state ),
 	} ),
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				fetchSettingsGeneral,

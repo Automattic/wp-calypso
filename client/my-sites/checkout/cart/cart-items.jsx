@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,7 +27,7 @@ export class CartItems extends React.Component {
 		};
 	}
 
-	handleExpand = event => {
+	handleExpand = ( event ) => {
 		event.preventDefault();
 
 		// If we call setState here directly, it would remove the expander from DOM,

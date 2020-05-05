@@ -14,14 +14,19 @@ const inputDir = path.join( dir, 'src' );
 const outputDirEsm = path.join( dir, 'dist', 'esm' );
 const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 
-console.log( 'Building %s', dir );
+// If the pattern was just a relative path (**/test/**), Babel would resolve it against the
+// root directory (set as cwd) which isn't an ancestor of any of the source files.
+const testIgnorePattern = path.join( dir, '**/test/**' );
 
-execSync( `npx babel --presets="${ babelPresetFile }" -d "${ outputDirEsm }" "${ inputDir }"`, {
+console.log( 'Building %s', dir );
+const baseCommand = `npx --no-install babel --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
+
+execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
 	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 	cwd: root,
 } );
 
-execSync( `npx babel --presets="${ babelPresetFile }" -d "${ outputDirCommon }" "${ inputDir }"`, {
-	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'server' } ),
+execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'commonjs' } ),
 	cwd: root,
 } );

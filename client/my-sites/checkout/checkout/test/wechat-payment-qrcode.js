@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -29,7 +28,7 @@ const defaultProps = {
 	transactionStatus: null,
 	transactionError: null,
 	reset: jest.fn(),
-	translate: x => x,
+	translate: ( x ) => x,
 };
 
 describe( 'WechatPaymentQRCode', () => {

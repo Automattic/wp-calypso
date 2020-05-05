@@ -1,0 +1,30 @@
+.upsell-nudge__placeholders {
+    display: flex;
+    flex-direction: column;
+
+    .is-placeholder {
+        animation: pulse-light 800ms ease-in-out infinite;
+        background: var( --color-neutral-10 );
+    }
+}
+
+.upsell-nudge__placeholder-row {
+    height: 40px;
+    flex: 0 0 100%;
+    margin-bottom: 15px;
+}
+
+.upsell-nudge__placeholder-button {
+    height: 50px;
+    width: 100%;
+
+    @include breakpoint( '>480px' ) {
+        width: 80px;
+        height: 40px;
+    }
+}
+
+.upsell-nudge__placeholder-button-container {
+    display: flex;
+    justify-content: space-between;
+}

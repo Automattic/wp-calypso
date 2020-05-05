@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -11,16 +10,15 @@ import React from 'react';
  */
 import './style.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-const Masterbar = ( { children } ) => (
-	<header id="header" className="masterbar">
+const Masterbar = ( { children, className } ) => (
+	<header id="header" className={ classNames( 'masterbar', className ) }>
 		{ children }
 	</header>
 );
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 Masterbar.propTypes = {
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 };
 
 export default Masterbar;

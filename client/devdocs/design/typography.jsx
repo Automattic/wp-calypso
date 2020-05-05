@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 
@@ -26,8 +24,9 @@ export default class Typography extends React.PureComponent {
 					<h2>Interface Typography</h2>
 
 					<p>
-						We use sans-serif system fonts as the default for UI. This includes UI elements like
-						buttons, notices, and navigation. System fonts improve the page-rendering speed.
+						We use sans-serif system fonts with weights of 400 or greater as the default for UI.
+						This includes UI elements like buttons, notices, and navigation. System fonts improve
+						the page-rendering speed.
 					</p>
 					<p>
 						<code>
@@ -62,7 +61,7 @@ export default class Typography extends React.PureComponent {
 							{ '\n\t' }
 							font-weight: 400;
 							{ '\n\t' }
-							color: var( --color-neutral-700 );
+							color: var( --color-neutral-70 );
 							{ '\n' }
 							&#125;
 						</code>
@@ -70,9 +69,9 @@ export default class Typography extends React.PureComponent {
 
 					<h2>Content Typography</h2>
 					<p>
-						We mostly use <code>Noto Serif</code> in reading and writing contexts, like the Reader
-						and the editor. Use your best judgment when using Noto Serif for a UI element. Does it
-						add valuable context for the person using our products?
+						We mostly use <code>Noto Serif</code> with weights of 400 or greater in reading and
+						writing contexts, like the Reader and the editor. Use your best judgment when using Noto
+						Serif for a UI element. Does it add valuable context for the person using our products?
 					</p>
 
 					<Card className="design__typography-content-example">

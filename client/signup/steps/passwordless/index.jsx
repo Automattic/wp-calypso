@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,18 +10,17 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-
-/**
- * Internal dependencies
- */
 import StepWrapper from 'signup/step-wrapper';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import Button from 'components/button';
-import { createPasswordlessUser, verifyPasswordlessUser } from 'lib/signup/step-actions';
+import { Button } from '@automattic/components';
+import {
+	createPasswordlessUser,
+	verifyPasswordlessUser,
+} from 'lib/signup/step-actions/passwordless';
 import Notice from 'components/notice';
 import FormStateStore from 'lib/form-state';
 import createFormStore from 'lib/form-state/store';
@@ -56,7 +54,7 @@ export class PasswordlessStep extends Component {
 		} );
 	}
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {
@@ -69,7 +67,7 @@ export class PasswordlessStep extends Component {
 		} );
 	};
 
-	createUser = event => {
+	createUser = ( event ) => {
 		event.preventDefault();
 		const data = { email: getFieldValue( this.formStore.get(), 'email' ) };
 
@@ -77,7 +75,7 @@ export class PasswordlessStep extends Component {
 			submitting: true,
 		} );
 
-		createPasswordlessUser( this.handleUserCreationRequest, null, data );
+		createPasswordlessUser( this.handleUserCreationRequest, data );
 	};
 
 	handleUserCreationRequest = ( error, response ) => {
@@ -99,19 +97,17 @@ export class PasswordlessStep extends Component {
 		} );
 	};
 
-	verifyUser = event => {
+	verifyUser = ( event ) => {
 		event.preventDefault();
-		const data = {
-			email: getFieldValue( this.formStore.get(), 'email' ),
-			code: getFieldValue( this.formStore.get(), 'code' ),
-		};
-
 		this.setState( {
 			errorMessages: null,
 			submitting: true,
 		} );
 
-		verifyPasswordlessUser( this.handleUserVerificationRequest, null, data );
+		verifyPasswordlessUser( this.handleUserVerificationRequest, {
+			email: getFieldValue( this.formStore.get(), 'email' ),
+			code: getFieldValue( this.formStore.get(), 'code' ),
+		} );
 	};
 
 	handleUserVerificationRequest = ( error, providedDependencies ) => {
@@ -127,7 +123,7 @@ export class PasswordlessStep extends Component {
 		this.submitStep( providedDependencies );
 	};
 
-	submitStep = providedDependencies => {
+	submitStep = ( providedDependencies ) => {
 		const { flowName, stepName } = this.props;
 
 		this.props.submitSignupStep(
@@ -251,14 +247,10 @@ export class PasswordlessStep extends Component {
 				headerText={ this.props.headerText }
 				subHeaderText={ this.props.translate( 'Create a WordPress.com account' ) }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( PasswordlessStep ) );
+export default connect( null, { submitSignupStep } )( localize( PasswordlessStep ) );

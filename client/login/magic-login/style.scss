@@ -1,3 +1,7 @@
+@import 'landing/gutenboarding/mixins.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,
 	.magic-login__check-email,
@@ -51,7 +55,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -60,7 +64,7 @@
 }
 
 .magic-login__form-label {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	display: block;
 	font-size: 14px;
 	line-height: 1.5;
@@ -80,7 +84,7 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
 		line-height: 4em;
 		font-size: 14px;
@@ -97,7 +101,7 @@
 		}
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 	.gridicon {
@@ -109,4 +113,41 @@
 	display: block;
 	height: 132px;
 	margin: 0 auto 1.5em;
+}
+
+.magic-login.is-gutenboarding-login {
+	.magic-login__form-header {
+		@include onboarding-heading-text-mobile;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.card {
+		box-shadow: none;
+	}
+
+	.magic-login__form-action .button.is-primary:not( [disabled] ) {
+		// Match primary button color in Gutenboarding and
+		// change border color to remove 3D effect
+		background-color: #007cba;
+		border-color: #007cba;
+	}
+}
+
+.magic-login__gutenboarding-wordpress-logo {
+	height: 64px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	@include break-mobile {
+		padding: 8px 24px;
+	}
 }

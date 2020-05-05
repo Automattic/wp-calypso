@@ -32,7 +32,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async clickUpgradeNudge() {
-		const selector = By.css( '.dops-notice a[href*="plans-business"]' );
+		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}

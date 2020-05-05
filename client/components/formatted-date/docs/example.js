@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -24,7 +23,7 @@ class FormattedDateExample extends PureComponent {
 		format: 'lll',
 	};
 
-	handleDateChange = evt => {
+	handleDateChange = ( evt ) => {
 		const val = moment( evt.target.value );
 		if ( val.isValid() ) {
 			this.setState( {
@@ -34,14 +33,14 @@ class FormattedDateExample extends PureComponent {
 		}
 	};
 
-	handleLocaleChange = evt => {
+	handleLocaleChange = ( evt ) => {
 		const val = evt.target.value;
 		if ( val.length === 2 || val.length === 5 ) {
 			this.props.setLocale( evt.target.value );
 		}
 	};
 
-	handleFormatChange = evt => {
+	handleFormatChange = ( evt ) => {
 		const val = evt.target.value;
 		if ( val ) {
 			this.setState( { format: val } );
@@ -88,7 +87,7 @@ class FormattedDateExample extends PureComponent {
 }
 
 const exported = connect(
-	state => ( {
+	( state ) => ( {
 		currentLocale: getCurrentLocaleSlug( state ),
 	} ),
 	{ setLocale }

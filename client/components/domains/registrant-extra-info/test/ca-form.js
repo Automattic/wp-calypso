@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,6 @@ import { identity } from 'lodash';
 import { RegistrantExtraInfoCaForm } from '../ca-form';
 
 jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-jest.mock( 'lib/analytics', () => {} );
 
 const mockProps = {
 	translate: identity,

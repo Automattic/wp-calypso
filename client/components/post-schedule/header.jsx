@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,7 +43,7 @@ class PostScheduleHeader extends React.Component {
 		onDateChange( moment( date ).year( moment().year() ) );
 	};
 
-	setYear = modifier => {
+	setYear = ( modifier ) => {
 		const { moment, date, onDateChange } = this.props;
 		const newDate = moment( date ).add( modifier, 'y' );
 

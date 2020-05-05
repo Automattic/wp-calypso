@@ -1,22 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';
@@ -29,15 +26,13 @@ import EmptyContent from 'components/empty-content';
 import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 
 /**
  * Stylesheet dependencies
  */
-
 import './style.scss';
 
 const maxFollowers = 1000;
@@ -73,15 +68,12 @@ const Followers = localize(
 			}
 
 			actions.fetchFollowers( Object.assign( this.props.fetchOptions, { page } ) );
-			analytics.ga.recordEvent( 'People', analyticsAction, 'page', page );
+			gaRecordEvent( 'People', analyticsAction, 'page', page );
 		};
 
 		removeFollower( follower ) {
 			const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-			analytics.ga.recordEvent(
-				'People',
-				'Clicked Remove Follower Button On' + listType + ' list'
-			);
+			gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
 			accept(
 				<div>
 					<p>
@@ -90,9 +82,9 @@ const Followers = localize(
 						) }
 					</p>
 				</div>,
-				accepted => {
+				( accepted ) => {
 					if ( accepted ) {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 						);
@@ -101,7 +93,7 @@ const Followers = localize(
 							: FollowersActions
 						).removeFollower( this.props.site.ID, follower );
 					} else {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Cancel Button In Remove ' + listType + ' Confirmation'
 						);
@@ -111,7 +103,7 @@ const Followers = localize(
 			);
 		}
 
-		renderFollower = follower => {
+		renderFollower = ( follower ) => {
 			const removeFollower = () => {
 				this.removeFollower( follower );
 			};
@@ -128,7 +120,7 @@ const Followers = localize(
 			);
 		};
 
-		getFollowerRef = follower => {
+		getFollowerRef = ( follower ) => {
 			return 'follower-' + follower.ID;
 		};
 
@@ -288,7 +280,7 @@ const Followers = localize(
 	}
 );
 
-const FollowersList = props => {
+const FollowersList = ( props ) => {
 	let DataComponent;
 	const fetchOptions = {
 		max: 100,

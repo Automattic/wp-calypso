@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { localize } from 'i18n-calypso';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SiteToolsLink from './link';
@@ -31,8 +28,8 @@ import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purc
  */
 import './style.scss';
 
-const trackDeleteSiteOption = option => {
-	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+const trackDeleteSiteOption = ( option ) => {
+	recordTracksEvent( 'calypso_settings_delete_site_options', {
 		option: option,
 	} );
 };
@@ -97,7 +94,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader title={ translate( 'Site Tools' ) } />
+				<SettingsSectionHeader title={ translate( 'Site tools' ) } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
@@ -106,7 +103,7 @@ class SiteTools extends Component {
 						description={ changeAddressText }
 					/>
 				) }
-				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
+				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
 				{ showThemeSetup && (
@@ -158,7 +155,7 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'start-over' );
 	}
 
-	checkForSubscriptions = event => {
+	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
@@ -175,7 +172,7 @@ class SiteTools extends Component {
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -192,8 +189,7 @@ export default connect( state => {
 		purchasesError: getPurchasesError( state ),
 		cloneUrl,
 		showChangeAddress: ! isJetpack && ! isVip,
-		showClone:
-			'active' === rewindState.state && ! find( rewindState.credentials, { type: 'managed' } ),
+		showClone: 'active' === rewindState.state && ! isAtomic,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,

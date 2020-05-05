@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -65,7 +63,7 @@ NewsletterSettings.propTypes = {
 	isRequesting: PropTypes.bool,
 };
 
-const NewsletterSettingsConnected = connect( state => {
+const NewsletterSettingsConnected = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,

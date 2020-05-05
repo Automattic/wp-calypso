@@ -12,26 +12,29 @@
 	button {
 		display: flex;
 		justify-content: flex-start;
+		align-items: center;
 		cursor: pointer;
 		padding: 8px 0;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		background: var( --color-surface );
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 		font-size: 15px;
 		line-height: 1.5;
 		text-align: left;
 		width: 100%;
 	}
 
-	.gridicons-chevron-left {
+	.gridicons-menu {
 		color: var( --color-neutral-light );
 		margin: 0 8px;
-		align-self: center;
 	}
+}
 
-	.current-section__group-title {
-		font-size: 10px;
-		color: var( --color-neutral-400 );
-		margin: 2px 0 -3px;
+.layout__page-title {
+	font-size: 24px;
+	margin: 16px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 0 8px;
 	}
 }

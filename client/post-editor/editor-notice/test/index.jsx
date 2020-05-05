@@ -1,11 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect as chaiExpect } from 'chai';
 import { shallow } from 'enzyme';
-import { translate, moment } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -34,9 +34,7 @@ describe( 'EditorNotice', () => {
 		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'text' )
 			.equal( "You haven't written anything yet!" );
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-error' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
 		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
@@ -56,9 +54,7 @@ describe( 'EditorNotice', () => {
 		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'text' )
 			.equal( 'Publishing of post failed.' );
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-error' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
 		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
@@ -79,9 +75,7 @@ describe( 'EditorNotice', () => {
 		);
 
 		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
 	} );
 
 	test( 'should display publish success for post', () => {
@@ -101,9 +95,7 @@ describe( 'EditorNotice', () => {
 		);
 
 		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
 	} );
 
 	test( 'should display publish success for custom post type', () => {
@@ -123,9 +115,7 @@ describe( 'EditorNotice', () => {
 		);
 
 		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
 	} );
 
 	test( 'should display custom post type view label', () => {
@@ -149,8 +139,6 @@ describe( 'EditorNotice', () => {
 		);
 
 		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
 	} );
 } );

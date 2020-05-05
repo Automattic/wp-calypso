@@ -20,10 +20,8 @@ function updateNote( id ) {
 	return () => globalClient.getNote( id );
 }
 
-export const setApproveStatus = function( noteId, siteId, commentId, isApproved, type ) {
-	const comment = wpcom()
-		.site( siteId )
-		.comment( commentId );
+export const setApproveStatus = function ( noteId, siteId, commentId, isApproved, type ) {
+	const comment = wpcom().site( siteId ).comment( commentId );
 
 	reduxStore.dispatch( actions.notes.approveNote( noteId, isApproved ) );
 	bumpStat( isApproved ? 'unapprove-comment' : 'approve-comment' );
@@ -34,19 +32,15 @@ export const setApproveStatus = function( noteId, siteId, commentId, isApproved,
 	comment.update( { status: isApproved ? 'approved' : 'unapproved' }, updateNote( noteId ) );
 };
 
-export const setLikeStatus = function( noteId, siteId, postId, commentId, isLiked ) {
+export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLiked ) {
 	const type = commentId ? 'comment' : 'post';
 	const target =
 		'comment' === type
-			? wpcom()
-					.site( siteId )
-					.comment( commentId )
-			: wpcom()
-					.site( siteId )
-					.post( postId );
+			? wpcom().site( siteId ).comment( commentId )
+			: wpcom().site( siteId ).post( postId );
 
 	reduxStore.dispatch( actions.notes.likeNote( noteId, isLiked ) );
-	bumpStat( `${ isLiked ? 'unlike' : 'like' }-${ type }` );
+	bumpStat( `${ isLiked ? 'unlike' : 'like'}-${ type }` );
 	recordTracksEvent( 'calypso_notification_note_' + ( isLiked ? 'like' : 'unlike' ), {
 		note_type: type,
 	} );
@@ -56,7 +50,7 @@ export const setLikeStatus = function( noteId, siteId, postId, commentId, isLike
 		: target.like().del( updateNote( noteId ) );
 };
 
-export const spamNote = function( note ) {
+export const spamNote = function ( note ) {
 	const global = store.get( 'global' );
 
 	bumpStat( 'spam-comment' );
@@ -68,7 +62,7 @@ export const spamNote = function( note ) {
 	global.updateUndoBar( 'spam', note );
 };
 
-export const trashNote = function( note ) {
+export const trashNote = function ( note ) {
 	const global = store.get( 'global' );
 
 	bumpStat( 'trash-comment' );

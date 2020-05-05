@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SitePickerSubmit from './site-picker-submit';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
@@ -24,13 +22,13 @@ class SitePicker extends Component {
 		siteSlug: null,
 	};
 
-	handleSiteSelect = siteSlug => {
+	handleSiteSelect = ( siteSlug ) => {
 		this.setState( {
 			siteSlug,
 		} );
 	};
 
-	filterSites = site => {
+	filterSites = ( site ) => {
 		return site.capabilities.manage_options && ! site.jetpack;
 	};
 
@@ -63,7 +61,6 @@ class SitePicker extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderScreen() }
 			/>
 		);

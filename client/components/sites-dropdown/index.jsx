@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -117,7 +115,7 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	primarySiteId: getPrimarySiteId( state ),
 	hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
 } ) )( SitesDropdown );

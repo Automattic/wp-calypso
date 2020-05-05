@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -19,10 +18,12 @@ import { noop } from 'lodash';
 import { UserStep as User } from '../';
 
 jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/abtest', () => () => {} );
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
 jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
 jest.mock( 'signup/utils', () => ( {
-	getFlowSteps: flow => {
+	getFlowSteps: ( flow ) => {
 		let flowSteps = null;
 
 		if ( 'userAsFirstStepInFlow' === flow ) {
@@ -33,9 +34,9 @@ jest.mock( 'signup/utils', () => ( {
 
 		return flowSteps;
 	},
-	getNextStepName: x => x,
-	getStepUrl: x => x,
-	getPreviousStepName: x => x,
+	getNextStepName: ( x ) => x,
+	getStepUrl: ( x ) => x,
+	getPreviousStepName: ( x ) => x,
 } ) );
 
 describe( '#signupStep User', () => {

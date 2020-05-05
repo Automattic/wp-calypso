@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,7 +27,10 @@ const dummyAction = {
 	form: 'test-form',
 	siteId: 123,
 	zoneId: 456,
-	posts: [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ],
+	posts: [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	],
 };
 
 const apiResponse = [

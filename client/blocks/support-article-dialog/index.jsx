@@ -16,6 +16,6 @@ function SupportArticleDialogLoader( { isVisible } ) {
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isVisible: isInlineSupportArticleVisible( state ),
 } ) )( SupportArticleDialogLoader );

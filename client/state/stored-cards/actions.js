@@ -1,8 +1,11 @@
-/** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -14,38 +17,34 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const addStoredCard = cardData => dispatch => {
-	return new Promise( ( resolve, reject ) => {
-		wp.undocumented()
-			.me()
-			.storedCardAdd( cardData.token, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
+export const addStoredCard = ( cardData ) => ( dispatch ) => {
+	return wp
+		.undocumented()
+		.me()
+		.storedCardAdd( cardData.token, cardData.additionalData )
+		.then( ( item ) => {
+			dispatch( {
+				type: STORED_CARDS_ADD_COMPLETED,
+				item,
 			} );
-	} ).then( item => {
-		dispatch( {
-			type: STORED_CARDS_ADD_COMPLETED,
-			item,
 		} );
-	} );
 };
 
-export const fetchStoredCards = () => dispatch => {
+export const fetchStoredCards = () => ( dispatch ) => {
 	dispatch( {
 		type: STORED_CARDS_FETCH,
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		wp.undocumented().getStoredCards( ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
-	} )
-		.then( data => {
+	return wp
+		.undocumented()
+		.getPaymentMethods()
+		.then( ( data ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_COMPLETED,
 				list: data,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_FAILED,
 				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' ),
@@ -53,26 +52,24 @@ export const fetchStoredCards = () => dispatch => {
 		} );
 };
 
-export const deleteStoredCard = card => dispatch => {
+export const deleteStoredCard = ( card ) => ( dispatch ) => {
 	dispatch( {
 		type: STORED_CARDS_DELETE,
 		card,
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		wp.undocumented()
-			.me()
-			.storedCardDelete( card, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-	} )
+	return Promise.all(
+		card.allStoredDetailsIds.map( ( storedDetailsId ) =>
+			wp.undocumented().me().storedCardDelete( { stored_details_id: storedDetailsId } )
+		)
+	)
 		.then( () => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_COMPLETED,
 				card,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_FAILED,
 				card,

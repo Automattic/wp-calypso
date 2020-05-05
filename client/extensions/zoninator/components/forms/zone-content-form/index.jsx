@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
 import PostsList from './posts-list';
@@ -31,7 +29,7 @@ class ZoneContentForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = data => this.props.onSubmit( form, data );
+	save = ( data ) => this.props.onSubmit( form, data );
 
 	render() {
 		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;
@@ -62,7 +60,4 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight(
-	localize,
-	createReduxForm
-)( ZoneContentForm );
+export default flowRight( localize, createReduxForm )( ZoneContentForm );

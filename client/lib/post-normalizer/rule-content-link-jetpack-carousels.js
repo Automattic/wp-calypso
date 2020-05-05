@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,15 @@ import { forEach, get } from 'lodash';
  * For example,
  * Before: https://example.com/2017/03/25/my-family/img_1/
  * After: https://example.com/2017/03/25/my-family/#jp-carousel-1234
- * @param  {Object} post The post
- * @param  {Object} dom  The DOM for the post's content
- * @return {Object}      The post, with any additions
+ *
+ * @param  {object} post The post
+ * @param  {object} dom  The DOM for the post's content
+ * @returns {object}      The post, with any additions
  */
 export default function linkJetpackCarousels( post, dom ) {
 	const galleries = dom.querySelectorAll( '.tiled-gallery' );
 
-	forEach( galleries, gallery => {
+	forEach( galleries, ( gallery ) => {
 		let extra = get( gallery, [ 'dataset', 'carouselExtra' ], false );
 		if ( ! extra ) {
 			// this only really exists for jsdom. See https://github.com/tmpvar/jsdom/issues/961
@@ -40,7 +39,7 @@ export default function linkJetpackCarousels( post, dom ) {
 		}
 		// find all the links and rewrite them to point to the carousel instead of the permalink
 		const links = gallery.querySelectorAll( '.tiled-gallery-item > a' );
-		forEach( links, link => {
+		forEach( links, ( link ) => {
 			const img = link.querySelector( 'img' );
 			const attachmentId = img && img.getAttribute( 'data-attachment-id' );
 			if ( attachmentId ) {

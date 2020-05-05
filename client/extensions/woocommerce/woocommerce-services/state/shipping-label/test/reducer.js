@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -494,7 +492,7 @@ describe( 'Label purchase form reducer', () => {
 			},
 		} );
 
-		const dispatch = action => {
+		const dispatch = ( action ) => {
 			state = reducer( state, action );
 		};
 

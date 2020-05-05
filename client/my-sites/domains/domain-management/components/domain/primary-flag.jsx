@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +30,7 @@ DomainPrimaryFlag.propTypes = {
 
 export default flow(
 	localize,
-	connect( state => ( {
+	connect( ( state ) => ( {
 		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	} ) )
 )( DomainPrimaryFlag );

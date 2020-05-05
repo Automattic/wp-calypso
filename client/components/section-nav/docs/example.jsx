@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -78,10 +76,10 @@ class SectionNavigation extends PureComponent {
 
 		forEach(
 			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
-			function( prop, key ) {
+			function ( prop, key ) {
 				demoSections[ key ] = [];
 
-				prop.forEach( function( item, index ) {
+				prop.forEach( function ( item, index ) {
 					demoSections[ key ].push(
 						<NavItem
 							key={ key + '-' + index }
@@ -137,14 +135,14 @@ class SectionNavigation extends PureComponent {
 		);
 	}
 
-	getSelectedText = section => {
+	getSelectedText = ( section ) => {
 		var selected = this.state[ section + 'SelectedIndex' ],
 			text = this.props[ section ][ selected ];
 
 		return 'object' === typeof text ? text.name : text;
 	};
 
-	getSelectedCount = section => {
+	getSelectedCount = ( section ) => {
 		var selected = this.state[ section + 'SelectedIndex' ],
 			selectedItem = this.props[ section ][ selected ];
 
@@ -161,7 +159,7 @@ class SectionNavigation extends PureComponent {
 	};
 
 	handleNavItemClick = ( section, index ) => {
-		return function() {
+		return function () {
 			var stateUpdate = {};
 
 			stateUpdate[ section + 'SelectedIndex' ] = index;
@@ -169,7 +167,7 @@ class SectionNavigation extends PureComponent {
 		}.bind( this );
 	};
 
-	demoSearch = keywords => {
+	demoSearch = ( keywords ) => {
 		console.log( 'Section Nav Search (keywords):', keywords );
 	};
 }

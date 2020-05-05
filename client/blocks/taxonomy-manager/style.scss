@@ -1,13 +1,13 @@
 .taxonomy-manager {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 }
 
 .taxonomy-manager__header {
 	display: flex;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
-	background: var( --color-white );
+	background: var( --color-surface );
 }
 
 .taxonomy-manager__header .search-card {

@@ -1,15 +1,13 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { omit, findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -44,7 +42,7 @@ export function isRequesting( state = {}, action ) {
  * Helper function to update a plugin's state after a successful plugin action
  * (multiple action-types are possible)
  */
-const updatePlugin = function( state, action ) {
+const updatePlugin = function ( state, action ) {
 	if ( typeof state[ action.siteId ] !== 'undefined' ) {
 		return Object.assign( {}, state, {
 			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),
@@ -56,22 +54,29 @@ const updatePlugin = function( state, action ) {
 /*
  * Tracks all known installed plugin objects indexed by site ID.
  */
-export const plugins = createReducer(
-	{},
-	{
-		[ PLUGINS_RECEIVE ]: ( state, action ) => {
+export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case PLUGINS_RECEIVE: {
 			return { ...state, [ action.siteId ]: action.data };
-		},
-		[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_UPDATE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_INSTALL_REQUEST_SUCCESS ]: updatePlugin,
-		[ PLUGIN_REMOVE_REQUEST_SUCCESS ]: updatePlugin,
-	},
-	pluginsSchema
-);
+		}
+		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_UPDATE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_INSTALL_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+		case PLUGIN_REMOVE_REQUEST_SUCCESS:
+			return updatePlugin( state, action );
+	}
+
+	return state;
+} );
 
 /*
  * Tracks the list of premium plugin objects for a single site
@@ -83,7 +88,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return state.map( p => plugin( p, action ) );
+			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:

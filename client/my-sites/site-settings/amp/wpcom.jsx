@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -94,7 +93,9 @@ class AmpWpcom extends Component {
 								components: {
 									a: (
 										<a
-											href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
+											href={ localizeUrl(
+												'https://wordpress.com/support/google-amp-accelerated-mobile-pages/'
+											) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -116,7 +117,7 @@ class AmpWpcom extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

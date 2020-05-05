@@ -1,0 +1,32 @@
+.educational-content {
+	display: flex;
+
+	.educational-content__wrapper {
+		flex: 70%;
+	}
+
+	.educational-content__illustration {
+		flex: 30%;
+		margin-left: 1rem;
+		text-align: center;
+	}
+
+	h3 {
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+
+	.educational-content__link {
+		margin-bottom: 12px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		&:not( .is-external-link ) .gridicon {
+			vertical-align: text-bottom;
+			margin-right: 0.5rem;
+			fill: var( --color-neutral );
+		}
+	}
+}

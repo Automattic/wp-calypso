@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,7 @@ import {
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
 } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import schema from './schema';
 
 const reducer = ( state = null, action ) => {
@@ -24,6 +23,5 @@ const reducer = ( state = null, action ) => {
 			return state;
 	}
 };
-reducer.schema = schema;
 
-export default reducer;
+export default withSchemaValidation( schema, reducer );

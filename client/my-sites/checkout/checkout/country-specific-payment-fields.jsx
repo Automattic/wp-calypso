@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -98,7 +97,8 @@ export class CountrySpecificPaymentFields extends Component {
 		);
 	};
 
-	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
+	onFieldChange = ( event ) =>
+		this.props.handleFieldChange( event.target.name, event.target.value );
 
 	render() {
 		const { translate, countriesList, countryCode } = this.props;
@@ -129,6 +129,13 @@ export class CountrySpecificPaymentFields extends Component {
 					} ),
 				} ) }
 
+				{ this.createField( 'nik', Input, {
+					label: translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
+					} ),
+				} ) }
+
 				{ this.createField( 'pan', Input, {
 					placeholder: ' ',
 					label: translate( 'PAN Number {{panNumberPopover/}}', {
@@ -136,6 +143,13 @@ export class CountrySpecificPaymentFields extends Component {
 						components: {
 							panNumberPopover: this.getPanNumberPopover(),
 						},
+					} ),
+				} ) }
+
+				{ this.createField( 'gstin', Input, {
+					placeholder: ' ',
+					label: translate( 'GSTIN (optional)', {
+						comment: 'India PAN number ',
 					} ),
 				} ) }
 

@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { get, join } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import wp from 'lib/wp';
+import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();
 
@@ -33,13 +35,13 @@ class RegistrantVerificationPage extends Component {
 		this.state = this.getLoadingState();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
 		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			() => {
-				this.setState( this.getVerificationSuccessState() );
+			( response ) => {
+				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
 			},
-			error => {
+			( error ) => {
 				this.setErrorState( error );
 			}
 		);
@@ -57,15 +59,18 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getVerificationSuccessState = () => {
-		const { domain, translate } = this.props;
+	getVerificationSuccessState = ( domains ) => {
+		const { translate } = this.props;
+
+		const verifiedDomains = join( domains, ', ' );
+
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
 				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
 				{
 					args: {
-						domain: domain,
+						domain: verifiedDomains,
 					},
 					components: {
 						strong: <strong />,
@@ -116,7 +121,7 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getKeySystemsErrorState = errorMessage => {
+	getKeySystemsErrorState = ( errorMessage ) => {
 		if (
 			'Invalid attribute value; Contact verification already confirmed, nothing to do' ===
 			errorMessage
@@ -174,7 +179,18 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	setErrorState = error => {
+	getRunningMaintenanceErrorState = ( error ) => {
+		const { translate } = this.props;
+
+		const message = getMaintenanceMessageFromError( error, translate );
+
+		return {
+			title: translate( 'Domain maintenance in progress' ),
+			message: message,
+		};
+	};
+
+	setErrorState = ( error ) => {
 		let errorState;
 
 		switch ( error.error ) {
@@ -193,6 +209,11 @@ class RegistrantVerificationPage extends Component {
 			case 'resend_email_failed':
 				errorState = this.getResendEmailErrorState();
 				break;
+
+			case 'domain_registration_unavailable':
+			case 'tld-in-maintenance':
+				errorState = this.getRunningMaintenanceErrorState( error );
+				break;
 		}
 
 		this.setState( {
@@ -206,7 +227,7 @@ class RegistrantVerificationPage extends Component {
 
 		this.setState( this.getLoadingState() );
 
-		wpcom.resendIcannVerification( domain, error => {
+		wpcom.resendIcannVerification( domain, ( error ) => {
 			if ( error ) {
 				this.setErrorState( { error: 'resend_email_failed' } );
 			} else {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { get, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Count from 'components/count';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -40,7 +38,7 @@ class FollowersCount extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = get( site, 'ID' );
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );

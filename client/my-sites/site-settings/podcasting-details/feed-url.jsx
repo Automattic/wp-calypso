@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ function PodcastFeedUrl( { feedUrl, translate } ) {
 			<FormSettingExplanation>
 				{ translate(
 					'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-				) }{' '}
+				) }{ ' ' }
 				<PodcastingSupportLink />
 			</FormSettingExplanation>
 		</FormFieldset>
