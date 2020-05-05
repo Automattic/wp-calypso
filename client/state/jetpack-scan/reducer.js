@@ -8,6 +8,7 @@ import {
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
+import enqueueReducer from './enqueue/reducer';
 import historyReducer from './history/reducer';
 
 export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
@@ -37,5 +38,6 @@ export const scan = keyedReducer( 'siteId', ( state, { type, payload } ) => {
 export default combineReducers( {
 	requestStatus,
 	scan,
+	enqueue: enqueueReducer,
 	history: historyReducer,
 } );

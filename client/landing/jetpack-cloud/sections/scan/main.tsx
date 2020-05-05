@@ -29,6 +29,10 @@ import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	requestJetpackScanEnqueue,
+	startScanOptimistically,
+} from 'state/jetpack-scan/enqueue/actions';
 
 /**
  * Style dependencies
@@ -47,6 +51,8 @@ interface Props {
 	nextScanTimestamp: number;
 	moment: Function;
 	dispatchRecordTracksEvent: Function;
+	dispatchRequestScanEnqueue: Function;
+	dispatchStartScanOptimistically: Function;
 }
 
 class ScanPage extends Component< Props > {
@@ -112,7 +118,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { siteID, siteSlug, moment, lastScanTimestamp, dispatchRecordTracksEvent } = this.props;
+		const { siteSlug, moment, lastScanTimestamp } = this.props;
 
 		return (
 			<>
@@ -139,11 +145,7 @@ class ScanPage extends Component< Props > {
 						primary
 						href={ `/scan/${ siteSlug }` }
 						className="scan__button"
-						onClick={ () =>
-							dispatchRecordTracksEvent( 'calypso_scan_run', {
-								site_id: siteID,
-							} )
-						}
+						onClick={ this.handleOnScanNow }
 					>
 						{ translate( 'Scan now' ) }
 					</Button>
@@ -151,6 +153,22 @@ class ScanPage extends Component< Props > {
 			</>
 		);
 	}
+
+	handleOnScanNow = () => {
+		const {
+			dispatchRecordTracksEvent,
+			site,
+			dispatchRequestScanEnqueue,
+			dispatchStartScanOptimistically,
+		} = this.props;
+
+		dispatchRecordTracksEvent( 'calypso_scan_run', {
+			site_id: site.ID,
+		} );
+
+		dispatchRequestScanEnqueue( site.ID );
+		dispatchStartScanOptimistically( site.ID );
+	};
 
 	renderScanning() {
 		const { scanProgress = 0, isInitialScan } = this.props;
@@ -287,5 +305,9 @@ export default connect(
 			nextScanTimestamp,
 		};
 	},
-	{ dispatchRecordTracksEvent: recordTracksEvent }
+	{
+		dispatchRecordTracksEvent: recordTracksEvent,
+		dispatchRequestScanEnqueue: requestJetpackScanEnqueue,
+		dispatchStartScanOptimistically: startScanOptimistically,
+	}
 )( withLocalizedMoment( ScanPage ) );
