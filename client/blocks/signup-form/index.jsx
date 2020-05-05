@@ -491,7 +491,7 @@ class SignupForm extends Component {
 									a: (
 										<a
 											href={ link }
-											onClick={ event => this.handleLoginClick( event, fieldValue ) }
+											onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
 										/>
 									),
 								},
