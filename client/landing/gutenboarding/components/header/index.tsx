@@ -70,15 +70,17 @@ const Header: React.FunctionComponent = () => {
 	const currentStep = useCurrentStep();
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
+	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 
 	const makePath = usePath();
 
-	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { createSite, resetOnboardStore, setDomain, setIsRedirecting } = useDispatch(
+		ONBOARD_STORE
+	);
 
 	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
@@ -95,7 +97,6 @@ const Header: React.FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
-	const [ isRedirecting, setIsRedirecting ] = React.useState( false );
 
 	const {
 		location: { pathname, search },
@@ -159,6 +160,7 @@ const Header: React.FunctionComponent = () => {
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
+			setIsRedirecting( true );
 			if ( hasPaidDomain ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
@@ -178,7 +180,6 @@ const Header: React.FunctionComponent = () => {
 						...cart,
 						products: [ ...cart.products, domainProduct ],
 					} );
-					setIsRedirecting( true );
 					resetOnboardStore();
 					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
 				};
@@ -191,13 +192,19 @@ const Header: React.FunctionComponent = () => {
 				isNewUser: !! newUser,
 				blogId: newSite.blogid,
 			} );
-
-			setIsRedirecting( true );
 			resetOnboardStore();
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
-	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting, hasPaidDomain ] );
+	}, [
+		domain,
+		hasPaidDomain,
+		isRedirecting,
+		newSite,
+		newUser,
+		resetOnboardStore,
+		setIsRedirecting,
+	] );
 
 	return (
 		<div

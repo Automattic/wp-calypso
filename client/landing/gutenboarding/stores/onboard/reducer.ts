@@ -128,17 +128,28 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	return state;
 };
 
+const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_REDIRECTING' ) {
+		return action.isRedirecting;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		// return false
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
 	domainCategory,
+	isRedirecting,
+	pageLayouts,
 	selectedFonts,
 	selectedDesign,
+	selectedSite,
 	siteTitle,
 	siteVertical,
 	wasVerticalSkipped,
-	pageLayouts,
-	selectedSite,
 } );
 
 export type State = ReturnType< typeof reducer >;

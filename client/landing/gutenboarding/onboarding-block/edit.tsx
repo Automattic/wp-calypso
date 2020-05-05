@@ -26,6 +26,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const replaceHistory = useNewQueryParam();
 
@@ -36,6 +37,28 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	React.useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ pathname ] );
+
+	const canUseDesignSelection = (): boolean => {
+		return ! ( ! siteVertical && ! siteTitle && ! wasVerticalSkipped );
+	};
+
+	const canUseStyleStep = (): boolean => {
+		return !! selectedDesign && isEnabled( 'gutenboarding/style-preview' );
+	};
+
+	const canUseCreateSiteStep = (): boolean => {
+		return isCreatingSite || isRedirecting;
+	};
+
+	const getLatestStepPath = (): string => {
+		if ( ! canUseDesignSelection() ) {
+			return makePath( Step.IntentGathering );
+		}
+		if ( ! canUseStyleStep ) {
+			return makePath( Step.DesignSelection );
+		}
+		return makePath( Step.IntentGathering );
+	};
 
 	return (
 		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
@@ -48,29 +71,23 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
-					{ ! siteVertical && ! siteTitle && ! wasVerticalSkipped ? (
-						<Redirect to={ makePath( Step.IntentGathering ) } />
-					) : (
+					{ canUseDesignSelection() ? (
 						<DesignSelector />
+					) : (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
 					) }
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{
-						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
-						// eslint-disable-next-line no-nested-ternary
-						! selectedDesign ? (
-							<Redirect to={ makePath( Step.DesignSelection ) } />
-						) : isEnabled( 'gutenboarding/style-preview' ) ? (
-							<StylePreview />
-						) : (
-							<Redirect to={ makePath( Step.DesignSelection ) } />
-						)
-					}
+					{ canUseStyleStep() ? (
+						<StylePreview />
+					) : (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) }
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>
-					<CreateSite />
+					{ canUseCreateSiteStep() ? <CreateSite /> : <Redirect to={ getLatestStepPath() } /> }
 				</Route>
 			</Switch>
 		</div>
