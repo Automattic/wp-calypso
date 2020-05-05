@@ -271,6 +271,11 @@ const CheckoutSummaryTitleLink = styled.button`
 		border-bottom: none;
 	}
 
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-bottom: none 0;
+	}
+
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		display: none;
 	}
