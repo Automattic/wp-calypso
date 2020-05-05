@@ -1,45 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-import Gridicon from 'gridicons';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 import Focusable from 'components/focusable';
-import ScreenReaderText from 'components/screen-reader-text';
 
-class FocusableExample extends React.PureComponent {
+export default class FocusableExample extends React.PureComponent {
 	static displayName = 'Focusable';
 
 	render() {
-		return config.isEnabled( 'devdocs/components-usage-stats' )
-			? this.renderDocsExampleWithUsageStats()
-			: this.renderFocusable();
-	}
-
-	renderDocsExampleWithUsageStats = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<DocsExample componentUsageStats={ this.props.componentUsageStats }>
-				{ this.renderFocusable() }
-			</DocsExample>
-		);
-	};
-
-	renderFocusable = () => {
-		return (
-			<Card>
+			<DocsExample>
 				<Focusable onClick={ noop }>
 					<p>
-						This keyboard-accessible component can contain other elements as children, including{' '}
+						This keyboard-accessible component can contain other elements as children, including{ ' ' }
 						<code>p</code>
 						s, <code>div</code>
 						s, or other components.
@@ -60,9 +40,8 @@ class FocusableExample extends React.PureComponent {
 						</div>
 					</div>
 				</Focusable>
-			</Card>
+			</DocsExample>
 		);
-	};
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
 }
-
-export default FocusableExample;

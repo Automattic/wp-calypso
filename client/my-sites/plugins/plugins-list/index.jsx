@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -47,6 +45,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
+// eslint-disable-next-line react/prefer-es6-class
 export const PluginsList = createReactClass( {
 	displayName: 'PluginsList',
 	mixins: [ PluginNotices ],
@@ -136,7 +135,7 @@ export const PluginsList = createReactClass( {
 		const { autoupdate: canAutoupdate, activation: canActivate } = this.getAllowedPluginActions(
 			plugin
 		);
-		return ! this.hasNoSitesThatCanManage( plugin ) && ( canAutoupdate || canActivate );
+		return canAutoupdate || canActivate;
 	},
 
 	setBulkSelectionState( plugins, selectionState ) {
@@ -156,26 +155,26 @@ export const PluginsList = createReactClass( {
 
 	getPluginBySlug( slug ) {
 		const { plugins } = this.props;
-		return find( plugins, plugin => plugin.slug === slug );
+		return find( plugins, ( plugin ) => plugin.slug === slug );
 	},
 
 	filterSelection: {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( site => site.plugin && site.plugin.active );
+				return plugin.sites.some( ( site ) => site.plugin && site.plugin.active );
 			}
 			return false;
 		},
 		inactive( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( site => site.plugin && ! site.plugin.active );
+				return plugin.sites.some( ( site ) => site.plugin && ! site.plugin.active );
 			}
 			return false;
 		},
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
 				return plugin.sites.some(
-					site =>
+					( site ) =>
 						site.plugin &&
 						site.plugin.update &&
 						site.plugin.update.new_version &&
@@ -189,10 +188,6 @@ export const PluginsList = createReactClass( {
 		},
 	},
 
-	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.sites.some( site => site.canManage );
-	},
-
 	getSelected() {
 		return this.props.plugins.filter( this.filterSelection.selected.bind( this ) );
 	},
@@ -204,7 +199,7 @@ export const PluginsList = createReactClass( {
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += this.props.selectedSite ? '' : ' on Multisite';
 		if ( includeSelectedPlugins ) {
-			const pluginSlugs = this.getSelected().map( plugin => plugin.slug );
+			const pluginSlugs = this.getSelected().map( ( plugin ) => plugin.slug );
 			this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs );
 		} else {
 			this.props.recordGoogleEvent( 'Plugins', eventAction );
@@ -239,19 +234,21 @@ export const PluginsList = createReactClass( {
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
-			.map( p => p.sites ) // list of plugins -> list of list of sites
+			.map( ( p ) => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( site => action( site, site.plugin ) );
+			.forEach( ( site ) => action( site, site.plugin ) );
 	},
 
 	pluginHasUpdate( plugin ) {
-		return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
+		return plugin.sites.some(
+			( site ) => site.plugin && site.plugin.update && site.canUpdateFiles
+		);
 	},
 
 	updateAllPlugins() {
 		this.removePluginsNotices();
-		this.props.plugins.forEach( plugin => {
-			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
+		this.props.plugins.forEach( ( plugin ) => {
+			plugin.sites.forEach( ( site ) => PluginsActions.updatePlugin( site, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
@@ -302,11 +299,11 @@ export const PluginsList = createReactClass( {
 		let pluginName, siteName;
 		const { plugins, translate } = this.props;
 
-		plugins.filter( this.isSelected ).forEach( plugin => {
+		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
 			pluginsList[ plugin.slug ] = true;
 			pluginName = plugin.name || plugin.slug;
 
-			plugin.sites.forEach( site => {
+			plugin.sites.forEach( ( site ) => {
 				if ( site.canUpdateFiles ) {
 					sitesList[ site.ID ] = true;
 					siteName = site.title;
@@ -513,7 +510,7 @@ export const PluginsList = createReactClass( {
 	},
 
 	orderPluginsByUpdates( plugins ) {
-		return sortBy( plugins, plugin => {
+		return sortBy( plugins, ( plugin ) => {
 			// Bring the plugins requiring updates to the front of the array
 			return this.pluginHasUpdate( plugin ) ? 0 : 1;
 		} );
@@ -528,10 +525,11 @@ export const PluginsList = createReactClass( {
 		return (
 			<PluginItem
 				key={ plugin.slug }
-				hasAllNoManageSites={ this.hasNoSitesThatCanManage( plugin ) }
 				plugin={ plugin }
 				sites={ plugin.sites }
-				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
+				progress={ this.state.notices.inProgress.filter(
+					( log ) => log.plugin.slug === plugin.slug
+				) }
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
@@ -547,12 +545,12 @@ export const PluginsList = createReactClass( {
 
 	renderPlaceholders() {
 		const placeholderCount = 18;
-		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	},
 } );
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		return {
 			selectedSite,

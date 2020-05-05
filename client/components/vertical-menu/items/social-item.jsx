@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,18 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, identity } from 'lodash';
-import SocialLogo from 'social-logos';
+
+/**
+ * Internal dependencies
+ */
+import SocialLogo from 'components/social-logo';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const services = translate => ( {
+const services = ( translate ) => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
 	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
@@ -26,7 +28,7 @@ const services = translate => ( {
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 } );
 
-export const SocialItem = props => {
+export const SocialItem = ( props ) => {
 	const { isSelected, onClick, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );
@@ -34,14 +36,16 @@ export const SocialItem = props => {
 		'is-selected': isSelected,
 	} );
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className={ classes } onClick={ () => onClick( service ) }>
+		<div className={ classes } onClick={ () => onClick( service ) } role="presentation">
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div>
 			<span className="vertical-menu__items__social-label">{ label }</span>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 SocialItem.propTypes = {

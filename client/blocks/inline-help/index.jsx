@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -17,22 +16,19 @@ import Gridicon from 'gridicons';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import Button from 'components/button';
+import { Button, RootChild } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
-import {
-	showInlineHelpPopover,
-	hideInlineHelpPopover,
-	hideChecklistPrompt,
-} from 'state/inline-help/actions';
-import {
-	isInlineHelpPopoverVisible,
-	getChecklistPromptTaskId,
-	isInlineHelpChecklistPromptVisible,
-} from 'state/inline-help/selectors';
+import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
+import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Module variables
@@ -43,11 +39,11 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
-const InlineHelpPopover = props => (
+const InlineHelpPopover = ( props ) => (
 	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
 );
 
-const InlineHelpDialog = props => (
+const InlineHelpDialog = ( props ) => (
 	<AsyncLoad { ...props } require="blocks/inline-help/dialog" placeholder={ null } />
 );
 
@@ -62,18 +58,11 @@ class InlineHelp extends Component {
 		isPopoverVisible: false,
 	};
 
-	state = {
-		showChecklistNotification: false,
-		storedTask: null,
-	};
+	state = {};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
-		}
-
-		if ( this.props.isChecklistPromptVisible && this.props.checklistPromptTaskId ) {
-			this.props.showInlineHelpPopover();
 		}
 	}
 
@@ -83,8 +72,8 @@ class InlineHelp extends Component {
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
 	}
@@ -117,14 +106,13 @@ class InlineHelp extends Component {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
-		this.props.hideChecklistPrompt();
 	};
 
 	handleHelpButtonClicked = () => {
 		this.toggleInlineHelp();
 	};
 
-	inlineHelpToggleRef = node => {
+	inlineHelpToggleRef = ( node ) => {
 		this.inlineHelpToggle = node;
 	};
 
@@ -138,30 +126,16 @@ class InlineHelp extends Component {
 
 	closeDialog = () => this.setState( { showDialog: false } );
 
-	setNotification = status => {
-		this.setState( { showChecklistNotification: status } );
-	};
-
-	setStoredTask = taskKey => {
-		this.setState( { storedTask: taskKey } );
-	};
-
 	render() {
 		const { translate, isPopoverVisible } = this.props;
-		const { showDialog, videoLink, dialogType, showChecklistNotification, storedTask } = this.state;
+		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
-			'has-notification': showChecklistNotification,
 		};
 
 		return (
 			<div className="inline-help">
-				<WpcomChecklist
-					viewMode="notification"
-					setNotification={ this.setNotification }
-					storedTask={ storedTask }
-				/>
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
@@ -178,10 +152,12 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
-						setNotification={ this.setNotification }
-						setStoredTask={ this.setStoredTask }
-						showNotification={ showChecklistNotification }
 					/>
+				) }
+				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
+					<RootChild>
+						<div className="inline-help__mobile-overlay"></div>
+					</RootChild>
 				) }
 				{ showDialog && (
 					<InlineHelpDialog
@@ -198,13 +174,11 @@ class InlineHelp extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
-		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
-		checklistPromptTaskId: getChecklistPromptTaskId( state ),
 	};
 };
 
@@ -212,10 +186,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
-	hideChecklistPrompt,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelp ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

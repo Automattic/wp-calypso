@@ -1,18 +1,19 @@
 {
 	"name": "eslint-plugin-wpcalypso",
-	"version": "4.0.2",
+	"version": "4.1.0",
 	"description": "Custom ESLint rules for the WordPress.com Calypso project",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/eslint-plugin-wpcalypso"
 	},
+	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"eslint",
 		"eslintplugin",
 		"eslint-plugin"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"main": "lib/index.js",
 	"files": [
 		"lib/"
@@ -20,5 +21,7 @@
 	"engines": {
 		"node": ">=10"
 	},
-	"license": "GPL-2.0-or-later"
+	"peerDependencies": {
+		"eslint": ">=5"
+	}
 }

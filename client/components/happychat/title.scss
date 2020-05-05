@@ -1,0 +1,22 @@
+.happychat__active-toolbar {
+	display: flex;
+	flex: 1 1 auto;
+
+	> :first-child {
+		flex: 1;
+		margin-left: 12px;
+	}
+
+	> div {
+		padding: 11px;
+		cursor: pointer;
+	}
+
+	> div:hover {
+		background: var( --color-primary-0 );
+	}
+
+	svg {
+		display: block;
+	}
+}

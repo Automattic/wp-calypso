@@ -1,0 +1,75 @@
+
+// ==========================================================================
+// Long content fade mixin
+//
+// Creates a fading overlay to signify that the content is longer
+// than the space allows.
+//
+// Note: To support CSS custom properties, any color that is passed in to
+// the mixin needs to be escaped with the hex-to-rgb() function.
+//
+// Usage:
+// @include long-content-fade();
+// @include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
+// ==========================================================================
+
+@mixin long-content-fade(
+	$direction: right,
+	$size: 20%,
+	$color: var( --color-surface-rgb ),
+	$edge: 0,
+	$z-index: false
+) {
+	content: '';
+	display: block;
+	position: absolute;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+
+	@if $z-index {
+		z-index: $z-index;
+	}
+
+	@if $direction == 'bottom' {
+		background: overflow-gradient( $color, 90%, to top );
+		left: $edge;
+		right: $edge;
+		top: $edge;
+		bottom: calc( 100% - $size );
+		width: auto;
+	}
+
+	@if $direction == 'top' {
+		background: overflow-gradient( $color, 90%, to bottom );
+		top: calc( 100% - $size );
+		left: $edge;
+		right: $edge;
+		bottom: $edge;
+		width: auto;
+	}
+
+	@if $direction == 'left' {
+		background: overflow-gradient( $color, 90%, to left );
+		top: $edge;
+		left: $edge;
+		bottom: $edge;
+		right: auto;
+		width: $size;
+		height: auto;
+	}
+
+	@if $direction == 'right' {
+		background: overflow-gradient( $color );
+		top: $edge;
+		bottom: $edge;
+		right: $edge;
+		left: auto;
+		width: $size;
+		height: auto;
+	}
+}

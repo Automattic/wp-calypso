@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { compact, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
@@ -19,10 +17,17 @@ import {
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: editProductCategoryAction,
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR ]: clearEditsAction,
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_CATEGORY_EDIT:
+			return editProductCategoryAction( state, action );
+		case WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR:
+			return clearEditsAction( state, action );
+		case WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED:
+			return productCategoryUpdatedAction( state, action );
+	}
+
+	return state;
 } );
 
 function productCategoryUpdatedAction( edits, action ) {
@@ -34,7 +39,7 @@ function productCategoryUpdatedAction( edits, action ) {
 		const prevCreates = prevEdits.creates || [];
 
 		const newCreates = compact(
-			prevCreates.map( category => {
+			prevCreates.map( ( category ) => {
 				if ( isEqual( prevCategoryId, category.id ) ) {
 					// Remove this create, it's no longer needed.
 					return undefined;
@@ -55,7 +60,7 @@ function productCategoryUpdatedAction( edits, action ) {
 		const prevUpdates = prevEdits.updates || [];
 
 		const newUpdates = compact(
-			prevUpdates.map( category => {
+			prevUpdates.map( ( category ) => {
 				if ( isEqual( prevCategoryId, category.id ) ) {
 					return undefined;
 				}
@@ -97,7 +102,7 @@ function editProductCategory( array, category, data ) {
 
 	// Look for this object in the appropriate create or edit array first.
 	const newArray = compact(
-		prevArray.map( c => {
+		prevArray.map( ( c ) => {
 			if ( isEqual( category.id, c.id ) ) {
 				found = true;
 

@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -63,9 +62,7 @@ class StoreStats extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
-				<div className="store-stats__sidebar-nav">
-					<SidebarNavigation />
-				</div>
+				<SidebarNavigation />
 				<StatsNavigation
 					selectedItem={ 'store' }
 					siteId={ siteId }
@@ -89,9 +86,7 @@ class StoreStats extends Component {
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
 							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' )
-										.subtract( 1, 'days' )
-										.format( 'YYYY-MM-DD' )
+								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 								: selectedDate
 						}
 						query={ orderQuery }
@@ -153,7 +148,7 @@ class StoreStats extends Component {
 							</Module>
 						</div>
 					) ) }
-					{ topWidgets.map( widget => {
+					{ topWidgets.map( ( widget ) => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
@@ -190,7 +185,7 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
 } ) )( StoreStats );

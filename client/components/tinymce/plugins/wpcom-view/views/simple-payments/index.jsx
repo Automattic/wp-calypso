@@ -1,4 +1,3 @@
-/** @format **/
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
@@ -7,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -126,7 +125,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 	};
 } )( localize( SimplePaymentsView ) );
 
-SimplePaymentsView.match = content => {
+SimplePaymentsView.match = ( content ) => {
 	const match = next( 'simple-payment', content );
 
 	if ( match ) {
@@ -140,7 +139,7 @@ SimplePaymentsView.match = content => {
 	}
 };
 
-SimplePaymentsView.serialize = content => {
+SimplePaymentsView.serialize = ( content ) => {
 	return encodeURIComponent( content );
 };
 

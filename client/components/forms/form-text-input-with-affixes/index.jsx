@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.Component {
 	static displayName = 'FormTextInputWithAffixes';

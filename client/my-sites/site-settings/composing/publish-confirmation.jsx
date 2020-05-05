@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,8 +20,7 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { isGutenbergEnabled } from 'state/selectors/is-gutenberg-enabled';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {
@@ -32,7 +29,7 @@ class PublishConfirmation extends Component {
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
 			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
 		}
@@ -98,18 +95,17 @@ PublishConfirmation.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
 			siteId,
 			fetchingPreferences: isFetchingPreferences( state ),
 			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
-			showPublishFlow:
-				isGutenbergEnabled( state, siteId ) && getSelectedEditor( state, siteId ) === 'gutenberg',
+			showPublishFlow: shouldLoadGutenberg( state, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				savePublishConfirmationPreference: saveConfirmationSidebarPreference,

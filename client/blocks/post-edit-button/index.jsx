@@ -1,18 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
 import { getEditURL } from 'state/posts/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const PostEditButton = ( { post, site, iconSize, onClick, translate } ) => {
 	const editUrl = getEditURL( post, site );

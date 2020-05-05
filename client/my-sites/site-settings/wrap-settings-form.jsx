@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -13,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import {
@@ -22,6 +21,7 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getJetpackSettings from 'state/selectors/get-jetpack-settings';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
@@ -32,18 +32,19 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
-const wrapSettingsForm = getFormSettings => SettingsForm => {
+const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
 		};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -60,13 +61,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
+				const noticeSettings = {
+					id: 'site-settings-save',
+					duration: 10000,
+				};
 				if (
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
-					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
-						id: 'site-settings-save',
-					} );
+					this.props.successNotice(
+						this.props.translate( 'Settings saved successfully!' ),
+						noticeSettings
+					);
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
 				} else if ( ! this.props.isSaveRequestSuccessful ) {
@@ -80,7 +86,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 							);
 							break;
 					}
-					this.props.errorNotice( text, { id: 'site-settings-save' } );
+					this.props.errorNotice( text, noticeSettings );
 				}
 			}
 		}
@@ -92,8 +98,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! ( currentFields[ field ] == persistedFields[ field ] )
+			const nextDirtyFields = previousDirtyFields.filter( ( field ) =>
+				isObjectLike( currentFields[ field ] )
+					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
+					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
 			/*eslint-enable eqeqeq*/
 
@@ -112,28 +120,29 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 
 		// Some Utils
-		handleSubmitForm = event => {
-			const { dirtyFields, fields, trackTracksEvent } = this.props;
+		handleSubmitForm = ( event ) => {
+			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
 			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
 
-			dirtyFields.map( function( value ) {
+			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
-						trackTracksEvent( 'calypso_settings_site_tagline_updated' );
+						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );
 						break;
 					case 'blogname':
-						trackTracksEvent( 'calypso_settings_site_title_updated' );
+						trackTracksEvent( 'calypso_settings_site_title_updated', { path } );
 						break;
 					case 'blog_public':
 						trackTracksEvent( 'calypso_settings_site_privacy_updated', {
 							privacy: fields.blog_public,
+							path,
 						} );
 						break;
 					case 'wga':
-						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated' );
+						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
 				}
 			} );
@@ -152,10 +161,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
+			if ( ! this.props.settings.private_sites_enabled && 'variant' !== abtest( 'ATPrivacy' ) ) {
+				delete siteFields.wpcom_coming_soon;
+			}
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
 		};
 
-		handleRadio = event => {
+		handleRadio = ( event ) => {
 			const currentTargetName = event.currentTarget.name,
 				currentTargetValue = event.currentTarget.value;
 
@@ -175,26 +187,30 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		handleSelect = event => {
+		handleSelect = ( event ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int
 			const parsedValue = parseInt( value, 10 );
 			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
-		handleToggle = name => () => {
+		handleToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
-		handleAutosavingToggle = name => () => {
+		handleAutosavingToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
+			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
+				name,
+				path: this.props.path,
+			} );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
 				this.submitForm();
 			} );
 		};
 
-		onChangeField = field => event => {
+		onChangeField = ( field ) => ( event ) => {
 			const value = event.target.value;
 			debug( 'onChangeField', { field, value } );
 			this.props.updateFields( {
@@ -214,7 +230,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			);
 		};
 
-		uniqueEventTracker = message => () => {
+		uniqueEventTracker = ( message ) => () => {
 			if ( this.state.uniqueEvents[ message ] ) {
 				return;
 			}
@@ -264,6 +280,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const settingsFields = {
 				site: keys( settings ),
 			};
+			const path = getCurrentRouteParameterized( state, siteId );
 
 			const isJetpack = isJetpackSite( state, siteId );
 
@@ -293,14 +310,16 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSavingSettings,
 				isSaveRequestSuccessful,
 				jetpackFieldsToUpdate,
+				path,
 				siteIsJetpack: isJetpack,
+				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
 				siteId,
 			};
 		},
-		dispatch => {
+		( dispatch ) => {
 			const boundActionCreators = bindActionCreators(
 				{
 					errorNotice,
@@ -312,23 +331,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				},
 				dispatch
 			);
-			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
+			const trackEvent = ( name ) => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 			const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
 			return {
 				...boundActionCreators,
-				eventTracker: message => () => trackEvent( message ),
+				eventTracker: ( message ) => () => trackEvent( message ),
 				trackTracksEvent,
 				trackEvent,
 			};
 		}
 	);
 
-	return flowRight(
-		trackForm,
-		protectForm,
-		connectComponent,
-		localize
-	)( WrappedSettingsForm );
+	return flowRight( trackForm, protectForm, connectComponent, localize )( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

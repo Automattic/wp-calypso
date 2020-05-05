@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,10 @@ import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 
 const title = translate( 'My Likes' );
-const documentTitle = translate( '%s ‹ Reader', { args: title } );
+const documentTitle = translate( '%s ‹ Reader', {
+	args: title,
+	comment: '%s is the section name. For example: "My Likes"',
+} );
 
 class LikedStream extends React.Component {
 	render() {

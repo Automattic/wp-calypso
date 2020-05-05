@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -30,7 +28,7 @@ class APIKeysView extends Component {
 		),
 	};
 
-	renderOneKey = key => {
+	renderOneKey = ( key ) => {
 		const { highlightEmptyFields, onEdit, translate } = this.props;
 		const isError = highlightEmptyFields && ! key.value.trim();
 		const requiredFieldText = translate( 'This field is required.' );

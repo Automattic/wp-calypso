@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,6 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
@@ -42,10 +39,10 @@ const BLACKLISTED_SECTIONS = [
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
+const mappable = ( x ) => ( ! Array.isArray( x ) ? [ x ] : x) ;
 
 const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
-	mappable( tourMeta.path ).map( path => ( {
+	mappable( tourMeta.path ).map( ( path ) => ( {
 		tour: key,
 		when: tourMeta.when,
 		path,
@@ -58,14 +55,14 @@ const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
  * tour.
  */
 const getToursFromFeaturesReached = createSelector(
-	state =>
+	( state ) =>
 		uniq(
 			getActionLog( state )
 				.filter( ( { type } ) => type === ROUTE_SET )
 				.reduceRight( ( allTours, { path: triggerPath } ) => {
 					const newTours = relevantFeatures
 						.filter( ( { path: featurePath } ) => startsWith( triggerPath, featurePath ) )
-						.map( feature => feature.tour );
+						.map( ( feature ) => feature.tour );
 
 					return newTours ? [ ...allTours, ...newTours ] : allTours;
 				}, [] )
@@ -78,7 +75,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
+	( state ) => uniq( map( getToursHistory( state ), 'tourName' ) ),
 	[ getToursHistory ]
 );
 
@@ -87,7 +84,7 @@ const getToursSeen = createSelector(
  * arguments, if the tour exists. Returns `undefined` otherwise.
  */
 const getTourFromQuery = createSelector(
-	state => {
+	( state ) => {
 		const initial = getInitialQueryArguments( state );
 		const current = getCurrentQueryArguments( state );
 		const tourProps = [ 'tour', '_timestamp' ];
@@ -106,13 +103,15 @@ const getTourFromQuery = createSelector(
  * otherwise.
  */
 const hasJustSeenTour = ( state, { tour, _timestamp } ) =>
-	getToursHistory( state ).some( entry => entry.tourName === tour && entry.timestamp > _timestamp );
+	getToursHistory( state ).some(
+		( entry ) => entry.tourName === tour && entry.timestamp > _timestamp
+	);
 
 /*
  * Returns the name of the tour requested via URL query arguments if it hasn't
  * "just" been seen (i.e., in the current Calypso session).
  */
-const findRequestedTour = state => {
+const findRequestedTour = ( state ) => {
 	const requestedTour = getTourFromQuery( state );
 	if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
 		return requestedTour.tour;
@@ -124,7 +123,7 @@ const findRequestedTour = state => {
  * tour hasn't been ruled out (e.g. if it has already been seen, or if the
  * "when" isn't right).
  */
-const findTriggeredTour = state => {
+const findTriggeredTour = ( state ) => {
 	if ( ! preferencesLastFetchedTimestamp( state ) ) {
 		debug( 'No fresh user preferences, bailing.' );
 		return;
@@ -144,13 +143,13 @@ const findTriggeredTour = state => {
 	] );
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
-	return find( newTours, tour => {
+	return find( newTours, ( tour ) => {
 		const { when = constant( true ) } = find( relevantFeatures, { tour } );
 		return when( state );
 	} );
 };
 
-const isSectionBlacklisted = state => includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+const isSectionBlacklisted = ( state ) => includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
 
 export const hasTourJustBeenVisible = createSelector(
 	( state, now = Date.now() ) => {
@@ -164,15 +163,12 @@ export const hasTourJustBeenVisible = createSelector(
 	[ getActionLog ]
 );
 
-const isConflictingWithOtherHelp = state =>
-	hasTourJustBeenVisible( state ) || shouldViewBeVisible( state );
+const shouldBailAllTours = ( state ) => isSectionBlacklisted( state );
 
-const shouldBailAllTours = state => isSectionBlacklisted( state );
-
-const shouldBailNewTours = state => isConflictingWithOtherHelp( state );
+const shouldBailNewTours = ( state ) => hasTourJustBeenVisible( state );
 
 export const findEligibleTour = createSelector(
-	state => {
+	( state ) => {
 		if ( shouldBailAllTours( state ) ) {
 			return;
 		}
@@ -196,13 +192,13 @@ export const findEligibleTour = createSelector(
  * configuration (`stepConfig`) for the currently active tour step, if one is
  * active.
  *
- * @param  {Object}  state Global state tree
- * @return {Object}        Current Guided Tours state
+ * @param  {object}  state Global state tree
+ * @returns {object}        Current Guided Tours state
  */
-const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
+const getRawGuidedTourState = ( state ) => get( state, 'ui.guidedTour', false );
 
 export const getGuidedTourState = createSelector(
-	state => {
+	( state ) => {
 		const emptyState = { shouldShow: false };
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );

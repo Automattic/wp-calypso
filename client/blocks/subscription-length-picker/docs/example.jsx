@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -60,7 +58,7 @@ const SubscriptionLengthPickerExample = () => (
 			currencyCode="USD"
 			productsWithPrices={ productsWithPrices1 }
 			initialValue={ PLAN_BUSINESS_2_YEARS }
-			translate={ x => x }
+			translate={ ( x ) => x }
 		/>
 		<hr />
 
@@ -68,7 +66,7 @@ const SubscriptionLengthPickerExample = () => (
 			currencyCode="USD"
 			productsWithPrices={ productsWithPrices2 }
 			initialValue={ PLAN_BUSINESS }
-			translate={ x => x }
+			translate={ ( x ) => x }
 		/>
 	</div>
 );

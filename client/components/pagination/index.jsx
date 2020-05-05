@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,11 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import PaginationPage from './pagination-page';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Pagination extends Component {
 	static propTypes = {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
@@ -48,7 +46,7 @@ export default class extends React.Component {
 		}
 	};
 
-	uploadFiles = event => {
+	uploadFiles = ( event ) => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
 			MediaActions.add( this.props.site, event.target.files );
@@ -56,7 +54,7 @@ export default class extends React.Component {
 
 		this.formRef.current.reset();
 		this.props.onAddMedia();
-		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
+		bumpStat( 'editor_upload_via', 'add_button' );
 	};
 
 	/**
@@ -66,7 +64,7 @@ export default class extends React.Component {
 	 * but is supported in Internet Explorer and Chrome browsers. Further input
 	 * validation will occur when attempting to upload the file.
 	 *
-	 * @return {string} Supported file extensions, as comma-separated string
+	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
 		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
@@ -75,7 +73,7 @@ export default class extends React.Component {
 		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
 
 		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
-			.map( type => `.${ type }` )
+			.map( ( type ) => `.${ type }` )
 			.join();
 	};
 

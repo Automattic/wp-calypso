@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 
 import {
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
@@ -18,57 +16,90 @@ import {
 
 export const uploadedPluginId = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ PLUGIN_UPLOAD ]: () => null,
-			[ PLUGIN_UPLOAD_COMPLETE ]: ( state, { pluginId } ) => pluginId,
-			[ PLUGIN_UPLOAD_CLEAR ]: () => null,
-			[ PLUGIN_UPLOAD_ERROR ]: () => null,
-			[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { uploadedPluginId: pluginId } ) => pluginId,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case PLUGIN_UPLOAD:
+				return null;
+			case PLUGIN_UPLOAD_COMPLETE: {
+				const { pluginId } = action;
+				return pluginId;
+			}
+			case PLUGIN_UPLOAD_CLEAR:
+				return null;
+			case PLUGIN_UPLOAD_ERROR:
+				return null;
+			case AUTOMATED_TRANSFER_STATUS_SET: {
+				const { uploadedPluginId: pluginId } = action;
+				return pluginId;
+			}
 		}
-	)
+
+		return state;
+	} )
 );
 
 export const uploadError = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ PLUGIN_UPLOAD_ERROR ]: ( state, { error } ) => error,
-			[ PLUGIN_UPLOAD ]: () => null,
-			[ PLUGIN_UPLOAD_CLEAR ]: () => null,
-			[ PLUGIN_UPLOAD_COMPLETE ]: () => null,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case PLUGIN_UPLOAD_ERROR: {
+				const { error } = action;
+				return error;
+			}
+			case PLUGIN_UPLOAD:
+				return null;
+			case PLUGIN_UPLOAD_CLEAR:
+				return null;
+			case PLUGIN_UPLOAD_COMPLETE:
+				return null;
 		}
-	)
+
+		return state;
+	} )
 );
 
 export const progressPercent = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ PLUGIN_UPLOAD_PROGRESS ]: ( state, { progress } ) => progress,
-			[ PLUGIN_UPLOAD ]: () => 0,
-			[ PLUGIN_UPLOAD_CLEAR ]: () => 0,
-			[ PLUGIN_UPLOAD_ERROR ]: () => 0,
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case PLUGIN_UPLOAD_PROGRESS: {
+				const { progress } = action;
+				return progress;
+			}
+			case PLUGIN_UPLOAD:
+				return 0;
+			case PLUGIN_UPLOAD_CLEAR:
+				return 0;
+			case PLUGIN_UPLOAD_ERROR:
+				return 0;
 		}
-	)
+
+		return state;
+	} )
 );
 
 export const inProgress = keyedReducer(
 	'siteId',
-	createReducer(
-		{},
-		{
-			[ PLUGIN_UPLOAD ]: () => true,
-			[ PLUGIN_UPLOAD_COMPLETE ]: () => false,
-			[ PLUGIN_UPLOAD_ERROR ]: () => false,
-			[ PLUGIN_UPLOAD_CLEAR ]: () => false,
-			[ AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP ]: () => true,
-			[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { status } ) => status !== 'complete',
+	withoutPersistence( ( state = {}, action ) => {
+		switch ( action.type ) {
+			case PLUGIN_UPLOAD:
+				return true;
+			case PLUGIN_UPLOAD_COMPLETE:
+				return false;
+			case PLUGIN_UPLOAD_ERROR:
+				return false;
+			case PLUGIN_UPLOAD_CLEAR:
+				return false;
+			case AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP:
+				return true;
+			case AUTOMATED_TRANSFER_STATUS_SET: {
+				const { status } = action;
+				return status !== 'complete';
+			}
 		}
-	)
+
+		return state;
+	} )
 );
 
 export default combineReducers( {

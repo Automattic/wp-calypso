@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import ExampleDomainBrowser from '../example-domain-browser';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
@@ -52,7 +55,7 @@ class DomainSuggestionsExample extends React.Component {
 const recordClick = () => recordTracksEvent( 'calypso_example_domain_suggestions_link_click' );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteDesignType: getDesignType( state ),
 	} ),
 	{

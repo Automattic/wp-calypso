@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import { localize, moment } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { useTranslate } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
@@ -13,15 +12,14 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { getSite, getSiteTitle, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
 import { purchaseType as getPurchaseType, getName } from 'lib/purchases';
 import { paymentMethodName } from 'lib/cart-values';
 
 export function PendingListItem( {
-	translate,
 	paymentType,
 	totalCost,
 	currency,
@@ -31,6 +29,9 @@ export function PendingListItem( {
 	dateCreated,
 	products,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	// products being populated is not guaranteed
 	const initialProduct = get( products, '0', {} );
 	let productName = getName( initialProduct ) || '';
@@ -91,4 +92,4 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteId ),
 	siteTitle: getSiteTitle( state, props.siteId ),
 	siteDomain: getSiteDomain( state, props.siteId ),
-} ) )( localize( PendingListItem ) );
+} ) )( PendingListItem );

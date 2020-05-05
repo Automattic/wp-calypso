@@ -1,4 +1,3 @@
-
 .editor-media-modal.dialog.card {
 	position: absolute;
 	top: 0;
@@ -24,9 +23,10 @@
 
 .editor-media-modal .dialog__content {
 	position: static;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	height: 100%;
 	padding: 0;
+	overflow: inherit;
 }
 
 .editor-media-modal .section-nav {
@@ -141,7 +141,7 @@
 
 .editor-media-modal .media-library__list-item-figure {
 	background-color: var( --color-neutral-0 );
-	box-shadow: inset 0 0 0 1px var( --color-neutral-50 );
+	box-shadow: inset 0 0 0 1px var( --color-neutral-5 );
 }
 
 .editor-media-modal .media-library__list-item-file-name {

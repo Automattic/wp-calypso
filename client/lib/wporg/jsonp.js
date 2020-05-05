@@ -1,7 +1,6 @@
 /**
  * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
  *
- * @format
  */
 
 /**
@@ -30,8 +29,8 @@ function noop() {}
 /**
  * JSONP handler
  *
- * @param {String} url
- * @param {Object} query params
+ * @param {string} url
+ * @param {object} query params
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
@@ -47,7 +46,7 @@ function jsonp( url, query, fn ) {
 	id = prefix + count++;
 
 	if ( timeout ) {
-		timer = setTimeout( function() {
+		timer = setTimeout( function () {
 			cleanup();
 			if ( fn ) {
 				fn( new Error( 'Timeout' ) );
@@ -72,7 +71,7 @@ function jsonp( url, query, fn ) {
 		}
 	}
 
-	window[ id ] = function( data ) {
+	window[ id ] = function ( data ) {
 		debug( 'jsonp got', data );
 		cleanup();
 		if ( fn ) {

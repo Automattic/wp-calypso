@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
@@ -14,10 +12,9 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import formState from 'lib/form-state';
 import { login } from 'lib/paths';
-import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
@@ -25,6 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -52,7 +50,7 @@ class Site extends React.Component {
 		submitting: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
@@ -87,7 +85,7 @@ class Site extends React.Component {
 		this.save();
 	}
 
-	sanitizeSubdomain = domain => {
+	sanitizeSubdomain = ( domain ) => {
 		if ( ! domain ) {
 			return domain;
 		}
@@ -108,7 +106,7 @@ class Site extends React.Component {
 				blog_title: fields.site,
 				validate: true,
 			},
-			function( error, response ) {
+			function ( error, response ) {
 				let messages = {};
 
 				debug( error, response );
@@ -117,7 +115,7 @@ class Site extends React.Component {
 					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 						siteUrlsSearched.push( fields.site );
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+						recordTracksEvent( 'calypso_signup_site_url_validation_failed', {
 							error: error.error,
 							site_url: fields.site,
 						} );
@@ -136,7 +134,7 @@ class Site extends React.Component {
 		);
 	};
 
-	setFormState = state => {
+	setFormState = ( state ) => {
 		this.setState( { form: state } );
 	};
 
@@ -145,13 +143,13 @@ class Site extends React.Component {
 		timesValidationFailed = 0;
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { submitting: true } );
 
 		this.formStateController.handleSubmit(
-			function( hasErrors ) {
+			function ( hasErrors ) {
 				const site = formState.getFieldValue( this.state.form, 'site' );
 
 				this.setState( { submitting: false } );
@@ -160,15 +158,14 @@ class Site extends React.Component {
 					return;
 				}
 
-				analytics.tracks.recordEvent( 'calypso_signup_site_step_submit', {
+				recordTracksEvent( 'calypso_signup_site_step_submit', {
 					unique_site_urls_searched: siteUrlsSearched.length,
 					times_validation_failed: timesValidationFailed,
 				} );
 
 				this.resetAnalyticsData();
 
-				SignupActions.submitSignupStep( {
-					processingMessage: this.props.translate( 'Setting up your site' ),
+				this.props.submitSignupStep( {
 					stepName: this.props.stepName,
 					form: this.state.form,
 					site,
@@ -186,26 +183,26 @@ class Site extends React.Component {
 	};
 
 	save = () => {
-		SignupActions.saveSignupStep( {
+		this.props.saveSignupStep( {
 			stepName: 'site',
 			form: this.state.form,
 		} );
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value,
 		} );
 	};
 
-	handleFormControllerError = error => {
+	handleFormControllerError = ( error ) => {
 		if ( error ) {
 			throw error;
 		}
 	};
 
-	getErrorMessagesWithLogin = fieldName => {
+	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
 				isNative: config.isEnabled( 'login/native-login-links' ),
 				redirectTo: window.location.href,
@@ -218,7 +215,7 @@ class Site extends React.Component {
 
 		return map(
 			messages,
-			function( message, error_code ) {
+			function ( message, error_code ) {
 				if ( error_code === 'blog_name_reserved' ) {
 					return (
 						<span>
@@ -249,7 +246,7 @@ class Site extends React.Component {
 			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ true }
+					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
@@ -299,11 +296,10 @@ class Site extends React.Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() }
 			/>
 		);
 	}
 }
 
-export default localize( Site );
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( Site ) );

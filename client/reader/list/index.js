@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,6 +10,6 @@ import { listListing } from './controller';
 import { sidebar, updateLastRoute } from 'reader/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page( '/read/list/:user/:list', updateLastRoute, sidebar, listListing, makeLayout, clientRender );
 }

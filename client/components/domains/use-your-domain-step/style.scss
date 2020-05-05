@@ -1,6 +1,10 @@
 .use-your-domain-step__content {
 	display: flex;
 
+	@include breakpoint( '<800px' ) {
+		flex-flow: wrap;
+	}
+
 	&.use-your-domain-step__option {
 		.use-your-domain-step__option-reasons {
 			min-height: 26px;
@@ -35,6 +39,10 @@
 		justify-content: center;
 		margin: 1em 0;
 		max-height: 150px;
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
 	}
 
 	.use-your-domain-step__option-illustration img {
@@ -91,21 +99,15 @@
 	color: var( --color-text );
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			text-decoration: underline;
 
 			&:hover {
 				color: var( --color-neutral-0 );
 			}
 		}
-	}
-}
-
-@include breakpoint( '<800px' ) {
-	.use-your-domain-step__content {
-		flex-flow: wrap;
 	}
 }

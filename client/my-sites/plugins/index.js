@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,72 +8,75 @@ import page from 'page';
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import config from 'config';
-import pluginsController from './controller';
+import {
+	browsePlugins,
+	browsePluginsOrPlugin,
+	eligibility,
+	jetpackCanUpdate,
+	plugins,
+	resetHistory,
+	scrollTopIfNoHash,
+	setupPlugins,
+	upload,
+} from './controller';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page(
 			'/plugins/setup',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
-			pluginsController.setupPlugins,
+			setupPlugins,
 			makeLayout,
 			clientRender
 		);
 
 		page(
 			'/plugins/setup/:site',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
-			pluginsController.setupPlugins,
+			setupPlugins,
 			makeLayout,
 			clientRender
 		);
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
-		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
 			page.redirect( `/plugins/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
 			page.redirect( `/plugins/browse/${ context.params.site }` );
 		} );
 
-		page( '/plugins/manage/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/manage/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
 			page.redirect( `/plugins/manage/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/:category/:site', context => {
+		page( '/plugins/browse/:category/:site', ( context ) => {
 			const { category, site } = context.params;
 			page.redirect( `/plugins/${ category }/${ site }` );
 		} );
 
-		page( '/plugins/browse/:siteOrCategory?', context => {
+		page( '/plugins/browse/:siteOrCategory?', ( context ) => {
 			const { siteOrCategory } = context.params;
 			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
 		} );
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
-			page(
-				'/plugins/upload',
-				pluginsController.scrollTopIfNoHash,
-				siteSelection,
-				sites,
-				makeLayout,
-				clientRender
-			);
+			page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 			page(
 				'/plugins/upload/:site_id',
-				pluginsController.scrollTopIfNoHash,
+				scrollTopIfNoHash,
 				siteSelection,
 				navigation,
-				pluginsController.upload,
+				upload,
 				makeLayout,
 				clientRender
 			);
@@ -82,58 +84,58 @@ export default function() {
 
 		page(
 			'/plugins',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			pluginsController.browsePlugins,
+			browsePlugins,
 			makeLayout,
 			clientRender
 		);
 
 		page(
 			'/plugins/manage/:site?',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			pluginsController.plugins,
+			plugins,
 			makeLayout,
 			clientRender
 		);
 
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			pluginsController.jetpackCanUpdate,
-			pluginsController.plugins,
+			jetpackCanUpdate,
+			plugins,
 			makeLayout,
 			clientRender
 		);
 
 		page(
 			'/plugins/:plugin/:site_id?',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			pluginsController.browsePluginsOrPlugin,
+			browsePluginsOrPlugin,
 			makeLayout,
 			clientRender
 		);
 
 		page(
 			'/plugins/:plugin/eligibility/:site_id',
-			pluginsController.scrollTopIfNoHash,
+			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			pluginsController.eligibility,
+			eligibility,
 			makeLayout,
 			clientRender
 		);
 
 		page.exit( '/plugins/*', ( context, next ) => {
 			if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
-				pluginsController.resetHistory();
+				resetHistory();
 			}
 
 			next();

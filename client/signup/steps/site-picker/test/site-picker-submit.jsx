@@ -1,35 +1,21 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: () => {},
-} ) );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { noop } from 'lodash';
+
+jest.mock( 'i18n-calypso', () => ( {
+	translate: ( str ) => str,
+} ) );
 
 /**
  * Internal dependencies
@@ -59,6 +45,7 @@ import {
 
 const props = {
 	goToStep: jest.fn(),
+	submitSignupStep: noop,
 	selectedSite: {
 		ID: 1,
 	},
@@ -83,13 +70,13 @@ describe( 'siteHasPaidPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `Should return true for plan ${ product_slug }`, () => {
 			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( true );
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( product_slug ) => {
 		test( `Should return false for plan ${ product_slug }`, () => {
 			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( false );
 		} );
@@ -126,7 +113,7 @@ describe( 'SitePickerSubmit', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Goes to step "user" when paid plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 			shallow(
@@ -136,7 +123,7 @@ describe( 'SitePickerSubmit', () => {
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( plan => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( plan ) => {
 		test( `Goes to step "plans-site-selected" when a free plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 			shallow(

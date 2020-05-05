@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,6 @@ export class SiteSettingsNavigation extends Component {
 			performance: translate( 'Performance', { context: 'settings screen' } ),
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
-			traffic: translate( 'Traffic', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
 		};
 	}
@@ -90,20 +87,12 @@ export class SiteSettingsNavigation extends Component {
 					>
 						{ strings.discussion }
 					</NavItem>
-
-					<NavItem
-						path={ `/settings/traffic/${ site.slug }` }
-						preloadSectionName="settings-traffic"
-						selected={ section === 'traffic' }
-					>
-						{ strings.traffic }
-					</NavItem>
 				</NavTabs>
 			</SectionNav>
 		);
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SiteSettingsNavigation ) );

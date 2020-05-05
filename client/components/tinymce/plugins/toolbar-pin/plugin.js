@@ -1,22 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import tinymce from 'tinymce/tinymce';
 import { throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isWithinBreakpoint } from 'lib/viewport';
 
 /**
  * TinyMCE plugin for toggling an `is-pinned` class on the editor container
  * when the viewport scroll position exceeds the top edge of the container.
  *
- * @param {Object} editor TinyMCE editor instance
+ * @param {object} editor TinyMCE editor instance
  */
 function toolbarPin( editor ) {
 	let isMonitoringScroll = false,
@@ -33,7 +26,7 @@ function toolbarPin( editor ) {
 	/**
 	 * Updates the pinned state, toggling the container class as appropriate.
 	 *
-	 * @param {Boolean} toBePinned Whether toolbar should be pinned
+	 * @param {boolean} toBePinned Whether toolbar should be pinned
 	 */
 	function togglePinned( toBePinned ) {
 		isPinned = toBePinned;
@@ -64,7 +57,7 @@ function toolbarPin( editor ) {
 	 * pinning behavior is restricted to larger viewports whilst the visual
 	 * editing mode is active.
 	 */
-	const maybeBindScroll = throttle( event => {
+	const maybeBindScroll = throttle( ( event ) => {
 		const isVisual = ! editor.isHidden();
 		const shouldBind = 'remove' !== event.type && isVisual && isWithinBreakpoint( '>660px' );
 
@@ -92,6 +85,6 @@ function toolbarPin( editor ) {
 	window.addEventListener( 'resize', maybeBindScroll );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/toolbarpin', toolbarPin );
 }

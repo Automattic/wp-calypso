@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { compact, isEqual, filter, uniqueId } from 'lodash';
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 
 /**
  * Internal dependencies
@@ -23,13 +21,23 @@ import {
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
-	[ WOOCOMMERCE_PRODUCT_DELETE ]: deleteProductAction,
-	[ WOOCOMMERCE_PRODUCT_EDIT_CLEAR ]: clearEditsAction,
-	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
-	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_EDIT:
+			return editProductAction( state, action );
+		case WOOCOMMERCE_PRODUCT_DELETE:
+			return deleteProductAction( state, action );
+		case WOOCOMMERCE_PRODUCT_EDIT_CLEAR:
+			return clearEditsAction( state, action );
+		case WOOCOMMERCE_PRODUCT_UPDATED:
+			return productUpdatedAction( state, action );
+		case WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT:
+			return editProductAttributeAction( state, action );
+		case WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED:
+			return productCategoryUpdatedAction( state, action );
+	}
+
+	return state;
 } );
 
 function productUpdatedAction( edits, action ) {
@@ -45,7 +53,7 @@ function productUpdatedAction( edits, action ) {
 		const prevBucketEdits = prevEdits[ bucket ] || [];
 
 		const newBucketEdits = compact(
-			prevBucketEdits.map( productEdit => {
+			prevBucketEdits.map( ( productEdit ) => {
 				return isEqual( productId, productEdit.id ) ? undefined : productEdit;
 			} )
 		);
@@ -67,12 +75,12 @@ function productCategoryUpdatedAction( edits, action ) {
 		const newCategoryId = data.id;
 		const prevEdits = edits || {};
 
-		const buckets = [ 'creates', 'updates' ].map( bucket => {
+		const buckets = [ 'creates', 'updates' ].map( ( bucket ) => {
 			const prevBucket = prevEdits[ bucket ] || [];
 
-			const newBucket = prevBucket.map( product => {
+			const newBucket = prevBucket.map( ( product ) => {
 				const prevCategories = product.categories || [];
-				const newCategories = prevCategories.map( category => {
+				const newCategories = prevCategories.map( ( category ) => {
 					if ( isEqual( prevCategoryId, category.id ) ) {
 						return { ...category, id: newCategoryId };
 					}
@@ -143,7 +151,7 @@ function editProduct( array, product, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const _array = prevArray.map( p => {
+	const _array = prevArray.map( ( p ) => {
 		if ( isEqual( product.id, p.id ) ) {
 			found = true;
 			return { ...p, ...data };
@@ -168,7 +176,7 @@ export function editProductAttribute( attributes, attribute, data ) {
 	let found = false;
 
 	// Look for this attribute in the array of attributes first.
-	const _attributes = prevAttributes.map( a => {
+	const _attributes = prevAttributes.map( ( a ) => {
 		if ( ( uid && isEqual( uid, a.uid ) ) || ( name && isEqual( name, a.name ) ) ) {
 			found = true;
 			return { ...attribute, ...data, uid };
@@ -190,7 +198,7 @@ export function deleteProductAction( edits, action ) {
 	const prevEdits = edits || {};
 
 	if ( prevEdits && prevEdits.updates ) {
-		const newUpdates = filter( prevEdits.updates, product => product.id !== productId );
+		const newUpdates = filter( prevEdits.updates, ( product ) => product.id !== productId );
 		return {
 			...prevEdits,
 			updates: newUpdates,

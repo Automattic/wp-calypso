@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
@@ -116,7 +114,7 @@ class ThemeSetupDialog extends React.Component {
 
 ThemeSetupDialog = localize( ThemeSetupDialog );
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
 	const result = state.ui.themeSetup.result;
@@ -129,7 +127,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ toggleDialog, runThemeSetup }
-)( ThemeSetupDialog );
+export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );

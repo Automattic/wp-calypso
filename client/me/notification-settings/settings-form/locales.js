@@ -1,4 +1,3 @@
-/** @format */
 import i18n from 'i18n-calypso';
 
 export const streamLabels = {
@@ -20,8 +19,8 @@ export const settingLabels = {
 	store_order: () => i18n.translate( 'New order' ),
 };
 
-export const getLabelForStream = stream =>
+export const getLabelForStream = ( stream ) =>
 	stream in streamLabels ? streamLabels[ stream ].call() : null;
 
-export const getLabelForSetting = setting =>
+export const getLabelForSetting = ( setting ) =>
 	setting in settingLabels ? settingLabels[ setting ].call() : null;

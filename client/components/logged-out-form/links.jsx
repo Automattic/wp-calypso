@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,6 +6,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
+
+/**
+ * Style dependencies
+ */
+import './links.scss';
 
 export default class LoggedOutFormLinks extends React.Component {
 	static propTypes = {

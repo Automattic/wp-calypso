@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -11,8 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Gridicon from 'gridicons';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -22,9 +20,12 @@ import {
 	getSiteVerticalIsUserInput,
 	getSiteVerticalId,
 	getSiteVerticalParentId,
+	getSiteVerticalSuggestedTheme,
 } from 'state/signup/steps/site-vertical/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -39,7 +40,7 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
+	onSiteTopicChange = ( verticalData ) => {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
@@ -47,11 +48,19 @@ class SiteTopicForm extends Component {
 			slug: verticalData.verticalSlug,
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,
+			suggestedTheme: verticalData.suggestedTheme,
 		} );
 	};
 
-	onSubmit = event => {
-		const { isUserInput, siteSlug, siteTopic, verticalId, verticalParentId } = this.props;
+	onSubmit = ( event ) => {
+		const {
+			isUserInput,
+			siteSlug,
+			siteTopic,
+			suggestedTheme,
+			verticalId,
+			verticalParentId,
+		} = this.props;
 
 		event.preventDefault();
 
@@ -67,20 +76,28 @@ class SiteTopicForm extends Component {
 			slug: siteSlug,
 			parentId: verticalParentId,
 			id: verticalId,
+			suggestedTheme,
 		} );
 	};
 
 	render() {
-		const { isButtonDisabled, siteTopic } = this.props;
+		const { isButtonDisabled, siteTopic, siteType } = this.props;
+		const suggestionSearchInputPlaceholder =
+			getSiteTypePropertyValue( 'slug', siteType, 'siteTopicInputPlaceholder' ) || '';
+		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
+
 		return (
-			<div className="site-topic__content">
+			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch
+							placeholder={ suggestionSearchInputPlaceholder }
+							labelText={ headerText }
 							onChange={ this.onSiteTopicChange }
 							showPopular={ true }
 							searchValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+							siteType={ siteType }
 						/>
 						<Button
 							title={ this.props.translate( 'Continue' ) }
@@ -89,7 +106,7 @@ class SiteTopicForm extends Component {
 							disabled={ isButtonDisabled }
 							primary
 						>
-							<Gridicon icon="arrow-right" />
+							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</FormFieldset>
 				</form>
@@ -99,13 +116,16 @@ class SiteTopicForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
+		const siteType = getSiteType( state );
 		const siteTopic = getSiteVerticalName( state );
-		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic );
+		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );
 
 		return {
 			siteTopic,
+			siteType,
 			siteSlug: getSiteVerticalSlug( state ),
+			suggestedTheme: getSiteVerticalSuggestedTheme( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 			isButtonDisabled,
 			verticalId: getSiteVerticalId( state ),

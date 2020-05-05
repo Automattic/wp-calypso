@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ const REGEXP_CODE_SHORTCODE = new RegExp(
 );
 
 export function wrapPre( { content, initial, load } ) {
-	return ( content = content.replace( REGEXP_CODE_SHORTCODE, function( match, shortcode ) {
+	return ( content = content.replace( REGEXP_CODE_SHORTCODE, function ( match, shortcode ) {
 		shortcode = shortcode.replace( /\r/, '' );
 		shortcode = shortcode.replace( /<br ?\/?>\n?/g, '\n' ).replace( /<\/?p( [^>]*)?>\n?/g, '\n' );
 
@@ -45,18 +43,15 @@ export function unwrapPre( { content } ) {
 		return content;
 	}
 
-	return content.replace( REGEXP_CODE_SHORTCODE, function( match, shortcode ) {
-		shortcode = shortcode
-			.replace( /&lt;/g, '<' )
-			.replace( /&gt;/g, '>' )
-			.replace( /&amp;/g, '&' );
+	return content.replace( REGEXP_CODE_SHORTCODE, function ( match, shortcode ) {
+		shortcode = shortcode.replace( /&lt;/g, '<' ).replace( /&gt;/g, '>' ).replace( /&amp;/g, '&' );
 
 		return `<p>${ shortcode }</p>`;
 	} );
 }
 
 function sourcecode( editor ) {
-	editor.on( 'BeforeSetContent', event => {
+	editor.on( 'BeforeSetContent', ( event ) => {
 		if ( ! event.content || 'html' === event.mode ) {
 			return;
 		}
@@ -64,7 +59,7 @@ function sourcecode( editor ) {
 		event.content = wrapPre( event );
 	} );
 
-	editor.on( 'GetContent', event => {
+	editor.on( 'GetContent', ( event ) => {
 		if ( event.format !== 'raw' || ! event.content || event.selection ) {
 			return;
 		}
@@ -72,7 +67,7 @@ function sourcecode( editor ) {
 		event.content = unwrapPre( event );
 	} );
 
-	editor.on( 'PostProcess', event => {
+	editor.on( 'PostProcess', ( event ) => {
 		if ( ! event.content ) {
 			return;
 		}
@@ -81,6 +76,6 @@ function sourcecode( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/sourcecode', sourcecode );
 }

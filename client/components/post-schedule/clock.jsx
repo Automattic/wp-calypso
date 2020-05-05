@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,11 +13,9 @@ import 'moment-timezone'; // monkey patches the existing moment.js
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
 import { withLocalizedMoment } from 'components/localized-moment';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import { isMobile } from 'lib/viewport';
 
 /**
  * Local dependencies
@@ -33,11 +29,11 @@ import {
 } from './utils';
 
 class PostScheduleClock extends Component {
-	adjustHour = event => this.handleKeyDown( event, 'hour' );
-	adjustMinute = event => this.handleKeyDown( event, 'minute' );
+	adjustHour = ( event ) => this.handleKeyDown( event, 'hour' );
+	adjustMinute = ( event ) => this.handleKeyDown( event, 'minute' );
 
-	setAm = event => this.setAmPm( event, 'AM' );
-	setPm = event => this.setAmPm( event, 'PM' );
+	setAm = ( event ) => this.setAmPm( event, 'AM' );
+	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
 	amPmRef = React.createRef();
 	hourRef = React.createRef();
@@ -117,8 +113,8 @@ class PostScheduleClock extends Component {
 	/**
 	 * Converts a 12-hour time to a 24-hour time, depending on time format.
 	 *
-	 * @param {Number}  hour The hour to convert.
-	 * @return {Number}      The converted hour.
+	 * @param {number}  hour The hour to convert.
+	 * @returns {number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
 		if ( 'PM' === this.amPmRef.current.value && hour < 12 ) {
@@ -219,20 +215,20 @@ class PostScheduleClock extends Component {
 							value={ date.format( 'A' ) }
 						/>
 						<SegmentedControl compact>
-							<ControlItem
+							<SegmentedControl.Item
 								value="am"
 								onClick={ this.setAm }
 								selected={ 'AM' === date.format( 'A' ) }
 							>
 								{ translate( 'AM' ) }
-							</ControlItem>
-							<ControlItem
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
 								value="pm"
 								onClick={ this.setPm }
 								selected={ 'PM' === date.format( 'A' ) }
 							>
 								{ translate( 'PM' ) }
-							</ControlItem>
+							</SegmentedControl.Item>
 						</SegmentedControl>
 					</span>
 				) }

@@ -1,0 +1,379 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
+@import '../../variables.scss';
+
+.style-preview {
+	// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
+	height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
+	display: flex;
+	flex-direction: column;
+}
+
+.style-preview__header {
+	position: relative;
+	@include onboarding-heading-padding;
+}
+
+.style-preview__actions-mobile {
+	clear: both;
+	padding-top: 32px;
+
+	a.is-link {
+		@include onboarding-medium-text;
+		display: block;
+		text-align: center;
+		margin: 1em 0;
+		color: var( --studio-gray-40 );
+	}
+
+	&-continue-button.is-primary.is-large {
+		display: block;
+		width: 100%;
+		padding: 0 40px;
+	}
+
+	@include break-small {
+		display: none;
+	}
+}
+
+.style-preview__viewport-select {
+	@include break-small {
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+	}
+}
+
+.style-preview__actions {
+	display: none;
+	@include break-small {
+		display: block;
+	}
+}
+
+.style-preview__actions {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	transform: translateY( -50% );
+
+	@include break-small {
+		display: flex;
+		flex-flow: column;
+	}
+
+	a.is-link {
+		@include onboarding-medium-text;
+		margin: 1em 0 0;
+		color: var( --studio-gray-40 );
+		order: 2;
+
+		@include break-xlarge {
+			margin: 0 1em;
+			order: 1;
+		}
+	}
+
+	&-continue-button.is-primary.is-large {
+		padding: 0 40px;
+		display: block;
+		width: 100%;
+		order: 1;
+
+		@include break-xlarge {
+			display: initial;
+			width: auto;
+			order: 2;
+		}
+	}
+
+	@include break-xlarge {
+		display: block;
+	}
+}
+
+@supports ( display: grid ) {
+	.style-preview__header {
+		display: grid;
+		grid-template-areas: 'title viewport-select actions';
+		column-gap: 1em;
+		align-items: center;
+		@include onboarding-heading-padding;
+
+		@include break-small {
+			grid-template-columns: auto auto 180px;
+		}
+		@include break-xlarge {
+			grid-template-columns: auto auto auto;
+		}
+	}
+
+	.style-preview__titles {
+		grid-area: title;
+	}
+
+	.style-preview__viewport-select {
+		grid-area: viewport-select;
+		position: initial;
+		top: 0;
+		left: 0;
+		transform: none;
+	}
+
+	.style-preview__actions {
+		grid-area: actions;
+		position: initial;
+		top: 0;
+		left: 0;
+		transform: none;
+		justify-self: end;
+	}
+}
+
+.style-preview__content {
+	height: 100%;
+}
+
+.style-preview__font-options {
+	float: left;
+	width: 100%;
+
+	@include break-small {
+		width: 163px;
+	}
+}
+
+@supports ( display: grid ) {
+	.style-preview__content {
+		display: block;
+		width: 100%;
+
+		@include break-small {
+			display: grid;
+			grid-template-areas: 'fonts preview';
+			column-gap: 50px;
+			flex: 1;
+			grid-template-columns: 163px auto;
+		}
+
+		@include break-medium {
+			column-gap: 100px;
+		}
+	}
+
+	.style-preview__font-options {
+		width: 100%;
+
+		@include break-small {
+			width: auto;
+		}
+	}
+}
+
+.style-preview__font-option {
+	min-height: 3.4em;
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	display: block;
+	width: 100%;
+	position: relative;
+	// for IE, see https://github.com/Automattic/wp-calypso/pull/40881#issuecomment-610836378
+	vertical-align: top;
+
+	+ .style-preview__font-option {
+		margin-top: 8px;
+
+		@include break-small {
+			margin-top: 1em;
+		}
+	}
+
+	.style-preview__font-option-contents {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 100%;
+	}
+
+	// Extra specificity to override core style
+	// This is effectively a more-specific synonmy of the same selector
+	&.components-button {
+		color: var( --studio-gray-90 );
+		height: auto;
+		border-radius: 2px;
+
+		&:hover,
+		&:focus,
+		&:focus:not( :disabled ) {
+			color: var( --studio-gray-90 );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
+		}
+	}
+
+	&.is-selected {
+		// override default focus and hover styles for selected-fonts buttons
+		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
+		color: var( --studio-blue-40 ) !important;
+		box-shadow: inset 0 0 0 1px var( --studio-blue-40 ) !important;
+	}
+}
+
+.style-preview__font-option {
+	display: flex;
+}
+
+.style-preview__preview {
+	float: left;
+	height: 100%;
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.style-preview__preview {
+	width: calc( 100% - 163px );
+	margin: 0 auto;
+	padding-left: 100px;
+
+	&.is-viewport-tablet {
+		max-width: 1024px;
+	}
+
+	&.is-viewport-mobile {
+		max-width: 351px;
+	}
+}
+
+@supports ( display: grid ) {
+	.style-preview__preview {
+		grid-area: preview;
+		width: 100%;
+		padding-left: 0;
+
+		&.is-viewport-tablet {
+			max-width: 1024px;
+		}
+
+		&.is-viewport-mobile {
+			max-width: 351px;
+		}
+	}
+}
+
+.style-preview__preview-wrapper {
+	background: var( --studio-white );
+	box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.1 );
+	border-radius: 4px;
+	overflow: hidden;
+	position: relative;
+
+	width: 100%;
+	margin: 0 auto;
+	height: 100%;
+
+	.is-viewport-mobile &,
+	.is-viewport-tablet & {
+		height: 0;
+		box-sizing: border-box;
+		border: 13px solid var( --studio-white );
+
+		box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.14 ),
+			inset 0 0 0 1px var( --studio-gray-5 );
+		border-radius: 31px;
+	}
+
+	.is-viewport-tablet & {
+		padding-top: 768 / 1024 * 100%;
+	}
+
+	.is-viewport-mobile & {
+		padding-top: 691 / 351 * 100%;
+	}
+}
+
+$gutenboarding-style-preview-bar-height: 30px;
+
+// This and the following dot class render the browser chrome
+.style-preview__preview-bar {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: $gutenboarding-style-preview-bar-height;
+	background: var( --studio-white );
+	border-bottom: 1px solid var( --studio-gray-5 );
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 10px;
+}
+
+.style-preview__preview-bar-dot {
+	background: var( --studio-gray-5 );
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	margin: 0 2px;
+}
+
+.style-preview__viewport-select {
+	display: none;
+
+	@include break-large {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+.style-preview__viewport-select-button {
+	color: var( --studio-gray-10 );
+
+	// Need the extra specificity here to override core
+	&.components-button {
+		color: var( --studio-gray-10 );
+		height: auto;
+		padding: 4px;
+
+		&.is-selected,
+		&:hover,
+		&:focus {
+			color: var( --studio-black );
+		}
+
+		svg {
+			fill: none;
+		}
+	}
+}
+
+// Remove focus styling from clicking a button
+// Keep keyboard-focused focus style
+html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( :disabled ) {
+	box-shadow: none;
+}
+
+.style-preview__iframe {
+	$scale-factor: 0.7;
+	// Extra specificify to override editor iframe styles
+	.style-preview__preview & {
+		width: 100% / $scale-factor;
+		height: 100% / $scale-factor;
+	}
+
+	position: absolute;
+	top: 0;
+
+	transform: scale( $scale-factor );
+	transform-origin: 0 0;
+
+	.is-viewport-desktop & {
+		top: $gutenboarding-style-preview-bar-height;
+		height: calc(
+			#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height / $scale-factor}
+		);
+	}
+}

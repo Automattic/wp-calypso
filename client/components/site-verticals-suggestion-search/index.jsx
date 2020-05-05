@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,8 +14,9 @@ import { v4 as uuid } from 'uuid';
 import SuggestionSearch from 'components/suggestion-search';
 import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
 import QueryVerticals from 'components/data/query-verticals';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -28,19 +27,24 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
 		defaultVertical: PropTypes.object,
+		defaultVerticalSearchTerm: PropTypes.string,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		searchValue: PropTypes.string,
 		showPopular: PropTypes.bool,
+		siteType: PropTypes.string,
 		verticals: PropTypes.array,
+		labelText: PropTypes.string,
 	};
 
 	static defaultProps = {
 		autoFocus: false,
 		defaultVertical: {},
+		defaultVerticalSearchTerm: '',
 		onChange: () => {},
 		placeholder: '',
 		searchValue: '',
+		siteType: '',
 		showPopular: false,
 		verticals: [],
 	};
@@ -86,9 +90,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 *
 	 * @param {Array} results Incoming vertical results
 	 */
-	setSearchResults = results => {
+	setSearchResults = ( results ) => {
 		if ( results && results.length ) {
-			this.setState( { candidateVerticals: results }, () =>
+			const candidateVerticals = this.getSuggestionsWithCategories( results );
+			this.setState( { candidateVerticals }, () =>
 				this.updateVerticalData(
 					this.searchForVerticalMatches( this.state.inputValue ),
 					this.state.inputValue
@@ -101,26 +106,27 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		id: `${ uuid().replace( /-/g, '' ) }-site-vertical-suggestion`,
 		fetch_algo: '/verticals',
 		action: 'site_vertical_selected',
+		ui_algo: 'signup/site-topic/related_1',
 	} );
 
 	/**
 	 * Searches the API results for a direct match on the user search query.
 	 *
-	 * @param {String} value       Search query array
-	 * @returns {Object|undefined} An object from the vertical results array
+	 * @param {string} value       Search query array
+	 * @returns {object|undefined} An object from the vertical results array
 	 */
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase().trim() && !! item.preview
+			( item ) => item.verticalName.toLowerCase() === value.toLowerCase().trim()
 		);
 
 	/**
 	 * Callback to be passed to consuming component when the search value is updated.
 	 * TODO: once the siteVertical state got simplified, this can be removed.
 	 *
-	 * @param {Object} verticalData An object from the vertical results array
-	 * @param {String} value Search query array
+	 * @param {object} verticalData An object from the vertical results array
+	 * @param {string} value Search query array
 	 */
 	updateVerticalData = ( verticalData, value = '' ) => {
 		const trimmedValue = value.trim();
@@ -139,9 +145,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	/**
 	 * Callback to be passed to consuming component when the search field is updated.
 	 *
-	 * @param {String}  value                The new search value
+	 * @param {string}  value                The new search value
 	 */
-	onSiteTopicChange = value => {
+	onSiteTopicChange = ( value ) => {
 		const newState = {
 			inputValue: value,
 		};
@@ -162,39 +168,79 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * We use the `this.state.candidateVerticals` array instead of `this.props.verticals`
 	 * so `<SuggestionSearch />` has a list to filter in between requests.
 	 *
+	 * @param {Array} verticals verticals to be categorized
 	 * @returns {Array} The array of vertical values.
 	 */
-	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
+	getSuggestionsWithCategories( verticals ) {
+		const normalizedInput = this.state.inputValue.toLowerCase().trim();
+		const includeRelated = normalizedInput.length > 2;
+
+		return verticals
+			.map( ( vertical ) => ( {
+				label: vertical.verticalName,
+				category: isRelatedVertical( vertical, normalizedInput )
+					? this.props.translate( 'Related' )
+					: undefined,
+			} ) )
+			.filter( ( suggestion ) => includeRelated || ! suggestion.category );
+	}
 
 	render() {
-		const { autoFocus, placeholder, translate } = this.props;
-		const { inputValue, railcar } = this.state;
+		const { autoFocus, defaultVerticalSearchTerm, placeholder, siteType, translate } = this.props;
+		const { candidateVerticals, inputValue, railcar } = this.state;
+		const shouldShowPopularTopics = this.shouldShowPopularTopics();
+		const placeholderText = shouldShowPopularTopics
+			? translate( 'Enter a topic or select from below.', {
+					comment:
+						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
+			  } )
+			: translate( 'Enter a topic.', {
+					comment:
+						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
+			  } );
+
 		return (
 			<>
-				<QueryVerticals searchTerm={ inputValue.trim() } debounceTime={ 300 } />
-				<QueryVerticals searchTerm={ DEFAULT_VERTICAL_KEY } limit={ 1 } />
+				<QueryVerticals
+					searchTerm={ inputValue.trim() }
+					siteType={ siteType }
+					debounceTime={ 300 }
+				/>
+				<QueryVerticals searchTerm={ defaultVerticalSearchTerm } siteType={ siteType } />
 				<SuggestionSearch
 					id="siteTopic"
-					placeholder={ placeholder || translate( 'Enter a keyword or select one from below.' ) }
+					placeholder={ placeholder || placeholderText }
 					onChange={ this.onSiteTopicChange }
-					suggestions={ this.getSuggestions() }
+					suggestions={ candidateVerticals }
 					value={ inputValue }
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					isSearching={ this.isVerticalSearchPending() }
 					railcar={ railcar }
+					aria-label={ this.props.labelText }
 				/>
-				{ this.shouldShowPopularTopics() && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
+				{ shouldShowPopularTopics && <PopularTopics onSelect={ this.onSiteTopicChange } /> }
 			</>
 		);
 	}
 }
 
+function isRelatedVertical( vertical, normalizedInput ) {
+	return (
+		! vertical.isUserInputVertical &&
+		! vertical.verticalName.toLowerCase().includes( normalizedInput )
+	);
+}
+
 export default localize(
-	connect(
-		( state, ownProps ) => ( {
-			verticals: getVerticals( state, ownProps.searchValue ) || [],
-			defaultVertical: get( getVerticals( state, 'business' ), '0', {} ),
-		} ),
-		null
-	)( SiteVerticalsSuggestionSearch )
+	connect( ( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		const defaultVerticalSearchTerm =
+			getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
+		return {
+			siteType,
+			defaultVerticalSearchTerm,
+			verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
+			defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
+		};
+	}, null )( SiteVerticalsSuggestionSearch )
 );

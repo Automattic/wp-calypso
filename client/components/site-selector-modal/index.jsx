@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import SitesDropdown from 'components/sites-dropdown';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getVisibleSites from 'state/selectors/get-visible-sites';
@@ -53,11 +50,11 @@ class SiteSelectorModal extends Component {
 		siteId: this.props.initialSiteId,
 	};
 
-	setSite = siteId => {
+	setSite = ( siteId ) => {
 		this.setState( { siteId } );
 	};
 
-	onClose = action => {
+	onClose = ( action ) => {
 		if ( 'mainAction' === action ) {
 			this.props.mainAction( this.state.siteId );
 		}
@@ -108,7 +105,7 @@ export default connect( ( state, { filter } ) => {
 	const primarySiteId = getPrimarySiteId( state );
 	const visibleSites = getVisibleSites( state );
 
-	let filteredSiteIds = visibleSites.map( site => site.ID );
+	let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
 
 	if ( filter ) {
 		filteredSiteIds = filteredSiteIds.filter( filter );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,19 +8,22 @@ import classnames from 'classnames';
 import url from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, noop, get } from 'lodash';
+import { noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import { CompactCard } from '@automattic/components';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
 import * as utils from 'state/posts/utils';
-import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Draft extends Component {
 	static propTypes = {
@@ -86,13 +87,13 @@ class Draft extends Component {
 		return (
 			<CompactCard
 				className={ classes }
-				key={ 'draft-' + post.ID }
+				key={ post.ID }
 				href={ editPostURL }
 				onClick={ this.props.onTitleClick }
 			>
 				<h3 className="draft__title">{ title }</h3>
 				<TimeSince className="draft__time" date={ post.modified } />
-				{ image ? this.renderImage( imageUrl ) : null }
+				{ image && this.renderImage( imageUrl ) }
 			</CompactCard>
 		);
 	}
@@ -104,27 +105,15 @@ class Draft extends Component {
 
 	postPlaceholder() {
 		return (
+			/* eslint-disable jsx-a11y/heading-has-content */
 			<CompactCard className="draft is-placeholder">
 				<h3 className="draft__title" />
-				<div className="draft__actions">
-					<p className="post-relative-time-status">
-						<span className="time">
-							<Gridicon icon="time" size={ 18 } />
-							<span className="time-text" />
-						</span>
-					</p>
-				</div>
 			</CompactCard>
+			/* eslint-enable jsx-a11y/heading-has-content */
 		);
 	}
 }
 
-const mapState = ( state, { siteId, post } ) => ( {
-	site: getSite( state, siteId ),
+export default connect( ( state, { siteId, post } ) => ( {
 	editorUrl: getEditorUrl( state, siteId, get( post, 'ID' ) ),
-} );
-
-export default flow(
-	localize,
-	connect( mapState )
-)( Draft );
+} ) )( localize( Draft ) );

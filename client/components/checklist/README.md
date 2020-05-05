@@ -1,17 +1,20 @@
-Checklist
-=======
+# Checklist
 
 `Checklist` and `Task` are components used to render checklists.
 
 ## `Checklist` props
 
+### `className { string }`
+
+Additional class to add to the Checklist.
+
 ### `isPlaceholder { bool } - default: false`
 
 Render as a placeholder.
 
-### `progressText { string } - default: "Your setup list"`
+### `onExpandTask { func }`
 
-Displayed in the checklist header, right on top of the progress bar.
+Function that is called when a task is expanded. The task's props are passed as argument.
 
 ## `Task` props
 
@@ -30,10 +33,6 @@ Handle the action button click.
 ### `onDismiss { func }`
 
 Handle dismissal (or un-dismissal) click. Ignored for completed tasks.
-
-### `buttonPrimary { bool }`
-
-Display the action button as primary.
 
 ### `buttonText { node } - default: "Do it!"`
 
@@ -63,6 +62,8 @@ Task title
 
 ## Usage
 
+A Checklist expects its children to be a flat list of Task:
+
 ```jsx
 <Checklist>
 	<Task
@@ -70,7 +71,6 @@ Task title
 		onDismiss={ handleSplineDismiss }
 		title="Reticulate splines"
 		buttonText="Reticulate!"
-		buttonPrimary
 		completedTitle="Splines are reticulated 👍"
 		description="Make sure that all the splines are reticulated."
 		duration="1 minute"
@@ -81,14 +81,10 @@ Task title
 		onDismiss={ handleYakDismiss }
 		title="Shave yaks!"
 		buttonText="Buzzzz"
-		buttonPrimary
 		completedTitle="Yaks shaved."
 		description="Make sure you shave the yaks so you can get on with your life."
 		duration="10,000 minutes"
 	/>
-	<Task
-		title="Overwaxing banisters!"
-		inProgress={ ! this.state.overwaxBanisters }
-	/>
+	<Task title="Overwaxing banisters!" inProgress={ ! this.state.overwaxBanisters } />
 </Checklist>
 ```

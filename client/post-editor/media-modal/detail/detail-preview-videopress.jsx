@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { loadScript, removeScriptCallback } from 'lib/load-script';
+import { loadScript, removeScriptCallback } from '@automattic/load-script';
 
 /**
  * Module variables
@@ -48,7 +46,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		this.destroy();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
 			this.pause();
 		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {
@@ -71,13 +69,13 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		return false;
 	}
 
-	setVideoInstance = ref => ( this.video = ref );
+	setVideoInstance = ( ref ) => ( this.video = ref );
 
 	loadInitializeScript() {
 		loadScript( videoPressUrl, this.onScriptLoaded );
 	}
 
-	onScriptLoaded = error => {
+	onScriptLoaded = ( error ) => {
 		const { isPlaying, item, onScriptLoadError } = this.props;
 
 		if ( error ) {
@@ -102,7 +100,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		}
 	};
 
-	receiveMessage = event => {
+	receiveMessage = ( event ) => {
 		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}

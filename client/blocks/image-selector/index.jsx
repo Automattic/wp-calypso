@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,11 @@ import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -56,7 +59,7 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( imageId => MediaStore.get( siteId, imageId ) );
+			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
 			MediaActions.setLibrarySelectedItems( siteId, images );
 		}
 
@@ -71,24 +74,24 @@ export class ImageSelector extends Component {
 		} );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		if ( value ) {
 			this.props.onImageSelected( value );
 		}
 		this.hideMediaModal();
 	};
 
-	removeImage = image => {
+	removeImage = ( image ) => {
 		this.props.onRemoveImage( image );
 	};
 
-	addImage = image => {
+	addImage = ( image ) => {
 		this.props.onAddImage( image );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = images => {
+	onImageChange = ( images ) => {
 		this.props.onImageChange( images );
 	};
 
@@ -109,7 +112,7 @@ export class ImageSelector extends Component {
 					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
 					enabledFilters={ [ 'images' ] }
 					galleryViewEnabled={ false }
-					{ ...! multiple && { single: true } }
+					{ ...( ! multiple && { single: true } ) }
 				/>
 			</MediaLibrarySelectedData>
 		);

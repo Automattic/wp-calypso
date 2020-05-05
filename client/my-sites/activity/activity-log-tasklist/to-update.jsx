@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import { requestSiteAlerts } from 'state/data-getters';
 
 const emptyList = [];
 
-export default WrappedComponent => {
+export default ( WrappedComponent ) => {
 	class ToUpdate extends Component {
 		static propTypes = {
 			siteId: PropTypes.number,

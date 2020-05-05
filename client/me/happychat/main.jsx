@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { isExternal } from 'lib/url';
+import { isOutsideCalypso } from 'lib/url';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
@@ -29,6 +27,11 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import { Composer } from 'components/happychat/composer';
 import { Notices } from 'components/happychat/notices';
 import { Timeline } from 'components/happychat/timeline';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * React component for rendering a happychat client as a full page
@@ -112,11 +115,11 @@ HappychatPage.propTypes = {
 	twemojiUrl: PropTypes.string,
 };
 
-const isMessageFromCurrentUser = currentUser => ( { user_id, source } ) => {
+const isMessageFromCurrentUser = ( currentUser ) => ( { user_id, source } ) => {
 	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 };
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const currentUser = getCurrentUser( state );
 	return {
 		chatStatus: getHappychatChatStatus( state ),
@@ -124,7 +127,7 @@ const mapState = state => {
 		currentUserEmail: currentUser.email,
 		disabled: ! canUserSendMessages( state ),
 		isCurrentUser: isMessageFromCurrentUser( currentUser ), // see redux-no-bound-selectors eslint-rule
-		isExternalUrl: isExternal,
+		isExternalUrl: isOutsideCalypso,
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),
@@ -141,7 +144,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( HappychatPage ) );
+export default connect( mapState, mapDispatch )( localize( HappychatPage ) );

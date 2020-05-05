@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +15,7 @@ import PropTypes from 'prop-types';
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-const connectUserMentions = WrappedComponent => {
+const connectUserMentions = ( WrappedComponent ) => {
 	class connectUserMentionsFetcher extends React.PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,

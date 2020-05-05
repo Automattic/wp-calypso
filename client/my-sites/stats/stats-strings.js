@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { translate } from 'i18n-calypso';
 
-export default function() {
+export default function () {
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: translate( 'Posts & Pages', { context: 'Stats: title of module' } ),
+		title: translate( 'Posts & pages', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate( 'No posts or pages viewed', {
@@ -52,8 +50,8 @@ export default function() {
 	};
 
 	statsStrings.search = {
-		title: translate( 'Search Terms', { context: 'Stats: title of module' } ),
-		item: translate( 'Search Term', {
+		title: translate( 'Search terms', { context: 'Stats: title of module' } ),
+		item: translate( 'Search term', {
 			context: 'Stats: module row header for search in search terms.',
 		} ),
 		value: translate( 'Views', {
@@ -86,19 +84,19 @@ export default function() {
 		} ),
 	};
 
-	statsStrings.podcastdownloads = {
-		title: translate( 'Podcasts', { context: 'Stats: title of module' } ),
-		item: translate( 'Episodes', { context: 'Stats: module row header for podcast.' } ),
-		value: translate( 'Downloads', {
-			context: 'Stats: module row header for number of downloads per podcast episode.',
+	statsStrings.filedownloads = {
+		title: translate( 'File downloads', { context: 'Stats: title of module' } ),
+		item: translate( 'Files', { context: 'Stats: module row header for file downloads.' } ),
+		value: translate( 'downloads', {
+			context: 'Stats: module row header for number of downloads per file.',
 		} ),
-		empty: translate( 'No episodes downloaded', {
-			context: 'Stats: Info box label when the Podcasts module is empty',
+		empty: translate( 'No files downloaded', {
+			context: 'Stats: Info box label when the file downloads module is empty',
 		} ),
 	};
 
 	statsStrings.tags = {
-		title: translate( 'Tags & Categories', { context: 'Stats: title of module' } ),
+		title: translate( 'Tags & categories', { context: 'Stats: title of module' } ),
 		item: translate( 'Topic', { context: 'Stats: module row header for tags and categories.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per tag or category.',

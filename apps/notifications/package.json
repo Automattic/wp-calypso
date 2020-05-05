@@ -1,0 +1,28 @@
+{
+	"name": "@automattic/notifications",
+	"version": "1.0.0",
+	"description": "WordPress.com Notifications Panel",
+	"main": "dist/build.min.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/notifications"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist",
+		"prebuild": "check-npm-client && yarn run clean",
+		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
+	},
+	"dependencies": {
+		"@automattic/calypso-color-schemes": "^2.1.0",
+		"@automattic/calypso-polyfills": "^1.0.0"
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -57,16 +55,16 @@ const clearOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
 
 // Creates a request object to start performing the actual import
-const importOrder = importerStatus =>
+const importOrder = ( importerStatus ) =>
 	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
 const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
-const apiSuccess = data => {
+const apiSuccess = ( data ) => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
 
 	return data;
 };
-const apiFailure = data => {
+const apiFailure = ( data ) => {
 	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
 
 	return data;
@@ -79,7 +77,7 @@ const setImportLock = ( shouldEnableLock, importerId ) => {
 const lockImport = partial( setImportLock, true );
 const unlockImport = partial( setImportLock, false );
 
-const asArray = a => [].concat( a );
+const asArray = ( a ) => [].concat( a );
 
 function receiveImporterStatus( importerStatus ) {
 	Dispatcher.handleViewAction( {
@@ -119,8 +117,8 @@ export function fetchState( siteId ) {
 		.fetchImporterState( siteId )
 		.then( apiSuccess )
 		.then( asArray )
-		.then( importers => importers.map( fromApi ) )
-		.then( importers => importers.map( receiveImporterStatus ) )
+		.then( ( importers ) => importers.map( fromApi ) )
+		.then( ( importers ) => importers.map( receiveImporterStatus ) )
 		.catch( apiFailure );
 }
 
@@ -221,25 +219,29 @@ export function startImporting( importerStatus ) {
 	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
 }
 
+export const setUploadStartState = ( importerId, filenameOrUrl ) => {
+	const startUploadAction = {
+		type: IMPORTS_UPLOAD_START,
+		filename: filenameOrUrl,
+		importerId,
+	};
+	Dispatcher.handleViewAction( startUploadAction );
+	reduxDispatch( startUploadAction );
+};
+
 export const startUpload = ( importerStatus, file ) => {
 	const {
 		importerId,
 		site: { ID: siteId },
 	} = importerStatus;
 
-	const startUploadAction = {
-		type: IMPORTS_UPLOAD_START,
-		filename: file.name,
-		importerId,
-	};
-	Dispatcher.handleViewAction( startUploadAction );
-	reduxDispatch( startUploadAction );
+	setUploadStartState( importerId, file.name );
 
 	wpcom
 		.uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
-			onprogress: event => {
+			onprogress: ( event ) => {
 				const uploadProgressAction = setUploadProgress( importerId, {
 					uploadLoaded: event.loaded,
 					uploadTotal: event.total,
@@ -250,15 +252,15 @@ export const startUpload = ( importerStatus, file ) => {
 			},
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
-		.then( data => Object.assign( data, { siteId } ) )
+		.then( ( data ) => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( importerData => {
+		.then( ( importerData ) => {
 			const finishUploadAction = createFinishUploadAction( importerId, importerData );
 
 			Dispatcher.handleViewAction( finishUploadAction );
 			reduxDispatch( finishUploadAction );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			const failUploadAction = {
 				type: IMPORTS_UPLOAD_FAILED,
 				importerId,

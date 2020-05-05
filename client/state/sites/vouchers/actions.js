@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -27,9 +25,9 @@ const wpcom = injectHandler( wpcomBase );
  * an object containing the vouchers for
  * a given site have been received.
  *
- * @param {Number} siteId - identifier of the site
- * @param {Object} vouchers - vouchers array gotten from WP REST-API response
- * @returns {Object} the action object
+ * @param {number} siteId - identifier of the site
+ * @param {object} vouchers - vouchers array gotten from WP REST-API response
+ * @returns {object} the action object
  */
 export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
 	type: SITE_VOUCHERS_RECEIVE,
@@ -42,15 +40,15 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  *
  * Return SITE_VOUCHERS_REQUEST action object
  *
- * @param {Number} siteId - side identifier
- * @return {Object} siteId - action object
+ * @param {number} siteId - side identifier
+ * @returns {object} siteId - action object
  */
-export const vouchersRequestAction = siteId => ( {
+export const vouchersRequestAction = ( siteId ) => ( {
 	type: SITE_VOUCHERS_REQUEST,
 	siteId,
 } );
 
-export const vouchersRequestSuccessAction = siteId => ( {
+export const vouchersRequestSuccessAction = ( siteId ) => ( {
 	type: SITE_VOUCHERS_REQUEST_SUCCESS,
 	siteId,
 } );
@@ -92,23 +90,23 @@ export const vouchersAssignRequestFailureAction = ( siteId, serviceType, error )
 /**
  * Fetches vouchers for the given site.
  *
- * @param {Number} siteId - identifier of the site
+ * @param {number} siteId - identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function requestSiteVouchers( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( vouchersRequestAction( siteId ) );
 
 		return wpcom
 			.site( siteId )
 			.creditVouchers()
 			.list()
-			.then( data => {
+			.then( ( data ) => {
 				const { vouchers = [] } = data;
 				dispatch( vouchersRequestSuccessAction( siteId ) );
 				dispatch( vouchersReceiveAction( siteId, vouchers ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersRequestFailureAction( siteId, message ) );
@@ -119,24 +117,24 @@ export function requestSiteVouchers( siteId ) {
 /**
  * Assign a voucher to the given site.
  *
- * @param {Number} siteId - identifier of the site
- * @param {String} serviceType - service type supported: 'google-credits', etc.
+ * @param {number} siteId - identifier of the site
+ * @param {string} serviceType - service type supported: 'google-credits', etc.
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function assignSiteVoucher( siteId, serviceType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( vouchersAssignRequestAction( siteId, serviceType ) );
 
 		return wpcom
 			.site( siteId )
 			.creditVouchers()
 			.assign( serviceType )
-			.then( data => {
+			.then( ( data ) => {
 				const { voucher = {} } = data;
 				dispatch( vouchersAssignRequestSuccessAction( siteId, serviceType ) );
 				dispatch( vouchersAssignReceiveAction( siteId, serviceType, voucher ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersAssignRequestFailureAction( siteId, serviceType, message ) );

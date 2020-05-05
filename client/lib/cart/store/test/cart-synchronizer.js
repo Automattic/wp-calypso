@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -17,7 +15,7 @@ jest.mock( 'lib/user', () => () => {} );
 const TEST_CART_KEY = 91234567890;
 
 const poller = {
-	add: function() {},
+	add: function () {},
 };
 
 describe( 'cart-synchronizer', () => {

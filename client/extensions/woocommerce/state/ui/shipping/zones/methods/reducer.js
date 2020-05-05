@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -47,20 +44,19 @@ export const initialState = {
 	currentlyEditingChangedType: false,
 };
 
-const reducer = {};
-
 /**
  * Gets the temporal ID object that the next created method should have.
- * @param {Object} state Current edit state
- * @return {Object} Object with an "index" property, guaranteed to be unique
+ *
+ * @param {object} state Current edit state
+ * @returns {object} Object with an "index" property, guaranteed to be unique
  */
-const nextCreateId = state => {
+const nextCreateId = ( state ) => {
 	return {
 		index: isEmpty( state.creates ) ? 0 : state.creates[ state.creates.length - 1 ].id.index + 1,
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
+function handleZoneMethodAdd( state, action ) {
 	const { methodType, title } = action;
 	const id = nextCreateId( state );
 	let method = { id, methodType };
@@ -78,9 +74,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 		currentlyEditingChangedType: false,
 		currentlyEditingChanges: method,
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
+function handleZoneMethodOpen( state, action ) {
 	return {
 		...state,
 		currentlyEditingId: action.methodId,
@@ -88,18 +84,18 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
 		currentlyEditingChangedType: false,
 		currentlyEditingNew: false,
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ] = state => {
+function handleZoneMethodCancel( state ) {
 	return {
 		...state,
 		currentlyEditingId: null,
 		currentlyEditingChangedType: false,
 		currentlyEditingNew: false,
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = state => {
+function handleZoneMethodClose( state ) {
 	const {
 		currentlyEditingId,
 		currentlyEditingChanges,
@@ -141,9 +137,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = state => {
 			originalId = method._originalId;
 		}
 
-		state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ]( state, {
-			methodId: currentlyEditingId,
-		} );
+		state = handleZoneMethodRemove( state, { methodId: currentlyEditingId } );
 		return {
 			...state,
 			currentlyEditingId: null,
@@ -165,7 +159,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = state => {
 	}
 
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( currentlyEditingId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them
@@ -189,9 +183,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = state => {
 		currentlyEditingNew: false,
 		[ bucket ]: newBucket,
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
+function handleZoneMethodRemove( state, { methodId } ) {
 	const newState = {
 		...state,
 		currentlyEditingId: null,
@@ -204,9 +198,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => 
 	newState[ bucket ] = reject( state[ bucket ], { id: methodId } );
 
 	return newState;
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
+function handleZoneMethodChangeType( state, action ) {
 	const { methodType, title } = action;
 	if ( ! builtInShippingMethods[ methodType ] ) {
 		return state;
@@ -225,9 +219,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		currentlyEditingChangedType: true,
 		currentlyEditingChanges,
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { title } ) => {
+function handleZoneMethodEditTitle( state, { title } ) {
 	return {
 		...state,
 		currentlyEditingChanges: {
@@ -235,9 +229,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { title } ) =>
 			title,
 		},
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED ] = ( state, { enabled } ) => {
+function handleZoneMethodToggleOpenedEnabled( state, { enabled } ) {
 	return {
 		...state,
 		currentlyEditingChanges: {
@@ -245,9 +239,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED ] = ( state, { e
 			enabled,
 		},
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
+function handleZoneMethodToggleEnabled( state, { methodId, enabled } ) {
 	const bucket = getBucket( { id: methodId } );
 	const index = findIndex( state[ bucket ], { id: methodId } );
 
@@ -277,12 +271,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId
 			...state[ bucket ].slice( index + 1 ),
 		],
 	};
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = (
-	state,
-	{ data, originatingAction: { methodId, method } }
-) => {
+function handleZoneMethodUpdated( state, { data, originatingAction: { methodId, method } } ) {
 	const bucket = getBucket( { id: methodId } );
 	const newState = {
 		...state,
@@ -317,12 +308,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = (
 		}
 	}
 	return newState;
-};
+}
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED ] = (
-	state,
-	{ originatingAction: { methodId } }
-) => {
+function handleZoneMethodDeleted( state, { originatingAction: { methodId } } ) {
 	return {
 		...state,
 		creates: reject( state.creates, { id: methodId } ),
@@ -330,13 +318,32 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED ] = (
 		deletes: reject( state.deletes, { id: methodId } ),
 		currentlyEditingId: null,
 	};
-};
+}
 
-const mainReducer = createReducer( initialState, reducer );
-
-export default ( state, action ) => {
-	if ( reducer[ action.type ] ) {
-		return mainReducer( state, action );
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD:
+			return handleZoneMethodAdd( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN:
+			return handleZoneMethodOpen( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL:
+			return handleZoneMethodCancel( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE:
+			return handleZoneMethodClose( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE:
+			return handleZoneMethodRemove( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE:
+			return handleZoneMethodChangeType( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE:
+			return handleZoneMethodEditTitle( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED:
+			return handleZoneMethodToggleOpenedEnabled( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED:
+			return handleZoneMethodToggleEnabled( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED:
+			return handleZoneMethodUpdated( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED:
+			return handleZoneMethodDeleted( state, action );
 	}
 
 	const { methodId, methodType } = action;
@@ -355,4 +362,4 @@ export default ( state, action ) => {
 	}
 
 	return state;
-};
+} );

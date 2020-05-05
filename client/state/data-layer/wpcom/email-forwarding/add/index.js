@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -20,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const addEmailForward = action => {
+export const addEmailForward = ( action ) => {
 	return http(
 		{
 			method: 'POST',

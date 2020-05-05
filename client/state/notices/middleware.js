@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -55,10 +54,12 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
+} from 'state/action-types';
+import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { purchasesRoot, billingHistoryReceipt } from 'me/purchases/paths';
 
 import {
@@ -88,15 +89,17 @@ export const onBillingReceiptEmailSendFailure = () =>
 export const onBillingReceiptEmailSendSuccess = () =>
 	successNotice( translate( 'Your receipt was sent by email successfully.' ) );
 
-export const onGravatarReceiveImageFailure = action => errorNotice( action.errorMessage );
+export const onGravatarReceiveImageFailure = ( action ) => errorNotice( action.errorMessage );
 
 export const onGravatarUploadRequestFailure = () =>
-	errorNotice( translate( 'Hmm, your new Gravatar was not saved. Please try uploading again.' ) );
+	errorNotice(
+		translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' )
+	);
 
 export const onGravatarUploadRequestSuccess = () =>
-	successNotice( translate( 'You successfully uploaded a new Gravatar — looking sharp!' ) );
+	successNotice( translate( 'You successfully uploaded a new profile photo — looking sharp!' ) );
 
-export const onDeleteInvitesFailure = action => ( dispatch, getState ) => {
+export const onDeleteInvitesFailure = ( action ) => ( dispatch, getState ) => {
 	for ( const inviteId of action.inviteIds ) {
 		const invite = getInviteForSite( getState(), action.siteId, inviteId );
 		dispatch(
@@ -117,7 +120,7 @@ export const onDeleteInvitesSuccess = ( { inviteIds } ) =>
 export const onInviteResendRequestFailure = () =>
 	errorNotice( translate( 'Invitation failed to resend.' ) );
 
-export const onPostDeleteFailure = action => ( dispatch, getState ) => {
+export const onPostDeleteFailure = ( action ) => ( dispatch, getState ) => {
 	const post = getSitePost( getState(), action.siteId, action.postId );
 
 	let message;
@@ -134,7 +137,7 @@ export const onPostDeleteFailure = action => ( dispatch, getState ) => {
 
 const onPostDeleteSuccess = () => successNotice( translate( 'Post successfully deleted' ) );
 
-export const onPostRestoreFailure = action => ( dispatch, getState ) => {
+export const onPostRestoreFailure = ( action ) => ( dispatch, getState ) => {
 	const post = getSitePost( getState(), action.siteId, action.postId );
 
 	let message;
@@ -151,9 +154,9 @@ export const onPostRestoreFailure = action => ( dispatch, getState ) => {
 
 const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully restored' ) );
 
-export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
+export const onPostSaveSuccess = ( { post, savedPost } ) => ( dispatch ) => {
 	switch ( post.status ) {
-		case 'trash':
+		case 'trash': {
 			const noticeId = 'trash_' + savedPost.global_ID;
 			dispatch(
 				successNotice( translate( 'Post successfully moved to trash.' ), {
@@ -166,10 +169,12 @@ export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 				} )
 			);
 			break;
+		}
 
-		case 'publish':
+		case 'publish': {
 			dispatch( successNotice( translate( 'Post successfully published' ) ) );
 			break;
+		}
 	}
 };
 
@@ -374,7 +379,7 @@ export const handlers = {
  * Middleware
  */
 
-export default store => next => action => {
+export default ( store ) => ( next ) => ( action ) => {
 	const rv = next( action );
 
 	if ( ! get( action, 'meta.notices.skip' ) && handlers.hasOwnProperty( action.type ) ) {

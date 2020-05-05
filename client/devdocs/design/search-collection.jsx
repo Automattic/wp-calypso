@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -37,12 +35,21 @@ const shouldShowInstance = ( example, filter, component ) => {
 };
 
 const getReadmeFilePath = ( section, example ) => {
-	switch ( section ) {
-		case 'design':
-			return `/client/components/${ example.props.readmeFilePath }/README.md`;
-		default:
-			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	let path = example.props.readmeFilePath;
+
+	if ( ! path ) {
+		return null;
 	}
+
+	if ( ! path.startsWith( '/' ) ) {
+		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
+	}
+
+	if ( ! path.endsWith( 'README.md' ) ) {
+		path = `${ path }/README.md`;
+	}
+
+	return path;
 };
 
 const Collection = ( {
@@ -55,7 +62,7 @@ const Collection = ( {
 	let showCounter = 0;
 	const summary = [];
 
-	const examples = React.Children.map( children, example => {
+	const examples = React.Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}
@@ -116,11 +123,11 @@ const Collection = ( {
 
 			{ examples.slice( 0, examplesToMount ) }
 
-			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
-				const groupKey = map( exampleGroup, example => example.key ).join( '_' );
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), ( exampleGroup ) => {
+				const groupKey = map( exampleGroup, ( example ) => example.key ).join( '_' );
 				return (
 					<LazyRender key={ groupKey }>
-						{ shouldRender =>
+						{ ( shouldRender ) =>
 							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
 					</LazyRender>

@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { get } from 'lodash';
@@ -12,13 +12,13 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal Dependencies
  **/
+import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import PlanPill from 'components/plans/plan-pill';
-import PlanIcon from 'components/plans/plan-icon';
 import { TYPE_FREE } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
@@ -26,10 +26,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
-import { requestGeoLocation } from 'state/data-getters';
-import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -45,27 +42,41 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
+		const {
+			newPlan,
+			bestValue,
+			planType,
+			popular,
+			selectedPlan,
+			isInSignup,
+			title,
+			translate,
+		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const isCurrent = this.isPlanCurrent();
 
 		return (
 			<header className={ headerClasses }>
 				<div className="plan-features__header-figure">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ planLevelsMatch( selectedPlan, planType ) && (
+				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
 					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 				) }
-				{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-				{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-				{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
-				{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ popular && ! selectedPlan && ! isCurrent && (
+					<PlanPill>{ translate( 'Popular' ) }</PlanPill>
+				) }
+				{ newPlan && ! selectedPlan && ! isCurrent && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+				{ bestValue && ! selectedPlan && ! isCurrent && (
+					<PlanPill>{ translate( 'Best Value' ) }</PlanPill>
+				) }
 			</header>
 		);
 	}
@@ -85,7 +96,7 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
-			<>
+			<span>
 				<header className={ headerClasses }>
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
@@ -95,27 +106,17 @@ export class PlanFeaturesHeader extends Component {
 					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
 					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
-					{ this.isPlanCurrent() && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
-			</>
+			</span>
 		);
 	}
 
 	renderSignupHeader() {
-		const {
-			planType,
-			popular,
-			newPlan,
-			bestValue,
-			title,
-			audience,
-			translate,
-			countryCode,
-		} = this.props;
+		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -131,13 +132,11 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) !== 'monthlyOnly'
-						? this.getIntervalDiscount()
-						: null }
+					{ this.getIntervalDiscount() }
 				</div>
 			</div>
 		);
@@ -298,18 +297,21 @@ export class PlanFeaturesHeader extends Component {
 			currentSitePlan,
 			discountPrice,
 			isJetpack,
+			isSiteAT,
 			planType,
 			rawPrice,
 			showPlanCreditsApplied,
 			translate,
 		} = this.props;
 
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		if (
 			! showPlanCreditsApplied ||
 			! availableForPurchase ||
 			planMatches( planType, { type: TYPE_FREE } ) ||
 			planType === currentSitePlan.productSlug ||
-			isJetpack ||
+			isJetpackNotAtomic ||
 			! discountPrice ||
 			discountPrice >= rawPrice
 		) {
@@ -399,8 +401,8 @@ PlanFeaturesHeader.defaultProps = {
 	siteSlug: '',
 };
 
-export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
-	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
+	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
 
@@ -410,6 +412,5 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
-		countryCode: requestGeoLocation().data || 'US',
 	};
 } )( localize( PlanFeaturesHeader ) );

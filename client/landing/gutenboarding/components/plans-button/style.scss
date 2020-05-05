@@ -1,0 +1,18 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+.plans-button.components-button {
+	&:disabled,
+	&[aria-disabled='true'] {
+		opacity: 1;
+
+		&:hover {
+			color: var( --studio-black );
+		}
+	}
+}
+
+.plans-button__jetpack-logo {
+	@include break-mobile {
+		margin-left: 8px;
+	}
+}

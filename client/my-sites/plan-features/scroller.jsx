@@ -3,14 +3,14 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { clamp, inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const MIN_CELL_WIDTH = 240; // px
 const SIDE_PANE_RATIO = 0.12; // 12% of full width
@@ -56,7 +56,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 	}
 
-	setWrapperRef = element => {
+	setWrapperRef = ( element ) => {
 		this.scrollWrapperDOM = element;
 		if ( element ) {
 			element.addEventListener( 'scroll', this.handleScroll );
@@ -64,13 +64,13 @@ export default class PlanFeaturesScroller extends PureComponent {
 		}
 	};
 
-	scrollLeft = event => {
+	scrollLeft = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.scrollBy( -1 );
 	};
 
-	scrollRight = event => {
+	scrollRight = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.scrollBy( 1 );
@@ -101,8 +101,8 @@ export default class PlanFeaturesScroller extends PureComponent {
 		const step = ( to - from ) / 200;
 		let startTime = null;
 
-		return new Promise( resolve => {
-			const animate = timestamp => {
+		return new Promise( ( resolve ) => {
+			const animate = ( timestamp ) => {
 				if ( ! startTime ) {
 					startTime = timestamp;
 				}
@@ -123,12 +123,12 @@ export default class PlanFeaturesScroller extends PureComponent {
 	}
 
 	handleWindowResize = () => {
-		cancelAnimationFrame( this.updateViewportWidthRaf );
+		window.cancelAnimationFrame( this.updateViewportWidthRaf );
 		this.updateViewportWidthRaf = window.requestAnimationFrame( this.updateViewportWidth );
 	};
 
 	handleScroll = () => {
-		cancelAnimationFrame( this.updateScrollPositionRaf );
+		window.cancelAnimationFrame( this.updateScrollPositionRaf );
 		this.updateScrollPositionRaf = window.requestAnimationFrame( this.updateScrollPosition );
 	};
 
@@ -186,14 +186,14 @@ export default class PlanFeaturesScroller extends PureComponent {
 			do {
 				visibleCount--;
 				cellWidth = ( vpw * ( 1 - SIDE_PANE_RATIO * 2 ) ) / visibleCount - borderSpacing;
-			} while ( cellWidth < MIN_CELL_WIDTH );
+			} while ( cellWidth < MIN_CELL_WIDTH && visibleCount > 1 );
 
 			paneWidth = SIDE_PANE_RATIO * vpw;
 			scrollerWidth = ( cellWidth + borderSpacing ) * planCount + borderSpacing;
 			scrollerPadding = `0 ${ paneWidth - borderSpacing / 2 }px`;
 			visibleIndex = round( scrollPos / ( cellWidth + borderSpacing ) );
 
-			styleWeights = range( 0, planCount ).map( index => {
+			styleWeights = range( 0, planCount ).map( ( index ) => {
 				const pos = index - scrollPos / ( cellWidth + borderSpacing );
 
 				if ( inRange( pos, -0.5, visibleCount - 0.5 ) ) {
@@ -221,7 +221,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		};
 	}
 
-	renderStyle( { styleWeights, borderSpacing, paneWidth, visibleIndex, visibleCount } ) {
+	renderStyle( { styleWeights, visibleIndex, visibleCount } ) {
 		const { cellSelector, planCount } = this.props;
 
 		if ( ! styleWeights ) {
@@ -230,9 +230,6 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 		return (
 			<>
-				<style>
-					{ `.plan-features__header::before { left: ${ -paneWidth - borderSpacing / 2 }px }` }
-				</style>
 				{ styleWeights.map( ( weight, index ) => {
 					const selector = `${ cellSelector }:nth-child(${ index + 1 })`;
 					const opacity = round( weight * ( 1 - MIN_PLAN_OPACITY ) + MIN_PLAN_OPACITY, 2 );
@@ -269,7 +266,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 		return (
 			<div className="plan-features__scroll-indicator">
-				{ range( 0, this.props.planCount ).map( index => (
+				{ range( 0, this.props.planCount ).map( ( index ) => (
 					<span
 						key={ index }
 						className={ classNames( dotClass, { 'is-highlighted': inRange( index, start, end ) } ) }
@@ -290,13 +287,13 @@ export default class PlanFeaturesScroller extends PureComponent {
 		const disabledLeft = 0 === vars.visibleIndex;
 		const disabledRight = planCount === vars.visibleIndex + vars.visibleCount;
 		const containerClass = classNames( 'plan-features__scroller-container', {
-			'scroll-snap-disabled': this.state.scrollSnapDisabled,
+			'scroll-snap-enabled': ! this.state.scrollSnapDisabled,
 		} );
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 			<div className={ containerClass }>
-				<style>{ `.signup__step.is-plans { overflow-x: hidden; }` }</style>
+				<style>{ `[class^="signup__step is-plans"]  { overflow-x: hidden; }` }</style>
 				{ this.renderStyle( vars ) }
 				<div
 					className={ classNames( 'plan-features__scroll-left', { disabled: disabledLeft } ) }
@@ -312,7 +309,11 @@ export default class PlanFeaturesScroller extends PureComponent {
 						<Gridicon icon="arrow-left" size={ 24 } />
 					</Button>
 				</div>
-				<div className="plan-features__scroller-wrapper" ref={ this.setWrapperRef }>
+				<div
+					className="plan-features__scroller-wrapper"
+					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2 }px` } }
+					ref={ this.setWrapperRef }
+				>
 					<div
 						className="plan-features__scroller"
 						style={ { width: vars.scrollerWidth, padding: vars.scrollerPadding } }

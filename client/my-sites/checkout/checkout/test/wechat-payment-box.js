@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -46,7 +45,7 @@ jest.mock( 'lib/cart-values', () => ( {
 
 const defaultProps = {
 	cart: { total_cost: 100, products: [] },
-	translate: x => x,
+	translate: ( x ) => x,
 	countriesList: [
 		{
 			code: 'US',
@@ -59,14 +58,14 @@ const defaultProps = {
 	],
 	paymentType: 'default',
 	transaction: {},
-	redirectTo: x => x,
+	redirectTo: ( x ) => x,
 	selectedSite: { slug: 'example.com' },
-	showErrorNotice: x => x,
-	showInfoNotice: x => x,
-	createRedirect: x => x,
+	showErrorNotice: ( x ) => x,
+	showInfoNotice: ( x ) => x,
+	createRedirect: ( x ) => x,
 	pending: false,
 	failure: false,
-	reset: x => x,
+	reset: ( x ) => x,
 	redirectUrl: null,
 	orderId: null,
 	isMobile: false,
@@ -84,11 +83,11 @@ describe( 'WechatPaymentBox', () => {
 			'.payment-box__payment-buttons .checkout__secure-payment .checkout__secure-payment-content [icon="lock"]',
 			'Localized(CheckoutTerms)',
 			'Localized(SubscriptionText)',
-			'Localized(CartToggle)',
+			'Connect(CartToggle)',
 			'Connect(Localized(CartCoupon))',
 		];
 
-		rules.forEach( rule => {
+		rules.forEach( ( rule ) => {
 			test( rule, () => {
 				expect( wrapper.find( rule ) ).toHaveLength( 1 );
 			} );
@@ -113,7 +112,7 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		otherPlans.forEach( product_slug => {
+		otherPlans.forEach( ( product_slug ) => {
 			test( 'renders if only non-business plan products are in the cart', () => {
 				const props = {
 					...defaultProps,
@@ -134,7 +133,7 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		];
 
-		eligiblePlans.forEach( product_slug => {
+		eligiblePlans.forEach( ( product_slug ) => {
 			test( 'renders if any eligible WP.com plan is in the cart', () => {
 				const props = {
 					...defaultProps,
@@ -149,7 +148,7 @@ describe( 'WechatPaymentBox', () => {
 			} );
 		} );
 
-		eligiblePlans.forEach( product_slug => {
+		eligiblePlans.forEach( ( product_slug ) => {
 			test( 'does not render if presaleChatAvailable is false', () => {
 				const props = {
 					...defaultProps,

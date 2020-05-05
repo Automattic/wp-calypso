@@ -1,0 +1,14 @@
+.logged-out-form__links {
+	margin: 0 auto;
+	max-width: 330px;
+	text-align: center;
+
+	&::before {
+		content: '';
+		display: block;
+		width: 80px;
+		background: rgba( var( --color-surface-rgb ), 0.3 );
+		height: 2px;
+		margin: 0 auto 8px;
+	}
+}

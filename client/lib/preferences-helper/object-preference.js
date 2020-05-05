@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ class ObjectPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				{ Object.keys( value ).map( property => (
+				{ Object.keys( value ).map( ( property ) => (
 					<li key={ property }>{ property + ': ' + JSON.stringify( value[ property ] ) }</li>
 				) ) }
 			</ul>
@@ -27,7 +25,4 @@ class ObjectPreference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	null
-)( localize( ObjectPreference ) );
+export default connect( null, null )( localize( ObjectPreference ) );

@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
-import { READER_TEAMS_RECEIVE } from 'state/action-types';
+import { READER_TEAMS_RECEIVE } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };

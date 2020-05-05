@@ -10,7 +10,7 @@
 
 .theme-setup {
 	.is-placeholder {
-		@include placeholder;
+		@include placeholder();
 	}
 }
 

@@ -1,29 +1,28 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
+import { isMobile } from '@automattic/viewport';
 import { head, find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import userSettings from 'lib/user-settings';
-import { isMobile } from 'lib/viewport';
+import { postRequest } from 'lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 	ENABLE_TRANSLATOR_KEY,
-} from './constants';
+} from 'lib/i18n-utils/constants';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
- * @param {String} locale user's localeSlug
- * @param {Object} localeVariant user's localeVariant slug (if any)
- * @returns {Boolean} whether the CT can be displayed
+ *
+ * @param {string} locale user's localeSlug
+ * @param {object} localeVariant user's localeVariant slug (if any)
+ * @returns {boolean} whether the CT can be displayed
  */
 export function canDisplayCommunityTranslator(
 	locale = userSettings.getSetting( 'language' ),
@@ -51,6 +50,7 @@ export function canDisplayCommunityTranslator(
  * Checks whether the CT is enabled, that is, if
  * 1) the user has chosen to enable it,
  * 2) it can be displayed based on the user's language and device settings
+ *
  * @returns {Bool} whether the CT should be enabled
  */
 export function isCommunityTranslatorEnabled() {
@@ -69,33 +69,14 @@ export function isCommunityTranslatorEnabled() {
 }
 
 /**
- * Sends the POST request
- * @param {String} glotPressUrl API url
- * @param {String} postFormData post data url param string
- * @returns {Object} request object
- */
-export function postRequest( glotPressUrl, postFormData ) {
-	return (
-		request
-			.post( glotPressUrl )
-			.withCredentials()
-			.send( postFormData )
-			// .then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-			.then( response => response.body )
-			.catch( error => {
-				throw error; // pass on the error so the call sites can handle it accordingly.
-			} )
-	);
-}
-
-/**
  * Prepares and triggers a request to get GP string
- * @param {Object} locale and item from `languages` array in config/_shared.json
- * @param {Object} originalStringData GP string information { singular, context, plural }
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {String} project GP project
+ *
+ * @param {object} locale and item from `languages` array in config/_shared.json
+ * @param {object} originalStringData GP string information { singular, context, plural }
+ * @param {string} apiBaseUrl Base API url to get translations
+ * @param {string} project GP project
  * @param {Function} post see postRequest()
- * @returns {Object} request object
+ * @returns {object} request object
  */
 export function getSingleTranslationData(
 	locale,
@@ -112,20 +93,21 @@ export function getSingleTranslationData(
 		`&original_strings=${ encodeURIComponent( JSON.stringify( [ originalStringData ] ) ) }`,
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressDataEntries =>
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressDataEntries ) =>
 		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
 	);
 }
 
 /**
  * Prepares and triggers a request to get GP string
- * @param {String} originalId GP original string id
- * @param {Object} translationObject GP string information { singular, context, plural }
- * @param {Object} locale and item from `languages` array in config/_shared.json
- * @param {String} apiBaseUrl Base API url to get translations
- * @param {String} project GP project
+ *
+ * @param {string} originalId GP original string id
+ * @param {object} translationObject GP string information { singular, context, plural }
+ * @param {object} locale and item from `languages` array in config/_shared.json
+ * @param {string} apiBaseUrl Base API url to get translations
+ * @param {string} project GP project
  * @param {Function} post see postRequest()
- * @returns {Object} request object
+ * @returns {object} request object
  */
 export function submitTranslation(
 	originalId,
@@ -141,21 +123,22 @@ export function submitTranslation(
 		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
 		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
 		...Object.keys( translationObject ).map(
-			key =>
+			( key ) =>
 				translationObject[ key ] &&
 				`&translation[${ originalId }][]=${ encodeURIComponent( translationObject[ key ] ) }`
 		),
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressData =>
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressData ) =>
 		normalizeDetailsFromTranslationData( glotPressData )
 	);
 }
 
 /**
  * Normalizes raw data from GP API
- * @param {Object} glotPressData raw API response
- * @returns {Object} normalized data
+ *
+ * @param {object} glotPressData raw API response
+ * @returns {object} normalized data
  */
 export function normalizeDetailsFromTranslationData( glotPressData ) {
 	const translationDetails = find( glotPressData.translations, {
@@ -173,10 +156,11 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 
 /**
  * Normalizes raw data from GP API
- * @param {String} originalId GP original string id
- * @param {Object} locale and item from `languages` array in config/_shared.json
- * @param {String} project GP project
- * @returns {String} the permalink to the translation on GlotPress
+ *
+ * @param {string} originalId GP original string id
+ * @param {object} locale and item from `languages` array in config/_shared.json
+ * @param {string} project GP project
+ * @returns {string} the permalink to the translation on GlotPress
  */
 export function getTranslationPermaLink( originalId, locale, project = GP_PROJECT ) {
 	if ( ! originalId || ! locale ) {

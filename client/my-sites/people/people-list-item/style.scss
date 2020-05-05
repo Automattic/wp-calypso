@@ -23,33 +23,6 @@
 	}
 }
 
-.people-list-item__checkbox[type=checkbox] {
-	margin-top: 0;
-	position: absolute;
-	top: 48px;
-	left: 2px;
-
-	&::after { // Making tap area larger
-		content: '';
-		position: absolute;
-		top: -20px;
-		left: -19px;
-		width: 56px;
-		height: 55px;
-	}
-}
-
-.people-list-item__label {
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: z-index( 'root', '.people-list-item__label' );
-	cursor: pointer;
-}
-
 .people-list-item__profile-container {
 	display: block;
 	flex-grow: 1;
@@ -126,7 +99,7 @@
 	&.is-success {
 		background-color: var( --color-neutral-0 );
 		border: 0;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		cursor: default;
 	}
 }

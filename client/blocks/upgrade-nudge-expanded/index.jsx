@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, ProductIcon } from '@automattic/components';
 import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
@@ -26,7 +26,6 @@ import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import PlanIcon from 'components/plans/plan-icon';
 
 /**
  * Style dependencies
@@ -54,19 +53,14 @@ class UpgradeNudgeExpanded extends Component {
 	}
 
 	render() {
-		//Display only if upgrade path available
-		if (
-			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor &&
-				! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
-		) {
+		if ( ! this.props.currentPlan && ! this.props.forceDisplay ) {
 			return null;
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
 		const features = this.props.planConstants
-			.getPromotedFeatures()
-			.filter( feature => feature !== this.props.highlightedFeature )
+			.getPlanCompareFeatures()
+			.filter( ( feature ) => feature !== this.props.highlightedFeature )
 			.slice( 0, 6 );
 
 		return (
@@ -92,7 +86,7 @@ class UpgradeNudgeExpanded extends Component {
 								{ getFeatureTitle( this.props.highlightedFeature ) }
 							</PlanCompareCardItem>
 						) }
-						{ features.map( feature => (
+						{ features.map( ( feature ) => (
 							<PlanCompareCardItem key={ feature }>
 								{ getFeatureTitle( feature ) }
 							</PlanCompareCardItem>
@@ -103,10 +97,12 @@ class UpgradeNudgeExpanded extends Component {
 					{ this.props.title && (
 						<div className="upgrade-nudge-expanded__title">
 							<div className="upgrade-nudge-expanded__title-plan">
-								<PlanIcon
-									plan={ this.props.plan.product_slug }
-									className="upgrade-nudge-expanded__title-plan-icon"
-								/>
+								{ this.props.plan.product_slug && (
+									<ProductIcon
+										slug={ this.props.plan.product_slug }
+										className="upgrade-nudge-expanded__title-plan-icon"
+									/>
+								) }
 							</div>
 							<p className="upgrade-nudge-expanded__title-message">{ this.props.title }</p>
 						</div>
@@ -154,6 +150,7 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
+	forceDisplay: PropTypes.bool,
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 
@@ -164,9 +161,6 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } );
 
-const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeNudgeExpanded ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

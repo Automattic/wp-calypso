@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -7,26 +6,32 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = createReducer(
-	[],
-	{
-		[ READER_TEAMS_RECEIVE ]: ( state, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case READER_TEAMS_RECEIVE: {
 			if ( action.error ) {
 				return state;
 			}
 			return get( action, [ 'payload', 'teams' ], state );
-		},
-	},
-	itemsSchema
-);
+		}
+	}
 
-export const isRequesting = createReducer( false, {
-	[ READER_TEAMS_REQUEST ]: () => true,
-	[ READER_TEAMS_RECEIVE ]: () => false,
+	return state;
+} );
+
+export const isRequesting = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case READER_TEAMS_REQUEST:
+			return true;
+		case READER_TEAMS_RECEIVE:
+			return false;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

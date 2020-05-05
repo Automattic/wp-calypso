@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AfterTheDeadline from './after-the-deadline';
 import Latex from './latex';
 import Shortcodes from './shortcodes';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard } from '@automattic/components';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
@@ -51,13 +47,6 @@ const Composing = ( {
 
 			{ siteIsJetpack && (
 				<Fragment>
-					<AfterTheDeadline
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
-					/>
 					<Latex
 						fields={ fields }
 						handleToggle={ handleToggle }
@@ -104,6 +93,6 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) )( Composing );

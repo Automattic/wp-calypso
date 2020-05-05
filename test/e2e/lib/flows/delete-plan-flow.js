@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,6 +5,7 @@ import ManagePurchasePage from '../pages/manage-purchase-page';
 import CancelPurchasePage from '../pages/cancel-purchase-page';
 import * as SlackNotifier from '../slack-notifier';
 import NavBarComponent from '../components/nav-bar-component';
+import NoticesComponent from '../components/notices-component';
 import ProfilePage from '../pages/profile-page';
 import PurchasesPage from '../pages/purchases-page';
 
@@ -40,9 +39,16 @@ export default class DeletePlanFlow {
 				await cancelPurchasePage.chooseCancelPlanAndDomain();
 			}
 			await cancelPurchasePage.clickCancelPurchase();
-			await cancelPurchasePage.completeCancellationSurvey();
-			return await cancelPurchasePage.waitAndDismissSuccessNotice();
-		} )().catch( err => {
+
+			if ( planName === 'theme' ) {
+				await cancelPurchasePage.completeThemeCancellation();
+			} else {
+				await cancelPurchasePage.completeCancellationSurvey();
+			}
+
+			const noticesComponent = await NoticesComponent.Expect( this.driver );
+			return await noticesComponent.dismissNotice();
+		} )().catch( ( err ) => {
 			SlackNotifier.warn(
 				`There was an error in the hooks that clean up the test account (delete plan) but since it is cleaning up we really don't care: '${ err }'`,
 				{ suppressDuplicateMessages: true }

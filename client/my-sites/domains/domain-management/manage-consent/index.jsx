@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,16 +10,14 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import Button from 'components/button';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, requestGdprConsentManagementLink } from 'lib/domains';
 import SectionHeader from 'components/section-header';
-import { requestGdprConsentManagementLink } from 'lib/upgrades/actions';
 
 class ManageConsent extends React.Component {
 	static propTypes = {
@@ -105,7 +101,7 @@ class ManageConsent extends React.Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
+		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				this.setState( { error: error.message, success: false, submitting: false } );
 			} else {

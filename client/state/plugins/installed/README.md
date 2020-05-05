@@ -25,7 +25,7 @@ A module for managing installed plugins on connected sites.
 
 ## Selectors
 
-### `isRequesting( state: Object, siteId: Number|String )`
+### `isRequesting( state: Object, siteId: number|string )`
 
 ### `isRequestingForSites( state: Object, sites: Array )`
 
@@ -35,11 +35,11 @@ Get plugins installed on a list of sites (can also be just one site, but it shou
 
 ### `getPluginsWithUpdates( state: Object, siteIds: Array )`
 
-### `getStatusForPlugin( state: Object, siteId: Number|String, pluginId: String )`
+### `getStatusForPlugin( state: Object, siteId: number|string, pluginId: String )`
 
 Get the most recent status for a plugin action (including "inProgress" for currently-running actions).
 
-### `isPluginDoingAction( state: Object, siteId: Number|String, pluginId: String )`
+### `isPluginDoingAction( state: Object, siteId: number|string, pluginId: String )`
 
 Checks if this site/plugin is busy doing an action.
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,13 +40,21 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async clickMySites() {
 		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
-		return await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
+		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			by.css( '.sidebar__menu-wrapper' )
+		);
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			by.css( '.is-group-sites' )
+		);
 	}
 	hasUnreadNotifications() {
 		return this.driver
 			.findElement( by.css( '.masterbar__item-notifications' ) )
 			.getAttribute( 'class' )
-			.then( classNames => {
+			.then( ( classNames ) => {
 				return classNames.includes( 'has-unread' );
 			} );
 	}
@@ -80,19 +86,6 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const present = await driverHelper.isElementPresent( self.driver, guidedToursDialogSelector );
 		if ( present === true ) {
 			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
-		}
-	}
-
-	async dismissStatsPopup() {
-		const statsPopupSelector = by.css( '.first-view.is-visible' );
-
-		const isPresent = await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			statsPopupSelector,
-			2000
-		);
-		if ( isPresent === true ) {
-			return await driverHelper.clickWhenClickable( self.driver, statsPopupSelector );
 		}
 	}
 }

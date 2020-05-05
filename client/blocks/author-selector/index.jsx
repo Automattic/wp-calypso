@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -38,7 +37,7 @@ class AuthorSelector extends React.Component {
 
 	static defaultProps = {
 		showAuthorMenu: false,
-		onClose: function() {},
+		onClose: function () {},
 		allowSingleUser: false,
 		popoverPosition: 'bottom left',
 	};
@@ -76,7 +75,7 @@ class AuthorSelector extends React.Component {
 		);
 	}
 
-	_updateSearch = searchTerm => {
+	_updateSearch = ( searchTerm ) => {
 		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
 		this.setState( {
 			search: searchTerm,

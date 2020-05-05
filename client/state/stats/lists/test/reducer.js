@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items as unwrappedItems, requests } from '../reducer';
+import reducer, { items, requests } from '../reducer';
 import {
 	DESERIALIZE,
 	SERIALIZE,
@@ -17,10 +15,7 @@ import {
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 /**
  * Test Data
@@ -43,7 +38,7 @@ const streakQuery = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const streakQueryDos = { startDate: '2014-06-01', endDate: '2015-06-01' };
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

@@ -20,7 +20,7 @@ export function getEditHomeUrl( siteSlug ) {
 }
 
 export function isEligibleForPageBuilder( segment, flowName ) {
-	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding-for-business' === flowName;
+	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding' === flowName;
 }
 
 export function isBlockEditorSectionInTest( state ) {
@@ -29,11 +29,12 @@ export function isBlockEditorSectionInTest( state ) {
 
 /**
  * This is only to be used once there is a `site` object post-signup
+ *
  * @param {object} state  Redux state
  * @param {number} siteId Current site ID
  * @returns {bool}        Is the site qualified?
  */
 export function siteQualifiesForPageBuilder( state, siteId ) {
 	const segment = getSiteOption( state, siteId, 'site_segment' );
-	return isEligibleForPageBuilder( segment, 'onboarding-for-business' );
+	return isEligibleForPageBuilder( segment, 'onboarding' );
 }

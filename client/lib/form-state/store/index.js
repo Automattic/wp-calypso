@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -57,7 +55,7 @@ class Store {
 	}
 
 	_runActionCreators( name, ...rest ) {
-		this._modules.forEach( module => {
+		this._modules.forEach( ( module ) => {
 			if ( ! module[ name ] ) {
 				return;
 			}

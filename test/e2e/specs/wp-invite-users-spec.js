@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,33 +40,34 @@ const emailClient = new EmailClient( inviteInboxId );
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Invites:  (${ screenSize })`, function() {
+describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Inviting new user as an Editor: @parallel @jetpack', function() {
+	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
-		step( 'Can log in and navigate to Invite People page', async function() {
+		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 			const peoplePage = await PeoplePage.Expect( driver );
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function() {
+		step( 'Can invite a new user as an editor and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -76,10 +75,10 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 		} );
 
-		step( 'Can see an invitation email received for the invite', async function() {
+		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -88,7 +87,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can sign up as new user for the blog via invite link', async function() {
+		step( 'Can sign up as new user for the blog via invite link', async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 
 			await driver.get( acceptInviteURL );
@@ -103,18 +102,18 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await acceptInvitePage.waitUntilNotVisible();
 		} );
 
-		step( 'User has been added as Editor', async function() {
+		step( 'User has been added as Editor', async function () {
 			await PostsPage.Expect( driver );
 
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Editor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
 			);
 		} );
 
-		step( 'As the original user can see and remove new user', async function() {
+		step( 'As the original user can see and remove new user', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -130,7 +129,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.selectOnlyPersonDisplayed();
 			const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 			await editTeamMemberPage.removeUserAndDeleteContent();
-			const displayed = await peoplePage.successNoticeDisplayed();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert.strictEqual(
 				displayed,
 				true,
@@ -138,37 +138,37 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'As the invited user, I am no longer an editor on the site', async function() {
+		step( 'As the invited user, I am no longer an editor on the site', async function () {
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
 			await ReaderPage.Expect( driver );
 
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
-			await navBarComponent.dismissStatsPopup();
 			return await NoSitesComponent.Expect( driver );
 		} );
 	} );
 
-	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function() {
+	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditor' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
-		step( 'Can log in and navigate to Invite People page', async function() {
+		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 			const peoplePage = await PeoplePage.Expect( driver );
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can Invite a New User as an Editor, then revoke the invite', async function() {
+		step( 'Can Invite a New User as an Editor, then revoke the invite', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -179,14 +179,14 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const revokePage = await RevokePage.Expect( driver );
 			await revokePage.revokeUser();
-			const sent = await revokePage.revokeSent();
+			const sent = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert( sent, 'The sent confirmation message was not displayed' );
 		} );
 
-		step( 'Can see an invitation email received for the invite', async function() {
+		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -195,7 +195,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can open the invite page and see it has been revoked', async function() {
+		step( 'Can open the invite page and see it has been revoked', async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 
 			await driver.get( acceptInviteURL );
@@ -207,7 +207,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 	} );
 
-	describe( 'Inviting New User as a Viewer of a WordPress.com Private Site: @parallel', function() {
+	describe( 'Inviting New User as a Viewer of a WordPress.com Private Site: @parallel', function () {
 		const newUserName = 'e2eflowtestingviewer' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		const siteName = config.get( 'privateSiteForInvites' );
@@ -215,24 +215,25 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		let removedViewerFlag = true;
 		let acceptInviteURL = '';
 
-		step( 'As an anonymous user I can not see a private site', async function() {
+		step( 'As an anonymous user I can not see a private site', async function () {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
 		} );
 
-		step( 'Can log in and navigate to Invite People page', async function() {
+		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 			const peoplePage = await PeoplePage.Expect( driver );
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function() {
+		step( 'Can invite a new user as an editor and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
 				'viewer',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -240,10 +241,10 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 		} );
 
-		step( 'Can see an invitation email received for the invite', async function() {
+		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -252,7 +253,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can sign up as new user for the blog via invite link', async function() {
+		step( 'Can sign up as new user for the blog via invite link', async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 
 			await driver.get( acceptInviteURL );
@@ -268,9 +269,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await acceptInvitePage.waitUntilNotVisible();
 		} );
 
-		step( 'Can see user has been added as a Viewer', async function() {
+		step( 'Can see user has been added as a Viewer', async function () {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = await noticesComponent.followMessageTitle();
+			const followMessageDisplayed = await noticesComponent.getNoticeContent();
 			assert.strictEqual(
 				true,
 				followMessageDisplayed.includes( 'viewer' ),
@@ -281,7 +282,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await ViewBlogPage.Visit( driver, siteUrl );
 		} );
 
-		step( 'Can see new user added and can be removed', async function() {
+		step( 'Can see new user added and can be removed', async function () {
 			await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -302,7 +303,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can not see the site - see the private site log in page', async function() {
+		step( 'Can not see the site - see the private site log in page', async function () {
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
 
@@ -310,7 +311,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
 		} );
 
-		after( async function() {
+		after( async function () {
 			if ( ! removedViewerFlag ) {
 				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
 				const peoplePage = await PeoplePage.Expect( driver );
@@ -326,7 +327,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingcontributor' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		const reviewPostTitle = dataHelper.randomPhrase();
@@ -335,20 +336,21 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			'We are all in the gutter, but some of us are looking at the stars.\n— Oscar Wilde, Lady Windermere’s Fan';
 		let acceptInviteURL = '';
 
-		step( 'Can log in and navigate to Invite People page', async function() {
+		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 			const peoplePage = await PeoplePage.Expect( driver );
 			return await peoplePage.inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function() {
+		step( 'Can invite a new user as an editor and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
 				'contributor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -356,10 +358,10 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 		} );
 
-		step( 'Can see an invitation email received for the invite', async function() {
+		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -368,7 +370,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can sign up as new user for the blog via invite link', async function() {
+		step( 'Can sign up as new user for the blog via invite link', async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 
 			await driver.get( acceptInviteURL );
@@ -383,17 +385,17 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await acceptInvitePage.waitUntilNotVisible();
 		} );
 
-		step( 'Can see a notice welcoming the new user as an contributor', async function() {
+		step( 'Can see a notice welcoming the new user as an contributor', async function () {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
 			);
 		} );
 
-		step( 'New user can create a new post', async function() {
+		step( 'New user can create a new post', async function () {
 			const navbarComponent = await NavBarComponent.Expect( driver );
 			await navbarComponent.dismissGuidedTours();
 			await navbarComponent.clickCreateNewPost();
@@ -403,14 +405,14 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await gEditorComponent.enterText( postQuote );
 		} );
 
-		step( 'New user can submit the new post for review as pending status', async function() {
+		step( 'New user can submit the new post for review as pending status', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.submitForReview();
 			await gEditorComponent.ensureSaved();
 			return await gEditorComponent.closeEditor();
 		} );
 
-		step( 'New user can see post on posts page in pending status', async function() {
+		step( 'New user can see post on posts page in pending status', async function () {
 			const postsPage = await PostsPage.Expect( driver );
 			await postsPage.viewMyPosts();
 			await postsPage.viewDrafts();
@@ -419,7 +421,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return assert( pending, 'The pending post was not displayed on the posts page' );
 		} );
 
-		step( 'As the original user, can see new user added to site', async function() {
+		step( 'As the original user, can see new user added to site', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 			const peoplePage = await PeoplePage.Expect( driver );
 			await peoplePage.selectTeam();
@@ -434,13 +436,14 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step(
 			'As the original user, I can change the contributor user to an author user',
-			async function() {
+			async function () {
 				const peoplePage = await PeoplePage.Expect( driver );
 
 				await peoplePage.selectOnlyPersonDisplayed();
 				const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 				await editTeamMemberPage.changeToNewRole( 'author' );
-				const displayed = await editTeamMemberPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert(
 					displayed,
 					'The update successful notice was not shown on the edit team member page.'
@@ -448,7 +451,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			}
 		);
 
-		step( 'As the invited user, I can now publish a post', async function() {
+		step( 'As the invited user, I can now publish a post', async function () {
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
 			await ReaderPage.Expect( driver );
@@ -464,24 +467,25 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 	} );
 
 	// Disabled pending wp-calypso issue 26178
-	xdescribe( 'Inviting New User as a Follower: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as a Follower: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingfollower' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
-		step( 'Can log in and navigate to Invite People page', async function() {
+		step( 'Can log in and navigate to Invite People page', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 			await new PeoplePage( driver ).inviteUser();
 		} );
 
-		step( 'Can invite a new user as an editor and see its pending', async function() {
+		step( 'Can invite a new user as an editor and see its pending', async function () {
 			const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 			await invitePeoplePage.inviteNewUser(
 				newInviteEmailAddress,
 				'follower',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -489,10 +493,10 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 		} );
 
-		step( 'Can see an invitation email received for the invite', async function() {
+		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notStrictEqual(
 				acceptInviteURL,
@@ -501,7 +505,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can sign up as new user for the blog via invite link', async function() {
+		step( 'Can sign up as new user for the blog via invite link', async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 
 			await driver.get( acceptInviteURL );
@@ -516,9 +520,9 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			return await acceptInvitePage.waitUntilNotVisible();
 		} );
 
-		step( 'User has been added as a Follower', async function() {
+		step( 'User has been added as a Follower', async function () {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = noticesComponent.followMessageTitle();
+			const followMessageDisplayed = noticesComponent.getNoticeContent();
 			assert(
 				followMessageDisplayed.includes( 'following' ),
 				`The follow message '${ followMessageDisplayed }' does not include 'following'`
@@ -526,7 +530,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await new ReaderPage( driver ).displayed();
 		} );
 
-		step( 'As the original user, can see new user added to site', async function() {
+		step( 'As the original user, can see new user added to site', async function () {
 			await new LoginFlow( driver ).loginAndSelectPeople();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -540,7 +544,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			);
 		} );
 
-		step( 'Can remove the email follower from the site', async function() {
+		step( 'Can remove the email follower from the site', async function () {
 			const peoplePage = await PeoplePage.Expect( driver );
 			await peoplePage.removeOnlyEmailFollowerDisplayed();
 			await peoplePage.searchForUser( newUserName );
@@ -553,7 +557,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.cancelSearch();
 		} );
 
-		step( 'Can remove the follower account from the site', async function() {
+		step( 'Can remove the follower account from the site', async function () {
 			const peoplePage = new PeoplePage.Expect( driver );
 			await peoplePage.selectFollowers();
 			await peoplePage.waitForSearchResults();

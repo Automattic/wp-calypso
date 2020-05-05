@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -37,7 +35,7 @@ export class JetpackRemoteInstallNotices extends Component {
 		url: PropTypes.string,
 	};
 
-	trackManualInstallClick = noticeType => () => {
+	trackManualInstallClick = ( noticeType ) => () => {
 		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click', {
 			notice_type: noticeType,
 		} );
@@ -110,7 +108,7 @@ export class JetpackRemoteInstallNotices extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
 		return {

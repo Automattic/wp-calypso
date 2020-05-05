@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -39,7 +37,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 			);
 			return await webdriver.promise.filter(
 				allElements,
-				async e => ( await e.getText() ) === pluginTitle
+				async ( e ) => ( await e.getText() ) === pluginTitle
 			);
 		};
 		const shown = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
@@ -52,5 +50,10 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.search__close-icon' ) );
 		await this.searchForPlugin( searchTerm );
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+	}
+
+	async selectManagePlugins() {
+		const manageButtonSelector = by.css( ".plugins-browser__main a[href*='manage']" );
+		return await driverHelper.clickWhenClickable( this.driver, manageButtonSelector );
 	}
 }

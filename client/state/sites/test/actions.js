@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +36,7 @@ describe( 'actions', () => {
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -69,7 +68,7 @@ describe( 'actions', () => {
 
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -108,7 +107,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -133,21 +132,21 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSite()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/sites/2916284' )
+				.get( '/rest/v1.2/sites/2916284' )
 				.reply( 200, {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
 					capabilities: {},
 				} )
-				.get( '/rest/v1.1/sites/77203074' )
+				.get( '/rest/v1.2/sites/77203074' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',
 				} )
-				.get( '/rest/v1.1/sites/8894098' )
+				.get( '/rest/v1.2/sites/8894098' )
 				.reply( 200, {
 					ID: 8894098,
 					name: 'Some random site I dont have access to',
@@ -216,7 +215,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSite()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/delete' )

@@ -1,14 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
 	assign,
+	clone,
 	defer,
 	find,
 	get,
@@ -16,109 +15,108 @@ import {
 	indexOf,
 	isEqual,
 	kebabCase,
-	last,
 	map,
 	pick,
 	startsWith,
 } from 'lodash';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { urlParseAmpCompatible } from 'lib/analytics/utils';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-// Components
+import * as oauthToken from 'lib/oauth-token';
+import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
+import SignupFlowController from 'lib/signup/flow-controller';
+import { disableCart } from 'lib/cart/actions';
+import {
+	recordSignupStart,
+	recordSignupComplete,
+	recordSignupStep,
+	recordSignupInvalidStep,
+} from 'lib/analytics/signup';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
-
-// Libraries
-import analytics from 'lib/analytics';
-import * as oauthToken from 'lib/oauth-token';
-import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
-import SignupActions from 'lib/signup/actions';
-import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart } from 'lib/upgrades/actions';
-
-// State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
-import { affiliateReferral } from 'state/refer/actions';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import {
+	isUserLoggedIn,
+	getCurrentUser,
+	currentUserHasFlag,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
+import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
+import { submitSignupStep, removeStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-
-// Current directory dependencies
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
 import steps from './config/steps';
 import flows from './config/flows';
-import stepComponents from './config/step-components';
+import { getStepComponent } from './config/step-components';
 import {
 	canResumeFlow,
 	getCompletedSteps,
 	getDestination,
-	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
+	persistSignupDestination,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
-import SiteMockups from 'signup/site-mockup';
+import SiteMockups from './site-mockup';
 
 /**
- * Constants
+ * Style dependencies
  */
+import './style.scss';
+
 const debug = debugModule( 'calypso:signup' );
 
+function dependenciesContainCartItem( dependencies ) {
+	return !! (
+		dependencies &&
+		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+	);
+}
+
 class Signup extends React.Component {
-	static displayName = 'Signup';
-
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static propTypes = {
+		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
 		setSurvey: PropTypes.func.isRequired,
+		submitSiteType: PropTypes.func.isRequired,
+		submitSiteVertical: PropTypes.func.isRequired,
+		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
-		trackAffiliateReferral: PropTypes.func.isRequired,
+		flowName: PropTypes.string,
+		stepName: PropTypes.string,
+		pageTitle: PropTypes.string,
+		siteType: PropTypes.string,
+		stepSectionName: PropTypes.string,
+		shouldShowMockups: PropTypes.bool,
 	};
 
-	constructor( props, context ) {
-		super( props, context );
-
-		this.state = {
-			controllerHasReset: false,
-			login: false,
-			dependencies: props.signupDependencies,
-			siteDomains: props.siteDomains,
-			isPaidPlan: props.isPaidPlan,
-			shouldShowLoadingScreen: false,
-			resumingStep: undefined,
-			loginHandler: null,
-			hasCartItems: false,
-			plans: false,
-			previousFlowName: null,
-		};
-	}
+	state = {
+		controllerHasReset: false,
+		shouldShowLoadingScreen: false,
+		resumingStep: undefined,
+		previousFlowName: null,
+	};
 
 	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
@@ -140,7 +138,7 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
-			reduxStore: this.context.store,
+			reduxStore: this.props.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
@@ -149,40 +147,28 @@ class Signup extends React.Component {
 		this.updateShouldShowLoadingScreen();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
-			// Resume progress if possible
-			return this.resumeProgress();
+			// Resume from the current window location
+			return;
 		}
 
 		if ( this.getPositionInFlow() !== 0 ) {
-			// Flow is not resumable; redirect to the beginning of the flow
-			return page.redirect(
-				getStepUrl(
-					this.props.flowName,
-					flows.getFlow( this.props.flowName ).steps[ 0 ],
-					this.props.locale
-				)
-			);
+			// Flow is not resumable; redirect to the beginning of the flow.
+			// Set `resumingStep` to prevent flash of incorrect step before the redirect.
+			const destinationStep = flows.getFlow( this.props.flowName ).steps[ 0 ];
+			this.setState( { resumingStep: destinationStep } );
+			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
-
-		this.checkForCartItems( this.props.signupDependencies );
-		this.recordStep();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { signupDependencies, stepName, flowName, progress } = nextProps;
-
-		this.removeFulfilledSteps( nextProps );
+		const { stepName, flowName, progress } = nextProps;
 
 		if ( this.props.stepName !== stepName ) {
-			this.recordStep( stepName, flowName );
+			this.removeFulfilledSteps( nextProps );
 		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
-		}
-
-		if ( cookie.parse( document.cookie )[ 'wp-affiliate-tracker' ] ) {
-			this.setState( { plans: true } );
 		}
 
 		if ( this.props.flowName !== flowName ) {
@@ -192,8 +178,6 @@ class Signup extends React.Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-
-		this.checkForCartItems( signupDependencies );
 	}
 
 	componentWillUnmount() {
@@ -203,20 +187,50 @@ class Signup extends React.Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
-		this.recordSignupStart();
+		recordSignupStart( this.props.flowName, this.props.refParameter );
+		recordSignupStep( this.props.flowName, this.props.stepName );
+		this.preloadNextStep();
+		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
+		if (
+			this.props.flowName !== prevProps.flowName ||
+			this.props.stepName !== prevProps.stepName
+		) {
+			recordSignupStep( this.props.flowName, this.props.stepName );
+		}
+
 		if (
 			get( this.props.signupDependencies, 'siteType' ) !==
 			get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
 		}
+
+		if ( this.props.stepName !== prevProps.stepName ) {
+			this.maybeShowSitePreview();
+			this.preloadNextStep();
+		}
+	}
+
+	maybeShowSitePreview() {
+		// Only show the site preview on main step pages, not sub step section screens
+		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
+			this.props.showSitePreview();
+		} else {
+			this.props.hideSitePreview();
+		}
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+
+		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
+		if ( destination !== filteredDestination ) {
+			persistSignupDestination( destination );
+		}
+
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
@@ -225,32 +239,6 @@ class Signup extends React.Component {
 
 		if ( siteType === 'business' ) {
 			this.props.loadTrackingTool( 'HotJar' );
-		}
-	}
-
-	recordSignupStart() {
-		analytics.recordSignupStart( {
-			flow: this.props.flowName,
-			ref: this.props.refParameter,
-		} );
-		this.recordReferralVisit();
-	}
-
-	recordReferralVisit() {
-		const urlPath = location.href;
-		const parsedUrl = urlParseAmpCompatible( urlPath );
-		const affiliateId = parsedUrl.query.aff;
-		const campaignId = parsedUrl.query.cid;
-		const subId = parsedUrl.query.sid;
-
-		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			// Record the referral in Tracks
-			analytics.tracks.recordEvent( 'calypso_refer_visit', {
-				flow: this.props.flowName,
-				// The current page without any query params
-				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
-			} );
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 		}
 	}
 
@@ -273,81 +261,71 @@ class Signup extends React.Component {
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			return;
-		}
-
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
 		const defaultDependencies = steps[ stepName ].defaultDependencies;
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
 	};
 
-	removeFulfilledSteps = nextProps => {
+	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
-		map( flowSteps, flowStepName => this.processFulfilledSteps( flowStepName, nextProps ) );
+		const excludedSteps = clone( flows.excludedSteps );
+		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
+		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
 			this.goToNextStep( flowName );
 		}
 	};
 
-	checkForCartItems = signupDependencies => {
-		const dependenciesContainCartItem = dependencies => {
-			return (
-				dependencies &&
-				( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-			);
-		};
+	preloadNextStep() {
+		const currentStepName = this.props.stepName;
+		const nextStepName = flows.getNextStepNameInFlow( this.props.flowName, currentStepName );
 
-		if ( dependenciesContainCartItem( signupDependencies ) ) {
-			this.setState( { hasCartItems: true } );
-		}
-	};
-
-	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
-		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
-			flow: flowName,
-			step: stepName,
-		} );
-	};
+		nextStepName && getStepComponent( nextStepName );
+	}
 
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const isNewUser = !! ( dependencies && dependencies.username );
-		const isNewSite = !! ( dependencies && dependencies.siteSlug );
-		const hasCartItems = !! (
-			dependencies &&
-			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
-		);
-		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
+		const { isNewishUser, existingSiteCount } = this.props;
 
-		analytics.recordSignupComplete( {
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const siteId = dependencies && dependencies.siteId;
+		const isNew7DUserSite = !! (
+			isNewUser ||
+			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
+		);
+		const hasCartItems = dependenciesContainCartItem( dependencies );
+
+		const debugProps = {
+			isNewishUser,
+			existingSiteCount,
 			isNewUser,
-			isNewSite,
 			hasCartItems,
-			isNewUserOnFreePlan,
+			isNew7DUserSite,
 			flow: this.props.flowName,
+			siteId,
+		};
+		debug( 'Tracking signup completion.', debugProps );
+
+		recordSignupComplete( {
+			flow: this.props.flowName,
+			siteId,
+			isNewUser,
+			hasCartItems,
+			isNew7DUserSite,
 		} );
 
-		if ( dependencies.cartItem || dependencies.domainItem ) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-			} );
-		}
+		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin = ( dependencies, destination, event ) => {
+	handleLogin( dependencies, destination ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
 
-		if ( event && event.redirectTo ) {
-			destination = event.redirectTo;
-		}
-
 		debug( `Logging you in to "${ destination }"` );
+
+		this.signupFlowController.reset();
 
 		if ( ! this.state.controllerHasReset ) {
 			this.setState( { controllerHasReset: true } );
@@ -362,7 +340,6 @@ class Signup extends React.Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
-				this.signupFlowController.reset();
 				window.location.href = destination;
 			} );
 		}
@@ -370,7 +347,6 @@ class Signup extends React.Component {
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
-			this.signupFlowController.reset();
 			window.location.href = destination;
 			return;
 		}
@@ -388,9 +364,9 @@ class Signup extends React.Component {
 				} );
 			}
 		}
-	};
+	}
 
-	loginRedirectTo = path => {
+	loginRedirectTo = ( path ) => {
 		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
@@ -405,31 +381,6 @@ class Signup extends React.Component {
 		return redirectTo + path;
 	};
 
-	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
-			nextStepName = currentSteps[ signupProgress.length ],
-			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
-			firstInProgressStepName = firstInProgressStep.stepName;
-
-		return firstInProgressStepName || nextStepName || last( currentSteps );
-	};
-
-	resumeProgress = () => {
-		// Update the Flows object to know that the signup flow is being resumed.
-		flows.resumingFlow = true;
-
-		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
-			stepSectionName = firstUnsubmittedStep.stepSectionName;
-
-		// set `resumingStep` so we don't render/animate anything until we have mounted this step
-		this.setState( { firstUnsubmittedStep } );
-
-		return page.redirect(
-			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
-		);
-	};
-
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
@@ -438,17 +389,26 @@ class Signup extends React.Component {
 		}
 
 		// animate the scroll position to the top
-		const scrollPromise = new Promise( resolve => {
+		const scrollPromise = new Promise( ( resolve ) => {
 			this.setState( { scrolling: true } );
 
-			const scrollIntervalId = setInterval( () => {
-				if ( window.pageYOffset > 0 ) {
-					window.scrollBy( 0, -10 );
+			const ANIMATION_LENGTH_MS = 200;
+			const startTime = window.performance.now();
+			const scrollHeight = window.pageYOffset;
+
+			const scrollToTop = ( timestamp ) => {
+				const progress = timestamp - startTime;
+
+				if ( progress < ANIMATION_LENGTH_MS ) {
+					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
+					window.requestAnimationFrame( scrollToTop );
 				} else {
 					this.setState( { scrolling: false } );
-					resolve( clearInterval( scrollIntervalId ) );
+					resolve();
 				}
-			}, 1 );
+			};
+
+			window.requestAnimationFrame( scrollToTop );
 		} );
 
 		// redirect the user to the next step
@@ -464,14 +424,13 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
-			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
+		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			SignupActions.changeSignupFlow( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
@@ -482,10 +441,7 @@ class Signup extends React.Component {
 		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
 
 		if ( firstInvalidStep ) {
-			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
-				step: firstInvalidStep.stepName,
-				flow: this.props.flowName,
-			} );
+			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
 				// No need to redirect
@@ -515,18 +471,20 @@ class Signup extends React.Component {
 
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
-			CurrentComponent = stepComponents[ this.props.stepName ],
-			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
-			stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName ),
-			hideFreePlan = !! (
-				this.state.plans ||
-				( ( isDomainRegistration( domainItem ) ||
-					isDomainTransfer( domainItem ) ||
-					isDomainMapping( domainItem ) ) &&
-					this.props.domainsWithPlansOnly )
-			);
+		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		const CurrentComponent = this.props.stepComponent;
+		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
+		const flow = flows.getFlow( this.props.flowName );
+		const planWithDomain =
+			this.props.domainsWithPlansOnly &&
+			domainItem &&
+			( isDomainRegistration( domainItem ) ||
+				isDomainTransfer( domainItem ) ||
+				isDomainMapping( domainItem ) );
+		// Hide the free option as part of 'domainStepCopyUpdates' a/b test
+		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
@@ -536,14 +494,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen
-							hasCartItems={ this.state.hasCartItems }
-							steps={ this.props.progress }
-							loginHandler={ this.state.loginHandler }
-							signupDependencies={ this.props.signupDependencies }
-							flowName={ this.props.flowName }
-							flowSteps={ flow.steps }
-						/>
+						<SignupProcessingScreen />
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -556,7 +507,6 @@ class Signup extends React.Component {
 							goToStep={ this.goToStep }
 							previousFlowName={ this.state.previousFlowName }
 							flowName={ this.props.flowName }
-							signupProgress={ this.props.progress }
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
@@ -590,6 +540,7 @@ class Signup extends React.Component {
 	}
 
 	render() {
+		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
 			! this.props.stepName ||
 			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
@@ -604,15 +555,11 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const pageTitle =
-			this.props.flowName === 'account'
-				? translate( 'Create an account' )
-				: translate( 'Create a site' );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ pageTitle } />
+				<DocumentHead title={ this.props.pageTitle } />
 				<SignupHeader
 					positionInFlow={ this.getPositionInFlow() }
 					flowLength={ this.getFlowLength() }
@@ -621,6 +568,9 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -628,37 +578,48 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const shouldStepShowSitePreview = get(
+			steps[ ownProps.stepName ],
+			'props.showSiteMockups',
+			false
+		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
 				: true,
+			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
+			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
+			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
+			siteType: getSiteType( state ),
+			shouldStepShowSitePreview,
+			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 		};
 	},
 	{
 		setSurvey,
 		submitSiteType,
 		submitSiteVertical,
+		submitSignupStep,
+		removeStep,
 		loadTrackingTool,
-		trackAffiliateReferral: affiliateReferral,
-	},
-	undefined,
-	{ pure: false }
+		showSitePreview,
+		hideSitePreview,
+	}
 )( Signup );

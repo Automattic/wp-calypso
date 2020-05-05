@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import SideBarComponent from '../lib/components/sidebar-component';
 
-import ImporterPage from '../lib/pages/settings/importer-page';
+import ImporterPage from '../lib/pages/importer-page';
 
 import * as driverManager from '../lib/driver-manager.js';
 
@@ -24,49 +22,41 @@ const screenSize = driverManager.currentScreenSize();
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( 'Verify Import Option: (' + screenSize + ') @parallel', function() {
+describe( 'Verify Import Option: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Can log in as default user', async function() {
+	step( 'Can log in as default user', async function () {
 		const loginFlow = new LoginFlow( driver );
 		return await loginFlow.login();
 	} );
 
-	step( 'Can open the sidebar', async function() {
+	step( 'Can open the sidebar', async function () {
 		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.clickMySites();
 	} );
 
-	step( "Can see an 'Import' option", async function() {
-		const sideBarComponent = await SideBarComponent.Expect( driver );
-		return assert(
-			await sideBarComponent.settingsOptionExists(),
-			'The settings menu option does not exist'
-		);
-	} );
-
-	step( "Following 'Import' menu option opens the Import page", async function() {
+	step( "Following 'Import' menu option opens the Import page", async function () {
 		const sideBarComponent = await SideBarComponent.Expect( driver );
 		await sideBarComponent.selectImport();
 		await ImporterPage.Expect( driver );
 	} );
 
-	step( 'Can see the WordPress importer', async function() {
+	step( 'Can see the WordPress importer', async function () {
 		const importerPage = await ImporterPage.Expect( driver );
 		assert( await importerPage.importerIsDisplayed( 'wordpress' ) );
 	} );
 
-	step( 'Can see the Medium importer', async function() {
+	step( 'Can see the Medium importer', async function () {
 		const importerPage = await ImporterPage.Expect( driver );
-		assert( await importerPage.importerIsDisplayed( 'medium' ) );
+		assert( await importerPage.importerIsDisplayed( 'medium-logo' ) );
 	} );
 
-	step( 'Can see the Blogger importer', async function() {
+	step( 'Can see the Blogger importer', async function () {
 		const importerPage = await ImporterPage.Expect( driver );
 		assert( await importerPage.importerIsDisplayed( 'blogger-alt' ) );
 	} );

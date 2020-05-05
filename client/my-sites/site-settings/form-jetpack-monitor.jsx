@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { isEmpty, partial } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -34,19 +32,19 @@ import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-moni
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
 			this.setState( nextProps.monitorSettings );
 		}
 	}
 
-	recordEvent = event => {
+	recordEvent = ( event ) => {
 		return () => {
 			this.props.trackEvent( event );
 		};
 	};
 
-	handleToggle = name => () => {
+	handleToggle = ( name ) => () => {
 		this.props.trackEvent( `Toggled ${ name }` );
 		this.setState(
 			{
@@ -134,18 +132,22 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
-						text={ translate( "Notifies you when there's an issue with your site." ) }
+						text={ translate(
+							'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
+						) }
 						link="https://jetpack.com/support/monitor/"
 					/>
 
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="monitor"
-						label={ translate( "Monitor your site's downtime" ) }
+						label={ translate(
+							'Get alerts if your site goes offline. We’ll let you know when it’s back up, too.'
+						) }
 						disabled={ this.disableForm() }
 					/>
 
@@ -162,7 +164,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

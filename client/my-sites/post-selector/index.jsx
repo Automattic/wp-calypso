@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,11 @@ import { reduce, snakeCase } from 'lodash';
  * Internal dependencies
  */
 import PostSelectorPosts from './selector';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.PureComponent {
 	static displayName = 'PostSelector';
@@ -46,7 +49,7 @@ export default class extends React.PureComponent {
 		search: '',
 	};
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		if ( term !== this.state.search ) {
 			this.setState( {
 				search: term,

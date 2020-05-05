@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 
-export default function( router ) {
+export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
@@ -34,6 +32,14 @@ export default function( router ) {
 		clientRender
 	);
 
+	router(
+		paths.upcomingCharges,
+		sidebar,
+		billingController.upcomingCharges,
+		makeLayout,
+		clientRender
+	);
+
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(
 			paths.purchasesRoot + '/pending',
@@ -45,18 +51,28 @@ export default function( router ) {
 	}
 
 	router(
-		paths.purchasesRoot + '/memberships',
+		paths.purchasesRoot + '/other',
 		sidebar,
 		membershipsController.myMemberships,
 		makeLayout,
 		clientRender
 	);
 	router(
-		paths.purchasesRoot + '/memberships/:subscriptionId',
+		paths.purchasesRoot + '/other/:subscriptionId',
 		sidebar,
 		membershipsController.subscription,
 		makeLayout,
 		clientRender
+	);
+	// Legacy:
+	router(
+		paths.purchasesRoot + '/memberships/:subscriptionId',
+		( { params: { subscriptionId } } ) => {
+			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
+		}
+	);
+	router( paths.purchasesRoot + '/memberships', () =>
+		page.redirect( paths.purchasesRoot + '/other' )
 	);
 
 	router(
@@ -81,10 +97,13 @@ export default function( router ) {
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
 		sidebar,
-		siteSelection,
 		controller.cancelPurchase,
 		makeLayout,
 		clientRender
@@ -144,4 +163,4 @@ export default function( router ) {
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
-}
+};

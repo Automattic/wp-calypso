@@ -11,7 +11,7 @@ import { isNull, noop, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 /**
@@ -23,7 +23,6 @@ function CommentButton( props ) {
 	const { commentCount, href, onClick, showLabel, tagName, target } = props;
 	const translate = useTranslate();
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return React.createElement(
 		tagName,
 		omitBy(
@@ -48,7 +47,6 @@ function CommentButton( props ) {
 			) }
 		</span>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 CommentButton.propTypes = {

@@ -1,0 +1,13 @@
+npm-debug.log
+.DS_Store
+.idea
+
+/node_modules
+/test/config.json
+/tmp
+/gh-tmp
+/dist
+/build
+/webapp/webapp-bundle*
+/webapp/tests/testing-bundle*
+/examples/media-editor/built/

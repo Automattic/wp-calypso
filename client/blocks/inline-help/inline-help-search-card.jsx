@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -42,7 +41,7 @@ class InlineHelpSearchCard extends Component {
 		query: '',
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		// ignore keyboard access when manipulating a text selection in input etc.
 		if ( event.getModifierState( 'Shift' ) ) {
 			return;
@@ -69,7 +68,7 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		debug( 'search query received: ', searchQuery );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
 		this.props.requestInlineHelpSearchResults( searchQuery );
@@ -83,7 +82,6 @@ class InlineHelpSearchCard extends Component {
 				onSearch={ this.onSearch }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
-				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				delaySearch={ true }
 			/>
 		);
@@ -102,7 +100,4 @@ const mapDispatchToProps = {
 	selectPreviousResult,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpSearchCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );

@@ -16,7 +16,6 @@ A good example for this case is navigation. Sometimes the option that is selecte
 ```js
 import React from 'react';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 
 export default class extends React.Component {
 	// ...
@@ -24,10 +23,10 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<DropdownItem selected={ true } path="/published">Published</DropdownItem>
-				<DropdownItem path="/scheduled">Scheduled</DropdownItem>
-				<DropdownItem path="/drafts">Drafts</DropdownItem>
-				<DropdownItem path="/trashed">Trashed</DropdownItem>
+				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
+				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
+				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
 			</SelectDropdown>
 		);
 	} 
@@ -92,24 +91,22 @@ Optional bool to disable dropdown item.
 
 `onClick`
 
-Optional callback that will be applied when a `DropdownItem` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
+Optional callback that will be applied when a `SelectDropdown.Item` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
 
 ### Label
 
-An item "label" can be added like as a sibling to `DropdownItem`. The purpose
-of this `DropdownLabel` component is used to display a static item, for example, to group
+An item "label" can be added like as a sibling to `SelectDropdown.Item`. The purpose
+of this `SelectDropdown.Label` component is used to display a static item, for example, to group
 items.
 
 ### Separator
 
-As a sibling to `DropdownItem`, an item "separator" or horizontal line can be used to visually separate items.
+As a sibling to `SelectDropdown.Item`, an item "separator" or horizontal line can be used to visually separate items.
 
 ![separator example screenshot](https://cldup.com/CWEH2K9PUf.png)
 
 ```js
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
 
 export default class extends React.Component {
 
@@ -118,12 +115,12 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<DropdownLabel><em>Post status<em></DropdownLabel>
-				<DropdownItem selected={ true } path="/published">Published</DropdownItem>
-				<DropdownItem path="/scheduled">Scheduled</DropdownItem>
-				<DropdownItem path="/drafts">Drafts</DropdownItem>
-				<DropdownSeparator />
-				<DropdownItem path="/trashed">Trashed</DropdownItem>
+				<SelectDropdown.Label><em>Post status<em></SelectDropdown.Label>
+				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
+				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
+				<SelectDropdown.Separator />
+				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
 			</SelectDropdown>
 		);
 	}
@@ -142,6 +139,7 @@ A good example for this case is a form element. You don't want to have to write 
 
 ```js
 import SelectDropdown from 'components/select-dropdown';
+
 var options = [
 	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
@@ -203,7 +201,7 @@ Optional callback that will be run after the dropdown is opened or closed. An ev
 
 ### Label
 
-Adding `isLabel` key set to `true` into the item object will create a `DropdownLabel` component.
+Adding `isLabel` key set to `true` into the item object will create a `SelectDropdown.Label` component.
 
 ```js
 var options = [

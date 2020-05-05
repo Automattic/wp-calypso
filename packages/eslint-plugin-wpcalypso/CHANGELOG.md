@@ -1,6 +1,12 @@
-#### next (…)
+#### Unreleased
+- Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
+- Enhancement: `jsx-classname-namespace` understands Storybook `index.stories.js` files and treats them as root files
 
-- Enhancement: Update `i18n-ellipsis` rule to catch usage in @wordpress/i18n functions
+#### v4.1.0 (2019-05-07)
+
+- Enhancement: `jsx-classname-namespace` doesn't limit classnames without suffix to root elements
+- Enhancement: `jsx-classname-namespace` accepts both file and directory name when validating class name
+- Enhancement: `i18n-ellipsis` rule updated to catch usage in @wordpress/i18n functions
 
 #### v4.0.2 (2018-08-10)
 
@@ -60,7 +66,7 @@
 
 - Breaking: Required Node version increased from >=0.10.x to >=4.x ([see ESLint 3.0.0 migration guide](http://eslint.org/docs/user-guide/migrating-to-3.0.0))
 - Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
-- Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
+- Fix: `yarn test` is now run synchronously so it exits with a non-zero code on failure
 - Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
 - Fix: Remove unintended debugging statement from i18n-no-newlines rule
 - Fix: jsx-classname-namespace will now correctly identify index components in Windows environments ([#18](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/18))
@@ -70,7 +76,7 @@
 
 #### v1.4.1 (2016-08-12)
 
-- Add: String template support for all rules 
+- Add: String template support for all rules
 
 #### v1.4.0 (2016-07-29)
 
@@ -85,7 +91,7 @@
 
 - Fix: jsx-classname-namespace: Skip validation on render call expressions (ReactDOM.render)
 - General: Upgrade ESLint (^1.10.3 to ^2.13.1) and babel-eslint (^5.0.0-beta6 to ^6.1.0)
-- General: Add `npm run lint` npm script, included in `npm test`
+- General: Add `yarn run lint` npm script, included in `yarn test`
 
 #### v1.3.1 (2016-06-17)
 

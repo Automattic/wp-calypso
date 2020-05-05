@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -92,13 +90,6 @@ export default class AddEditProductPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.action-header__actions button.is-primary' )
-		);
-	}
-
-	async waitForSuccessNotice() {
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.notice.is-success' )
 		);
 	}
 

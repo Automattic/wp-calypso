@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +33,7 @@ class ListStream extends React.Component {
 		super( props );
 		this.title = props.translate( 'Loading list' );
 	}
-	toggleFollowing = isFollowRequested => {
+	toggleFollowing = ( isFollowRequested ) => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -85,7 +84,12 @@ class ListStream extends React.Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ shouldShowFollow }
 			>
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.title } ) } />
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: this.title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
@@ -129,7 +133,7 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				followList,

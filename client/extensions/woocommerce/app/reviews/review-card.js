@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,8 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Emojify from 'components/emojify';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -183,7 +181,7 @@ class ReviewCard extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSiteWithFallback( state );
 	return {
 		site,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { pick } from 'lodash';
  */
 import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
@@ -112,23 +115,27 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-0' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 					/>
 				) }
 				{ secondarySuggestion && (
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-1' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
 					/>
 				) }
 			</div>

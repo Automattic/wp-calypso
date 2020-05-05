@@ -1,10 +1,10 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -14,10 +14,13 @@ import {
 	getTranslationPermaLink,
 	normalizeDetailsFromTranslationData,
 } from '../utils';
-import { isMobile } from 'lib/viewport';
-import { GP_PROJECT, GP_BASE_URL, GP_PROJECT_TRANSLATION_SET_SLUGS } from '../constants';
+import {
+	GP_PROJECT,
+	GP_BASE_URL,
+	GP_PROJECT_TRANSLATION_SET_SLUGS,
+} from 'lib/i18n-utils/constants';
 
-jest.mock( 'lib/viewport', () => ( {
+jest.mock( '@automattic/viewport', () => ( {
 	isMobile: jest.fn(),
 } ) );
 
@@ -96,9 +99,7 @@ describe( 'Community Translator', () => {
 
 		test( 'should return valid url with correct params for root language', () => {
 			expect( getTranslationPermaLink( '123', languagesMock[ 0 ] ) ).toBe(
-				`${ GP_BASE_URL }/projects/${ GP_PROJECT }/${
-					languagesMock[ 0 ].langSlug
-				}/default?filters[original_id]=123`
+				`${ GP_BASE_URL }/projects/${ GP_PROJECT }/${ languagesMock[ 0 ].langSlug }/default?filters[original_id]=123`
 			);
 		} );
 

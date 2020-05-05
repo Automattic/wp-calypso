@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,9 +30,10 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 	}
 
 	async customizeSite() {
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.dialog button[data-e2e-button="customizeSite"]' )
 		);
+		return await driverHelper.switchToWindowByIndex( this.driver, 1 );
 	}
 }

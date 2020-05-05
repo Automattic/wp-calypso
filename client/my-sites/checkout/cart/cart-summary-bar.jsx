@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,13 +9,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import GridiconCart from 'gridicons/dist/cart';
+import Gridicon from 'components/gridicon';
 
 class CartSummaryBar extends React.Component {
 	render() {
 		const { itemCount, showItemCount, translate } = this.props;
 
-		let text = translate( 'Order Summary' );
+		let text = translate( 'Order summary' );
 		if ( showItemCount && itemCount ) {
 			text = translate( 'Cart - %(count)d item', 'Cart - %(count)d items', {
 				count: itemCount,
@@ -28,13 +26,13 @@ class CartSummaryBar extends React.Component {
 		return (
 			<div>
 				<SectionHeader className="cart__header" label={ text }>
-					<GridiconCart size="18" />
+					<Gridicon icon="cart" size={ 18 } />
 				</SectionHeader>
 			</div>
 		);
 	}
 
-	toggleVisibility = event => {
+	toggleVisibility = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.onClick ) {

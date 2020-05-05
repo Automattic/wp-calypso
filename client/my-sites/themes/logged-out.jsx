@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,19 +13,18 @@ import { connectOptions } from './theme-options';
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
-export default props => (
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+export default ( props ) => (
 	<Main className="themes">
 		<ConnectedThemeShowcase
 			{ ...props }
 			origin="wpcom"
 			defaultOption="signup"
-			getScreenshotOption={ function() {
+			getScreenshotOption={ function () {
 				return 'info';
 			} }
 			source="showcase"
 			showUploadButton={ false }
+			loggedOutComponent={ true }
 		/>
 	</Main>
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 );

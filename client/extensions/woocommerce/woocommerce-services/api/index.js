@@ -1,12 +1,12 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import request from 'woocommerce/state/sites/request';
 
-export * as url from './url';
+import * as urlModule from './url';
+export { urlModule as url };
 
-const handleError = jsonError => {
+const handleError = ( jsonError ) => {
 	if ( jsonError && jsonError.message ) {
 		throw jsonError.message;
 	}

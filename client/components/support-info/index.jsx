@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,7 @@ class SupportInfo extends Component {
 	static propTypes = {
 		text: PropTypes.string,
 		link: PropTypes.string,
+		position: PropTypes.string,
 		privacyLink: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
@@ -32,13 +31,13 @@ class SupportInfo extends Component {
 	};
 
 	render() {
-		const { text, link, privacyLink, translate } = this.props;
+		const { text, link, position, privacyLink, translate } = this.props;
 		const actualPrivacyLink =
 			! privacyLink && privacyLink !== false && link ? link + '#privacy' : privacyLink;
 
 		return (
 			<div className="support-info">
-				<InfoPopover position="left" screenReaderText={ translate( 'Learn more' ) }>
+				<InfoPopover position={ position || 'left' } screenReaderText={ translate( 'Learn more' ) }>
 					{ text + ' ' }
 					{ link && (
 						<span className="support-info__learn-more">

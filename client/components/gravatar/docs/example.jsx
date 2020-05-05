@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ function GravatarExample( { currentUser } ) {
 	return <Gravatar user={ currentUser } size={ 96 } />;
 }
 
-const ConnectedGravatarExample = connect( state => {
+const ConnectedGravatarExample = connect( ( state ) => {
 	const currentUser = getCurrentUser( state );
 
 	if ( ! currentUser ) {

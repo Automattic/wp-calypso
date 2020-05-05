@@ -1,10 +1,14 @@
-/** @format */
-
 export const purchasesRoot = '/me/purchases';
 
 export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
+
+export const upcomingCharges = purchasesRoot + '/upcoming';
+
+export const pendingPayments = purchasesRoot + '/pending';
+
+export const myMemberships = purchasesRoot + '/other';
 
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {

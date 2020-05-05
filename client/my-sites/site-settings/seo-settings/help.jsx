@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SupportInfo from 'components/support-info';
@@ -75,7 +73,7 @@ const SeoSettingsHelpCard = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const hasAdvancedSEOFeature = hasFeature( state, siteId, FEATURE_ADVANCED_SEO );

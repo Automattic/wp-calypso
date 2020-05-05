@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,8 +42,8 @@ function Poller( dataStore, fetcher, options ) {
 	}
 }
 
-Poller.prototype.start = function() {
-	const fetch = function() {
+Poller.prototype.start = function () {
+	const fetch = function () {
 		debug( 'Calling fetcher for %o', { fetcher: this.fetcher, store: this.dataStore } );
 		this.fetch();
 	}.bind( this );
@@ -60,7 +58,7 @@ Poller.prototype.start = function() {
 	}
 };
 
-Poller.prototype.stop = function() {
+Poller.prototype.stop = function () {
 	if ( this.timer ) {
 		debug( 'Stopping poller for %o', this.dataStore );
 		clearInterval( this.timer );
@@ -69,7 +67,7 @@ Poller.prototype.stop = function() {
 	}
 };
 
-Poller.prototype.fetch = function() {
+Poller.prototype.fetch = function () {
 	if ( typeof this.fetcher === 'string' ) {
 		this.dataStore[ this.fetcher ]();
 	} else {
@@ -77,13 +75,13 @@ Poller.prototype.fetch = function() {
 	}
 };
 
-Poller.prototype.clear = function() {
+Poller.prototype.clear = function () {
 	this.dataStore.off( 'newListener', this.startOnFirstChange );
 	this.dataStore.off( 'removeListener', this.stopOnNoChangeListeners );
 	this.stop();
 };
 
-Poller.prototype.startOnFirstChange = function( event ) {
+Poller.prototype.startOnFirstChange = function ( event ) {
 	if ( event !== 'change' ) {
 		return;
 	}
@@ -91,7 +89,7 @@ Poller.prototype.startOnFirstChange = function( event ) {
 	this.start();
 };
 
-Poller.prototype.stopOnNoChangeListeners = function( event ) {
+Poller.prototype.stopOnNoChangeListeners = function ( event ) {
 	if ( event !== 'change' ) {
 		return;
 	}

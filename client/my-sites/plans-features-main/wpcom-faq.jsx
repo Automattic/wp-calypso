@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -40,7 +39,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/all-about-domains/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -60,7 +59,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/plugins/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -71,9 +70,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			/>
 
 			<FAQItem
-				question={ translate( 'Can I upload my own theme?' ) }
+				question={ translate( 'Can I install my own theme?' ) }
 				answer={ translate(
-					"Yes! With the WordPress.com Business plan you can upload any theme you'd like." +
+					"Yes! With the WordPress.com Business plan you can install any theme you'd like." +
 						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
 						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 					{
@@ -101,7 +100,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/add-email/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/add-email/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -122,7 +121,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://en.support.wordpress.com/custom-design/' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/custom-design/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -165,7 +164,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( WpcomFAQ ) );

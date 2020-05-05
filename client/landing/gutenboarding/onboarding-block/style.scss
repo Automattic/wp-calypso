@@ -1,0 +1,23 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins.scss';
+
+.onboarding-block {
+	@include onboarding-block-margin;
+}
+
+.gutenboarding-page {
+	transform-origin: center center;
+	animation: gutenboarding-page-appear 300ms ease-out forwards;
+}
+
+@keyframes gutenboarding-page-appear {
+	from {
+		opacity: 0;
+		transform: translateY( 10px );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}

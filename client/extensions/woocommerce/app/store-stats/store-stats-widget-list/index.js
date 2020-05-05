@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { findIndex } from 'lodash';
-import { moment, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'components/localized-moment';
 import Delta from 'woocommerce/components/delta';
 import { formatValue, getDelta } from '../utils';
 import { getPeriodFormat } from 'state/stats/lists/utils';
@@ -34,11 +32,11 @@ class StoreStatsWidgetList extends Component {
 	};
 
 	render() {
-		const { data, deltas, query, selectedDate, widgets } = this.props;
+		const { data, deltas, query, selectedDate, widgets, moment } = this.props;
 		const { unit } = query;
-		const selectedIndex = findIndex( data, d => d.period === selectedDate );
+		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
 		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter(
-			key => key !== 'period'
+			( key ) => key !== 'period'
 		)[ 0 ];
 		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
 		const periodFormat = getPeriodFormat( unit, sincePeriod.reference_period );
@@ -79,8 +77,8 @@ class StoreStatsWidgetList extends Component {
 			</TableRow>
 		);
 
-		const widgetData = widgets.map( widget => {
-			const timeSeries = data.map( row => +row[ widget.key ] );
+		const widgetData = widgets.map( ( widget ) => {
+			const timeSeries = data.map( ( row ) => +row[ widget.key ] );
 			const delta = getDelta( deltas, selectedDate, widget.key );
 			const deltaValue =
 				delta.direction === 'is-undefined-increase'
@@ -132,4 +130,4 @@ export default connect( ( state, { siteId, statType, query } ) => {
 		data: siteStats.data,
 		deltas: siteStats.deltas,
 	};
-} )( StoreStatsWidgetList );
+} )( withLocalizedMoment( StoreStatsWidgetList ) );

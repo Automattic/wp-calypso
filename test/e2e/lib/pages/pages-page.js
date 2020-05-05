@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,10 +19,10 @@ export default class PagesPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.pages__page-list .is-placeholder:not(.page)' );
 		return await driver.wait(
-			function() {
+			function () {
 				return driverHelper
 					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},
@@ -36,5 +34,28 @@ export default class PagesPage extends AsyncBaseContainer {
 	async editPageWithTitle( title ) {
 		const pageTitleSelector = By.linkText( `${ title }` );
 		return await driverHelper.clickWhenClickable( this.driver, pageTitleSelector );
+	}
+
+	async selectAddNewPage() {
+		const addPageSelector = By.css( '.pages__add-page' ); // Add button when there are pages
+		const startPageSelector = By.css( '.empty-content__action' ); // Add button when there are no pages
+
+		if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				addPageSelector,
+				this.explicitWaitMS / 5
+			)
+		) {
+			return await driverHelper.clickWhenClickable( this.driver, addPageSelector );
+		} else if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				startPageSelector,
+				this.explicitWaitMS / 5
+			)
+		) {
+			return await driverHelper.clickWhenClickable( this.driver, startPageSelector );
+		}
 	}
 }

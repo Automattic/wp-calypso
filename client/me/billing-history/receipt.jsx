@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import TextareaAutosize from 'components/textarea-autosize';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import { withLocalizedMoment } from 'components/localized-moment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
@@ -27,6 +26,8 @@ import {
 	requestBillingTransaction,
 } from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getPlanTermLabel } from 'lib/plans';
+import { PARTNER_PAYPAL_EXPRESS } from 'lib/checkout/payment-methods';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -37,7 +38,7 @@ class BillingReceipt extends React.Component {
 		this.redirectIfInvalidTransaction();
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -76,7 +77,7 @@ class BillingReceipt extends React.Component {
 		const { transaction, translate } = this.props;
 		let text;
 
-		if ( transaction.pay_part === 'paypal_express' ) {
+		if ( transaction.pay_part === PARTNER_PAYPAL_EXPRESS ) {
 			text = translate( 'PayPal' );
 		} else if ( 'XXXX' !== transaction.cc_num ) {
 			text = translate( '%(cardType)s ending in %(cardNum)s', {
@@ -176,12 +177,14 @@ class BillingReceipt extends React.Component {
 		const { transaction, translate } = this.props;
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
-		const items = groupedTransactionItems.map( item => {
+		const items = groupedTransactionItems.map( ( item ) => {
+			const termLabel = getPlanTermLabel( item.wpcom_product_slug, translate );
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
+						{ termLabel ? <em>{ termLabel }</em> : null }
 						<br />
 						<em>{ item.domain }</em>
 					</td>
@@ -197,7 +200,7 @@ class BillingReceipt extends React.Component {
 
 		return (
 			<div className="billing-history__receipt">
-				<h4>{ translate( 'Order Summary' ) }</h4>
+				<h4>{ translate( 'Order summary' ) }</h4>
 				<table className="billing-history__receipt-line-items">
 					<thead>
 						<tr>
@@ -241,7 +244,7 @@ class BillingReceipt extends React.Component {
 							alt={ transaction.service }
 						/>
 						<h2>
-							{' '}
+							{ ' ' }
 							{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
 								components: {
 									link: serviceLink,
@@ -314,4 +317,4 @@ export default connect(
 		recordGoogleEvent,
 		requestBillingTransaction,
 	}
-)( localize( BillingReceipt ) );
+)( localize( withLocalizedMoment( BillingReceipt ) ) );

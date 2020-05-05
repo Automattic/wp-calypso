@@ -1,0 +1,18 @@
+.gutenboarding-header {
+	display: flex;
+	flex-wrap: wrap;
+	margin: -12px 27px 50px;
+	justify-content: space-between;
+
+	&__select-free-plan {
+		color: var( --color-neutral );
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 14px !important;
+	}
+
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 80px;
+		margin-top: 0;
+	}
+}

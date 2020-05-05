@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -56,6 +55,7 @@ class SiteBlocked extends React.Component {
 						components: {
 							em: <em />,
 						},
+						comment: '%s is a site name - for example, "Discover"',
 					} ) }
 					illustration={ '/calypso/images/illustrations/error.svg' }
 					illustrationWidth={ 500 }
@@ -65,11 +65,8 @@ class SiteBlocked extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		bumpStat,
-		unblockSite,
-	}
-)( localize( SiteBlocked ) );
+export default connect( null, {
+	recordGoogleEvent,
+	bumpStat,
+	unblockSite,
+} )( localize( SiteBlocked ) );

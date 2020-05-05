@@ -6,9 +6,9 @@ const componentsStyle = fs.readFileSync( 'assets/stylesheets/_components.scss', 
 } );
 const components = componentsStyle
 	.split( '\n' )
-	.filter( line => line.startsWith( '@import' ) )
-	.map( component => component.substring( 9, component.length - 2 ) );
-console.log( components.length );
+	.filter( ( line ) => line.startsWith( '@import' ) )
+	.map( ( component ) => component.substring( 9, component.length - 2 ) );
+console.log( `Scoring ${ components.length } components...` );
 
 const zero = { score: 0 };
 
@@ -24,17 +24,17 @@ function hasImports( f ) {
 
 /**
  *
- * @param {String} f
- * @param {String} name
+ * @param {string} f
+ * @param {string} name
  */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;
-	const re = /^\.([\w_\-\.]+)/gm;
+	const re = /^\.([\w_\-.]+)/gm;
 	let violations = 0;
 	while ( ( topLevelSelectors = re.exec( f ) ) !== null ) {
 		const classes = topLevelSelectors[ 0 ].split( '.' ).filter( Boolean );
 
-		if ( ! classes.some( cls => cls.startsWith( name ) ) ) {
+		if ( ! classes.some( ( cls ) => cls.startsWith( name ) ) ) {
 			// suspect
 			//console.log( '  saw %s\n  expected %s', topLevelSelectors[0], name );
 			++violations;
@@ -51,21 +51,50 @@ function hasNonCompliantToplevelSelectors( f, name ) {
 	return zero;
 }
 
+const childProcess = require( 'child_process' );
+function overridenByOthers( f, name, componentPath ) {
+	const results = childProcess.spawnSync(
+		'git',
+		[
+			'grep',
+			'-l',
+			'-F',
+			`.${ name }`,
+			'--',
+			`"*.scss"`,
+			`":^${ componentPath }"`,
+			':^assets/stylesheets/shared/functions/_z-index.scss',
+		],
+		{ encoding: 'utf8', shell: true }
+	);
+	const r = results.stdout.split( '\n' );
+	const componentsFullPath = components.map( ( c ) => 'client/' + c + '.scss' );
+	const matches = r.filter( ( p ) => componentsFullPath.includes( p ) );
+	const matchCount = matches.length;
+	if ( matchCount > 0 ) {
+		return {
+			score: matchCount,
+			name: `styles overriden by ${ matchCount } consumers:\n\t${ matches.join( '\n\t' ) }`,
+		};
+	}
+	return zero;
+}
+
 function score( c ) {
 	const styles = fs.readFileSync( 'client/' + c + '.scss', { encoding: 'utf8' } );
 	const name = path.basename( c.replace( /\/style$/, '' ) );
-	//console.log( '\nclient/%s.scss => %s', c, name );
-	const checks = [ hasImports, hasNonCompliantToplevelSelectors ];
-	const scores = checks.map( check => check( styles, name ) );
+	const componentPath = `client/${ path.dirname( c ) }/`;
+	const checks = [ hasImports, hasNonCompliantToplevelSelectors, overridenByOthers ];
+	const scores = checks.map( ( check ) => check( styles, name, componentPath ) );
 	scores.score = scores.reduce( ( totalScore, { score: s } ) => totalScore + s, 0 );
 	scores.summary = scores
-		.filter( s => s.name )
-		.map( s => s.name )
+		.filter( ( s ) => s.name )
+		.map( ( s ) => s.name )
 		.join( ', ' );
 	return scores;
 }
 
-const scored = components.map( c => ( { component: c, scores: score( c ) } ) );
+const scored = components.map( ( c ) => ( { component: c, scores: score( c ) } ) );
 
 scored.sort( ( a, b ) => {
 	const scoreDiff = b.scores.score - a.scores.score;

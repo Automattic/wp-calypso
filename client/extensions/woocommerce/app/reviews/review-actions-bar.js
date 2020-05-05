@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,14 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { changeReviewStatus, deleteReview } from 'woocommerce/state/sites/reviews/actions';
 
 // currentStatus is the status/tab that is currently selected in the UI.
@@ -111,7 +109,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( ReviewActionsBar ) );
+export default connect( null, mapDispatchToProps )( localize( ReviewActionsBar ) );

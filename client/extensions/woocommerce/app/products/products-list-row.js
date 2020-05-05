@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ const ProductsListRow = ( { site, product } ) => {
 
 	const categoryNames =
 		product.categories &&
-		product.categories.map( function( category ) {
+		product.categories.map( function ( category ) {
 			return unescape( category.name );
 		} );
 

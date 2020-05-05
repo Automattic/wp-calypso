@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,9 +17,8 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import Dialog from 'components/dialog';
 import { hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSite, getSiteDomain } from 'state/sites/selectors';
@@ -76,7 +73,7 @@ class DeleteSite extends Component {
 		);
 	}
 
-	handleDeleteSiteClick = event => {
+	handleDeleteSiteClick = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -120,14 +117,14 @@ class DeleteSite extends Component {
 		this.props.deleteSite( siteId );
 	};
 
-	_checkSiteLoaded = event => {
+	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
 			event.preventDefault();
 		}
 	};
 
-	onConfirmDomainChange = event => {
+	onConfirmDomainChange = ( event ) => {
 		this.setState( {
 			confirmDomain: event.target.value,
 		} );
@@ -135,7 +132,7 @@ class DeleteSite extends Component {
 
 	render() {
 		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
-		const exportLink = '/settings/export/' + siteSlug;
+		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
@@ -143,16 +140,16 @@ class DeleteSite extends Component {
 		const deleteButtons = [
 			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ deleteDisabled } onClick={ this._deleteSite }>
-				{ translate( 'Delete this Site' ) }
+				{ translate( 'Delete this site' ) }
 			</Button>,
 		];
 
 		const strings = {
-			confirmDeleteSite: translate( 'Confirm Delete Site' ),
-			contactSupport: translate( 'Contact Support' ),
-			deleteSite: translate( 'Delete Site' ),
-			exportContent: translate( 'Export Content' ),
-			exportContentFirst: translate( 'Export Content First' ),
+			confirmDeleteSite: translate( 'Confirm delete site' ),
+			contactSupport: translate( 'Contact support' ),
+			deleteSite: translate( 'Delete site' ),
+			exportContent: translate( 'Export content' ),
+			exportContentFirst: translate( 'Export content first' ),
 		};
 
 		return (
@@ -225,7 +222,7 @@ class DeleteSite extends Component {
 						</p>
 						<p>
 							{ translate(
-								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
+								'This content {{strong}}can not{{/strong}} be recovered once you delete this site.',
 								{
 									components: {
 										strong: <strong />,
@@ -375,7 +372,7 @@ class DeleteSite extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );

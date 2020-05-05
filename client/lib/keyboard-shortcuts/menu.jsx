@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,10 +9,15 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KEY_BINDINGS from 'lib/keyboard-shortcuts/key-bindings';
+
+/**
+ * Style dependencies
+ */
+import './menu.scss';
 
 class KeyboardShortcutsMenu extends React.Component {
 	state = {
@@ -73,7 +76,7 @@ class KeyboardShortcutsMenu extends React.Component {
 			} );
 		}
 
-		return shortcutsByCategory.map( category => {
+		return shortcutsByCategory.map( ( category ) => {
 			const className = classNames( 'keyboard-shortcuts__category', category.className, {
 				'keyboard-shortcuts__category-disabled': category.disabled,
 			} );
@@ -90,7 +93,7 @@ class KeyboardShortcutsMenu extends React.Component {
 	}
 
 	getShortcutList( shortcuts ) {
-		return shortcuts.map( shortcut => {
+		return shortcuts.map( ( shortcut ) => {
 			// some shortcuts, like 'open-support-user', don't have a description
 			if ( ! shortcut.description ) {
 				return null;

@@ -12,18 +12,18 @@
 }
 
 .wpcom-help__action {
-	border: 1px solid var( --color-neutral-100 );
-	font-weight: normal;
+	border: 1px solid var( --color-neutral-10 );
+	font-weight: 400;
 	padding: 4px;
 }
 
 .wpcom-help__key {
 	width: 48px;
 	padding: 4px 6px 4px 4px;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-width: 0 0 1px;
 	text-align: center;
-	font-weight: 700;
+	font-weight: 600;
 	@include breakpoint( '>480px' ) {
 		width: 60px;
 		padding: 4px;
@@ -35,7 +35,7 @@
 }
 
 .wpcom-help__table {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-collapse: separate;
 	border-spacing: 0;
 	border-width: 1px 0 0 1px;
@@ -43,10 +43,10 @@
 	table-layout: fixed; /* Prevents HTML tables from becoming too wide */
 
 	th {
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	kbd {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }

@@ -1,7 +1,6 @@
 /**
  * Needed for store test
  *
- * @format
  */
 
 import sinon from 'sinon';

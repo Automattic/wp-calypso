@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -15,14 +12,16 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
+import { getPlanTermLabel } from 'lib/plans';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -31,11 +30,11 @@ class TransactionsTable extends React.Component {
 		header: false,
 	};
 
-	onPageClick = page => {
+	onPageClick = ( page ) => {
 		this.props.setPage( this.props.transactionType, page );
 	};
 
-	onSearch = terms => {
+	onSearch = ( terms ) => {
 		this.props.setQuery( this.props.transactionType, terms );
 	};
 
@@ -61,7 +60,7 @@ class TransactionsTable extends React.Component {
 		);
 	}
 
-	serviceName = transaction => {
+	serviceName = ( transaction ) => {
 		if ( ! transaction.items ) {
 			return this.serviceNameDescription( transaction );
 		}
@@ -85,13 +84,15 @@ class TransactionsTable extends React.Component {
 		} );
 	};
 
-	serviceNameDescription = transaction => {
+	serviceNameDescription = ( transaction ) => {
 		let description;
 		if ( transaction.domain ) {
+			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
+					{ termLabel ? <small>{ termLabel }</small> : null }
 				</div>
 			);
 		} else {
@@ -160,12 +161,12 @@ class TransactionsTable extends React.Component {
 			);
 		}
 
-		return transactions.map( transaction => {
+		return transactions.map( ( transaction ) => {
 			const transactionDate = this.props.moment( transaction.date ).format( 'll' );
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
-					<td>{ transactionDate }</td>
+					<td className="billing-history__date">{ transactionDate }</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
@@ -224,4 +225,4 @@ export default connect(
 		setPage,
 		setQuery,
 	}
-)( localize( TransactionsTable ) );
+)( localize( withLocalizedMoment( TransactionsTable ) ) );

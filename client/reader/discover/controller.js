@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +20,6 @@ const exported = {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
 		const streamKey = `site:${ blogId }`;
-		const featuredStreamKey = `featured:${ blogId }`;
 
 		const mcKey = 'discover';
 
@@ -34,7 +32,6 @@ const exported = {
 				require="reader/site-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
-				featuredStreamKey={ featuredStreamKey }
 				siteId={ +blogId }
 				title="Discover"
 				trackScrollPage={ trackScrollPage.bind(

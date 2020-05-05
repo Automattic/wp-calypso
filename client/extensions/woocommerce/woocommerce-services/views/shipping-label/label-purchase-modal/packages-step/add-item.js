@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { includes, size, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
@@ -26,7 +24,7 @@ import {
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const AddItemDialog = props => {
+const AddItemDialog = ( props ) => {
 	const {
 		siteId,
 		orderId,
@@ -43,7 +41,7 @@ const AddItemDialog = props => {
 	}
 
 	const packageLabels = getPackageDescriptions( selected, all, true );
-	const getPackageNameElement = pckgId => {
+	const getPackageNameElement = ( pckgId ) => {
 		return <span className="packages-step__dialog-package-name">{ packageLabels[ pckgId ] }</span>;
 	};
 
@@ -55,7 +53,7 @@ const AddItemDialog = props => {
 			  } )
 			: item;
 
-		const onChange = event =>
+		const onChange = ( event ) =>
 			props.setAddedItem( orderId, siteId, pckgId, itemIdx, event.target.checked );
 		return (
 			<FormLabel
@@ -69,13 +67,13 @@ const AddItemDialog = props => {
 	};
 
 	const itemOptions = [];
-	Object.keys( selected ).forEach( pckgId => {
+	Object.keys( selected ).forEach( ( pckgId ) => {
 		if ( pckgId === openedPackageId ) {
 			return;
 		}
 
 		let itemIdx = 0;
-		selected[ pckgId ].items.forEach( item => {
+		selected[ pckgId ].items.forEach( ( item ) => {
 			itemOptions.push( renderCheckbox( pckgId, itemIdx, item ) );
 			itemIdx++;
 		} );
@@ -142,11 +140,8 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddItemDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddItemDialog ) );

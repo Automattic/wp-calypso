@@ -1,0 +1,79 @@
+$timeline-spot-color: #320467;
+$timeline-border-width: 4px;
+$timeline-gutter: 24px;
+
+// Styles shared between editor and frontend.
+.wp-block-jetpack-timeline {
+	margin: 0;
+	padding-left: 8px;
+
+	li {
+		list-style-type: none;
+		position: relative;
+		position: relative;
+		padding: 12px 24px;
+		border-radius: 4px;
+		margin-left: $timeline-gutter;
+
+		// Note, this needs extra specificity in the editor, so there's an additional style there.
+		margin-bottom: $timeline-gutter;
+
+		// Draw the bubble connector.
+		.timeline-item__bubble {
+			display: block;
+			width: 0;
+			height: 0;
+			border-top: 8px solid transparent !important; // We use !important here to be able to use "borderColor" instead of "borderColorRight" in code, thus enabling RTL.
+			border-right: 10px solid #eee;
+			border-bottom: 8px solid transparent !important;
+			position: absolute;
+			top: 50%;
+			transform: translateY( -8px );
+			left: -10px;
+		}
+
+		// Draw the vertical line.
+		.timeline-item::after {
+			content: '';
+			display: block;
+			background: $timeline-spot-color;
+			position: absolute;
+			left: -4px - $timeline-gutter;
+			top: -$timeline-gutter;
+			bottom: -$timeline-gutter;
+			width: $timeline-border-width;
+		}
+
+		// Add special timeline starting point and end point.
+		// Note, editor.scss has separate code for this.
+		&.wp-block-jetpack-timeline-item {
+			// First instance.
+			&:first-child .timeline-item::after {
+				top: 50%;
+			}
+
+			// Last instance.
+			&:last-child .timeline-item::after {
+				bottom: 50%;
+			}
+		}
+
+		// Draw a timeline circle dot.
+		.timeline-item__dot {
+			display: block;
+			border: $timeline-border-width solid $timeline-spot-color;
+			width: 16px;
+			height: 16px;
+			position: absolute;
+			z-index: 1;
+			border-radius: 50%;
+			top: 50%;
+			transform: translateY( -8px );
+			left: -10px - $timeline-gutter;
+			box-sizing: border-box;
+
+			// Fallback background color.
+			background-color: #fff;
+		}
+	}
+}

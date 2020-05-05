@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex, min, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -19,11 +16,10 @@ import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-
-import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import SortedGrid from 'components/sorted-grid';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -61,7 +57,7 @@ export class MediaLibraryList extends React.Component {
 
 	state = {};
 
-	setListContext = component => {
+	setListContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -79,7 +75,7 @@ export class MediaLibraryList extends React.Component {
 		return Math.floor( 1 / this.props.mediaScale );
 	};
 
-	getMediaItemStyle = index => {
+	getMediaItemStyle = ( index ) => {
 		const itemsPerRow = this.getItemsPerRow();
 		const isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale;
 		const isLastInRow = 0 === ( index + 1 ) % itemsPerRow;
@@ -146,25 +142,25 @@ export class MediaLibraryList extends React.Component {
 		}
 	};
 
-	getItemRef = item => {
+	getItemRef = ( item ) => {
 		return 'item-' + item.ID;
 	};
 
-	getGroupLabel = date => {
+	getGroupLabel = ( date ) => {
 		const itemDate = new Date( date );
 		const currentDate = new Date();
 
 		if ( itemDate.getFullYear() === currentDate.getFullYear() ) {
-			return moment( date ).format( 'MMM D' );
+			return this.props.moment( date ).format( 'MMM D' );
 		}
 
-		return moment( date ).format( 'MMM D, YYYY' );
+		return this.props.moment( date ).format( 'MMM D, YYYY' );
 	};
 
-	getItemGroup = item =>
-		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
+	getItemGroup = ( item ) =>
+		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
-	renderItem = item => {
+	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.mediaLibrarySelectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
@@ -198,7 +194,7 @@ export class MediaLibraryList extends React.Component {
 		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
+		return Array.apply( null, new Array( placeholders ) ).map( function ( value, i ) {
 			return (
 				<ListItem
 					key={ 'placeholder-' + i }
@@ -231,7 +227,7 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		const onFetchNextPage = function() {
+		const onFetchNextPage = function () {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();
@@ -265,12 +261,6 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		mediaScale: getPreference( state, 'mediaScale' ),
-		isRtl: isRtlSelector( state ),
-	} ),
-	null,
-	null,
-	{ pure: false }
-)( MediaLibraryList );
+export default connect( ( state ) => ( {
+	mediaScale: getPreference( state, 'mediaScale' ),
+} ) )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

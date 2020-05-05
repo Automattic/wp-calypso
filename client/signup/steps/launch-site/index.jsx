@@ -1,27 +1,22 @@
-/** @format */
 /**
  * External dependencies
  */
 import { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SignupActions from 'lib/signup/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 class LaunchSiteComponent extends Component {
 	componentDidMount() {
-		const { flowName, stepName, goToNextStep } = this.props;
-
-		SignupActions.submitSignupStep(
-			{
-				stepName,
-			},
-			[],
-			{}
+		const { flowName, stepName } = this.props;
+		this.props.submitSignupStep(
+			{ stepName },
+			{ isPreLaunch: this.props.flowName === 'new-launch' }
 		);
-
-		goToNextStep( flowName );
+		this.props.goToNextStep( flowName );
 	}
 
 	render() {
@@ -29,4 +24,4 @@ class LaunchSiteComponent extends Component {
 	}
 }
 
-export default LaunchSiteComponent;
+export default connect( null, { submitSignupStep } )( LaunchSiteComponent );

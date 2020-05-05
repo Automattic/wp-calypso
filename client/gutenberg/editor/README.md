@@ -2,7 +2,7 @@
 
 ## Editor Selection Flows
 
-See [`isGutenbergEnabled`](../../state/selectors/is-gutenberg-enabled.js) and [`getEditorUrl`](../../state/selectors/get-editor-url.js).
+See [`getSelectedEditor`](../../state/selectors/get-selected-editor.js) and [`getEditorUrl`](../../state/selectors/get-editor-url.js).
 
 
 ## Style Overrides

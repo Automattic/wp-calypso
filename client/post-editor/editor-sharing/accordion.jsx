@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -20,7 +18,6 @@ import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';
 import * as postUtils from 'state/posts/utils';
-import { isMobile } from 'lib/viewport';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -119,7 +116,7 @@ class EditorSharingAccordion extends React.Component {
 				text: this.props.translate( 'A broken connection requires repair', {
 					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
-				url: `/sharing/${ this.props.siteSlug }`,
+				url: `/marketing/connections/${ this.props.siteSlug }`,
 				position: isMobile() ? 'top left' : 'top',
 				onClick: this.props.onStatusClick,
 			};
@@ -155,7 +152,7 @@ class EditorSharingAccordion extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );

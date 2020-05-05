@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,10 +16,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async connectWordPressCom() {
-		// TODO: remove `a.jp-jetpack-connect__button,` after Jetpack 6.9 release
-		const selector = By.css(
-			"a.jp-jetpack-connect__button,.jp-connect-full__button-container a[href*='register']"
-		);
+		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
@@ -31,25 +26,15 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.jp-at-a-glance' ) );
 	}
 
-	async jumpstartDisplayed() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.jp-jumpstart' ) );
-	}
-
 	async openPlansTab() {
 		const selector = By.css( '.dops-section-nav__panel li.dops-section-nav-tab:nth-child(2) a' );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
 	async clickUpgradeNudge() {
-		const selector = By.css( '.dops-notice a[href*="upgrade"]' );
+		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
-	}
-
-	async activateRecommendedFeatures() {
-		const selector = By.css( '.jp-jumpstart button.is-primary' );
-		await driverHelper.clickWhenClickable( this.driver, selector );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.notice.is-success' ) );
 	}
 
 	async disconnectSite() {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,10 +10,10 @@ import thunk from 'redux-thunk';
 import { fetchPluginData } from '../actions';
 import wporgReducer from '../reducer';
 import { combineReducers } from 'state/utils';
-import wporg from 'lib/wporg';
+import * as wporg from 'lib/wporg';
 
 jest.mock( 'lib/wporg', () => ( {
-	fetchPluginInformation: jest.fn( slug => Promise.resolve( { slug } ) ),
+	fetchPluginInformation: jest.fn( ( slug ) => Promise.resolve( { slug } ) ),
 } ) );
 
 const reducer = combineReducers( {

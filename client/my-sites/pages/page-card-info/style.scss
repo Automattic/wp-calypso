@@ -2,52 +2,22 @@
 	color: var( --color-text-subtle );
 	font-size: 12px;
 	vertical-align: middle;
-
-	a,
-	&.post-actions__relative-time {
-		color: var( --color-text-subtle );
-
-		&:hover {
-			color: var( --color-accent );
-		}
-	}
-}
-
-.page-card-info__item {
-	display: inline-block;
-	margin-right: 12px;
-}
-
-.page-card-info__item-icon {
-	margin-right: 4px;
-}
-
-.page-card-info__item-icon,
-.page-card-info__item-text {
-	vertical-align: middle;
-}
-
-.page-card-info__item-text {
-	line-height: 1;
-
-	&::first-letter {
-		text-transform: capitalize;
-	}
 }
 
 .page-card-info__site-url {
 	font-style: italic;
 }
 
-p.post-relative-time-status {
-	margin-bottom: 0;
+.page-card-info__badge {
+	background: var( --color-neutral-0 );
+	border-radius: 12px;
+	color: var( --color-neutral );
+	display: inline-block;
+	padding: 2px 10px;
+	vertical-align: middle;
 
-	& .post-relative-time-status__time-text,
-	.post-relative-time-status__status-text {
-		vertical-align: middle;
-	}
-
-	& .gridicon {
-		margin: 0 4px 0 0;
+	.page-card-info__badge-icon {
+		margin-right: 4px;
+		margin-bottom: -1px;
 	}
 }

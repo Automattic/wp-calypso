@@ -1,40 +1,41 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { DEFAULT_VERTICAL_KEY } from 'state/signup/verticals/constants';
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
+
+import 'state/signup/init';
 
 export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
 }
 
 export function getSiteVerticalData( state ) {
+	const siteType = getSiteType( state );
 	const verticalName = getSiteVerticalName( state );
-	const verticals = getVerticals( state, verticalName );
+	const verticals = getVerticals( state, verticalName, siteType );
 
 	const match = find(
 		verticals,
-		item => item.verticalName.toLowerCase() === verticalName.toLowerCase()
+		( item ) => item.verticalName.toLowerCase() === verticalName.toLowerCase()
 	);
 
 	if ( match ) {
 		return match;
 	}
 
-	const defaultVerticalData = get( verticals, [ DEFAULT_VERTICAL_KEY, 0 ], {} );
-
 	return {
 		isUserInputVertical: true,
 		parent: '',
-		preview: defaultVerticalData.preview || '',
+		preview: '',
+		previewStylesUrl: '',
+		siteType,
 		verticalId: '',
 		verticalName,
 		verticalSlug: verticalName,
@@ -43,6 +44,20 @@ export function getSiteVerticalData( state ) {
 
 export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
+}
+
+export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
+	const screenshots = get( getSiteVerticalData( state ), 'previewScreenshots' );
+
+	return get(
+		screenshots,
+		viewportDevice,
+		get( screenshots, viewportDevice === 'phone' ? 'phoneHighDpi' : 'desktopHighDpi' )
+	);
+}
+
+export function getSiteVerticalPreviewStyles( state ) {
+	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
 }
 
 // TODO: All the following selectors will be updated to use getSiteVerticalData like getSiteVerticalPreview() does.
@@ -60,4 +75,14 @@ export function getSiteVerticalSlug( state ) {
 
 export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
+}
+
+export function getSiteVerticalSuggestedTheme( state ) {
+	return get( state, 'signup.steps.siteVertical.suggestedTheme' );
+}
+
+// Used to fill `vertical` param to pass to to `/domains/suggestions`
+// client/signup/steps/domains/index.jsx
+export function getVerticalForDomainSuggestions( state ) {
+	return getSiteVerticalId( state ) || getSurveyVertical( state );
 }

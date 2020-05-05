@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { flow, mapKeys, mapValues, snakeCase, startsWith, noop } from 'lodash';
  */
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-export const recordMapDomainButtonClick = section =>
+export const recordMapDomainButtonClick = ( section ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
 		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
@@ -54,7 +52,7 @@ export const recordSearchFormSubmit = (
 		} )
 	);
 
-export const recordSearchFormView = section =>
+export const recordSearchFormView = ( section ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Landed on Search' ),
 		recordTracksEvent( 'calypso_domain_search_pageview', { section } )
@@ -126,13 +124,11 @@ export function recordShowMoreResults( searchQuery, pageNumber, section ) {
 }
 
 function processFiltersForAnalytics( filters ) {
-	const convertArraysToCSV = input =>
-		mapValues( input, value => ( Array.isArray( value ) ? value.join( ',' ) : value ) );
-	const prepareKeys = input => mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
-	const transformation = flow(
-		prepareKeys,
-		convertArraysToCSV
-	);
+	const convertArraysToCSV = ( input ) =>
+		mapValues( input, ( value ) => ( Array.isArray( value ) ? value.join( ',' ) : value)  );
+	const prepareKeys = ( input ) =>
+		mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
+	const transformation = flow( prepareKeys, convertArraysToCSV );
 	return transformation( filters );
 }
 

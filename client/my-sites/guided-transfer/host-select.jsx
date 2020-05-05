@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class HostSelect extends React.Component {
 	static displayName = 'HostSelect';
@@ -46,7 +44,9 @@ class HostSelect extends React.Component {
 									strong: <strong />,
 									partner_link: <a href="https://get.wp.com/gt-hosting/" />,
 									lobby_link: <a href="https://guidedtransfer.wordpress.com/" />,
-									learn_link: <a href="https://en.support.wordpress.com/guided-transfer/" />,
+									learn_link: (
+										<a href={ localizeUrl( 'https://wordpress.com/support/guided-transfer/' ) } />
+									),
 								},
 							}
 						) }
@@ -61,7 +61,7 @@ class HostSelect extends React.Component {
 									key={ index }
 									aria-label={ label }
 								>
-									<img className="guided-transfer__host-button-image" src={ logo } />
+									<img className="guided-transfer__host-button-image" src={ logo } alt="" />
 								</Button>
 							);
 						} ) }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 
 /**
  * Module vars
  */
-const noop = function() {};
+const noop = function () {};
 
 const action = () => alert( 'i <3 cake' );
 

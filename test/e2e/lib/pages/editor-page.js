@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,6 +14,7 @@ const by = webdriver.By;
 const until = webdriver.until;
 
 import AsyncBaseContainer from '../async-base-container';
+import NoticesComponent from '../components/notices-component';
 
 export default class EditorPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -89,8 +88,14 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent( driver, '.media-library__list-item.is-transient' );
-		await driverHelper.elementIsNotPresent( driver, '.media-library .notice.is-error' );
+		await driverHelper.elementIsNotPresent(
+			driver,
+			by.css( '.media-library__list-item.is-transient' )
+		);
+		const errorShown = await this.isErrorDisplayed();
+		if ( errorShown ) {
+			throw new Error( 'There is an error shown on the editor page!' );
+		}
 		return await driverHelper.waitTillPresentAndDisplayed(
 			driver,
 			by.css( '.media-library__list-item.is-selected' )
@@ -167,10 +172,11 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'span[data-e2e-insert-type="payment-button"]' )
 		);
-		await driverHelper.clickIfPresent(
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal button svg.gridicons-plus-small' ),
-			2
+			by.css(
+				'.editor-simple-payments-modal__navigation .section-header__actions .gridicons-plus-small'
+			)
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
@@ -213,7 +219,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
 			by.css( '.editor-simple-payments-modal' ),
-			this.explicitWaitMS * 3
+			this.explicitWaitMS * 7
 		);
 	}
 
@@ -278,9 +284,9 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driver.switchTo().defaultContent();
 	}
 
-	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, by.css( '.notice.is-error' ) );
+	async isErrorDisplayed() {
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.isErrorNoticeDisplayed();
 	}
 
 	async ensureContactFormDisplayedInPost() {

@@ -1,18 +1,19 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { canRemoveFromCart, cartItems } from 'lib/cart-values';
+import Gridicon from 'components/gridicon';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { canRemoveFromCart } from 'lib/cart-values';
+import { getIncludedDomain } from 'lib/cart-values/cart-items';
 import {
 	isCredits,
 	isGoogleApps,
@@ -24,18 +25,18 @@ import {
 	isBundled,
 	isDomainProduct,
 } from 'lib/products-values';
+import { isGSuiteProductSlug } from 'lib/gsuite';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { removeItem } from 'lib/upgrades/actions';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
+import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
-const getIncludedDomain = cartItems.getIncludedDomain;
-
 export class CartItem extends React.Component {
-	removeFromCart = event => {
+	removeFromCart = ( event ) => {
 		event.preventDefault();
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Upgrades',
 			'Clicked Remove From Cart Icon',
 			'Product ID',
@@ -45,7 +46,7 @@ export class CartItem extends React.Component {
 	};
 
 	price() {
-		const { cartItem, translate } = this.props;
+		const { cart, cartItem, translate } = this.props;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
 			return translate( 'Loading price' );
@@ -63,6 +64,34 @@ export class CartItem extends React.Component {
 
 		if ( 0 === cost ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+		}
+
+		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+			const {
+				cost_before_coupon: costPerProductBeforeCoupon,
+				is_sale_coupon_applied: isSaleCouponApplied,
+			} = cartItem;
+			const costBeforeCoupon = costPerProductBeforeCoupon * cartItem.volume;
+
+			if ( isSaleCouponApplied ) {
+				const { is_coupon_applied: isCouponApplied } = cart;
+
+				return (
+					<div className="cart__gsuite-discount">
+						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
+
+						<span className="cart__gsuite-discount-discounted-price">
+							{ cost } { cartItem.currency }
+						</span>
+
+						<span className="cart__gsuite-discount-text">
+							{ isCouponApplied
+								? translate( 'Discounts applied' )
+								: translate( 'Discount for first year' ) }
+						</span>
+					</div>
+				);
+			}
 		}
 
 		return translate( '%(cost)s %(currency)s', {
@@ -150,7 +179,6 @@ export class CartItem extends React.Component {
 
 	getProductInfo() {
 		const { cartItem, selectedSite } = this.props;
-
 		const domain =
 			cartItem.meta ||
 			get( cartItem, 'extra.domain_to_bundle' ) ||
@@ -158,7 +186,7 @@ export class CartItem extends React.Component {
 		let info = null;
 
 		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => (
+			info = cartItem.extra.google_apps_users.map( ( user ) => (
 				<div key={ `user-${ user.email }` }>{ user.email }</div>
 			) );
 		} else if ( isCredits( cartItem ) ) {
@@ -171,6 +199,35 @@ export class CartItem extends React.Component {
 			info = domain;
 		}
 		return info;
+	}
+
+	getDomainRenewalExpiryDate() {
+		const { cartItem } = this.props;
+
+		return (
+			get( cartItem, 'is_domain_registration' ) &&
+			get( cartItem, 'is_renewal' ) &&
+			get( cartItem, 'domain_post_renewal_expiration_date' )
+		);
+	}
+
+	renderDomainRenewalExpiryDate() {
+		const domainRenewalExpiryDate = this.getDomainRenewalExpiryDate();
+
+		if ( ! domainRenewalExpiryDate ) {
+			return null;
+		}
+
+		const { moment, translate } = this.props;
+		const domainRenewalExpiryDateText = translate( 'Renew until %(renewalDate)s', {
+			args: {
+				renewalDate: moment( domainRenewalExpiryDate ).format( 'LL' ),
+			},
+		} );
+
+		/*eslint-disable wpcalypso/jsx-classname-namespace*/
+		return <span className="product-domain-renewal-date">{ domainRenewalExpiryDateText }</span>;
+		/*eslint-enable wpcalypso/jsx-classname-namespace*/
 	}
 
 	render() {
@@ -194,6 +251,7 @@ export class CartItem extends React.Component {
 						{ name || translate( 'Loading…' ) }
 					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
+					{ this.renderDomainRenewalExpiryDate() }
 				</div>
 
 				<div className="secondary-details">
@@ -247,8 +305,8 @@ export class CartItem extends React.Component {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate( '%(productName)s (1 User)', {
 						args: {
 							productName: cartItem.product_name,
@@ -260,8 +318,8 @@ export class CartItem extends React.Component {
 			}
 		} else {
 			switch ( cartItem.product_slug ) {
-				case 'gapps':
-				case 'gapps_unlimited':
+				case GSUITE_BASIC_SLUG:
+				case GSUITE_BUSINESS_SLUG:
 					return translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',
@@ -280,21 +338,23 @@ export class CartItem extends React.Component {
 
 	removeButton() {
 		const { cart, cartItem, translate } = this.props;
+		const labelText = translate( 'Remove item' );
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
 				<button
 					className="cart__remove-item"
 					onClick={ this.removeFromCart }
-					aria-label={ translate( 'Remove item' ) }
+					aria-label={ labelText }
+					title={ labelText }
 				>
-					<Gridicon icon="trash" size={ 18 } />
+					<Gridicon icon="trash" size={ 24 } />
 				</button>
 			);
 		}
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-} ) )( localize( CartItem ) );
+} ) )( localize( withLocalizedMoment( CartItem ) ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,12 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isArray, isEmpty, map, partialRight } from 'lodash';
 
-const addLinesToOperations = operations => {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const addLinesToOperations = ( operations ) => {
 	if ( ! isArray( operations ) || isEmpty( operations ) ) {
 		return operations;
 	}

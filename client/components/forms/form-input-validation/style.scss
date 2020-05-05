@@ -6,6 +6,7 @@
 	box-sizing: border-box;
 	font-size: 14px;
 	animation: appear 0.3s ease-in-out;
+	font-weight: normal;
 
 	&.is-error {
 		color: var( --color-error );

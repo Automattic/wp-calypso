@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,10 +13,10 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
  * Returns true if a broken Publicize connections exists for the specified site
  * and user, or false otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  userId User ID
- * @return {Boolean}        Whether broken connection exists
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {number}  userId User ID
+ * @returns {boolean}        Whether broken connection exists
  */
 export default function hasInvalidSiteUserConnection( state, siteId, userId ) {
 	return some( getSiteUserConnections( state, siteId, userId ), { status: 'invalid' } );

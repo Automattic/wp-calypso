@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,6 @@ import React from 'react';
 import PurchaseDetail from '..';
 import PurchaseButton from '../purchase-button';
 import TipInfo from '../tip-info';
-import * as abtest from 'lib/abtest';
 
 describe( 'PurchaseDetail', () => {
 	let wrapper;
@@ -35,14 +33,11 @@ describe( 'PurchaseDetail', () => {
 	} );
 
 	test( 'should render given notice text', () => {
-		const abtestMock = jest.spyOn( abtest, 'abtest' );
-		abtestMock.mockImplementationOnce( () => 'original' );
 		wrapper = shallow( <PurchaseDetail requiredText="test:notice" /> );
 
 		const notice = wrapper.find( '.purchase-detail__required-notice > em' );
 		expect( notice ).to.have.length( 1 );
 		expect( notice.props().children ).to.equal( 'test:notice' );
-		abtestMock.mockRestore();
 	} );
 
 	test( 'should render given body text', () => {

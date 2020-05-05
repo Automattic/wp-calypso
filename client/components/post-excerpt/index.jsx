@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,6 +6,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class PostExcerpt extends React.Component {
 	static propTypes = {

@@ -13,7 +13,7 @@
 .pie-chart__title {
 	margin-top: 15px;
 	font-size: 16px;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .pie-chart__chart-section-0,
@@ -68,20 +68,4 @@
 .pie-chart__placeholder-drawing-element {
 	@include placeholder();
 	fill: var( --color-neutral-0 );
-}
-
-.pie-chart__placeholder-legend-item {
-	display: flex;
-	margin-top: 22px;
-}
-
-.pie-chart__placeholder-legend-item-detail {
-	flex: 0 0 100%;
-}
-
-.pie-chart__placeholder-legend-item-detail-element {
-	@include placeholder();
-	width: 90%;
-	height: 20px;
-	margin-bottom: 14px;
 }

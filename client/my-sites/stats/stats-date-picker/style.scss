@@ -2,7 +2,7 @@
 	line-height: 16px;
 
 	.stats-date-picker__update-date {
-		color: var( --color-neutral-light );
+		color: var( --color-text-subtle );
 		display: inline-block;
 		font-size: 13px;
 
@@ -11,4 +11,8 @@
 			vertical-align: bottom;
 		}
 	}
+}
+
+.stats-date-picker__last-update {
+	color: var( --color-neutral-70 );
 }

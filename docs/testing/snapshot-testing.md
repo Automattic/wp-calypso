@@ -12,7 +12,7 @@ However, if the change was intentional, follow these steps to update the snapsho
 1. Run the following to update the snapshots:
    ```sh
    # --testPathPattern is optional but will be much faster by only running matching tests
-   npm run test-client -- --updateSnapshot --testPathPattern client/components
+   yarn run test-client -- --updateSnapshot --testPathPattern client/components
    ```
 1. Review the diff and ensure the changes are expected and intentional
 1. Commit
@@ -97,13 +97,13 @@ You might be blindsided by CI tests failing when snapshots don't match. You'll n
 `--updateSnapshot`. In Calypso you can do that as follows:
 
 ```sh
-npm run test-client -- --updateSnapshot --testPathPattern path/to/match
+yarn run test-client -- --updateSnapshot --testPathPattern path/to/match
 ```
 
 `--testPathPattern` is not required, but specifying a path will avoid running the whole suite and
 run much faster.
 
-I strongly recommend that you keep `npm run test-client:watch` in the background as you work. Jest
+I strongly recommend that you keep `yarn run test-client:watch` in the background as you work. Jest
 will run only the relevant tests for changed files, and when snapshot tests fail, just hit `u` to
 update a snapshot!
 

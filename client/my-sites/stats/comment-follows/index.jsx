@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,6 @@ import Followers from '../stats-comment-followers-page';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsFirstView from '../stats-first-view';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -40,7 +37,7 @@ class StatsCommentFollows extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	paginationHandler = pageNum => {
+	paginationHandler = ( pageNum ) => {
 		let path = '/stats/follows/comment/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
@@ -59,7 +56,6 @@ class StatsCommentFollows extends Component {
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"
 				/>
-				<StatsFirstView />
 
 				<div id="my-stats-content" className="follows-detail follows-detail-comment">
 					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
@@ -77,7 +73,7 @@ class StatsCommentFollows extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -87,7 +83,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsCommentFollows );
+export default flowRight( connectComponent, localize )( StatsCommentFollows );

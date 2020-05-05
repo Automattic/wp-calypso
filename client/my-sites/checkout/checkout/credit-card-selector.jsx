@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,20 +8,17 @@ import { find, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
-import { newCardPayment, storedCardPayment } from 'lib/store-transactions';
-import { setPayment } from 'lib/upgrades/actions';
+import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/transaction/payments';
+import { setPayment } from 'lib/transaction/actions';
+import { withStripeProps } from 'lib/stripe';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
 		super( props );
-		if ( props.initialCard ) {
-			this.state = { section: props.initialCard.stored_details_id };
-		} else {
-			this.state = { section: 'new-card' };
-		}
+		this.state = { section: props.initialCard ? props.initialCard.stored_details_id : 'new-card' };
 	}
 
 	render() {
@@ -36,8 +32,8 @@ class CreditCardSelector extends React.Component {
 	}
 
 	storedCards = () => {
-		return this.props.cards.map( card => {
-			const onSelect = this.handleClickedSection.bind( this, card.stored_details_id );
+		return this.props.cards.map( ( card ) => {
+			const onSelect = () => this.handleClickedSection( card.stored_details_id );
 			return (
 				<CreditCard
 					key={ card.stored_details_id }
@@ -64,8 +60,14 @@ class CreditCardSelector extends React.Component {
 		defer( () => this.savePayment( this.state.section ) );
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.stripe !== this.props.stripe ) {
+			defer( () => this.savePayment( this.state.section ) );
+		}
+	}
+
 	newCardForm = () => {
-		const onSelect = this.handleClickedSection.bind( this, 'new-card' );
+		const onSelect = () => this.handleClickedSection( 'new-card' );
 		const classes = classNames( 'checkout__payment-box-section', {
 			'no-stored-cards': this.props.cards.length === 0,
 		} );
@@ -83,30 +85,31 @@ class CreditCardSelector extends React.Component {
 		);
 	};
 
-	handleClickedSection = section => {
+	handleClickedSection = ( section ) => {
 		if ( section === this.state.section ) {
 			return;
 		}
 		if ( 'new-card' === section ) {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
+			gaRecordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
 		}
 		this.savePayment( section );
 		this.setState( { section: section } );
 	};
 
-	savePayment = section => {
-		let newPayment;
+	savePayment = ( section ) => {
 		if ( 'new-card' === section ) {
-			newPayment = newCardPayment( this.props.transaction.newCardRawDetails );
-		} else {
-			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
+			if ( this.props.stripe ) {
+				return setPayment( newStripeCardPayment( this.props.transaction.newCardRawDetails ) );
+			}
+
+			return setPayment( newCardPayment( this.props.transaction.newCardRawDetails ) );
 		}
-		setPayment( newPayment );
+		setPayment( storedCardPayment( this.getStoredCardDetails( section ) ) );
 	};
 
-	getStoredCardDetails = section => {
+	getStoredCardDetails = ( section ) => {
 		return find( this.props.cards, { stored_details_id: section } );
 	};
 }
 
-export default CreditCardSelector;
+export default withStripeProps( CreditCardSelector );

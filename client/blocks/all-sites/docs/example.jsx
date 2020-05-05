@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import AllSites from 'blocks/all-sites';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 const AllSitesExample = () => (
 	<Card style={ { padding: 0 } }>

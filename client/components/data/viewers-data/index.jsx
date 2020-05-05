@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +30,7 @@ export default class ViewersData extends Component {
 		this.fetchIfEmpty( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId ) {
 			return;
 		}
@@ -45,7 +44,7 @@ export default class ViewersData extends Component {
 		ViewersStore.removeListener( 'change', this.refreshViewers );
 	}
 
-	fetchIfEmpty = siteId => {
+	fetchIfEmpty = ( siteId ) => {
 		siteId = siteId || this.props.siteId;
 		if ( ! siteId ) {
 			return;
@@ -56,7 +55,7 @@ export default class ViewersData extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		const defer = function() {
+		const defer = function () {
 			const paginationData = ViewersStore.getPaginationData( siteId );
 			if ( paginationData.fetchingViewers ) {
 				return;
@@ -85,7 +84,7 @@ export default class ViewersData extends Component {
 		return false;
 	};
 
-	refreshViewers = siteId => {
+	refreshViewers = ( siteId ) => {
 		siteId = siteId || this.props.siteId;
 		this.setState( {
 			viewers: ViewersStore.getViewers( siteId ),

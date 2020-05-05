@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -30,9 +28,14 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 
-export const requestId = userId => `pending-payments:${ userId }`;
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-const requestPendingPayments = userId => {
+export const requestId = ( userId ) => `pending-payments:${ userId }`;
+
+const requestPendingPayments = ( userId ) => {
 	return requestHttpData(
 		requestId( userId ),
 		http( {
@@ -41,7 +44,7 @@ const requestPendingPayments = userId => {
 			method: 'GET',
 		} ),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
+			fromApi: () => ( pending ) => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
 			freshness: -Infinity,
 		}
 	);
@@ -79,7 +82,7 @@ export class PendingPayments extends Component {
 						line={ translate(
 							'Our plans give your site the power to thrive. Find the plan that works for you.'
 						) }
-						action={ translate( 'Upgrade Now' ) }
+						action={ translate( 'Upgrade now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 					/>
@@ -99,7 +102,7 @@ export class PendingPayments extends Component {
 						title={ translate( 'Thank you! Your payment is being processed.' ) }
 					/>
 					<div>
-						{ pendingPayments.map( purchase => (
+						{ pendingPayments.map( ( purchase ) => (
 							<PendingListItem key={ purchase.orderId } { ...purchase } />
 						) ) }
 					</div>
@@ -126,7 +129,7 @@ PendingPayments.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		const response = getHttpData( requestId( userId ) );
 		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
@@ -138,7 +141,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		showErrorNotice: ( error, options ) =>
 			dispatch(
 				errorNotice( error, Object.assign( {}, options, { id: 'pending-payments-tab' } ) )

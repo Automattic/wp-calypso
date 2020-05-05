@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 
 import conversations from './conversations/reducer';
 import feeds from './feeds/reducer';
@@ -19,8 +18,9 @@ import streams from './streams/reducer';
 import tags from './tags/reducer';
 import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
+import viewing from './viewing/reducer';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	conversations,
 	feeds,
 	feedSearches,
@@ -36,4 +36,7 @@ export default combineReducers( {
 	tags,
 	teams,
 	thumbnails,
+	viewing,
 } );
+const readerReducer = withStorageKey( 'reader', combinedReducer );
+export default readerReducer;

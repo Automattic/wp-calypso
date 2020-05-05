@@ -1,1 +1,2 @@
-dist
+/full-site-editing-plugin/*/dist/
+/full-site-editing-plugin/newspack-blocks/synced-newspack-blocks

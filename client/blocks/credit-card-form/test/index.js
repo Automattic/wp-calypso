@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,13 +13,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { CreditCardForm } from '../';
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-} ) );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+import { getParamsForApi } from '../helpers';
+import CreditCardFormFields from 'components/credit-card-form-fields';
 
 describe( 'Credit Card Form', () => {
 	const defaultProps = {
@@ -36,12 +30,54 @@ describe( 'Credit Card Form', () => {
 		expect( wrapper ).toHaveLength( 1 );
 	} );
 
+	test( 'renders CreditCardFormFields', () => {
+		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
+		expect( wrapper.find( CreditCardFormFields ) ).toHaveLength( 1 );
+	} );
+
+	test( 'renders CreditCardFormFields with appropriate fields', () => {
+		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		expect( child.prop( 'card' ) ).toEqual( {
+			'address-1': '',
+			'address-2': '',
+			brand: '',
+			city: '',
+			country: '',
+			cvv: '',
+			document: '',
+			'expiration-date': '',
+			name: '',
+			number: '',
+			'phone-number': '',
+			'postal-code': '',
+			state: '',
+			'street-number': '',
+		} );
+	} );
+
+	test( 'has getErrorMessage return no errors for an empty field', () => {
+		const initialValues = { number: '' };
+		const props = { ...defaultProps, initialValues };
+		const wrapper = shallow( <CreditCardForm { ...props } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		const getErrorMessage = child.prop( 'getErrorMessage' );
+		expect( getErrorMessage( 'number' ) ).toEqual( '' );
+	} );
+
+	test( 'has getErrorMessage return the correct errors', () => {
+		const initialValues = { number: '234' };
+		const props = { ...defaultProps, initialValues };
+		const wrapper = shallow( <CreditCardForm { ...props } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		const getErrorMessage = child.prop( 'getErrorMessage' );
+		expect( getErrorMessage( 'number' )[ 0 ] ).toMatch( /invalid/ );
+	} );
+
 	describe( 'getParamsForApi()', () => {
 		test( 'should return expected api params from form credit card values', () => {
-			const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
-
 			expect(
-				wrapper.instance().getParamsForApi(
+				getParamsForApi(
 					{
 						country: 'AU',
 						'postal-code': '33333',
@@ -70,7 +106,8 @@ describe( 'Credit Card Form', () => {
 				city: 'city',
 				state: 'state',
 				phone_number: '+31222222',
-				cardToken: {},
+				paygate_token: {},
+				payment_partner: '',
 			} );
 		} );
 	} );

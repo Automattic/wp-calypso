@@ -1,4 +1,3 @@
-/** @format */
 export const usersSchema = {
 	type: 'array',
 	items: {

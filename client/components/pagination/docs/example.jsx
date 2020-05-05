@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ class PaginationExample extends Component {
 		compact: false,
 	};
 
-	updatePage = page => {
+	updatePage = ( page ) => {
 		this.setState( { page } );
 	};
 
@@ -28,9 +26,9 @@ class PaginationExample extends Component {
 	render() {
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
+				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
 					{ this.state.compact ? 'Normal' : 'Compact' }
-				</a>
+				</button>
 				<Pagination
 					compact={ this.state.compact }
 					page={ this.state.page }

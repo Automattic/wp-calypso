@@ -9,11 +9,11 @@ Before you get started we encourage you to get familiar with our [development va
 [development values]: https://wpcalypso.wordpress.com/devdocs/docs/guide/0-values.md
 [data approach]: https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md
 [docs]: https://wpcalypso.wordpress.com/devdocs
-[prs]: https://wpcalypso.wordpress.com/devdocs/.github/CONTRIBUTING.md#pull-requests
+[prs]: https://wpcalypso.wordpress.com/devdocs/docs/CONTRIBUTING.md#pull-requests
 
 ## Defining a new section
 
-Create a new directory within `/client/extensions` with your plugin name. Add a `package.json` file at the root of your directory. Add a `section` field in the same format as those found in `client/wordpress-com.js`:
+Create a new directory within `/client/extensions` with your plugin name. Add a `package.json` file at the root of your directory. Add a `section` field in the same format as those found in `client/sections.js`:
 
 ```json
 {

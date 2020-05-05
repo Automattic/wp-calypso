@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
-import { setMediaExportData } from 'state/site-settings/exporter/actions';
+import { setMediaExportData } from 'state/exporter/actions';
 import { fetch, onSuccess, onError, fromApi } from '../';
 
 describe( 'fetch()', () => {

@@ -1,21 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';
@@ -28,9 +26,14 @@ import EmptyContent from 'components/empty-content';
 import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import ListEnd from 'components/list-end';
+import { preventWidows } from 'lib/formatting';
+
+/**
+ * Stylesheet dependencies
+ */
+import './style.scss';
 
 const maxFollowers = 1000;
 
@@ -65,27 +68,23 @@ const Followers = localize(
 			}
 
 			actions.fetchFollowers( Object.assign( this.props.fetchOptions, { page } ) );
-			analytics.ga.recordEvent( 'People', analyticsAction, 'page', page );
+			gaRecordEvent( 'People', analyticsAction, 'page', page );
 		};
 
 		removeFollower( follower ) {
 			const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-			analytics.ga.recordEvent(
-				'People',
-				'Clicked Remove Follower Button On' + listType + ' list'
-			);
+			gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
 			accept(
 				<div>
 					<p>
 						{ this.props.translate(
-							'If removed, this follower will stop receiving notifications about this site, unless they re-follow.'
+							'Removing followers makes them stop receiving updates from your site. If they choose to, they can still visit your site, and follow it again.'
 						) }
 					</p>
-					<p>{ this.props.translate( 'Would you still like to remove this follower?' ) }</p>
 				</div>,
-				accepted => {
+				( accepted ) => {
 					if ( accepted ) {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 						);
@@ -94,7 +93,7 @@ const Followers = localize(
 							: FollowersActions
 						).removeFollower( this.props.site.ID, follower );
 					} else {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Cancel Button In Remove ' + listType + ' Confirmation'
 						);
@@ -104,7 +103,7 @@ const Followers = localize(
 			);
 		}
 
-		renderFollower = follower => {
+		renderFollower = ( follower ) => {
 			const removeFollower = () => {
 				this.removeFollower( follower );
 			};
@@ -121,7 +120,7 @@ const Followers = localize(
 			);
 		};
 
-		getFollowerRef = follower => {
+		getFollowerRef = ( follower ) => {
 			return 'follower-' + follower.ID;
 		};
 
@@ -136,6 +135,17 @@ const Followers = localize(
 
 		siteHasNoFollowers() {
 			return ! this.props.followers.length && ! this.props.fetching;
+		}
+
+		renderInviteFollowersAction( isPrimary = true ) {
+			const { site, translate } = this.props;
+
+			return (
+				<Button primary={ isPrimary } href={ `/people/new/${ site.domain }` }>
+					<Gridicon icon="user-add" />
+					<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+				</Button>
+			);
 		}
 
 		isLastPage() {
@@ -167,11 +177,13 @@ const Followers = localize(
 			let emptyTitle;
 			if ( this.siteHasNoFollowers() ) {
 				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
-					emptyTitle = this.props.translate( "You don't have any email followers yet." );
+					emptyTitle = preventWidows(
+						this.props.translate( 'No one is following you by email yet.' )
+					);
 				} else {
-					emptyTitle = this.props.translate( "You don't have any followers yet." );
+					emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 				}
-				return <EmptyContent title={ emptyTitle } />;
+				return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
 			}
 
 			let headerText;
@@ -187,8 +199,8 @@ const Followers = localize(
 
 				if ( this.props.type === 'email' ) {
 					headerText = this.props.translate(
-						'You have %(number)d email follower',
-						'You have %(number)d email followers',
+						'You have %(number)d follower receiving updates by email',
+						'You have %(number)d followers receiving updates by email',
 						{
 							args: { number: this.props.totalFollowers },
 							count: this.props.totalFollowers,
@@ -268,7 +280,7 @@ const Followers = localize(
 	}
 );
 
-const FollowersList = props => {
+const FollowersList = ( props ) => {
 	let DataComponent;
 	const fetchOptions = {
 		max: 100,

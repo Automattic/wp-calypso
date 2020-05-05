@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ let features = [];
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
 		beforeAll( () => {
-			sinon.stub( config, 'isEnabled' ).callsFake( flag => {
+			sinon.stub( config, 'isEnabled' ).callsFake( ( flag ) => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );

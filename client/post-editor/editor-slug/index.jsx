@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -67,7 +65,7 @@ class PostEditorSlug extends Component {
 	onSlugKeyDown( event ) {
 		if ( event.key === 'Enter' || event.key === 'Escape' ) {
 			const { onEscEnter, isEditable } = this.props;
-			this.setState( { isSlugFocused: false }, function() {
+			this.setState( { isSlugFocused: false }, function () {
 				onEscEnter();
 
 				if ( isEditable ) {
@@ -148,7 +146,7 @@ class PostEditorSlug extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const slug = getEditedPostSlug( state, siteId, postId );

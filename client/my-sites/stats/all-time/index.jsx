@@ -1,24 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -59,7 +57,7 @@ class StatsAllTime extends Component {
 		let bestDay;
 
 		if ( viewsBestDay && ! isLoading ) {
-			bestDay = moment( viewsBestDay ).format( 'LL' );
+			bestDay = this.props.moment( viewsBestDay ).format( 'LL' );
 		}
 
 		const classes = {
@@ -96,7 +94,7 @@ class StatsAllTime extends Component {
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
-							label={ translate( 'Best Views Ever' ) }
+							label={ translate( 'Best views ever' ) }
 							loading={ isLoading }
 							value={ viewsBestDayTotal }
 							compact
@@ -110,7 +108,7 @@ class StatsAllTime extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {};
 	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
@@ -128,4 +126,4 @@ export default connect( state => {
 		siteId,
 		...allTimeStats,
 	};
-} )( localize( StatsAllTime ) );
+} )( localize( withLocalizedMoment( StatsAllTime ) ) );

@@ -1,0 +1,40 @@
+@mixin jetpack-connect-colors() {
+	// Override accent variables with Jetpack colors
+	--color-accent: var( --studio-jetpack-green-30 );
+	--color-accent-light: var( --studio-jetpack-green-20 );
+	--color-accent-dark: var( --studio-jetpack-green-50 );
+	--color-accent-60: var( --studio-jetpack-green-40 );
+
+	// Override global colors with accent variables
+	--color-primary: var( --color-accent-dark );
+	--color-primary-light: var( --color-accent-light );
+	--color-primary-dark: var( --color-accent-dark );
+
+	::selection {
+		color: var( --color-text-inverted );
+		background: var( --color-accent );
+	}
+}
+
+@mixin woocommerce-colors() {
+	// Override accent variables with WooCommerce colors
+	--color-accent: var( --studio-pink-50 );
+	--color-accent-light: var( --studio-pink-30 );
+	--color-accent-dark: var( --studio-pink-70 );
+
+	--color-woocommerce-onboarding-background: #f6f7f7;
+	--color-woocommerce-header-border: #dcdcde;
+
+	// Override global colors with accent variables
+	--color-primary: var( --color-accent-dark );
+	--color-primary-10: var( --color-neutral-60 );
+	--color-neutral-20: var( --color-neutral-60 );
+	--color-primary-20:  var( --color-neutral-60 );
+	--color-primary-light: var( --color-accent-light );
+	--color-accent-60: var( --color-accent-dark );
+
+	::selection {
+		color: var( --color-text-inverted );
+		background: var( --color-accent );
+	}
+}

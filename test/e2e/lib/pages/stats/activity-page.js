@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,6 +18,11 @@ export default class ActivityPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			await driver.navigate().refresh();
+			// Sometimes activity log take a long time to load it's content. lets wait for it.
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.activity-log-item:not(.is-loading)' )
+			);
 			return await driverHelper.isElementPresent(
 				driver,
 				// data-e2e-activity won't work since activity log has changed.
@@ -29,6 +32,6 @@ export default class ActivityPage extends AsyncBaseContainer {
 					`//div[@class='activity-log-item__description-content']//a[text()='${ postTitle }']`
 				)
 			);
-		}, this.explicitWaitMS * 2 );
+		}, this.explicitWaitMS * 3 );
 	}
 }

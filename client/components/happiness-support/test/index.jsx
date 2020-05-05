@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import {
 
 describe( 'HappinessSupport', () => {
 	let wrapper;
-	const translate = content => `Translated: ${ content }`;
+	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
@@ -36,17 +35,17 @@ describe( 'HappinessSupport', () => {
 	} );
 
 	test( 'should render translated help content', () => {
-		const content = wrapper.find( 'p.happiness-support__text' );
+		const content = wrapper.find( 'p.happiness-support__description' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.'
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
 		);
 	} );
 
 	test( 'should render a translated support button', () => {
-		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().children ).to.equal(
-			'Translated: Support documentation'
-		);
+		expect(
+			wrapper.find( 'Button.happiness-support__support-button>span' ).props().children
+		).to.equal( 'Translated: Support documentation' );
 	} );
 
 	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {
@@ -62,12 +61,7 @@ describe( 'HappinessSupport', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
-		expect(
-			wrapper
-				.find( 'Button' )
-				.last()
-				.prop( 'href' )
-		).to.equal( JETPACK_SUPPORT );
+		expect( wrapper.find( 'Button' ).last().prop( 'href' ) ).to.equal( JETPACK_SUPPORT );
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {

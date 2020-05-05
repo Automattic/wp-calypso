@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import postsController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { getSiteFragment } from 'lib/route';
 
-export default function() {
+export default function () {
 	page(
 		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,

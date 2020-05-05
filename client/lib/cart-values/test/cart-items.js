@@ -1,5 +1,3 @@
-/** @format */
-
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -18,6 +16,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import { PRODUCT_JETPACK_BACKUP_DAILY } from 'lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -35,6 +35,7 @@ const {
 	getCartItemBillPeriod,
 	getDomainPriceRule,
 	hasToUpgradeToPayForADomain,
+	getRenewalItemFromProduct,
 } = cartItems;
 
 /**
@@ -53,7 +54,7 @@ describe( 'planItem()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return an object for non-free plan (${ product_slug })`, () => {
 			expect( planItem( product_slug ).product_slug ).toBe( product_slug );
 		} );
@@ -66,7 +67,7 @@ describe( 'getItemForPlan()', () => {
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return personal plan item for personal plan ${ product_slug }`, () => {
 			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
 		} );
@@ -76,7 +77,7 @@ describe( 'getItemForPlan()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return personal plan item for a premium plan ${ product_slug }`, () => {
 			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
 		} );
@@ -87,13 +88,13 @@ describe( 'getItemForPlan()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return personal plan item for a business plan ${ product_slug }`, () => {
 			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( product_slug ) => {
 		test( `should throw an error for plan ${ product_slug }`, () => {
 			expect( () => getItemForPlan( { product_slug } ).product_slug ).toThrow();
 		} );
@@ -121,7 +122,7 @@ describe( 'getCartItemBillPeriod()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return plan bill_period for any plan with product_slug ${ product_slug }`, () => {
 			const expected_bill_period = getTermDuration( getPlan( product_slug ).term );
 
@@ -148,7 +149,7 @@ describe( 'hasRenewableSubscription()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return true for product with bill_period same as plan ${ product_slug }`, () => {
 			const bill_period = getTermDuration( getPlan( product_slug ).term );
 
@@ -245,7 +246,7 @@ describe( 'isDomainBeingUsedForPlan()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return true for ${ product_slug } plan and .com domain`, () => {
 			expect( isDomainBeingUsedForPlan( buildCartWithDomain( product_slug ), 'domain.com' ) ).toBe(
 				true
@@ -260,7 +261,7 @@ describe( 'isDomainBeingUsedForPlan()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return true for ${ product_slug } plan and .blog domain`, () => {
 			expect(
 				isDomainBeingUsedForPlan(
@@ -271,7 +272,7 @@ describe( 'isDomainBeingUsedForPlan()', () => {
 		} );
 	} );
 
-	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( ( product_slug ) => {
 		test( `should return false for ${ product_slug } plan and .com domain`, () => {
 			expect( isDomainBeingUsedForPlan( buildCartWithDomain( product_slug ), 'domain.com' ) ).toBe(
 				false
@@ -279,7 +280,7 @@ describe( 'isDomainBeingUsedForPlan()', () => {
 		} );
 	} );
 
-	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( ( product_slug ) => {
 		test( `should return false for ${ product_slug } plan and .blog domain`, () => {
 			expect(
 				isDomainBeingUsedForPlan(
@@ -633,7 +634,7 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `should return false if current site is not on a blogger plan [${ product_slug }]`, () => {
 			expect( hasToUpgradeToPayForADomain( { plan: { product_slug } }, {} ) ).toBe( false );
 		} );
@@ -649,5 +650,222 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 
 	test( 'should return false if current site is not passed', () => {
 		expect( hasToUpgradeToPayForADomain( null, {} ) ).toBe( false );
+	} );
+} );
+
+describe( 'getRenewalItemFromProduct()', () => {
+	const buildPurchase = ( overrides ) => ( {
+		id: 123,
+		includedDomain: 'included.com',
+		domain: 'purchased.com',
+		...overrides,
+	} );
+	const properties = {
+		domain: 'purchased.com',
+		source: 'source',
+	};
+	describe( 'isDomainProduct', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'domain_map' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+					source: 'source',
+				},
+				meta: 'purchased.com',
+				product_slug: 'domain_map',
+			} );
+		} );
+	} );
+	describe( 'isPlan', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: PLAN_PERSONAL } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				free_trial: false,
+				product_slug: PLAN_PERSONAL,
+			} );
+		} );
+	} );
+	describe( 'isGoogleApps', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: GSUITE_BASIC_SLUG, users: 123 } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					google_apps_users: 123,
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				meta: 'purchased.com',
+				product_slug: GSUITE_BASIC_SLUG,
+			} );
+		} );
+	} );
+	describe( 'isSiteRedirect', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'offsite_redirect' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+					source: 'source',
+				},
+				meta: 'purchased.com',
+				product_slug: 'offsite_redirect',
+			} );
+		} );
+	} );
+	describe( 'isNoAds', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'no-adverts/no-adverts.php' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'no-adverts/no-adverts.php',
+			} );
+		} );
+	} );
+	describe( 'isCustomDesign', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'custom-design' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'custom-design',
+			} );
+		} );
+	} );
+	describe( 'isVideoPress', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'videopress' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'videopress',
+			} );
+		} );
+	} );
+	describe( 'isUnlimitedSpace', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'unlimited_space' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'unlimited_space',
+			} );
+		} );
+	} );
+	describe( 'isUnlimitedThemes', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'unlimited_themes' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'unlimited_themes',
+			} );
+		} );
+	} );
+	describe( 'isJetpackProduct', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: PRODUCT_JETPACK_BACKUP_DAILY } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
+			} );
+		} );
+	} );
+	describe( 'isSpaceUpgrade', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: '1gb_space_upgrade' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: '1gb_space_upgrade',
+			} );
+		} );
+	} );
+
+	describe( 'renewal not supported', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect( () =>
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'new_plan_does_not_exist' } ),
+					properties
+				)
+			).toThrowError( 'This product cannot be renewed' );
+		} );
 	} );
 } );

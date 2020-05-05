@@ -1,0 +1,43 @@
+.importer__service-icon {
+	box-sizing: border-box;
+	float: left;
+	width: 40px;
+	height: 40px;
+	padding: 2px;
+	margin-right: 1em;
+
+	background-color: var( --color-neutral-70 );
+	fill: var( --color-text-inverted );
+	border-radius: 4px;
+
+	&.wordpress {
+		background-color: var( --color-wordpress-com );
+	}
+
+	&.medium-logo {
+		background-color: var( --color-medium );
+	}
+
+	&.blogger-alt {
+		background-color: var( --color-blogger );
+	}
+
+	&.godaddy-gocentral {
+		background-color: var( --color-godaddy );
+	}
+
+	&.wix-logo {
+		background-color: var( --color-wix );
+	}
+
+	&.squarespace {
+		background-color: var( --color-squarespace );
+	}
+
+	@include breakpoint( '>960px' ) {
+		width: 56px;
+		height: 56px;
+		padding: 4px;
+		margin-right: 1.5em;
+	}
+}

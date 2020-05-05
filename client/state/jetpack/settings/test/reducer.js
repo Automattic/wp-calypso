@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -294,12 +292,7 @@ describe( 'reducer', () => {
 
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				[ 12345678 ]: {
-					onboarding: {
-						...settings.onboarding,
-						siteTitle: {},
-					},
-				},
+				[ 12345678 ]: [ 'test' ],
 			} );
 			const state = settingsReducer( original, { type: DESERIALIZE } );
 

@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 export const akismet = {

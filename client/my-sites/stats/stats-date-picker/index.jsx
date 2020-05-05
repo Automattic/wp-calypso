@@ -1,24 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
-import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { getSiteStatsQueryDate, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -87,14 +82,8 @@ class StatsDatePicker extends Component {
 					context: 'Date range for which stats are being displayed',
 					args: {
 						// LL is a date localized by momentjs
-						startDate: localizedDate
-							.startOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
-						endDate: localizedDate
-							.endOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
+						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
 					},
 				} );
 				break;
@@ -126,15 +115,17 @@ class StatsDatePicker extends Component {
 		const isToday = today.isSame( date, 'day' );
 		return (
 			<span>
-				{ translate( 'Last update: %(time)s', {
+				{ translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
 					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+					components: {
+						b: <span className="stats-date-picker__last-update" />,
+					},
 				} ) }
-				<Gridicon icon="info-outline" size={ 18 } />
 			</span>
 		);
 	}
 
-	bindStatusIndicator = ref => {
+	bindStatusIndicator = ( ref ) => {
 		this.statusIndicator = ref;
 	};
 
@@ -179,23 +170,8 @@ class StatsDatePicker extends Component {
 					<div className="stats-section-title">
 						<h3>{ sectionTitle }</h3>
 						{ showQueryDate && isAutoRefreshAllowedForQuery( query ) && (
-							<div
-								className="stats-date-picker__refresh-status"
-								ref={ this.bindStatusIndicator }
-								onMouseEnter={ this.showTooltip }
-								onMouseLeave={ this.hideTooltip }
-							>
-								<span className="stats-date-picker__update-date">
-									{ this.renderQueryDate() }
-									<Tooltip
-										isVisible={ this.state.isTooltipVisible }
-										onClose={ this.hideTooltip }
-										position="bottom"
-										context={ this.statusIndicator }
-									>
-										{ translate( 'Auto-refreshing every 30 minutes' ) }
-									</Tooltip>
-								</span>
+							<div className="stats-date-picker__refresh-status">
+								<span className="stats-date-picker__update-date">{ this.renderQueryDate() }</span>
 							</div>
 						) }
 					</div>
@@ -215,7 +191,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDatePicker );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDatePicker );

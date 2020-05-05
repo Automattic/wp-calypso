@@ -6,9 +6,8 @@
 	white-space: nowrap;
 }
 
-.plugins__header {
-	background: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+.plugins__main-header {
+	background: var( --color-surface );
 	flex-direction: column;
 	display: flex;
 	margin-bottom: 9px;
@@ -19,15 +18,14 @@
 	}
 }
 
-.plugins__header .section-nav {
-	border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
-	border-width: 0 0 1px;
+.plugins__main-header .section-nav {
+	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
 	box-shadow: none;
 	flex: auto;
 	margin: 0;
 
-	@include breakpoint( '>480px' ) {
-		border-width: 0 1px 0 0;
+	@include breakpoint( '<660px' ) {
+		border-width: 1px 0;
 	}
 }
 
@@ -35,21 +33,51 @@
 	margin-bottom: 1px;
 }
 
-.plugins__header-buttons {
+.plugins__main-buttons {
 	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 9px;
+	width: 100%;
 
-	.header-button {
-		flex: auto;
-		flex-basis: 0;
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 17px;
+	}
 
+
+	.plugins__button {
 		&:not( :last-child ) {
-			border-right: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
+			margin-right: 10px;
+		}
+
+		&:last-child {
+			@include breakpoint( '<660px' ) {
+				margin-right: 15px;
+			}
+		}
+
+		.gridicon {
+			margin-right: 0;
+			@include breakpoint( '>480px' ) {
+				margin-right: 4px;
+			}
 		}
 
 		@include breakpoint( '>480px' ) {
 			flex: none;
 		}
+
+		.plugins__button-text {
+			display: none;
+			@include breakpoint( '>480px' ) {
+				display: inline-block;
+			}
+		}
 	}
+}
+
+.plugins__header-navigation {
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	width: 100%;
 }
 
 .plugins__more-header {

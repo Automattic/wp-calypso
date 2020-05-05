@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -60,7 +59,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestGuidedTransferStatus()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
@@ -112,7 +111,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#saveHostDetails()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )

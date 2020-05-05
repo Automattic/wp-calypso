@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,11 +11,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { rewindClone } from 'state/activity-log/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -28,7 +26,6 @@ class CloneReadyStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -36,13 +33,13 @@ class CloneReadyStep extends Component {
 	goToNextStep = () => {
 		const { originBlogId, clonePoint } = this.props.payload;
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );
+		this.props.submitSignupStep( { stepName: this.props.stepName } );
 
 		this.props.initRewind( originBlogId, clonePoint, this.props.payload );
 		this.props.goToNextStep();
 	};
 
-	renderStepContent = () => {
+	renderStepContent() {
 		const { destinationSiteName, translate } = this.props;
 
 		return (
@@ -140,10 +137,10 @@ class CloneReadyStep extends Component {
 				</Button>
 			</Card>
 		);
-	};
+	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Ready to clone!' );
 
@@ -157,7 +154,6 @@ class CloneReadyStep extends Component {
 				subHeaderText={ '' }
 				fallbackSubHeaderText={ '' }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);
@@ -165,19 +161,16 @@ class CloneReadyStep extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
-			payload: get( ownProps, [ 'signupDependencies' ], {} ),
-		};
-	},
-	dispatch => ( {
+	( state, ownProps ) => ( {
+		destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
+		payload: get( ownProps, [ 'signupDependencies' ], {} ),
+	} ),
+	{
+		submitSignupStep,
 		initRewind: ( blogId, timestamp, payload ) =>
-			dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_activitylog_clone_request' ),
-					rewindClone( blogId, timestamp, payload )
-				)
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_clone_request' ),
+				rewindClone( blogId, timestamp, payload )
 			),
-	} )
+	}
 )( localize( CloneReadyStep ) );

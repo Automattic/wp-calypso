@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,6 @@ import StatsPlaceholder from '../stats-module/placeholder';
 import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
-import StatsFirstView from '../stats-first-view';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostLikes from '../stats-post-likes';
@@ -31,7 +28,7 @@ import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 import hasNavigated from 'state/selectors/has-navigated';
@@ -130,8 +127,6 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<StatsFirstView />
-
 				<HeaderCake
 					onClick={ this.goBack }
 					actionIcon={ showViewLink ? 'visible' : null }
@@ -148,7 +143,7 @@ class StatsPostDetail extends Component {
 						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
 						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
+						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
 						illustration="/calypso/images/stats/illustration-stats.svg"
 						illustrationWidth={ 150 }
@@ -163,7 +158,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="years"
-							title={ translate( 'Months and Years' ) }
+							title={ translate( 'Months and years' ) }
 							total={ translate( 'Total' ) }
 							siteId={ siteId }
 							postId={ postId }
@@ -171,7 +166,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="averages"
-							title={ translate( 'Average per Day' ) }
+							title={ translate( 'Average per day' ) }
 							total={ translate( 'Overall' ) }
 							siteId={ siteId }
 							postId={ postId }
@@ -213,7 +208,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetail );

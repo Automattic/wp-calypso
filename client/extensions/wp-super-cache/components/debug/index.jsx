@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -142,9 +139,7 @@ class DebugTab extends Component {
 												'<!-- super cache -->',
 											{
 												args: {
-													date: moment()
-														.utc()
-														.format( 'YYYY-MM-DD HH:mm:ss' ),
+													date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ),
 												},
 											}
 										) }
@@ -235,7 +230,7 @@ class DebugTab extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_path',
 		'cache_path_url',

@@ -1,0 +1,22 @@
+
+@mixin banner-color( $color ) {
+	border-left-color: $color;
+
+	.banner__icon {
+		color: $color;
+	}
+
+	.banner__icon-circle {
+		background-color: $color;
+	}
+}
+
+@mixin banner-dark() {
+	background-color: var( --color-neutral-70 );
+
+	.banner__list,
+	.banner__title,
+	.banner__description {
+		color: #fff;
+	}
+}

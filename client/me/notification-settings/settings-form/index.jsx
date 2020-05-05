@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import React, { Component } from 'react';
  */
 import Settings from './settings';
 import Actions from './actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class NotificationSettingsForm extends Component {
 	static propTypes = {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,14 +32,7 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 		await DriverHelper.setWhenSettable( this.driver, By.css( '#message' ), message );
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.button.is-primary:not([disabled])' )
-		);
-	}
-
-	async inviteSent() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '.notice__text' )
+			By.css( '.invite-people button.button.is-primary:not([disabled])' )
 		);
 	}
 

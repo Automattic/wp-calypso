@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,12 +20,5 @@ export default class WPAdminPostsPage extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, viewAnchor );
 		await driverHelper.followLinkWhenFollowable( this.driver, viewAnchor );
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, postPage );
-	}
-
-	async trashedSuccessNoticeDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( 'div.notice a[href*=untrash]' )
-		);
 	}
 }

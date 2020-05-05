@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop, values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 /**
@@ -117,7 +115,9 @@ export class ImageEditorToolbar extends Component {
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Free' ),
+				label: translate( 'Freeform', {
+					context: 'Option in image editor used to crop images using freeform aspect ratio',
+				} ),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
@@ -149,7 +149,7 @@ export class ImageEditorToolbar extends Component {
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item =>
+				{ items.map( ( item ) =>
 					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
 						<PopoverMenuItem
 							key={ 'image-editor-toolbar-aspect-' + item.action }
@@ -192,7 +192,7 @@ export class ImageEditorToolbar extends Component {
 			},
 		];
 
-		return buttons.map( button => {
+		return buttons.map( ( button ) => {
 			const buttonClasses = classNames( 'image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
 			} );
@@ -221,7 +221,7 @@ export class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 

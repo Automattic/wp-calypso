@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( { error: serverError.error, message: serverError.message } );
 			return;
@@ -48,7 +46,7 @@ function checkDomainAvailability( params, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -64,7 +62,7 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
+	wpcom.undocumented().getInboundTransferStatus( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;
@@ -82,7 +80,7 @@ function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+		.startInboundTransfer( siteId, domainName, authCode, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -98,7 +96,7 @@ function resendInboundTransferEmail( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().resendInboundTransferEmail( domainName, function( serverError, result ) {
+	wpcom.undocumented().resendInboundTransferEmail( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError );
 			return;
@@ -118,7 +116,12 @@ function canRedirect( siteId, domainName, onComplete ) {
 		domainName = 'http://' + domainName;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
+	if ( includes( domainName, '@' ) ) {
+		onComplete( new ValidationError( 'invalid_domain' ) );
+		return;
+	}
+
+	wpcom.undocumented().canRedirect( siteId, domainName, function ( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
 		} else if ( ! data.can_redirect ) {
@@ -133,7 +136,7 @@ function getPrimaryDomain( siteId, onComplete ) {
 	wpcom
 		.site( siteId )
 		.domain()
-		.getPrimary( function( serverError, data ) {
+		.getPrimary( function ( serverError, data ) {
 			onComplete( serverError, data );
 		} );
 }
@@ -149,15 +152,34 @@ function getFixedDomainSearch( domainName ) {
 }
 
 function isSubdomain( domainName ) {
-	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+	return (
+		domainName &&
+		domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ )
+	);
+}
+
+function isHstsRequired( productSlug, productsList ) {
+	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
+
+	return get( product, 'is_hsts_required', false );
 }
 
 function isMappedDomain( domain ) {
 	return domain.type === domainTypes.MAPPED;
 }
 
+/**
+ * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
+ *
+ * @param {object} domain - domain object
+ * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
+ */
+function isMappedDomainWithWpcomNameservers( domain ) {
+	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
+}
+
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains, domain => {
+	return find( domains, ( domain ) => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}
@@ -195,7 +217,7 @@ function hasMappedDomain( domains ) {
  * for our purposes, the approach should be "good enough" for a long time.
  *
  * @param {string}     domainName     The domain name parse the tld from
- * @return {string}                   The TLD or an empty string
+ * @returns {string}                   The TLD or an empty string
  */
 function getTld( domainName ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
@@ -228,17 +250,27 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
-function getDomainPrice( slug, productsList, currencyCode ) {
+function getUnformattedDomainPrice( slug, productsList ) {
 	let price = get( productsList, [ slug, 'cost' ], null );
+
 	if ( price ) {
 		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
-		price = formatCurrency( price, currencyCode );
 	}
 
 	return price;
 }
 
-function getDomainSalePrice( slug, productsList, currencyCode ) {
+function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {
+	let price = getUnformattedDomainPrice( slug, productsList );
+
+	if ( price ) {
+		price = formatCurrency( price, currencyCode, { stripZeros } );
+	}
+
+	return price;
+}
+
+function getUnformattedDomainSalePrice( slug, productsList ) {
 	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
 	const couponValidForNewDomainPurchase = get(
 		productsList,
@@ -250,7 +282,17 @@ function getDomainSalePrice( slug, productsList, currencyCode ) {
 		return null;
 	}
 
-	return formatCurrency( saleCost, currencyCode );
+	return saleCost;
+}
+
+function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {
+	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
+
+	if ( saleCost ) {
+		saleCost = formatCurrency( saleCost, currencyCode, { stripZeros } );
+	}
+
+	return saleCost;
 }
 
 function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
@@ -284,7 +326,7 @@ function getDomainTypeText( domain = {} ) {
 			return 'Site Redirect';
 
 		case domainTypes.WPCOM:
-			return 'Wpcom Domain';
+			return 'Default Site Domain';
 
 		case domainTypes.TRANSFER:
 			return 'Transfer';
@@ -299,7 +341,7 @@ function getDomainTypeText( domain = {} ) {
  *
  * @param {string} search Original search string
  * @param {integer} minLength Minimum search string length
- * @return {string} Cleaned search string
+ * @returns {string} Cleaned search string
  */
 function getDomainSuggestionSearch( search, minLength = 2 ) {
 	const cleanedSearch = getFixedDomainSearch( search );
@@ -319,6 +361,14 @@ function getDomainSuggestionSearch( search, minLength = 2 ) {
 	return cleanedSearch;
 }
 
+function resendIcannVerification( domainName, onComplete ) {
+	return wpcom.undocumented().resendIcannVerification( domainName, onComplete );
+}
+
+function requestGdprConsentManagementLink( domainName, onComplete ) {
+	return wpcom.undocumented().requestGdprConsentManagementLink( domainName, onComplete );
+}
+
 export {
 	canRedirect,
 	checkAuthCode,
@@ -336,12 +386,18 @@ export {
 	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
+	getUnformattedDomainPrice,
+	getUnformattedDomainSalePrice,
 	hasMappedDomain,
+	isHstsRequired,
 	isMappedDomain,
+	isMappedDomainWithWpcomNameservers,
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
 	startInboundTransfer,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
+	resendIcannVerification,
+	requestGdprConsentManagementLink,
 };

@@ -1,17 +1,21 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
 import { string, node } from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export function PreferencesHelper() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

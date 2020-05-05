@@ -1,11 +1,11 @@
-FROM node:10.15.2
+FROM node:12.16.2
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
 
 
 ENV        CONTAINER 'docker'
-ENV        NODE_PATH=/calypso/server:/calypso/client
+ENV        PROGRESS=true
 
 # Build a "base" layer
 #
@@ -24,8 +24,9 @@ RUN        bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-COPY       . /calypso/
-RUN        npm ci
+COPY . /calypso/
+RUN yarn install --frozen-lockfile
+
 
 # Build the final layer
 #
@@ -35,7 +36,7 @@ ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
 ARG        workers
-RUN        WORKERS=$workers CALYPSO_ENV=production npm run build
+RUN        WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true yarn run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

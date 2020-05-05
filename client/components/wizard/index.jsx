@@ -1,18 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, indexOf, omit } from 'lodash';
+import { compact, get, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import NavigationLink from './navigation-link';
-import ProgressIndicator from 'components/wizard/progress-indicator';
+import ProgressIndicator from './progress-indicator';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Wizard extends Component {
 	static propTypes = {
@@ -78,6 +81,7 @@ class Wizard extends Component {
 		const {
 			backText,
 			basePath,
+			baseSuffix,
 			components,
 			forwardText,
 			hideBackLink,
@@ -106,7 +110,7 @@ class Wizard extends Component {
 					getBackUrl: this.getBackUrl,
 					getForwardUrl: this.getForwardUrl,
 					steps,
-					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
+					...otherProps,
 				} ) }
 
 				{ ! hideNavigation && totalSteps > 1 && (

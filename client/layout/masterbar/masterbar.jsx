@@ -1,22 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const Masterbar = ( { children } ) => (
-	<header id="header" className="masterbar">
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const Masterbar = ( { children, className } ) => (
+	<header id="header" className={ classNames( 'masterbar', className ) }>
 		{ children }
 	</header>
 );
 
-Masterbar.displayName = 'Masterbar';
-
 Masterbar.propTypes = {
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 };
 
 export default Masterbar;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,7 +43,7 @@ class QueryRecentPostViews extends Component {
 		// Break post_ids into chunks of 100 because `stats/views/posts`
 		// is limited to 100 post_ids per query.
 		const postIdsChunks = chunk( postIds, 100 );
-		postIdsChunks.forEach( postIdsChunk =>
+		postIdsChunks.forEach( ( postIdsChunk ) =>
 			this.props.requestRecentPostViews( siteId, postIdsChunk, num, date )
 		);
 	}
@@ -55,7 +53,4 @@ class QueryRecentPostViews extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestRecentPostViews }
-)( QueryRecentPostViews );
+export default connect( null, { requestRecentPostViews } )( QueryRecentPostViews );

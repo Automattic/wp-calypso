@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
-const isPercentage = val => percentageRegex.test( val );
+const isPercentage = ( val ) => percentageRegex.test( val );
 
 const embedsConfig = {
 	default: {

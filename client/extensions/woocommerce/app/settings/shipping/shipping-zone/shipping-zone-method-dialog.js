@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isEmpty, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FlatRate from './shipping-methods/flat-rate';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -70,8 +68,9 @@ const ShippingZoneMethodDialog = ( {
 	const onDelete = () => {
 		actions.removeMethodFromShippingZone( method.id );
 	};
-	const onMethodTitleChange = event => actions.changeShippingZoneMethodTitle( event.target.value );
-	const onMethodTypeChange = event => {
+	const onMethodTitleChange = ( event ) =>
+		actions.changeShippingZoneMethodTitle( event.target.value );
+	const onMethodTypeChange = ( event ) => {
 		const newType = event.target.value;
 		actions.changeShippingZoneMethodType( newType, methodNamesMap( newType ) );
 	};

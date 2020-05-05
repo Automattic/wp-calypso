@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ const log = debug( 'calypso:test:use-nock' );
  * @param {Function} setupCallback Function executed before all tests are run.
  * @deprecated Use nock directly instead.
  */
-export const useNock = setupCallback => {
+export const useNock = ( setupCallback ) => {
 	if ( setupCallback ) {
 		beforeAll( partial( setupCallback, nock ) );
 	}

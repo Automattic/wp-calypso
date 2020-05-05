@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight, get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import { deleteFile } from '../../state/stats/actions';
 import { isDeletingFile } from '../../state/stats/selectors';
@@ -50,7 +48,7 @@ class CacheStats extends Component {
 		url: '',
 	};
 
-	deleteFile = event => {
+	deleteFile = ( event ) => {
 		const url = get( event, 'currentTarget.dataset.url', '' );
 
 		if ( ! url ) {
@@ -104,7 +102,7 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -115,7 +113,4 @@ const connectComponent = connect(
 	{ deleteFile }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( CacheStats );
+export default flowRight( connectComponent, localize )( CacheStats );

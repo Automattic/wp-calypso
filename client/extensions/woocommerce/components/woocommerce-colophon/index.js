@@ -1,27 +1,38 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
+import { recordTracksEvent } from 'state/analytics/actions';
+
 import WooCommerceLogo from '../woocommerce-logo';
 
-const WooCommerceColophon = ( { translate } ) => {
-	return (
-		<div className="woocommerce-colophon">
-			<span>
-				{ translate( 'Powered by {{WooCommerceLogo /}}', {
-					components: {
-						WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
-					},
-				} ) }
-			</span>
-		</div>
-	);
-};
+class WooCommerceColophon extends React.Component {
+	static displayName = 'WooCommerceColophon';
 
-export default localize( WooCommerceColophon );
+	onClick = () => {
+		this.props.recordTracksEvent( 'calypso_store_woocommercecolophon_click' );
+	};
+
+	render() {
+		return (
+			<div className="woocommerce-colophon">
+				<ExternalLink icon={ false } onClick={ this.onClick } href="https://woocommerce.com">
+					{ this.props.translate( 'Powered by {{WooCommerceLogo /}}', {
+						components: {
+							WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
+						},
+					} ) }
+				</ExternalLink>
+			</div>
+		);
+	}
+}
+
+export default connect( null, { recordTracksEvent } )( localize( WooCommerceColophon ) );

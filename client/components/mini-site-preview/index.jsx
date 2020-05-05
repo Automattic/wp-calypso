@@ -1,10 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const MiniSitePreview = ( { className, imageSrc } ) =>
 	imageSrc ? (

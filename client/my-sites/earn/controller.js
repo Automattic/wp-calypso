@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,15 +11,13 @@ import page from 'page';
 import Main from './main';
 
 export default {
-	redirect: function( context ) {
+	redirectToAdsEarnings: function ( context ) {
 		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
-		return;
 	},
-	redirectToAdsSettings: function( context ) {
+	redirectToAdsSettings: function ( context ) {
 		page.redirect( '/earn/ads-settings/' + context.params.site_id );
-		return;
 	},
-	layout: function( context, next ) {
+	layout: function ( context, next ) {
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
@@ -30,6 +26,7 @@ export default {
 		context.primary = React.createElement( Main, {
 			section: context.params.section,
 			path: context.path,
+			query: context.query,
 		} );
 		next();
 	},

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { POST_TYPES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -33,7 +31,10 @@ describe( 'reducer', () => {
 			const state = items( undefined, {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
-				types: [ { name: 'post', label: 'Posts' }, { name: 'page', label: 'Pages' } ],
+				types: [
+					{ name: 'post', label: 'Posts' },
+					{ name: 'page', label: 'Pages' },
+				],
 			} );
 
 			expect( state ).to.eql( {

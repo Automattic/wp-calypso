@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import { fetchUser } from 'lib/users/actions';
@@ -28,6 +26,11 @@ import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 import EditUserForm from './edit-user-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {
@@ -57,7 +60,7 @@ export class EditTeamMemberForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId || nextProps.userLogin !== this.props.userLogin ) {
 			this.refreshUser( nextProps );
 		}
@@ -80,7 +83,7 @@ export class EditTeamMemberForm extends Component {
 	redirectIfError = () => {
 		if ( this.props.siteId ) {
 			const fetchUserError = PeopleLogStore.getErrors(
-				log =>
+				( log ) =>
 					this.props.siteId === log.siteId &&
 					'RECEIVE_USER_FAILED' === log.action &&
 					this.props.userLogin === log.user
@@ -96,7 +99,7 @@ export class EditTeamMemberForm extends Component {
 			return;
 		}
 
-		const removeUserSuccessful = PeopleLogStore.getCompleted( log => {
+		const removeUserSuccessful = PeopleLogStore.getCompleted( ( log ) => {
 			return (
 				'RECEIVE_DELETE_SITE_USER_SUCCESS' === log.action &&
 				this.props.siteId === log.siteId &&
@@ -111,7 +114,7 @@ export class EditTeamMemberForm extends Component {
 		}
 
 		const removeUserInProgress = PeopleLogStore.getInProgress(
-			function( log ) {
+			function ( log ) {
 				return (
 					'DELETE_SITE_USER' === log.action &&
 					this.props.siteId === log.siteId &&
@@ -154,7 +157,7 @@ export class EditTeamMemberForm extends Component {
 				<HeaderCake onClick={ this.goBack } isCompact />
 				{ this.renderNotices() }
 				<Card className="edit-team-member-form__user-profile">
-					<PeopleProfile user={ this.state.user } />
+					<PeopleProfile siteId={ this.props.siteId } user={ this.state.user } />
 					<EditUserForm
 						{ ...this.state.user }
 						disabled={ this.state.removingUser }
@@ -176,7 +179,7 @@ export class EditTeamMemberForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -30,6 +28,7 @@ import {
 	isKeyringConnectionsFetching,
 } from 'state/sharing/keyring/selectors';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -73,7 +72,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		);
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { connection } = this.props;
 		if ( ! connection ) {
 			return;
@@ -132,7 +131,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/publicize/#facebook-pages"
+									href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -189,7 +188,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
 				) }
 				<NoticeAction href={ addSiteFragment( '/sharing', siteSlug ) }>
-					{ this.props.translate( 'Go to Sharing settings' ) }{' '}
+					{ this.props.translate( 'Go to Sharing settings' ) }{ ' ' }
 					<Gridicon icon="external" size={ 18 } />
 				</NoticeAction>
 			</Notice>

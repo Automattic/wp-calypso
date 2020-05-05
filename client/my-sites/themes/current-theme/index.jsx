@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
@@ -45,7 +43,7 @@ class CurrentTheme extends Component {
 		currentTheme: PropTypes.object,
 	};
 
-	trackClick = event => trackClick( 'current theme', event );
+	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
 		const { currentTheme, currentThemeId, siteId, translate } = this.props,
@@ -54,7 +52,7 @@ class CurrentTheme extends Component {
 
 		const options = pickBy(
 			this.props.options,
-			option =>
+			( option ) =>
 				option.icon && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 

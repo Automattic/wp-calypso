@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,11 @@ import countPostLikes from 'state/selectors/count-post-likes';
 import getPostLikes from 'state/selectors/get-post-likes';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostLikes extends React.PureComponent {
 	static defaultProps = {
 		postType: 'post',
@@ -27,7 +30,7 @@ class PostLikes extends React.PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
-	renderLike = like => {
+	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
 		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;

@@ -1,18 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { bumpStat } from 'lib/analytics/mc';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
+	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -34,20 +33,29 @@ export function setNpsSurveyEligibility( isEligible ) {
 	};
 }
 
+export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSession ) {
+	return {
+		type: NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
+		isAvailableForConciergeSession,
+	};
+}
+
 export function setupNpsSurveyEligibility() {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Checking NPS eligibility...' );
 
 		return wpcom
 			.undocumented()
 			.checkNPSSurveyEligibility()
-			.then( data => {
+			.then( ( data ) => {
 				debug( '...Eligibility returned from endpoint.', data );
 				dispatch( setNpsSurveyEligibility( data.display_survey ) );
+				dispatch( setNpsConciergeSessionAvailaibility( data.has_available_concierge_sessions ) );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error querying NPS survey eligibility.', err );
 				dispatch( setNpsSurveyEligibility( false ) );
+				dispatch( setNpsConciergeSessionAvailaibility( false ) );
 			} );
 	};
 }
@@ -59,12 +67,12 @@ export function markNpsSurveyShownThisSession() {
 }
 
 export function submitNpsSurvey( surveyName, score ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Submitting NPS survey...' );
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
+		bumpStat( 'calypso_nps_survey', 'survey_submitted' );
+		recordTracksEvent( 'calypso_nps_survey_submitted' );
 
 		return wpcom
 			.undocumented()
@@ -73,7 +81,7 @@ export function submitNpsSurvey( surveyName, score ) {
 				debug( '...Successfully submitted NPS survey.' );
 				dispatch( submitNpsSurveyRequestSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error submitting NPS survey.', err );
 				dispatch( submitNpsSurveyRequestFailure( err ) );
 			} );
@@ -81,12 +89,12 @@ export function submitNpsSurvey( surveyName, score ) {
 }
 
 export function submitNpsSurveyWithNoScore( surveyName ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
+		bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
+		recordTracksEvent( 'calypso_nps_survey_dismissed' );
 
 		return wpcom
 			.undocumented()
@@ -95,7 +103,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 				debug( '...Successfully submitted NPS survey with no score.' );
 				dispatch( submitNpsSurveyWithNoScoreRequestSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error submitting NPS survey with no score.', err );
 				dispatch( submitNpsSurveyWithNoScoreRequestFailure( err ) );
 			} );
@@ -103,12 +111,12 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 }
 
 export function sendNpsSurveyFeedback( surveyName, feedback ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Sending NPS survey feedback...' );
 		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
+		bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
+		recordTracksEvent( 'calypso_nps_survey_feedback_submitted' );
 
 		return wpcom
 			.undocumented()
@@ -117,7 +125,7 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 				debug( '...Successfully sent NPS survey feedback.' );
 				dispatch( sendNpsSurveyFeedbackSuccess() );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				debug( '...Error sending NPS survey feedback.' );
 				dispatch( sendNpsSurveyFeedbackFailure( err ) );
 			} );

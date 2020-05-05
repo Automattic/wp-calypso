@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -42,7 +41,7 @@ const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => 
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteUrl: getSiteUrl( state, siteId ),

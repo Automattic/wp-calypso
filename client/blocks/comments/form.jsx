@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -38,12 +37,12 @@ class PostCommentForm extends React.Component {
 
 		// bind event handlers to this instance
 		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( prop => prop.indexOf( 'handle' ) === 0 )
-			.filter( prop => typeof this[ prop ] === 'function' )
-			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
+			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
+			.filter( ( prop ) => typeof this[ prop ] === 'function' )
+			.forEach( ( prop ) => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
@@ -246,7 +245,7 @@ PostCommentForm.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }

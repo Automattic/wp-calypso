@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,10 @@ import { get } from 'lodash';
  * Returns true if currently requesting that shortcode for the specified site ID, or
  * false otherwise.
  *
- * @param  {Object}  state     Global state tree
- * @param  {Number}  siteId    Site ID
- * @param  {String}  shortcode Shortcode
- * @return {Boolean}           Whether that shortcode is being requested
+ * @param  {object}  state     Global state tree
+ * @param  {number}  siteId    Site ID
+ * @param  {string}  shortcode Shortcode
+ * @returns {boolean}           Whether that shortcode is being requested
  */
 export const isRequestingShortcode = ( state, siteId, shortcode ) => {
 	return get( state.shortcodes.requesting, [ siteId, shortcode ], false );
@@ -21,10 +19,11 @@ export const isRequestingShortcode = ( state, siteId, shortcode ) => {
 
 /**
  * Retrieve the data of a certain shortcode for a particular site
- * @param  {Object} state      Global state tree
- * @param  {Number} siteId     Site ID
- * @param  {String} shortcode  Shortcode
- * @return {Object}            Shortcode data
+ *
+ * @param  {object} state      Global state tree
+ * @param  {number} siteId     Site ID
+ * @param  {string} shortcode  Shortcode
+ * @returns {object}            Shortcode data
  */
 export const getShortcode = ( state, siteId, shortcode ) => {
 	return get( state.shortcodes.items, [ siteId, shortcode ] );

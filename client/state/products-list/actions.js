@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -24,14 +23,14 @@ export function receiveProductsList( productsList ) {
 }
 
 export function requestProductsList() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
 		return wpcom
 			.undocumented()
 			.getProducts()
-			.then( productsList => dispatch( receiveProductsList( productsList ) ) )
-			.catch( error =>
+			.then( ( productsList ) => dispatch( receiveProductsList( productsList ) ) )
+			.catch( ( error ) =>
 				dispatch( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,
 					error,

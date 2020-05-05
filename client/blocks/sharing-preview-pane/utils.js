@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { parseHtml } from 'lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
-export const getPostImage = post => {
+export const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -43,7 +41,7 @@ export const getPostImage = post => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-export const getExcerptForPost = post => {
+export const getExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -61,10 +59,10 @@ export const getExcerptForPost = post => {
  * Returns a summary of a post, truncated approximately at the same length as our servers
  * and Facebook truncate it.
  *
- * @param {Object} post A post object.
+ * @param {object} post A post object.
  * @param {Function} translate The i18n-calypso function.
- * @param {Number} maxWords Approximation of the truncation logic performed by our servers.
- * @returns {String} Post summary
+ * @param {number} maxWords Approximation of the truncation logic performed by our servers.
+ * @returns {string} Post summary
  */
 export const getSummaryForPost = ( post, translate, maxWords = 60 ) => {
 	if ( ! post ) {

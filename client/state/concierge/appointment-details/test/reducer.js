@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -37,5 +35,3 @@ describe( 'concierge/availableTimes/reducer', () => {
 		} );
 	} );
 } );
-
-/** @format */

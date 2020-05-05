@@ -8,13 +8,13 @@
 	&.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: var( --color-white );
+		background: var( --color-surface );
 
 		p {
 			width: 300px;
 			height: 14px;
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-50 );
+			background-color: var( --color-neutral-5 );
 		}
 	}
 

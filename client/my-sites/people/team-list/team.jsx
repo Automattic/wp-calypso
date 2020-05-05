@@ -1,10 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
@@ -14,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import { fetchUsers } from 'lib/users/actions';
@@ -131,7 +130,7 @@ class Team extends React.Component {
 		);
 	}
 
-	renderPerson = user => {
+	renderPerson = ( user ) => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -156,12 +155,9 @@ class Team extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	getPersonRef = user => 'user-' + user.ID;
+	getPersonRef = ( user ) => 'user-' + user.ID;
 
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Team ) );
+export default connect( null, { recordGoogleEvent } )( localize( Team ) );

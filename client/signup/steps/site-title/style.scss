@@ -1,0 +1,104 @@
+.site-title__wrapper {
+	max-width: 480px;
+	min-height: 46px;
+	margin: 0 auto;
+	position: relative;
+	.site-title__field-control {
+		margin: 0 auto;
+	}
+
+	// Mimic a card
+	.form-fieldset {
+		border-radius: 4px;
+		background: var( --color-surface );
+		@include elevation ( 2dp );
+	}
+
+	label {
+		// The label isn't needed when
+		// there's only one input.
+		display: none;
+	}
+
+	input {
+		// Extra padding to account for the button
+		padding: 10px 90px 12px 16px;
+
+		// Match the radious of the fieldset
+		border-radius: 4px;
+
+		// No need for a border here
+		border: none;
+
+		// On smaller screens the buttons get bigger,
+		// so this input needs to get bigger, too.
+		@include breakpoint( '<660px' ) {
+			padding-top: 15px;
+			padding-bottom: 15px;
+			padding-right: 100px;
+
+			// The rounded borders look strange on
+			// smaller screens.
+			border-radius: 0;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 3px var( --color-accent-light );
+		}
+	}
+
+	.card {
+		margin: 0 auto;
+		background: transparent;
+		border: 0;
+		box-shadow: none;
+		padding: 0;
+	}
+}
+
+.site-title__info-popover {
+	margin-left: 5px;
+
+	.gridicon {
+		margin-bottom: -3px;
+		color: var( --color-text-inverted );
+	}
+}
+
+.site-title__field-control {
+	margin: 0 auto 20px;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
+
+	&:last-child {
+		margin: 0 auto;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	.button {
+		position: absolute;
+		top: 3px;
+		right: 3px;
+		width: auto;
+		padding: 8px;
+		transition: none;
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+	}
+}
+
+/* We need specificity here to overwrite client/signup/style.scss */
+body.is-section-signup {
+	.site-title__wrapper .site-title__field-control button.button {
+		@include breakpoint( '<660px' ) {
+			padding: 12px;
+		}
+	}
+}

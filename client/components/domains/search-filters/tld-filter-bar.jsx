@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -14,8 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import Popover from 'components/popover';
 import TokenField from 'components/token-field';
@@ -42,16 +39,16 @@ export class TldFilterBar extends Component {
 	};
 
 	static defaultProps = {
-		numberOfTldsShown: 8,
+		numberOfTldsShown: 6,
 	};
 
 	state = {
 		showPopover: false,
 	};
 
-	bindButton = button => ( this.button = button );
+	bindButton = ( button ) => ( this.button = button );
 
-	handleButtonClick = event => {
+	handleButtonClick = ( event ) => {
 		const { filters: { tlds = [] } = {} } = this.props;
 
 		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
@@ -79,8 +76,8 @@ export class TldFilterBar extends Component {
 		this.togglePopover();
 		this.hasFiltersChanged() && this.props.onSubmit();
 	};
-	handleTokenChange = newTlds => {
-		const tlds = newTlds.filter( tld => includes( this.props.availableTlds, tld ) );
+	handleTokenChange = ( newTlds ) => {
+		const tlds = newTlds.filter( ( tld ) => includes( this.props.availableTlds, tld ) );
 		this.props.onChange( { tlds } );
 	};
 
@@ -98,7 +95,9 @@ export class TldFilterBar extends Component {
 	}
 
 	render() {
-		if ( this.props.showPlaceholder ) {
+		const { showPlaceholder } = this.props;
+
+		if ( showPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
@@ -108,8 +107,8 @@ export class TldFilterBar extends Component {
 
 		return (
 			<CompactCard className={ className }>
-				{ this.renderSuggestedButtons() }
 				{ this.renderPopoverButton() }
+				{ this.renderSuggestedButtons() }
 				{ this.state.showPopover && this.renderPopover() }
 			</CompactCard>
 		);
@@ -139,6 +138,7 @@ export class TldFilterBar extends Component {
 
 	renderPopoverButton() {
 		const { filters: { tlds = [] } = {}, translate } = this.props;
+
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
@@ -172,8 +172,8 @@ export class TldFilterBar extends Component {
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
-						displayTransform={ item => `.${ item }` }
-						saveTransform={ query => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
+						displayTransform={ ( item ) => `.${ item }` }
+						saveTransform={ ( query ) => ( query[ 0 ] === '.' ? query.substr( 1 ) : query)  }
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
@@ -184,10 +184,10 @@ export class TldFilterBar extends Component {
 				</FormFieldset>
 				<FormFieldset className="search-filters__buttons-fieldset">
 					<div className="search-filters__buttons">
-						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 						<Button primary onClick={ this.handleFiltersSubmit }>
 							{ translate( 'Apply' ) }
 						</Button>
+						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 					</div>
 				</FormFieldset>
 			</Popover>
@@ -204,9 +204,6 @@ export class TldFilterBar extends Component {
 		);
 	}
 }
-export default connect(
-	null,
-	{
-		recordTldFilterSelected,
-	}
-)( localize( TldFilterBar ) );
+export default connect( null, {
+	recordTldFilterSelected,
+} )( localize( TldFilterBar ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { compact, find, isEqual, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
@@ -26,13 +24,23 @@ import { editProductAttribute } from '../edits-reducer';
 import { getBucket } from 'woocommerce/state/ui/helpers';
 import generateVariations from 'woocommerce/lib/generate-variations';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
-	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR ]: clearEditsAction,
-	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdatedAction,
-	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_EDIT:
+			return editProductAction( state, action );
+		case WOOCOMMERCE_PRODUCT_UPDATED:
+			return productUpdatedAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_EDIT:
+			return editProductVariationAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR:
+			return clearEditsAction( state, action );
+		case WOOCOMMERCE_PRODUCT_VARIATION_UPDATED:
+			return productVariationUpdatedAction( state, action );
+		case WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT:
+			return editProductAttributeAction( state, action );
+	}
+
+	return state;
 } );
 
 /**
@@ -43,23 +51,23 @@ export default createReducer( null, {
  *
  * ```
  * {
- *   productId: <Number|Object>,
+ *   productId: <number|object>,
  *   creates: [ {<new variation object>} ]
  *   updated: [ {<variation props to update>} ]
  *   deletes: [ <variation id> ]
  * }
  * ```
  *
- * @param {Object} edits The state at `woocommerce.ui.products.variations.edits`
- * @param {Number|Object} productId The id of product edits object to be updating.
+ * @param {object} edits The state at `woocommerce.ui.products.variations.edits`
+ * @param {number|object} productId The id of product edits object to be updating.
  * @param {Function} doUpdate ( productEdits ) Called with previous product edits, takes return as new product edits.
- * @return {Object} The new, updated product edits to be used in state.
+ * @returns {object} The new, updated product edits to be used in state.
  */
 function updateProductEdits( edits, productId, doUpdate ) {
 	const prevEdits = edits || [];
 	let found = false;
 
-	const newEdits = prevEdits.map( productEdits => {
+	const newEdits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			return doUpdate( productEdits );
@@ -81,7 +89,7 @@ function editProductAction( edits, action ) {
 		// Ensure there are no variation edits for this product,
 		// and that any existing ones have deletes.
 		return updateProductEdits( edits, product.id, () => {
-			const deletes = productVariations ? productVariations.map( v => v.id ) : undefined;
+			const deletes = productVariations ? productVariations.map( ( v ) => v.id ) : undefined;
 			return { deletes };
 		} );
 	}
@@ -101,7 +109,7 @@ function editProductVariationAction( edits, action ) {
 	let found = false;
 
 	// Look for an existing product edits first.
-	const _edits = prevEdits.map( productEdits => {
+	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			const variationId = ( variation && variation.id ) || {
@@ -144,7 +152,7 @@ function editProductVariation( array, variation, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const _array = prevArray.map( v => {
+	const _array = prevArray.map( ( v ) => {
 		if ( isEqual( variation.id, v.id ) ) {
 			found = true;
 			return { ...v, ...data };
@@ -166,7 +174,7 @@ function editProductAttributeAction( edits, action ) {
 	const attributes = editProductAttribute( product.attributes, attribute, data );
 	const calculatedVariations = generateVariations( { ...product, attributes }, productVariations );
 
-	return updateProductEdits( edits, product.id, productEdits => {
+	return updateProductEdits( edits, product.id, ( productEdits ) => {
 		const creates = productEdits ? productEdits.creates : [];
 		const updates = productEdits ? productEdits.updates : [];
 		const newCreates = updateVariationCreates( creates, calculatedVariations, productVariations );
@@ -185,7 +193,7 @@ function editProductAttributeAction( edits, action ) {
 
 function updateVariationCreates( creates, calculatedVariations, productVariations ) {
 	const newCreates = compact(
-		calculatedVariations.map( calculatedVariation => {
+		calculatedVariations.map( ( calculatedVariation ) => {
 			const foundCreate = find( creates, { attributes: calculatedVariation.attributes } );
 
 			if ( foundCreate ) {
@@ -209,7 +217,7 @@ function updateVariationCreates( creates, calculatedVariations, productVariation
 
 function updateVariationUpdates( updates, calculatedVariations, productVariations ) {
 	const newUpdates = compact(
-		calculatedVariations.map( calculatedVariation => {
+		calculatedVariations.map( ( calculatedVariation ) => {
 			const productVariation = find( productVariations, {
 				attributes: calculatedVariation.attributes,
 			} );
@@ -227,7 +235,7 @@ function updateVariationUpdates( updates, calculatedVariations, productVariation
 function updateVariationDeletes( calculatedVariations, productVariations ) {
 	if ( productVariations ) {
 		const newDeletes = compact(
-			productVariations.map( productVariation => {
+			productVariations.map( ( productVariation ) => {
 				const foundInCalculated = find( calculatedVariations, {
 					attributes: productVariation.attributes,
 				} );
@@ -256,7 +264,7 @@ export function productUpdatedAction( edits, action ) {
 		const prevProductId = originatingAction.product.id;
 		const newProductId = data.id;
 
-		const newEdits = prevEdits.map( productEdits => {
+		const newEdits = prevEdits.map( ( productEdits ) => {
 			if ( isEqual( prevProductId, productEdits.productId ) ) {
 				return { ...productEdits, productId: newProductId };
 			}
@@ -290,7 +298,7 @@ function removeVariationEdit( edits, bucket, productId, variationId ) {
 	const prevEdits = edits || [];
 
 	const newEdits = compact(
-		prevEdits.map( editsForProduct => {
+		prevEdits.map( ( editsForProduct ) => {
 			if ( isEqual( productId, editsForProduct.productId ) ) {
 				return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
 			}
@@ -305,7 +313,7 @@ function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variat
 	const prevBucketEdits = editsForProduct[ bucket ] || [];
 
 	const newBucketEdits = compact(
-		prevBucketEdits.map( variationEdit => {
+		prevBucketEdits.map( ( variationEdit ) => {
 			if ( isEqual( variationId, variationEdit.id ) ) {
 				return undefined;
 			}

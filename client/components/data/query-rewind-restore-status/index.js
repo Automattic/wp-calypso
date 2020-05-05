@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Interval, { EVERY_SECOND } from 'lib/interval';
+import { Interval, EVERY_SECOND } from 'lib/interval';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
 
 class QueryRewindRestoreStatus extends Component {
@@ -30,7 +29,4 @@ class QueryRewindRestoreStatus extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ getRewindRestoreProgress }
-)( QueryRewindRestoreStatus );
+export default connect( null, { getRewindRestoreProgress } )( QueryRewindRestoreStatus );

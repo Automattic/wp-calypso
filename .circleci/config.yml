@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.2.0
+  slack: circleci/slack@2.6.0
 
 references:
   shared-environment: &shared-environment
@@ -9,13 +9,12 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.15.2-browsers
+    - image: circleci/node:12.16.2-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                                  \
-        "$CIRCLE_ARTIFACTS/icfy"                \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
@@ -48,13 +47,13 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
@@ -64,13 +63,13 @@ references:
   restore-terser-cache: &restore-terser-cache
     name: Restore Terser cache
     keys:
-      - v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v0-terser-{{ .Branch }}
-      - v0-terser-master
-      - v0-terser
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
   save-terser-cache: &save-terser-cache
     name: Save Terser cache
-    key: v0-terser-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/terser-cache
 
@@ -86,22 +85,22 @@ references:
   restore-git-cache: &restore-git-cache
     name: Restore git cache
     keys:
-      - v2-git-{{ .Branch }}-{{ .Revision }}
-      - v2-git-{{ .Branch }}
-      - v2-git-master
-      - v2-git
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
   update-git-master: &update-git-master
     name: Update master branch
     command: git fetch --force origin master
   save-git-cache: &save-git-cache
     name: Save git cache
-    key: v2-git-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ".git"
+      - '.git'
 
-  # npm cache
+  # yarn cache
   #
-  # npm caches the modules it installs in ~/.npm.
+  # yarn caches the modules it installs in ~/.cache/yarn.
   # We cache that cache to save time pulling modules from the network.
   #
   #
@@ -110,46 +109,51 @@ references:
   #   - https://github.com/Automattic/wp-calypso/pull/25487
   #   - https://github.com/Automattic/wp-calypso/pull/27180
   #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-npm-cache: &restore-npm-cache
-    name: "Restore npm cache"
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching and https://circleci.com/docs/2.0/yarn/
+  restore-yarn-cache: &restore-yarn-cache
+    name: 'Restore yarn cache'
     keys:
-      - v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v3-npm-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
-  npm-install: &npm-install
-    name: Install npm dependencies
-    command: npm ci
+  yarn-install: &yarn-install
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+    name: Install dependencies
+    command: yarn install --frozen-lockfile
 
-  save-npm-cache: &save-npm-cache
-    name: "Save node_modules cache"
-    key: v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+  save-yarn-cache: &save-yarn-cache
+    name: 'Save yarn cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
-      - ~/.npm
+      - ~/.cache/yarn
   npm-e2e-install: &npm-e2e-install
     name: Install e2e npm dependencies
-    command: cd test/e2e && npm ci
+    command: |
+      cd test/e2e &&
+      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-babel-client-cache: &restore-babel-client-cache
     name: Restore Babel Client Cache
     keys:
-      - v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v1-babel-client-{{ .Branch }}
-      - v1-babel-client-master
-      - v1-babel-client
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
   save-babel-client-cache: &save-babel-client-cache
     name: Save Babel Client Cache
-    key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
-      - "build/.babel-client-cache"
+      - 'build/.babel-client-cache'
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
+      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
@@ -165,7 +169,7 @@ references:
 
 commands:
   prepare:
-    description: "Prepare Job"
+    description: 'Prepare Job'
     steps:
       # folders to collect results
       - run: *setup-results-and-artifacts
@@ -191,15 +195,34 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
-      - run: *npm-install
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
       - run: *npm-e2e-install
-      - save_cache: *save-npm-cache
-      - run: npm run build-packages
+      - save_cache: *save-yarn-cache
+      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
             - wp-calypso
+
+  typecheck:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: TypeScript typecheck
+          # Report but don't fail the build (`|| exit 0`)
+          command: yarn run typecheck || exit 0
+
+  typecheck-strict:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: TypeScript strict typecheck of individual subprojects
+          command: yarn run tsc --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
@@ -209,7 +232,7 @@ jobs:
       - run:
           name: Lint Config Keys
           when: always
-          command: npm run lint:config-defaults
+          command: yarn run lint:config-defaults
       - run:
           name: Lint Client and Server
           when: always
@@ -219,7 +242,7 @@ jobs:
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
                 | grep -E '^(client/|server/|packages/)'            \
-                | grep -E '\.jsx?$'
+                | grep -E '\.[jt]sx?$'
             ) || exit 0
 
             if [[ ! -z $FILES_TO_LINT ]]; then
@@ -232,7 +255,7 @@ jobs:
           name: Build calypso-strings.pot
           when: always
           command: |
-            npm run translate
+            yarn run translate
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
@@ -273,7 +296,7 @@ jobs:
       - run:
           name: Build Notifications Panel
           command: |
-            NODE_ENV=production npm run build-notifications -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
+            NODE_ENV=production npx lerna run build --scope='@automattic/notifications' -- -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
   build-o2-blocks:
@@ -297,7 +320,15 @@ jobs:
           command: |
             npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
       - store-artifacts-and-test-results
-
+  test-full-site-editing:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Run Full Site Editing client tests
+          command: |
+            npx lerna run test:js --scope='@automattic/full-site-editing' --stream --no-prefix
   test-client:
     <<: *defaults
     parallelism: 6
@@ -317,7 +348,8 @@ jobs:
             # Run jest on the CircleCI split for parallelization across containers
             # Avoid using `--split-by=timings` here so that per-node Jest caches
             # receive a stable sub-set of tests for optimal cache usage.
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/client" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
@@ -340,7 +372,8 @@ jobs:
       - run:
           name: Run Integration Tests
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/integration" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                     \
                 --cacheDirectory="$HOME/jest-cache"        \
                 --ci                                       \
@@ -362,7 +395,8 @@ jobs:
           name: Run Package Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/packages" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                    \
                 --cacheDirectory="$HOME/jest-cache"                       \
                 --ci                                                      \
@@ -384,7 +418,8 @@ jobs:
           name: Run Server Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+            JEST_JUNIT_OUTPUT_DIR="$CIRCLE_TEST_REPORTS/server" \
+            JEST_JUNIT_OUTPUT_NAME="results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
@@ -395,76 +430,6 @@ jobs:
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
-
-  icfy-stats:
-    <<: *defaults
-    steps:
-      - prepare
-      - restore_cache: *restore-babel-client-cache
-      - restore_cache: *restore-terser-cache
-      - run:
-          name: Build Stats
-          environment:
-            NODE_ENV: "production"
-            BROWSERSLIST_ENV: "defaults"
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            npm run build-css                                      \
-              && npm run preanalyze-bundles                        \
-              && node bin/icfy-analyze.js                          \
-              && mv stats.json chart.json style.json "$CIRCLE_ARTIFACTS/icfy" \
-              || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
-            exit 0
-      - save_cache: *save-terser-cache
-      - save_cache: *save-babel-client-cache
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify ICFY of failed build
-          when: on_fail
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            curl -X POST                                                                     \
-              "http://api.iscalypsofastyet.com:5000/submit-stats-failed?secret=$ICFY_SECRET" \
-              -H 'Cache-Control: no-cache'                                                   \
-              -H 'Content-Type: application/json'                                            \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "sha": "'"$CIRCLE_SHA1"'"
-                    }
-                  }'
-      - run:
-          name: Notify ICFY
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
-              ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-              curl -X POST                                                              \
-                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
-                -H 'Cache-Control: no-cache'                                            \
-                -H 'Content-Type: application/json'                                     \
-                -d '{
-                      "payload": {
-                        "branch": "'"$CIRCLE_BRANCH"'",
-                        "build_num": '"$CIRCLE_BUILD_NUM"',
-                        "sha": "'"$CIRCLE_SHA1"'",
-                        "ancestor": "'"$ANCESTOR_SHA1"'"
-                      }
-                    }'
-            fi
 
   # Prime calypso.live so it has a build ready
   #
@@ -505,7 +470,9 @@ jobs:
               echo 'PRs from external authors cannot run on calypso.live'
               exit 1
             fi
-      - prepare
+      - restore_cache: *restore-git-cache
+      - checkout
+      # Don't bother updating the git cache here, it would be the second time in the workflow
       - run:
           name: Wait for calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh
@@ -517,7 +484,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
-      - run: npm run decryptconfig
+      - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
@@ -531,56 +498,57 @@ jobs:
     parameters:
       test-flags:
         type: string
-        default: "-C"
+        default: '-C'
       test-target:
         type: string
-        default: ""
+        default: ''
       jetpack-host:
         type: string
-        default: ""
+        default: ''
       slack-webhook:
         type: string
         default: $SLACK_E2E
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
           command: |
-              # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
-              if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
-                curl -X POST -H 'Content-type: application/json' \
-                    --data \
-                    "{ \
-                      \"attachments\": [ \
-                        { \
-                          \"text\": \"Jetpack tests were skipped\", \
-                          \"fields\": [ \
-                            { \
-                              \"title\": \"Project\", \
-                              \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
-                              \"short\": true \
-                            }, \
-                            { \
-                              \"title\": \"Job Number\", \
-                              \"value\": \"$CIRCLE_BUILD_NUM\", \
-                              \"short\": true \
-                            } \
-                          ], \
-                          \"actions\": [ \
-                            { \
-                              \"type\": \"button\", \
-                              \"text\": \"Visit Job\", \
-                              \"url\": \"$CIRCLE_BUILD_URL\" \
-                            } \
-                          ], \
-                          \"color\": \"#FF0000\" \
-                        } \
-                      ] \
-                    }" << parameters.slack-webhook >>
-                circleci-agent step halt
-              fi
-      - run: npm run decryptconfig
+            # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
+            if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
+              curl -X POST -H 'Content-type: application/json' \
+                  --data \
+                  "{ \
+                    \"attachments\": [ \
+                      { \
+                        \"text\": \"Jetpack tests were skipped\", \
+                        \"fields\": [ \
+                          { \
+                            \"title\": \"Project\", \
+                            \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
+                            \"short\": true \
+                          }, \
+                          { \
+                            \"title\": \"Job Number\", \
+                            \"value\": \"$CIRCLE_BUILD_NUM\", \
+                            \"short\": true \
+                          } \
+                        ], \
+                        \"actions\": [ \
+                          { \
+                            \"type\": \"button\", \
+                            \"text\": \"Visit Job\", \
+                            \"url\": \"$CIRCLE_BUILD_URL\" \
+                          } \
+                        ], \
+                        \"color\": \"#FF0000\" \
+                      } \
+                    ] \
+                  }" << parameters.slack-webhook >>
+              circleci-agent step halt
+            fi
+      - run: yarn run decryptconfig
       - run:
           name: Run Canary Tests
           command: |
@@ -596,11 +564,12 @@ workflows:
     jobs:
       - setup
       - prime-calypso-live:
-          requires:
-            - setup
           filters:
             branches:
               ignore: master
+      - test-full-site-editing:
+          requires:
+            - setup
       - build-notifications:
           requires:
             - setup
@@ -608,9 +577,6 @@ workflows:
           requires:
             - setup
       - build-wpcom-block-editor:
-          requires:
-            - setup
-      - icfy-stats:
           requires:
             - setup
       - lint-and-translate:
@@ -625,36 +591,46 @@ workflows:
       - test-server:
           requires:
             - setup
+      - typecheck:
+          requires:
+            - setup
+      - typecheck-strict:
+          requires:
+            - setup
       - wait-calypso-live:
           requires:
             - test-client
             - test-server
           filters:
             branches:
-              ignore: master
-      - test-e2e-canary:
-          requires:
-            - wait-calypso-live
-          test-flags: "-C -S $CIRCLE_SHA1"
+              ignore:
+                # Do not spin up calypso.live for `master`
+                - master
+                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
+                - /pull\/[0-9]+/
+#      - test-e2e-canary:
+#          requires:
+#            - wait-calypso-live
+#          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
             - wait-calypso-live
-          test-flags: "-z -S $CIRCLE_SHA1"
-          test-target: "IE11"
-          slack-webhook: "$SLACK_IE"
+          test-flags: '-z -S $CIRCLE_SHA1'
+          test-target: 'IE11'
+          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
             - wait-calypso-live
-          test-flags: "-y -S $CIRCLE_SHA1"
+          test-flags: '-y -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-woo
           requires:
             - wait-calypso-live
-          test-flags: "-W -S $CIRCLE_SHA1"
-          test-target: "WOO"
-          slack-webhook: "$SLACK_WOO"
+          test-flags: '-W -S $CIRCLE_SHA1'
+          test-target: 'WOO'
+          slack-webhook: '$SLACK_WOO'
 
   calypso-nightly:
     jobs:
@@ -673,7 +649,7 @@ workflows:
             - setup
     triggers:
       - schedule:
-          cron: "0 4 * * *"
+          cron: '0 4 * * *'
           filters:
             branches:
               only:
@@ -681,16 +657,16 @@ workflows:
 
   e2e-full-suite-scheduled:
     jobs:
-    - setup
-    - test-e2e:
-        requires:
-        - setup
+      - setup
+      - test-e2e:
+          requires:
+            - setup
     triggers:
-    - schedule:
-        cron: "0 3,15 * * *"
-        filters:
-          branches:
-            only: master
+      - schedule:
+          cron: '0 3,15 * * *'
+          filters:
+            branches:
+              only: master
 
   e2e-canary-scheduled:
     jobs:
@@ -699,19 +675,19 @@ workflows:
           name: test-e2e-canary-ie-sched
           requires:
             - setup
-          test-flags: "-w"
-          test-target: "IE11"
-          slack-webhook: "$SLACK_IE"
+          test-flags: '-w'
+          test-target: 'IE11'
+          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-woo-sched
           requires:
             - setup
-          test-flags: "-W"
-          test-target: "WOO"
-          slack-webhook: "$SLACK_WOO"
+          test-flags: '-W'
+          test-target: 'WOO'
+          slack-webhook: '$SLACK_WOO'
     triggers:
       - schedule:
-          cron: "0 12,20 * * *"
+          cron: '0 12 * * *'
           filters:
             branches:
               only: master
@@ -723,35 +699,35 @@ workflows:
           name: test-e2e-jetpack
           requires:
             - setup
-          test-flags: "-j"
-          jetpack-host: "PRESSABLEBLEEDINGEDGE"
-          test-target: "JETPACK"
-          slack-webhook: "$SLACK_JP"
+          test-flags: '-j -s desktop'
+          jetpack-host: 'PRESSABLEBLEEDINGEDGE'
+          test-target: 'JETPACK'
+          slack-webhook: '$SLACK_JP'
     triggers:
       - schedule:
-          cron: "0 7 * * *"
+          cron: '0 7 * * *'
           filters:
             branches:
               only: master
 
-# Temporarily disabling these scheduled test runs
-#  e2e-jetpack-scheduled:
-#    jobs:
-#    - setup
-#    - test-e2e-canary:
-#        name: test-e2e-jetpack
-#        requires:
-#        - setup
-#        test-flags: "-j"
-#        jetpack-host: "PRESSABLE"
-#        test-target: "JETPACK"
-#        slack-webhook: "$SLACK_JP"
-#    triggers:
-#    - schedule:
-#        cron: "0 1,13 * * *"
-#        filters:
-#          branches:
-#            only: master
+  # Temporarily disabling these scheduled test runs
+  #  e2e-jetpack-scheduled:
+  #    jobs:
+  #    - setup
+  #    - test-e2e-canary:
+  #        name: test-e2e-jetpack
+  #        requires:
+  #        - setup
+  #        test-flags: "-j"
+  #        jetpack-host: "PRESSABLE"
+  #        test-target: "JETPACK"
+  #        slack-webhook: "$SLACK_JP"
+  #    triggers:
+  #    - schedule:
+  #        cron: "0 1,13 * * *"
+  #        filters:
+  #          branches:
+  #            only: master
 
   e2e-canary-i18n-monthly:
     jobs:
@@ -760,14 +736,14 @@ workflows:
           name: test-e2e-i18n-monthly
           requires:
             - setup
-          test-target: "I18N"
-          test-flags: "-i"
+          test-target: 'I18N'
+          test-flags: '-i'
           filters:
             branches:
               only: master
     triggers:
       - schedule:
-          cron: "40 15 19 * *"
+          cron: '40 15 19 * *'
           filters:
             branches:
               only: master
@@ -779,16 +755,15 @@ workflows:
           name: test-e2e-i18n-nightly
           requires:
             - setup
-          test-target: "I18N"
-          test-flags: "-I"
+          test-target: 'I18N'
+          test-flags: '-I'
           filters:
             branches:
               only: master
     triggers:
       - schedule:
-          cron: "46 4 * * *"
+          cron: '46 4 * * *'
           filters:
             branches:
               only: master
-
 # vi: sts=2 ts=2 sw=2 et

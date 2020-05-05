@@ -42,7 +42,7 @@
 	cursor: pointer;
 	background-color: var( --color-neutral-0 );
 	width: 100%;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	text-align: left;
 	margin-top: 15px;
 	padding: 5px 10px 10px 12px;
@@ -56,11 +56,11 @@
 }
 
 .comments__comment-author {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 
 	.gravatar {
 		border-radius: 48px;
@@ -71,7 +71,7 @@
 }
 
 .comments__comment-username {
-	color: var( --color-neutral-600 );
+	color: var( --color-text );
 	height: 21px;
 	margin-right: 7px;
 }
@@ -97,7 +97,7 @@ a.comments__comment-username {
 
 	.gridicon {
 		height: 24px;
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 		margin-left: 4px;
 		margin-top: 4px;
 	}
@@ -120,7 +120,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-respondee {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-right: 12px;
 
 	.gridicon {
@@ -132,8 +132,8 @@ a.comments__comment-username {
 }
 
 .comments__comment-respondee .comments__comment-respondee-link {
-	color: var( --color-neutral-light );
-	font-weight: normal;
+	color: var( --color-text-subtle );
+	font-weight: 400;
 	margin-left: -2px;
 
 	&:hover {
@@ -142,8 +142,8 @@ a.comments__comment-username {
 }
 
 .comments__comment-timestamp a {
-	color: var( --color-neutral-light );
-	font-weight: normal;
+	color: var( --color-text-subtle );
+	font-weight: 400;
 	text-decoration: none;
 
 	&:hover {
@@ -152,7 +152,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-moderation {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 	font-size: 12px;

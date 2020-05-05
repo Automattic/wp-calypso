@@ -1,0 +1,17 @@
+.payment-method-delete-dialog {
+	.button {
+		margin-right: 10px;
+		margin-bottom: 8px;
+		padding: 8px 10px;
+		text-align: left;
+	}
+
+	&.dialog {
+		max-width: 440px;
+	}
+
+	&__header {
+		font-size: 24px;
+		margin-bottom: 14px;
+	}
+}

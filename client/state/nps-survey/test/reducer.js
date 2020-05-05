@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import { expect } from 'chai';
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from '../constants';
 import reducer, {
 	isSessionEligible,
+	isAvailableForConciergeSession,
 	wasShownThisSession,
 	surveyState,
 	surveyName,
@@ -19,6 +18,7 @@ import reducer, {
 } from '../reducer';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
+	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -35,6 +35,7 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isSessionEligible',
+			'isAvailableForConciergeSession',
 			'wasShownThisSession',
 			'surveyState',
 			'surveyName',
@@ -63,6 +64,32 @@ describe( 'reducer', () => {
 			const state = isSessionEligible( undefined, {
 				type: NPS_SURVEY_SET_ELIGIBILITY,
 				isSessionPicked: false,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( '#isAvailableForConciergeSession()', () => {
+		test( 'should default to not available', () => {
+			const state = isAvailableForConciergeSession( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		test( 'should track if user is available for concierge session', () => {
+			const state = isAvailableForConciergeSession( undefined, {
+				type: NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
+				isAvailableForConciergeSession: true,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		test( 'should track if user is not available for concierge session', () => {
+			const state = isAvailableForConciergeSession( undefined, {
+				type: NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
+				isAvailableForConciergeSession: false,
 			} );
 
 			expect( state ).to.be.false;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import FormRange from 'components/forms/form-range';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class extends React.Component {
 	static displayName = 'Range';

@@ -25,3 +25,13 @@ The component does not render a [query component](https://github.com/Automattic/
 </table>
 
 The global ID of the post to be displayed. If omitted, it's assumed that the post is currently loading, and a post with placeholder styling will be shown instead.
+
+### `showPublishedStatus`
+
+<table>
+	<tr><th>Type</th><td>Bool</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
+</table>
+
+If true, statuses will be shown for scheduled, trashed, drafted, and published posts.

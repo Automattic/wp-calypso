@@ -2,9 +2,8 @@
  * Returns true if an error should be shown in the video editor.
  *
  *
- * @format
- * @param {Object}  state Global state tree
- * @return {Boolean} true if an error should be shown.
+ * @param {object}  state Global state tree
+ * @returns {boolean} true if an error should be shown.
  */
 
 export default function shouldShowVideoEditorError( state ) {

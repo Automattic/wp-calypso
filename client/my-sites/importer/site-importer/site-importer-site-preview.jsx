@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,13 +12,17 @@ import classNames from 'classnames';
  */
 import Spinner from 'components/spinner';
 import ExternalLink from 'components/external-link';
-import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { loadmShotsPreview } from 'lib/mshots';
 import ImportableContent from 'my-sites/importer/site-importer/site-importer-importable-content';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+
+/**
+ * Style dependencies
+ */
+import './site-importer-site-preview.scss';
 
 class SiteImporterSitePreview extends React.Component {
 	static propTypes = {
@@ -33,7 +36,6 @@ class SiteImporterSitePreview extends React.Component {
 
 	state = {
 		previewRetries: 0,
-		siteURL: this.props.siteURL,
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
 		loadingPreviewImage: true,
@@ -48,11 +50,11 @@ class SiteImporterSitePreview extends React.Component {
 		this.setState( { loadingPreviewImage: true, previewStartTime: Date.now() } );
 
 		loadmShotsPreview( {
-			url: this.state.siteURL,
+			url: this.props.siteURL,
 			maxRetries: 30,
 			retryTimeout: 1000,
 		} )
-			.then( imageBlob => {
+			.then( ( imageBlob ) => {
 				this.setState( {
 					loadingPreviewImage: false,
 					sitePreviewImage: imageBlob,
@@ -61,7 +63,7 @@ class SiteImporterSitePreview extends React.Component {
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
+					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
 			} )
@@ -74,7 +76,7 @@ class SiteImporterSitePreview extends React.Component {
 
 				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
+					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
 				} );
 			} );
@@ -107,9 +109,10 @@ class SiteImporterSitePreview extends React.Component {
 								</div>
 								<div className={ containerClass }>
 									<div className="site-importer__site-preview-column-container">
-										<MiniSitePreview
+										<img
 											className="site-importer__site-preview"
-											imageSrc={ this.state.sitePreviewImage }
+											src={ this.state.sitePreviewImage }
+											alt={ this.props.translate( 'Screenshot of your site.' ) }
 										/>
 										<ImportableContent importData={ this.props.importData } />
 									</div>
@@ -157,7 +160,4 @@ class SiteImporterSitePreview extends React.Component {
 	};
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteImporterSitePreview ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );

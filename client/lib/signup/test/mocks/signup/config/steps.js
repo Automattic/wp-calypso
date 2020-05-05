@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ export default {
 
 	asyncStep: {
 		stepName: 'asyncStep',
-		apiRequestFunction: function( callback, dependencies, stepData ) {
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
 			defer( callback );
 			stepData.done();
 		},
@@ -32,9 +30,9 @@ export default {
 		stepName: 'siteCreation',
 		dependencies: [ 'bearer_token' ],
 		providesDependencies: [ 'siteSlug' ],
-		apiRequestFunction: function( callback, dependencies, stepData ) {
-			defer( function() {
-				callback( [], { siteSlug: 'testsite.wordpress.com' } );
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
+			defer( function () {
+				callback( null, { siteSlug: 'testsite.wordpress.com' } );
 				stepData.stepCallback( dependencies );
 			} );
 		},
@@ -44,9 +42,9 @@ export default {
 		stepName: 'userCreation',
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
-			defer( function() {
-				callback( [], { bearer_token: 'TOKEN' } );
+		apiRequestFunction: function ( callback ) {
+			defer( function () {
+				callback( null, { bearer_token: 'TOKEN' } );
 			} );
 		},
 	},
@@ -55,8 +53,8 @@ export default {
 		stepName: 'userCreation',
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
-			callback();
+		apiRequestFunction: function ( callback ) {
+			defer( callback );
 		},
 	},
 
@@ -64,10 +62,27 @@ export default {
 		stepName: 'delayedStep',
 		component: null,
 		delayApiRequestUntilComplete: true,
-		apiRequestFunction: function( callback, dependencies, stepData ) {
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
 			stepData.stepCallback();
 			defer( callback );
 		},
+	},
+
+	'domains-launch': {
+		stepName: 'domains-launch',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'domainItem' ],
+	},
+
+	plans: {
+		stepName: 'plans',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'cartItem' ],
+	},
+
+	'site-type': {
+		stepName: 'site-type',
+		providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
 	},
 
 	'site-topic': {
@@ -79,4 +94,18 @@ export default {
 		stepName: 'site-topic-and-title',
 		providesDependencies: [ 'siteTopic', 'siteTitle' ],
 	},
+
+	'site-topic-with-optional-theme': {
+		stepName: 'site-topic-with-optional-theme',
+		providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
+		optionalDependencies: [ 'themeSlugWithRepo' ],
+	},
+
+	'site-topic-with-optional-survey-question': {
+		stepName: 'site-topic-with-optional-survey-question',
+		providesDependencies: [ 'siteTopic', 'surveyQuestion' ],
+		optionalDependencies: [ 'surveyQuestion' ],
+	},
 };
+
+export const isDomainStepSkippable = jest.fn( () => false );

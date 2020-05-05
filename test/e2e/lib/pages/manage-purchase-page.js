@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ export default class ManagePurchasePage extends AsyncBaseContainer {
 	async chooseRenewNow() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.manage-purchase__purchase-expiring-notice a.notice__action' )
+			by.css( '.manage-purchase button.is-card-link' )
 		);
 	}
 }

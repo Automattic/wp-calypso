@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -71,7 +70,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
@@ -90,7 +89,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		this.setState( { taxesEnabled: ! this.state.taxesEnabled, pristine: false } );
 	};
 
-	onCheckboxChange = event => {
+	onCheckboxChange = ( event ) => {
 		const option = event.target.name;
 		const value = event.target.checked;
 		this.setState( { [ option ]: value, pristine: false } );
@@ -133,7 +132,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		);
 	};
 
-	onAddressChange = address => {
+	onAddressChange = ( address ) => {
 		const { siteId } = this.props;
 		this.props.fetchTaxRates( siteId, address, true );
 	};
@@ -144,7 +143,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		return (
 			<div className="taxes__nexus">
 				<ExtendedHeader
-					label={ translate( 'Store Address' ) }
+					label={ translate( 'Store address' ) }
 					description={ translate(
 						'The address of where your business is located for tax purposes.'
 					) }

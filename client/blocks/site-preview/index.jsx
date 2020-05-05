@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -38,7 +37,7 @@ class SitePreview extends Component {
 
 	previewCounter = 0;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
 			this.previewCounter = 0;
 		}
@@ -103,13 +102,10 @@ function mapStateToProps( state ) {
 		selectedSite: getPreviewSite( state ),
 		selectedSiteId,
 		selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
-		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce_site_only' ) || '',
+		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 		previewUrl: getPreviewUrl( state ),
 		isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ closePreview }
-)( SitePreview );
+export default connect( mapStateToProps, { closePreview } )( SitePreview );

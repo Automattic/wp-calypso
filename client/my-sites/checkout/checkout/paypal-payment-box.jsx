@@ -1,20 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'gridicons';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import cartValues, { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
-import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
+import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
+import { hasRenewalItem } from 'lib/cart-values/cart-items';
+import { setTaxPostalCode } from 'lib/cart/actions';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import PaymentCountrySelect from 'components/payment-country-select';
@@ -29,6 +29,8 @@ import CheckoutTerms from './checkout-terms';
 
 const wpcom = wp.undocumented();
 
+const debug = debugFactory( 'calypso:paypal-payment-box' );
+
 export class PaypalPaymentBox extends React.Component {
 	static displayName = 'PaypalPaymentBox';
 
@@ -37,11 +39,11 @@ export class PaypalPaymentBox extends React.Component {
 		formDisabled: false,
 	};
 
-	handlePostalCodeChange = event => {
+	handlePostalCodeChange = ( event ) => {
 		setTaxPostalCode( event.target.value );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		this.updateLocalStateWithFieldValue( event.target.name, event.target.value );
 	};
 
@@ -51,7 +53,7 @@ export class PaypalPaymentBox extends React.Component {
 		this.setState( data );
 	};
 
-	setSubmitState = submitState => {
+	setSubmitState = ( submitState ) => {
 		if ( submitState.error ) {
 			notices.error( submitState.error );
 		}
@@ -64,7 +66,7 @@ export class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	redirectToPayPal = event => {
+	redirectToPayPal = ( event ) => {
 		const { cart, transaction } = this.props;
 		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
@@ -91,38 +93,48 @@ export class PaypalPaymentBox extends React.Component {
 		} );
 
 		// get PayPal Express URL from rest endpoint
+		debug( 'submitting paypalExpress request', dataForApi );
 		wpcom.paypalExpressUrl(
 			dataForApi,
-			function( error, paypalExpressURL ) {
-				let errorMessage;
+			function ( error, paypalExpressURL ) {
+				debug( 'paypalExpress request complete' );
 				if ( error ) {
-					if ( error.message ) {
-						errorMessage = error.message;
-					} else {
-						errorMessage = this.props.translate( 'Please specify a country and postal code.' );
-					}
-
+					debug( 'paypalExpress request had an error', error );
+					const errorMessage =
+						error.message || this.props.translate( 'Please specify a country and postal code' );
 					this.setSubmitState( {
 						error: errorMessage,
 						disabled: false,
 					} );
+					return;
 				}
 
-				if ( paypalExpressURL ) {
+				if ( ! paypalExpressURL ) {
+					debug( 'paypalExpress request returned no url' );
+					const errorMessage = this.props.translate(
+						'An error occurred connecting to PayPal; please check your information and try again'
+					);
 					this.setSubmitState( {
-						info: this.props.translate( 'Redirecting you to PayPal' ),
-						disabled: true,
+						error: errorMessage,
+						disabled: false,
 					} );
-					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-					analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-					window.location = paypalExpressURL;
+					return;
 				}
+
+				debug( 'paypalExpress request successfully got a url', paypalExpressURL );
+				this.setSubmitState( {
+					info: this.props.translate( 'Redirecting you to PayPal' ),
+					disabled: true,
+				} );
+				gaRecordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
+				recordTracksEvent( 'calypso_checkout_with_paypal' );
+				window.location = paypalExpressURL;
 			}.bind( this )
 		);
 	};
 
 	renderButtonText = () => {
-		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
+		if ( hasRenewalItem( this.props.cart ) ) {
 			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
 				context: 'Pay button on /checkout',
@@ -136,7 +148,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
@@ -150,7 +162,7 @@ export class PaypalPaymentBox extends React.Component {
 							<PaymentCountrySelect
 								additionalClasses="checkout-field"
 								name="country"
-								label={ this.props.translate( 'Country', { textOnly: true } ) }
+								label={ translate( 'Country', { textOnly: true } ) }
 								countriesList={ this.props.countriesList }
 								onCountrySelected={ this.updateLocalStateWithFieldValue }
 								disabled={ this.state.formDisabled }
@@ -159,7 +171,7 @@ export class PaypalPaymentBox extends React.Component {
 							<Input
 								additionalClasses="checkout-field"
 								name="postal-code"
-								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
+								label={ translate( 'Postal Code', { textOnly: true } ) }
 								value={ getTaxPostalCode( cart ) || '' }
 								onChange={ this.handlePostalCodeChange }
 								disabled={ this.state.formDisabled }
@@ -190,7 +202,7 @@ export class PaypalPaymentBox extends React.Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 

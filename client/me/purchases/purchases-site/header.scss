@@ -1,0 +1,24 @@
+.purchases-site__header {
+	&.card.is-compact {
+		padding: 0;
+	}
+
+	.site.is-loading {
+		.site-icon,
+		.site__title,
+		.site__domain {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+
+	.site.is-disconnected .site-icon {
+		height: 32px;
+		width: 32px;
+		line-height: 32px;
+		font-size: 32px;
+	}
+
+	.site .site__content {
+		padding: 11px 24px;
+	}
+}

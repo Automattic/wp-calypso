@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,19 +11,18 @@ import {
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_POSTS_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
 /**
  * Tracks all known conversation following statuses.
  */
-export const items = createReducer(
-	{},
-	{
-		[ READER_CONVERSATION_FOLLOW ]: ( state, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_CONVERSATION_FOLLOW: {
 			const newState = assign( {}, state, {
 				[ key(
 					action.payload.siteId,
@@ -32,14 +30,14 @@ export const items = createReducer(
 				) ]: CONVERSATION_FOLLOW_STATUS.following,
 			} );
 			return newState;
-		},
-		[ READER_CONVERSATION_MUTE ]: ( state, action ) => {
+		}
+		case READER_CONVERSATION_MUTE: {
 			const newState = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId ) ]: CONVERSATION_FOLLOW_STATUS.muting,
 			} );
 			return newState;
-		},
-		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
+		}
+		case READER_CONVERSATION_UPDATE_FOLLOW_STATUS: {
 			const stateKey = key( action.payload.siteId, action.payload.postId );
 
 			// If followStatus is null, remove the key from the state map entirely
@@ -52,15 +50,15 @@ export const items = createReducer(
 			} );
 
 			return newState;
-		},
-		[ READER_POSTS_RECEIVE ]: ( state, action ) => {
+		}
+		case READER_POSTS_RECEIVE: {
 			if ( ! action.posts ) {
 				return state;
 			}
 
 			const newState = {};
 
-			forEach( action.posts, post => {
+			forEach( action.posts, ( post ) => {
 				if ( post.is_following_conversation ) {
 					newState[ key( post.site_ID, post.ID ) ] = CONVERSATION_FOLLOW_STATUS.following;
 				}
@@ -71,10 +69,11 @@ export const items = createReducer(
 			}
 
 			return { ...state, ...newState };
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

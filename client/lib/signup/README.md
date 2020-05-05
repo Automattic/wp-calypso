@@ -13,7 +13,7 @@ Modules
 ### `SignupProgressStore`
 `SignupProgressStore` stores the user's progress through a signup flow by storing a list of the steps in the signup flow the user has submitted. This list is initially empty and steps are added to it as the user progresses through the flow.
 
-A step begins as an object which is collected by the store through the `SUBMIT_SIGNUP_STEP` action. Once steps are added to the `SignupProgressStore`, they receive a `status` string property which is set to either `pending`, `completed`, and `invalid`.
+A step begins as an object which is collected by the store through the `SUBMIT_SIGNUP_STEP` action. Once steps are added to the `SignupProgressStore`, they receive a `status` string property which is set to either `in-progress`, `processing`, `pending`, `completed`, or `invalid`.
 
 The array of steps in the store is returned by the `SignupProgressStore#get()`.
 
@@ -36,8 +36,8 @@ Each action takes a `step` object with the following properties:
 
 #### Actions
 
--   `submitSignupStep( step, errors, providedDependencies )` — the user submits a step
--   `processedSignupStep( step, errors, providedDependencies )` — a step processed by the API
+-   `submitSignupStep( step, providedDependencies )` — the user submits a step
+-   `completeSignupStep( step, errors, providedDependencies )` — a step processed by the API
 
 If `errors` has a non-zero length, it will be attached to the step and the step's status will be set to `invalid` as it is added to the store. If a `providedDependencies` object is included, its information will be added to the dependency store.
 
@@ -48,7 +48,7 @@ Actions which provide a `providedDependencies` object will have this information
 import SignupDependencyStore from 'lib/signup/dependency-store' );
 import SignupActions from 'lib/signup/actions';
 
-SignupActions.processedSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
+SignupActions.completeSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
 
 SignupDependencyStore.get() // => { userId: 1337 }
 ```
@@ -64,8 +64,8 @@ import SignupFlowController from 'lib/signup/flow-controller';
 
 // this is the component that renders the signup flow
 class SignupComponent extends React.Component {
-	componentWillMount() {
-		this.signupFlowController = SignupFlowController( {
+	constructor() {
+		this.signupFlowController = new SignupFlowController( {
 			flowName: 'default', // the name of the flow to begin, from flows.json
 			onComplete: function() { // optional callback, called when the flow is completed
 				console.log( 'The user completed the flow. Redirect or log them in here.' );

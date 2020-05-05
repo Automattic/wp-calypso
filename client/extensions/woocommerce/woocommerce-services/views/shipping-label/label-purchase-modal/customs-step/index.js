@@ -26,7 +26,7 @@ import StepConfirmationButton from '../step-confirmation-button';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const CustomsStep = props => {
+const CustomsStep = ( props ) => {
 	const { siteId, orderId, errors, expanded, translate, isSubmitted, packageDescriptions } = props;
 	const summary = hasNonEmptyLeaves( errors )
 		? translate( 'Customs information incomplete' )
@@ -91,7 +91,4 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	confirmCustoms: () => dispatch( confirmCustoms( orderId, siteId ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CustomsStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CustomsStep ) );

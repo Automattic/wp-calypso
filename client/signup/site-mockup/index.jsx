@@ -1,75 +1,91 @@
-/** @format */
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SignupSitePreview from 'components/signup-site-preview';
+import { getPreviewParamClass } from 'components/signup-site-preview/utils';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
+	getSiteVerticalName,
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewScreenshot,
+	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-theme';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import QueryVerticals from 'components/data/query-verticals';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function SiteMockupHelpTip() {
+function SiteMockupHelpTip( { siteType } ) {
+	const helpTipCopy = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopy' ) || '';
+
 	return (
 		<div className="site-mockup__help-tip">
-			<p>
-				{ translate(
-					'Scroll down to see your website. Once you complete setup you’ll be able to customize it further.'
-				) }
-			</p>
+			<p>{ helpTipCopy }</p>
 			<Gridicon icon="chevron-down" />
+		</div>
+	);
+}
+
+function SiteMockupHelpTipBottom( { siteType } ) {
+	const helpTipCopy =
+		getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopyBottom' ) || '';
+	return (
+		<div className="site-mockup__help-tip">
+			<Gridicon icon="chevron-up" />
+			<p>{ helpTipCopy }</p>
 		</div>
 	);
 }
 
 class SiteMockups extends Component {
 	static propTypes = {
-		address: PropTypes.string,
-		phone: PropTypes.string,
 		siteStyle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepName: PropTypes.string,
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
+		verticalPreviewScreenshot: PropTypes.string,
+		verticalPreviewStyles: PropTypes.string,
 	};
 
 	static defaultProps = {
-		address: '',
-		phone: '',
 		siteStyle: '',
 		siteType: '',
 		stepName: '',
 		title: '',
 		vertical: '',
 		verticalPreviewContent: '',
+		verticalPreviewStyles: '',
 	};
 
 	shouldComponentUpdate( nextProps ) {
 		// Debouncing updates to the preview content
 		// prevents the flashing effect.
-		if ( nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ) {
+		if (
+			nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ||
+			nextProps.verticalPreviewScreenshot !== this.props.verticalPreviewScreenshot
+		) {
 			this.updateDebounced();
 			return false;
 		}
@@ -77,71 +93,73 @@ class SiteMockups extends Component {
 		return true;
 	}
 
-	updateDebounced = debounce( this.forceUpdate, 777 );
+	updateDebounced = debounce( () => {
+		this.forceUpdate();
+		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot ) {
+			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
+				site_type: this.props.siteType,
+				vertical_slug: this.props.verticalSlug,
+				site_style: this.props.siteStyle || 'default',
+			} );
+		}
+	}, 777 );
 
 	/**
-	 * Returns an interpolated site preview content block with template markers
+	 * Returns site preview content block interpolated with markup that allows
+	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
-	 * @return {string} Formatted content
+	 * @returns {string} Formatted content
 	 */
 	getContent( content = '' ) {
-		const { title: CompanyName, address, phone } = this.props;
-		if ( 'string' === typeof content ) {
-			each(
-				{
-					CompanyName,
-					Address: this.formatAddress( address ) || translate( 'Your Address' ),
-					Phone: phone || translate( 'Your Phone Number' ),
-				},
-				( value, key ) =>
-					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
-			);
-		}
-		return content;
-	}
-
-	getTagline() {
-		const { address, phone } = this.props;
-		const hasAddress = ! isEmpty( address );
-		const hasPhone = ! isEmpty( phone );
-
-		if ( ! hasAddress && ! hasPhone ) {
-			return translate( 'You’ll be able to customize this to your needs.' );
+		if ( 'string' !== typeof content ) {
+			return content;
 		}
 
-		return [
-			hasAddress ? this.formatAddress( address ) : '',
-			hasAddress && hasPhone ? ' &middot; ' : '',
-			hasPhone ? phone : '',
-		].join( '' );
+		return Object.keys( this.getPreviewParams() ).reduce(
+			( currContent, paramName ) =>
+				currContent.replace(
+					new RegExp( '{{' + paramName + '}}', 'gi' ),
+					`<span class="${ getPreviewParamClass( paramName ) }"></span>`
+				),
+			content
+		);
 	}
 
-	/**
-	 *
-	 * @param {string} address An address formatted onto separate lines
-	 * @return {string} Get rid of the last line of the address.
-	 */
-	formatAddress( address ) {
-		const parts = address.split( '\n' );
-		return parts.slice( 0, 2 ).join( ', ' );
+	getPreviewParams() {
+		const { title: CompanyName, siteVerticalName } = this.props;
+		return {
+			CompanyName,
+			Address: translate( 'Your Address' ),
+			Phone: translate( 'Your Phone Number' ),
+			Vertical: siteVerticalName || '',
+		};
 	}
 
-	handleClick = size =>
-		this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
+	handlePreviewClick = ( size ) =>
+		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+			size,
+			vertical_slug: this.props.verticalSlug,
+			site_style: this.props.siteStyle || 'default',
+		} );
 
 	render() {
 		const {
 			fontUrl,
+			shouldFetchVerticalData,
 			shouldShowHelpTip,
 			siteStyle,
+			siteType,
+			siteVerticalName,
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalPreviewScreenshot,
+			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ),
+			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshot,
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -151,18 +169,20 @@ class SiteMockups extends Component {
 			cssUrl: getThemeCssUri( themeSlug, isRtl ),
 			content: {
 				title,
-				tagline: this.getTagline(),
+				tagline: translate( 'You’ll be able to customize this to your needs.' ),
 				body: this.getContent( verticalPreviewContent ),
+				params: this.getPreviewParams(),
 			},
+			gutenbergStylesUrl: verticalPreviewStyles,
 			langSlug,
 			isRtl,
-			onPreviewClick: this.handleClick,
+			onPreviewClick: this.handlePreviewClick,
 			className: siteStyle,
 		};
 
 		return (
 			<div className={ siteMockupClasses }>
-				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
+				{ shouldShowHelpTip && <SiteMockupHelpTip siteType={ siteType } /> }
 				<div className="site-mockup__devices">
 					<SignupSitePreview
 						defaultViewportDevice="desktop"
@@ -172,6 +192,10 @@ class SiteMockups extends Component {
 					/>
 					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
+				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
+				{ shouldFetchVerticalData && (
+					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
+				) }
 			</div>
 		);
 	}
@@ -179,34 +203,31 @@ class SiteMockups extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteInformation = getSiteInformation( state );
 		const siteStyle = getSiteStyle( state );
 		const siteType = getSiteType( state );
-		const styleOptions = getSiteStyleOptions( siteType );
-		const style = find( styleOptions, { id: siteStyle || 'professional' } );
+		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
+		const verticalPreviewContent = getSiteVerticalPreview( state );
+		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
-			title: siteInformation.title || translate( 'Your New Website' ),
-			address: siteInformation.address,
-			phone: siteInformation.phone,
+			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
 			siteType,
-			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreviewContent,
+			// Used to determine whether content has changed, choose any screenshot
+			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot( state, 'desktop' ),
+			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
+			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
-				'site-information-title-with-preview' === ownProps.stepName,
-			themeSlug: style.theme,
-			fontUrl: style.fontUrl,
+				'site-title-with-preview' === ownProps.stepName,
+			themeSlug: themeSlug,
+			fontUrl: defaultFontUri,
+			shouldFetchVerticalData,
 		};
 	},
-	dispatch => ( {
-		handleClick: ( verticalSlug, siteStyle, size ) =>
-			dispatch(
-				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
-					size,
-					vertical_slug: verticalSlug,
-					site_style: siteStyle || 'default',
-				} )
-			),
-	} )
+	{
+		recordTracksEvent,
+	}
 )( SiteMockups );

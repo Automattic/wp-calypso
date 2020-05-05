@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -30,15 +28,15 @@ export class AddImageDialog extends Component {
 		imageUrl: '',
 	};
 
-	setImageAlt = event => {
+	setImageAlt = ( event ) => {
 		this.setState( { imageAlt: event.target.value } );
 	};
 
-	setImageTitle = event => {
+	setImageTitle = ( event ) => {
 		this.setState( { imageTitle: event.target.value } );
 	};
 
-	setImageUrl = event => {
+	setImageUrl = ( event ) => {
 		this.setState( { imageUrl: event.target.value } );
 	};
 

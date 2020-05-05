@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { By } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -22,9 +19,7 @@ import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
 import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
-import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
-import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
-import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
+import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -62,15 +57,6 @@ export default class JetpackConnectFlow {
 		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 		await jetpackAuthorizePage.waitToDisappear();
 
-		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-		await siteTypePage.selectSiteType( 'blog' );
-
-		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-		await siteTopicPage.selectSiteTopic( 'test site' );
-
-		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-		await userTypePage.selectUserType( 'creator' );
-
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		return await pickAPlanPage.selectFreePlanJetpack();
 	}
@@ -89,20 +75,8 @@ export default class JetpackConnectFlow {
 		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 		await jetpackAuthorizePage.approveConnection();
 		await jetpackAuthorizePage.waitToDisappear();
-
-		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-		await siteTypePage.selectSiteType( 'blog' );
-
-		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-		await siteTopicPage.selectSiteTopic( 'test site' );
-
-		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-		await userTypePage.selectUserType( 'creator' );
-
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
-		await pickAPlanPage.selectFreePlanJetpack();
-		await wpAdminJetpack.jumpstartDisplayed();
-		return await wpAdminJetpack.activateRecommendedFeatures();
+		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
 	async removeSites( timeout = config.get( 'mochaTimeoutMS' ) ) {
@@ -118,15 +92,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				By.css( '.notice.is-success.is-dismissable' ),
-				config.get( 'explicitWaitMS' ) * 2
-			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.notice.is-dismissable .notice__dismiss' )
-			);
+			const noticesComponent = await NoticesComponent.Expect( this.driver );
+			await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 

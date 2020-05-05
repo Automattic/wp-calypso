@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import { map, truncate } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'state/action-types';
+import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'state/reader/action-types';
 import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -23,7 +22,7 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export function fromApi( apiResponse ) {
-	const feeds = map( apiResponse.feeds, feed => ( {
+	const feeds = map( apiResponse.feeds, ( feed ) => ( {
 		...feed,
 		feed_URL: feed.subscribe_URL,
 	} ) );

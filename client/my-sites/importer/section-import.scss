@@ -1,0 +1,18 @@
+.importer__section-header {
+	&.formatted-header {
+		margin: 0 auto;
+		max-width: 500px;
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+
+	.formatted-header__subtitle {
+		color: var( --color-neutral-dark );
+
+		a {
+			display: inline-block;
+		}
+	}
+}

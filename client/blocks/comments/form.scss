@@ -65,7 +65,7 @@
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: var( --color-neutral-200 );
+	color: var( --color-text-subtle );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
@@ -90,7 +90,7 @@
 }
 
 .comments__form-closed {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	margin-top: 20px;
 	margin-bottom: -3px;
 	font-family: $sans;

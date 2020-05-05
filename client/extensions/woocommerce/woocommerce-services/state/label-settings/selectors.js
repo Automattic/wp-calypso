@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -91,7 +89,7 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
 	}
 
 	return getStoredCards( state )
-		.map( card => ( {
+		.map( ( card ) => ( {
 			payment_method_id: Number( card.stored_details_id ),
 			card_type: card.card_type,
 			name: card.name,

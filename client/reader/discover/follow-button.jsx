@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +18,7 @@ class DiscoverFollowButton extends React.Component {
 		followUrl: PropTypes.string.isRequired,
 	};
 
-	recordFollowToggle = isFollowing => {
+	recordFollowToggle = ( isFollowing ) => {
 		recordFollowToggle( isFollowing, this.props.siteUrl );
 	};
 

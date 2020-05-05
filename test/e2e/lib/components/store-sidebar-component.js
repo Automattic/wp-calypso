@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -53,10 +51,8 @@ export default class StoreSidebarComponent extends AsyncBaseContainer {
 	}
 
 	addProduct() {
-		return driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( 'li.products a.sidebar__button' )
-		);
+		this.selectProducts();
+		return driverHelper.selectElementByText( this.driver, By.css( '.button' ), 'Add a product' );
 	}
 
 	settingsLinkDisplayed() {

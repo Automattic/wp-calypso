@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
@@ -11,13 +8,18 @@ import { get, map, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
-import { cartItems } from 'lib/cart-values';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'components/gridicon';
+import {
+	getDomainRegistrations,
+	getDomainTransfers,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
 
 class DomainRegistrationAgreement extends React.Component {
 	recordRegistrationAgreementClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
 	renderAgreementLinkForList = ( url, domains ) => {
@@ -41,7 +43,7 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 	};
 
-	renderMultipleAgreements = agreementsList => {
+	renderMultipleAgreements = ( agreementsList ) => {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration agreements:'
 		);
@@ -93,11 +95,11 @@ class DomainRegistrationAgreement extends React.Component {
 
 	getDomainsByRegistrationAgreement() {
 		const { cart } = this.props;
-		const domainItems = cartItems.getDomainRegistrations( cart );
-		domainItems.push( ...cartItems.getDomainTransfers( cart ) );
+		const domainItems = getDomainRegistrations( cart );
+		domainItems.push( ...getDomainTransfers( cart ) );
 		const agreementUrls = [
 			...new Set(
-				map( domainItems, registration =>
+				map( domainItems, ( registration ) =>
 					get( registration, 'extra.domain_registration_agreement_url' )
 				)
 			),
@@ -128,7 +130,7 @@ class DomainRegistrationAgreement extends React.Component {
 
 	render() {
 		const { cart } = this.props;
-		if ( ! ( cartItems.hasDomainRegistration( cart ) || cartItems.hasTransferProduct( cart ) ) ) {
+		if ( ! ( hasDomainRegistration( cart ) || hasTransferProduct( cart ) ) ) {
 			return null;
 		}
 

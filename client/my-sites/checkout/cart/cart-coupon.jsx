@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/cart/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -29,7 +27,7 @@ export class CartCoupon extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}
@@ -56,7 +54,7 @@ export class CartCoupon extends React.Component {
 					{ this.props.translate( 'Coupon applied: %(coupon)s', {
 						args: { coupon: this.appliedCouponCode },
 					} ) }
-				</span>{' '}
+				</span>{ ' ' }
 				<button onClick={ this.clearCoupon } className="button is-link cart__remove-link">
 					{ this.props.translate( 'Remove' ) }
 				</button>
@@ -112,7 +110,7 @@ export class CartCoupon extends React.Component {
 		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon ? true : false;
 	}
 
-	toggleCouponDetails = event => {
+	toggleCouponDetails = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
@@ -124,7 +122,7 @@ export class CartCoupon extends React.Component {
 		}
 	};
 
-	clearCoupon = event => {
+	clearCoupon = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.setState(
@@ -138,7 +136,7 @@ export class CartCoupon extends React.Component {
 		);
 	};
 
-	applyCoupon = event => {
+	applyCoupon = ( event ) => {
 		event.preventDefault();
 
 		if ( this.isSubmitting ) {
@@ -148,7 +146,7 @@ export class CartCoupon extends React.Component {
 		this.props.applyCoupon( this.state.couponInputValue );
 	};
 
-	removeCoupon = event => {
+	removeCoupon = ( event ) => {
 		event.preventDefault();
 
 		if ( this.isSubmitting ) {
@@ -158,7 +156,7 @@ export class CartCoupon extends React.Component {
 		this.props.removeCoupon();
 	};
 
-	handleCouponInputChange = event => {
+	handleCouponInputChange = ( event ) => {
 		this.setState( {
 			userChangedCoupon: true,
 			couponInputValue: event.target.value,
@@ -166,9 +164,9 @@ export class CartCoupon extends React.Component {
 	};
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	recordGoogleEvent,
-	applyCoupon: coupon_code => {
+	applyCoupon: ( coupon_code ) => {
 		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code } ) );
 		applyCoupon( coupon_code );
 	},
@@ -178,7 +176,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( CartCoupon ) );
+export default connect( null, mapDispatchToProps )( localize( CartCoupon ) );

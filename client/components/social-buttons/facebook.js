@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -54,18 +52,16 @@ class FacebookLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialize();
 	}
 
-	loadDependency() {
-		if ( window.FB ) {
-			return Promise.resolve( window.FB );
+	async loadDependency() {
+		if ( ! window.FB ) {
+			await loadScript( '//connect.facebook.net/en_US/sdk.js' );
 		}
 
-		return new Promise( resolve => {
-			loadScript( '//connect.facebook.net/en_US/sdk.js', () => resolve( window.FB ) );
-		} );
+		return window.FB;
 	}
 
 	initialize() {
@@ -74,7 +70,7 @@ class FacebookLoginButton extends Component {
 		}
 
 		this.initialized = this.loadDependency()
-			.then( FB => {
+			.then( ( FB ) => {
 				FB.init( {
 					appId: this.props.appId,
 					version: this.props.version,
@@ -84,7 +80,7 @@ class FacebookLoginButton extends Component {
 
 				return FB;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.initialized = null;
 
 				return Promise.reject( error );
@@ -102,9 +98,9 @@ class FacebookLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.initialize().then( FB => {
+		this.initialize().then( ( FB ) => {
 			FB.login(
-				response => {
+				( response ) => {
 					responseHandler( response );
 				},
 				{ scope }
@@ -127,7 +123,7 @@ class FacebookLoginButton extends Component {
 						{ this.props.translate( 'Continue with %(service)s', {
 							args: { service: 'Facebook' },
 							comment:
-								'%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...',
+								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 						} ) }
 					</span>
 				</button>
@@ -136,6 +132,6 @@ class FacebookLoginButton extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isFormDisabled: isFormDisabled( state ),
 } ) )( localize( FacebookLoginButton ) );

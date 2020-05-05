@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +30,7 @@ class ColorSchemePicker extends PureComponent {
 		saveColorSchemePreference: PropTypes.func,
 	};
 
-	handleColorSchemeSelection = event => {
+	handleColorSchemeSelection = ( event ) => {
 		const { temporarySelection, onSelection, saveColorSchemePreference } = this.props;
 		const { value } = event.currentTarget;
 		if ( temporarySelection ) {
@@ -68,7 +67,7 @@ const saveColorSchemePreference = ( preference, temporarySelection ) =>
 		: savePreference( 'colorScheme', preference );
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 		};

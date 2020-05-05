@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,11 +18,18 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
-import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
-import cartItems from 'lib/cart-values/cart-items';
+import { addItem, removeItem } from 'lib/cart/actions';
+import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
+import {
+	hasDomainInCart,
+	domainMapping,
+	domainTransfer,
+	domainRegistration,
+	updatePrivacyForDomain,
+} from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -61,21 +67,21 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = suggestion => {
-		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+	handleAddRemoveDomain = ( suggestion ) => {
+		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion );
 		} else {
 			this.removeDomain( suggestion );
 		}
 	};
 
-	handleAddMapping = domain => {
-		addItem( cartItems.domainMapping( { domain } ) );
+	handleAddMapping = ( domain ) => {
+		addItem( domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	handleAddTransfer = domain => {
-		addItem( cartItems.domainTransfer( { domain } ) );
+	handleAddTransfer = ( domain ) => {
+		addItem( domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
@@ -96,25 +102,41 @@ class DomainSearch extends Component {
 	}
 
 	addDomain( suggestion ) {
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
+		const {
+			domain_name: domain,
+			product_slug: productSlug,
+			supports_privacy: supportsPrivacy,
+		} = suggestion;
 
-		let domainRegistration = cartItems.domainRegistration( {
-			domain: suggestion.domain_name,
-			productSlug: suggestion.product_slug,
-			extra: { privacy_available: suggestion.supports_privacy },
+		this.props.recordAddDomainButtonClick( domain, 'domains' );
+
+		let registration = domainRegistration( {
+			domain,
+			productSlug,
+			extra: { privacy_available: supportsPrivacy },
 		} );
 
-		if ( suggestion.supports_privacy ) {
-			domainRegistration = cartItems.updatePrivacyForDomain( domainRegistration, true );
+		if ( supportsPrivacy ) {
+			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		addItems( [ domainRegistration ] );
-		goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
+		addItem( registration );
+
+		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
+			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+		} else {
+			page( '/checkout/' + this.props.selectedSiteSlug );
+		}
 	}
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		removeDomainFromCart( suggestion );
+		removeItem(
+			domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+			} )
+		);
 	}
 
 	render() {
@@ -148,6 +170,8 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const suggestion =
+				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -158,16 +182,15 @@ class DomainSearch extends Component {
 							noticeStatus="is-info"
 						>
 							<RegisterDomainStep
-								path={ this.props.context.path }
-								suggestion={ this.props.context.query.suggestion }
+								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
 								cart={ this.props.cart }
-								selectedSite={ selectedSite }
 								offerUnavailableOption
+								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 								vendor={ getSuggestionsVendor() }
@@ -190,11 +213,11 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			domains: getDecoratedSiteDomains( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: siteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

@@ -1,5 +1,13 @@
-/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+/**
+ * External dependencies
+ */
 import React from 'react';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function rand( min, max ) {
@@ -18,13 +26,13 @@ export const emotions = [
 ];
 
 export function RandomAgentW( { exclude = [] } ) {
-	const filteredEmotions = emotions.filter( emotion => exclude.indexOf( emotion ) === -1 );
+	const filteredEmotions = emotions.filter( ( emotion ) => exclude.indexOf( emotion ) === -1 );
 	const index = rand( 0, filteredEmotions.length - 1 );
 
 	return <AgentW classes={ filteredEmotions[ index ] } />;
 }
 
-const AgentW = props => {
+const AgentW = ( props ) => {
 	return (
 		<div className="chat__gravatar chat__agent-w">
 			<div className={ props.classes }>

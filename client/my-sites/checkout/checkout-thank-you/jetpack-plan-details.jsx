@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +14,7 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 const user = userFactory();
+import { localizeUrl } from 'lib/i18n-utils';
 
 const BasicDetails = ( { translate } ) => (
 	<PurchaseDetail
@@ -46,7 +46,7 @@ class EnhancedDetails extends Component {
 							'protect your site from spam and data loss. ' +
 							"If you have any questions along the way, we're here to help!"
 					) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href={ localizeUrl( 'https://wordpress.com/support/setting-up-premium-services/' ) }
 					onClick={ trackManualInstall }
 				/>
 			);
@@ -68,7 +68,7 @@ class EnhancedDetails extends Component {
 								<a
 									target="_blank"
 									rel="noopener noreferrer"
-									href="https://en.support.wordpress.com/setting-up-premium-services/"
+									href="https://wordpress.com/support/setting-up-premium-services/"
 									onClick={ trackManualInstall }
 								/>
 							),
@@ -81,20 +81,13 @@ class EnhancedDetails extends Component {
 	}
 }
 
-const getTracksDataForAutoconfigHalt = selectedSite => {
+const getTracksDataForAutoconfigHalt = ( selectedSite ) => {
 	const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {
 		return {
 			name: 'calypso_plans_autoconfig_halt_filemod',
 			properties: { error: reasons[ 0 ] },
-		};
-	}
-
-	if ( ! selectedSite.hasMinimumJetpackVersion ) {
-		return {
-			name: 'calypso_plans_autoconfig_halt_jpversion',
-			properties: { jetpack_version: selectedSite.options.jetpack_version },
 		};
 	}
 
@@ -131,10 +124,7 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 } );
 
 const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
-	? connect(
-			null,
-			mapDispatchToProps
-	  )( EnhancedDetails )
+	? connect( null, mapDispatchToProps )( EnhancedDetails )
 	: BasicDetails;
 
 export default localize( JetpackPlanDetails );

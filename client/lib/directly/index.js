@@ -2,7 +2,6 @@
  *
  *
  *
- * @format
  * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
  * @see https:
  */
@@ -15,8 +14,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import wpcom from 'lib/wp';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
 const DIRECTLY_ASSETS_BASE_URL = 'https://www.directly.com';
@@ -29,7 +33,7 @@ let directlyPromise;
  *
  * @see https://cloudup.com/cySVQ9R_O6S for all configuration options
  *
- * @returns {Object} The default configuration options
+ * @returns {object} The default configuration options
  */
 function getDefaultOptions() {
 	const ids = config( 'directly_rtm_widget_ids' );
@@ -51,7 +55,7 @@ function configureGlobals() {
 	// This snippet is pasted from Directly's setup code.
 	window.DirectlyRTM =
 		window.DirectlyRTM ||
-		function() {
+		function () {
 			( window.DirectlyRTM.cq = window.DirectlyRTM.cq || [] ).push( arguments );
 		};
 	// Since we can only configure once per pageload, this library only provides a
@@ -96,7 +100,7 @@ function execute( ...args ) {
  */
 function loadDirectlyScript() {
 	return new Promise( ( resolve, reject ) => {
-		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
+		loadScript( DIRECTLY_RTM_SCRIPT_URL, function ( error ) {
 			if ( error ) {
 				return reject( new Error( `Failed to load script "${ error.src }".` ) );
 			}

@@ -18,7 +18,7 @@
 		border: 1px solid var( --color-primary );
 
 		.gridicon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: var( --color-primary-400 );
+			border-color: var( --color-primary-40 );
 		}
 	}
 
@@ -57,7 +57,7 @@
 	padding: 1px;
 	border-radius: 100%;
 	background-color: var( --color-primary );
-	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	@include elevation( 4dp );
 	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
@@ -68,32 +68,33 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		margin: 0;
 		top: 0;
 		height: 36px;
 		width: 36px;
 
-		g {
+		> use:first-child,
+		> g:first-child {
 			transform: none;
 		}
 	}
 
 	&:hover:not( .is-active ) {
-		animation: wiggle 0.8s 0.5s ease-in-out infinite;
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+		@include elevation( 6dp );
 		background: var( --color-primary );
+		transform: scale( 1.15 );
 	}
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: var( --color-primary-400 );
+		border-color: var( --color-primary-40 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-accent-300 );
-		border: 2px solid var( --color-white );
+		background-color: var( --color-accent-30 );
+		border: 2px solid var( --color-border-inverted );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -104,41 +105,20 @@
 	}
 }
 
-@keyframes wiggle {
-	0% {
-		transform: rotate( 0 );
-	}
-	40% {
-		transform: rotate( 15deg );
-	}
-	50% {
-		transform: rotate( -15deg );
-	}
-	100% {
-		transform: rotate( 0 );
-	}
+.inline-help__mobile-overlay {
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	bottom: 0;
+	height: 100%;
+	position: fixed;
+	right: 0;
+	left: 0;
+	z-index: z-index( 'root', '.inline-help__mobile-overlay' );
 }
 
 .inline-help__popover.popover {
 	@include breakpoint( '<660px' ) {
-		top: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		left: 0 !important;
-		position: fixed;
-		background: rgba( var( --color-neutral-0-rgb ), 0.8 );
-
-		.popover__arrow {
-			display: none;
-		}
-
-		.popover__inner {
-			top: auto !important;
-			right: auto !important;
-			bottom: auto !important;
-			left: auto !important;
-			margin: 16px;
-		}
+		margin-top: -5px;
+		width: calc( 100% - 28px );
 	}
 
 	p {
@@ -236,10 +216,6 @@
 	}
 }
 
-.inline-help__checklist {
-	min-height: 0;
-}
-
 .inline-help__view-heading {
 	display: block;
 	font-size: 14px;
@@ -304,15 +280,17 @@
 
 .inline-help__footer {
 	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	flex-wrap: wrap;
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
-	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
-		width: 50%;
 		position: relative;
 		padding: 12px 8px 12px 46px;
 
@@ -340,12 +318,11 @@
 	}
 
 	.button.is-borderless.inline-help__contact-button {
-		padding-right: 24px;
+		padding-right: 40px;
 	}
 
 	// Hide/Show buttons as needed
-	.inline-help__cancel-button,
-	.inline-help__back-to-help-button {
+	.inline-help__cancel-button {
 		display: none;
 	}
 
@@ -357,17 +334,6 @@
 
 		.inline-help__cancel-button {
 			display: block;
-		}
-	}
-
-	.is-onboarding-welcome-active & {
-		.inline-help__cancel-button,
-		.inline-help__more-button {
-			display: none;
-		}
-		.inline-help__contact-button,
-		.inline-help__back-to-help-button {
-			display: inline-block;
 		}
 	}
 }
@@ -410,10 +376,10 @@
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			&:hover {
 				background: none;
 			}
@@ -435,7 +401,7 @@
 	padding: 16px 0 0;
 	margin: 0;
 	font-size: 14px;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-style: italic;
 
 	@include breakpoint( '>660px' ) {
@@ -496,17 +462,5 @@
 	100% {
 		opacity: 0.3;
 		width: 65%;
-	}
-}
-
-// Upwork AB Test Link
-.inline-help__upwork {
-	border-bottom: 1px solid var( --color-neutral-100 );
-	padding: 12px 16px;
-	text-align: left;
-
-	p {
-		font-size: 12px;
-		margin-bottom: 0;
 	}
 }

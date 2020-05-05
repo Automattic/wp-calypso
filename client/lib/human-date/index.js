@@ -1,16 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-export default function humanDate( dateOrMoment, dateFormat = 'll' ) {
-	const now = i18n.moment();
-	dateOrMoment = i18n.moment( dateOrMoment );
+export default function humanDate(
+	dateOrMoment,
+	dateFormat = 'll',
+	locale = i18n.getLocaleSlug()
+) {
+	const now = moment().locale( locale );
+	dateOrMoment = moment( dateOrMoment ).locale( locale );
 
 	let millisAgo = now.diff( dateOrMoment );
 	if ( millisAgo < 0 ) {

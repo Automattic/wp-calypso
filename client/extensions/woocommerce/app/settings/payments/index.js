@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
@@ -179,7 +177,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsPayments ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsPayments ) );

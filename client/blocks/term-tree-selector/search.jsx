@@ -1,35 +1,35 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
-class TermTreeSelectorSearch extends React.Component {
-	static displayName = 'TermTreeSelectorSearch';
+/**
+ * Style dependencies
+ */
+import './search.scss';
 
-	static propTypes = {
-		searchTerm: PropTypes.string,
-		onSearch: PropTypes.func.isRequired,
-	};
+function TermTreeSelectorSearch( { searchTerm, onSearch } ) {
+	const translate = useTranslate();
 
-	render() {
-		return (
-			<div className="term-tree-selector__search">
-				<Gridicon icon="search" size={ 18 } />
-				<input
-					type="search"
-					placeholder={ this.props.translate( 'Search…', { textOnly: true } ) }
-					value={ this.props.searchTerm }
-					onChange={ this.props.onSearch }
-				/>
-			</div>
-		);
-	}
+	return (
+		<div className="term-tree-selector__search">
+			<Gridicon icon="search" size={ 18 } />
+			<input
+				type="search"
+				placeholder={ translate( 'Search…', { textOnly: true } ) }
+				value={ searchTerm }
+				onChange={ onSearch }
+			/>
+		</div>
+	);
 }
 
-export default localize( TermTreeSelectorSearch );
+TermTreeSelectorSearch.propTypes = {
+	searchTerm: PropTypes.string,
+	onSearch: PropTypes.func.isRequired,
+};
+
+export default TermTreeSelectorSearch;

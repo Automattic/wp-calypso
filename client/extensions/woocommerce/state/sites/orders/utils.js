@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,8 +20,8 @@ export const DEFAULT_QUERY = {
  * Returns a normalized orders query, excluding any values which match the
  * default order query.
  *
- * @param  {Object} query Orders query
- * @return {Object}       Normalized orders query
+ * @param  {object} query Orders query
+ * @returns {object}       Normalized orders query
  */
 export function getNormalizedOrdersQuery( query ) {
 	if ( query.status ) {
@@ -34,8 +33,8 @@ export function getNormalizedOrdersQuery( query ) {
 /**
  * Returns a serialized orders query
  *
- * @param  {Object} query  Orders query
- * @return {String}        Serialized orders query
+ * @param  {object} query  Orders query
+ * @returns {string}        Serialized orders query
  */
 export function getSerializedOrdersQuery( query = {} ) {
 	const normalizedQuery = getNormalizedOrdersQuery( query );
@@ -49,14 +48,14 @@ export function getSerializedOrdersQuery( query = {} ) {
  * The IDs for items needs to be null when sent to the API for the remote site
  * to correctly save them as new line items/fee items.
  *
- * @param  {Object} order  Order object
- * @return {Object}        Order object, with no temporary IDs
+ * @param  {object} order  Order object
+ * @returns {object}        Order object, with no temporary IDs
  */
 export function removeTemporaryIds( order ) {
 	const newOrder = { ...order };
 	for ( const type of [ 'line_items', 'fee_lines', 'coupon_lines', 'shipping_lines' ] ) {
 		if ( order[ type ] ) {
-			newOrder[ type ] = order[ type ].map( item => {
+			newOrder[ type ] = order[ type ].map( ( item ) => {
 				if ( ! isFinite( item.id ) ) {
 					return omit( item, 'id' );
 				}
@@ -71,8 +70,8 @@ export function removeTemporaryIds( order ) {
 /**
  * Convert all order values to the type expected by the API
  *
- * @param  {Object} order  Order object
- * @return {Object}        Order object, with no temporary IDs
+ * @param  {object} order  Order object
+ * @returns {object}        Order object, with no temporary IDs
  */
 export function transformOrderForApi( order ) {
 	const totalsAndTaxes = [
@@ -84,30 +83,30 @@ export function transformOrderForApi( order ) {
 		'total',
 		'total_tax',
 	];
-	forEach( totalsAndTaxes, key => {
+	forEach( totalsAndTaxes, ( key ) => {
 		if ( isFinite( order[ key ] ) || order[ key ] ) {
 			order[ key ] = getCurrencyFormatString( order[ key ], order.currency );
 		}
 	} );
 
 	const transformOrderData = ( data, strings = [], prices = [], integers = [], floats = [] ) => {
-		return data.map( line => {
-			forEach( strings, key => {
+		return data.map( ( line ) => {
+			forEach( strings, ( key ) => {
 				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = line[ key ].toString();
 				}
 			} );
-			forEach( prices, key => {
+			forEach( prices, ( key ) => {
 				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatString( line[ key ], order.currency );
 				}
 			} );
-			forEach( integers, key => {
+			forEach( integers, ( key ) => {
 				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = parseInt( line[ key ] );
 				}
 			} );
-			forEach( floats, key => {
+			forEach( floats, ( key ) => {
 				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatDecimal( line[ key ], order.currency );
 				}

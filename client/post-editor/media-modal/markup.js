@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -22,12 +21,12 @@ const Markup = {
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
 	 *
-	 * @param  {Object} site    A site object
-	 * @param  {Object} media   A media object
-	 * @param  {Object} options Appearance options
-	 * @return {string}         A markup string
+	 * @param  {object} site    A site object
+	 * @param  {object} media   A media object
+	 * @param  {object} options Appearance options
+	 * @returns {string}         A markup string
 	 */
-	get: function( site, media, options ) {
+	get: function ( site, media, options ) {
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
@@ -47,10 +46,10 @@ const Markup = {
 	 * Given a media object, returns a link markup string representing that
 	 * object.
 	 *
-	 * @param  {Object} media A media object
-	 * @return {string}       A link markup string
+	 * @param  {object} media A media object
+	 * @returns {string}       A link markup string
 	 */
-	link: function( media ) {
+	link: function ( media ) {
 		const element = React.createElement(
 			'a',
 			{
@@ -72,12 +71,12 @@ const Markup = {
 	 * @license See CREDITS.md.
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
 	 *
-	 * @param  {Object} site           A site object
-	 * @param  {(Object|String)} media A media object or markup string
-	 * @return {String}                A caption React element, or null if not
+	 * @param  {object} site           A site object
+	 * @param  {(object|string)} media A media object or markup string
+	 * @returns {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( site, media ) {
+	caption: function ( site, media ) {
 		let img, caption, width;
 
 		if ( 'string' !== typeof media ) {
@@ -122,12 +121,12 @@ const Markup = {
 		 * Given an image media object and a site, returns a markup string representing that
 		 * image object as HTML.
 		 *
-		 * @param  {Object} site    A site object
-		 * @param  {Object} media   An image media object
-		 * @param  {Object} options Appearance options
-		 * @return {string}         An image markup string
+		 * @param  {object} site    A site object
+		 * @param  {object} media   An image media object
+		 * @param  {object} options Appearance options
+		 * @returns {string}         An image markup string
 		 */
-		image: function( site, media, options ) {
+		image: function ( site, media, options ) {
 			options = assign(
 				{
 					size: 'full',
@@ -193,11 +192,11 @@ const Markup = {
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
 		 *
-		 * @param  {Object} site  A site object
-		 * @param  {Object} media An audio media object
-		 * @return {string}       An audio markup string
+		 * @param  {object} site  A site object
+		 * @param  {object} media An audio media object
+		 * @returns {string}       An audio markup string
 		 */
-		audio: function( site, media ) {
+		audio: function ( site, media ) {
 			return stringify( {
 				tag: 'audio',
 				attrs: {
@@ -210,11 +209,11 @@ const Markup = {
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
 		 *
-		 * @param  {Object} site  A site object
+		 * @param  {object} site  A site object
 		 * @param  {string} media A video media object
-		 * @return {string}       A video markup string
+		 * @returns {string}       A video markup string
 		 */
-		video: function( site, media ) {
+		video: function ( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
 				return stringify( {
 					tag: 'wpvideo',

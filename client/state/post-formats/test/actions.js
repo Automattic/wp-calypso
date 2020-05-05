@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -20,10 +19,10 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#requestPostFormats()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/12345678/post-formats' )

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,11 @@ import Blog from './blog';
 import InfiniteList from 'components/infinite-list';
 import Placeholder from './placeholder';
 import config from 'config';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const createPlaceholder = () => <Placeholder />;
 
@@ -92,7 +95,7 @@ class BlogsSettings extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	sites: getSites( state ),
 	requestingSites: isRequestingSites( state ),
 } );

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -145,10 +145,7 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( PluginActivateToggle ) );
+export default connect( null, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( PluginActivateToggle ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,7 @@ import { conversations, conversationsA8c } from './controller';
 import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page(
 		'/read/conversations',
 		preloadReaderBundle,

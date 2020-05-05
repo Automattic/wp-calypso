@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -6,8 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import escapeRegexp from 'escape-string-regexp';
-import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
+import { escapeRegExp, reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
@@ -21,8 +19,7 @@ import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-re
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import getReaderFollows from 'state/selectors/get-reader-follows';
-import getReaderFollowsCount from 'state/selectors/get-reader-follows-count';
+import { getReaderFollows, getReaderFollowsCount } from 'state/reader/follows/selectors';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
 import EllipsisMenu from 'components/ellipsis-menu';
@@ -47,9 +44,9 @@ class FollowingManageSubscriptions extends Component {
 			return follows;
 		}
 
-		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
+		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
 
-		return follows.filter( follow => {
+		return follows.filter( ( follow ) => {
 			const feed = follow.feed;
 			const site = follow.site;
 			const siteName = getSiteName( { feed, site } );
@@ -67,7 +64,7 @@ class FollowingManageSubscriptions extends Component {
 
 	sortFollows( follows, sortOrder ) {
 		if ( sortOrder === 'alpha' ) {
-			return sortBy( follows, follow => {
+			return sortBy( follows, ( follow ) => {
 				const feed = follow.feed;
 				const site = follow.site;
 				const displayUrl = formatUrlForDisplay( follow.URL );
@@ -78,7 +75,7 @@ class FollowingManageSubscriptions extends Component {
 		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
 	}
 
-	handleSortChange = sort => {
+	handleSortChange = ( sort ) => {
 		page.replace( addQueryArgs( { sort }, window.location.pathname + window.location.search ) );
 	};
 
@@ -96,7 +93,7 @@ class FollowingManageSubscriptions extends Component {
 				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
-						{ translate( '%(num)s Followed Sites', {
+						{ translate( '%(num)s Followed sites', {
 							args: { num: followsCount },
 						} ) }
 					</h1>
@@ -148,6 +145,7 @@ class FollowingManageSubscriptions extends Component {
 								? translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 										components: { italic: <i /> },
 										args: query,
+										comment: '%s is the user-entered search string. For example: "bananas"',
 								  } )
 								: translate( 'Sorry, no followed sites found.' ) }
 						</span>
@@ -158,7 +156,7 @@ class FollowingManageSubscriptions extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const follows = getReaderFollows( state );
 	const followsCount = getReaderFollowsCount( state );
 	return { follows, followsCount };

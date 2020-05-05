@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isPersonal, isGoogleApps } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import PurchaseDetail from 'components/purchase-detail';
+
+/**
+ * Image dependencies
+ */
+import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -24,9 +26,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
-				<GoogleAppsDetails isRequired />
-			) }
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -34,7 +34,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
+				icon={ <img alt="" src={ adsRemovedImage } /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

@@ -16,7 +16,7 @@ const MyComponent = ( { translate } ) => (
 		title={ translate( 'Important!' ) }
 		description={ translate( "Your domain mapping won't work until you update the DNS settings." ) }
 		buttonText={ translate( 'Learn More' ) }
-		href="https://support.wordpress.com"
+		href="https://wordpress.com/support"
 		target="_blank"
 	/>
 );

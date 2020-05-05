@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { expect } from 'chai';
  */
 import { geocode, reverseGeocode } from '../';
 
-jest.mock( 'lib/load-script', () => require( './mocks/load-script' ) );
+jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ) );
 /**
  * Module variables
  */
@@ -26,9 +25,9 @@ describe( 'geocoding', () => {
 				expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
+			test( 'should call to the Google Maps API', ( done ) => {
 				geocode( TEST_ADDRESS )
-					.then( results => {
+					.then( ( results ) => {
 						expect( results ).to.eql( [ 1, 2, 3 ] );
 						done();
 					} )
@@ -43,9 +42,9 @@ describe( 'geocoding', () => {
 				expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
+			test( 'should call to the Google Maps API', ( done ) => {
 				reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
-					.then( results => {
+					.then( ( results ) => {
 						expect( results ).to.eql( [ 1, 2, 3 ] );
 						done();
 					} )

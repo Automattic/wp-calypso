@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -81,7 +79,7 @@ const DEFAULT_POST = {
 	],
 };
 
-const makeComparator = query => ( a, b ) => PostQueryManager.compare( query, a, b );
+const makeComparator = ( query ) => ( a, b ) => PostQueryManager.compare( query, a, b );
 
 describe( 'PostQueryManager', () => {
 	describe( '#matches()', () => {

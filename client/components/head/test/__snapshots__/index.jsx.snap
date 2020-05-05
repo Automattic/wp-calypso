@@ -13,7 +13,7 @@ exports[`Head should render custom title 1`] = `
     httpEquiv="X-UA-Compatible"
   />
   <meta
-    content="width=device-width, initial-scale=1, maximum-scale=1"
+    content="width=device-width, initial-scale=1"
     name="viewport"
   />
   <meta
@@ -141,12 +141,12 @@ exports[`Head should render custom title 1`] = `
   />
   <link
     as="style"
-    href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+    href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
     rel="preload"
   />
   <noscript>
     <link
-      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
       rel="stylesheet"
     />
   </noscript>
@@ -157,7 +157,7 @@ exports[`Head should render custom title 1`] = `
 			(function() {
 				var m = document.createElement( \\"link\\" );
 				m.rel = \\"stylesheet\\";
-				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese\\";
+				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap\\";
 				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
 			})()
 			",
@@ -181,7 +181,7 @@ exports[`Head should render default title 1`] = `
     httpEquiv="X-UA-Compatible"
   />
   <meta
-    content="width=device-width, initial-scale=1, maximum-scale=1"
+    content="width=device-width, initial-scale=1"
     name="viewport"
   />
   <meta
@@ -309,12 +309,12 @@ exports[`Head should render default title 1`] = `
   />
   <link
     as="style"
-    href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+    href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
     rel="preload"
   />
   <noscript>
     <link
-      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
       rel="stylesheet"
     />
   </noscript>
@@ -325,7 +325,7 @@ exports[`Head should render default title 1`] = `
 			(function() {
 				var m = document.createElement( \\"link\\" );
 				m.rel = \\"stylesheet\\";
-				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese\\";
+				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap\\";
 				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
 			})()
 			",

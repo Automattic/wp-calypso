@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
@@ -26,7 +25,7 @@ describe( 'Plans', () => {
 		path.externalRedirect.mockReset();
 	} );
 	test( 'should render plans', () => {
-		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } countryCode={ 'US' } /> );
+		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( PlansGrid ) ).toHaveLength( 1 );

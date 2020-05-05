@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,12 @@ import React, { Children } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class FormButton extends React.Component {
 	static defaultProps = {

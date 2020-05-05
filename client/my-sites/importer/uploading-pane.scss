@@ -1,0 +1,55 @@
+.importer__uploading-pane {
+	position: relative;
+	height: 150px;
+	margin-bottom: 1.5em;
+
+	border: 5px solid var( --color-neutral-0 );
+	fill: var( --color-neutral-20 );
+	font-size: 14px;
+	font-weight: 600;
+	color: var( --color-neutral-light );
+	text-align: center;
+
+	input {
+		visibility: hidden;
+	}
+
+	.accessible-focus &:focus {
+		border-color: var( --color-neutral-20 );
+	}
+}
+
+.importer__uploading-pane-description {
+	font-size: 14px;
+}
+
+.importer__upload-content {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	text-align: center;
+	transform: translateY( -50% );
+
+	&.importer-upload-success {
+		color: var( --color-success );
+	}
+
+	&.importer-upload-failure {
+		color: var( --color-error );
+	}
+}
+
+.importer__upload-progress {
+	&.progress-bar {
+		width: 80%;
+	}
+
+	.progress-bar__progress {
+		background-color: var( --color-accent );
+	}
+
+	&.is-complete .progress-bar__progress {
+		background-color: var( --color-success );
+	}
+}

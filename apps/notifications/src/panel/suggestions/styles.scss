@@ -1,0 +1,126 @@
+$base-background-color: var( --color-surface );
+$list-background: var( --color-surface );
+$border-color: var( --color-neutral-10 );
+$light-border-color: var( --color-neutral-0 );
+$text-color: var( --color-neutral-70 );
+$name-color: var( --color-neutral-light );
+$selected-color: var( --color-primary );
+$img-size: 24px;
+$img-border-radius: 50%;
+$border-radius: 3px;
+$box-shadow: 0 5px 6px rgba( var( --color-neutral-10-rgb ), 0.5 );
+
+.wpnc__suggestions {
+	position: relative;
+	left: 50%;
+	transform: translate( -50%, 0 );
+	margin-top: 5px;
+	color: $text-color;
+	background: $base-background-color;
+	border: 1px solid $border-color;
+	border-radius: $border-radius;
+	box-shadow: $box-shadow;
+	z-index: 20010;
+	font-family: $sans;
+	width: 90%;
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: auto;
+		background: $list-background;
+
+		li {
+			display: block;
+			box-sizing: content-box;
+			padding: 8px 10px;
+			margin: 0;
+			border-bottom: 1px solid $light-border-color;
+			cursor: pointer;
+			line-height: $img-size;
+			font-size: 14px;
+			height: $img-size;
+			overflow: hidden;
+		}
+	}
+
+	img {
+		border-radius: $img-border-radius;
+		width: $img-size;
+		height: $img-size;
+		float: left;
+		margin: 0 10px 0 0;
+	}
+
+	strong {
+		font-weight: 400;
+		background: rgba( var( --color-primary-light-rgb ), 0.25 );
+	}
+
+	.wpnc__username {
+		float: left;
+		display: inline-block;
+		font-weight: 400;
+		padding: 10px 0;
+		margin: -10px 0 0;
+	}
+
+	small {
+		font-size: 11px;
+		font-weight: 400;
+		float: right;
+		color: $name-color;
+		display: inline-block;
+	}
+
+	// Currently-selected item (arrows or via search)
+	.cur {
+		background: $selected-color;
+		color: var( --color-text-inverted );
+
+		strong,
+		.username strong {
+			color: var( --color-text-inverted );
+			background: rgba( var( --color-primary-light-rgb ), 0.45 );
+		}
+
+		small {
+			color: var( --color-text-inverted );
+		}
+	}
+}
+
+.rtl {
+	.wpnc__suggestions {
+		li {
+			direction: ltr; // required to get the '@' on the correct side
+		}
+
+		img {
+			float: right;
+			margin: 0 0 0 10px;
+		}
+
+		.wpnc__username {
+			float: left;
+		}
+
+		&.right {
+			img {
+				float: left;
+				margin: 0 10px 0 0;
+			}
+
+			.wpnc__username {
+				float: right;
+			}
+		}
+	}
+}
+
+@media ( max-width: 400px ) {
+	.wpnc__suggestions {
+		width: 100%;
+		height: 100%;
+	}
+}
