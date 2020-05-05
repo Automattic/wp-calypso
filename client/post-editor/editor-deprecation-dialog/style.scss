@@ -1,3 +1,5 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .editor-deprecation-dialog {
 
@@ -6,7 +8,7 @@
 	}
 
 	.components-modal__content {
-		@include breakpoint( '>660px' ) {
+		@include break-small {
 			width: 60%;
 			padding: 32px;
 		}
@@ -25,12 +27,10 @@
 			height: auto;
 			line-height: 1.2;
 			font-family: $serif;
+			margin-top: 260px;
 
-			@include breakpoint( '<660px' ) {
-				margin-top: 260px;
-			}
-
-			@include breakpoint( '>660px' ) {
+			@include break-small {
+				margin-top: unset;
 				font-size: 32px;
 			}
 		}
@@ -47,27 +47,6 @@
 	button {
 		margin-right: 24px;
 	}
-
-
-	.dialog__content {
-		padding: 0;
-
-		@include breakpoint( '<660px' ) {
-			padding: 0 24px;
-		}
-
-		@include breakpoint( '>660px' ) {
-			width: 50%;
-		}
-
-		p {
-			margin-bottom: 24px;
-
-			&.editor-deprecation-dialog__subhead {
-				color: var( --color-neutral-50 );
-			}
-		}
-	}
 }
 
 .editor-deprecation-dialog__illustration {
@@ -77,18 +56,15 @@
 	top: 0;
 	right: 0;
 	bottom: 0;
+	height: 250px;
+	width: 100%;
+	background-size: 100%;
 
-	@include breakpoint( '<660px' ) {
-		height: 250px;
-		width: 100%;
-		background-size: 100%;
-	}
-
-	@include breakpoint( '>660px' ) {
+	@include break-small {
 		background-size: 100% auto;
 		background-position: bottom;
 		background-color: #1381d8;
-		height: auto;
 		width: 40%;
+		height: unset;
 	}
 }
