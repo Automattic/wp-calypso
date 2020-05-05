@@ -1,6 +1,8 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+
 $sidebarWidth: 272px;
-$headerHeight: 56px;
-$border: 1px solid #e2e4e7;
+$border: 1px solid $light-gray-500;
 $transitionPeriod: 500ms;
 
 .is-wpcom-block-editor-nav-sidebar-attached {
@@ -49,11 +51,11 @@ $transitionPeriod: 500ms;
 	top: 0;
 	left: 0;
 	position: fixed;
-	height: $headerHeight;
+	height: $header-height;
 
 	.components-button {
-		height: $headerHeight;
-		width: $headerHeight;
+		height: $header-height;
+		width: $header-height;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -72,7 +74,7 @@ $transitionPeriod: 500ms;
 }
 
 .wpcom-block-editor-nav-sidebar__header-space {
-	height: $headerHeight;
+	height: $header-height;
 	border-bottom: $border;
 }
 
