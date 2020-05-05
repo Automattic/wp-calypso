@@ -74,6 +74,16 @@ class JetpackConnectMainHeader extends PureComponent {
 			};
 		}
 
+		if ( type === 'jetpack_search' ) {
+			return {
+				title: translate( 'Get Jetpack Search' ),
+				subtitle: translate(
+					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
+						'instantly find the right content – right when they need it.'
+				),
+			};
+		}
+
 		return {
 			title: translate( 'Set up Jetpack on your self-hosted WordPress' ),
 			subtitle: translate(

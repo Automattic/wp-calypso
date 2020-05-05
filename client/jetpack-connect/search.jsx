@@ -81,6 +81,9 @@ export class SearchPurchase extends Component {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
+		if ( ! this.props.isLoggedIn ) {
+			this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+		}
 	}
 
 	componentDidMount() {
@@ -367,6 +370,7 @@ export class SearchPurchase extends Component {
 						this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ this.isInstall() }
+					product={ 'jetpack_search' }
 				/>
 			</Card>
 		);
