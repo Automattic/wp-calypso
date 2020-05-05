@@ -33,6 +33,7 @@ import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import MaterialIcon from 'components/material-icon';
+import Gridicon from 'components/gridicon';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -146,10 +147,11 @@ export default function WPCheckout( {
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-					<span>
+					<CheckoutSummaryTitle>
+						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
 						{ translate( 'Purchase Details' ) }
-						<CheckoutSummaryIcon icon="keyboard_arrow_down" />
-					</span>
+						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+					</CheckoutSummaryTitle>
 					<CheckoutSummaryTitlePrice>
 						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
 					</CheckoutSummaryTitlePrice>
@@ -282,7 +284,15 @@ const CheckoutSummaryTitleLink = styled.button`
 	}
 `;
 
-const CheckoutSummaryIcon = styled( MaterialIcon )`
+const CheckoutSummaryTitle = styled.span`
+	display: flex;
+`;
+
+const CheckoutSummaryTitleIcon = styled( Gridicon )`
+	margin-right: 6px;
+`;
+
+const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
 	fill: ${( props ) => props.theme.colors.textColor};
 	margin-left: 4px;
 	transition: transform 0.1s linear;
