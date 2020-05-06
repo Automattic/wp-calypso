@@ -141,8 +141,6 @@ export default function WPCheckout( {
 	// so we mock the loaded property the CartStore would inject.
 	const mockCart = { ...responseCart, hasLoadedFromServer: true };
 
-	//...( isSummaryVisible ? [ 'is-visible' ] : [] ),
-
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
