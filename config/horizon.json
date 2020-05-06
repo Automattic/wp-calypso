@@ -100,6 +100,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"reader": true,
+		"reader/seen-posts": false,
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,

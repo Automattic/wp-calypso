@@ -22,6 +22,7 @@ export class ReaderSidebarTags extends Component {
 	static propTypes = {
 		tags: PropTypes.array,
 		path: PropTypes.string.isRequired,
+		hasUnseen: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		onClick: PropTypes.func,
 		currentTag: PropTypes.string,
@@ -53,9 +54,10 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
+		const { tags, isOpen, translate, onClick, hasUnseen } = this.props;
 		return (
-			<ul>
+			<ul className={ hasUnseen ? 'has-unseen' : '' }>
+				{ hasUnseen && <span className="sidebar__reader-bubble" /> }
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }

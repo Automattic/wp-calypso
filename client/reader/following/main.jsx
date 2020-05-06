@@ -5,7 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -22,11 +22,14 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
+import { requestMarkAllAsSeen, requestMarkAllAsUnseen } from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { sectionHasUnseen } from 'state/reader/seen-posts/selectors';
+import { SECTION_FOLLOWING } from 'state/reader/seen-posts/constants';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -53,6 +56,22 @@ const FollowingStream = ( props ) => {
 	const now = new Date();
 	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
 	const { translate } = props;
+	const dispatch = useDispatch();
+
+	const markAllAsSeen = () => {
+		// hide global dot
+		// hide dot (optimistic update)
+		// move marker
+		// request new status/all
+		dispatch( requestMarkAllAsSeen( { section: SECTION_FOLLOWING } ) );
+	};
+
+	const markAllAsUnSeen = () => {
+		// add global dot
+		// add section dot (optimistic update)
+		// delete marker
+		dispatch( requestMarkAllAsUnseen( { section: SECTION_FOLLOWING } ) );
+	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -80,6 +99,16 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
+				{ ! props.hasUnseen && (
+					<Button compact onClick={ markAllAsUnSeen }>
+						{ translate( 'Mark All as Unseen' ) }
+					</Button>
+				) }
+				{ props.hasUnseen && (
+					<Button compact onClick={ markAllAsSeen }>
+						{ translate( 'Mark All as Seen' ) }
+					</Button>
+				) }
 				<Button primary compact className="following__manage" href="/following/manage">
 					{ translate( 'Manage' ) }
 				</Button>
@@ -91,4 +120,5 @@ const FollowingStream = ( props ) => {
 
 export default connect( ( state ) => ( {
 	userInUSA: getCurrentUserCountryCode( state ) === 'US',
+	hasUnseen: sectionHasUnseen( state, SECTION_FOLLOWING ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

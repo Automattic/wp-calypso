@@ -109,6 +109,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/seen-posts": false,
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,
 		"republicize": true,

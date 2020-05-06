@@ -8,6 +8,7 @@ import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -30,11 +31,13 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -65,8 +68,8 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		this.props.blockSite( this.props.post.site_ID );
-		this.props.onBlock();
+		// this.props.blockSite( this.props.post.site_ID );
+		// this.props.onBlock();
 	};
 
 	reportPost = () => {
@@ -150,6 +153,39 @@ class ReaderPostOptionsMenu extends React.Component {
 		window.open( post.URL, '_blank' );
 	};
 
+	markAsSeen = () => {
+		const post = this.props.post;
+
+		if ( ! post ) {
+			return;
+		}
+
+		this.props.requestMarkAsSeen( {
+			blogId: post.site_ID,
+			postId: post.ID,
+			globalId: post.global_ID,
+			source: SOURCE_READER_WEB,
+		} );
+
+		this.onMenuToggle();
+	};
+
+	markAsUnSeen = () => {
+		const post = this.props.post;
+
+		if ( ! post ) {
+			return;
+		}
+
+		this.props.requestMarkAsUnseen( {
+			blogId: post.site_ID,
+			postId: post.ID,
+			globalId: post.global_ID,
+		} );
+
+		this.onMenuToggle();
+	};
+
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
 
@@ -188,7 +224,7 @@ class ReaderPostOptionsMenu extends React.Component {
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
-					popoverClassName="reader-post-options-menu__popover"
+					popoverClassName="reader-post-options-menu__popover ignore-click"
 					onToggle={ this.onMenuToggle }
 					position={ position }
 				>
@@ -211,6 +247,18 @@ class ReaderPostOptionsMenu extends React.Component {
 							post={ post }
 							followSource={ READER_POST_OPTIONS_MENU }
 						/>
+					) }
+
+					{ config.isEnabled( 'reader/seen-posts' ) && post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
+							{ translate( 'Mark as Unseen' ) }
+						</PopoverMenuItem>
+					) }
+
+					{ config.isEnabled( 'reader/seen-posts' ) && ! post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+							{ translate( 'Mark as Seen' ) }
+						</PopoverMenuItem>
 					) }
 
 					{ this.props.showVisitPost && post.URL && (
@@ -265,5 +313,7 @@ export default connect(
 	},
 	{
 		blockSite,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
 	}
 )( localize( ReaderPostOptionsMenu ) );

@@ -37,6 +37,7 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { hasUnseen } from 'state/ui/reader/seen-posts/selectors';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -47,6 +48,7 @@ class MasterbarLoggedIn extends React.Component {
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
+		hasUnseen: PropTypes.bool,
 	};
 
 	clickMySites = () => {
@@ -181,6 +183,7 @@ class MasterbarLoggedIn extends React.Component {
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ translate( 'Read the blogs and topics you follow' ) }
 					preloadSection={ this.preloadReader }
+					hasUnseen={ this.props.hasUnseen }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
@@ -239,6 +242,7 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		return {
+			hasUnseen: hasUnseen( state ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),

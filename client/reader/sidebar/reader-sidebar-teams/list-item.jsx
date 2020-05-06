@@ -40,7 +40,7 @@ const renderA8CLogo = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 };
 
-export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
+export const ReaderSidebarTeamsListItem = ( { path, team, hasUnseen } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -54,6 +54,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 			className={ ReaderSidebarHelper.itemLinkClass( teamUri, path, {
 				'sidebar-streams__team': true,
 			} ) }
+			hasUnseen={ hasUnseen }
 		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -62,6 +63,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 ReaderSidebarTeamsListItem.propTypes = {
 	team: PropTypes.object.isRequired,
 	path: PropTypes.string.isRequired,
+	hasUnseen: PropTypes.bool,
 };
 
 export default localize( ReaderSidebarTeamsListItem );

@@ -140,6 +140,7 @@ class ReaderPostCard extends React.Component {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
+			'is-seen': !! post.is_seen,
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
 			'is-expanded-video': isVideo && isExpanded,

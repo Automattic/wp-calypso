@@ -12,10 +12,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarBlogs from './reader-sidebar-blogs';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
+import QueryUnseenStatusAll from 'components/data/query-unseen-status-all';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
@@ -31,13 +33,19 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
 import { getReaderTeams } from 'state/reader/teams/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import { getSectionsStatus } from 'state/reader/seen-posts/selectors';
+import {
+	toggleReaderSidebarLists,
+	toggleReaderSidebarTags,
+	toggleReaderSidebarBlogs,
+} from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import config from 'config';
 
 const A8CConversationsIcon = () => (
 	<svg
@@ -141,7 +149,7 @@ export class ReaderSidebar extends React.Component {
 	}
 
 	render() {
-		const { path, teams, translate } = this.props;
+		const { path, teams, translate, unseenStatuses } = this.props;
 
 		return (
 			<Sidebar onClick={ this.handleClick }>
@@ -158,6 +166,7 @@ export class ReaderSidebar extends React.Component {
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
 								link="/read"
+								hasUnseen={ unseenStatuses.following && unseenStatuses.following.status }
 							/>
 
 							<SidebarItem
@@ -168,9 +177,14 @@ export class ReaderSidebar extends React.Component {
 								onNavigate={ this.handleReaderSidebarConversationsClicked }
 								materialIcon="question_answer"
 								link="/read/conversations"
+								hasUnseen={ unseenStatuses.conversations && unseenStatuses.conversations.status }
 							/>
 
-							<ReaderSidebarTeams teams={ teams } path={ path } />
+							<ReaderSidebarTeams
+								teams={ teams }
+								path={ path }
+								hasUnseen={ unseenStatuses.a8c_following && unseenStatuses.a8c_following.status }
+							/>
 
 							{ isAutomatticTeamMember( teams ) && (
 								<SidebarItem
@@ -181,6 +195,9 @@ export class ReaderSidebar extends React.Component {
 									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 									link="/read/conversations/a8c"
 									customIcon={ <A8CConversationsIcon /> }
+									hasUnseen={
+										unseenStatuses.a8c_conversations && unseenStatuses.a8c_conversations.status
+									}
 								/>
 							) }
 
@@ -218,8 +235,19 @@ export class ReaderSidebar extends React.Component {
 						</ul>
 					</SidebarMenu>
 
+					{ config.isEnabled( 'reader/seen-posts' ) && <QueryUnseenStatusAll /> }
+
 					<QueryReaderLists />
 					<QueryReaderTeams />
+
+					<ReaderSidebarBlogs
+						lists={ this.props.subscribedLists }
+						path={ path }
+						isOpen={ this.props.isMyBlogsOpen }
+						onClick={ this.props.toggleBlogsVisibility }
+						unseen={ unseenStatuses.network && unseenStatuses.network }
+					/>
+
 					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
 						<ReaderSidebarLists
 							lists={ this.props.subscribedLists }
@@ -228,6 +256,7 @@ export class ReaderSidebar extends React.Component {
 							onClick={ this.props.toggleListsVisibility }
 							currentListOwner={ this.state.currentListOwner }
 							currentListSlug={ this.state.currentListSlug }
+							hasUnseen={ unseenStatuses.lists && unseenStatuses.lists.status }
 						/>
 					) }
 					<ReaderSidebarTags
@@ -237,6 +266,7 @@ export class ReaderSidebar extends React.Component {
 						onClick={ this.props.toggleTagsVisibility }
 						onFollowTag={ this.highlightNewTag }
 						currentTag={ this.state.currentTag }
+						hasUnseen={ unseenStatuses.tags && unseenStatuses.tags.status }
 					/>
 				</SidebarRegion>
 
@@ -255,6 +285,8 @@ ReaderSidebar.defaultProps = {
 export default connect(
 	( state ) => {
 		return {
+			unseenStatuses: getSectionsStatus( state ),
+			isMyBlogsOpen: state.ui.reader.sidebar.isBlogsOpen,
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
 			subscribedLists: getSubscribedLists( state ),
@@ -262,6 +294,7 @@ export default connect(
 		};
 	},
 	{
+		toggleBlogsVisibility: toggleReaderSidebarBlogs,
 		toggleListsVisibility: toggleReaderSidebarLists,
 		toggleTagsVisibility: toggleReaderSidebarTags,
 		setNextLayoutFocus,
