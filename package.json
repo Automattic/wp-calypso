@@ -114,7 +114,7 @@
 		"pretest-client": "check-npm-client && yarn run -s pretest",
 		"test-client": "check-npm-client && jest -c=test/client/jest.config.js",
 		"test-client:watch": "check-npm-client && yarn run -s test-client --watch",
-		"test-e2e": "check-npm-client && cd test/e2e && yarn install --frozen-lockfile --ignore-scripts && yarn run test",
+		"test-e2e": "check-npm-client && cd test/e2e && yarn install --ignore-scripts && yarn run test",
 		"encrypt-e2e-config": "check-npm-client && openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./test/e2e/config/encrypted.enc -in ./test/e2e/config/local-$NODE_ENV.json",
 		"decrypt-e2e-config": "check-npm-client && openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./test/e2e/config/encrypted.enc -out ./test/e2e/config/local-$NODE_ENV.json",
 		"pretest-integration": "check-npm-client && yarn run -s pretest",
