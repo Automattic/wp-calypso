@@ -26,6 +26,9 @@ const NEW_BLOCKS = [
 	'core/gallery',
 ];
 
+// Add the "New" block category to the top (under the "Most Used").
+setCategories( [ NEW_CATEGORY, ...getCategories() ] );
+
 /**
  * Sets NEW_CATEGORY to blocks from the NEW_BLOCKS list.
  *
@@ -43,9 +46,6 @@ function setNewCategory( settings, name ) {
 		category: NEW_CATEGORY.slug,
 	};
 }
-
-// Add the "New" block category to the top
-setCategories( [ NEW_CATEGORY, ...getCategories() ] );
 
 // Register the filter for setting the "New" category to the blocks from the list:
 addFilter( 'blocks.registerBlockType', 'full-site-editing/new-blocks-showcase', setNewCategory );
