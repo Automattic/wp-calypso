@@ -18,14 +18,19 @@ import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
 import { showStripeModalAuth } from '../stripe';
-import { useMessages, useLineItems, renderDisplayValueMarkdown, useEvents } from '../../public-api';
+import {
+	usePaymentProcessor,
+	useTransactionStatus,
+	useMessages,
+	useLineItems,
+	renderDisplayValueMarkdown,
+	useEvents,
+} from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
-import { useTransactionStatus } from '../transaction-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { usePaymentProcessor } from '../payment-processors';
 
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 

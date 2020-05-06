@@ -7,13 +7,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { useLineItems, useMessages, useEvents } from '../../public-api';
+import {
+	useTransactionStatus,
+	usePaymentProcessor,
+	useLineItems,
+	useMessages,
+	useEvents,
+} from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import { useFormStatus } from '../form-status';
-import { useTransactionStatus } from '../transaction-status';
-import { usePaymentProcessor } from '../payment-processors';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 

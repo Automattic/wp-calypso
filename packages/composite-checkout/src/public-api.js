@@ -53,14 +53,16 @@ import {
 } from './components/default-steps';
 import { useFormStatus } from './lib/form-status';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
+import { useTransactionStatus } from './lib/transaction-status';
+import { usePaymentProcessor } from './lib/payment-processors';
 
 // Re-export the public API
 export {
 	Checkout,
 	CheckoutCheckIcon,
 	CheckoutModal,
-	CheckoutOrderSummaryStep,
 	CheckoutOrderSummary,
+	CheckoutOrderSummaryStep,
 	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
@@ -82,8 +84,8 @@ export {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
-	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	registerStore,
@@ -95,12 +97,14 @@ export {
 	useIsStepActive,
 	useIsStepComplete,
 	useLineItems,
+	useLineItemsOfType,
 	useMessages,
 	usePaymentMethod,
 	usePaymentMethodId,
+	usePaymentProcessor,
 	useRegisterStore,
 	useRegistry,
 	useSelect,
-	useLineItemsOfType,
 	useTotal,
+	useTransactionStatus,
 };
