@@ -108,9 +108,7 @@ class ActivityCard extends Component {
 		const { activity, showContentLink } = this.props;
 		return showContentLink !== undefined
 			? showContentLink
-			: !! (
-					activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
-			  ) || isSuccessfulDailyBackup( activity );
+			: !! activity.streams || isSuccessfulDailyBackup( activity );
 	}
 
 	renderContentLink() {
@@ -119,7 +117,7 @@ class ActivityCard extends Component {
 		// todo: handle the rest of cases
 		if (
 			activity.streams &&
-			activity.streams.some( ( stream ) => stream.activityMedia?.available )
+			activity.streams.some( ( stream ) => stream.activityMedia && stream.activityMedia.available )
 		) {
 			return (
 				<Button
@@ -209,19 +207,17 @@ class ActivityCard extends Component {
 	renderToolbar( isTopToolbar = true ) {
 		const { showActions } = this.props;
 
-		const shouldRenderContentLink = this.shouldRenderContentLink();
-
-		return ! ( shouldRenderContentLink || showActions ) ? null : (
+		return (
 			<>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! shouldRenderContentLink && showActions
+						! this.shouldRenderContentLink() && showActions
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ shouldRenderContentLink && this.renderContentLink() }
+					{ this.shouldRenderContentLink() && this.renderContentLink() }
 					{ showActions && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</>
