@@ -14,6 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
+import Plans from './plans';
 import { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
@@ -116,6 +117,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					) : (
 						<Redirect to={ makePath( Step.DesignSelection ) } />
 					) }
+				</Route>
+
+				<Route path={ makePath( Step.Plans ) }>
+					<Plans />
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

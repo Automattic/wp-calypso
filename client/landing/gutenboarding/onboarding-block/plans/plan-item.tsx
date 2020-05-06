@@ -1,0 +1,121 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { useI18n } from '@automattic/react-i18n';
+import { Button, Icon } from '@wordpress/components';
+import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+
+const TickIcon = () => (
+	<Icon
+		icon={ () => (
+			<svg
+				width="16"
+				height="12"
+				viewBox="0 0 16 12"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					fill-rule="evenodd"
+					clip-rule="evenodd"
+					d="M5.4987 9.50033L1.9987 6.00033L0.832031 7.16699L5.4987 11.8337L15.4987 1.83366L14.332 0.666992L5.4987 9.50033Z"
+					fill="white"
+				/>
+			</svg>
+		) }
+	/>
+);
+
+const featureExamples = [
+	'200 GB storage',
+	'Remove WordPress ads',
+	'Email & basic Live Chat Support',
+	'Collect recurring payments',
+	'Collect one-time payments',
+	'Earn ad revenue',
+	'Premium themes',
+	'Upload videos',
+	'Google Analytics support',
+	'Business features (incl. SEO)',
+	'Accept Payments in 60+ Countries',
+];
+
+export interface Props {
+	name: string;
+	price: string;
+	isPopular?: boolean;
+	isSelected?: boolean;
+	domainName?: string;
+	featureCount?: number; // temporary for mockup purposes
+}
+
+const PlanItem: React.FunctionComponent< Props > = ( {
+	name,
+	price,
+	isPopular = false,
+	isSelected = false,
+	domainName,
+	featureCount = 10,
+} ) => {
+	const { __ } = useI18n();
+
+	const hasDomain = !! domainName;
+
+	const features = featureExamples.slice( 0, featureCount );
+
+	return (
+		<div className="plan-item">
+			<div className="plan-item__heading">
+				<div className="plan-item__name">{ name }</div>
+				{ isPopular && <div className="plan-item__badge">Popular</div> }
+			</div>
+			<div className="plan-item__price">
+				<div className="plan-item__price-amount">{ price }</div>
+				<div className="plan-item__price-note">{ __( 'per month, billed yearly' ) }</div>
+			</div>
+			<div className="plan-item__actions">
+				<Button
+					className={ classNames( 'plan-item__select-button', { 'is-selected': isSelected } ) }
+					isLarge
+				>
+					{ isSelected ? (
+						<>
+							<TickIcon></TickIcon>
+							<span>{ __( 'Selected' ) }</span>
+						</>
+					) : (
+						<span>{ __( 'Select' ) }</span>
+					) }
+				</Button>
+			</div>
+			<div className="plan-item__domain">
+				<div className="plan-item__domain-summary">{ __( 'Free domain for 1 year' ) }</div>
+				<div className="plan-item__domain-name">
+					<Button
+						className={ classNames( 'plan-item__domain-picker-button', {
+							'has-domain': hasDomain,
+						} ) }
+						isLink
+					>
+						<span>{ hasDomain ? domainName : __( 'Choose domain' ) }</span>
+						<Icon icon="arrow-down-alt2" size={ 14 }></Icon>
+					</Button>
+				</div>
+			</div>
+			<div className="plan-item__features">
+				<ul className="plan-item__feature-item-group">
+					{ features.map( ( feature ) => (
+						<li className="plan-item__feature-item">{ feature }</li>
+					) ) }
+				</ul>
+			</div>
+		</div>
+	);
+};
+
+export default PlanItem;
