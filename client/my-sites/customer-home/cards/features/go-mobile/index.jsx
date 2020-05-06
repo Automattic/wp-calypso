@@ -74,9 +74,11 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 			</div>
 			{ isDesktopView && ! isDesktopApp && (
 				<div className="go-mobile__email-link">
-					{ translate( 'Get a download link via email — click it on your phone to get the app.' ) }
-					<Button className="go-mobile__email-link-button is-link" onClick={ emailLogin }>
-						{ translate( 'Send my download link' ) }
+					{ translate(
+						'We can email a link to open on your phone to instantly download the app.'
+					) }
+					<Button className="go-mobile__email-link-button" onClick={ emailLogin } borderless>
+						{ translate( 'Email download link' ) }
 					</Button>
 				</div>
 			) }
