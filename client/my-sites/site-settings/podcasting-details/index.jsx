@@ -89,7 +89,7 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderSaveButton() {
+	renderSaveButton( largeButton ) {
 		const {
 			handleSubmitForm,
 			isRequestingSettings,
@@ -112,7 +112,7 @@ class PodcastingDetails extends Component {
 
 		return (
 			<Button
-				compact
+				compact={ ! largeButton }
 				onClick={ handleSubmitForm }
 				primary
 				type="submit"
@@ -377,7 +377,7 @@ class PodcastingDetails extends Component {
 					key: 'podcasting_keywords',
 					label: translate( 'Keywords' ),
 				} ) }
-				{ isPodcastingEnabled && this.renderSaveButton() }
+				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>
 		);
 	}
