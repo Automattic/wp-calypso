@@ -23,7 +23,6 @@ import atomicHosting from './hosting/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
-import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -98,6 +97,7 @@ import wordads from './wordads/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
+// Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
 	account,
 	accountRecovery,
@@ -109,7 +109,6 @@ const reducers = {
 	atomicTransfer,
 	billingTransactions,
 	checklist,
-	concierge,
 	connectedApplications,
 	countries,
 	countryStates,
