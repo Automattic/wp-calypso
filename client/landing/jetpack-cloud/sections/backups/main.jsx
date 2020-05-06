@@ -199,7 +199,7 @@ class BackupsPage extends Component {
 					) }
 				</div>
 
-				{ ! isLoadingBackups && realtimeBackups.length > 0 && (
+				{ ! isLoadingBackups && lastBackup && (
 					<BackupDelta
 						{ ...{
 							deltas,
