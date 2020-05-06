@@ -88,7 +88,7 @@ class Block_Patterns {
 		while ( false !== $pattern ) {
 			// Only allow files ending in .json or .php.
 			if ( substr( $pattern, -5 ) === '.json' || substr( $pattern, -4 ) === '.php' ) {
-				$pattern_files[] = $patterns_dir . $pattern;
+				$pattern_files[] = $pattern;
 			}
 
 			$pattern = readdir( $directory_handle );
@@ -105,8 +105,8 @@ class Block_Patterns {
 
 		// Manually curated list of patterns to go at the top of the list.
 		$featured_patterns = array(
-			$patterns_dir . 'image-and-description.php',
-			$patterns_dir . 'three-columns-and-image.php',
+			'image-and-description.php',
+			'three-columns-and-image.php',
 		);
 
 		// Add the featured patterns to the top of the patterns.
@@ -117,13 +117,13 @@ class Block_Patterns {
 			if ( substr( $pattern_file, -5 ) === '.json' ) {
 				$patterns[] = json_decode(
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					file_get_contents( $pattern_file ),
+					file_get_contents( $patterns_dir . $pattern_file ),
 					true
 				);
 			}
 
 			if ( substr( $pattern_file, -4 ) === '.php' ) {
-				$patterns[] = include_once $pattern_file;
+				$patterns[] = include_once $patterns_dir . $pattern_file;
 			}
 		}
 
