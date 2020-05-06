@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import {
@@ -10,6 +10,7 @@ import {
 	renderDisplayValueMarkdown,
 	useLineItemsOfType,
 	useTotal,
+	useEvents,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -21,7 +22,6 @@ import getSupportVariation, {
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
-import createAnalyticsEventHandler from '../../record-analytics';
 
 export default function WPCheckoutOrderSummary() {
 	const reduxDispatch = useDispatch();
@@ -36,9 +36,14 @@ export default function WPCheckoutOrderSummary() {
 			SUPPORT_DIRECTLY !== getSupportVariation( state )
 		);
 	} );
-	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
+	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
-		recordEvent( { type: 'CHECKOUT_SUMMARY_HELP_CLICK', payload: { isSupportChatUser } } );
+		onEvent( {
+			type: 'calypso_checkout_composite_summary_help_click',
+			payload: {
+				isSupportChatUser,
+			},
+		} );
 		reduxDispatch( showInlineHelpPopover() );
 	};
 
