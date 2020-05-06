@@ -30,6 +30,7 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
 import { getTask } from './get-task';
 
