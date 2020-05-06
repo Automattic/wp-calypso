@@ -22,8 +22,8 @@ $markup = '
             <!-- /wp:paragraph -->
 
             <!-- wp:buttons {"align":"center"} -->
-            <div class="wp-block-buttons aligncenter"><!-- wp:button {"customBackgroundColor":"#a5150f","customTextColor":"#ffffff"} -->
-               <div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a></div>
+            <div class="wp-block-buttons aligncenter"><!-- wp:button {"style":{"color":{"text":"#ffffff","background":"#a5150f"}}} -->
+               <a class="wp-block-button wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a>
             <!-- /wp:button -->
             </div>
             <!-- /wp:buttons -->
