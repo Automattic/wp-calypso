@@ -445,7 +445,7 @@ export function createAccount(
 			email,
 		};
 
-		const marketing_price_group = ( response && response.marketing_price_group ) || '';
+		const marketing_price_group = response?.marketing_price_group ?? '';
 
 		// Fire after a new user registers.
 		recordRegistration( {
