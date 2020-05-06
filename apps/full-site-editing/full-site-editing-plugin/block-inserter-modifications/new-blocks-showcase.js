@@ -12,7 +12,8 @@ import { getCategories, setCategories } from '@wordpress/blocks';
 
 const NEW_CATEGORY = {
 	slug: 'new',
-	title: __( 'New', 'a8c' ),
+	/* translators: Category name for recently added blocks. */
+	title: __( 'New', 'full-site-editing' ),
 	// icon: TBD,
 };
 
