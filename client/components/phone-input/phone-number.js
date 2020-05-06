@@ -262,15 +262,12 @@ export function toIcannFormat( inputNumber, country ) {
 	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }
 
-export function getUpdatedCursorPosition( oldValue, newValue, selectStart, selectEnd ) {
+export function getUpdatedCursorPosition( oldValue, newValue, selectStart ) {
 	const oldDigits = oldValue.split( '' ).filter( ( char ) => /\d/.test( char ) );
 	let digitIndex = 0;
 	let foundIndex = newValue.length;
 	const newChars = newValue.split( '' );
 	let stopSearch = false;
-	if ( selectStart !== selectEnd ) {
-		return selectEnd > newChars.length ? newChars.length : selectEnd;
-	}
 	newChars.forEach( ( char, index ) => {
 		if ( stopSearch ) {
 			return;
