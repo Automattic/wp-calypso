@@ -267,9 +267,9 @@ function load_premium_content() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
 
 /**
- * Load New Blocks Showcase module
+ * Load Block Inserter Modifications module
  */
-function load_new_blocks_showcase() {
-	require_once __DIR__ . '/new-blocks-showcase/index.php';
+function load_block_inserter_modifications() {
+	require_once __DIR__ . '/block-inserter-modifications/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_new_blocks_showcase' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
