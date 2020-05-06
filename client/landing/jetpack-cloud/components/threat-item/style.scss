@@ -1,7 +1,9 @@
 .threat-item {
 	// Override the error color to a slightly different red.
 	--color-error-20: var( --color-threat-found );
-
+	.foldable-card__main {
+		flex: auto;
+	}
 	&.is-placeholder .card-heading,
 	&.is-placeholder .log-item__subheader {
 		margin-bottom: 2px;
