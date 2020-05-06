@@ -132,7 +132,7 @@ class DailyBackupStatus extends Component {
 					<p>
 						{ translate(
 							'Check out the {{a}}backups help guide{{/a}} or contact our support team to resolve the ' +
-								'issue. View to get the issue resolved',
+								'issue.',
 							{
 								components: {
 									a: (
