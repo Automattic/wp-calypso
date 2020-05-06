@@ -77,8 +77,17 @@ async function fetchStripeConfiguration() {
 	};
 }
 
-async function sendStripeTransaction( data ) {
+async function stripeCardProcessor( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
+	return {
+		success: true,
+	};
+}
+
+async function applePayProcessor( data ) {
+	window.console.log( 'Processing apple-pay transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return {
@@ -93,7 +102,7 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const { registerStore, select } = defaultRegistry;
+const { registerStore } = defaultRegistry;
 
 registerStore( 'demo', {
 	actions: {
@@ -310,18 +319,7 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
 
-	const stripeStore = useMemo(
-		() =>
-			createStripePaymentMethodStore( {
-				getCountry: () => select( 'demo' ).getCountry(),
-				getPostalCode: () => 90210,
-				getSubdivisionCode: () => 'CA',
-				getSiteId: () => 12345,
-				getDomainDetails: {},
-				submitTransaction: sendStripeTransaction,
-			} ),
-		[]
-	);
+	const stripeStore = useMemo( () => createStripePaymentMethodStore(), [] );
 
 	const stripeMethod = useMemo( () => {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
@@ -345,14 +343,7 @@ function MyCheckout() {
 		) {
 			return null;
 		}
-		return createApplePayMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
-			getPostalCode: () => 90210,
-			registerStore,
-			submitTransaction: sendStripeTransaction,
-			stripe,
-			stripeConfiguration,
-		} );
+		return createApplePayMethod( stripe, stripeConfiguration );
 	}, [
 		isApplePayLoading,
 		stripe,
@@ -386,6 +377,7 @@ function MyCheckout() {
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			paymentProcessors={ { 'apple-pay': applePayProcessor, card: stripeCardProcessor } }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
