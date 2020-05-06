@@ -6,7 +6,7 @@
  */
 
 $markup = '
-<!-- wp:group {"customBackgroundColor":"#2b2729","align":"full"} -->
+<!-- wp:group {"align":"full","style":{"color":{"background":"#2b2729"}}} -->
 <div class="wp-block-group alignfull has-background" style="background-color:#2b2729"><div class="wp-block-group__inner-container"><!-- wp:spacer {"height":60} -->
 <div style="height:60px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
@@ -17,16 +17,16 @@ $markup = '
 <div class="wp-block-jetpack-map is-style-black_and_white" data-map-style="black_and_white" data-map-details="true" data-points="[]" data-zoom="13.035941141633781" data-map-center="{&quot;lng&quot;:-122.42415148727684,&quot;lat&quot;:37.77537669430244}" data-marker-color="red" data-map-height="400" data-show-fullscreen-button="true"></div>
 <!-- /wp:jetpack/map -->
 
-<!-- wp:paragraph {"align":"center","customTextColor":"#ffffff"} -->
-<p style="color:#ffffff" class="has-text-color has-text-align-center">%1$s<br>%2$s</p>
+<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#ffffff"}}} -->
+<p class="has-text-align-center has-text-color" style="color:#ffffff">%1$s<br>%2$s</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:paragraph {"align":"center","customTextColor":"#ffffff"} -->
-<p style="color:#ffffff" class="has-text-color has-text-align-center">%3$s<br><a href="mailto:hello@example.com">%4$s</a></p>
+<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#ffffff"}}} -->
+<p class="has-text-align-center has-text-color" style="color:#ffffff">%3$s<br><a href="mailto:hello@example.com">%4$s</a></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:social-links {"align":"center","className":"margin-top-half"} -->
-<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"WordPress"} /-->
+<ul class="wp-block-social-links aligncenter margin-top-half"><!-- wp:social-link {"url":"","service":"wordpress"} /-->
 
 <!-- wp:social-link {"url":"https://facebook.com/","service":"facebook"} /-->
 
