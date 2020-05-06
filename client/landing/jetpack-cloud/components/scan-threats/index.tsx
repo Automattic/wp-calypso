@@ -10,6 +10,7 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import FixAllThreatsDialog from 'landing/jetpack-cloud/components/fix-all-threats-dialog';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
@@ -30,15 +31,63 @@ import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
  */
 import './style.scss';
 
+interface Site {
+	ID: number;
+	name: string;
+	URL: string;
+}
+
 interface Props {
-	site: {
-		ID: number;
-		name: string;
-		URL: string;
-	};
+	site: Site;
 	threats: Array< Threat >;
 	error: boolean;
 }
+
+const ScanError: React.FC< { site: Site } > = ( { site } ) => {
+	const dispatch = useDispatch();
+	const dispatchScanRun = React.useCallback( () => {
+		triggerScanRun( site.ID )( dispatch );
+	}, [ dispatch, site ] );
+
+	return (
+		<div className="scan-threats__error">
+			{ translate( 'The scanner was unable to check all files and errored before completion.' ) }
+			<br />
+			{ isEnabled( 'jetpack-cloud/on-demand-scan' )
+				? translate(
+						'Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						{
+							components: {
+								runScan: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+								linkToSupport: (
+									<a
+										href={ contactSupportUrl( site.URL ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+				  )
+				: translate(
+						'Deal with the threats found above and if the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						{
+							components: {
+								linkToSupport: (
+									<a
+										href={ contactSupportUrl( site.URL ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+				  ) }
+		</div>
+	);
+};
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
 	const {
@@ -55,10 +104,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
 	);
 	const dispatch = useDispatch();
-
-	const dispatchScanRun = React.useCallback( () => {
-		triggerScanRun( site.ID )( dispatch );
-	}, [ dispatch, site ] );
 
 	const allFixableThreats = threats.filter(
 		( threat ): threat is FixableThreat => threat.fixable !== false
@@ -169,28 +214,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				) ) }
 			</div>
 
-			{ error && (
-				<div className="scan-threats__error">
-					{ translate(
-						'The scanner was unable to check all files and errored before completion.{{lineBreak/}} Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
-						{
-							components: {
-								lineBreak: <br />,
-								runScan: (
-									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
-								),
-								linkToSupport: (
-									<a
-										href={ contactSupportUrl( site.URL ) }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								),
-							},
-						}
-					) }
-				</div>
-			) }
+			{ error && <ScanError site={ site } /> }
 
 			{ selectedThreat && (
 				<ThreatDialog

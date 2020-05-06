@@ -112,13 +112,11 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { siteId, siteSlug, moment, lastScanTimestamp, dispatchScanRun } = this.props;
-
-		console.log( dispatchScanRun );
-
+		const { scanState, siteId, siteSlug, moment, dispatchScanRun } = this.props;
 		const lastScanTimestamp = scanState?.mostRecent?.timestamp
 			? scanState?.mostRecent?.timestamp.getTime()
 			: '';
+
 		return (
 			<>
 				<SecurityIcon />
@@ -269,9 +267,9 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
-		const scanState = getSiteScanState( state, siteID );
-		const scanProgress = getSiteScanProgress( state, siteID );
-		const isInitialScan = getSiteScanIsInitial( state, siteID );
+		const scanState = getSiteScanState( state, siteId );
+		const scanProgress = getSiteScanProgress( state, siteId );
+		const isInitialScan = getSiteScanIsInitial( state, siteId );
 
 		return {
 			site,
