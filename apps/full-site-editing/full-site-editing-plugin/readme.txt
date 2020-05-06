@@ -10,7 +10,6 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
 
-
 == Description ==
 
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
