@@ -1,3 +1,16 @@
+.customer-home__layout-col-right {
+ .go-mobile {
+		// reduce padding to allow for padding on button for better click target
+		padding-bottom: 16px;
+
+		@include breakpoint( '<480px' ) {
+			.go-mobile__subheader.customer-home__card-subheader {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
 .go-mobile__app-badges {
 	display: flex;
 }
@@ -6,9 +19,19 @@
 	width: 50%;
 }
 
-.go-mobile__email-link-button {
-	margin-top: 1rem;
-	width: 100%;
+.go-mobile__email-link {
+	margin: 24px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid var( --color-neutral-5 );
+	color: var( --color-text-subtle );
+}
+
+.go-mobile__email-link-button.button {
+	color: var( --color-primary );
+	font-size: 15px;
+	font-weight: 400;
+	margin-top: 8px;
+	padding: 8px 0;
 }
 
 .go-mobile__row.has-2-cols {
