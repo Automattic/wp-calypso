@@ -12,8 +12,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { PageTemplatesPlugin } from '../index';
-import TemplateSelectorItem from './template-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
 /* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {
 	state = {
@@ -28,57 +26,12 @@ class SidebarModalOpener extends Component {
 		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
 	};
 
-	getLastTemplateUsed = () => {
-		const { isFrontPage, templates, theme } = this.props;
-		let { lastTemplateUsedSlug } = this.props;
-		// Try to match the homepage of the theme. Note that as folks transition
-		// to using the slug-based version of the homepage (e.g. "shawburn"), the
-		// slug will work normally without going through this check.
-		if ( ! lastTemplateUsedSlug && isFrontPage ) {
-			lastTemplateUsedSlug = theme;
-		}
-
-		if ( ! lastTemplateUsedSlug || lastTemplateUsedSlug === 'blank' ) {
-			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
-			return templates[ 0 ];
-		}
-		const matchingTemplate = templates.find( ( temp ) => temp.slug === lastTemplateUsedSlug );
-		// If no matching template, return the blank template.
-		if ( ! matchingTemplate ) {
-			return templates[ 0 ];
-		}
-		return matchingTemplate;
-	};
-
 	render() {
-		const { slug, title, preview, previewAlt } = this.getLastTemplateUsed();
-		const {
-			templates,
-			theme,
-			vertical,
-			segment,
-			siteInformation,
-			hidePageTitle,
-			isFrontPage,
-			isOpen,
-		} = this.props;
+		const { templates, theme, vertical, segment, hidePageTitle, isFrontPage, isOpen } = this.props;
 
 		return (
 			<div className="sidebar-modal-opener">
-				<TemplateSelectorItem
-					id="sidebar-modal-opener__last-template-used-preview"
-					value={ slug }
-					label={ replacePlaceholders( title, siteInformation ) }
-					staticPreviewImg={ preview }
-					staticPreviewImgAlt={ previewAlt }
-					onSelect={ this.toggleWarningModal }
-				/>
-
-				<Button
-					isPrimary
-					onClick={ this.toggleWarningModal }
-					className="sidebar-modal-opener__button"
-				>
+				<Button isSecondary onClick={ this.toggleWarningModal }>
 					{ __( 'Change Layout' ) }
 				</Button>
 
@@ -125,8 +78,6 @@ class SidebarModalOpener extends Component {
 
 const SidebarTemplatesPlugin = compose(
 	withSelect( ( select ) => ( {
-		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
-			._starter_page_template,
 		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) ),
 	withDispatch( ( dispatch ) => ( {
