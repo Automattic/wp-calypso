@@ -29,6 +29,7 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import VerticalNavItem from 'components/vertical-nav/item';
 import VerticalNav from 'components/vertical-nav';
 import { ECOMMERCE, FORMS } from 'lib/url/support';
+import HappinessSupport from 'components/happiness-support';
 
 import './style.scss';
 
@@ -81,11 +82,17 @@ class Security extends React.Component {
 
 		if ( sslStatuses.SSL_PENDING === sslStatus ) {
 			return (
-				<p>
-					{ translate(
-						'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most so if you’re running into delays please let us know so we can help you out.'
-					) }
-				</p>
+				<React.Fragment>
+					<p>
+						{ translate(
+							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most so if you’re running into delays please let us know so we can help you out.'
+						) }
+					</p>
+					<HappinessSupport
+						liveChatButtonEventName="domain_security_ssl_pending"
+						showLiveChatButton={ true }
+					/>
+				</React.Fragment>
 			);
 		}
 
