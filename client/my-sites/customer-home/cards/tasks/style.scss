@@ -12,13 +12,13 @@
 
 	.action-panel__title {
 		font-family: 'Recoleta', serif;
-		font-size: 32px;
-		line-height: 40px;
+		font-size: 28px;
+		line-height: 36px;
 		margin-bottom: 4px;
 
 		@include breakpoint( '>800px' ) {
-			font-size: 40px;
-			line-height: 48px;
+			font-size: 32px;
+			line-height: 40px;
 		}
 	}
 
@@ -30,14 +30,15 @@
 	}
 
 	.action-panel__body p.task__description {
-		margin-bottom: 32px;
+		margin-bottom: 24px;
 		font-size: 16px;
 		line-height: 24px;
 		color: var( --color-text );
 
 		@include breakpoint( '>800px' ) {
-			font-size: 20px;
-			line-height: 32px;
+			font-size: 18px;
+			line-height: 28px;
+			margin-bottom: 32px;
 		}
 	}
 
