@@ -131,7 +131,7 @@
 	.card-heading,
 	.foldable-card__header {
 		margin-top: 0;
-		font-size: inherit;
+		font-size: 16px;
 		font-weight: 600;
 	}
 
@@ -142,5 +142,12 @@
 	.customer-home__card-subheader {
 		margin: 0 0 1rem;
 		font-size: inherit;
+	}
+
+	.customer-home__layout-col-right {
+		& > .card,
+		& > .foldable-card {
+			margin-bottom: 24px;
+		}
 	}
 }
