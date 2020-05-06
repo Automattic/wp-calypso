@@ -7,6 +7,7 @@
 		background: var( --studio-blue-0 );
 		color: var( --studio-blue-40 );
 		padding: 5px 12px;
+		margin-top: 2px;
 		height: auto; // prevent clipping when there are 2 lines
 		text-align: left;
 		border-radius: $radius-round-rectangle;
@@ -39,7 +40,6 @@
 
 	.dashicon {
 		margin-left: 0.5em;
-		margin-top: 2px;
 		transition: transform 100ms ease-in-out;
 	}
 
@@ -50,6 +50,29 @@
 	&.is-modal-open {
 		display: none; // Hide domain picker button when modal is open
 	}
+
+	&.picked-domain .domain-picker-button__label {
+		animation-duration: 0.3s;
+		animation-name: wriggle;
+		animation-delay: 0.3s;
+	}
+}
+
+@keyframes wriggle {
+	from {
+		transform: scale( 1 );
+		padding: 0;
+	}
+
+	50% {
+		transform: scale( 1.05 );
+		padding: 2px;
+	}
+
+	to {
+		transform: scale( 1 );
+		padding:0;
+	}
 }
 
 // Remove focus styling from clicking a button
@@ -57,3 +80,5 @@
 html:not( .accessible-focus ) .domain-picker-button:focus:not( :disabled ):not( :hover ) {
 	box-shadow: none;
 }
+
+

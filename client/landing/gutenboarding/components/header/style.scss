@@ -50,8 +50,47 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 }
 
-.gutenboarding__header-domain-picker-button-domain {
-	&.placeholder {
-		@include placeholder();
+@keyframes slideIn {
+	from {
+		max-width: 0;
+		opacity: 0;
+		padding: 5px 0;
+	}
+
+	79% {
+		max-width: 0;
+		opacity: 0;
+		padding: 5px 0;
+	}
+
+	80% {
+		max-width: 0;
+		opacity: 0.5;
+		padding: 5px 12px;
+	}
+
+	to {
+		max-width: 500px;
+		opacity: 1;
+		padding: 5px 12px;
+	}
+}
+
+.gutenboarding__header-domain-picker-button {
+	max-width: 0;
+	opacity: 0;
+
+	&.has-content:not( .is-modal-open ):not( .is-open ):not( .picked-domain ) {
+		animation-duration: 5s;
+		animation-name: slideIn;
+	}
+
+	&.has-content {
+		max-width: 1500px;
+		opacity: 1;
+	}
+
+	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

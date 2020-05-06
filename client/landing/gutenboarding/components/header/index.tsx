@@ -89,6 +89,8 @@ const Header: React.FunctionComponent = () => {
 	);
 	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
 	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
+	const [ isRedirecting, setIsRedirecting ] = React.useState( false );
 
 	React.useEffect( () => {
 		if ( ! siteTitle ) {
@@ -97,6 +99,13 @@ const Header: React.FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
+	const [ previousRecommendedDomain, setPreviousRecommendedDomain ] = React.useState( '' );
+	if (
+		recommendedDomainSuggestion &&
+		previousRecommendedDomain !== recommendedDomainSuggestion.domain_name
+	) {
+		setPreviousRecommendedDomain( recommendedDomainSuggestion.domain_name );
+	}
 
 	const {
 		location: { pathname, search },
@@ -122,21 +131,31 @@ const Header: React.FunctionComponent = () => {
 
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
+	const getDomainElementContent = () => {
+		if ( recommendedDomainSuggestion || previousRecommendedDomain !== '' ) {
+			/* translators: domain name is available, eg: "yourname.com is available" */
+			return sprintf(
+				__( '%s is available' ),
+				recommendedDomainSuggestion
+					? recommendedDomainSuggestion.domain_name
+					: previousRecommendedDomain
+			);
+		}
+
+		return 'example.wordpress.com';
+	};
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
 	) : (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! recommendedDomainSuggestion,
+				placeholder: ! recommendedDomainSuggestion && ! previousRecommendedDomain === '',
 			} ) }
 		>
 			{ isMobile && __( 'Domain available' ) }
-			{ ! isMobile &&
-				( recommendedDomainSuggestion
-					? /* translators: domain name is available, eg: "yourname.com is available" */
-					  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
-					: 'example.wordpress.com' ) }
+			{ ! isMobile && getDomainElementContent() }
 		</span>
 	);
 
@@ -229,15 +248,24 @@ const Header: React.FunctionComponent = () => {
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
 						// show it comes from a site title (but hide it if it comes from a vertical).
-						domainElement && ( siteTitle || currentStep !== 'IntentGathering' ) && (
-							<DomainPickerButton
-								className="gutenboarding__header-domain-picker-button"
-								currentDomain={ domain }
-								onDomainSelect={ setDomain }
-							>
-								{ domainElement }
-							</DomainPickerButton>
-						)
+						domainElement &&
+							( siteTitle || previousRecommendedDomain || currentStep !== 'IntentGathering' ) && (
+								<DomainPickerButton
+									className="gutenboarding__header-domain-picker-button"
+									currentDomain={ domain }
+									onDomainSelect={ setDomain }
+									hasContent={
+										!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== ''
+									}
+									hasPlaceholder={
+										!! siteTitle &&
+										! recommendedDomainSuggestion &&
+										previousRecommendedDomain !== ''
+									}
+								>
+									{ domainElement }
+								</DomainPickerButton>
+							)
 					}
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
