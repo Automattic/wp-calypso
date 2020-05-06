@@ -107,15 +107,20 @@ const SiteSetupList = ( {
 	useEffect( () => {
 		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
-			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
-			setCurrentTaskId( initialTaskId );
+			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
+			if ( ! initialTask ) {
+				// Last task was skipped, refresh home layout
+				dispatch( requestHomeLayout( siteId ) );
+			} else {
+				setCurrentTaskId( initialTask.id );
+			}
 		}
 
 		// Reset verification email state on first load.
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, dispatch, isEmailUnverified, tasks ] );
+	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
 
 	// Move to next task after completing current one.
 	useEffect( () => {
@@ -126,7 +131,7 @@ const SiteSetupList = ( {
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTask, currentTaskId, tasks ] );
+	}, [ tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -147,14 +152,12 @@ const SiteSetupList = ( {
 		}
 	}, [
 		currentTaskId,
-		dispatch,
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
 		menusUrl,
 		siteId,
 		siteSlug,
-		tasks,
 		taskUrls,
 		userEmail,
 	] );
