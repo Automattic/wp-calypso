@@ -24,12 +24,9 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
+import { sslStatuses } from 'lib/domains/constants';
 
 import './style.scss';
-
-const SSL_DISABLED = 'disabled';
-const SSL_PROVISIONING = 'provisioning';
-const SSL_ACTIVE = 'active';
 
 class Security extends React.Component {
 	header() {
@@ -44,35 +41,21 @@ class Security extends React.Component {
 		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
-	getSSLStatus( domain ) {
-		const { expired, sslProvisioning } = domain;
-
-		if ( expired ) {
-			return SSL_DISABLED;
-		}
-
-		if ( sslProvisioning ) {
-			return SSL_PROVISIONING;
-		}
-
-		return SSL_ACTIVE;
-	}
-
 	getSSLStatusIcon( domain ) {
 		const { translate } = this.props;
 
-		const sslStatus = this.getSSLStatus( domain );
+		const { sslStatus } = domain;
 		let icon, text;
 
 		switch ( sslStatus ) {
-			case SSL_PROVISIONING:
+			case sslStatuses.SSL_PENDING:
 				text = translate( 'Provisioning' );
 				break;
-			case SSL_ACTIVE:
+			case sslStatuses.SSL_ACTIVE:
 				icon = 'check_circle';
 				text = translate( 'Enabled' );
 				break;
-			case SSL_DISABLED:
+			case sslStatuses.SSL_DISABLED:
 				icon = 'info';
 				text = translate( 'Disabled' );
 				break;
@@ -90,9 +73,9 @@ class Security extends React.Component {
 
 	getStatusDescription( domain ) {
 		const { selectedSite, purchase, translate } = this.props;
-		const sslStatus = this.getSSLStatus( domain );
+		const { sslStatus } = domain;
 
-		if ( SSL_PROVISIONING === sslStatus ) {
+		if ( sslStatuses.SSL_PENDING === sslStatus ) {
 			return (
 				<p>
 					{ translate(
@@ -102,7 +85,7 @@ class Security extends React.Component {
 			);
 		}
 
-		if ( SSL_DISABLED === sslStatus ) {
+		if ( sslStatuses.SSL_DISABLED === sslStatus ) {
 			return (
 				<React.Fragment>
 					<p>
@@ -179,7 +162,7 @@ class Security extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	const domain = ownProps.domains && getSelectedDomain( ownProps );
-	const { subscriptionId } = domain;
+	const { subscriptionId } = domain || {};
 
 	return {
 		domain,

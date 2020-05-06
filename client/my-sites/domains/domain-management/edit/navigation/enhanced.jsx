@@ -26,7 +26,7 @@ import {
 	domainManagementSecurity,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { type as domainTypes, transferStatus } from 'lib/domains/constants';
+import { type as domainTypes, transferStatus, sslStatuses } from 'lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
@@ -413,20 +413,40 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		const { pointsToWpcom } = domain;
+		const { pointsToWpcom, sslStatus } = domain;
 
-		if ( ! pointsToWpcom ) {
+		if ( ! pointsToWpcom || ! sslStatus ) {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		let sslStatusHuman;
+		switch ( sslStatus ) {
+			case sslStatuses.SSL_PENDING:
+				sslStatusHuman = translate( 'provisioning', {
+					comment: 'Shows as "HTTPS encryption: provisioning" in the nav menu',
+				} );
+				break;
+			case sslStatuses.SSL_ACTIVE:
+				sslStatusHuman = translate( 'on', {
+					comment: 'Shows as "HTTPS encryption: on" in the nav menu',
+				} );
+				break;
+			case sslStatuses.SSL_DISABLED:
+				sslStatusHuman = translate( 'disabled', {
+					comment: 'Shows as "HTTPS encryption: disabled" in the nav menu',
+				} );
+				break;
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementSecurity( selectedSite.slug, domain.name ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
-				description={ 'HTTPS encryption: on' }
+				description={ translate( 'HTTPS encryption: %(sslStatusHuman)s', {
+					args: { sslStatusHuman },
+				} ) }
 			/>
 		);
 	}
