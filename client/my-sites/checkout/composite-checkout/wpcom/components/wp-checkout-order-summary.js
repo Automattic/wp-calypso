@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import {
 	CheckoutCheckIcon,
@@ -17,6 +17,11 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { showInlineHelpPopover } from 'state/inline-help/actions';
+import getSupportVariation, {
+	SUPPORT_FORUM,
+	SUPPORT_DIRECTLY,
+} from 'state/selectors/get-inline-help-support-variation';
+import createAnalyticsEventHandler from '../../record-analytics';
 
 export default function WPCheckoutOrderSummary() {
 	const reduxDispatch = useDispatch();
@@ -25,7 +30,17 @@ export default function WPCheckoutOrderSummary() {
 	const coupons = useLineItemsOfType( 'coupon' );
 	const total = useTotal();
 
-	const handleHelpButtonClicked = () => reduxDispatch( showInlineHelpPopover() );
+	const isSupportChatUser = useSelector( ( state ) => {
+		return (
+			SUPPORT_FORUM !== getSupportVariation( state ) &&
+			SUPPORT_DIRECTLY !== getSupportVariation( state )
+		);
+	} );
+	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
+	const handleHelpButtonClicked = () => {
+		recordEvent( { type: 'CHECKOUT_SUMMARY_HELP_CLICK', payload: { isSupportChatUser } } );
+		reduxDispatch( showInlineHelpPopover() );
+	};
 
 	return (
 		<CheckoutSummaryCard>
@@ -44,12 +59,21 @@ export default function WPCheckoutOrderSummary() {
 						{ translate( 'Money back guarantee' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</CheckoutSummaryFeaturesList>
-				<CheckoutSummaryHelp>
-					{ translate( 'Questions? {{link}}Ask a Happiness Engineer.{{/link}}', {
-						components: {
-							link: <button onClick={ handleHelpButtonClicked } />,
-						},
-					} ) }
+				<CheckoutSummaryHelp onClick={ handleHelpButtonClicked }>
+					{ isSupportChatUser
+						? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
+								components: {
+									underline: <span />,
+								},
+						  } )
+						: translate(
+								'Questions? {{underline}}Read more about plans and purchases.{{/underline}}',
+								{
+									components: {
+										underline: <span />,
+									},
+								}
+						  ) }
 				</CheckoutSummaryHelp>
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
@@ -101,10 +125,11 @@ const CheckoutSummaryFeaturesList = styled.ul`
 	font-size: 14px;
 `;
 
-const CheckoutSummaryHelp = styled.div`
+const CheckoutSummaryHelp = styled.button`
 	margin-top: 16px;
+	text-align: left;
 
-	button {
+	span {
 		cursor: pointer;
 		text-decoration: underline;
 	}
