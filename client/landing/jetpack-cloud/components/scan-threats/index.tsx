@@ -5,11 +5,12 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import FixAllThreatsDialog from 'landing/jetpack-cloud/components/fix-all-threats-dialog';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
@@ -22,31 +23,71 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
-import { useThreats } from 'landing/jetpack-cloud/lib/useThreats';
+import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
+import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+interface Site {
+	ID: number;
+	name: string;
+	URL: string;
+}
+
 interface Props {
-	site: {
-		ID: number;
-		name: string;
-		URL: string;
-	};
+	site: Site;
 	threats: Array< Threat >;
 	error: boolean;
 }
 
-// @todo: once we have designs for the "error+threats found" case, we should update this component
-const ScanError = () => (
-	<Card highlight="error">
-		Something went wrong with the most recent Scan. Please, get in touch with support to get more
-		information. <br />
-		Despite this error, we can inform you we have found threats in your site.
-	</Card>
-);
+const ScanError: React.FC< { site: Site } > = ( { site } ) => {
+	const dispatch = useDispatch();
+	const dispatchScanRun = React.useCallback( () => {
+		triggerScanRun( site.ID )( dispatch );
+	}, [ dispatch, site ] );
+
+	return (
+		<div className="scan-threats__error">
+			{ translate( 'The scanner was unable to check all files and errored before completion.' ) }
+			<br />
+			{ isEnabled( 'jetpack-cloud/on-demand-scan' )
+				? translate(
+						'Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						{
+							components: {
+								runScan: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+								linkToSupport: (
+									<a
+										href={ contactSupportUrl( site.URL ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+				  )
+				: translate(
+						'Deal with the threats found above and if the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						{
+							components: {
+								linkToSupport: (
+									<a
+										href={ contactSupportUrl( site.URL ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+				  ) }
+		</div>
+	);
+};
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
 	const {
@@ -115,7 +156,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		<>
 			<SecurityIcon icon="error" />
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
-			{ error && <ScanError /> }
 			<p>
 				{ translate(
 					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
@@ -173,6 +213,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					/>
 				) ) }
 			</div>
+
+			{ error && <ScanError site={ site } /> }
+
 			{ selectedThreat && (
 				<ThreatDialog
 					showDialog={ showThreatDialog }

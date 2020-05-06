@@ -21,9 +21,11 @@ import {
 	clearMediaErrors,
 	clearMediaItemErrors,
 	createMediaItem,
+	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
+	setMediaLibrarySelectedItems,
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
@@ -319,6 +321,8 @@ MediaActions.delete = function ( siteId, item ) {
 		data: item,
 	} );
 
+	reduxDispatch( deleteMedia( siteId, item.ID ) );
+
 	debug( 'Deleting media from %d by ID %d', siteId, item.ID );
 	wpcom
 		.site( siteId )
@@ -345,6 +349,7 @@ MediaActions.setLibrarySelectedItems = function ( siteId, items ) {
 		siteId: siteId,
 		data: items,
 	} );
+	reduxDispatch( setMediaLibrarySelectedItems( siteId, items ) );
 };
 
 MediaActions.clearValidationErrors = function ( siteId, itemId ) {

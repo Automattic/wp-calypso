@@ -24,9 +24,6 @@ import {
 import { stubs } from './mocks/lib/wp';
 import { site } from './fixtures/site';
 
-jest.mock( 'lib/media/library-selected-store', () => ( {
-	getAll: () => [ require( './fixtures' ).DUMMY_ITEM ],
-} ) );
 jest.mock( 'lib/media/store', () => ( {
 	dispatchToken: require( 'dispatcher' ).register( () => {} ),
 	get: () => require( './fixtures' ).DUMMY_ITEM,
