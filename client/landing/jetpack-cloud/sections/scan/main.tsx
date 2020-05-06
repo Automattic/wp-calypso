@@ -29,10 +29,7 @@ import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	requestJetpackScanEnqueue,
-	startScanOptimistically,
-} from 'state/jetpack-scan/enqueue/actions';
+import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
 
 /**
  * Style dependencies
@@ -41,7 +38,7 @@ import './style.scss';
 
 interface Props {
 	site: object | null;
-	siteID: number | null;
+	siteId: number | null;
 	siteSlug: string | null;
 	siteUrl: string | null;
 	scanState: Scan | null;
@@ -49,8 +46,7 @@ interface Props {
 	isInitialScan: boolean;
 	moment: Function;
 	dispatchRecordTracksEvent: Function;
-	dispatchRequestScanEnqueue: Function;
-	dispatchStartScanOptimistically: Function;
+	dispatchScanRun: Function;
 }
 
 class ScanPage extends Component< Props > {
@@ -74,7 +70,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderContactSupportButton() {
-		const { dispatchRecordTracksEvent, siteUrl, siteID, scanState } = this.props;
+		const { dispatchRecordTracksEvent, siteUrl, siteId, scanState } = this.props;
 		const scanStateType = scanState?.state;
 
 		return (
@@ -87,7 +83,7 @@ class ScanPage extends Component< Props > {
 				onClick={ () =>
 					dispatchRecordTracksEvent( 'calypso_scan_error_contact_support', {
 						scan_state: scanStateType,
-						site_id: siteID,
+						site_id: siteId,
 					} )
 				}
 			>
@@ -116,11 +112,11 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { siteSlug, moment, scanState } = this.props;
-
+		const { scanState, siteId, siteSlug, moment, dispatchScanRun } = this.props;
 		const lastScanTimestamp = scanState?.mostRecent?.timestamp
 			? scanState?.mostRecent?.timestamp.getTime()
 			: '';
+
 		return (
 			<>
 				<SecurityIcon />
@@ -146,7 +142,7 @@ class ScanPage extends Component< Props > {
 						primary
 						href={ `/scan/${ siteSlug }` }
 						className="scan__button"
-						onClick={ this.handleOnScanNow }
+						onClick={ () => dispatchScanRun( siteId ) }
 					>
 						{ translate( 'Scan now' ) }
 					</Button>
@@ -154,22 +150,6 @@ class ScanPage extends Component< Props > {
 			</>
 		);
 	}
-
-	handleOnScanNow = () => {
-		const {
-			dispatchRecordTracksEvent,
-			site,
-			dispatchRequestScanEnqueue,
-			dispatchStartScanOptimistically,
-		} = this.props;
-
-		dispatchRecordTracksEvent( 'calypso_scan_run', {
-			site_id: site.ID,
-		} );
-
-		dispatchRequestScanEnqueue( site.ID );
-		dispatchStartScanOptimistically( site.ID );
-	};
 
 	renderScanning() {
 		const { scanProgress = 0, isInitialScan } = this.props;
@@ -246,7 +226,6 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( threatsFound ) {
-			// @todo: we should display somehow that an error happened (design missing)
 			return (
 				<ScanThreats
 					className="scan__threats"
@@ -265,7 +244,7 @@ class ScanPage extends Component< Props > {
 			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
-				<QueryJetpackScan siteId={ this.props.siteID } />
+				<QueryJetpackScan siteId={ this.props.siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
@@ -284,16 +263,16 @@ class ScanPage extends Component< Props > {
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
-		const siteID = getSelectedSiteId( state );
-		const siteUrl = getSiteUrl( state, siteID );
+		const siteId = getSelectedSiteId( state );
+		const siteUrl = getSiteUrl( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
-		const scanState = getSiteScanState( state, siteID );
-		const scanProgress = getSiteScanProgress( state, siteID );
-		const isInitialScan = getSiteScanIsInitial( state, siteID );
+		const scanState = getSiteScanState( state, siteId );
+		const scanProgress = getSiteScanProgress( state, siteId );
+		const isInitialScan = getSiteScanIsInitial( state, siteId );
 
 		return {
 			site,
-			siteID,
+			siteId,
 			siteUrl,
 			siteSlug,
 			scanState,
@@ -303,7 +282,6 @@ export default connect(
 	},
 	{
 		dispatchRecordTracksEvent: recordTracksEvent,
-		dispatchRequestScanEnqueue: requestJetpackScanEnqueue,
-		dispatchStartScanOptimistically: startScanOptimistically,
+		dispatchScanRun: triggerScanRun,
 	}
 )( withLocalizedMoment( ScanPage ) );
