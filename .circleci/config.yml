@@ -228,6 +228,17 @@ jobs:
           when: always
           command: yarn run lint:config-defaults
       - run:
+          name: Lint yarn.lock
+          when: always
+          command: |
+            DIRTY_FILES=$(git status --porcelain 2>/dev/null)
+            if [[ ! -z "$DIRTY_FILES" ]]; then
+              echo "Repository contains uncommited changes: "
+              echo "$DIRTY_FILES"
+              echo "You may need to checkout the branch, run `yarn` and commit those files."
+              exit 1
+            fi
+      - run:
           name: Lint Client and Server
           when: always
           command: |
