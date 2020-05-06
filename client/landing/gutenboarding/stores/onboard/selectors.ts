@@ -3,6 +3,7 @@
  */
 import { State } from './reducer';
 
+export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getState = ( state: State ) => state;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const hasPaidDomain = ( state: State ): boolean => {

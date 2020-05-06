@@ -11,8 +11,6 @@ import { useInterval } from '../../../../lib/interval/use-interval';
 /**
  * Internal dependencies
  */
-import CreateAndRedirect from './create-and-redirect';
-import { useNewQueryParam } from '../../path';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
@@ -23,8 +21,6 @@ const DURATION_IN_MS = 6000;
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const shouldTriggerCreate = useNewQueryParam();
-	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 	const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
 
 	const steps = React.useRef< string[] >(
@@ -50,12 +46,6 @@ const CreateSite: React.FunctionComponent = () => {
 		isComplete ? null : DURATION_IN_MS / totalSteps
 	);
 
-	React.useEffect( () => {
-		if ( isComplete ) {
-			setCreateAndRedirect( true );
-		}
-	}, [ isComplete ] );
-
 	useTrackStep( 'CreateSite' );
 
 	// Force animated progress bar to start at 0
@@ -67,7 +57,6 @@ const CreateSite: React.FunctionComponent = () => {
 
 	return (
 		<div className="gutenboarding-page create-site__background">
-			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
 			<div className="create-site__layout">
 				<div className="create-site__header">
 					<div className="gutenboarding__header-wp-logo">

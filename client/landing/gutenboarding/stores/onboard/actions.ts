@@ -82,6 +82,11 @@ export const setSelectedSite = ( selectedSite: number ) => ( {
 	selectedSite,
 } );
 
+export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
+	type: 'SET_IS_REDIRECTING' as const,
+	isRedirecting,
+} );
+
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
@@ -134,6 +139,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainSearch
 	| typeof setDomainCategory
 	| typeof setFonts
+	| typeof setIsRedirecting
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
 	| typeof setSiteTitle
