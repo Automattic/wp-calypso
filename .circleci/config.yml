@@ -120,18 +120,13 @@ references:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: yarn install --frozen-lockfile
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
-  npm-e2e-install: &npm-e2e-install
-    name: Install e2e npm dependencies
-    command: |
-      cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -197,7 +192,6 @@ jobs:
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
-      - run: *npm-e2e-install
       - save_cache: *save-yarn-cache
       - run: yarn run build-packages
       - persist_to_workspace:
