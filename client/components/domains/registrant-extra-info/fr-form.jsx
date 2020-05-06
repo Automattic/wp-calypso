@@ -170,14 +170,22 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				)
 			);
 
-		const sirenSiretValidationMessage =
-			validationErrors.sirenSiret &&
-			renderValidationError(
-				translate(
-					'The SIREN/SIRET field must be either a ' +
-						'9 digit SIREN number, or a 14 digit SIRET number'
-				)
-			);
+		let sirenSiretValidationMessage = null;
+
+		if ( validationErrors.sirenSiret ) {
+			if ( validationErrors.sirenSiret.indexOf( 'checksum' ) >= 0 ) {
+				sirenSiretValidationMessage = renderValidationError(
+					translate( 'This is not a valid SIREN/SIRET number' )
+				);
+			} else {
+				sirenSiretValidationMessage = renderValidationError(
+					translate(
+						'The SIREN/SIRET field must be either a ' +
+							'9 digit SIREN number, or a 14 digit SIRET number'
+					)
+				);
+			}
+		}
 
 		const trademarkNumberStrings = {
 			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
