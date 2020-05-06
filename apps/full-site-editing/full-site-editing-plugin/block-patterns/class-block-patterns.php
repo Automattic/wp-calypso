@@ -110,7 +110,7 @@ class Block_Patterns {
 		);
 
 		// Add the featured patterns to the top of the patterns.
-		$pattern_files = $featured_patterns + array_diff( $pattern_files, $featured_patterns );
+		$pattern_files = array_merge( $featured_patterns, array_diff( $pattern_files, $featured_patterns ) );
 
 		// Get the pattern files contents.
 		foreach ( $pattern_files as $pattern_file ) {
