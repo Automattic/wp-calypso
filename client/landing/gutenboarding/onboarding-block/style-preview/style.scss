@@ -135,6 +135,11 @@
 
 .style-preview__content {
 	height: 100%;
+	margin-bottom: $gutenboarding-footer-height + 8px;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
 }
 
 .style-preview__font-options {
@@ -303,13 +308,14 @@
 }
 
 $gutenboarding-style-preview-bar-height: 30px;
+$gutenboarding-style-preview-bar-height-mobile: 15px;
 
 // This and the following dot class render the browser chrome
 .style-preview__preview-bar {
 	position: absolute;
 	top: 0;
 	width: 100%;
-	height: $gutenboarding-style-preview-bar-height / 2;
+	height: $gutenboarding-style-preview-bar-height-mobile;
 	background: var( --studio-white );
 	border-bottom: 1px solid var( --studio-gray-5 );
 	display: flex;
@@ -387,9 +393,15 @@ html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( 
 	transform-origin: 0 0;
 
 	.is-viewport-desktop & {
-		top: $gutenboarding-style-preview-bar-height;
+		top: $gutenboarding-style-preview-bar-height-mobile;
 		height: calc(
-			#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height / $scale-factor}
+			#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height-mobile / $scale-factor}
 		);
+		@include break-small {
+			top: $gutenboarding-style-preview-bar-height;
+			height: calc(
+				#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height / $scale-factor}
+			);
+		}
 	}
 }

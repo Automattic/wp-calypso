@@ -21,6 +21,7 @@ import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
+import BottomBarMobile from '../../components/bottom-bar-mobile';
 
 import './style.scss';
 
@@ -63,56 +64,47 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	return (
-		<div className="gutenboarding-page style-preview">
-			<div className="style-preview__header">
-				<div className="style-preview__titles">
-					<Title>{ __( 'Pick a font pairing' ) }</Title>
-					<SubTitle>
-						{ __( 'Customize your design with typography. You can always fine-tune it later.' ) }
-					</SubTitle>
+		<>
+			<div className="gutenboarding-page style-preview">
+				<div className="style-preview__header">
+					<div className="style-preview__titles">
+						<Title>{ __( 'Pick a font pairing' ) }</Title>
+						<SubTitle>
+							{ __( 'Customize your design with typography. You can always fine-tune it later.' ) }
+						</SubTitle>
+					</div>
+					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
+					<div className="style-preview__actions">
+						<Link isLink to={ makePath( Step.DesignSelection ) }>
+							{ __( 'Choose another design' ) }
+						</Link>
+						{ hasSelectedDesign && (
+							<Button
+								className="style-preview__actions-continue-button"
+								isPrimary
+								isLarge
+								onClick={ () =>
+									currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+								}
+							>
+								{ __( 'Continue' ) }
+							</Button>
+						) }
+					</div>
 				</div>
-				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
-				<div className="style-preview__actions">
-					<Link isLink to={ makePath( Step.DesignSelection ) }>
-						{ __( 'Choose another design' ) }
-					</Link>
-					{ hasSelectedDesign && (
-						<Button
-							className="style-preview__actions-continue-button"
-							isPrimary
-							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
-						>
-							{ __( 'Continue' ) }
-						</Button>
-					) }
+				<div className="style-preview__content">
+					<FontSelect />
+					<Preview viewport={ selectedViewport } />
 				</div>
+				{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 			</div>
-			<div className="style-preview__content">
-				<FontSelect />
-				<Preview viewport={ selectedViewport } />
-				<div className="style-preview__actions-mobile">
-					{ hasSelectedDesign && (
-						<Button
-							className="style-preview__actions-mobile-continue-button"
-							isPrimary
-							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
-						>
-							{ __( 'Continue' ) }
-						</Button>
-					) }
-					<Link isLink to={ makePath( Step.DesignSelection ) }>
-						{ __( 'Choose another design' ) }
-					</Link>
-				</div>
-			</div>
-			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
-		</div>
+			<BottomBarMobile
+				backUrl={ makePath( Step.DesignSelection ) }
+				onContinue={ () =>
+					currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+				}
+			/>
+		</>
 	);
 };
 
