@@ -325,7 +325,6 @@ describe( 'TokenField', () => {
 				expect( wrapper.find( '.is-active' ).length === 1 ).to.equal( isActive );
 			}
 
-			document.activeElement.blur();
 			textInputNode.simulate( 'blur' );
 			testSavedState( false );
 			textInputNode.simulate( 'focus' );
