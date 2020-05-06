@@ -115,7 +115,7 @@ const SiteSetupList = ( {
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, isEmailUnverified, tasks ] );
+	}, [ currentTaskId, dispatch, isEmailUnverified, tasks ] );
 
 	// Move to next task after completing current one.
 	useEffect( () => {
@@ -126,7 +126,7 @@ const SiteSetupList = ( {
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ tasks ] );
+	}, [ currentTask, currentTaskId, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -147,12 +147,14 @@ const SiteSetupList = ( {
 		}
 	}, [
 		currentTaskId,
+		dispatch,
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
 		menusUrl,
 		siteId,
 		siteSlug,
+		tasks,
 		taskUrls,
 		userEmail,
 	] );
