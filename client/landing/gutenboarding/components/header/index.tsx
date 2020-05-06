@@ -7,7 +7,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import classnames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
 /**
@@ -89,8 +88,6 @@ const Header: React.FunctionComponent = () => {
 	);
 	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
 	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
-	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
-	const [ isRedirecting, setIsRedirecting ] = React.useState( false );
 
 	React.useEffect( () => {
 		if ( ! siteTitle ) {
@@ -149,11 +146,7 @@ const Header: React.FunctionComponent = () => {
 	const domainElement = domain ? (
 		domain.domain_name
 	) : (
-		<span
-			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! recommendedDomainSuggestion && ! previousRecommendedDomain === '',
-			} ) }
-		>
+		<span className="gutenboarding__header-domain-picker-button-domain">
 			{ isMobile && __( 'Domain available' ) }
 			{ ! isMobile && getDomainElementContent() }
 		</span>
