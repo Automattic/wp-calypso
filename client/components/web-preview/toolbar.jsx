@@ -16,6 +16,7 @@ import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -33,6 +34,8 @@ class PreviewToolbar extends Component {
 		showSEO: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
@@ -90,12 +93,13 @@ class PreviewToolbar extends Component {
 			showEdit,
 			showExternal,
 			showSEO,
+			showEditHeaderLink,
 			translate,
+			siteSlug,
 		} = this.props;
 
 		const selectedDevice = this.devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
-
 		return (
 			<div className="web-preview__toolbar">
 				{ showClose && (
@@ -130,6 +134,17 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				) }
+				{ showEditHeaderLink && (
+					<Button
+						borderless
+						aria-label={ translate( 'Edit Header' ) }
+						className="web-preview__edit-header-link"
+						href={ '/customize/identity/' + siteSlug }
+					>
+						{ translate( 'Edit Header' ) }
+					</Button>
+				) }
+
 				{ showUrl && (
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
@@ -166,6 +181,11 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
+export default connect( ( state ) => {
+	const siteSlug = getSelectedSiteSlug( state );
+
+	return {
+		siteSlug,
+		recordTracksEvent,
+	};
 } )( localize( PreviewToolbar ) );

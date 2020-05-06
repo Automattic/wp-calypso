@@ -84,6 +84,7 @@ class SitePreview extends Component {
 				externalUrl={ this.getBasePreviewUrl() }
 				showExternal={ true }
 				showClose={ true }
+				showEditHeaderLink={ true }
 				showPreview={ this.props.showPreview }
 				onClose={ this.props.closePreview }
 				showSEO={ ! this.props.isDomainOnlySite }
