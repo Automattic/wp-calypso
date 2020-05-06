@@ -24,7 +24,7 @@ import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
 import BackupDelta from '../../components/backup-delta';
 import DailyBackupStatus from '../../components/daily-backup-status';
-import DatePicker from '../../components/date-picker';
+import BackupDatePicker from '../../components/backup-date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -171,7 +171,7 @@ class BackupsPage extends Component {
 				<QueryRewindCapabilities siteId={ siteId } />
 
 				<div className="backups__last-backup-status">
-					<DatePicker
+					<BackupDatePicker
 						onDateChange={ this.onDateChange }
 						selectedDate={ this.getSelectedDate() }
 						siteId={ siteId }

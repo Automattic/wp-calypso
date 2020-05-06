@@ -21,7 +21,7 @@ import { backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths
  */
 import './style.scss';
 
-class DatePicker extends Component {
+class BackupDatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.object.isRequired,
@@ -107,16 +107,16 @@ class DatePicker extends Component {
 		const nextDisplayDate = this.getDisplayDate( nextDate, false );
 
 		return (
-			<div className="date-picker">
-				<div className="date-picker__select-date">
+			<div className="backup-date-picker">
+				<div className="backup-date-picker__select-date">
 					<div
-						className="date-picker__select-date--previous"
+						className="backup-date-picker__select-date--previous"
 						role="button"
 						tabIndex={ 0 }
 						onClick={ this.goToPreviousDay }
 						onKeyDown={ this.onSpace( this.goToPreviousDay ) }
 					>
-						<Button compact borderless className="date-picker__button--previous">
+						<Button compact borderless className="backup-date-picker__button--previous">
 							<Gridicon
 								icon="chevron-left"
 								className={ ! this.canGoToPreviousDay() && 'disabled' }
@@ -124,7 +124,7 @@ class DatePicker extends Component {
 						</Button>
 
 						<span
-							className={ classNames( 'date-picker__display-date', {
+							className={ classNames( 'backup-date-picker__display-date', {
 								disabled: ! this.canGoToPreviousDay(),
 							} ) }
 						>
@@ -139,26 +139,26 @@ class DatePicker extends Component {
 					/>
 
 					<div
-						className="date-picker__select-date--next"
+						className="backup-date-picker__select-date--next"
 						role="button"
 						tabIndex={ 0 }
 						onClick={ this.goToNextDay }
 						onKeyDown={ this.onSpace( this.goToNextDay ) }
 					>
 						<span
-							className={ classNames( 'date-picker__display-date', {
+							className={ classNames( 'backup-date-picker__display-date', {
 								disabled: ! this.canGoToNextDay(),
 							} ) }
 						>
 							{ nextDisplayDate }
 						</span>
 
-						<Button compact borderless className="date-picker__button--next">
+						<Button compact borderless className="backup-date-picker__button--next">
 							<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 						</Button>
 
-						<a className="date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
-							<Gridicon icon="search" className="date-picker__search-icon" />
+						<a className="backup-date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
+							<Gridicon icon="search" className="backup-date-picker__search-icon" />
 						</a>
 					</div>
 				</div>
@@ -167,4 +167,4 @@ class DatePicker extends Component {
 	}
 }
 
-export default localize( withLocalizedMoment( DatePicker ) );
+export default localize( withLocalizedMoment( BackupDatePicker ) );
