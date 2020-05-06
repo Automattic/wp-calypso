@@ -84,6 +84,11 @@
 		}
 	}
 
+	.card__link-indicator {
+		fill: var( --color-neutral-20 );
+		right: 20px;
+	}
+
 	&:hover {
 		background: var( --color-neutral-0 );
 
