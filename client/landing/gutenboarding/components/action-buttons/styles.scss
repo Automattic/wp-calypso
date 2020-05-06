@@ -1,0 +1,22 @@
+.action-buttons {
+	padding: 10px 20px;
+	border-top: 1px solid #f0f0f0;
+	background: var( --studio-white );
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+
+	@include break-small {
+		padding: 0;
+		position: static;
+	}
+}
+
+// .domain-picker__panel-row-footer {
+// 	padding: 10px 20px;
+// 	border-top: 1px solid #f0f0f0;
+
+// 	@include break-small {
+// 		padding: 24px 36px;
+// 	}
+// }

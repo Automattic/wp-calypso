@@ -1,0 +1,16 @@
+@import '../../../mixins.scss';
+
+.plans-modal-overlay {
+	@include onboarding-modal-overlay;
+}
+
+.plans-modal {
+	@include onboarding-block-margin;
+}
+
+// Hide onboarding block when modal is open
+body.has-plans-modal {
+	.onboarding-block {
+		display: none;
+	}
+}

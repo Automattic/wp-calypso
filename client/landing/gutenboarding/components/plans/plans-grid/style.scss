@@ -1,0 +1,39 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../../mixins.scss';
+
+.plans-grid {
+	// Space to accomodate sticky footer
+	margin-bottom: 85px; // @TODO: replace with a variable
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}
+
+.plans-grid__header {
+	@include onboarding-heading-padding;
+}
+
+// @TODO: remove once the real grid is implemented
+.plans-grid__table {
+	display: flex;
+	flex-wrap: wrap;
+}
+.plans-grid__column {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 400px;
+	justify-content: space-between;
+
+	@include break-small {
+		flex: 1;
+		margin: 20px;
+	}
+}
+.components-button.is-primary.plans-grid__button--active {
+	background-color: black;
+	&:hover:not( :disabled ) {
+		background-color: black;
+	}
+}
