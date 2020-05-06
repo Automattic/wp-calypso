@@ -167,7 +167,7 @@ describe( 'WechatPaymentBox', () => {
 		let originalLocationProperties;
 
 		beforeEach( () => {
-			// window.location has an empty setter so the only way to mockwindow.location.asign
+			// window.location has an empty setter so the only way to mock window.location.asign
 			// is to do a full replacement of window.location using a property descriptor
 			originalLocationProperties = Object.getOwnPropertyDescriptors( window ).location;
 			Object.defineProperty( window, 'location', {

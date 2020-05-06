@@ -21,7 +21,7 @@ describe( 'oAuthStore', () => {
 		oAuthToken = require( 'lib/oauth-token' );
 		oAuthStore = require( 'lib/oauth-store' );
 
-		// global.doucment.location is not configurable and global.document has an empty setter
+		// global.document.location is not configurable and global.document has an empty setter
 		// so the only way to mock global.document.location.replace is do a full replacement
 		// of global.document using a property descriptor
 		originalDocumentProperties = Object.getOwnPropertyDescriptors( global ).document;
