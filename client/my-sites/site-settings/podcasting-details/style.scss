@@ -148,6 +148,10 @@
 		color: var( --color-neutral-20 );
 		border-color: var( --color-neutral-10 );
 	}
+	
+	.podcasting-details__save-button {
+		float: right;
+	}
 }
 
 .podcasting-details__private-site,
