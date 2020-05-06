@@ -42,7 +42,6 @@ import {
 	getCustomizerUrl,
 	getSite,
 	isJetpackSite,
-	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
@@ -55,7 +54,6 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
@@ -849,8 +847,6 @@ function mapStateToProps( state ) {
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		canUserUseAds: canCurrentUserUseAds( state, siteId ),
-		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
