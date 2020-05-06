@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -335,7 +334,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 			isDomainTransfer( primaryPurchase ) ||
 			isSiteRedirect( primaryPurchase )
 		) {
-			return translate( 'Manage domain' );
+			return this.isSingleDomainPurchase()
+				? translate( 'Manage domain' )
+				: translate( 'Manage domains' );
 		}
 
 		if ( isGoogleApps( primaryPurchase ) ) {
@@ -365,8 +366,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return (
 			primaryPurchase &&
 			isDomainRegistration( primaryPurchase ) &&
-			purchases.length === 2 &&
-			get( purchases.find( isDomainMapping ), 'meta' ) === primaryPurchase.meta
+			purchases.filter( isDomainRegistration ).length === 1
 		);
 	}
 
