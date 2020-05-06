@@ -89,6 +89,10 @@
 			fill: var( --color-neutral-80 );
 		}
 	}
+
+	&:last-of-type {
+		box-shadow: 0 -1px 0 0px var( --color-border-subtle );
+	}
 }
 
 .quick-links__action-box-label {
