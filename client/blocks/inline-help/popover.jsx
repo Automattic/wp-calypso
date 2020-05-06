@@ -41,6 +41,7 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
+import { isEnabled } from 'config';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -280,7 +281,9 @@ const optIn = ( siteId, gutenbergUrl ) => {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
+	const classicUrl = isEnabled( 'editor/after-deprecation' )
+		? getWpAdminClassicEditorRedirectionUrl( state, siteId )
+		: `/${ currentRoute.replace( '/block-editor/', '' ) }`;
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
