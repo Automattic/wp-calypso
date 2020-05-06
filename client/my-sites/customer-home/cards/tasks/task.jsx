@@ -37,9 +37,11 @@ import './style.scss';
 
 const Task = ( {
 	actionOnClick,
+	actionTarget,
 	actionText,
 	actionUrl,
 	badgeText,
+	completeOnStart = false,
 	description,
 	illustration,
 	enableSkipOptions = true,
@@ -65,6 +67,12 @@ const Task = ( {
 		if ( actionOnClick instanceof Function ) {
 			actionOnClick();
 		}
+
+		if ( completeOnStart ) {
+			setIsTaskVisible( false );
+			dispatch( savePreference( dismissalPreferenceKey, true ) );
+		}
+
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_customer_home_task_start', {
@@ -144,7 +152,13 @@ const Task = ( {
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
-						<Button className="task__action" primary onClick={ startTask } href={ actionUrl }>
+						<Button
+							className="task__action"
+							primary
+							onClick={ startTask }
+							href={ actionUrl }
+							target={ actionTarget }
+						>
 							{ actionText }
 						</Button>
 
