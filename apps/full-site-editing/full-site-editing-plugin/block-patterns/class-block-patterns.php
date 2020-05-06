@@ -82,25 +82,50 @@ class Block_Patterns {
 			return $patterns;
 		}
 
-		$pattern = readdir( $directory_handle );
+		// Get all the pattern files.
+		$pattern       = readdir( $directory_handle );
+		$pattern_files = array();
 		while ( false !== $pattern ) {
-			if ( substr( $pattern, -5 ) === '.json' ) {
-				$patterns[] = json_decode(
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					file_get_contents( $patterns_dir . '/' . $pattern ),
-					true
-				);
-			}
-
-			if ( substr( $pattern, -4 ) === '.php' ) {
-				$patterns[] = include_once $patterns_dir . '/' . $pattern;
+			// Only allow files ending in .json or .php.
+			if ( substr( $pattern, -5 ) === '.json' || substr( $pattern, -4 ) === '.php' ) {
+				$pattern_files[] = $patterns_dir . $pattern;
 			}
 
 			$pattern = readdir( $directory_handle );
 		}
 
 		closedir( $directory_handle );
-		sort( $patterns );
+
+		// Patterns to remove / disable.
+		$disabled_patterns = array();
+
+		if ( ! empty( $disabled_patterns ) ) {
+			$pattern_files = array_diff( $pattern_files, $disabled_patterns );
+		}
+
+		// Manually curated list of patterns to go at the top of the list.
+		$featured_patterns = array(
+			$patterns_dir . 'image-and-description.php',
+			$patterns_dir . 'three-columns-and-image.php',
+		);
+
+		// Add the featured patterns to the top of the patterns.
+		$pattern_files = $featured_patterns + array_diff( $pattern_files, $featured_patterns );
+
+		// Get the pattern files contents.
+		foreach ( $pattern_files as $pattern_file ) {
+			if ( substr( $pattern_file, -5 ) === '.json' ) {
+				$patterns[] = json_decode(
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+					file_get_contents( $pattern_file ),
+					true
+				);
+			}
+
+			if ( substr( $pattern_file, -4 ) === '.php' ) {
+				$patterns[] = include_once $pattern_file;
+			}
+		}
 
 		return $patterns;
 	}
