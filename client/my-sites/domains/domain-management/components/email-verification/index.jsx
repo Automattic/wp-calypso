@@ -134,15 +134,20 @@ class EmailVerificationCard extends React.Component {
 	}
 
 	renderCompact() {
-		const { translate } = this.props;
+		const { changeEmailHref, translate } = this.props;
 		const { submitting } = this.state;
 
 		return (
 			<div>
 				<p>{ this.props.verificationExplanation }</p>
-				<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
-					{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
-				</Button>
+				<div className="email-verification__actions">
+					<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
+						{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
+					</Button>
+					{ changeEmailHref && (
+						<a href={ changeEmailHref }>{ translate( 'Change your email address' ) }</a>
+					) }
+				</div>
 			</div>
 		);
 	}
