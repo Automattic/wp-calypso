@@ -76,7 +76,9 @@
 	position: relative;
 
 	&--with-arrow {
-		margin-right: 40px; // make space for absolute positioned arrow
+		.madlib__input {
+			margin-right: 40px; // make space for absolute positioned arrow
+		}
 	}
 
 	.madlib__input:empty {
@@ -132,7 +134,7 @@
 .vertical-select__arrow {
 	position: absolute;
 	bottom: 8px;
-	margin-left: 15px;
+	margin-left: -25px;
 
 	@include break-small {
 		bottom: 25px;
