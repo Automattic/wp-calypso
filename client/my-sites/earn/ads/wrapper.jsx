@@ -205,9 +205,9 @@ class AdsWrapper extends Component {
 				showIcon
 				event="calypso_upgrade_nudge_impression"
 				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksImpressionProperties={ { cta_name: '' } }
+				tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
 				tracksClickName="calypso_upgrade_nudge_cta_click"
-				tracksClickProperties={ { cta_name: '' } }
+				tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
 				list={ [
 					translate( 'Instantly enroll into the WordAds network.' ),
 					translate( 'Earn money from your content and traffic.' ),
