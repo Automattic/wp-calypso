@@ -36,6 +36,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import './style.scss';
 
 const Task = ( {
+	actionOnClick,
 	actionTarget,
 	actionText,
 	actionUrl,
@@ -63,6 +64,10 @@ const Task = ( {
 	const successNoticeId = `task_remind_later_success-${ taskId }`;
 
 	const startTask = () => {
+		if ( actionOnClick instanceof Function ) {
+			actionOnClick();
+		}
+
 		if ( completeOnStart ) {
 			setIsTaskVisible( false );
 			dispatch( savePreference( dismissalPreferenceKey, true ) );
