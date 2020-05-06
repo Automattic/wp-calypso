@@ -26,6 +26,9 @@ import {
 } from 'state/purchases/selectors';
 import { sslStatuses } from 'lib/domains/constants';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import VerticalNavItem from 'components/vertical-nav/item';
+import VerticalNav from 'components/vertical-nav';
+import { ECOMMERCE, FORMS } from 'lib/url/support';
 
 import './style.scss';
 
@@ -133,7 +136,7 @@ class Security extends React.Component {
 
 	getContent() {
 		const { domain, translate } = this.props;
-
+		const { sslStatus } = domain;
 		return (
 			<React.Fragment>
 				<CompactCard className="security__header">
@@ -143,6 +146,16 @@ class Security extends React.Component {
 				<CompactCard className="security__content">
 					{ this.getStatusDescription( domain ) }
 				</CompactCard>
+				{ sslStatuses.SSL_ACTIVE === sslStatus && (
+					<VerticalNav>
+						<VerticalNavItem path={ ECOMMERCE } external>
+							{ translate( 'Learn more about selling products on WordPress.com' ) }
+						</VerticalNavItem>
+						<VerticalNavItem path={ FORMS } external>
+							{ translate( 'Learn more about forms on WordPress.com' ) }
+						</VerticalNavItem>
+					</VerticalNav>
+				) }
 			</React.Fragment>
 		);
 	}
