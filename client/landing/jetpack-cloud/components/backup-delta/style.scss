@@ -167,3 +167,12 @@
         background: var( --studio-white );
     }
 }
+
+@include breakpoint( '>660px' ) {
+    .backup-delta__daily .backup-delta__changes-header:first-child {
+        margin-top: 28px;
+        border-bottom: 1px solid var( --studio-gray-20 );
+        padding-bottom: 8px;
+        margin-bottom: 24px;
+    }
+}

@@ -30,6 +30,7 @@ import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
  */
 import './style.scss';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
+import backupCompleteIcon from './backup-complete-icon.svg';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -79,7 +80,12 @@ class DailyBackupStatus extends Component {
 		return (
 			<>
 				<div className="daily-backup-status__icon-section">
-					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
+					<img
+						src={ backupCompleteIcon }
+						role="presentation"
+						alt=""
+						className="daily-backup-status__status-icon"
+					/>
 					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
