@@ -117,6 +117,25 @@
 	font-size: 0.9rem;
 }
 
+.daily-backup-status__failed-message-head {
+	img {
+		width: 48px;
+	}
+
+	div {
+		color: var( --color-scary-50 );
+		font-size: 1.4rem;
+		font-weight: 400;
+	}
+}
+
+.daily-backup-status__failed-message {
+	color: var( --studio-gray-80 );
+	font-size: 1.3rem;
+	margin-top: 0.3rem;
+	margin-bottom: 1.5rem;
+}
+
 @include breakpoint( '>660px' ) {
 	.daily-backup-status__meta,
 	.daily-backup-status__title {
