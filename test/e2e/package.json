@@ -58,7 +58,7 @@
 		"selenium-webdriver": "4.0.0-alpha.4",
 		"slack-notify": "^0.1.7",
 		"speakeasy": "^2.0.0",
-		"spec-xunit-reporter": "./lib/reporter",
+		"spec-xunit-reporter": "^0.0.1",
 		"testarmada-magellan": "11.0.1",
 		"testarmada-magellan-local-executor": "^2.0.0",
 		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#b731cdf",

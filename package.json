@@ -4,12 +4,20 @@
 	"version": "0.17.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin",
 	"private": true,
-	"workspaces": [
-		"client",
-		"apps/*",
-		"packages/*",
-		"tests/e2e"
-	],
+	"workspaces": {
+		"packages": [
+			"client",
+			"apps/*",
+			"packages/*",
+			"test/e2e",
+			"test/e2e/lib/reporter"
+		],
+		"nohoist": [
+			"**/config",
+			"**/testarmada-magellan",
+			"**/testarmada-magellan-*"
+		]
+	},
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
