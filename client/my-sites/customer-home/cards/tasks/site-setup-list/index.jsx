@@ -30,6 +30,7 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
 import { getTask } from './get-task';
 
@@ -107,22 +108,27 @@ const SiteSetupList = ( {
 	useEffect( () => {
 		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
-			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
-			setCurrentTaskId( initialTaskId );
+			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
+			if ( ! initialTask ) {
+				// Last task was skipped, refresh home layout
+				dispatch( requestHomeLayout( siteId ) );
+			} else {
+				setCurrentTaskId( initialTask.id );
+			}
 		}
 
 		// Reset verification email state on first load.
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, isEmailUnverified, tasks ] );
+	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
 
 	// Move to next task after completing current one.
 	useEffect( () => {
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
-				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
+				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
 				setCurrentTaskId( nextTaskId );
 			}
 		}
