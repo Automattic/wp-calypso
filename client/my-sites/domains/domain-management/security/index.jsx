@@ -25,6 +25,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
 import { sslStatuses } from 'lib/domains/constants';
+import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 
 import './style.scss';
 
@@ -133,10 +134,6 @@ class Security extends React.Component {
 	getContent() {
 		const { domain, translate } = this.props;
 
-		if ( ! domain ) {
-			return null;
-		}
-
 		return (
 			<React.Fragment>
 				<CompactCard className="security__header">
@@ -151,6 +148,12 @@ class Security extends React.Component {
 	}
 
 	render() {
+		const { domain } = this.props;
+
+		if ( ! domain ) {
+			return <DomainMainPlaceholder goBack={ this.back } />;
+		}
+
 		return (
 			<Main className="security">
 				{ this.header() }
