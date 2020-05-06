@@ -22,13 +22,16 @@
 .plans-grid__column {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	height: 400px;
 	justify-content: space-between;
+	width: 100%;
+	height: 100px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid grey;
 
 	@include break-small {
 		flex: 1;
-		margin: 20px;
+		height: 400px;
 	}
 }
 .components-button.is-primary.plans-grid__button--active {

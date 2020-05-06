@@ -37,10 +37,14 @@ const PlansGridModal: React.FunctionComponent< Props > = ( {
 		onClose();
 	};
 
+	React.useEffect( () => {
+		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
+	}, [ isOpen ] );
+
 	return (
 		<Modal
 			isOpen={ isOpen }
-			className="plans-modal"
+			className="gutenboarding-page plans-modal"
 			overlayClassName="plans-modal-overlay"
 			bodyOpenClassName="has-plans-modal"
 		>
