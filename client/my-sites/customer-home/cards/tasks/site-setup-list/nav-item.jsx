@@ -31,6 +31,7 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, showChevron }
 				trackExpand();
 				onClick();
 			} }
+			data-task={ taskId }
 		>
 			<div className="nav-item__status">
 				{ isCompleted ? (

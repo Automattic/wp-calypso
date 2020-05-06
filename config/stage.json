@@ -49,7 +49,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
-		"home/experimental-layout": false,
+		"home/experimental-layout": true,
 		"inline-help": true,
 		"ive/me": false,
 		"ive/use-external-defs": false,

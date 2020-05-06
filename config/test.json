@@ -40,7 +40,7 @@
 		"gdpr-banner": false,
 		"google-my-business": false,
 		"help": true,
-		"home/experimental-layout": false,
+		"home/experimental-layout": true,
 		"inline-help": true,
 		"ive/me": false,
 		"ive/use-external-defs": false,
