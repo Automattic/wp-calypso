@@ -3,10 +3,14 @@
 @import '../../variables.scss';
 
 .style-preview {
-	// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
-	height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
+	height: auto;
 	display: flex;
 	flex-direction: column;
+
+	@include break-small {
+		// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
+		height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
+	}
 }
 
 .style-preview__header {
@@ -134,8 +138,7 @@
 }
 
 .style-preview__content {
-	height: 100%;
-	padding-bottom: $gutenboarding-footer-height + 8px;
+	padding-bottom: $gutenboarding-footer-height + 28px;
 
 	@include break-small {
 		padding-bottom: 0;
@@ -157,13 +160,14 @@
 		width: 100%;
 		grid-template-areas: 'preview' 'fonts';
 		grid-template-columns: auto;
-		grid-template-rows: auto;
+		grid-template-rows: 240px auto;
 
 		@include break-small {
 			column-gap: 50px;
 			flex: 1;
 			grid-template-areas: 'fonts preview';
 			grid-template-columns: 163px auto;
+			grid-template-rows: auto;
 		}
 
 		@include break-medium {
@@ -236,7 +240,6 @@
 	float: left;
 	width: 100%;
 	max-width: 100%;
-	height: calc( ( 100vw - 20px ) / 1.667 );
 	margin-bottom: 28px;
 	padding-left: 0;
 
