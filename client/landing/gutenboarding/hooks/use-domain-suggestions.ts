@@ -11,9 +11,12 @@ import { useI18n } from '@automattic/react-i18n';
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { DOMAIN_SUGGESTION_VENDOR, PAID_DOMAINS_TO_SHOW, selectorDebounce } from '../constants';
+import { PAID_DOMAINS_TO_SHOW, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
 import { domainTldsByCategory } from '../domains-constants';
+import { getSignupDomainsSuggestionsVendor } from '../utils/domain-suggestions';
+
+const DOMAIN_SUGGESTION_VENDOR = getSignupDomainsSuggestionsVendor();
 
 export function useDomainSuggestions( {
 	searchOverride = '',

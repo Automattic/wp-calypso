@@ -14,8 +14,11 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { DOMAIN_SUGGESTION_VENDOR, FLOW_ID } from '../../constants';
+import { FLOW_ID } from '../../constants';
 import { RecordTrainTracksEventProps } from '../../lib/analytics';
+import { getSignupDomainsSuggestionsVendor } from '../../utils/domain-suggestions';
+
+const DOMAIN_SUGGESTION_VENDOR = getSignupDomainsSuggestionsVendor();
 
 interface Props {
 	suggestion: DomainSuggestion;
