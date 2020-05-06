@@ -348,6 +348,14 @@ describe( 'getUpdatedCursorPosition', () => {
 		equal( getUpdatedCursorPosition( '234', '234-5', 3 ), 5 );
 	} );
 
+	test( 'should return last position for appending duplicate numbers with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 5 ), 6 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 4 ), 5 );
+	} );
+
 	test( 'should return last position for deleting from end with special characters', () => {
 		equal( getUpdatedCursorPosition( '234-5', '234', 5 ), 3 );
 	} );
