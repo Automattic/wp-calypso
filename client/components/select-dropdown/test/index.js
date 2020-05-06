@@ -206,6 +206,7 @@ describe( 'index', () => {
 			sinon.assert.calledOnce( escEvent.preventDefault );
 			// check that container was focused
 			expect( container.instance() ).to.equal( document.activeElement );
+			dropdown.unmount();
 		} );
 
 		describe( "permits to open the dropdown, and navigate through the dropdown's options by ", () => {
