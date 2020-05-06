@@ -1,22 +1,23 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 .action-buttons {
 	padding: 10px 20px;
 	border-top: 1px solid #f0f0f0;
 	background: var( --studio-white );
 	position: fixed;
-	width: 100%;
 	bottom: 0;
+	right: 0;
+	left: 0;
+	display: flex;
+	justify-content: space-between;
 
 	@include break-small {
 		padding: 0;
 		position: static;
+		border: none;
+
+		& > div {
+			margin: 20px;
+		}
 	}
 }
-
-// .domain-picker__panel-row-footer {
-// 	padding: 10px 20px;
-// 	border-top: 1px solid #f0f0f0;
-
-// 	@include break-small {
-// 		padding: 24px 36px;
-// 	}
-// }

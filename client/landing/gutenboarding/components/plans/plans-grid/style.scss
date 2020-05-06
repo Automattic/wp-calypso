@@ -10,8 +10,11 @@
 	}
 }
 
-.plans-grid__header {
+.plans-grid__header { // @TODO: replace with a generic component
 	@include onboarding-heading-padding;
+	display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 // @TODO: remove once the real grid is implemented

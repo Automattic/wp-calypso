@@ -42,12 +42,14 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	return (
 		<div className="plans-grid">
 			<div className="plans-grid__header">
-				<Title>{ __( 'Choose a plan' ) }</Title>
-				<SubTitle>
-					{ __(
-						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
-					) }
-				</SubTitle>
+				<div>
+					<Title>{ __( 'Choose a plan' ) }</Title>
+					<SubTitle>
+						{ __(
+							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+						) }
+					</SubTitle>
+				</div>
 				<ActionButtons
 					primaryButton={ renderConfirmButton( selectedPlan ) }
 					secondaryButton={ cancelButton }
