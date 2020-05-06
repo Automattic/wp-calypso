@@ -107,7 +107,7 @@ const SiteSetupList = ( {
 	useEffect( () => {
 		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
-			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
+			const initialTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
 			setCurrentTaskId( initialTaskId );
 		}
 
@@ -122,7 +122,7 @@ const SiteSetupList = ( {
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
-				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted ).id;
+				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
 				setCurrentTaskId( nextTaskId );
 			}
 		}
