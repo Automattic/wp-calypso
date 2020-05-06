@@ -114,7 +114,7 @@ class BackupsPage extends Component {
 				}
 
 				// Looking for the last backup on the date (any activity rewindable)
-				if ( ! backupsOnSelectedDate.lastBackup ) {
+				if ( ! backupsOnSelectedDate.lastBackup && log.activityIsRewindable ) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
 					backupsOnSelectedDate.rewindableActivities.push( log );
