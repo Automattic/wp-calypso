@@ -5,12 +5,16 @@
 
 	&.components-modal__frame {
 		border: none;
+
+		@include break-small {
+			width: 700px;
+		}
 	}
 
 	.components-modal__content {
 		@include break-small {
-			width: 60%;
-			padding: 32px;
+			width: 55%;
+			padding: 48px 32px;
 		}
 	}
 
@@ -58,13 +62,13 @@
 	bottom: 0;
 	height: 250px;
 	width: 100%;
-	background-size: 100%;
+	background-size: auto;
+	background-position: bottom;
 
 	@include break-small {
-		background-size: 100% auto;
-		background-position: bottom;
-		background-color: #1381d8;
-		width: 40%;
+		background-size: 70% auto;
+		background-color: #007cba;
+		width: 45%;
 		height: unset;
 	}
 }
