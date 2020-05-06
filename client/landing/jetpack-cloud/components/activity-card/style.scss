@@ -8,11 +8,6 @@
 	align-items: center;
 }
 
-.activity-card .button.is-borderless.is-primary {
-	float: none;
-	display: inline-block;
-}
-
 .activity-card__time {
 	margin: 1.5rem 0 0.5rem;
 }
@@ -64,19 +59,29 @@
 
 .activity-card__activity-actions,
 .activity-card__activity-actions-reverse {
+	align-items: center;
+	border-top: 1px solid var( --color-neutral-5 );
 	display: flex;
+	justify-content: space-between;
+	padding-top: 0.7rem;
 	position: relative;
 	top: 0.5rem;
-	border-top: 1px solid #e4e4e6;
-	padding-top: 0.7rem;
-	justify-content: space-between;
 
 	a,
-	button.button {
+	button.button.is-borderless.is-compact {
 		font-weight: 400;
 		font-size: 12px;
+		display: flex;
+		align-items: center;
 		@include breakpoint( '>660px' ) {
 			font-size: 16px;
+		}
+
+		// gridicons within buttons have very specific rules for font sizes, disable them to let flex take care of it
+		.gridicon {
+			display: block;
+			margin-top: 0;
+			top: 0;
 		}
 	}
 }
