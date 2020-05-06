@@ -60,6 +60,26 @@ __Advantages:__
 - Encourages and often forces a developer toward writing functional, testable code
 - Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/reactjs/react-redux)
 
+### Fourth Era: Modularized Redux State Tree (February 2020 - Present)
+
+This era builds upon the previous, using the same selectors, reducers and action creators that were created before. However, instead of creating a single monolithic root reducer on boot, the goal is instead to have individual reducers register themselves when needed. This is done synchronously and automatically through dependency graph resolution.
+
+See [the Modularized State documentation](./modularized-state.md) for more details on how it works and how to implement it in new portions of state.
+
+__Identifying characteristics:__
+
+- Modularized reducers are not imported in the root reducer (`client/state/reducer`)
+- Modularized reducers use `withStorageKey` to store their state separately
+- Modularized portions of state include an `init` module that registers the reducer as a side effect
+- Action creators and selectors for a modularized portion of state import from the `init` module
+
+__Advantages:__
+
+- Preserves most of the advantages of Redux, with the tradeoff that action creators and selectors need to import the `init` file for the portions of state they touch
+- Significantly reduces the amount of code required to boot Calypso, improving loading performance
+- More scalable approach, as Redux state continues to grow
+
+
 ## Current Recommendations
 
 All new data requirements should be implemented as part of the global Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree can include their own reducer and actions.
