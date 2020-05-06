@@ -48,7 +48,7 @@
 		"@wordpress/element": "^2.12.0",
 		"@wordpress/format-library": "^1.15.0",
 		"@wordpress/i18n": "^3.10.0",
-		"@wordpress/is-shallow-equal": "^1.8.0",
+		"@wordpress/is-shallow-equal": "^2.0.0",
 		"@wordpress/keycodes": "^2.10.0",
 		"@wordpress/notices": "^2.1.0",
 		"@wordpress/nux": "^3.13.0",
