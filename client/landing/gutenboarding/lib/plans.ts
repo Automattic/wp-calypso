@@ -9,7 +9,7 @@ import { ValuesType } from 'utility-types';
 import * as plans from 'lib/plans/constants';
 import { getPlan, getPlanPath } from 'lib/plans';
 
-export type Plan = ValuesType< typeof plans >;
+export type Plan = ValuesType< typeof plans > | undefined;
 
 export const supportedPlans: Plan[] = [
 	plans.PLAN_FREE,

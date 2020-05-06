@@ -41,7 +41,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const planPath = usePlanRouteParam();
 
 	// @TODO: move to Onboard store once we use it for cart redirect at the end of the flow
-	const [ plan, setPlan ] = React.useState< Plan | undefined >( getPlanSlugByPath( planPath ) );
+	const [ plan, setPlan ] = React.useState< Plan >( getPlanSlugByPath( planPath ) );
 
 	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
 

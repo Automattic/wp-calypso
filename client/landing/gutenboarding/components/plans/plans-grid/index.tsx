@@ -19,7 +19,7 @@ import ActionButtons from '../../action-buttons';
 import './style.scss';
 
 export interface Props {
-	currentPlan: Plan | undefined;
+	currentPlan: Plan;
 	renderConfirmButton: ( plan: Plan ) => React.ReactElement;
 	cancelButton?: React.ReactElement;
 	onPlanChange?: ( plan: Plan ) => void;
@@ -32,7 +32,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPlanChange = () => undefined,
 } ) => {
 	const { __ } = useI18n();
-	const [ selectedPlan, setSelectedPlan ] = React.useState< Plan | undefined >( currentPlan );
+	const [ selectedPlan, setSelectedPlan ] = React.useState< Plan >( currentPlan );
 
 	const handlePlanSelect = ( plan: Plan ) => {
 		setSelectedPlan( plan );
