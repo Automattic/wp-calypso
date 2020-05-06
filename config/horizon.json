@@ -53,6 +53,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
+		"jetpack/scan-product": true,
 		"jetpack/search-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
