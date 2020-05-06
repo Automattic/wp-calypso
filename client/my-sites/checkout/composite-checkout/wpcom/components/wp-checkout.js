@@ -265,7 +265,7 @@ const CheckoutSummaryTitleLink = styled.button`
 	font-size: 16px;
 	font-weight: ${( props ) => props.theme.weights.bold};
 	justify-content: space-between;
-	padding: 20px;
+	padding: 20px 23px 20px 14px;
 	width: 100%;
 
 	.is-visible & {
