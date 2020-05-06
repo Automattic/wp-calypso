@@ -91,7 +91,7 @@
 	}
 
 	&:last-of-type {
-		box-shadow: 0 -1px 0 0px var( --color-border-subtle );
+		margin-bottom: 0;
 	}
 }
 
