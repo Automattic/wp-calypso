@@ -34,7 +34,7 @@ export function recordOnboardingStart( ref = '' ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-	trackEventWithFlow( 'calypso_signup_start', { ref } );
+	trackEventWithFlow( 'calypso_newsite_start', { ref } );
 }
 
 /**
@@ -43,7 +43,7 @@ export function recordOnboardingStart( ref = '' ): void {
  * @param {object} params A set of params to pass to analytics for signup completion
  */
 export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
-	trackEventWithFlow( 'calypso_signup_complete', {
+	trackEventWithFlow( 'calypso_newsite_complete', {
 		is_new_user: params.isNewUser,
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
@@ -56,7 +56,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
  * @param {object} params A set of params to pass to analytics for signup errors
  */
 export function recordOnboardingError( params: ErrorParameters ): void {
-	trackEventWithFlow( 'calypso_signup_error', {
+	trackEventWithFlow( 'calypso_newsite_error', {
 		error: params.error,
 		step: params.step,
 	} );
@@ -127,7 +127,7 @@ export function getNewRailcarId( suffix = 'suggestion' ) {
  * @param eventProperties Additional properties to record on closing the modal
  */
 export function recordCloseModal( modalName: string, eventProperties?: TracksEventProperties ) {
-	trackEventWithFlow( 'calypso_signup_modal_close', {
+	trackEventWithFlow( 'calypso_newsite_modal_close', {
 		name: modalName,
 		...eventProperties,
 	} );
@@ -139,7 +139,7 @@ export function recordCloseModal( modalName: string, eventProperties?: TracksEve
  * @param modalName The name of the modal to record in tracks
  */
 export function recordEnterModal( modalName: string ) {
-	trackEventWithFlow( 'calypso_signup_modal_open', {
+	trackEventWithFlow( 'calypso_newsite_modal_open', {
 		name: modalName,
 	} );
 }
@@ -151,7 +151,7 @@ export function recordEnterModal( modalName: string ) {
  * @param eventProperties Additional properties to record on leaving the step
  */
 export function recordLeaveStep( stepName: StepNameType, eventProperties?: TracksEventProperties ) {
-	trackEventWithFlow( 'calypso_signup_step_leave', {
+	trackEventWithFlow( 'calypso_newsite_step_leave', {
 		step: stepName,
 		...eventProperties,
 	} );
@@ -163,7 +163,7 @@ export function recordLeaveStep( stepName: StepNameType, eventProperties?: Track
  * @param stepName The name of the step to record in tracks
  */
 export function recordEnterStep( stepName: StepNameType ) {
-	trackEventWithFlow( 'calypso_signup_step_enter', {
+	trackEventWithFlow( 'calypso_newsite_step_enter', {
 		step: stepName,
 	} );
 }
