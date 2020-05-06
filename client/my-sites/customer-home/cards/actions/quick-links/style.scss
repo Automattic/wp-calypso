@@ -51,13 +51,15 @@
 	display: flex;
 	align-items: center;
 	transition: all 0.1s;
+	padding-top: 12px;
+	padding-bottom: 12px;
 
 	.quick-links__action-box-image {
 		display: flex;
 		flex-shrink: 0;
 		align-items: center;
-		width: 24px;
-		margin-right: 16px;
+		width: 20px;
+		margin-right: 12px;
 	}
 
 	.quick-links__action-box-icon {
@@ -69,7 +71,7 @@
 
 	.quick-links__action-box-label {
 		color: var( --color-text );
-		font-size: 16px;
+		font-size: 15px;
 	}
 
 	.quick-links__action-box-subtitle {
