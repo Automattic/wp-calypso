@@ -9,9 +9,9 @@ import {
 } from 'lib/domains/utils';
 import { camelCase, mapKeys } from 'lodash';
 
-function assembleGoogleAppsSubscription( googleAppsSubscription ) {
+function recursiveCamelCase( googleAppsSubscription ) {
 	if ( ! googleAppsSubscription ) {
-		return;
+		return null;
 	}
 
 	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
@@ -43,7 +43,7 @@ export const createSiteDomainObject = ( domain ) => {
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
-		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
+		googleAppsSubscription: recursiveCamelCase( domain.google_apps_subscription ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
@@ -80,7 +80,7 @@ export const createSiteDomainObject = ( domain ) => {
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		supportsGdprConsentManagement: Boolean( domain.supports_gdpr_consent_management ),
 		supportsTransferApproval: Boolean( domain.supports_transfer_approval ),
-		titanSubscription: domain.titan_subscription,
+		titanSubscription: recursiveCamelCase( domain.titan_subscription ),
 		tldMaintenanceEndTime: domain.tld_maintenance_end_time,
 		transferAwayEligibleAt: ! domain.transfer_away_eligible_at
 			? null

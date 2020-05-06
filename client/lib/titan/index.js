@@ -15,4 +15,15 @@ function hasTitanWithUs( domain ) {
 	return 'active' === titanStatus;
 }
 
-export { hasTitanWithUs };
+/**
+ * Determines whether a user owns a Titan account, given a domain object.
+ *
+ * @param {object} domain - domain object
+ * @param {number} userId - the user id of the user
+ * @returns {boolean} - .
+ */
+function userOwnsTitan( domain, userId ) {
+	return get( domain, 'titanSubscription.ownedByUserId' ) === userId;
+}
+
+export { hasTitanWithUs, userOwnsTitan };

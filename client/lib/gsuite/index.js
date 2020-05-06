@@ -244,6 +244,17 @@ function isGSuiteRestricted() {
 	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
+/**
+ * Determines whether a user owns a G Suite account, given a domain object.
+ *
+ * @param {object} domain - domain object
+ * @param {number} userId - the user id of the user
+ * @returns {boolean} - .
+ */
+function userOwnsGSuite( domain, userId ) {
+	return get( domain, 'googleAppsSubscription.ownedByUserId' ) === userId;
+}
+
 export {
 	canDomainAddGSuite,
 	getAnnualPrice,
@@ -260,4 +271,5 @@ export {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteProductSlug,
 	isGSuiteRestricted,
+	userOwnsGSuite,
 };
