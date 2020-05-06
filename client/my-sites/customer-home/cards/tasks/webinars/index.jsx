@@ -20,9 +20,9 @@ const Webinars = () => {
 				'Free, live video webinars led by our experts teach you to build a website, start a blog, or make money with your site.'
 			) }
 			actionText={ translate( 'Register for free' ) }
-			actionOnClick={ () => {
-				window.open( 'https://wordpress.com/webinars/', '_blank' );
-			} }
+			actionUrl="https://wordpress.com/webinars/"
+			actionTarget="_blank"
+			completeOnStart={ true }
 			illustration={ webinarsIllustration }
 			timing={ 2 }
 			taskId="webinars"
