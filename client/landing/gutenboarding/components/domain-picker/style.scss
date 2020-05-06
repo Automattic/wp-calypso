@@ -8,7 +8,7 @@ $domain-picker__suggestion-item-height: 24px;
 .domain-picker.components-panel {
 	border: none;
 
-	.components-panel__body {
+	> .components-panel__body {
 		display: flex;
 		flex-direction: column;
 		padding: 0;
@@ -275,4 +275,26 @@ $domain-picker__suggestion-item-height: 24px;
 		margin: 0 1em;
 		color: var( --studio-gray-40 );
 	}
+}
+
+.domain-picker__hsts-button {
+	&.components-button.is-tertiary {
+		align-items: center;
+		display: inline-flex;
+		height: 100%;
+		line-height: 100%;
+		padding: 0 10px;
+
+		&, &:hover:not( :disabled ) {
+			color: var( --color-neutral-100 );
+			background: none;
+			border: none;
+		}
+	}
+}
+
+// Remove focus styling from clicking a button
+// Keep keyboard-focused focus style
+html:not( .accessible-focus ) .domain-picker__hsts-button:focus:not( :disabled ):not( :hover ) {
+	box-shadow: none;
 }

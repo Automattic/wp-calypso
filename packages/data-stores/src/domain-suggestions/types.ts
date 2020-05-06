@@ -67,6 +67,11 @@ export interface DomainSuggestion {
 	domain_name: DomainName;
 
 	/**
+	 * Whether TLD requires HSTS notice displayed
+	 */
+	hsts_required?: boolean
+
+	/**
 	 * Relevance as a percent: 0 <= relevance <= 1
 	 *
 	 * @example 0.9

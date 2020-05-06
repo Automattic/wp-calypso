@@ -7,10 +7,7 @@ import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import React, { useRef, useEffect } from 'react';
-
-// Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
-// See https://github.com/WordPress/gutenberg/pull/19535
-// import '@wordpress/components/build-style/style.css';
+import '@wordpress/components/build-style/style.css';
 
 /**
  * Internal dependencies

@@ -17,8 +17,8 @@ import { STORE_KEY } from '../../stores/onboard';
 import { FLOW_ID } from '../../constants';
 import { RecordTrainTracksEventProps } from '../../lib/analytics';
 import { getSignupDomainsSuggestionsVendor } from '../../utils/domain-suggestions';
-
 const DOMAIN_SUGGESTION_VENDOR = getSignupDomainsSuggestionsVendor();
+import HstsInfo from './hsts-info';
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -113,6 +113,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				{ isRecommended && (
 					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 				) }
+				{ suggestion.hsts_required && <HstsInfo tld={ domainTld } /> }
 			</div>
 			<div
 				className={ classnames( 'domain-picker__price', {
