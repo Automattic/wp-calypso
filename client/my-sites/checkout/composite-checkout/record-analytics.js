@@ -470,6 +470,14 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 			}
 
+			case 'calypso_checkout_composite_summary_help_click': {
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
+						is_support_chat_user: action.payload.isSupportChatUser,
+					} )
+				);
+			}
+
 			default:
 				debug( 'unknown checkout event', action );
 				return reduxDispatch(

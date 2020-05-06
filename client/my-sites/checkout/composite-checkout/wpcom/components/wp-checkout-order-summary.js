@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import {
 	CheckoutCheckIcon,
@@ -9,14 +10,42 @@ import {
 	renderDisplayValueMarkdown,
 	useLineItemsOfType,
 	useTotal,
+	useEvents,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import { showInlineHelpPopover } from 'state/inline-help/actions';
+import getSupportVariation, {
+	SUPPORT_FORUM,
+	SUPPORT_DIRECTLY,
+} from 'state/selectors/get-inline-help-support-variation';
+
 export default function WPCheckoutOrderSummary() {
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
 	const total = useTotal();
+
+	const isSupportChatUser = useSelector( ( state ) => {
+		return (
+			SUPPORT_FORUM !== getSupportVariation( state ) &&
+			SUPPORT_DIRECTLY !== getSupportVariation( state )
+		);
+	} );
+	const onEvent = useEvents();
+	const handleHelpButtonClicked = () => {
+		onEvent( {
+			type: 'calypso_checkout_composite_summary_help_click',
+			payload: {
+				isSupportChatUser,
+			},
+		} );
+		reduxDispatch( showInlineHelpPopover() );
+	};
 
 	return (
 		<CheckoutSummaryCard>
@@ -35,6 +64,22 @@ export default function WPCheckoutOrderSummary() {
 						{ translate( 'Money back guarantee' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</CheckoutSummaryFeaturesList>
+				<CheckoutSummaryHelp onClick={ handleHelpButtonClicked }>
+					{ isSupportChatUser
+						? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
+								components: {
+									underline: <span />,
+								},
+						  } )
+						: translate(
+								'Questions? {{underline}}Read more about plans and purchases.{{/underline}}',
+								{
+									components: {
+										underline: <span />,
+									},
+								}
+						  ) }
+				</CheckoutSummaryHelp>
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
 				{ coupons.map( ( coupon ) => (
@@ -83,6 +128,16 @@ const CheckoutSummaryFeaturesList = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
+`;
+
+const CheckoutSummaryHelp = styled.button`
+	margin-top: 16px;
+	text-align: left;
+
+	span {
+		cursor: pointer;
+		text-decoration: underline;
+	}
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
