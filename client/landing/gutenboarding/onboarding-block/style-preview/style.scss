@@ -135,10 +135,10 @@
 
 .style-preview__content {
 	height: 100%;
-	margin-bottom: $gutenboarding-footer-height + 8px;
+	padding-bottom: $gutenboarding-footer-height + 8px;
 
 	@include break-small {
-		margin-bottom: 0;
+		padding-bottom: 0;
 	}
 }
 
