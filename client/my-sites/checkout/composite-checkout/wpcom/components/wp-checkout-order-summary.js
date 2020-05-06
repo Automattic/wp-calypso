@@ -19,7 +19,7 @@ export default function WPCheckoutOrderSummary() {
 	const total = useTotal();
 
 	return (
-		<CheckoutSummaryCard>
+		<CheckoutSummaryCardUI>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
@@ -53,9 +53,13 @@ export default function WPCheckoutOrderSummary() {
 					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryCard>
+		</CheckoutSummaryCardUI>
 	);
 }
+
+const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
+	border-bottom: none 0;
+`;
 
 const CheckoutSummaryFeatures = styled.div`
 	padding: 20px 20px 0;
