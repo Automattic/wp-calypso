@@ -262,34 +262,148 @@ export function toIcannFormat( inputNumber, country ) {
 	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }
 
-export function getUpdatedCursorPosition( oldValue, newValue, selectStart ) {
-	const oldDigits = oldValue.split( '' ).filter( ( char ) => /\d/.test( char ) );
-	let digitIndex = 0;
-	let foundIndex = newValue.length;
-	const newChars = newValue.split( '' );
-	let stopSearch = false;
-	newChars.forEach( ( char, index ) => {
-		if ( stopSearch ) {
-			return;
+/**
+ * Given two masked strings, old and new, approximates the
+ * expected cursor position in new after the (unknown) edit
+ * operation(s) changing old into new.
+ *
+ * Assumptions:
+ *   - masking and unmasking (as defined here) are mutual inverses
+ *   - edits are made from left to right
+ *       (maybe relevant for rtl languages)
+ *   - w is a strict subsequence of mask(w)
+ *       (as defined in indexOfStrictSubsequenceEnd)
+ *   - the cursor position should be at the right edge of
+ *       the rightmost "changed" digit
+ *
+ * Known weird behaviors:
+ *   - If newValue is obtained from oldValue by e.g. replacing
+ *     'oba' in 'foobar' by 'iba', then the cursor position
+ *     will be placed after 'i', rather than after 'a'.
+ *
+ * @param oldValue Masked original string
+ * @param newValue Masked updated string
+ * @returns number
+ */
+export function getUpdatedCursorPosition( oldValue, newValue ) {
+	const toList = ( str ) => str.split( '' );
+	const unmask = ( list ) => list.filter( ( char ) => /\d/.test( char ) );
+
+	const oldDigits = unmask( toList( oldValue ) );
+	const newDigits = unmask( toList( newValue ) );
+
+	const k = indexOfLongestCommonSuffixWith( oldDigits, newDigits );
+
+	const [ offset, suffix ] = indexOfStrictSubsequenceEnd(
+		newDigits.slice( 0, k ),
+		toList( newValue )
+	);
+
+	return offset + nonDigitsAtStart( suffix ) + 1;
+}
+
+/**
+ * Given two arrays w1 and w2, a /common suffix/ is an array v such that
+ * there exist arrays w1' and w2' where
+ *
+ *   w1 === w1'.concat(v)   and   w2 === w2'.concat(v)
+ *
+ * If, in addition, w1' and w2' have no common suffix except for [],
+ * then v is the /longest common suffix/ of w1 and w2. (This is analogous
+ * to the definition of greatest common divisor for integers.)
+ *
+ * For two arrays array1 and array2, this function finds the /index/
+ * of the first item in their longest common suffix /in array2/ --
+ * that is, it computes w2'.length.
+ *
+ * @param array1 An array
+ * @param array2 An array
+ * @returns number Index of the longest common suffix of array1 and array2 in array2
+ */
+export function indexOfLongestCommonSuffixWith( array1, array2 ) {
+	if ( array2.length === 0 ) {
+		return 0;
+	}
+	if ( array1.length === 0 ) {
+		return array2.length;
+	}
+	const c1 = array1.pop(); // mutate!
+	const c2 = array2.pop(); // mutate!
+	if ( c1 !== c2 ) {
+		return 1 + array2.length; // add 1 since we popped array2
+	}
+	return indexOfLongestCommonSuffixWith( array1, array2 );
+}
+
+/**
+ * Given two integer indexed arrays w1 and w2, we say that w1
+ * is a /subsequence/ of w2 if there is a monotone function f
+ * such that
+ *
+ *   w1[k] === w2[f(k)]
+ *
+ * for all integers k such that w1[k] exists. We say the
+ * subsequence is /strict/ if, in addition, for all k in
+ * the support of w1, f(k) is minimal among [k+1,...] such that
+ * w1[k] === w2[f(k)]. If w1 is a strict subsequence of w2
+ * then the function f that witnesses this is unique.
+ *
+ * That is a mouthful, but it captures this intuition:
+ *
+ *   w1 is a strict subsequence of w2 if the items of w1
+ *   appear in w2, in order, and such that corresponding
+ *   w1 items in w2 are pushed "as far to the left" as
+ *   possible.
+ *
+ * Suppose we have two arrays, array1 and array2, such that
+ * array1 is a strict subsequence of a2. This function
+ * computes the index after the last array1 item in array2.
+ * That is, it finds the (unique) index 1 + f( array1.length ),
+ * where f is the subsequence witness.
+ *
+ * @param array1 An array
+ * @param array2 An array, which includes array1 as a strict subsequence
+ * @returns [number, array] Index after the last array1 item in
+ *   array2, as well as the remainder of array2
+ */
+export function indexOfStrictSubsequenceEnd( array1, array2 ) {
+	const accumulate = ( a1, a2, offset ) => {
+		if ( a1.length === 0 ) {
+			return [ offset, a2 ];
 		}
-		const isDigit = /\d/.test( char );
-		if ( index >= selectStart ) {
-			if ( isDigit ) {
-				if ( char !== oldDigits[ digitIndex ] ) {
-					foundIndex = index + 1;
-				} else {
-					digitIndex += 1;
-				}
-			}
-			return;
+		// if array1 is actually a subsequence this case shouldn't happen.
+		if ( a2.length === 0 ) {
+			return [ offset, a2 ];
 		}
-		if ( isDigit ) {
-			if ( char !== oldDigits[ digitIndex ] ) {
-				foundIndex = index;
-				stopSearch = true;
-			}
-			digitIndex += 1;
+		const c1 = a1.shift(); // mutate!
+		const c2 = a2.shift(); // mutate!
+		if ( c1 !== c2 ) {
+			a1.unshift( c1 );
 		}
-	} );
-	return foundIndex;
+		return accumulate( a1, a2, 1 + offset );
+	};
+
+	return accumulate( array1, array2, 0 );
+}
+
+/**
+ * Counts the number of non-digit characters appearing
+ * at the front of an array of characters.
+ *
+ * @param array An array of characters
+ * @returns number Number of non-digit characters appearing at the start
+ */
+export function nonDigitsAtStart( array ) {
+	const accumulate = ( a, offset ) => {
+		if ( a.length === 0 ) {
+			return offset;
+		}
+		const c = a.shift(); // mutate!
+		if ( /\d/.test( c ) ) {
+			return offset;
+		}
+		return accumulate( a, 1 + offset );
+	};
+
+	return accumulate( array, 0 );
 }

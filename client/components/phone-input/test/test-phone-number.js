@@ -17,6 +17,9 @@ import {
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164,
+	indexOfLongestCommonSuffixWith,
+	indexOfStrictSubsequenceEnd,
+	nonDigitsAtStart,
 	getUpdatedCursorPosition,
 } from '../phone-number';
 
@@ -274,6 +277,68 @@ describe( 'metadata:', () => {
 	} );
 } );
 
+describe( 'indexOfLeastCommonSuffixWith', () => {
+	test( 'if array1 === array2 === [], return 0', () => {
+		equal( indexOfLongestCommonSuffixWith( [], [] ), 0 );
+	} );
+
+	test( 'if array1 === ["a"] and array2 === [], return 0', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'a' ], [] ), 0 );
+	} );
+
+	test( 'if array1 === [] and array2 === ["a"], return 1', () => {
+		equal( indexOfLongestCommonSuffixWith( [], [ 'a' ] ), 1 );
+	} );
+
+	test( 'if array1 === array2 === ["a"], return 0', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'a' ], [ 'a' ] ), 0 );
+	} );
+
+	test( 'if array1 === array2, return 0', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ] ), 0 );
+	} );
+
+	test( 'if array1 is a proper prefix of array2, return array2.length', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ), 4 );
+	} );
+
+	test( 'if array2 is a proper suffix of array1, return 0', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'b', 'c' ] ), 0 );
+	} );
+
+	test( 'if longest common suffix of array1 and array2 is empty, return array2.length', () => {
+		equal( indexOfLongestCommonSuffixWith( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ), 4 );
+	} );
+} );
+
+describe( 'indexOfStrictSubsequenceEnd', () => {
+	test( 'proper contiguous subsequence', () => {
+		equal( indexOfStrictSubsequenceEnd( [ 'a', 'b' ], [ 'a', 'b', 'c' ] )[ 0 ], 2 );
+	} );
+
+	test( 'proper noncontiguous subsequence', () => {
+		equal( indexOfStrictSubsequenceEnd( [ 'a', 'b' ], [ 'a', 'd', 'b', 'c' ] )[ 0 ], 3 );
+	} );
+} );
+
+describe( 'nonDigitsAtStart', () => {
+	test( 'if all digits, then return 0', () => {
+		equal( nonDigitsAtStart( [ '1', '2', '3' ] ), 0 );
+	} );
+
+	test( 'if all nondigits, then return length', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', 'z' ] ), 3 );
+	} );
+
+	test( 'nondigits followed by digits', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', '7' ] ), 2 );
+	} );
+
+	test( 'nondigits followed by digits followed by nondigits', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', '7', 'z' ] ), 2 );
+	} );
+} );
+
 describe( 'getUpdatedCursorPosition', () => {
 	test( 'should return last position for appending without special characters', () => {
 		equal( getUpdatedCursorPosition( '23', '234', 2 ), 3 );
@@ -308,7 +373,7 @@ describe( 'getUpdatedCursorPosition', () => {
 	} );
 
 	test( 'should return last position for deleting multiple characters in between special characters', () => {
-		equal( getUpdatedCursorPosition( '(802) 687-6234', '802-6234', 6 ), 4 );
+		equal( getUpdatedCursorPosition( '(802) 687-6234', '802-6234', 6 ), 3 );
 	} );
 
 	test( 'should return last position for replacing multiple characters in between special characters', () => {
