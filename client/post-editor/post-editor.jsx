@@ -301,7 +301,7 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				{ isEnabled( 'editor/deprecation-notice' ) && <EditorDeprecationDialog /> }
+				{ isEnabled( 'editor/before-deprecation' ) && <EditorDeprecationDialog /> }
 				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
