@@ -119,6 +119,7 @@ function premium_content_current_visitor_can_access( $attributes ) {
 	if ( ! isset( $attributes['selectedPlanId'] ) ) {
 		return false;
 	}
+
 	$paywall  = premium_content_subscription_service();
 	$can_view = $paywall->visitor_can_view_content( array( $attributes['selectedPlanId'] ) );
 
