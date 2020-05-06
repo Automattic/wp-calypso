@@ -11,8 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import Support from 'my-sites/customer-home/cards/features/support';
 import QuickStart from 'my-sites/customer-home/cards/features/quick-start';
-import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links-compact';
-import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links-compact';
+import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
+import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 
@@ -27,19 +27,20 @@ const cardComponents = {
 const ManageSite = ( { cards } ) => {
 	const translate = useTranslate();
 
+	if ( ! cards || ! cards.length ) {
+		return null;
+	}
+
 	return (
 		<>
 			<h2 className="manage-site__heading customer-home__section-heading">
 				{ translate( 'Manage your site' ) }
 			</h2>
-			{ cards &&
-				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
+			{ cards.map( ( card, index ) =>
+				React.createElement( cardComponents[ card ], {
+					key: index,
+				} )
+			) }
 		</>
 	);
 };

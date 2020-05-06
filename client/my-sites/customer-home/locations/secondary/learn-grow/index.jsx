@@ -37,12 +37,10 @@ const LearnGrow = ( { cards } ) => {
 				{ translate( 'Learn and grow' ) }
 			</h2>
 			<Card className="learn-grow__content">
-				{ cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
+				{ cards.map( ( card, index ) =>
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
 				) }
 			</Card>
 		</>

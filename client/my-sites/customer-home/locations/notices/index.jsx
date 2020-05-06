@@ -19,18 +19,19 @@ const cardComponents = {
 };
 
 const Notices = ( { checklistMode, displayChecklist, cards } ) => {
+	if ( ! cards || ! cards.length ) {
+		return null;
+	}
+
 	return (
 		<>
-			{ cards &&
-				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-							checklistMode,
-							displayChecklist,
-						} )
-				) }
+			{ cards.map( ( card, index ) =>
+				React.createElement( cardComponents[ card ], {
+					key: index,
+					checklistMode,
+					displayChecklist,
+				} )
+			) }
 		</>
 	);
 };

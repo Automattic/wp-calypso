@@ -6,8 +6,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import config from 'config';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -31,7 +29,6 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
-import Upsells from 'my-sites/customer-home/locations/upsells';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
 import Tertiary from 'my-sites/customer-home/locations/tertiary';
@@ -64,11 +61,7 @@ const Home = ( {
 	}
 
 	return (
-		<Main
-			className={ classnames( 'customer-home__main', 'is-wide-layout', {
-				'is-experimental': config.isEnabled( 'home/experimental-layout' ),
-			} ) }
-		>
+		<Main className="customer-home__main is-wide-layout">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
@@ -95,26 +88,14 @@ const Home = ( {
 						checklistMode={ checklistMode }
 						displayChecklist={ displayChecklist }
 					/>
-					{ config.isEnabled( 'home/experimental-layout' ) ? (
-						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
-					) : (
-						<Upsells cards={ layout.upsells } />
-					) }
+					<Primary cards={ layout.primary } checklistMode={ checklistMode } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">
-								{ config.isEnabled( 'home/experimental-layout' ) ? (
-									<Secondary cards={ layout.secondary } />
-								) : (
-									<Primary cards={ layout.primary } checklistMode={ checklistMode } />
-								) }
+								<Secondary cards={ layout.secondary } />
 							</div>
 							<div className="customer-home__layout-col customer-home__layout-col-right">
-								{ config.isEnabled( 'home/experimental-layout' ) ? (
-									<Tertiary cards={ layout.tertiary } />
-								) : (
-									<Secondary cards={ layout.secondary } />
-								) }
+								<Tertiary cards={ layout.tertiary } />
 							</div>
 						</div>
 					) }
@@ -154,9 +135,7 @@ const mapStateToProps = ( state ) => {
 		hasChecklistData,
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-		displayChecklist:
-			layout?.primary?.includes( 'home-primary-checklist-site-setup' ) ||
-			layout?.primary?.includes( 'home-task-site-setup-checklist' ),
+		displayChecklist: layout?.primary?.includes( 'home-task-site-setup-checklist' ),
 		user,
 		layout,
 	};
