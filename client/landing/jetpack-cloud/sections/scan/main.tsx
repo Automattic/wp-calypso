@@ -208,9 +208,8 @@ class ScanPage extends Component< Props > {
 				{ this.renderHeader( translate( 'Something went wrong' ) ) }
 				<p>
 					{ translate(
-						'The scan did not complete ' +
-							'successfully. In order to complete the scan you will need ' +
-							'to speak to support who can help determine what went wrong.'
+						"Jetpack Scan couldn't complete a scan of your site. Please check to see if your site is down " +
+							"– if it's not, try again. If it is, or if Jetpack Scan is still having problems, contact our support team."
 					) }
 				</p>
 				{ this.renderContactSupportButton() }
