@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { omit } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -52,8 +57,18 @@ const formatScanStateRawResponse = ( {
 		state,
 		threats: threats.map( formatScanThreat ),
 		credentials,
-		...( mostRecent ? { ...mostRecent, isInitial: mostRecent.is_initial } : {} ),
-		...( current ? { ...current, isInitial: current.is_initial } : {} ),
+		mostRecent: mostRecent
+			? {
+					...omit( mostRecent, [ 'is_initial' ] ),
+					isInitial: mostRecent.is_initial,
+			  }
+			: undefined,
+		current: current
+			? {
+					...omit( current, [ 'is_initial' ] ),
+					isInitial: current.is_initial,
+			  }
+			: undefined,
 		...rest,
 	};
 };
