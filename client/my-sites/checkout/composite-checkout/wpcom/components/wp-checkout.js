@@ -85,7 +85,7 @@ export default function WPCheckout( {
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const domainName = firstDomainItem ? firstDomainItem.wpcom_meta.meta : siteUrl;
 	const isDomainFieldsVisible = !! firstDomainItem;
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
