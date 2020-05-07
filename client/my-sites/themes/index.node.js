@@ -22,6 +22,8 @@ import { validateFilters, validateVertical } from './validate-filters';
 import { getLanguage, getLanguageRouteParam } from 'lib/i18n-utils';
 import { setLocaleRawData } from 'state/ui/language/actions';
 
+const translationsCache = {};
+
 function setupLocale( context, next ) {
 	if ( ! context.params.lang ) {
 		next();
@@ -34,21 +36,25 @@ function setupLocale( context, next ) {
 		context.lang = language.langSlug;
 		context.isRTL = language.rtl ? true : false;
 
-		const translations = JSON.parse(
-			fs.readFileSync(
-				path.join(
-					__dirname,
-					'..',
-					'..',
-					'..',
-					'public',
-					'evergreen',
-					'languages',
-					`${ context.lang }-v1.1.json`
-				),
-				'utf-8'
-			)
-		);
+		if ( typeof translationsCache[ context.lang ] === 'undefined' ) {
+			translationsCache[ context.lang ] = JSON.parse(
+				fs.readFileSync(
+					path.join(
+						__dirname,
+						'..',
+						'..',
+						'..',
+						'public',
+						'evergreen',
+						'languages',
+						`${ context.lang }-v1.1.json`
+					),
+					'utf-8'
+				)
+			);
+		}
+
+		const translations = translationsCache[ context.lang ];
 
 		context.store.dispatch( setLocaleRawData( translations ) );
 	}
