@@ -115,15 +115,15 @@ export class Banner extends Component {
 				</div>
 				{ callToAction && (
 					<div className="banner__action">
-						( this.props.forceHref ? (
-						<Button compact primary target={ target }>
-							{ callToAction }
-						</Button>
+						{ this.props.forceHref ? (
+							<Button compact primary target={ target }>
+								{ callToAction }
+							</Button>
 						) : (
-						<Button compact href={ href } onClick={ this.handleClick } primary target={ target }>
-							{ callToAction }
-						</Button>
-						) )
+							<Button compact href={ href } onClick={ this.handleClick } primary target={ target }>
+								{ callToAction }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>
