@@ -1,3 +1,10 @@
+// The eslint configuration below helps prevent new legacy reducers from being added.
+// See `docs/modularized-state.md` to learn more about modularized state.
+
+/*eslint no-restricted-imports: ["error", {
+    "patterns": ["./*\/reducer*", "state/*\/reducer*"]
+}]*/
+
 /**
  * External dependencies
  */
