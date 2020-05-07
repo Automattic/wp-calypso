@@ -24,7 +24,7 @@ In order to preserve the benefits of a Redux-based architecture while reducing t
 We opted for a synchronous, dependency-graph driven approach, where reducers are automatically loaded together with the chunks that make use of them. In a nutshell:
 
 - State is divided into top-level portions. Each of these portions is considered an atom that can't be subdivided (for the purposes of loading).
-- Each portion's reducer stores its state separately, using `withStorageKey`.
+- Each portion's reducer persists its state separately, using `withStorageKey`.
 - Each portion has an `init` module, that registers its reducer through a side-effect.
 - Each selector or action creator that accesses a portion of state must import its `init` module
 
@@ -89,14 +89,24 @@ Once this is done, you'll need to find every selector and action creator that ac
 Here's what a modified selector module could look like:
 
 ```js
-import 'state/subject/reducer';
+import 'state/subject/init';
 
 export default function getSubjectMatter( state ) {
   // ...
 }
 ```
 
-Finally, once all the modularized machinery is in place, remove the reducer from the legacy list in `client/state/reducer` (and `client/landing/login/store`, which has its own list!). It doesn't need to be there anymore, since it's now fully modularized!
+The same goes for an action creator:
+
+```js
+import 'state/subject/init';
+
+export function changeSubjectMatter( matter ) {
+  // ...
+}
+```
+
+Finally, once all the modularized machinery is in place, remove the reducer from the legacy list in `client/state/reducer` (and `client/landing/login/store`, which has its own list). It doesn't need to be there anymore, since it's now fully modularized!
 
 ## Troubleshooting
 
@@ -111,9 +121,6 @@ To explain a bit further, this error lets you know when you're registering a por
 Some unit tests may start failing once you modularize a portion of state (even if it seems unrelated, at first). This is usually because they create their own Redux store, which may have not been set up correctly for modularization. You'll find something like this:
 
 ```js
-/**
- * Internal dependencies
- */
 import { createReduxStore } from 'state';
 import Thing from '../';
 
@@ -128,9 +135,6 @@ describe( 'Thing', () => {
 Setting the store globally should be enough to solve these issues:
 
 ```js
-/**
- * Internal dependencies
- */
 import { createReduxStore } from 'state';
 import { setStore } from 'state/redux-store';
 import Thing from '../';
