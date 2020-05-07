@@ -8,6 +8,10 @@
 .gutenboarding-page {
 	transform-origin: center center;
 	animation: gutenboarding-page-appear 300ms ease-out forwards;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
 }
 
 @keyframes gutenboarding-page-appear {
