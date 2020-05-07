@@ -114,6 +114,7 @@ export class Checkout extends React.Component {
 	state = {
 		previousCart: null,
 		cartSettled: false,
+		isRedirecting: false,
 	};
 
 	// TODO: update this component to not use deprecated life cycle methods
@@ -313,6 +314,10 @@ export class Checkout extends React.Component {
 	}
 
 	redirectIfEmptyCart() {
+		if ( this.state.isRedirecting ) {
+			return true;
+		}
+
 		const { selectedSiteSlug, transaction, returnToBlockEditor } = this.props;
 
 		if ( ! transaction ) {
@@ -355,6 +360,7 @@ export class Checkout extends React.Component {
 			);
 		}
 
+		this.setState( { isRedirecting: true } );
 		page.redirect( redirectTo );
 
 		return true;
