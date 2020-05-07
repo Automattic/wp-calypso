@@ -41,8 +41,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.3 =
-* Remove page layout preview from document settings
-* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active
+* Update Premium Content Block icon.
+* Add Showcase New Blocks module.
+* Add new patterns, and update pattern order.
+* Bump newspack-blocks version to 1.5.0.
+* Remove page layout preview from document settings.
+* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
 
 = 1.2 =
 * New Posts Carousel block.
