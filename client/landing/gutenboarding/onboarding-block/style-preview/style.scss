@@ -154,13 +154,53 @@
 	}
 }
 
+.style-preview__font-options-desktop {
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.style-preview__font-options-mobile {
+	display: block;
+	margin-bottom: 28px;
+
+	.dashicon {
+		margin-left: 0.5em;
+		vertical-align: bottom;
+		transition: transform 100ms ease-in-out;
+	}
+
+	.is-open .dashicon {
+		transform: rotate( 180deg );
+	}
+
+	@include break-small {
+		display: none;
+	}
+}
+
+.style-preview__font-options-mobile-options {
+	display: none;
+
+	&.is-open {
+		margin-top: 8px;
+		display: block;
+	}
+}
+
 @supports ( display: grid ) {
 	.style-preview__content {
 		display: grid;
 		width: 100%;
-		grid-template-areas: 'preview' 'fonts';
+		grid-template-areas: 'fonts' 'preview';
 		grid-template-columns: auto;
-		grid-template-rows: 240px auto;
+		grid-template-rows: auto 240px;
+
+		@include onboarding-break-mobile-tall {
+			grid-template-rows: auto 340px;
+		}
 
 		@include break-small {
 			column-gap: 50px;
