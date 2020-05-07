@@ -43,7 +43,7 @@ import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabl
 import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 import { isEnabled } from 'config';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import { activatePlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
 
 class InlineHelpPopover extends Component {
@@ -59,6 +59,7 @@ class InlineHelpPopover extends Component {
 		isEligibleForChecklist: PropTypes.bool.isRequired,
 		isAtomic: PropTypes.bool,
 		activatePlugin: PropTypes.func,
+		fetchAtomicPlugins: PropTypes.func,
 		sitePlugins: PropTypes.array,
 	};
 
@@ -70,6 +71,14 @@ class InlineHelpPopover extends Component {
 		showSecondaryView: false,
 		activeSecondaryView: '',
 	};
+
+	componentDidMount() {
+		const { siteId, isAtomic, fetchAtomicPlugins } = this.props;
+
+		if ( isAtomic ) {
+			fetchAtomicPlugins( [ siteId ] );
+		}
+	}
 
 	openResultView = ( event ) => {
 		event.preventDefault();
@@ -213,13 +222,16 @@ class InlineHelpPopover extends Component {
 
 	checkForClassicEditorOnAtomic( siteId, sitePlugins ) {
 		const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
-		if ( ! classicPlugin.isActive ) {
+
+		if ( classicPlugin && ! classicPlugin.isActive ) {
 			this.props.activatePlugin( siteId, classicPlugin );
 		}
+		// TODO: need some error handling here if classic plugin not found
 	}
 
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl, translate, isAtomic, sitePlugins } = this.props;
+
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
@@ -334,6 +346,7 @@ const mapDispatchToProps = {
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
 	activatePlugin,
+	fetchAtomicPlugins: fetchPlugins,
 };
 
 export default compose(
