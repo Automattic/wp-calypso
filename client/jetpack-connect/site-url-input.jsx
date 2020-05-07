@@ -3,6 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -13,7 +14,10 @@ import { noop } from 'lodash';
 import { Card, Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
+import SitesDropdown from 'components/sites-dropdown';
 import Spinner from 'components/spinner';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class JetpackConnectSiteUrlInput extends PureComponent {
@@ -27,6 +31,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 		autoFocus: PropTypes.bool,
+		product: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -56,12 +61,14 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	};
 
 	renderButtonLabel() {
-		const { translate } = this.props;
+		const { product, translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
-			return translate( 'Start Installation' );
+			return product === 'jetpack_search'
+				? translate( 'Get Search' )
+				: translate( 'Start Installation' );
 		}
 		return translate( 'Setting up…' );
 	}
@@ -115,24 +122,38 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
+		const {
+			isFetching,
+			onChange,
+			onSelect,
+			onSubmit,
+			product,
+			requestingMissingSites,
+			translate,
+			url,
+			autoFocus,
+		} = this.props;
 
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					<FormTextInput
-						ref={ this.refInput }
-						id="siteUrl"
-						autoCapitalize="off"
-						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						onChange={ onChange }
-						disabled={ isFetching }
-						placeholder={ 'https://yourjetpack.blog' }
-						onKeyUp={ this.handleKeyPress }
-						value={ url }
-					/>
+					{ product === 'jetpack_search' ? (
+						<SitesDropdown isPlaceholder={ requestingMissingSites } onSiteSelect={ onSelect } />
+					) : (
+						<FormTextInput
+							ref={ this.refInput }
+							id="siteUrl"
+							autoCapitalize="off"
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							onChange={ onChange }
+							disabled={ isFetching }
+							placeholder={ 'https://yourjetpack.blog' }
+							onKeyUp={ this.handleKeyPress }
+							value={ url }
+						/>
+					) }
 					{ isFetching ? <Spinner /> : null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
@@ -151,4 +172,10 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 }
 
-export default localize( JetpackConnectSiteUrlInput );
+export default connect(
+	( state ) => ( {
+		currentUser: getCurrentUser( state ),
+		requestingMissingSites: isRequestingMissingSites( state ),
+	} ),
+	{}
+)( localize( JetpackConnectSiteUrlInput ) );

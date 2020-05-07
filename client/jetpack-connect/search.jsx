@@ -6,7 +6,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, get, includes, startsWith } from 'lodash';
+import { concat, flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,6 +29,7 @@ import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import getSites from 'state/selectors/get-sites';
 import { isRequestingSites } from 'state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -44,7 +45,6 @@ import {
 	ALREADY_CONNECTED,
 	ALREADY_OWNED,
 	IS_DOT_COM,
-	IS_DOT_COM_GET_SEARCH,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
@@ -119,6 +119,11 @@ export class SearchPurchase extends Component {
 		) {
 			return this.goToRemoteAuth( this.props.siteHomeUrl );
 		}
+
+		if ( this.getStatus() === IS_DOT_COM ) {
+			return this.goToCheckout( this.state.currentUrl );
+		}
+
 		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( isMobileAppFlow ) {
 				return this.redirectToMobileApp( 'already-connected' );
@@ -160,6 +165,15 @@ export class SearchPurchase extends Component {
 			}
 		};
 	}
+
+	goToCheckout = this.makeSafeRedirectionFunction( ( url ) => {
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'search_checkout',
+		} );
+
+		page.redirect( `checkout/${ urlToSlug( url ) }/jetpack_search` );
+	} );
 
 	goToPlans = this.makeSafeRedirectionFunction( ( url ) => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
@@ -220,8 +234,17 @@ export class SearchPurchase extends Component {
 
 	handleUrlChange = ( event ) => {
 		const url = event.target.value;
+
 		this.setState( {
 			currentUrl: cleanUrl( url ),
+			shownUrl: url,
+		} );
+	};
+
+	handleUrlSelect = ( siteId ) => {
+		const url = this.props.sites.filter( ( x ) => x.ID === siteId ).map( ( x ) => x.URL )[ 0 ];
+		this.setState( {
+			currentUrl: url,
 			shownUrl: url,
 		} );
 	};
@@ -291,11 +314,6 @@ export class SearchPurchase extends Component {
 		}
 
 		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-			const product = window.location.href.split( '/' )[ 5 ];
-
-			if ( startsWith( product, 'jetpack_search' ) ) {
-				return IS_DOT_COM_GET_SEARCH;
-			}
 			return IS_DOT_COM;
 		}
 		if ( ! this.checkProperty( 'exists' ) ) {
@@ -364,6 +382,7 @@ export class SearchPurchase extends Component {
 					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.handleUrlChange }
+					onSelect={ this.handleUrlSelect }
 					onSubmit={ this.handleUrlSubmit }
 					isError={ this.getStatus() }
 					isFetching={
@@ -410,6 +429,8 @@ const connectComponent = connect(
 		const isMobileAppFlow = !! mobileAppRedirect;
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteData = jetpackConnectSite.data || {};
+		const sites = getSites( state );
+
 		const skipRemoteInstall = siteData.skipRemoteInstall;
 
 		return {
@@ -422,6 +443,7 @@ const connectComponent = connect(
 			mobileAppRedirect,
 			skipRemoteInstall,
 			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
+			sites,
 		};
 	},
 	{
