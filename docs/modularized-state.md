@@ -56,6 +56,8 @@ For testing purposes, you can add the reducer to the root reducer at `client/sta
 
 Once your new state is in place, or if you're working on migrating existing state, the next step is to modularize it.
 
+### Add `init` module
+
 To start, add an `init` file to the root of that portion of state:
 
 ```text
@@ -78,11 +80,27 @@ registerReducer( [ 'subject' ], reducer );
 
 ```
 
+### Add `package.json` file
+
+It's generally a good idea to tell `webpack` when a file has side-effects, to prevent it from assuming that everything does. Our `init` file has side-effects, so create another file named `package.json` at the root of that portion of state. It may be odd to create a `package.json` file where there is no package, but it's currently the best way of letting `webpack` know about side-effects.
+
+```json
+{
+	"sideEffects": [
+		"./init.js"
+	]
+}
+```
+
+### Persist state to a separate key
+
 For persistence to work correctly, you'll need to modify the reducer so that it stores its data separately. Change the default export to use `withStorageKey`:
 
 ```js
 export default withStorageKey( 'subject', combinedReducer );
 ```
+
+### Ensure selectors and action creators initialize state
 
 Once this is done, you'll need to find every selector and action creator that accesses this portion of state. If it follows the recommended folder structure above that's easy to do, but otherwise you'll need to look in `state/selectors`. You may also find some components accessing state directly with inline selectors (some refactoring would probably be a good idea in that situation).
 
@@ -105,6 +123,8 @@ export function changeSubjectMatter( matter ) {
   // ...
 }
 ```
+
+### Remove state from legacy root reducer
 
 Finally, once all the modularized machinery is in place, remove the reducer from the legacy list in `client/state/reducer` (and `client/landing/login/store`, which has its own list). It doesn't need to be there anymore, since it's now fully modularized!
 
