@@ -39,7 +39,7 @@ __Advantages:__
 - Data logic (e.g. fetching) is not intertwined with the storage of the data
 - Adopting an accepted pattern grants us access to a community-driven ecosystem of reference implementations
 
-### Third Era: Redux Global State Tree (December 2015 - Present)
+### Third Era: Redux Global State Tree (December 2015 - February 2020)
 
 [Redux](http://redux.js.org/), described as a "predictable state container", is an evolution of the principles advocated in Flux. It is not a far departure from Flux, but is distinct in many ways:
 
