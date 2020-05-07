@@ -82,25 +82,59 @@ class Block_Patterns {
 			return $patterns;
 		}
 
-		$pattern = readdir( $directory_handle );
+		// Get all the pattern files.
+		$pattern       = readdir( $directory_handle );
+		$pattern_files = array();
 		while ( false !== $pattern ) {
-			if ( substr( $pattern, -5 ) === '.json' ) {
-				$patterns[] = json_decode(
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					file_get_contents( $patterns_dir . '/' . $pattern ),
-					true
-				);
-			}
-
-			if ( substr( $pattern, -4 ) === '.php' ) {
-				$patterns[] = include_once $patterns_dir . '/' . $pattern;
+			// Only allow files ending in .json or .php.
+			if ( substr( $pattern, -5 ) === '.json' || substr( $pattern, -4 ) === '.php' ) {
+				$pattern_files[] = $pattern;
 			}
 
 			$pattern = readdir( $directory_handle );
 		}
 
 		closedir( $directory_handle );
-		sort( $patterns );
+
+		// Manually curated list of patterns to go at the top of the list.
+		$featured_patterns = array(
+			'masonry-gallery.php',
+			'description-and-image.php',
+			'two-images-and-quote.php',
+			'image-and-description.php',
+			'three-images-side-by-side.php',
+			'image-and-text.php',
+			'three-columns-and-image.php',
+			'collage-gallery.php',
+			'headline.php',
+			'headline-02.php',
+			'recent-posts.php',
+			'recent-posts-02.php',
+			'two-images-side-by-side.php',
+			'numbers.php',
+			'contact.php',
+			'contact-02.php',
+			'contact-03.php',
+			'food-menu.php',
+		);
+
+		// Add the featured patterns to the top of the patterns.
+		$pattern_files = array_merge( $featured_patterns, array_diff( $pattern_files, $featured_patterns ) );
+
+		// Get the pattern files contents.
+		foreach ( $pattern_files as $pattern_file ) {
+			if ( substr( $pattern_file, -5 ) === '.json' ) {
+				$patterns[] = json_decode(
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+					file_get_contents( $patterns_dir . $pattern_file ),
+					true
+				);
+			}
+
+			if ( substr( $pattern_file, -4 ) === '.php' ) {
+				$patterns[] = include_once $patterns_dir . $pattern_file;
+			}
+		}
 
 		return $patterns;
 	}
