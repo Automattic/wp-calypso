@@ -66,7 +66,7 @@ class EditorDeprecationDialog extends Component {
 
 		return (
 			<Modal
-				title={ translate( 'The Block Editor is coming.' ) }
+				title={ translate( 'The new WordPress editor is coming.' ) }
 				className="editor-deprecation-dialog"
 				onRequestClose={ this.notNow }
 				isDismissible={ false }
@@ -76,7 +76,7 @@ class EditorDeprecationDialog extends Component {
 
 				<p className="editor-deprecation-dialog__subhead">
 					{ translate(
-						'Get a head start before we enable it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
+						'Get a head start before we activate it for everyone on {{date/}}. {{support}}Read more{{/support}}.',
 						{
 							components: {
 								date: (
@@ -101,7 +101,7 @@ class EditorDeprecationDialog extends Component {
 					) }
 				</p>
 				<Button onClick={ this.optInToGutenberg } isPrimary>
-					{ translate( 'Use the Block Editor' ) }
+					{ translate( 'Use the WordPress editor' ) }
 				</Button>
 				<Button onClick={ this.notNow } isLink>
 					{ translate( 'Not now' ) }
