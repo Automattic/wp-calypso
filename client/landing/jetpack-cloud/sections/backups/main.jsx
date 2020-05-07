@@ -13,12 +13,7 @@ import { includes } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter, setFilter } from 'state/activity-log/actions';
-import {
-	isActivityBackup,
-	getBackupAttemptsForDate,
-	getDailyBackupDeltas,
-	getMetaDiffForDailyBackup,
-} from './utils';
+import { isActivityBackup, getDailyBackupDeltas, getMetaDiffForDailyBackup } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -154,7 +149,6 @@ class BackupsPage extends Component {
 
 		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
-		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
@@ -205,11 +199,10 @@ class BackupsPage extends Component {
 					) }
 				</div>
 
-				{ ! isLoadingBackups && (
+				{ ! isLoadingBackups && lastBackup && (
 					<BackupDelta
 						{ ...{
 							deltas,
-							backupAttempts,
 							hasRealtimeBackups,
 							realtimeBackups,
 							allowRestore,
