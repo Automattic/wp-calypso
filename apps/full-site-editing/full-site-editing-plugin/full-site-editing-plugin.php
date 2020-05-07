@@ -265,3 +265,11 @@ function load_premium_content() {
 	require_once __DIR__ . '/premium-content/premium-content.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
+
+/**
+ * Load Block Inserter Modifications module
+ */
+function load_block_inserter_modifications() {
+	require_once __DIR__ . '/block-inserter-modifications/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
