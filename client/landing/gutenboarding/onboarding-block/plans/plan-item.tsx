@@ -56,7 +56,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 		<div className="plan-item">
 			<div className="plan-item__heading">
 				<div className="plan-item__name">{ name }</div>
-				{ isPopular && <div className="plan-item__badge">Popular</div> }
+				{ isPopular && <div className="plan-item__badge">{ __( 'Popular' ) }</div> }
 			</div>
 			<div className="plan-item__price">
 				<div className="plan-item__price-amount">{ price }</div>
