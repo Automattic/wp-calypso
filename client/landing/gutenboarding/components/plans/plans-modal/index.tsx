@@ -55,7 +55,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( {
 					</Button>
 				) }
 				cancelButton={
-					<Button isTertiary onClick={ onClose }>
+					<Button isLink onClick={ onClose }>
 						{ __( 'Close' ) }
 					</Button>
 				}

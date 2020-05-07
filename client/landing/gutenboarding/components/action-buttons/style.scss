@@ -1,15 +1,18 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../variables.scss';
 
 .action-buttons {
-	padding: 10px 20px;
-	border-top: 1px solid #f0f0f0;
-	background: var( --studio-white );
+	padding: 0 20px;
+	border-top: 1px solid $light-gray-500;
+	background-color: $white;
 	position: fixed;
 	bottom: 0;
 	right: 0;
 	left: 0;
-	display: flex;
+	height: $gutenboarding-footer-height;
 	justify-content: space-between;
+	display: flex;
+	align-items: center;
 
 	@include break-small {
 		padding: 0;
@@ -17,7 +20,7 @@
 		border: none;
 
 		& > div {
-			margin: 20px;
+			margin-left: 14px;
 		}
 	}
 }
