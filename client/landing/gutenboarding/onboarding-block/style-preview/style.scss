@@ -183,9 +183,10 @@
 
 .style-preview__font-options-mobile-options {
 	display: none;
+	border: 1px solid var( --studio-gray-10 );
+	border-top: none;
 
 	&.is-open {
-		margin-top: 8px;
 		display: block;
 	}
 }
@@ -233,8 +234,21 @@
 	// for IE, see https://github.com/Automattic/wp-calypso/pull/40881#issuecomment-610836378
 	vertical-align: top;
 
+	&.style-preview__font-option-mobile {
+		box-shadow: none;
+	}
+
+	&.is-selected-dropdown-option span {
+		font-weight: 600;
+		text-decoration: underline;
+	}
+
 	+ .style-preview__font-option {
 		margin-top: 8px;
+
+		&.style-preview__font-option-mobile {
+			margin-top: 0;
+		}
 
 		@include break-small {
 			margin-top: 1em;
@@ -255,6 +269,10 @@
 		color: var( --studio-gray-90 );
 		height: auto;
 		border-radius: 2px;
+
+		&.is-open {
+			border-radius: 2px 2px 0 0;
+		}
 
 		&:hover,
 		&:focus,

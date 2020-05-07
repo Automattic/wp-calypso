@@ -63,6 +63,11 @@ const FontSelect: React.FunctionComponent = () => {
 		return ! isShallowEqual( pair, selectedDesignDefaultFonts );
 	};
 
+	const setFontsAndClose = ( pair?: FontPair ) => {
+		setFonts( pair );
+		setIsOpen( false );
+	};
+
 	return (
 		<>
 			<div className="style-preview__font-options">
@@ -124,12 +129,16 @@ const FontSelect: React.FunctionComponent = () => {
 						} ) }
 					>
 						<Button
-							className={ classnames( 'style-preview__font-option', {
-								'is-selected':
-									selectedFonts?.headings === selectedDesignDefaultFonts?.headings &&
-									selectedFonts?.base === selectedDesignDefaultFonts?.base,
-							} ) }
-							onClick={ () => setFonts( selectedDesignDefaultFonts ) }
+							className={ classnames(
+								'style-preview__font-option',
+								'style-preview__font-option-mobile',
+								{
+									'is-selected-dropdown-option':
+										selectedFonts?.headings === selectedDesignDefaultFonts?.headings &&
+										selectedFonts?.base === selectedDesignDefaultFonts?.base,
+								}
+							) }
+							onClick={ () => setFontsAndClose( selectedDesignDefaultFonts ) }
 						>
 							<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 						</Button>
@@ -141,10 +150,14 @@ const FontSelect: React.FunctionComponent = () => {
 
 							return (
 								<Button
-									className={ classnames( 'style-preview__font-option', {
-										'is-selected': isSelected,
-									} ) }
-									onClick={ () => setFonts( fontPair ) }
+									className={ classnames(
+										'style-preview__font-option',
+										'style-preview__font-option-mobile',
+										{
+											'is-selected-dropdown-option': isSelected,
+										}
+									) }
+									onClick={ () => setFontsAndClose( fontPair ) }
 									key={ headings + base }
 								>
 									<span className="style-preview__font-option-contents">
