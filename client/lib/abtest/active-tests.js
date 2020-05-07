@@ -132,6 +132,7 @@ export default {
 			variantShowJPResults: 50,
 			control: 50,
 		},
+		defaultVariation: 'control',
 		localeTargets: 'any',
 		countryCodeTargets: [ 'JP' ],
 	},
