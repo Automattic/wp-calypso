@@ -445,6 +445,8 @@ export function createAccount(
 			email,
 		};
 
+		const marketing_price_group = response?.marketing_price_group ?? '';
+
 		// Fire after a new user registers.
 		recordRegistration( {
 			userData: registrationUserData,
@@ -452,7 +454,7 @@ export function createAccount(
 			type: signupType,
 		} );
 
-		const providedDependencies = assign( { username }, bearerToken );
+		const providedDependencies = assign( { username, marketing_price_group }, bearerToken );
 
 		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
 			assign( providedDependencies, {

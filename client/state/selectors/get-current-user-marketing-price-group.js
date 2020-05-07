@@ -9,8 +9,4 @@ import { getCurrentUser } from 'state/current-user/selectors';
  * @param {object} state Global state tree
  * @returns {string?} The price group slug
  */
-export default ( state ) => {
-	const currentUser = getCurrentUser( state );
-
-	return ( currentUser && currentUser.meta.marketing_price_group ) || null;
-};
+export default ( state ) => getCurrentUser( state )?.meta.marketing_price_group || null;

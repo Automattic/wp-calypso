@@ -146,7 +146,7 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
