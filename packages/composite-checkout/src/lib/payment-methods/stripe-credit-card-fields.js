@@ -405,7 +405,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			debug( 'marking complete' );
 			setFormComplete();
 		}
-		if ( transactionStatus === 'redirect' ) {
+		if ( transactionStatus === 'redirecting' ) {
 			debug( 'redirecting' );
 			showInfoMessage( localize( 'Redirecting...' ) );
 			// TODO: make this redirect able to be mocked
@@ -427,7 +427,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	useEffect( () => {
 		let isSubscribed = true;
 
-		if ( transactionStatus === 'auth' ) {
+		if ( transactionStatus === 'authorizing' ) {
 			debug( 'showing auth' );
 			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 			showStripeModalAuth( {
