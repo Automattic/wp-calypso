@@ -89,6 +89,8 @@
 	padding: 6px 16px;
 	line-height: 34px;
 	color: var( --color-primary );
+	border-left: 1px solid var( --color-neutral-5 );
+	border-radius: 0;
 
 	@include breakpoint( '>960px' ) {
 		padding: 6px 32px;
@@ -127,6 +129,9 @@ a.web-preview__external.button {
 	display: flex;
 	margin: 6px 0 0 12px;
 	width: 200px;
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
 }
 
 .web-preview__url-clipboard-input {
