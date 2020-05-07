@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 
-const TickIcon = () => (
+const TickIcon = (
 	<Icon
 		icon={ () => (
 			<svg
@@ -21,8 +21,8 @@ const TickIcon = () => (
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<path
-					fill-rule="evenodd"
-					clip-rule="evenodd"
+					fillRule="evenodd"
+					clipRule="evenodd"
 					d="M5.4987 9.50033L1.9987 6.00033L0.832031 7.16699L5.4987 11.8337L15.4987 1.83366L14.332 0.666992L5.4987 9.50033Z"
 					fill="white"
 				/>
@@ -69,7 +69,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 				>
 					{ isSelected ? (
 						<>
-							<TickIcon></TickIcon>
+							{ TickIcon }
 							<span>{ __( 'Selected' ) }</span>
 						</>
 					) : (
