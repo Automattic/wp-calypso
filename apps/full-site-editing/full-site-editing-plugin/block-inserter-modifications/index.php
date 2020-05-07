@@ -5,7 +5,7 @@
  * @package A8C\FSE
  */
 
-namespace A8C\FSE\BLOCK_INSERTER_MODIFICATIONS;
+namespace A8C\FSE\Block_Inserter_Modifications;
 
 use RuntimeException;
 
