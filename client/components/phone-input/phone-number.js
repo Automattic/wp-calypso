@@ -282,10 +282,10 @@ export function toIcannFormat( inputNumber, country ) {
  *     position may be placed after 'i', rather than after 'a',
  *     depending on where the cursor position is before the edit.
  *
- * @param oldValue Masked original string
- * @param newValue Masked updated string
- * @param oldCursorPosition Index of the cursor in oldValue
- * @returns number
+ * @param {string} oldValue Masked original string
+ * @param {string} newValue Masked updated string
+ * @param {number} oldCursorPosition Index of the cursor in oldValue
+ * @returns {number} The new cursor position
  */
 export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition ) {
 	const toList = ( str ) => str.split( '' );
