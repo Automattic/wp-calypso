@@ -1,6 +1,23 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins.scss';
 
+@keyframes gutenboarding_wriggle {
+	from {
+		transform: scale( 1 );
+		padding: 0;
+	}
+
+	50% {
+		transform: scale( 1.05 );
+		padding: 2px;
+	}
+
+	to {
+		transform: scale( 1 );
+		padding:0;
+	}
+}
+
 .domain-picker-button {
 	&.components-button {
 		@include onboarding-medium-text;
@@ -53,25 +70,9 @@
 
 	&.picked-domain .domain-picker-button__label {
 		animation-duration: 0.3s;
-		animation-name: wriggle;
+		animation-name: gutenboarding_wriggle;
 		animation-delay: 0.3s;
-	}
-}
-
-@keyframes wriggle {
-	from {
-		transform: scale( 1 );
-		padding: 0;
-	}
-
-	50% {
-		transform: scale( 1.05 );
-		padding: 2px;
-	}
-
-	to {
-		transform: scale( 1 );
-		padding:0;
+		@include reduce-motion( 'animation' );
 	}
 }
 
@@ -80,5 +81,3 @@
 html:not( .accessible-focus ) .domain-picker-button:focus:not( :disabled ):not( :hover ) {
 	box-shadow: none;
 }
-
-
