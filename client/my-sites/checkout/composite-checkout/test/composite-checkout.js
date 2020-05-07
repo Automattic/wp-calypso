@@ -583,10 +583,11 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getAllByLabelText } = renderResult;
+		const { getAllByLabelText, getByText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
+		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
 		getAllByLabelText( 'bar.com' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
@@ -619,7 +620,8 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Domain Registration: billed yearly' ) ).toBeInTheDocument();
+		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
+		expect( getByText( 'foo.cash' ) ).toBeInTheDocument();
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
@@ -633,7 +635,8 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed yearly' ) ).toBeInTheDocument();
+		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
+		expect( getByText( 'bar.com' ) ).toBeInTheDocument();
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
@@ -649,9 +652,10 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Domain Mapping: billed yearly' ) ).toBeInTheDocument();
-		expect( getByText( 'Domain Registration: billed yearly' ) ).toBeInTheDocument();
+		const { getByText, getAllByText } = renderResult;
+		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
+		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
