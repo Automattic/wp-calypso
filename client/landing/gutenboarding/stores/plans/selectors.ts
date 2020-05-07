@@ -5,8 +5,8 @@ import { State, supportedPlanSlugs } from './reducer';
 import * as plans from 'lib/plans/constants';
 import { getPlan, getPlanPath } from 'lib/plans';
 
-export const freePlan = plans.PLAN_FREE;
-export const defaultPaidPlan = plans.PLAN_PREMIUM;
+const freePlan = plans.PLAN_FREE;
+const defaultPaidPlan = plans.PLAN_PREMIUM;
 
 export const getSelectedPlan = ( state: State ) => getPlan( state.selectedPlanSlug );
 export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) =>
