@@ -41,21 +41,6 @@ function is_homepage_title_hidden() {
 }
 
 /**
- * Detects if assets for the common module should be loaded.
- *
- * It should return true if any of the features added to the common module need
- * to be loaded. To accomplish this, please create separate functions if you add
- * other small features to this file. The separate function should detect if your
- * individual feature ought to be loaded. Then, "or" (||) that together with the
- * return value here.
- *
- * @return bool True if the common module assets should be loaded.
- */
-function should_load_assets() {
-	return (bool) is_homepage_title_hidden();
-}
-
-/**
  * Adds custom classes to the admin body classes.
  *
  * @param string $classes Classes for the body element.
@@ -74,11 +59,6 @@ add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_classes' );
  * Enqueue script and style for the common package.
  */
 function enqueue_script_and_style() {
-	// Avoid loading assets if possible.
-	if ( ! should_load_assets() ) {
-		return;
-	}
-
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
 	$script_dependencies = $asset_file['dependencies'];
 	wp_enqueue_script(
