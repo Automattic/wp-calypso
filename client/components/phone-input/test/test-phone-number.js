@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { equal, ok } from 'assert';
+import { equal, ok, deepStrictEqual } from 'assert';
 import { groupBy, pickBy, forIn } from 'lodash';
 
 /**
@@ -17,9 +17,10 @@ import {
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164,
-	indexOfLongestCommonSuffixWith,
+	indexOfLongestCommonSuffix,
 	indexOfStrictSubsequenceEnd,
 	nonDigitsAtStart,
+	numDigitsBeforeIndex,
 	getUpdatedCursorPosition,
 } from '../phone-number';
 
@@ -277,37 +278,43 @@ describe( 'metadata:', () => {
 	} );
 } );
 
-describe( 'indexOfLeastCommonSuffixWith', () => {
-	test( 'if array1 === array2 === [], return 0', () => {
-		equal( indexOfLongestCommonSuffixWith( [], [] ), 0 );
+describe( 'indexOfLongestCommonSuffix', () => {
+	test( 'if array1 === array2 === []', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [], [] ), [ 0, 0 ] );
 	} );
 
-	test( 'if array1 === ["a"] and array2 === [], return 0', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'a' ], [] ), 0 );
+	test( 'if array1 === ["a"] and array2 === []', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a' ], [] ), [ 1, 0 ] );
 	} );
 
-	test( 'if array1 === [] and array2 === ["a"], return 1', () => {
-		equal( indexOfLongestCommonSuffixWith( [], [ 'a' ] ), 1 );
+	test( 'if array1 === [] and array2 === ["a"]', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [], [ 'a' ] ), [ 0, 1 ] );
 	} );
 
-	test( 'if array1 === array2 === ["a"], return 0', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'a' ], [ 'a' ] ), 0 );
+	test( 'if array1 === array2 === ["a"]', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a' ], [ 'a' ] ), [ 0, 0 ] );
 	} );
 
-	test( 'if array1 === array2, return 0', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ] ), 0 );
+	test( 'if array1 === array2', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ] ), [ 0, 0 ] );
 	} );
 
-	test( 'if array1 is a proper prefix of array2, return array2.length', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ), 4 );
+	test( 'if array1 is a proper prefix of array2', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ), [
+			3,
+			4,
+		] );
 	} );
 
-	test( 'if array2 is a proper suffix of array1, return 0', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'a', 'b', 'c' ], [ 'b', 'c' ] ), 0 );
+	test( 'if array2 is a proper suffix of array1', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'b', 'c' ] ), [ 1, 0 ] );
 	} );
 
-	test( 'if longest common suffix of array1 and array2 is empty, return array2.length', () => {
-		equal( indexOfLongestCommonSuffixWith( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ), 4 );
+	test( 'if longest common suffix of array1 and array2 is empty', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ), [
+			3,
+			4,
+		] );
 	} );
 } );
 
@@ -339,6 +346,48 @@ describe( 'nonDigitsAtStart', () => {
 	} );
 } );
 
+describe( 'numDigitsBeforeIndex', () => {
+	test( 'empty array', () => {
+		equal( numDigitsBeforeIndex( [], 1 ), 0 );
+	} );
+
+	test( 'all digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 3 ), 3 );
+	} );
+
+	test( 'all digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 4 ), 4 );
+	} );
+
+	test( 'all digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 5 ), 4 );
+	} );
+
+	test( 'not all digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 3 ), 2 );
+	} );
+
+	test( 'not all digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 4 ), 3 );
+	} );
+
+	test( 'not all digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 5 ), 3 );
+	} );
+
+	test( 'no digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 3 ), 0 );
+	} );
+
+	test( 'no digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 4 ), 0 );
+	} );
+
+	test( 'no digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 5 ), 0 );
+	} );
+} );
+
 describe( 'getUpdatedCursorPosition', () => {
 	test( 'should return last position for appending without special characters', () => {
 		equal( getUpdatedCursorPosition( '23', '234', 2 ), 3 );
@@ -352,8 +401,32 @@ describe( 'getUpdatedCursorPosition', () => {
 		equal( getUpdatedCursorPosition( '223-2', '223-22', 5 ), 6 );
 	} );
 
+	test( 'should return last position for appending duplicate substrings with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-232', 5 ), 7 );
+	} );
+
 	test( 'should return last position for inserting duplicate numbers with special characters', () => {
 		equal( getUpdatedCursorPosition( '223-2', '223-22', 4 ), 5 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters (2)', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 3 ), 5 );
+	} );
+
+	test( 'should return last position for appending duplicate numbers with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 5 ), 6 );
+	} );
+
+	test( 'should return last position for appending duplicate substrings with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-2325', 5 ), 7 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 4 ), 5 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters (2) - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 3 ), 5 );
 	} );
 
 	test( 'should return last position for deleting from end with special characters', () => {

@@ -278,28 +278,51 @@ export function toIcannFormat( inputNumber, country ) {
  *
  * Known weird behaviors:
  *   - If newValue is obtained from oldValue by e.g. replacing
- *     'oba' in 'foobar' by 'iba', then the cursor position
- *     will be placed after 'i', rather than after 'a'.
+ *     'oba' in 'foobar' by 'iba', via pasting, then the cursor
+ *     position may be placed after 'i', rather than after 'a',
+ *     depending on where the cursor position is before the edit.
  *
  * @param oldValue Masked original string
  * @param newValue Masked updated string
+ * @param oldCursorPosition Index of the cursor in oldValue
  * @returns number
  */
-export function getUpdatedCursorPosition( oldValue, newValue ) {
+export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition ) {
 	const toList = ( str ) => str.split( '' );
 	const unmask = ( list ) => list.filter( ( char ) => /\d/.test( char ) );
 
-	const oldDigits = unmask( toList( oldValue ) );
+	// Find the leftmost index point from the right end where
+	// the old and new (unmasked!) values agree (from right to
+	// left). We start by assuming this point is where the edits
+	// stopped. (This may be wrong; see below)
+	const [ idxOld, idxNew ] = indexOfLongestCommonSuffix(
+		unmask( toList( oldValue ) ),
+		unmask( toList( newValue ) )
+	);
+
+	// Find the cursor position in the unmasked old string.
+	const oldUnmaskedCursorPosition = numDigitsBeforeIndex( toList( oldValue ), oldCursorPosition );
+
+	// Our assumption about the portion of the string actually
+	// updated is definitely wrong if the old cursor point is
+	// to the right of the index of the longest common suffix.
+	// We can correct for this by adding this offset to that index.
+	const idxOffset = Math.max( 0, oldUnmaskedCursorPosition - idxOld );
+
+	// NB: indexOfLongestCommonSuffix mutates its arguments;
+	// this expression is also passed to that function above
+	// but we can't factor it out.
 	const newDigits = unmask( toList( newValue ) );
 
-	const k = indexOfLongestCommonSuffixWith( oldDigits, newDigits );
-
-	const [ offset, suffix ] = indexOfStrictSubsequenceEnd(
-		newDigits.slice( 0, k ),
+	// Now the unmasked new value appears in the masked new
+	// value as a subsequence, and the new cursor position
+	// is the corresponding index.
+	const [ offset ] = indexOfStrictSubsequenceEnd(
+		newDigits.slice( 0, idxNew + idxOffset ),
 		toList( newValue )
 	);
 
-	return offset + nonDigitsAtStart( suffix ) + 1;
+	return offset;
 }
 
 /**
@@ -318,21 +341,19 @@ export function getUpdatedCursorPosition( oldValue, newValue ) {
  *
  * @param array1 An array
  * @param array2 An array
- * @returns number Index of the longest common suffix of array1 and array2 in array2
+ * @returns [number, number] Index of the longest common suffix
+ *   in each argument
  */
-export function indexOfLongestCommonSuffixWith( array1, array2 ) {
-	if ( array2.length === 0 ) {
-		return 0;
-	}
-	if ( array1.length === 0 ) {
-		return array2.length;
+export function indexOfLongestCommonSuffix( array1, array2 ) {
+	if ( array1.length === 0 || array2.length === 0 ) {
+		return [ array1.length, array2.length ];
 	}
 	const c1 = array1.pop(); // mutate!
 	const c2 = array2.pop(); // mutate!
 	if ( c1 !== c2 ) {
-		return 1 + array2.length; // add 1 since we popped array2
+		return [ 1 + array1.length, 1 + array2.length ]; // add 1 since we popped
 	}
-	return indexOfLongestCommonSuffixWith( array1, array2 );
+	return indexOfLongestCommonSuffix( array1, array2 );
 }
 
 /**
@@ -406,4 +427,15 @@ export function nonDigitsAtStart( array ) {
 	};
 
 	return accumulate( array, 0 );
+}
+
+/**
+ * Count the number of digits appearing left of a given
+ * index in an array of strings.
+ *
+ * @param array An array
+ * @param index Index at which to cut off the count
+ */
+export function numDigitsBeforeIndex( array, index ) {
+	return array.slice( 0, index ).filter( ( x ) => /\d/.test( x ) ).length;
 }
