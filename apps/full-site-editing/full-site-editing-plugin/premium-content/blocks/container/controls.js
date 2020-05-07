@@ -18,14 +18,19 @@ import NewPlan from './new-plan';
  * @typedef { Object } Props
  * @property { number } selectedPlanId
  * @property { (plan: Plan) => void } onSelected
+ * @property { (plan: Plan) => string } formatPrice
  * @property { string } className
  * @property { Plan[] } plans
  *
  * @param { Props } props
  */
 export default function Controls( props ) {
-	const { selectedPlanId, onSelected, plans } = props;
+	const { selectedPlanId, onSelected, plans, getPlanDescription } = props;
 	const currentPlan = plans.find( ( plan ) => plan.id === selectedPlanId );
+	let planDescription = null;
+	if ( currentPlan ) {
+		planDescription = ' ' + getPlanDescription( currentPlan );
+	}
 	return (
 		<BlockControls>
 			<Toolbar>
@@ -34,13 +39,7 @@ export default function Controls( props ) {
 					icon={
 						<Fragment>
 							<Dashicon icon="update" />{ ' ' }
-							{ currentPlan && (
-								<Fragment>
-									{ ' ' }
-									{ currentPlan.title } : { currentPlan.price } { currentPlan.currency } /{ ' ' }
-									{ currentPlan.interval }{ ' ' }
-								</Fragment>
-							) }
+							{ planDescription && <Fragment>{ planDescription }</Fragment> }
 						</Fragment>
 					}
 					label={ __( 'Select a plan', 'premium-content' ) }
