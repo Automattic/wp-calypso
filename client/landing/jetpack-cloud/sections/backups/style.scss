@@ -12,17 +12,25 @@
 
 .backups__last-backup-status {
 	background: var( --studio-white );
-	margin-left: -16px;
-	margin-right: -16px;
 	padding-left: 16px;
 	padding-right: 16px;
 	padding-top: 24px;
+	flex-grow: 1;
 
 	@include breakpoint( '>660px' ) {
 		background: var( --color-surface-backdrop );
 		padding: 0;
 		margin: 0;
 	}
+}
+
+.backups__main-wrap {
+	display: flex;
+	flex-direction: column;
+	height: calc( 100vh - 120px );
+	overflow-y: scroll;
+	margin-left: -16px;
+	margin-right: -16px;
 }
 
 .backups__search {
