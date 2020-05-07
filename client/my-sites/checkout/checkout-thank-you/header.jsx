@@ -24,7 +24,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
-import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
@@ -39,6 +39,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		isSimplified: PropTypes.bool,
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
+		purchases: PropTypes.array,
 	};
 
 	getHeading() {
@@ -238,6 +239,19 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	visitDomain = ( event ) => {
+		event.preventDefault();
+
+		const { primaryPurchase, selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_view_site', {
+			product: primaryPurchase.productName,
+			singleDomain: true,
+		} );
+
+		page( domainManagementEdit( selectedSite.slug, primaryPurchase.meta ) );
+	};
+
 	visitSite = ( event ) => {
 		event.preventDefault();
 
@@ -321,7 +335,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 			isDomainTransfer( primaryPurchase ) ||
 			isSiteRedirect( primaryPurchase )
 		) {
-			return translate( 'Manage domain' );
+			return this.isSingleDomainPurchase()
+				? translate( 'Manage domain' )
+				: translate( 'Manage domains' );
 		}
 
 		if ( isGoogleApps( primaryPurchase ) ) {
@@ -343,6 +359,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		return null;
+	}
+
+	isSingleDomainPurchase() {
+		const { primaryPurchase, purchases } = this.props;
+
+		return (
+			primaryPurchase &&
+			isDomainRegistration( primaryPurchase ) &&
+			purchases.filter( isDomainRegistration ).length === 1
+		);
 	}
 
 	getButtons() {
@@ -377,7 +403,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		const clickHandler = 'concierge' === displayMode ? this.visitScheduler : this.visitSite;
+		let clickHandler = this.visitSite;
+
+		if ( 'concierge' === displayMode ) {
+			clickHandler = this.visitScheduler;
+		} else if ( this.isSingleDomainPurchase() ) {
+			clickHandler = this.visitDomain;
+		}
 
 		return (
 			<div className="checkout-thank-you__header-button">
