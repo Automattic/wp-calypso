@@ -7,15 +7,28 @@
 
 namespace A8C\FSE\BLOCK_INSERTER_MODIFICATIONS;
 
+use RuntimeException;
+
 /**
  * Enqueues a submodule script by its filename.
  *
  * @param string  $filename Name of the script file w/o extension.
  * @param boolean $in_footer Whether to enqueue the script before </body> instead of in the <head> (optional).
+ *
+ * @throws RuntimeException If the asset file doesn't exist.
  */
 function enqueue_script( $filename, $in_footer = false ) {
-	$asset_file   = __DIR__ . '/dist/' . $filename . '.asset.php';
-	$asset        = file_exists( $asset_file ) ? require_once $asset_file : null;
+	$asset_path = __DIR__ . '/dist/' . $filename . '.asset.php';
+
+	if ( ! file_exists( $asset_path ) ) {
+		throw new RuntimeException(
+			'Asset file not found: ' . $asset_path . '. ' .
+			'Please see https://github.com/Automattic/wp-calypso/blob/master/apps/full-site-editing/README.md#build-system ' .
+			'for more information about the Full Site Editing build system.'
+		);
+	}
+
+	$asset        = file_exists( $asset_path ) ? require_once $asset_path : null;
 	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
 	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/' . $filename . '.js' );
 
