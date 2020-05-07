@@ -30,6 +30,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import VerticalNav from 'components/vertical-nav';
 import { ECOMMERCE, FORMS } from 'lib/url/support';
 import { showInlineHelpPopover } from 'state/inline-help/actions';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 import './style.scss';
 
@@ -140,6 +141,12 @@ class Security extends React.Component {
 		);
 	}
 
+	handleLearnMoreClicks = ( event ) => {
+		this.props.recordTracksEvent( 'calypso_domain_security_learn_more_click', {
+			path: event.currentTarget.href,
+		} );
+	};
+
 	getContent() {
 		const { domain, translate } = this.props;
 		const { sslStatus } = domain;
@@ -154,10 +161,10 @@ class Security extends React.Component {
 				</CompactCard>
 				{ sslStatuses.SSL_ACTIVE === sslStatus && (
 					<VerticalNav>
-						<VerticalNavItem path={ ECOMMERCE } external>
+						<VerticalNavItem path={ ECOMMERCE } onClick={ this.handleLearnMoreClicks } external>
 							{ translate( 'Learn more about selling products on WordPress.com' ) }
 						</VerticalNavItem>
-						<VerticalNavItem path={ FORMS } external>
+						<VerticalNavItem path={ FORMS } onClick={ this.handleLearnMoreClicks } external>
 							{ translate( 'Learn more about forms on WordPress.com' ) }
 						</VerticalNavItem>
 					</VerticalNav>
@@ -197,5 +204,6 @@ export default connect(
 	},
 	{
 		showInlineHelpPopover,
+		recordTracksEvent,
 	}
 )( localize( Security ) );
