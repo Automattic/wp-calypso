@@ -226,21 +226,14 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( threatsFound ) {
-			return (
-				<ScanThreats
-					className="scan__threats"
-					threats={ threats }
-					error={ errorFound }
-					site={ site }
-				/>
-			);
+			return <ScanThreats threats={ threats } error={ errorFound } site={ site } />;
 		}
 
 		return this.renderScanOkay();
 	}
 
 	render() {
-		if ( null === this.props.siteID ) {
+		if ( null === this.props.siteId ) {
 			return;
 		}
 		return (
