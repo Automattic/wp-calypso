@@ -205,7 +205,7 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const { showActions } = this.props;
+		const { activity, showActions } = this.props;
 
 		return (
 			<>
@@ -218,7 +218,9 @@ class ActivityCard extends Component {
 					}
 				>
 					{ this.shouldRenderContentLink() && this.renderContentLink() }
-					{ showActions && this.renderActionButton( isTopToolbar ) }
+					{ showActions &&
+						activity.activityIsRewindable &&
+						this.renderActionButton( isTopToolbar ) }
 				</div>
 			</>
 		);
