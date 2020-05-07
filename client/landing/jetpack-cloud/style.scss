@@ -234,3 +234,7 @@ html {
 		border-radius: 0 0 3px 3px;
 	}
 }
+
+.empty-content__illustration {
+	filter: hue-rotate( -80deg ) saturate( 1.5 );
+}
