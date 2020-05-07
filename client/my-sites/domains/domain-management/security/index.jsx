@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { domainManagementEdit } from 'my-sites/domains/paths';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Button } from '@automattic/components';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedDomain } from 'lib/domains';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
@@ -29,7 +29,7 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import VerticalNavItem from 'components/vertical-nav/item';
 import VerticalNav from 'components/vertical-nav';
 import { ECOMMERCE, FORMS } from 'lib/url/support';
-import HappinessSupport from 'components/happiness-support';
+import { showInlineHelpPopover } from 'state/inline-help/actions';
 
 import './style.scss';
 
@@ -88,10 +88,9 @@ class Security extends React.Component {
 							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most so if you’re running into delays please let us know so we can help you out.'
 						) }
 					</p>
-					<HappinessSupport
-						liveChatButtonEventName="domain_security_ssl_pending"
-						showLiveChatButton={ true }
-					/>
+					<Button onClick={ this.props.showInlineHelpPopover }>
+						{ translate( 'Contact support' ) }
+					</Button>
 				</React.Fragment>
 			);
 		}
@@ -183,15 +182,20 @@ class Security extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const domain = ownProps.domains && getSelectedDomain( ownProps );
-	const { subscriptionId } = domain || {};
+export default connect(
+	( state, ownProps ) => {
+		const domain = ownProps.domains && getSelectedDomain( ownProps );
+		const { subscriptionId } = domain || {};
 
-	return {
-		domain,
-		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-		redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
-	};
-} )( localize( Security ) );
+		return {
+			domain,
+			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
+		};
+	},
+	{
+		showInlineHelpPopover,
+	}
+)( localize( Security ) );
