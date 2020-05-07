@@ -195,7 +195,7 @@ class AdsWrapper extends Component {
 			<EmptyContent
 				illustration="/calypso/images/illustrations/wordAds.svg"
 				illustrationWidth={ 400 }
-				title={ this.props.translate( 'Only site owners are elegible to activate WordAds.' ) }
+				title={ this.props.translate( 'Only site owners are eligible to activate WordAds.' ) }
 			/>
 		);
 	}
