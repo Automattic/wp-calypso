@@ -16,14 +16,18 @@ const NEW_CATEGORY = {
 	title: __( 'New', 'full-site-editing' ),
 };
 
+/**
+ * Currently selected blocks to be showcased via the "New" category.
+ *
+ * @see {@link https://github.com/Automattic/wp-calypso/pull/41822#discussion_r420993908}
+ */
 const NEW_BLOCKS = [
-	// An example content for testing purposes:
-	'a8c/blog-posts',
-	'a8c/posts-carousel',
 	'jetpack/podcast-player',
-	'jetpack/tiled-gallery',
-	'jetpack/slideshow',
-	'core/gallery',
+	'premium-content/container',
+	'jetpack/calendly',
+	'jetpack/eventbrite',
+	'jetpack/opentable',
+	'jetpack/revue',
 ];
 
 // Add the "New" block category to the top (under the "Most Used").
