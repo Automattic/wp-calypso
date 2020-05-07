@@ -65,3 +65,9 @@
 		@content;
 	}
 }
+
+@mixin onboarding-break-mobile-tall() {
+	@media ( min-height: 750px ) {
+		@content;
+	}
+}
