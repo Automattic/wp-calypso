@@ -10,18 +10,22 @@
 	}
 }
 
+.backups__last-backup-status-grow,
 .backups__last-backup-status {
 	background: var( --studio-white );
 	padding-left: 16px;
 	padding-right: 16px;
 	padding-top: 24px;
-	flex-grow: 1;
 
 	@include breakpoint( '>660px' ) {
 		background: var( --color-surface-backdrop );
 		padding: 0;
 		margin: 0;
 	}
+}
+
+.backups__last-backup-status-grow {
+	flex-grow: 1;
 }
 
 .backups__main-wrap {
