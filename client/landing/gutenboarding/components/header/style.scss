@@ -80,7 +80,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 	max-width: 0;
 	opacity: 0;
 
-	&.has-content:not( .is-modal-open ):not( .is-open ):not( .picked-domain ) {
+	&.has-content:not( .is-modal-open ):not( .is-open ):not( .has-picked-domain ) {
 		animation-duration: 5s;
 		animation-name: gutenboarding_domain-slide-in;
 		@include reduce-motion( 'animation' );

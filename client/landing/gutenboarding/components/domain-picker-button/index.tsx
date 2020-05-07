@@ -74,7 +74,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
 					'is-modal-open': isDomainModalVisible,
-					'picked-domain': ! isDomainPopoverVisible && ! isDomainModalVisible && !! currentDomain,
+					'has-picked-domain':
+						! isDomainPopoverVisible && ! isDomainModalVisible && !! currentDomain,
 					'has-content': hasContent,
 					'has-placeholder': hasPlaceholder,
 				} ) }

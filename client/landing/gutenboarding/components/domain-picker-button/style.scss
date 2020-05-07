@@ -68,7 +68,7 @@
 		display: none; // Hide domain picker button when modal is open
 	}
 
-	&.picked-domain .domain-picker-button__label {
+	&.has-picked-domain .domain-picker-button__label {
 		animation-duration: 0.3s;
 		animation-name: gutenboarding_wriggle;
 		animation-delay: 0.3s;
