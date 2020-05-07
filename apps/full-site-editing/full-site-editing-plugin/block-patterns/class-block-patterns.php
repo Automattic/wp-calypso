@@ -96,13 +96,6 @@ class Block_Patterns {
 
 		closedir( $directory_handle );
 
-		// Patterns to remove / disable.
-		$disabled_patterns = array();
-
-		if ( ! empty( $disabled_patterns ) ) {
-			$pattern_files = array_diff( $pattern_files, $disabled_patterns );
-		}
-
 		// Manually curated list of patterns to go at the top of the list.
 		$featured_patterns = array(
 			'masonry-gallery.php',
