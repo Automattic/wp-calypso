@@ -246,6 +246,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_thank_you_view_site', {
 			product: primaryPurchase.productName,
+			singleDomain: true,
 		} );
 
 		page( domainManagementEdit( selectedSite.slug, primaryPurchase.meta ) );
