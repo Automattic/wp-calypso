@@ -10,6 +10,7 @@ import config from 'config';
 
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import wrapInSiteOffsetProvider from 'landing/jetpack-cloud/lib/wrap-in-site-offset';
 import {
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
@@ -25,6 +26,7 @@ export default function () {
 			siteSelection,
 			navigation,
 			scan,
+			wrapInSiteOffsetProvider,
 			showUpsellIfNoScan,
 			makeLayout,
 			clientRender
@@ -36,6 +38,7 @@ export default function () {
 				siteSelection,
 				navigation,
 				scanHistory,
+				wrapInSiteOffsetProvider,
 				showUpsellIfNoScanHistory,
 				makeLayout,
 				clientRender
