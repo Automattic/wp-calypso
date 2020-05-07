@@ -13,7 +13,12 @@ import { includes } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter, setFilter } from 'state/activity-log/actions';
-import { isActivityBackup, getDailyBackupDeltas, getMetaDiffForDailyBackup } from './utils';
+import {
+	getDailyBackupDeltas,
+	getMetaDiffForDailyBackup,
+	isActivityBackup,
+	isSuccessfulRealtimeBackup,
+} from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -109,12 +114,12 @@ class BackupsPage extends Component {
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
 			this.props.indexedLog[ index ].forEach( ( log ) => {
 				// Discard log if it's not activity rewindable, failed backup or with streams
-				if ( ! isActivityBackup( log ) && ! log.activityIsRewindable && ! log.streams ) {
+				if ( ! isActivityBackup( log ) && ! isSuccessfulRealtimeBackup( log ) ) {
 					return;
 				}
 
 				// Looking for the last backup on the date (any activity rewindable)
-				if ( ! backupsOnSelectedDate.lastBackup && log.activityIsRewindable ) {
+				if ( ! backupsOnSelectedDate.lastBackup ) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
 					backupsOnSelectedDate.rewindableActivities.push( log );
