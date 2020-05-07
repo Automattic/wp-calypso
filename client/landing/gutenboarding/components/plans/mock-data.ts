@@ -82,7 +82,7 @@ export const mockPlans: MockPlans = [
 	},
 ];
 
-export const mockDetails: PlanDetails = [
+export const mockDetails: MockPlanDetails = [
 	{
 		id: 'general',
 		name: null,
