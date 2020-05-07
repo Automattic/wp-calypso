@@ -18,3 +18,9 @@ export type Scan = {
 		isInitial: boolean;
 	};
 };
+
+export type Site = {
+	ID: number;
+	name: string;
+	URL: string;
+};

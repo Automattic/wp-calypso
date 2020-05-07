@@ -15,7 +15,7 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
-import { Scan } from 'landing/jetpack-cloud/sections/scan/types';
+import { Scan, Site } from 'landing/jetpack-cloud/sections/scan/types';
 import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
@@ -37,13 +37,13 @@ import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
 import './style.scss';
 
 interface Props {
-	site: object | null;
+	site: Site | null;
 	siteId: number | null;
 	siteSlug: string | null;
-	siteUrl: string | null;
-	scanState: Scan | null;
+	siteUrl?: string;
+	scanState?: Scan;
 	scanProgress?: number;
-	isInitialScan: boolean;
+	isInitialScan?: boolean;
 	moment: Function;
 	dispatchRecordTracksEvent: Function;
 	dispatchScanRun: Function;
@@ -65,7 +65,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text ) {
+	renderHeader( text: i18nCalypso.TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 
@@ -199,7 +199,7 @@ class ScanPage extends Component< Props > {
 
 	renderScanState() {
 		const { site, scanState } = this.props;
-		if ( ! scanState ) {
+		if ( ! scanState || ! site ) {
 			return <ScanPlaceholder />;
 		}
 
@@ -226,20 +226,16 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( threatsFound ) {
-			return (
-				<ScanThreats
-					className="scan__threats"
-					threats={ threats }
-					error={ errorFound }
-					site={ site }
-				/>
-			);
+			return <ScanThreats threats={ threats } error={ errorFound } site={ site } />;
 		}
 
 		return this.renderScanOkay();
 	}
 
 	render() {
+		if ( null === this.props.siteId ) {
+			return;
+		}
 		return (
 			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
@@ -252,7 +248,7 @@ class ScanPage extends Component< Props > {
 					noticeText={ translate(
 						'Failing to plan is planning to fail. Regular backups ensure that should ' +
 							'the worst happen, you are prepared. Jetpack Backup has you covered.'
-					) }
+					).toString() }
 					noticeLink="https://jetpack.com/upgrade/backup"
 				/>
 			</Main>
@@ -262,12 +258,19 @@ class ScanPage extends Component< Props > {
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state );
+		const site = getSelectedSite( state ) as Site;
 		const siteId = getSelectedSiteId( state );
-		const siteUrl = getSiteUrl( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
-		const scanState = getSiteScanState( state, siteId );
-		const scanProgress = getSiteScanProgress( state, siteId );
+		if ( ! siteId ) {
+			return {
+				site,
+				siteId,
+				siteSlug,
+			};
+		}
+		const siteUrl = getSiteUrl( state, siteId ) || undefined;
+		const scanState = ( getSiteScanState( state, siteId ) as Scan ) || undefined;
+		const scanProgress = getSiteScanProgress( state, siteId ) || undefined;
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 
 		return {
