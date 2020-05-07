@@ -73,6 +73,9 @@ function WPLineItem( {
 					) }
 				</LineItemMeta>
 			) }
+			{ item.wpcom_meta?.extra?.google_apps_users?.length && (
+				<GSuiteUsersList users={ item.wpcom_meta.extra.google_apps_users } />
+			) }
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -316,6 +319,16 @@ const WPOrderReviewListItem = styled.li`
 	display: block;
 	list-style: none;
 `;
+
+function GSuiteUsersList( { users } ) {
+	return (
+		<div>
+			{ users.map( ( { email } ) => (
+				<div key={ email }>{ email }</div>
+			) ) }
+		</div>
+	);
+}
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};
