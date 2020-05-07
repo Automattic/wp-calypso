@@ -7,6 +7,7 @@ import { useSelect } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -46,7 +47,11 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
 
 	const handleModalClose = () => setIsPlanModalVisible( false );
-	const handleButtonClick = () => setIsPlanModalVisible( ( isVisible ) => ! isVisible );
+	const handleButtonClick = () => {
+		if ( config.isEnabled( 'gutenboarding/plans-grid' ) ) {
+			setIsPlanModalVisible( ( isVisible ) => ! isVisible );
+		}
+	};
 
 	/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
 	const planLabel = sprintf( __( '%s Plan' ), getPlanTitle( plan || defaultPlan ) );

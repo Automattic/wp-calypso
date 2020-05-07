@@ -68,6 +68,7 @@
 		"google-drive": true,
 		"gutenboarding": true,
 		"gutenboarding/style-preview": true,
+		"gutenboarding/plans-grid": true,
 		"help": true,
 		"help/courses": true,
 		"inline-help": true,
