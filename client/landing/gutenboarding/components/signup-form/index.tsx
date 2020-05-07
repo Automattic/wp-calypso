@@ -133,6 +133,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							value={ emailVal }
 							disabled={ isFetchingNewUser }
 							type="email"
+							inputmode="email"
 							onChange={ setEmailVal }
 							placeholder={ __( 'Email address' ) }
 							required
