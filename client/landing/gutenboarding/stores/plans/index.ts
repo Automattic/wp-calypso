@@ -19,7 +19,7 @@ registerStore< State >( STORE_KEY, {
 	reducer: reducer as any,
 	selectors,
 	// @TODO: work on persistence
-	// persist: [ 'selectedPlan' ],
+	// persist: [ 'selectedPlanSlug' ],
 } );
 
 declare module '@wordpress/data' {

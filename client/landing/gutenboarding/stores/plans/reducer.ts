@@ -2,9 +2,8 @@
  * Internal dependencies
  */
 import * as plans from '../../../../lib/plans/constants';
-import { getPlan } from '../../../../lib/plans';
 
-const supportedPlanSlugs = [
+export const supportedPlanSlugs = [
 	plans.PLAN_FREE,
 	plans.PLAN_PERSONAL,
 	plans.PLAN_PREMIUM,
@@ -12,19 +11,20 @@ const supportedPlanSlugs = [
 	plans.PLAN_ECOMMERCE,
 ];
 
-const supportedPlans = supportedPlanSlugs.map( getPlan );
+import { PlanAction } from './types';
 
-import { Plan, PlanAction } from './types';
-
-const DEFAUlT_STATE: { selectedPlan: Plan; supportedPlans: Array< Plan > } = {
-	supportedPlans,
-	selectedPlan: getPlan( supportedPlanSlugs[ 0 ] ),
+const DEFAUlT_STATE: {
+	selectedPlanSlug: string | undefined;
+	supportedPlanSlugs: Array< string >;
+} = {
+	supportedPlanSlugs,
+	selectedPlanSlug: undefined,
 };
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 	switch ( action.type ) {
 		case 'SET_PLAN':
-			return { ...state, selectedPlan: action.plan };
+			return { ...state, selectedPlanSlug: action.slug };
 		default:
 			return state;
 	}
