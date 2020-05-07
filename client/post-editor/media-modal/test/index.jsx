@@ -72,14 +72,15 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
-		shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				single={ true }
 				site={ DUMMY_SITE }
 				view={ null }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 			/>
 		).instance();
+		tree.UNSAFE_componentWillMount();
 		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
@@ -87,7 +88,11 @@ describe( 'EditorMediaModal', () => {
 		const media = DUMMY_MEDIA.slice( 0, 1 );
 
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } selectedItems={ media } translate={ translate } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ media }
+				translate={ translate }
+			/>
 		).instance();
 		tree.deleteMedia();
 
@@ -106,7 +111,11 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should prompt to delete multiple items from the list view', () => {
 		const tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } selectedItems={ DUMMY_MEDIA } translate={ translate } />
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				translate={ translate }
+			/>
 		).instance();
 		tree.deleteMedia();
 
@@ -126,10 +135,11 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should prompt to delete a single item from the detail view', () => {
 		const media = DUMMY_MEDIA[ 0 ];
+
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ [ media ] }
+				mediaLibrarySelectedItems={ [ media ] }
 				view={ ModalViews.DETAIL }
 			/>
 		).instance();
@@ -152,7 +162,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 			/>
 		).instance();
@@ -176,7 +186,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
 			/>
@@ -196,7 +206,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
 			/>
@@ -217,7 +227,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ [] }
+				mediaLibrarySelectedItems={ [] }
 				view={ ModalViews.IMAGE_EDITOR }
 				setView={ spy }
 			/>
@@ -230,12 +240,7 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should show a Copy to media library button when viewing external media (no selection)', () => {
 		const tree = shallow(
-			<EditorMediaModal
-				site={ DUMMY_SITE }
-				view={ ModalViews.DETAIL }
-				setView={ spy }
-				selectedItems={ [] }
-			/>
+			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
 		).instance();
 
 		tree.setState( { source: 'external' } );
@@ -250,7 +255,7 @@ describe( 'EditorMediaModal', () => {
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				view={ ModalViews.DETAIL }
-				selectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
 				setView={ spy }
 			/>
 		).instance();
@@ -267,7 +272,7 @@ describe( 'EditorMediaModal', () => {
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				view={ ModalViews.DETAIL }
-				selectedItems={ DUMMY_VIDEO_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
 				setView={ spy }
 			/>
 		).instance();
@@ -284,7 +289,7 @@ describe( 'EditorMediaModal', () => {
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				view={ ModalViews.DETAIL }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				setView={ spy }
 			/>
 		).instance();
@@ -300,7 +305,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
 			/>
@@ -313,12 +318,7 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'should show an insert button if none or one local items are selected', () => {
 		const tree = shallow(
-			<EditorMediaModal
-				site={ DUMMY_SITE }
-				view={ ModalViews.DETAIL }
-				setView={ spy }
-				selectedItems={ [] }
-			/>
+			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
 		).instance();
 
 		const buttons = tree.getModalButtons();
@@ -330,7 +330,7 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
-				selectedItems={ DUMMY_MEDIA }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 				view={ ModalViews.DETAIL }
 				setView={ spy }
 				galleryViewEnabled={ false }
@@ -347,7 +347,7 @@ describe( 'EditorMediaModal', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
-					selectedItems={ DUMMY_MEDIA }
+					mediaLibrarySelectedItems={ DUMMY_MEDIA }
 					onClose={ onClose }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
@@ -373,7 +373,7 @@ describe( 'EditorMediaModal', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
-					selectedItems={ DUMMY_MEDIA }
+					mediaLibrarySelectedItems={ DUMMY_MEDIA }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
 				/>
@@ -402,7 +402,7 @@ describe( 'EditorMediaModal', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
-					selectedItems={ DUMMY_VIDEO_MEDIA }
+					mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
 					view={ ModalViews.DETAIL }
 					setView={ spy }
 				/>

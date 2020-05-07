@@ -49,11 +49,7 @@ describe( 'ImageSelector', () => {
 		imageIds: [],
 	};
 	const store = {
-		getState: () => ( {
-			media: {
-				selectedItems: {},
-			},
-		} ),
+		getState: () => {},
 		subscribe: () => {},
 		dispatch: () => {},
 	};

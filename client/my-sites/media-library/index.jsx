@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
  */
 import Content from './content';
 import getMediaErrors from 'state/selectors/get-media-errors';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaActions from 'lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
@@ -98,7 +98,7 @@ class MediaLibrary extends Component {
 	};
 
 	onAddMedia = () => {
-		const { selectedItems } = this.props;
+		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
 		let filteredItems = selectedItems;
 
 		if ( ! this.props.site ) {
@@ -199,6 +199,7 @@ class MediaLibrary extends Component {
 					onAddAndEditImage={ this.props.onAddAndEditImage }
 					onMediaScaleChange={ this.props.onScaleChange }
 					onSourceChange={ this.props.onSourceChange }
+					selectedItems={ this.props.mediaLibrarySelectedItems }
 					onDeleteItem={ this.props.onDeleteItem }
 					onEditItem={ this.props.onEditItem }
 					onViewDetails={ this.props.onViewDetails }
@@ -215,7 +216,6 @@ export default connect(
 		isConnected: isConnected( state, source ),
 		mediaValidationErrors: getMediaErrors( state, site?.ID ),
 		needsKeyring: needsKeyring( state, source ),
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 	} ),
 	{
 		requestKeyringConnections,

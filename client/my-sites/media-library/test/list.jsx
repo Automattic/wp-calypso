@@ -7,7 +7,7 @@
  */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { defer, toArray } from 'lodash';
+import { toArray } from 'lodash';
 import React from 'react';
 import moment from 'moment';
 
@@ -16,13 +16,10 @@ import moment from 'moment';
  */
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import Dispatcher from 'dispatcher';
-
-/**
- * Module variables
- */
-const DUMMY_SITE_ID = 2916284;
-const mockSelectedItems = [];
+import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );
@@ -30,15 +27,11 @@ jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-
 jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
 	require( 'components/empty-component' )
 );
-jest.mock( 'lib/media/actions', () => ( {
-	__esModule: true,
-	default: {
-		setLibrarySelectedItems: ( siteId, mediaIds ) => {
-			mockSelectedItems.length = 0;
-			mockSelectedItems.push( ...mediaIds );
-		},
-	},
-} ) );
+
+/**
+ * Module variables
+ */
+const DUMMY_SITE_ID = 2916284;
 
 describe( 'MediaLibraryList item selection', () => {
 	let wrapper, mediaList;
@@ -48,18 +41,12 @@ describe( 'MediaLibraryList item selection', () => {
 	}
 
 	function expectSelectedItems() {
-		defer( function () {
-			expect( mockSelectedItems ).to.have.members(
-				toArray( arguments ).map( function ( arg ) {
-					return fixtures.media[ arg ];
-				} )
-			);
-		} );
+		expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.have.members(
+			toArray( arguments ).map( function ( arg ) {
+				return fixtures.media[ arg ];
+			} )
+		);
 	}
-
-	beforeEach( () => {
-		mockSelectedItems.length = 0;
-	} );
 
 	beforeAll( function () {
 		Dispatcher.handleServerAction( {
@@ -69,17 +56,22 @@ describe( 'MediaLibraryList item selection', () => {
 		} );
 	} );
 
+	beforeEach( () => {
+		MediaActions.setLibrarySelectedItems( DUMMY_SITE_ID, [] );
+	} );
+
 	describe( 'multiple selection', () => {
 		beforeEach( () => {
 			wrapper = mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ fixtures.media }
-					mediaScale={ 0.24 }
-					moment={ moment }
-					selectedItems={ [] }
-				/>
+				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
+					<MediaList
+						filterRequiresUpgrade={ false }
+						site={ { ID: DUMMY_SITE_ID } }
+						media={ fixtures.media }
+						mediaScale={ 0.24 }
+						moment={ moment }
+					/>
+				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
 		} );
@@ -159,15 +151,16 @@ describe( 'MediaLibraryList item selection', () => {
 	describe( 'single selection', () => {
 		beforeEach( () => {
 			wrapper = mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ fixtures.media }
-					mediaScale={ 0.24 }
-					moment={ moment }
-					single
-					selectedItems={ [] }
-				/>
+				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
+					<MediaList
+						filterRequiresUpgrade={ false }
+						site={ { ID: DUMMY_SITE_ID } }
+						media={ fixtures.media }
+						mediaScale={ 0.24 }
+						moment={ moment }
+						single
+					/>
+				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
 		} );
@@ -208,7 +201,6 @@ describe( 'MediaLibraryList item selection', () => {
 					moment={ moment }
 					source={ source }
 					single
-					selectedItems={ [] }
 				/>
 			)
 				.find( MediaList )

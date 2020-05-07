@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 
 import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
 import { requestMediaItem } from 'state/media/actions';
@@ -112,21 +113,23 @@ class ProductImagePicker extends Component {
 
 		return (
 			<div className="dialog__product-image-picker">
-				<AsyncLoad
-					require="post-editor/media-modal"
-					siteId={ siteId }
-					onClose={ this.setImage }
-					enabledFilters={ [ 'images' ] }
-					visible={ isSelecting }
-					isBackdropVisible={ false }
-					labels={ {
-						confirm: translate( 'Add' ),
-					} }
-					single
-					imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
-					onImageEditorDoneHook={ makeDirtyAfterImageEdit }
-					onRestoreMediaHook={ makeDirtyAfterImageEdit }
-				/>
+				<MediaLibrarySelectedData siteId={ siteId }>
+					<AsyncLoad
+						require="post-editor/media-modal"
+						siteId={ siteId }
+						onClose={ this.setImage }
+						enabledFilters={ [ 'images' ] }
+						visible={ isSelecting }
+						isBackdropVisible={ false }
+						labels={ {
+							confirm: translate( 'Add' ),
+						} }
+						single
+						imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
+						onImageEditorDoneHook={ makeDirtyAfterImageEdit }
+						onRestoreMediaHook={ makeDirtyAfterImageEdit }
+					/>
+				</MediaLibrarySelectedData>
 
 				<div className="dialog__product-image-container">
 					{ this.props.input.value && this.getCurrentImage() }

@@ -13,6 +13,7 @@ import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId
  */
 import SiteIcon from 'blocks/site-icon';
 import { Button } from '@automattic/components';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import accept from 'lib/accept';
@@ -28,10 +29,10 @@ import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import InfoPopover from 'components/info-popover';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import {
 	getImageEditorCrop,
@@ -166,8 +167,8 @@ class SiteIconSetting extends Component {
 			return;
 		}
 
-		const { siteId, selectedItems } = this.props;
-		const selectedItem = head( selectedItems );
+		const { siteId } = this.props;
+		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
 		if ( ! selectedItem ) {
 			return;
 		}
@@ -310,29 +311,31 @@ class SiteIconSetting extends Component {
 					</Button>
 				) }
 				{ hasToggledModal && (
-					<AsyncLoad
-						require="post-editor/media-modal"
-						placeholder={ <EditorMediaModalDialog isVisible /> }
-						siteId={ siteId }
-						onClose={ this.editSelectedMedia }
-						isParentReady={ this.isParentReady }
-						enabledFilters={ [ 'images' ] }
-						{ ...( isEditingSiteIcon
-							? {
-									imageEditorProps: {
-										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-										onDone: this.setSiteIcon,
-										onCancel: this.cancelEditingSiteIcon,
-									},
-							  }
-							: {} ) }
-						visible={ isModalVisible }
-						labels={ {
-							confirm: translate( 'Continue' ),
-						} }
-						disableLargeImageSources={ true }
-						single
-					/>
+					<MediaLibrarySelectedData siteId={ siteId }>
+						<AsyncLoad
+							require="post-editor/media-modal"
+							placeholder={ <EditorMediaModalDialog isVisible /> }
+							siteId={ siteId }
+							onClose={ this.editSelectedMedia }
+							isParentReady={ this.isParentReady }
+							enabledFilters={ [ 'images' ] }
+							{ ...( isEditingSiteIcon
+								? {
+										imageEditorProps: {
+											allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+											onDone: this.setSiteIcon,
+											onCancel: this.cancelEditingSiteIcon,
+										},
+								  }
+								: {} ) }
+							visible={ isModalVisible }
+							labels={ {
+								confirm: translate( 'Continue' ),
+							} }
+							disableLargeImageSources={ true }
+							single
+						/>
+					</MediaLibrarySelectedData>
 				) }
 			</FormFieldset>
 		);
@@ -357,7 +360,6 @@ export default connect(
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state ),
 			site: getSelectedSite( state ),
-			selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 		};
 	},
 	{

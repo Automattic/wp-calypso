@@ -12,6 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
@@ -120,14 +121,16 @@ class EditorFeaturedImage extends Component {
 		}
 
 		return (
-			<MediaModal
-				visible={ this.props.selecting || this.state.isSelecting }
-				onClose={ this.setImage }
-				siteId={ this.props.siteId }
-				labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
-				enabledFilters={ [ 'images' ] }
-				single
-			/>
+			<MediaLibrarySelectedData siteId={ this.props.siteId }>
+				<MediaModal
+					visible={ this.props.selecting || this.state.isSelecting }
+					onClose={ this.setImage }
+					siteId={ this.props.siteId }
+					labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
+					enabledFilters={ [ 'images' ] }
+					single
+				/>
+			</MediaLibrarySelectedData>
 		);
 	}
 

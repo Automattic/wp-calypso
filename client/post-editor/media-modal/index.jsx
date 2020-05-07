@@ -33,7 +33,6 @@ import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';
 import CloseOnEscape from 'components/close-on-escape';
 import accept from 'lib/accept';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -71,7 +70,7 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 export class EditorMediaModal extends Component {
 	static propTypes = {
 		visible: PropTypes.bool,
-		selectedItems: PropTypes.arrayOf( PropTypes.object ),
+		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
 		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
@@ -94,6 +93,7 @@ export class EditorMediaModal extends Component {
 
 	static defaultProps = {
 		visible: false,
+		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
 		isBackdropVisible: true,
 		isParentReady: () => true,
@@ -142,8 +142,8 @@ export class EditorMediaModal extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		const { view, selectedItems, site, single } = this.props;
-		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
+		const { view, mediaLibrarySelectedItems, site, single } = this.props;
+		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
 	}
@@ -207,22 +207,22 @@ export class EditorMediaModal extends Component {
 	}
 
 	confirmSelection = () => {
-		const { view, selectedItems } = this.props;
+		const { view, mediaLibrarySelectedItems } = this.props;
 
-		if ( areMediaActionsDisabled( view, selectedItems, this.props.isParentReady ) ) {
+		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems, this.props.isParentReady ) ) {
 			return;
 		}
 
-		if ( selectedItems.length && this.state.source !== '' ) {
-			const itemsWithTransientId = selectedItems.map( ( item ) =>
+		if ( mediaLibrarySelectedItems.length && this.state.source !== '' ) {
+			const itemsWithTransientId = mediaLibrarySelectedItems.map( ( item ) =>
 				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
 			);
 			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {
-			const value = selectedItems.length
+			const value = mediaLibrarySelectedItems.length
 				? {
 						type: ModalViews.GALLERY === view ? 'gallery' : 'media',
-						items: selectedItems,
+						items: mediaLibrarySelectedItems,
 						settings: this.state.gallerySettings,
 				  }
 				: undefined;
@@ -231,7 +231,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	isTransientSelected = () => {
-		return this.props.selectedItems.some( ( item ) => item.transient );
+		return this.props.mediaLibrarySelectedItems.some( ( item ) => item.transient );
 	};
 
 	setDetailSelectedIndex = ( index ) => {
@@ -241,23 +241,26 @@ export class EditorMediaModal extends Component {
 	};
 
 	setNextAvailableDetailView() {
-		if ( 1 === this.props.selectedItems.length ) {
+		if ( 1 === this.props.mediaLibrarySelectedItems.length ) {
 			// If this is the only selected item, return user to the list
 			this.props.setView( ModalViews.LIST );
-		} else if ( this.getDetailSelectedIndex() === this.props.selectedItems.length - 1 ) {
+		} else if (
+			this.getDetailSelectedIndex() ===
+			this.props.mediaLibrarySelectedItems.length - 1
+		) {
 			// If this is the last selected item, decrement to the previous
 			this.setDetailSelectedIndex( Math.max( this.getDetailSelectedIndex() - 1, 0 ) );
 		}
 	}
 
 	confirmDeleteMedia = ( accepted ) => {
-		const { site, selectedItems } = this.props;
+		const { site, mediaLibrarySelectedItems } = this.props;
 
 		if ( ! site || ! accepted ) {
 			return;
 		}
 
-		let toDelete = selectedItems;
+		let toDelete = mediaLibrarySelectedItems;
 		if ( ModalViews.DETAIL === this.props.view ) {
 			toDelete = toDelete[ this.getDetailSelectedIndex() ];
 			this.setNextAvailableDetailView();
@@ -269,13 +272,13 @@ export class EditorMediaModal extends Component {
 	};
 
 	deleteMedia = () => {
-		const { view, selectedItems, translate } = this.props;
+		const { view, mediaLibrarySelectedItems, translate } = this.props;
 		let selectedCount;
 
 		if ( ModalViews.DETAIL === view ) {
 			selectedCount = 1;
 		} else {
-			selectedCount = selectedItems.length;
+			selectedCount = mediaLibrarySelectedItems.length;
 		}
 
 		const confirmMessage = translate(
@@ -368,8 +371,8 @@ export class EditorMediaModal extends Component {
 	};
 
 	handleCancel = () => {
-		const { selectedItems } = this.props;
-		const item = selectedItems[ this.getDetailSelectedIndex() ];
+		const { mediaLibrarySelectedItems } = this.props;
+		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
 			this.props.setView( ModalViews.LIST );
@@ -387,9 +390,9 @@ export class EditorMediaModal extends Component {
 	};
 
 	getDetailSelectedIndex() {
-		const { selectedItems } = this.props;
+		const { mediaLibrarySelectedItems } = this.props;
 		const { detailSelectedIndex } = this.state;
-		if ( detailSelectedIndex >= selectedItems.length ) {
+		if ( detailSelectedIndex >= mediaLibrarySelectedItems.length ) {
 			return 0;
 		}
 		return detailSelectedIndex;
@@ -435,13 +438,13 @@ export class EditorMediaModal extends Component {
 	};
 
 	editItem = ( item ) => {
-		const { site, selectedItems, single } = this.props;
+		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
 		}
 
 		// Append item to set of selected items if not already selected.
-		let items = selectedItems;
+		let items = mediaLibrarySelectedItems;
 		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
 			if ( single ) {
 				items = [ item ];
@@ -471,7 +474,7 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		const selectedItems = this.props.selectedItems;
+		const selectedItems = this.props.mediaLibrarySelectedItems;
 		const galleryViewEnabled = this.props.galleryViewEnabled;
 		const isDisabled = areMediaActionsDisabled(
 			this.props.view,
@@ -535,7 +538,7 @@ export class EditorMediaModal extends Component {
 				content = (
 					<MediaModalDetail
 						site={ this.props.site }
-						items={ this.props.selectedItems }
+						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.getDetailSelectedIndex() }
 						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
@@ -547,7 +550,7 @@ export class EditorMediaModal extends Component {
 				content = (
 					<MediaModalGallery
 						site={ this.props.site }
-						items={ this.props.selectedItems }
+						items={ this.props.mediaLibrarySelectedItems }
 						settings={ this.state.gallerySettings }
 						onUpdateSettings={ this.updateSettings }
 					/>
@@ -555,7 +558,7 @@ export class EditorMediaModal extends Component {
 				break;
 
 			case ModalViews.IMAGE_EDITOR: {
-				const { site, imageEditorProps, selectedItems: items } = this.props;
+				const { site, imageEditorProps, mediaLibrarySelectedItems: items } = this.props;
 				const selectedIndex = this.getDetailSelectedIndex();
 				const media = get( items, selectedIndex, null );
 
@@ -573,7 +576,7 @@ export class EditorMediaModal extends Component {
 			}
 
 			case ModalViews.VIDEO_EDITOR: {
-				const { selectedItems: items } = this.props;
+				const { mediaLibrarySelectedItems: items } = this.props;
 				const selectedIndex = this.getDetailSelectedIndex();
 				const media = get( items, selectedIndex, null );
 
@@ -607,6 +610,7 @@ export class EditorMediaModal extends Component {
 						single={ this.props.single }
 						onDeleteItem={ this.deleteMedia }
 						onViewDetails={ this.props.onViewDetails }
+						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						postId={ this.props.postId }
 						disableLargeImageSources={ this.props.disableLargeImageSources }
 						disabledDataSources={ this.props.disabledDataSources }
@@ -643,7 +647,6 @@ export default connect(
 		// siteId and forcing descendant components to access via state
 		site: site || getSite( state, siteId ),
 		postId: getEditorPostId( state ),
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ?? siteId ),
 	} ),
 	{
 		setView: setEditorMediaModalView,
