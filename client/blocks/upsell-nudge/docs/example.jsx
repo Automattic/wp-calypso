@@ -15,7 +15,6 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with an icon."
-			showIcon={ true }
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -23,7 +22,6 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with a description."
-			showIcon={ true }
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -31,7 +29,6 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with a description."
-			showIcon={ true }
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -40,7 +37,6 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description and the horizontal layout."
-			showIcon={ true }
 			horizontal
 		/>
 		<UpsellNudge
@@ -55,13 +51,11 @@ const UpsellNudgeExample = () => (
 			] }
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description, prices, and a list of features."
-			showIcon={ true }
 			price={ [ 48, 50 ] }
 		/>
 		<UpsellNudge
 			forceDisplay
 			isJetpackDevDocs
-			showIcon
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a Jetpack nudge."
@@ -70,6 +64,7 @@ const UpsellNudgeExample = () => (
 			forceDisplay
 			href="#"
 			compact
+			showIcon={ false }
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a compact nudge with no icon."
 		/>

@@ -97,7 +97,7 @@ export class Banner extends Component {
 	}
 
 	getContent() {
-		const { callToAction, description, event, title, target } = this.props;
+		const { callToAction, description, event, href, title, target } = this.props;
 
 		return (
 			<div className="banner__content">
@@ -120,13 +120,7 @@ export class Banner extends Component {
 							{ callToAction }
 						</Button>
 						) : (
-						<Button
-							compact
-							href={ this.getHref() }
-							onClick={ this.handleClick }
-							primary
-							target={ target }
-						>
+						<Button compact href={ href } onClick={ this.handleClick } primary target={ target }>
 							{ callToAction }
 						</Button>
 						) )
@@ -145,6 +139,7 @@ export class Banner extends Component {
 			dismissTemporary,
 			forceHref,
 			horizontal,
+			href,
 		} = this.props;
 
 		const classes = classNames(
@@ -172,7 +167,7 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
+				href={ ( disableHref || callToAction ) && ! forceHref ? null : href }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 			>
 				{ this.getIcon() }

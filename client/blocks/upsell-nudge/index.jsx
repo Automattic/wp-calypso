@@ -262,6 +262,7 @@ export class UpsellNudge extends Component {
 			forceDisplay,
 			forceHref,
 			horizontal,
+			isJetpackDevDocs,
 			isVip,
 			jetpack,
 			plan,
@@ -305,7 +306,7 @@ export class UpsellNudge extends Component {
 			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName },
 			{ 'is-horizontal': horizontal },
-			{ 'is-jetpack': jetpack }
+			{ 'is-jetpack': jetpack || isJetpackDevDocs }
 		);
 
 		if ( dismissPreferenceName ) {
