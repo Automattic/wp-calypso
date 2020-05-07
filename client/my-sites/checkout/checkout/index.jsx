@@ -350,7 +350,8 @@ export class Checkout extends React.Component {
 				selectedSiteSlug,
 				this.props.upgradeIntent,
 				this.props.redirectTo,
-				returnToBlockEditor
+				returnToBlockEditor,
+				this.props.previousRoute
 			);
 		}
 
