@@ -1,6 +1,8 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
+$illustration-height: 250px;
+
 .editor-deprecation-dialog {
 
 	&.components-modal__frame {
@@ -31,7 +33,7 @@
 			height: auto;
 			line-height: 1.2;
 			font-family: $serif;
-			margin-top: 260px;
+			margin-top: $illustration-height + 24px;
 
 			@include break-small {
 				margin-top: unset;
@@ -55,19 +57,19 @@
 
 .editor-deprecation-dialog__illustration {
 	background: url( '/calypso/images/illustrations/block-library.svg' ) no-repeat;
+	background-color: #007cba;
+	background-position: bottom;
+	background-size: auto;
 	margin: 0;
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
-	height: 250px;
+	height: $illustration-height;
 	width: 100%;
-	background-size: auto;
-	background-position: bottom;
 
 	@include break-small {
 		background-size: 70% auto;
-		background-color: #007cba;
 		width: 45%;
 		height: unset;
 	}
