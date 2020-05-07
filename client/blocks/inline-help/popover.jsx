@@ -70,6 +70,7 @@ class InlineHelpPopover extends Component {
 	state = {
 		showSecondaryView: false,
 		activeSecondaryView: '',
+		activatingClassicOnAtomic: false,
 	};
 
 	componentDidMount() {
@@ -77,6 +78,18 @@ class InlineHelpPopover extends Component {
 
 		if ( isAtomic ) {
 			fetchAtomicPlugins( [ siteId ] );
+		}
+	}
+
+	componentDidUpdate() {
+		const { sitePlugins } = this.props;
+
+		if ( this.state.activatingClassicOnAtomic ) {
+			const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
+
+			if ( classicPlugin?.active ) {
+				this.redirectToClassicEditor();
+			}
 		}
 	}
 
@@ -220,30 +233,46 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	checkForClassicEditorOnAtomic( siteId, sitePlugins ) {
+	checkForClassicEditorOnAtomic() {
+		const { siteId, sitePlugins } = this.props;
 		const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
 
-		if ( classicPlugin && ! classicPlugin.isActive ) {
-			this.props.activatePlugin( siteId, classicPlugin );
+		if ( ! classicPlugin ) {
+			//TODO: In theory we should never get here but should add some sort of error message just in case.
+			return;
 		}
-		// TODO: need some error handling here if classic plugin not found
+
+		if ( ! classicPlugin.active ) {
+			this.setState( { activatingClassicOnAtomic: true } );
+			this.props.activatePlugin( siteId, classicPlugin );
+			return;
+		}
+
+		this.redirectToClassicEditor();
 	}
 
 	switchToClassicEditor = () => {
-		const { siteId, onClose, optOut, classicUrl, translate, isAtomic, sitePlugins } = this.props;
+		const { siteId, translate, isAtomic, sitePlugins } = this.props;
 
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
 
 		if ( proceed ) {
-			if ( isAtomic ) {
+			if ( isAtomic && isEnabled( 'editor/after-deprecation' ) ) {
 				this.checkForClassicEditorOnAtomic( siteId, sitePlugins );
+				return;
 			}
-			optOut( siteId, classicUrl );
-			onClose();
+			this.redirectToClassicEditor();
 		}
 	};
+
+	redirectToClassicEditor() {
+		const { siteId, classicUrl, optOut, onClose } = this.props;
+		this.setState( { activatingClassicOnAtomic: false } );
+		optOut( siteId, classicUrl );
+		onClose();
+	}
 
 	switchToBlockEditor = () => {
 		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
