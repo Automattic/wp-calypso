@@ -28,15 +28,13 @@ function enqueue_script( $filename, $in_footer = false ) {
 		);
 	}
 
-	$asset        = file_exists( $asset_path ) ? require_once $asset_path : null;
-	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
-	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/' . $filename . '.js' );
+	$asset = require_once $asset_path;
 
 	wp_enqueue_script(
 		$filename,
 		plugins_url( 'dist/' . $filename . '.js', __FILE__ ),
-		$dependencies,
-		$version,
+		$asset['dependencies'],
+		$asset['version'],
 		$in_footer
 	);
 }
