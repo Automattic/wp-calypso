@@ -35,6 +35,7 @@ function Edit( props ) {
 				<div hidden={ selectedTab.id === 'wall' } className={ selectedTab.className }>
 					{ stripeNudge }
 					<InnerBlocks
+						renderAppender={ ! props.hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
 						templateLock={ false }
 						template={ [
 							[
@@ -57,6 +58,8 @@ function Edit( props ) {
 export default compose( [
 	withSelect( ( select, props ) => {
 		return {
+			// @ts-ignore difficult to type with JSDoc
+			hasInnerBlocks: !! ( select( 'core/block-editor' ).getBlocksByClientId( props.clientId )[ 0 ].innerBlocks.length ),
 			// @ts-ignore difficult to type with JSDoc
 			containerClientId: select( 'core/block-editor' ).getBlockHierarchyRootClientId(
 				props.clientId
