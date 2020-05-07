@@ -54,16 +54,21 @@ function PhoneInput( {
 	const { displayValue } = phoneNumberState;
 
 	const numberInputRef = useSharedRef( inputRef );
+	const oldCursorPosition = useRef( [] );
 
-	useAdjustCursorPosition( displayValue, countryCode, numberInputRef );
+	useAdjustCursorPosition( displayValue, countryCode, numberInputRef, oldCursorPosition );
 
 	const handleInput = getInputHandler(
 		setPhoneNumberState,
 		onChange,
 		countryCode,
 		countriesList,
-		freezeSelection
+		freezeSelection,
+		oldCursorPosition
 	);
+	const handleCursorMove = ( event ) => {
+		recordCursorPosition( oldCursorPosition, event.target.selectionStart );
+	};
 	const handleCountrySelection = getCountrySelectionHandler(
 		displayValue,
 		countryCode,
@@ -78,6 +83,8 @@ function PhoneInput( {
 			<input
 				placeholder={ translate( 'Phone' ) }
 				onChange={ handleInput }
+				onClick={ handleCursorMove }
+				onKeyUp={ handleCursorMove }
 				name={ name }
 				value={ displayValue }
 				ref={ numberInputRef }
@@ -120,13 +127,11 @@ PhoneInput.propTypes = {
 	enableStickyCountry: PropTypes.bool,
 };
 
-function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
-	const cursorPosition = useRef( 0 );
+function useAdjustCursorPosition( displayValue, countryCode, numberInputRef, cursorPositionRef ) {
 	const oldValue = useRef( displayValue );
 	const oldCountry = useRef( countryCode );
 	useEffect( () => {
-		const oldCursorPosition = cursorPosition.current;
-		cursorPosition.current = numberInputRef.current?.selectionStart ?? 0;
+		const oldCursorPosition = getLastCursorPosition( cursorPositionRef.current );
 		if ( ! numberInputRef.current ) {
 			return;
 		}
@@ -144,8 +149,22 @@ function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
 		oldCountry.current = countryCode;
 
 		debug( 'moving cursor from', oldCursorPosition, 'to', newCursorPosition );
+		cursorPositionRef.current.push( newCursorPosition );
 		numberInputRef.current.setSelectionRange( newCursorPosition, newCursorPosition );
-	}, [ displayValue, numberInputRef, countryCode ] );
+	}, [ displayValue, numberInputRef, countryCode, cursorPositionRef ] );
+}
+
+function getLastCursorPosition( recentPositions ) {
+	const length = recentPositions.length;
+	let index = length - 1;
+	if ( length === 0 ) {
+		return 0;
+	} else if ( length >= 2 ) {
+		index = length - 2;
+	} else if ( length >= 1 ) {
+		index = length - 1;
+	}
+	return recentPositions[ index ];
 }
 
 function useSharedRef( inputRef ) {
@@ -211,11 +230,13 @@ function getInputHandler(
 	onChange,
 	countryCodeValue,
 	countriesList,
-	freezeSelection
+	freezeSelection,
+	oldCursorPosition
 ) {
 	return function handleInput( event ) {
 		event.preventDefault();
 		const rawValue = event.target.value;
+		recordCursorPosition( oldCursorPosition, event.target.selectionStart );
 
 		const { countryCode, value: displayValue } = calculateInputAndCountryCode(
 			rawValue,
@@ -231,6 +252,12 @@ function getInputHandler(
 
 		onChange( { value: displayValue, countryCode } );
 	};
+}
+
+function recordCursorPosition( oldCursorPosition, newPosition ) {
+	oldCursorPosition.current.push( newPosition );
+	oldCursorPosition.current = oldCursorPosition.current.slice( -3 );
+	debug( 'updating oldCursorPosition to', oldCursorPosition.current );
 }
 
 /**
