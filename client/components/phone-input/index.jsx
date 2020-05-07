@@ -121,9 +121,12 @@ PhoneInput.propTypes = {
 };
 
 function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
+	const cursorPosition = useRef( 0 );
 	const oldValue = useRef( displayValue );
 	const oldCountry = useRef( countryCode );
 	useEffect( () => {
+		const oldCursorPosition = cursorPosition.current;
+		cursorPosition.current = numberInputRef.current?.selectionStart ?? 0;
 		if ( ! numberInputRef.current ) {
 			return;
 		}
@@ -131,11 +134,16 @@ function useAdjustCursorPosition( displayValue, countryCode, numberInputRef ) {
 			return;
 		}
 
-		const newCursorPosition = getUpdatedCursorPosition( oldValue.current, displayValue );
+		const newCursorPosition = getUpdatedCursorPosition(
+			oldValue.current,
+			displayValue,
+			oldCursorPosition
+		);
 
 		oldValue.current = displayValue;
 		oldCountry.current = countryCode;
 
+		debug( 'moving cursor from', oldCursorPosition, 'to', newCursorPosition );
 		numberInputRef.current.setSelectionRange( newCursorPosition, newCursorPosition );
 	}, [ displayValue, numberInputRef, countryCode ] );
 }
