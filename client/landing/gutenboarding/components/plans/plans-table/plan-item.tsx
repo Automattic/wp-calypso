@@ -6,11 +6,6 @@ import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import type { Plan } from '../../../lib/plans';
-
 const TickIcon = (
 	<Icon
 		icon={ () => (
@@ -33,18 +28,18 @@ const TickIcon = (
 );
 
 export interface Props {
-	id: Plan;
+	slug: string;
 	name: string;
 	price: string;
 	features: Array< string >;
 	domainName?: string;
 	isPopular?: boolean;
 	isSelected?: boolean;
-	onSelect: ( id: Plan ) => void;
+	onSelect: ( slug: string ) => void;
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
-	id,
+	slug,
 	name,
 	price,
 	isPopular = false,
@@ -71,7 +66,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 				<Button
 					className={ classNames( 'plan-item__select-button', { 'is-selected': isSelected } ) }
 					onClick={ () => {
-						onSelect( id );
+						onSelect( slug );
 					} }
 					isLarge
 				>

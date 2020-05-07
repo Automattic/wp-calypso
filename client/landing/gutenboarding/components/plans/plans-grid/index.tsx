@@ -9,7 +9,6 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 
-import { Plan } from '../../../lib/plans';
 import { Title, SubTitle } from '../../titles';
 import ActionButtons from '../../action-buttons';
 import PlansTable from '../plans-table';
@@ -21,24 +20,24 @@ import PlansDetails from '../plans-details';
 import './style.scss';
 
 export interface Props {
-	currentPlan: Plan;
-	renderConfirmButton: ( plan: Plan ) => React.ReactElement;
+	selectedPlanSlug: string;
+	renderConfirmButton: ( plan: string ) => React.ReactElement;
 	cancelButton?: React.ReactElement;
-	onPlanChange?: ( plan: Plan ) => void;
+	onPlanChange?: ( plan: string ) => void;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
-	currentPlan,
+	selectedPlanSlug,
 	renderConfirmButton,
 	cancelButton,
 	onPlanChange = () => undefined,
 } ) => {
 	const { __ } = useI18n();
-	const [ selectedPlan, setSelectedPlan ] = React.useState< Plan >( currentPlan );
+	const [ currentPlan, setCurrentPlan ] = React.useState< string >( selectedPlanSlug );
 	const [ showDetails, setShowDetails ] = React.useState( false );
 
-	const handlePlanSelect = ( plan: Plan ) => {
-		setSelectedPlan( plan );
+	const handlePlanSelect = ( plan: string ) => {
+		setCurrentPlan( plan );
 		onPlanChange( plan );
 	};
 
@@ -58,13 +57,13 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					</SubTitle>
 				</div>
 				<ActionButtons
-					primaryButton={ renderConfirmButton( selectedPlan ) }
+					primaryButton={ renderConfirmButton( currentPlan ) }
 					secondaryButton={ cancelButton }
 				/>
 			</div>
 
 			<div className="plans-grid__table">
-				<PlansTable selectedPlan={ selectedPlan } onPlanSelect={ handlePlanSelect }></PlansTable>
+				<PlansTable selectedPlanSlug={ currentPlan } onPlanSelect={ handlePlanSelect }></PlansTable>
 			</div>
 
 			<div className="plans-grid__details">

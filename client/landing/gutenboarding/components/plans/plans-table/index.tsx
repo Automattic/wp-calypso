@@ -8,26 +8,30 @@ import React from 'react';
  */
 import './style.scss';
 import PlanItem from './plan-item';
-import { mockPlans } from '../mock-data';
-
-import type { Plan } from '../../../lib/plans';
+import { useSelect } from '@wordpress/data';
+import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 
 export interface Props {
-	selectedPlan: Plan;
-	onPlanSelect: ( planId: Plan ) => void;
+	selectedPlanSlug: string;
+	onPlanSelect: ( planSlug: string ) => void;
 }
 
-const Plans: React.FunctionComponent< Props > = ( { selectedPlan, onPlanSelect } ) => {
+const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
+	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+
 	return (
 		<div className="plans-table">
 			<div className="plans-table__body">
 				<div className="plans-table__items">
-					{ mockPlans.map( ( { id, ...props }, i ) => (
+					{ supportedPlans.map( ( plan, i ) => (
 						<PlanItem
 							key={ i }
-							id={ id }
-							{ ...props }
-							isSelected={ id === selectedPlan }
+							slug={ plan.getStoreSlug() }
+							features={ plan.features }
+							isPopular={ plan.isPopular }
+							price={ plan.price }
+							name={ plan.getTitle() }
+							isSelected={ plan.getStoreSlug() === selectedPlanSlug }
 							onSelect={ onPlanSelect }
 						></PlanItem>
 					) ) }

@@ -9,29 +9,26 @@ import {
 	PLAN_ECOMMERCE,
 } from '../../../../lib/plans/constants';
 
-import type { Plan } from '../../lib/plans';
+export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
 
-export type MockPlanFeature = { name: string; type: string; data: Array< boolean | string > };
-
-export type MockPlanDetail = {
+export type PlanDetail = {
 	id: string;
 	name: string | null;
-	features: Array< MockPlanFeature >;
+	features: Array< PlanFeature >;
 };
 
-export type MockPlanDetails = Array< MockPlanDetail >;
+export type PlanDetails = Array< PlanDetail >;
 
-export type MockPlan = {
-	id: Plan;
-	name: string;
-	price: string;
-	features: Array< string >;
+export type FortifiedPlan = {
+	name?: string;
+	price?: string;
+	features?: Array< string >;
 	isPopular?: boolean;
 	isSelected?: boolean;
 	domainName?: string;
 };
 
-export type MockPlans = Array< MockPlan >;
+type FortifiedPlans = Record< string, FortifiedPlan >;
 
 const mainFeatures = [
 	'Remove WordPress ads',
@@ -46,43 +43,31 @@ const mainFeatures = [
 	'Accept Payments in 60+ Countries',
 ];
 
-export const mockPlans: MockPlans = [
-	{
-		id: PLAN_FREE,
-		name: 'Free',
+export const planFeatures: FortifiedPlans = {
+	[ PLAN_FREE ]: {
 		price: '$0',
 		features: [ '3 GB', ...mainFeatures.slice( 0, 1 ) ],
-		domainName: 'roastingbeans.wordpress.com',
 	},
-	{
-		id: PLAN_PERSONAL,
-		name: 'Personal',
+	[ PLAN_PERSONAL ]: {
 		price: '$5',
 		features: [ '6 GB', ...mainFeatures.slice( 0, 4 ) ],
-		isSelected: true,
 	},
-	{
-		id: PLAN_PREMIUM,
-		name: 'Premium',
+	[ PLAN_PREMIUM ]: {
 		price: '$8',
 		features: [ '13 GB', ...mainFeatures.slice( 0, 9 ) ],
 		isPopular: true,
 	},
-	{
-		id: PLAN_BUSINESS,
-		name: 'Business',
+	[ PLAN_BUSINESS ]: {
 		price: '$25',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 10 ) ],
 	},
-	{
-		id: PLAN_ECOMMERCE,
-		name: 'Commerce',
+	[ PLAN_ECOMMERCE ]: {
 		price: '$45',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 11 ) ],
 	},
-];
+};
 
-export const mockDetails: MockPlanDetails = [
+export const planDetails: PlanDetails = [
 	{
 		id: 'general',
 		name: null,

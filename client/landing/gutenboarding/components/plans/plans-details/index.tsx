@@ -4,14 +4,17 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
+import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
-import { mockDetails, MockPlanFeature, MockPlanDetail } from '../mock-data';
 
 const PlansDetails: React.FunctionComponent = () => {
+	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
+
 	const { __ } = useI18n();
 
 	return (
@@ -26,14 +29,14 @@ const PlansDetails: React.FunctionComponent = () => {
 					<th>{ __( 'Commerce' ) }</th>
 				</tr>
 			</thead>
-			{ mockDetails.map( ( detail: MockPlanDetail ) => (
+			{ plansDetails.map( ( detail ) => (
 				<tbody key={ detail.id }>
 					{ detail.name && (
 						<tr className="plans-details__header-row">
 							<th colSpan={ 6 }>{ detail.name }</th>
 						</tr>
 					) }
-					{ detail.features.map( ( feature: MockPlanFeature, i ) => (
+					{ detail.features.map( ( feature, i ) => (
 						<tr className="plans-details__feature-row" key={ i }>
 							<th>{ feature.name }</th>
 							{ feature.data.map( ( value, j ) => (
