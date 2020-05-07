@@ -22,7 +22,6 @@ const {
 	vertical,
 	segment,
 	tracksUserData,
-	siteInformation = {},
 	screenAction,
 	theme,
 	isFrontPage,
@@ -62,10 +61,7 @@ registerPlugin( 'page-templates-sidebar', {
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 				icon="none"
 			>
-				<SidebarTemplatesPlugin
-					{ ...templatesPluginSharedProps }
-					siteInformation={ siteInformation }
-				/>
+				<SidebarTemplatesPlugin { ...templatesPluginSharedProps } />
 			</PluginDocumentSettingPanel>
 		);
 	},

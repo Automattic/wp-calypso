@@ -153,17 +153,12 @@ class Starter_Page_Templates {
 		wp_enqueue_script( 'starter-page-templates' );
 		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
 
-		$default_info      = [
-			'title'    => get_bloginfo( 'name' ),
-			'vertical' => $vertical['name'],
-		];
 		$default_templates = [
 			[
 				'title' => 'Blank',
 				'slug'  => 'blank',
 			],
 		];
-		$site_info         = get_option( 'site_contact_info', [] );
 		/**
 		 * Filters the config before it's passed to the frontend.
 		 *
@@ -172,16 +167,15 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			[
-				'siteInformation' 		=> array_merge( $default_info, $site_info ),
-				'templates'       		=> array_merge( $default_templates, $vertical_templates ),
-				'vertical'        		=> $vertical,
-				'segment'         		=> $segment,
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'screenAction'    		=> isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'           		=> normalize_theme_slug( get_stylesheet() ),
-				// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				'isFrontPage'     		=> isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
-				'hideFrontPageTitle'	=> get_theme_mod( 'hide_front_page_title' ),
+				'templates'          => array_merge( $default_templates, $vertical_templates ),
+				'vertical'           => $vertical,
+				'segment'            => $segment,
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'screenAction'       => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
+				'theme'              => normalize_theme_slug( get_stylesheet() ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'isFrontPage'        => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
+				'hideFrontPageTitle' => get_theme_mod( 'hide_front_page_title' ),
 			]
 		);
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
