@@ -59,6 +59,7 @@ export class Banner extends Component {
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		primaryButton: PropTypes.bool,
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
@@ -82,6 +83,7 @@ export class Banner extends Component {
 		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
+		primaryButton: true,
 		showIcon: true,
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
@@ -223,7 +225,7 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary target={ target }>
+								<Button compact primary={ this.props.primaryButton } target={ target }>
 									{ callToAction }
 								</Button>
 							) : (
@@ -231,7 +233,7 @@ export class Banner extends Component {
 									compact
 									href={ this.getHref() }
 									onClick={ this.handleClick }
-									primary
+									primary={ this.props.primaryButton }
 									target={ target }
 								>
 									{ callToAction }

@@ -42,6 +42,7 @@ import { getSuggestionsVendor } from 'lib/domains/suggestions';
  * Style dependencies
  */
 import './style.scss';
+import NewDomainsRedirectionNoticeUpsell from '../domain-management/components/domain/new-domains-redirection-notice-upsell';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -181,6 +182,7 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
+							<NewDomainsRedirectionNoticeUpsell />
 							<RegisterDomainStep
 								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
