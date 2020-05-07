@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 
@@ -11,10 +11,16 @@ import { Button, Icon } from '@wordpress/components';
 import './style.scss';
 import { Title, SubTitle } from '../../components/titles';
 import PlanItem from './plan-item';
+import PlanDetails from './plan-details';
 import { plans } from './mock-data';
 
 const Plans: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+	const [ showDetails, setShowDetails ] = useState( false );
+
+	const handleDetailsToggleButtonClick = () => {
+		setShowDetails( ! showDetails );
+	};
 
 	return (
 		<div className="plans">
@@ -43,9 +49,28 @@ const Plans: React.FunctionComponent = () => {
 						<PlanItem key={ id } { ...props }></PlanItem>
 					) ) }
 				</div>
-				<Button className="plans__details-toggle-button" isLarge>
-					<span>More details</span>
-					<Icon icon="arrow-down" size={ 20 }></Icon>
+				{ showDetails && (
+					<div className="plans__details">
+						<Title>{ __( 'Detailed comparison' ) }</Title>
+						<PlanDetails />
+					</div>
+				) }
+				<Button
+					className="plans__details-toggle-button"
+					isLarge
+					onClick={ handleDetailsToggleButtonClick }
+				>
+					{ showDetails ? (
+						<>
+							<span>{ __( 'Less details' ) } </span>
+							<Icon icon="arrow-up" size={ 20 }></Icon>
+						</>
+					) : (
+						<>
+							<span>{ __( 'More details' ) } </span>
+							<Icon icon="arrow-down" size={ 20 }></Icon>
+						</>
+					) }
 				</Button>
 			</div>
 		</div>
