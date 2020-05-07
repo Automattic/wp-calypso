@@ -157,7 +157,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should return a service unavailable error when service was unavailable during an external media request', () => {
-			const error = { error: 'service-unavailable' };
+			const error = { error: 'service_unavailable' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
 
 			expect( state ).to.eql( {
