@@ -105,6 +105,7 @@ export class SiteNotice extends React.Component {
 				tracksClickProperties={ eventProperties }
 				tracksImpressionName={ eventName }
 				tracksImpressionProperties={ eventProperties }
+				showIcon={ false }
 			/>
 		);
 	}
@@ -191,6 +192,7 @@ export class SiteNotice extends React.Component {
 				forceDisplay={ true }
 				horizontal={ true }
 				title={ preventWidows( noticeText ) }
+				showIcon={ false }
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
 				tracksImpressionName="calypso_upgrade_nudge_impression"

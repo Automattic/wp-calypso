@@ -1,4 +1,269 @@
-.upsell-nudge.banner.card.is-compact {
+.upsell-nudge.card {
+	border-left: 3px solid;
+	border-left-color: var( --color-accent );
+	cursor: default;
+	display: flex;
+	padding: 12px 6px 12px 12px;
+	line-height: 29px;
+
+	&.is-dismissible {
+		padding-right: 48px;
+	}
+
+	&.is-compact {
+		border-left-width: 4px;
+		font-size: 12px;
+		margin-bottom: 8px;
+		padding: 8px 12px 8px 8px;
+	}
+
+	&[href] {
+		cursor: pointer;
+	}
+
+	.upsell-nudge__icon {
+		color: var( --color-accent );
+	}
+
+	.upsell-nudge__icon-circle {
+		background-color: var( --color-accent );
+	}
+
+	&.is-jetpack {
+		border-left-color: var( --color-jetpack );
+
+		.upsell-nudge__icon {
+			color: var( --color-jetpack );
+		}
+
+		.upsell-nudge__icon-circle {
+			background-color: var( --color-jetpack );
+		}
+	}
+
+	.card__link-indicator {
+		align-items: center;
+		color: var( --color-neutral );
+		display: flex;
+	}
+
+	&.is-compact .card__link-indicator {
+		right: 8px;
+	}
+
+	&:hover {
+		transition: all 100ms ease-in-out;
+
+		&.is-card-link {
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
+		}
+		.card__link-indicator {
+			color: var( --color-neutral-dark );
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		padding: 12px 16px;
+
+		&.is-dismissible {
+			padding-right: 16px;
+		}
+
+		&.is-compact.is-dismissible {
+			padding-right: 8px;
+		}
+	}
+
+	&.is-card-link {
+		padding-right: 48px;
+	}
+}
+
+.upsell-nudge__icons {
+	display: flex;
+
+	.upsell-nudge__icon,
+	.upsell-nudge__icon-circle {
+		border-radius: 50%;
+		flex-shrink: 0;
+		height: 24px;
+		margin-right: 16px;
+		width: 24px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.upsell-nudge__icon {
+		align-self: center;
+		color: var( --color-text-inverted );
+		display: flex;
+	}
+
+	.upsell-nudge__icon-circle {
+		color: white;
+		display: none;
+		padding: 3px 4px 4px 3px;
+	}
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+
+		.upsell-nudge__icon {
+			display: none;
+		}
+		.upsell-nudge__icon-circle {
+			display: flex;
+		}
+	}
+}
+
+.upsell-nudge__icon-plan {
+	display: flex;
+	margin-right: 16px;
+	flex-shrink: 0;
+
+	.product-icon {
+		height: 32px;
+		width: 32px;
+	}
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+	}
+}
+
+.upsell-nudge__content {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
+	flex-wrap: wrap;
+
+	@include breakpoint( '>480px' ) {
+		flex-wrap: nowrap;
+	}
+}
+
+.upsell-nudge.is-compact .upsell-nudge__content {
+	padding: 5px;
+}
+
+.upsell-nudge__info {
+	flex-grow: 1;
+	line-height: 1.4;
+	width: 100%;
+
+	.upsell-nudge__title,
+	.upsell-nudge__description,
+	.upsell-nudge__list {
+		color: var( --color-neutral-70 );
+	}
+
+	.upsell-nudge__title {
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.upsell-nudge__description {
+		font-size: 12px;
+		margin-top: 3px;
+	}
+
+	.upsell-nudge__list {
+		font-size: 12px;
+		list-style: none;
+		margin: 0;
+		li {
+			margin: 6px 0;
+			.gridicon {
+				color: var( --color-neutral );
+				display: none;
+			}
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		width: auto;
+
+		.upsell-nudge__list li .gridicon {
+			display: inline;
+			margin-right: 12px;
+			vertical-align: bottom;
+		}
+	}
+}
+
+.upsell-nudge.is-compact .upsell-nudge__title {
+	font-size: 12px;
+}
+
+.upsell-nudge__action {
+	align-self: center;
+	font-size: 12px;
+	margin: 8px 0 0;
+	text-align: left;
+	width: 100%;
+
+	.upsell-nudge__prices {
+		display: flex;
+		justify-content: flex-start;
+
+		.plan-price {
+			margin-bottom: 0;
+		}
+
+		.plan-price.is-discounted,
+		.plan-price.is-discounted .plan-price__currency-symbol {
+			color: var( --color-neutral-70 );
+		}
+
+		.has-call-to-action & .plan-price {
+			margin-bottom: 8px;
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		margin: 0 -6px 0 8px;
+		text-align: center;
+		width: auto;
+
+		.is-dismissible & {
+			margin-top: 40px;
+		}
+
+		.is-compact & {
+			margin-right: 0;
+		}
+
+		.is-horizontal & {
+			flex-shrink: 0;
+			margin-right: 0;
+		}
+
+		.is-dismissible.is-horizontal & {
+			margin-top: 0;
+			margin-right: 40px;
+		}
+
+		.upsell-nudge__prices {
+			justify-content: flex-end;
+			text-align: right;
+		}
+	}
+}
+
+.upsell-nudge.is-compact .dismissible-card__close-icon {
+	width: 16px;
+	height: 16px;
+	top: 50%;
+	margin-top: -8px;
+}
+
+.is-horizontal .dismissible-card__close-icon {
+	top: 50%;
+	margin-top: -12px;
+}
+
+.upsell-nudge.card.is-compact {
 	background-color: var( --color-neutral-80 );
 	border-left-color: var( --color-accent );
 	box-shadow: none;
@@ -14,8 +279,8 @@
 		color: var( --color-text-inverted );
 	}
 
-	.banner__icon-circle,
-	.banner__icon {
+	.upsell-nudge__icon-circle,
+	.upsell-nudge__icon {
 		margin-top: -2px;
 		margin-right: 0.25em;
 	}
@@ -23,25 +288,25 @@
 		fill: var( --color-text-inverted );
 		margin-right: -6px;
 	}
-	.banner__content {
+	.upsell-nudge__content {
 		color: var( --color-text-inverted );
 		padding: 0 0 0 8px;
 	}
-	.banner__description {
+	.upsell-nudge__description {
 		color: var( --color-neutral-5 );
 	}
-	.banner__info {
+	.upsell-nudge__info {
 		margin-right: 5px;
 	}
-	.banner__info .banner__title {
+	.upsell-nudge__info .upsell-nudge__title {
 		color: var( --color-text-inverted );
 		font-weight: 400;
 	}
 	.card__link-indicator {
 		fill: var( --color-text-inverted );
 	}
-	.banner__icon-circle,
-	.banner__icon {
+	.upsell-nudge__icon-circle,
+	.upsell-nudge__icon {
 		width: auto;
 		height: auto;
 		color: var( --color-text-inverted );
@@ -55,10 +320,10 @@
 	}
 }
 
-.upsell-nudge.is-dismissible.is-horizontal.is-compact .banner__action {
+.upsell-nudge.is-dismissible.is-horizontal.is-compact .upsell-nudge__action {
 	margin-right: 28px;
 }
-.upsell-nudge.banner.card.is-compact.is-card-link {
+.upsell-nudge.card.is-compact.is-card-link {
 	padding-right: 12px;
 
 	.card__link-indicator {

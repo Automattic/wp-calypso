@@ -145,7 +145,7 @@
 
 	.banner__title {
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.banner__description {
@@ -188,24 +188,6 @@
 	text-align: left;
 	width: 100%;
 
-	.banner__prices {
-		display: flex;
-		justify-content: flex-start;
-
-		.plan-price {
-			margin-bottom: 0;
-		}
-
-		.plan-price.is-discounted,
-		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: var( --color-neutral-70 );
-		}
-
-		.has-call-to-action & .plan-price {
-			margin-bottom: 8px;
-		}
-	}
-
 	@include breakpoint( '>480px' ) {
 		margin: 0 -6px 0 8px;
 		text-align: center;
@@ -227,11 +209,6 @@
 		.is-dismissible.is-horizontal & {
 			margin-top: 0;
 			margin-right: 40px;
-		}
-
-		.banner__prices {
-			justify-content: flex-end;
-			text-align: right;
 		}
 	}
 }

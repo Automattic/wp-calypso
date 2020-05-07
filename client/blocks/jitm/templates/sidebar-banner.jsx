@@ -40,6 +40,7 @@ export default function SidebarBannerTemplate( {
 			dismissPreferenceName={ dismissPreferenceName }
 			href={ CTA.link }
 			onDismissClick={ onDismissClick }
+			showIcon={ false }
 			title={ preventWidows( message ) }
 			tracksClickName={ clickName }
 			tracksClickProperties={ { ...jitmProps, ...clickProps } }
