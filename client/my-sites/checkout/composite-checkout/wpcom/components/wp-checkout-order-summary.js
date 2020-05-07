@@ -48,8 +48,7 @@ export default function WPCheckoutOrderSummary() {
 	};
 
 	return (
-		<CheckoutSummaryCard>
-			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
+		<CheckoutSummaryCardUI>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
@@ -99,23 +98,20 @@ export default function WPCheckoutOrderSummary() {
 					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryCard>
+		</CheckoutSummaryCardUI>
 	);
 }
 
-const CheckoutSummaryTitle = styled.h2`
-	color: ${( props ) => props.theme.colors.textColor};
-	display: none;
-	font-weight: ${( props ) => props.theme.weights.bold};
-	padding: 20px 20px 0;
-
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		display: none;
-	}
+const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
+	border-bottom: none 0;
 `;
 
 const CheckoutSummaryFeatures = styled.div`
-	padding: 20px;
+	padding: 20px 20px 0;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		padding: 20px;
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -151,8 +147,11 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	padding: 20px;
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	}
 `;
 
 const CheckoutSummaryLineItem = styled.div`

@@ -18,6 +18,7 @@ import {
 	useDispatch,
 	useTotal,
 	usePaymentMethod,
+	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
 
 /**
@@ -31,6 +32,8 @@ import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
+import MaterialIcon from 'components/material-icon';
+import Gridicon from 'components/gridicon';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -121,6 +124,8 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 
+	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
+
 	// Copy siteId to the store so it can be more easily accessed during payment submission
 	useEffect( () => {
 		setSiteId( siteId );
@@ -138,12 +143,24 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<CheckoutSummaryUI>
-				<WPCheckoutOrderSummary />
-				<UpsellWrapperUI>
-					<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-				</UpsellWrapperUI>
-			</CheckoutSummaryUI>
+			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+					<CheckoutSummaryTitle>
+						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+						{ translate( 'Purchase Details' ) }
+						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+					</CheckoutSummaryTitle>
+					<CheckoutSummaryTitlePrice>
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</CheckoutSummaryTitlePrice>
+				</CheckoutSummaryTitleLink>
+				<CheckoutSummaryBody>
+					<WPCheckoutOrderSummary />
+					<UpsellWrapperUI>
+						<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+					</UpsellWrapperUI>
+				</CheckoutSummaryBody>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea>
 				<CheckoutSteps>
 					<CheckoutStep
@@ -240,8 +257,69 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
+const CheckoutSummaryTitleLink = styled.button`
+	background: ${( props ) => props.theme.colors.background};
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	color: ${( props ) => props.theme.colors.textColor};
+	display: flex;
+	font-size: 16px;
+	font-weight: ${( props ) => props.theme.weights.bold};
+	justify-content: space-between;
+	padding: 20px 23px 20px 14px;
+	width: 100%;
+
+	.is-visible & {
+		border-bottom: none;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		border-bottom: none 0;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryTitle = styled.span`
+	display: flex;
+`;
+
+const CheckoutSummaryTitleIcon = styled( Gridicon )`
+	margin-right: 4px;
+`;
+
+const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
+	fill: ${( props ) => props.theme.colors.textColor};
+	margin-left: 4px;
+	transition: transform 0.1s linear;
+	width: 18px;
+	height: 18px;
+	vertical-align: bottom;
+
+	.is-visible & {
+		transform: rotate( 180deg );
+	}
+`;
+
+const CheckoutSummaryTitlePrice = styled.span`
+	.is-visible & {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryBody = styled.div`
+	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	display: none;
+
+	.is-visible & {
+		display: block;
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+		border-bottom: none;
+	}
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		display: block;
@@ -249,19 +327,39 @@ const CheckoutSummaryUI = styled( CheckoutSummaryArea )`
 `;
 
 const UpsellWrapperUI = styled.div`
-	margin-top: 24px;
 	background: ${( props ) => props.theme.colors.surface};
 
+	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+		margin-top: 24px;
+	}
+
 	.cart__upsell-wrapper {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+			border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+			border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		}
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		}
 	}
 
 	.cart__upsell-header {
-		border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		border-top: none;
+		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		box-shadow: none;
-		padding-left: 20px;
-		padding-right: 20px;
+		margin-left: 20px;
+		margin-right: 20px;
+		padding-left: 0;
+		padding-right: 0;
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			border-top: none;
+			border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+			margin-left: 0;
+			margin-right: 0;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
 
 		.section-header__label {
 			color: ${( props ) => props.theme.colors.textColor};
@@ -270,7 +368,11 @@ const UpsellWrapperUI = styled.div`
 	}
 
 	.cart__upsell-body {
-		padding: 20px;
+		padding: 0 20px 20px;
+
+		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
+			padding: 20px;
+		}
 
 		p {
 			margin-bottom: 1.2em;
