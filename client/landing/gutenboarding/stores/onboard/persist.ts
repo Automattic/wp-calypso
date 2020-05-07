@@ -1,5 +1,5 @@
 /**
  * Internal dependencies
  */
-import createPersistanceConfig from '../persistance-config';
-export default createPersistanceConfig( 'WP_ONBOARD' );
+import createPersistenceConfig from '../persistence-config';
+export default createPersistenceConfig( 'WP_ONBOARD' );

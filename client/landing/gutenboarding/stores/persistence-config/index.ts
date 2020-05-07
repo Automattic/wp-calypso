@@ -4,11 +4,11 @@
 */
 
 /**
- * Creates a storage config for state persistance
+ * Creates a storage config for state persistence
  *
  * @param storageKey Unique key to the storage
  */
-export default function createPersistanceConfig( storageKey: string ) {
+export default function createPersistenceConfig( storageKey: string ) {
 	const PERSISTENCE_INTERVAL = 7 * 24 * 3600000; // days * hours in days * ms in hour
 	const STORAGE_KEY = storageKey;
 	const STORAGE_TS_KEY = storageKey + '_TS';
