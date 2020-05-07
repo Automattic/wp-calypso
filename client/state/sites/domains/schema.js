@@ -38,6 +38,7 @@ export const itemsSchema = {
 					subscriptionId: { type: [ 'null', 'string' ] },
 					supportsDomainConnect: { type: 'boolean', optional: true },
 					supportsGdprConsentManagement: { type: 'boolean', optional: true },
+					titanSubscription: { type: 'object' },
 					type: { type: 'string' },
 					transferStartDate: { type: [ 'null', 'string' ] },
 					transferEndDate: { type: [ 'null', 'string' ] },

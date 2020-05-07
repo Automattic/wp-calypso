@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -18,17 +19,17 @@ import {
 	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithAnotherProvider,
-	hasGSuiteWithUs,
 	isGSuiteRestricted,
 } from 'lib/gsuite';
+import { hasEmailWithUs } from 'lib/email';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
-import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
+import getEmailUsers from 'state/selectors/get-email-users';
+import hasLoadedEmailUsers from 'state/selectors/has-loaded-email-users';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
-import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
+import EmailUsersCard from 'my-sites/email/email-management/email-users-card';
 import Placeholder from 'my-sites/email/email-management/gsuite-users-card/placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -40,6 +41,7 @@ import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers }
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import QueryTitanUsers from 'components/data/query-titan-users';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -56,8 +58,8 @@ class EmailManagement extends React.Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
-		gsuiteUsers: PropTypes.array,
-		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
+		emailUsers: PropTypes.object,
+		hasEmailUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
@@ -81,6 +83,9 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
+				{ config.isEnabled( 'email/titan/enabled' ) && selectedSiteId && (
+					<QueryTitanUsers siteId={ selectedSiteId } />
+				) }
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
@@ -119,16 +124,16 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
+		const { domains, hasEmailUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
-		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
+		if ( ! hasEmailUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
 		}
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
-			return this.googleAppsUsersCard();
+		if ( domainList.some( hasEmailWithUs ) ) {
+			return this.emailUsersCard();
 		}
 
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
@@ -215,14 +220,14 @@ class EmailManagement extends React.Component {
 		};
 	}
 
-	googleAppsUsersCard() {
-		const { domains, gsuiteUsers, selectedDomainName } = this.props;
+	emailUsersCard() {
+		const { domains, emailUsers, selectedDomainName } = this.props;
 
 		return (
-			<GSuiteUsersCard
+			<EmailUsersCard
 				domains={ domains }
-				gsuiteUsers={ gsuiteUsers }
 				selectedDomainName={ selectedDomainName }
+				emailUsers={ emailUsers }
 			/>
 		);
 	}
@@ -269,10 +274,10 @@ export default connect( ( state ) => {
 	return {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
-		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
+		hasEmailUsersLoaded: hasLoadedEmailUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		emailUsers: getEmailUsers( state, selectedSiteId ),
 	};
 }, {} )( localize( EmailManagement ) );
