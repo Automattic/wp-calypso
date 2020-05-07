@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -18,6 +19,10 @@ import Inspector from './inspector';
 import StripeNudge from './stripe-nudge';
 import Context from './context';
 import apiFetch from '@wordpress/api-fetch';
+import {
+	isPriceValid,
+	minimumTransactionAmountForCurrency,
+} from '.';
 
 /**
  * @typedef { import('./plan').Plan } Plan
@@ -107,18 +112,21 @@ function Edit( props ) {
 			return;
 		}
 
-		// TODO: change that to minimumTransactionAmountForCurrency when formatcurrency works.
-		if (
-			attributes.newPlanPrice &&
-			( attributes.newPlanPrice < 5 || isNaN( attributes.newPlanPrice ) )
-		) {
-			onError( props, sprintf( __( 'Minimum allowed price is %s.' ), 5 ) );
+		const newPrice = parseFloat( attributes.newPlanPrice );
+		const minPrice = minimumTransactionAmountForCurrency( attributes.newPlanCurrency );
+		const minimumPriceNote = sprintf( __( 'Minimum allowed price is %s.', 'premium-content' ), formatCurrency(
+			minPrice,
+			attributes.newPlanCurrency
+		) );
+
+		if ( newPrice < minPrice ) {
+			onError( props, minimumPriceNote );
 			callback( false );
 			return;
 		}
 
-		if ( ! attributes.newPlanPrice ) {
-			onError( props, __( 'Plan requires a valid price' ) );
+		if ( ! isPriceValid( attributes.newPlanCurrency, newPrice ) ) {
+			onError( props, __( 'Plan requires a valid price', 'premium-content' ) );
 			callback( false );
 			return;
 		}
@@ -164,6 +172,23 @@ function Edit( props ) {
 				}
 			}
 		);
+	}
+
+	/**
+	 * @param {Plan} plan
+	 */
+	function getPlanDescription( plan ) {
+		const amount = formatCurrency( parseFloat( plan.price ), plan.currency );
+		if ( plan.interval === '1 month' ) {
+			return sprintf( __( '%s / month', 'premium-content' ), amount );
+		}
+		if ( plan.interval === '1 year' ) {
+			return sprintf( __( '%s / year', 'premium-content' ), amount );
+		}
+		if ( plan.interval === 'one-time' ) {
+			return amount;
+		}
+		return sprintf( __( '%s / %s', 'premium-content' ), amount, plan.interval );
 	}
 
 	/**
@@ -310,15 +335,16 @@ function Edit( props ) {
 	return (
 		<div className={ className } ref={ wrapperRef }>
 			{ props.noticeUI }
-			{ ( isSelected || selectedInnerBlock ) && (
+			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
 				<Controls
 					{ ...props }
 					plans={ products }
 					selectedPlanId={ props.attributes.selectedPlanId }
 					onSelected={ selectPlan }
+					getPlanDescription={ getPlanDescription }
 				/>
 			) }
-			{ ( isSelected || selectedInnerBlock ) && (
+			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
 				<Inspector { ...props } savePlan={ savePlan } siteSlug={ siteSlug } />
 			) }
 			{ ( isSelected || selectedInnerBlock ) && (
