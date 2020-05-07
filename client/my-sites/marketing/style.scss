@@ -246,7 +246,7 @@
 	margin: 0 15px 0 0;
 	text-align: center;
 	width: 50px;
-	border-radius: 4px;
+	border-radius: 2px;
 
 	@include breakpoint( '<660px' ) {
 		height: 21px;
@@ -662,7 +662,7 @@
 	padding: 8px;
 	cursor: pointer;
 	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
+	border-radius: 2px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
 	background-color: var( --color-surface );
 	color: var( --color-primary );
@@ -828,7 +828,7 @@
 	margin: 8px 8px 0 0;
 	cursor: default;
 	font-size: 12px;
-	border-radius: 3px;
+	border-radius: 2px;
 	color: #777;
 	background: #f8f8f8;
 	border: 1px solid #ccc;
@@ -967,12 +967,12 @@
 		margin: 14px 0 0;
 
 		.sharing-buttons-preview-button {
-			border-width: 1px 1px 2px;
-			font-weight: 500;
+			border-width: 1px;
+			font-weight: 600;
 			box-shadow: none;
 			box-sizing: border-box;
 			line-height: 1;
-			border-radius: 4px;
+			border-radius: 2px;
 			padding: 7px;
 			float: left;
 			color: var( --color-neutral-5 );
@@ -983,7 +983,7 @@
 				color: var( --color-neutral-10 );
 			}
 			&:active {
-				border-width: 2px 1px 1px;
+				border-width: 1px;
 			}
 
 			&.is-enabled {
