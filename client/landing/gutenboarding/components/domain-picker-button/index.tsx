@@ -51,6 +51,10 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setDomainModalVisibility( false );
 	};
 
+	const handleModalCancel = () => {
+		setDomainModalVisibility( false );
+	};
+
 	const handleMoreOptions = () => {
 		setDomainPopoverVisibility( false );
 		setDomainModalVisibility( true );
@@ -94,6 +98,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onClose={ handleModalClose }
+				onCancel={ handleModalCancel }
 				recordAnalytics={ recordAnalytics }
 			/>
 		</>

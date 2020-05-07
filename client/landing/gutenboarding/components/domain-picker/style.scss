@@ -53,6 +53,15 @@ $domain-picker__suggestion-item-height: 24px;
 	margin-bottom: 27px;
 }
 
+.domain-picker__header-group {
+	flex-grow: 1;
+}
+
+.domain-picker__header-buttons {
+	display: flex;
+	align-items: center;
+}
+
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
@@ -252,5 +261,18 @@ $domain-picker__suggestion-item-height: 24px;
 		@include onboarding-medium-text;
 		color: var( --color-neutral-100 );
 		align-items: center;
+	}
+}
+
+.domain-picker__confirm-button {
+	&.components-button {
+		padding: 0 40px;
+	}
+}
+
+.domain-picker__cancel-button {
+	&.components-button.is-link {
+		margin: 0 1em;
+		color: var( --studio-gray-40 );
 	}
 }
