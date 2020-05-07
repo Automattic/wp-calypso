@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -17,9 +17,8 @@ import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import Upsell from 'landing/jetpack-cloud/components/upsell';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { UpsellComponentProps } from 'landing/jetpack-cloud/components/upsell-switch';
 
-const ScanVPActiveBody: FunctionComponent = () => {
+function ScanVPActiveBody() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return (
@@ -34,9 +33,9 @@ const ScanVPActiveBody: FunctionComponent = () => {
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
 	);
-};
+}
 
-const ScanUpsellBody: FunctionComponent = () => {
+function ScanUpsellBody() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -51,21 +50,21 @@ const ScanUpsellBody: FunctionComponent = () => {
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
 	);
-};
+}
 
-const ScanUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => (
-	<Main className="scan__main">
-		<DocumentHead title="Scanner" />
-		<SidebarNavigation />
-		<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
-		<div className="scan__content">
-			{ 'vp_active_on_site' === reason ? <ScanVPActiveBody /> : <ScanUpsellBody /> }
-		</div>
-		<StatsFooter
-			noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
-			noticeLink="https://jetpack.com/upgrade/backups"
-		/>
-	</Main>
-);
-
-export default ScanUpsellPage;
+export default function ScanUpsellPage( { reason } ) {
+	return (
+		<Main className="scan__main">
+			<DocumentHead title="Scanner" />
+			<SidebarNavigation />
+			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
+			<div className="scan__content">
+				{ 'vp_active_on_site' === reason ? <ScanVPActiveBody /> : <ScanUpsellBody /> }
+			</div>
+			<StatsFooter
+				noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
+				noticeLink="https://jetpack.com/upgrade/backups"
+			/>
+		</Main>
+	);
+}
