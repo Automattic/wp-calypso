@@ -52,7 +52,9 @@ function ScanUpsellBody() {
 	);
 }
 
+
 export default function ScanUpsellPage( { reason } ) {
+
 	return (
 		<Main className="scan__main">
 			<DocumentHead title="Scanner" />
