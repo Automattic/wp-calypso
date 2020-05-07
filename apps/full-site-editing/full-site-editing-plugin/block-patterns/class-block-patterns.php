@@ -105,8 +105,24 @@ class Block_Patterns {
 
 		// Manually curated list of patterns to go at the top of the list.
 		$featured_patterns = array(
+			'masonry-gallery.php',
+			'description-and-image.php',
+			'two-images-and-quote.php',
 			'image-and-description.php',
+			'three-images-side-by-side.php',
+			'image-and-text.php',
 			'three-columns-and-image.php',
+			'collage-gallery.php',
+			'headline.php',
+			'headline-02.php',
+			'recent-posts.php',
+			'recent-posts-02.php',
+			'two-images-side-by-side.php',
+			'numbers.php',
+			'contact.php',
+			'contact-02.php',
+			'contact-03.php',
+			'food-menu.php',
 		);
 
 		// Add the featured patterns to the top of the patterns.
