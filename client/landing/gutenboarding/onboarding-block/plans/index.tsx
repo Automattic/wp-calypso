@@ -11,6 +11,7 @@ import { Button, Icon } from '@wordpress/components';
 import './style.scss';
 import { Title, SubTitle } from '../../components/titles';
 import PlanItem from './plan-item';
+import { plans } from './mock-data';
 
 const Plans: React.FunctionComponent = () => {
 	const { __ } = useI18n();
@@ -38,16 +39,9 @@ const Plans: React.FunctionComponent = () => {
 			</div>
 			<div className="plans__body">
 				<div className="plans__items">
-					<PlanItem
-						name="Free"
-						price="$0"
-						domainName="roastingbeans.wordpress.com"
-						featureCount={ 1 }
-					></PlanItem>
-					<PlanItem name="Personal" price="$5" isSelected featureCount={ 4 }></PlanItem>
-					<PlanItem name="Premium" price="$8" featureCount={ 9 }></PlanItem>
-					<PlanItem name="Business" price="$25" featureCount={ 10 }></PlanItem>
-					<PlanItem name="Commerce" price="$45" featureCount={ 11 }></PlanItem>
+					{ plans.map( ( { id, ...props } ) => (
+						<PlanItem key={ id } { ...props }></PlanItem>
+					) ) }
 				</div>
 				<Button className="plans__details-toggle-button" isLarge>
 					<span>More details</span>

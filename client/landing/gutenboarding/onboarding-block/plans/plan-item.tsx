@@ -31,27 +31,13 @@ const TickIcon = () => (
 	/>
 );
 
-const featureExamples = [
-	'200 GB storage',
-	'Remove WordPress ads',
-	'Email & basic Live Chat Support',
-	'Collect recurring payments',
-	'Collect one-time payments',
-	'Earn ad revenue',
-	'Premium themes',
-	'Upload videos',
-	'Google Analytics support',
-	'Business features (incl. SEO)',
-	'Accept Payments in 60+ Countries',
-];
-
 export interface Props {
 	name: string;
 	price: string;
+	features: Array< string >;
+	domainName?: string;
 	isPopular?: boolean;
 	isSelected?: boolean;
-	domainName?: string;
-	featureCount?: number; // temporary for mockup purposes
 }
 
 const PlanItem: React.FunctionComponent< Props > = ( {
@@ -60,13 +46,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	isPopular = false,
 	isSelected = false,
 	domainName,
-	featureCount = 10,
+	features,
 } ) => {
 	const { __ } = useI18n();
 
 	const hasDomain = !! domainName;
-
-	const features = featureExamples.slice( 0, featureCount );
 
 	return (
 		<div className="plan-item">
@@ -109,8 +93,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			</div>
 			<div className="plan-item__features">
 				<ul className="plan-item__feature-item-group">
-					{ features.map( ( feature ) => (
-						<li className="plan-item__feature-item">{ feature }</li>
+					{ features.map( ( feature, i ) => (
+						<li key={ i } className="plan-item__feature-item">
+							{ feature }
+						</li>
 					) ) }
 				</ul>
 			</div>
