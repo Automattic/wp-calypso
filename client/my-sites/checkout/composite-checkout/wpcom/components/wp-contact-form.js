@@ -168,12 +168,6 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-const DomainContactFieldsDescription = styled.p`
-	font-size: 14px;
-	color: ${( props ) => props.theme.colors.textColor};
-	margin: 0 0 16px;
-`;
-
 function ContactFormSummary( { isDomainFieldsVisible } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
@@ -280,11 +274,11 @@ function RenderContactDetails( {
 		case 'DOMAINS':
 			return (
 				<React.Fragment>
-					<DomainContactFieldsDescription>
+					<ContactDetailsFormDescription>
 						{ translate(
 							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 						) }
-					</DomainContactFieldsDescription>
+					</ContactDetailsFormDescription>
 					{ renderDomainContactFields(
 						prepareDomainContactDetails( contactInfo ),
 						prepareDomainContactDetailsErrors( contactInfo ),
@@ -298,6 +292,9 @@ function RenderContactDetails( {
 		default:
 			return (
 				<React.Fragment>
+					<ContactDetailsFormDescription>
+						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
+					</ContactDetailsFormDescription>
 					<TaxFields
 						section="contact"
 						taxInfo={ contactInfo }
@@ -312,3 +309,9 @@ function RenderContactDetails( {
 			);
 	}
 }
+
+const ContactDetailsFormDescription = styled.p`
+	font-size: 14px;
+	color: ${( props ) => props.theme.colors.textColor};
+	margin: 0 0 16px;
+`;
