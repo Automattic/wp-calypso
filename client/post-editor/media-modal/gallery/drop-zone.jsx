@@ -4,18 +4,19 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
 import { filterItemsByMimePrefix } from 'lib/media/utils';
 
-class EditorMediaModalGalleryDropZone extends React.Component {
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalGalleryDropZone';
+
 	static propTypes = {
 		site: PropTypes.object,
 		onInvalidItemAdded: PropTypes.func,
@@ -26,11 +27,12 @@ class EditorMediaModalGalleryDropZone extends React.Component {
 	};
 
 	filterDroppedImagesSelected = () => {
-		const { selectedItems, site } = this.props;
+		const { site } = this.props;
 		if ( ! site ) {
 			return;
 		}
 
+		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
 		const filteredItems = filterItemsByMimePrefix( selectedItems, 'image' );
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
@@ -49,7 +51,3 @@ class EditorMediaModalGalleryDropZone extends React.Component {
 		);
 	}
 }
-
-export default connect( ( state, { site } ) => ( {
-	selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-} ) )( EditorMediaModalGalleryDropZone );

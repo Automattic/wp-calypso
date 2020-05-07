@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import { reject } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -12,8 +12,8 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -24,12 +24,13 @@ class RemoveButton extends PureComponent {
 	};
 
 	remove = () => {
-		const { siteId, itemId, selectedItems } = this.props;
+		const { siteId, itemId } = this.props;
 		if ( ! siteId || ! itemId ) {
 			return;
 		}
 
-		const items = reject( selectedItems, ( item ) => item.ID === itemId );
+		const selected = MediaLibrarySelectedStore.getAll( siteId );
+		const items = reject( selected, ( item ) => item.ID === itemId );
 
 		MediaActions.setLibrarySelectedItems( siteId, items );
 	};
@@ -52,6 +53,4 @@ class RemoveButton extends PureComponent {
 
 RemoveButton.displayName = 'RemoveButton';
 
-export default connect( ( state, { siteId } ) => ( {
-	selectedItems: getMediaLibrarySelectedItems( state, siteId ),
-} ) )( localize( RemoveButton ) );
+export default localize( RemoveButton );
