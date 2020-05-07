@@ -3,12 +3,11 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * WordPress dependencies
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
 
@@ -19,16 +18,11 @@ import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@w
  */
 import tracksRecordEvent from './track-record-event';
 
-// let's remove this line once the core version updates.
-const debug = debugFactory( 'wpcom-block-editor:tracking:inserter-menu' );
-
 const InserterMenuTrackingEvent = function () {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const { selectedBlock } = useSelect( ( select ) => ( {
 		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
 	} ) );
-
-	const pluginVersion = window.wpcomGutenberg ? window.wpcomGutenberg.pluginVersion : null;
 
 	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {
 		setSearchTerm( search_term );
