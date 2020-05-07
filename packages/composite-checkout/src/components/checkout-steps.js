@@ -135,7 +135,7 @@ export const CheckoutSummaryCard = styled.div`
 	background: ${( props ) => props.theme.colors.surface};
 	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		border-bottom: none 0;
 	}
@@ -462,8 +462,11 @@ const CheckoutStepAreaUI = styled.div`
 	margin: 0 auto ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
 	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+	}
+
+	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
 		max-width: 556px;
 	}
 

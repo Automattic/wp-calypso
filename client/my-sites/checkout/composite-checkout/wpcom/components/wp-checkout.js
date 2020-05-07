@@ -272,7 +272,7 @@ const CheckoutSummaryTitleLink = styled.button`
 		border-bottom: none;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 		border-bottom: none 0;
 	}
@@ -317,7 +317,7 @@ const CheckoutSummaryBody = styled.div`
 		display: block;
 	}
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
 		border-bottom: none;
 	}
 
@@ -334,8 +334,10 @@ const UpsellWrapperUI = styled.div`
 	}
 
 	.cart__upsell-wrapper {
-		border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
+			border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+			border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
+		}
 
 		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
