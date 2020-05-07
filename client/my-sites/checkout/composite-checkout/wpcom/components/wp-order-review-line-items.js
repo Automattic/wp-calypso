@@ -59,9 +59,15 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta>
-					{ item.sublabel }
-					{ ( 'plan' !== item.type || ! shouldShowVariantSelector ) &&
-						': ' + translate( 'billed yearly' ) }
+					{ 'plan' !== item.type || ! shouldShowVariantSelector
+						? translate( '%(sublabel)s: %(interval)s', {
+								args: {
+									sublabel: item.sublabel,
+									interval: translate( 'billed annually' ),
+								},
+								comment: 'product type and billing interval, separated by a colon',
+						  } )
+						: item.sublabel }
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
 					) }
