@@ -1,0 +1,26 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../variables.scss';
+
+.action-buttons {
+	padding: 0 20px;
+	border-top: 1px solid $light-gray-500;
+	background-color: $white;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	height: $gutenboarding-footer-height;
+	justify-content: space-between;
+	display: flex;
+	align-items: center;
+
+	@include break-small {
+		padding: 0;
+		position: static;
+		border: none;
+
+		& > div {
+			margin-left: 14px;
+		}
+	}
+}
