@@ -44,9 +44,9 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 		<Card className="go-mobile">
 			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
 				<div className="go-mobile__title">
-					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
+					<CardHeading>{ translate( 'WordPress app' ) }</CardHeading>
 					<h6 className="go-mobile__subheader customer-home__card-subheader">
-						{ translate( 'Make updates on the go' ) }
+						{ translate( 'Make updates on the go.' ) }
 					</h6>
 				</div>
 				<div className="go-mobile__app-badges">
@@ -74,11 +74,9 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 			</div>
 			{ isDesktopView && ! isDesktopApp && (
 				<div className="go-mobile__email-link">
-					{ translate(
-						'We can email a link to open on your phone to instantly download the app.'
-					) }
-					<Button className="go-mobile__email-link-button" onClick={ emailLogin } borderless>
-						{ translate( 'Email download link' ) }
+					{ translate( 'Get a download link via email — click it on your phone to get the app.' ) }
+					<Button className="go-mobile__email-link-button is-link" onClick={ emailLogin }>
+						{ translate( 'Send my download link' ) }
 					</Button>
 				</div>
 			) }
