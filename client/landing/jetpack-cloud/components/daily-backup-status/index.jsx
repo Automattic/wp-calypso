@@ -24,7 +24,6 @@ import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
-import BackupChanges from './backup-changes';
 
 /**
  * Style dependencies
@@ -78,7 +77,7 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, hasRealtimeBackups, siteSlug, deltas, metaDiff, translate } = this.props;
+		const { allowRestore, hasRealtimeBackups, siteSlug, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
@@ -101,7 +100,6 @@ class DailyBackupStatus extends Component {
 					disabledRestore={ ! allowRestore }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
-				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
 			</>
 		);
 	}
@@ -297,6 +295,7 @@ class DailyBackupStatus extends Component {
 		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
+				<div className="daily-backup-status__realtime-details-title">Backup details</div>
 				<div className="daily-backup-status__realtime-details-card">
 					<ActivityCard
 						{ ...{
