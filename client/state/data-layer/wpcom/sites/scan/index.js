@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { omit } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -40,17 +45,31 @@ export const formatScanThreat = ( threat ) => ( {
  * @param {object} scanState Raw Scan state object from Scan endpoint
  * @returns {object} Processed Scan state
  */
-const formatScanStateRawResponse = ( { state, threats, credentials, most_recent: mostRecent } ) => {
+const formatScanStateRawResponse = ( {
+	state,
+	threats,
+	credentials,
+	most_recent: mostRecent,
+	current,
+	...rest
+} ) => {
 	return {
 		state,
 		threats: threats.map( formatScanThreat ),
 		credentials,
 		mostRecent: mostRecent
 			? {
-					...mostRecent,
+					...omit( mostRecent, [ 'is_initial' ] ),
 					isInitial: mostRecent.is_initial,
 			  }
-			: null,
+			: undefined,
+		current: current
+			? {
+					...omit( current, [ 'is_initial' ] ),
+					isInitial: current.is_initial,
+			  }
+			: undefined,
+		...rest,
 	};
 };
 
