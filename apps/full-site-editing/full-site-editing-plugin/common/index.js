@@ -27,19 +27,19 @@ const BlockPatternsMoved = () => {
 	return (
 		<>
 			<PluginSidebarMoreMenuItem icon={ layout } target="block-patterns-moved">
-				{ __( 'Block Patterns' ) }
+				{ __( 'Block Patterns Have Moved' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				icon={ layout }
-				name={ 'global-styles' }
-				title={ __( 'Block Patterns' ) }
+				name={ 'block-patterns-moved' }
+				title={ __( 'Block Patterns Have Moved' ) }
 				className="common__block-patterns-moved"
 			>
 				<PanelBody>
 					<h2>{ __( 'Block Patterns have moved!' ) }</h2>
 					<p>
 						{ __(
-							'You can now find them in the block inserter.  This can be found in the upper left corner of your screen by selecting the inserter icon:'
+							'You can now find them in the block inserter under the "patterns" tab.  The block inserter can be found in the top-left corner of your screen by selecting the following icon:'
 						) }
 					</p>
 					<Button icon={ plus } onClick={ openInserter } />
