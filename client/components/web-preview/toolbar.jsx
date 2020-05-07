@@ -137,11 +137,11 @@ class PreviewToolbar extends Component {
 				{ showEditHeaderLink && (
 					<Button
 						borderless
-						aria-label={ translate( 'Edit Header' ) }
+						aria-label={ translate( 'Edit header and menus' ) }
 						className="web-preview__edit-header-link"
 						href={ '/customize/identity/' + siteSlug }
 					>
-						{ translate( 'Edit Header' ) }
+						{ translate( 'Edit header and menus' ) }
 					</Button>
 				) }
 
