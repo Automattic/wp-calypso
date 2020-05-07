@@ -17,15 +17,28 @@ import { MenuItem } from '@wordpress/components';
  * @property { undefined | Plan } selectedPlan
  * @property { () => void } onClose
  * @property { (plan: Plan) => void } onSelected
+ * @property { (plan: Plan) => string } formatPrice
  *
  * @param { Props } props
  */
 export default function Plan( props ) {
-	const { className, plan, selectedPlan, onSelected, onClose } = props;
+	const {
+		className,
+		plan,
+		selectedPlan,
+		onSelected,
+		onClose,
+		getPlanDescription,
+	} = props;
 
 	const isSelected = selectedPlan && plan.id === selectedPlan.id;
 	const classNames = ( isSelected ? [ 'is-selected' ] : [] ).concat( [ className ] ).join( ' ' );
 	const icon = isSelected ? 'yes' : undefined;
+
+	let planDescription = null;
+	if ( plan ) {
+		planDescription = ' ' + getPlanDescription( plan );
+	}
 
 	return (
 		<MenuItem
@@ -40,7 +53,7 @@ export default function Plan( props ) {
 			selected={ isSelected }
 			icon={ icon }
 		>
-			{ plan.title } : { plan.price } { plan.currency } / { plan.interval }
+			{ plan.title } : { planDescription }
 		</MenuItem>
 	);
 }
