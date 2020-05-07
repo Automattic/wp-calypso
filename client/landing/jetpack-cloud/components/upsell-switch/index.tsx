@@ -16,7 +16,7 @@ type QueryComponentProps = {
 
 type QueryFunction = ( arg0: DefaultRootState, arg1: number | null ) => SiteState;
 
-type UpsellComponentProps = {
+export type UpsellComponentProps = {
 	reason?: string;
 };
 
