@@ -309,7 +309,6 @@ function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			// isDefaultLocale( context.lang ) &&
 			context.layout
 	);
 }

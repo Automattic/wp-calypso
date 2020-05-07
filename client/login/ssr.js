@@ -4,6 +4,11 @@
 import { intersection } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { isDefaultLocale } from 'lib/i18n-utils';
+
+/**
  * A middleware that enables (or disables) server side rendering for the /log-in page.
  *
  * Unlike the rest of the SSRed pages, the log-in page enables SSRing also when a set of parameters is set (see below
@@ -21,7 +26,9 @@ export function setShouldServerSideRenderLogin( context, next ) {
 	const hasOnlyValidKeys = queryKeys.length === intersection( queryKeys, validQueryKeys ).length;
 
 	context.serverSideRender =
-		hasOnlyValidKeys && isRedirectToValidForSsr( context.query.redirect_to );
+		hasOnlyValidKeys &&
+		isDefaultLocale( context.lang ) &&
+		isRedirectToValidForSsr( context.query.redirect_to );
 
 	next();
 }
