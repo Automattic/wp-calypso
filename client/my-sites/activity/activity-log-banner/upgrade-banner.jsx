@@ -47,6 +47,7 @@ class UpgradeBanner extends Component {
 					/>
 				) : (
 					<UpsellNudge
+						forceDisplay
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }

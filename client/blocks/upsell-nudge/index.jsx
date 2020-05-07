@@ -152,6 +152,7 @@ export class UpsellNudge extends Component {
 			return;
 		}
 
+		//If this is a Jetpack nudge, or we're showing an example Jetpack nudge in /devdocs
 		if ( jetpack || isJetpackDevDocs ) {
 			return (
 				<div className="upsell-nudge__icon-plan">
@@ -278,10 +279,15 @@ export class UpsellNudge extends Component {
 			( ! feature && ! isFreePlan( site.plan ) ) ||
 			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
 			( ! jetpack && site.jetpack ) ||
-			( jetpack && ! site.jetpack ) ||
-			( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams );
+			( jetpack && ! site.jetpack );
 
+		//forceDisplay is an override for upsells shared between Jetpack and WP.com
 		if ( shouldNotDisplay && ! forceDisplay ) {
+			return null;
+		}
+
+		//Never display upsells for WP for Teams
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
