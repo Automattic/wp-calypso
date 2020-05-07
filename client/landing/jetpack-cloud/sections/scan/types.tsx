@@ -10,7 +10,7 @@ export type Scan = {
 	threats: [ Threat ];
 	credentials: [ object ];
 	mostRecent: {
-		timestamp: Date;
+		timestamp: string;
 		progress: number;
 		duration: number;
 		// @todo: complete the error prop when we know what the shape will it have

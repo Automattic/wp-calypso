@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +31,10 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
+import {
+	withApplySiteOffset,
+	applySiteOffsetType,
+} from 'landing/jetpack-cloud/components/site-offset';
 
 /**
  * Style dependencies
@@ -44,7 +49,12 @@ interface Props {
 	scanState?: Scan;
 	scanProgress?: number;
 	isInitialScan?: boolean;
-	moment: Function;
+	timezone: string | null;
+	gmtOffset: number | null;
+	moment: {
+		utc: Function;
+	};
+	applySiteOffset: applySiteOffsetType;
 	dispatchRecordTracksEvent: Function;
 	dispatchScanRun: Function;
 }
@@ -112,10 +122,12 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { scanState, siteId, siteSlug, moment, dispatchScanRun } = this.props;
-		const lastScanTimestamp = scanState?.mostRecent?.timestamp
-			? scanState?.mostRecent?.timestamp.getTime()
-			: '';
+		const { scanState, siteId, siteSlug, moment, dispatchScanRun, applySiteOffset } = this.props;
+		const lastScanTimestamp = scanState?.mostRecent?.timestamp;
+		let lastScanSiteTime = '';
+		if ( lastScanTimestamp && applySiteOffset ) {
+			lastScanSiteTime = applySiteOffset( moment.utc( lastScanTimestamp ) )?.fromNow();
+		}
 
 		return (
 			<>
@@ -129,7 +141,7 @@ class ScanPage extends Component< Props > {
 							'{{br/}}' +
 							'Run a manual scan now or wait for Jetpack to scan your site later today.',
 						{
-							args: [ moment( lastScanTimestamp ).fromNow() ],
+							args: [ lastScanSiteTime ],
 							components: {
 								strong: <strong />,
 								br: <br />,
@@ -233,14 +245,15 @@ class ScanPage extends Component< Props > {
 	}
 
 	render() {
-		if ( null === this.props.siteId ) {
+		const { siteId } = this.props;
+		if ( ! siteId ) {
 			return;
 		}
 		return (
 			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
-				<QueryJetpackScan siteId={ this.props.siteId } />
+				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
@@ -268,9 +281,9 @@ export default connect(
 				siteSlug,
 			};
 		}
-		const siteUrl = getSiteUrl( state, siteId ) || undefined;
-		const scanState = ( getSiteScanState( state, siteId ) as Scan ) || undefined;
-		const scanProgress = getSiteScanProgress( state, siteId ) || undefined;
+		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
+		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
+		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 
 		return {
@@ -287,4 +300,4 @@ export default connect(
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 	}
-)( withLocalizedMoment( ScanPage ) );
+)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );

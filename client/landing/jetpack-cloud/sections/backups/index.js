@@ -10,6 +10,7 @@ import config from 'config';
 
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import wrapInSiteOffsetProvider from 'landing/jetpack-cloud/lib/wrap-in-site-offset';
 import {
 	backupActivity,
 	backupDetail,
@@ -17,7 +18,6 @@ import {
 	backupRestore,
 	backups,
 	showUpsellIfNoBackup,
-	wrapInSiteOffsetProvider,
 } from 'landing/jetpack-cloud/sections/backups/controller';
 import {
 	backupMainPath,
