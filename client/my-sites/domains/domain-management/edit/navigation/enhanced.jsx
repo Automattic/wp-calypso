@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { withLocalizedMoment } from 'components/localized-moment';
-import { getDomainTypeText } from 'lib/domains';
+import { getDomainTypeText, isSubdomain } from 'lib/domains';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import MaterialIcon from 'components/material-icon';
@@ -21,6 +21,7 @@ import {
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
 	domainManagementChangeSiteAddress,
+	domainTransferIn,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
@@ -134,33 +135,39 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
-	getNameServers() {
+	getDestinationText() {
 		const { selectedSite, translate, domain } = this.props;
+
+		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
+		const { pointsToWpcom, isPrimary } = domain;
+
+		if ( pointsToWpcom && isPrimary ) {
+			return translate( 'Destination: primary domain for %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
+			} );
+		}
+
+		if ( pointsToWpcom && ! isPrimary ) {
+			return translate( 'Destination: %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
+			} );
+		}
+
+		return translate( 'Destination: external service' );
+	}
+
+	getNameServers() {
+		const { translate, domain, selectedSite } = this.props;
 
 		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
 			return null;
 		}
 
-		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
-		const { pointsToWpcom, isPrimary } = domain;
-
-		let description;
-
-		if ( pointsToWpcom && isPrimary ) {
-			description = translate( 'Destination: primary domain for %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
-		} else if ( pointsToWpcom && ! isPrimary ) {
-			description = translate( 'Destination: %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
-		} else {
-			description = translate( 'Destination: external service' );
-		}
+		const description = this.getDestinationText();
 
 		return (
 			<DomainManagementNavigationItem
@@ -175,13 +182,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getDnsRecords() {
 		const { selectedSite, translate, domain } = this.props;
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		const description = this.getDestinationText();
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementDns( selectedSite.slug, domain.name ) }
 				materialIcon="language"
-				text={ translate( 'DNS records' ) }
-				description={ 'Destination: somewhere' }
+				text={ translate( 'Update your DNS records' ) }
+				description={ description }
 			/>
 		);
 	}
@@ -246,8 +254,28 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
+	getTransferMappedDomain() {
+		const { selectedSite, domain, translate } = this.props;
+
+		const { isEligibleForInboundTransfer } = domain;
+
+		if ( ! isEligibleForInboundTransfer ) {
+			return null;
+		}
+
+		return (
+			<DomainManagementNavigationItem
+				onClick={ this.handleTransferDomainClick }
+				path={ domainTransferIn( selectedSite.slug, domain.name, true ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer your domain to WordPress.com' ) }
+				description={ translate( 'Manage your site and domain all in one place' ) }
+			/>
+		);
+	}
+
 	getDomainConnectMapping() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, domain, translate } = this.props;
 
 		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = domain;
 
@@ -260,8 +288,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		return (
 			<DomainManagementNavigationItem
 				path={ path }
-				materialIcon="cached"
+				materialIcon="double_arrow"
 				text={ translate( 'Connect your domain' ) }
+				description={ translate( 'Point your domain to your site with zero hassle' ) }
 			/>
 		);
 	}
@@ -280,6 +309,15 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		this.props.recordTracksEvent( 'calypso_domain_management_change_navigation_click', {
 			action: 'change_site_address',
 			section: domain.type,
+		} );
+	};
+
+	handleTransferDomainClick = () => {
+		const { domain } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_domain_management_mapped_transfer_click', {
+			section: domain.type,
+			domain: domain.name,
 		} );
 	};
 
@@ -335,6 +373,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getSimilarDomains() {
 		const { domain, selectedSite, translate } = this.props;
+
+		if ( isSubdomain( domain.name ) ) {
+			return null;
+		}
 
 		// we don't use the full domain name, to avoid an error about the taken domain
 		const searchTerm = domain.name.split( '.' )[ 0 ];
@@ -440,9 +482,12 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	renderMappedDomainNavigation() {
 		return (
 			<React.Fragment>
-				{ this.getEmail() }
 				{ this.getDnsRecords() }
+				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
+				{ this.getTransferMappedDomain() }
+				{ this.getSecurity() }
+				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
