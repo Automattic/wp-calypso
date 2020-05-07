@@ -6,11 +6,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { translate, hasTranslation } from 'i18n-calypso';
-import { hasPlan, hasJetpackPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import { translate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import { hasPlan, hasJetpackPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
 import { getPlan, getBillingMonthsForTerm } from 'lib/plans';
 import { REGISTER_DOMAIN } from 'lib/url/support';
+import { translationExists } from 'lib/i18n-utils';
 
 function hasBiennialPlan( cart ) {
 	const plans = cart.products
@@ -37,9 +38,9 @@ export default function BundledDomainNotice( { cart } ) {
 	}
 
 	// Hide non-translated text for non-English users.
-	// TODO: this line of code should be removed once all translations are ready.
+	// TODO: the following lines of code should be removed once all translations are ready.
 	if (
-		! hasTranslation(
+		! translationExists(
 			'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.'
 		)
 	) {
