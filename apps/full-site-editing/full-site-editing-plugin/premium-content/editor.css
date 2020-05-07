@@ -28,13 +28,8 @@
 	margin-left: auto;
 }
 
-
 .premium-content-wrapper {
 	margin: 0;
-}
-
-.premium-content-toolbar-button {
-	min-width: 150px;
 }
 
 .premium-content-block-nudge .editor-warning {
@@ -97,8 +92,12 @@
 	margin: 0;
 }
 
-.wp-block-premium-content-container---settings-add_plan .components-panel__row.plan-price {
-	margin-bottom: 28px;
+.wp-block-premium-content-container---settings-add_plan .components-panel__row:last-child {
+	margin-top: 25px;
+}
+
+.wp-block-premium-content-container---settings-add_plan .components-base-control:last-child {
+	margin: 0;
 }
 
 .wp-block-premium-content-container---link-to-earn {
