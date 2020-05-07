@@ -49,14 +49,14 @@ const formatScanStateRawResponse = ( {
 	state,
 	threats,
 	credentials,
-	reason,
 	most_recent: mostRecent,
+	current,
+	...rest
 } ) => {
 	return {
 		state,
 		threats: threats.map( formatScanThreat ),
 		credentials,
-		reason,
 		mostRecent: mostRecent
 			? {
 					...omit( mostRecent, [ 'is_initial' ] ),
