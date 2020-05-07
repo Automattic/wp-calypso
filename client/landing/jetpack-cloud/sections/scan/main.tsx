@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,10 +31,10 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import { applySiteOffset } from 'lib/site/timezone';
-import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
+import {
+	withApplySiteOffset,
+	applySiteOffsetType,
+} from 'landing/jetpack-cloud/components/site-offset';
 
 /**
  * Style dependencies
@@ -53,6 +54,7 @@ interface Props {
 	moment: {
 		utc: Function;
 	};
+	applySiteOffset: applySiteOffsetType;
 	dispatchRecordTracksEvent: Function;
 	dispatchScanRun: Function;
 }
@@ -120,22 +122,11 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const {
-			scanState,
-			siteId,
-			siteSlug,
-			moment,
-			dispatchScanRun,
-			timezone,
-			gmtOffset,
-		} = this.props;
+		const { scanState, siteId, siteSlug, moment, dispatchScanRun, applySiteOffset } = this.props;
 		const lastScanTimestamp = scanState?.mostRecent?.timestamp;
 		let lastScanSiteTime = '';
-		if ( lastScanTimestamp ) {
-			lastScanSiteTime = applySiteOffset( moment.utc( lastScanTimestamp ), {
-				timezone,
-				gmtOffset,
-			} ).fromNow();
+		if ( lastScanTimestamp && applySiteOffset ) {
+			lastScanSiteTime = applySiteOffset( moment.utc( lastScanTimestamp ) )?.fromNow();
 		}
 
 		return (
@@ -263,7 +254,6 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<QueryJetpackScan siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
@@ -289,13 +279,9 @@ export default connect(
 				site,
 				siteId,
 				siteSlug,
-				timezone: null,
-				gmtOffset: null,
 			};
 		}
 		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
-		const timezone = getSiteTimezoneValue( state, siteId );
-		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
@@ -308,12 +294,10 @@ export default connect(
 			scanState,
 			scanProgress,
 			isInitialScan,
-			timezone,
-			gmtOffset,
 		};
 	},
 	{
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 	}
-)( withLocalizedMoment( ScanPage ) );
+)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );
