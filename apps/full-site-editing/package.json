@@ -72,6 +72,7 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
+		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
