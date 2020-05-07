@@ -22,7 +22,6 @@
 
 	.card-heading {
 		padding: 16px 24px;
-		margin-bottom: 0;
 		border-bottom: 1px solid var( --color-border-subtle );
 		display: flex;
 		align-items: center;
@@ -107,6 +106,6 @@
 	}
 }
 
-.customer-home__main.is-experimental .site-setup-list .card-heading {
+.customer-home__main .site-setup-list .card-heading {
 	margin-bottom: 0;
 }
