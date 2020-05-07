@@ -21,6 +21,7 @@ export const Step = {
 	Signup: 'signup',
 	Login: 'login',
 	CreateSite: 'create-site',
+	Plans: 'plans',
 } as const;
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
