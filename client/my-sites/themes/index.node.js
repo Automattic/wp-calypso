@@ -26,6 +26,9 @@ const translationsCache = {};
 
 function setupLocale( context, next ) {
 	if ( ! context.params.lang ) {
+		const localeDataPlaceholder = { '': {} };
+		context.store.dispatch( setLocaleRawData( localeDataPlaceholder ) ); // Reset to default locale
+
 		next();
 		return;
 	}
