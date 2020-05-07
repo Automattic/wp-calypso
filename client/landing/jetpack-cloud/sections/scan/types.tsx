@@ -14,6 +14,7 @@ export type Scan = {
 	state: ScanState;
 	threats: [ Threat ];
 	credentials: [ object ];
+	reason?: string;
 	mostRecent?: {
 		timestamp: string;
 		progress: number;
