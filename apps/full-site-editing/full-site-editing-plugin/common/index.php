@@ -75,9 +75,11 @@ add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_classes' );
  */
 function enqueue_script_and_style() {
 	// Avoid loading assets if possible.
-	if ( ! should_load_assets() ) {
-		return;
-	}
+
+	// TODO - Re-enable this once we remove the block patterns moved notice plugin.
+	// if ( ! should_load_assets() ) {
+	// 	return;
+	// }
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
 	$script_dependencies = $asset_file['dependencies'];
