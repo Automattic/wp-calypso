@@ -97,8 +97,8 @@ export class SiteNotice extends React.Component {
 				callToAction={ ctaText }
 				compact
 				event={ eventName }
-				forceHref={ true }
-				forceDisplay={ true }
+				forceHref
+				forceDisplay
 				href={ `/domains/add/${ this.props.site.slug }` }
 				title={ noticeText }
 				tracksClickName="calypso_domain_credit_reminder_click"
@@ -189,8 +189,8 @@ export class SiteNotice extends React.Component {
 				onDismissClick={ this.props.clickDomainUpsellDismiss }
 				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
-				horizontal={ true }
+				forceDisplay
+				horizontal
 				title={ preventWidows( noticeText ) }
 				showIcon={ false }
 				tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -228,7 +228,7 @@ export class SiteNotice extends React.Component {
 		return (
 			<UpsellNudge
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
+				forceDisplay
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ eventProperties }
 				tracksImpressionName="calypso_upgrade_nudge_impression"
