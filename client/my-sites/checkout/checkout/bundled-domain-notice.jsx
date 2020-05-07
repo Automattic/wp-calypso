@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
+import { translate, hasTranslation } from 'i18n-calypso';
 import { hasPlan, hasJetpackPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Gridicon from 'components/gridicon';
 import { getPlan, getBillingMonthsForTerm } from 'lib/plans';
@@ -33,6 +33,16 @@ export default function BundledDomainNotice( { cart } ) {
 
 	// The plan should bundle a free domain
 	if ( ! isNextDomainFree( cart ) ) {
+		return null;
+	}
+
+	// Hide non-translated text for non-English users.
+	// TODO: this line of code should be removed once all translations are ready.
+	if (
+		! hasTranslation(
+			'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.'
+		)
+	) {
 		return null;
 	}
 
