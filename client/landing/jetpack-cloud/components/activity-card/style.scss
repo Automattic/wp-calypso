@@ -47,6 +47,7 @@
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
 	font-size: 16px;
+	word-wrap: break-word;
 
 	@include breakpoint( '>660px' ) {
 		font-size: 18px;
