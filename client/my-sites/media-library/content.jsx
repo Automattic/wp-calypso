@@ -14,11 +14,11 @@ import { localize } from 'i18n-calypso';
  */
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import {
 	ValidationErrors as MediaValidationErrors,
@@ -347,20 +347,18 @@ export class MediaLibraryContent extends React.Component {
 				search={ this.props.search }
 				source={ this.props.source }
 			>
-				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-					<MediaLibraryList
-						key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
-						site={ this.props.site }
-						filter={ this.props.filter }
-						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-						search={ this.props.search }
-						containerWidth={ this.props.containerWidth }
-						thumbnailType={ this.getThumbnailType() }
-						single={ this.props.single }
-						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem }
-					/>
-				</MediaLibrarySelectedData>
+				<MediaLibraryList
+					key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
+					site={ this.props.site }
+					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+					search={ this.props.search }
+					containerWidth={ this.props.containerWidth }
+					thumbnailType={ this.getThumbnailType() }
+					single={ this.props.single }
+					scrollable={ this.props.scrollable }
+					onEditItem={ this.props.onEditItem }
+				/>
 			</MediaListData>
 		);
 	}
@@ -436,6 +434,7 @@ export default connect(
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
+			selectedItems: getMediaLibrarySelectedItems( state, ownProps.site?.ID ),
 		};
 	},
 	() => ( {

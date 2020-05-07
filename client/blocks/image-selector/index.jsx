@@ -14,7 +14,6 @@ import { noop } from 'lodash';
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
@@ -104,17 +103,15 @@ export class ImageSelector extends Component {
 		const { isSelecting } = this.state;
 
 		return (
-			<MediaLibrarySelectedData siteId={ siteId }>
-				<MediaModal
-					visible={ selecting || isSelecting }
-					onClose={ this.setImage }
-					siteId={ siteId }
-					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
-					enabledFilters={ [ 'images' ] }
-					galleryViewEnabled={ false }
-					{ ...( ! multiple && { single: true } ) }
-				/>
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ selecting || isSelecting }
+				onClose={ this.setImage }
+				siteId={ siteId }
+				labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
+				enabledFilters={ [ 'images' ] }
+				galleryViewEnabled={ false }
+				{ ...( ! multiple && { single: true } ) }
+			/>
 		);
 	}
 
