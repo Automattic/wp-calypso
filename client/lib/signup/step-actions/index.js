@@ -395,6 +395,75 @@ export function createAccount(
 	const surveySiteType = getSurveySiteType( state ).trim();
 	const userExperience = getUserExperience( state );
 
+	const SIGNUP_TYPE_SOCIAL = 'social';
+	const SIGNUP_TYPE_DEFAULT = 'default';
+
+	const responseHandler = ( signupType ) => ( error, response ) => {
+		const emailInError =
+			signupType === SIGNUP_TYPE_SOCIAL ? { email: get( error, 'data.email', undefined ) } : {};
+		const errors =
+			error && error.error
+				? [
+						{
+							error: error.error,
+							message: error.message,
+							...emailInError,
+						},
+				  ]
+				: undefined;
+
+		if ( errors ) {
+			callback( errors );
+			return;
+		}
+
+		// we should either have an error with an error property, or we should have a response with a bearer_token
+		const bearerToken = {};
+		if ( response && response.bearer_token ) {
+			bearerToken.bearer_token = response.bearer_token;
+		} else {
+			// something odd happened...
+			//eslint-disable-next-line no-console
+			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
+		}
+
+		const username =
+			( response && response.signup_sandbox_username ) ||
+			( response && response.username ) ||
+			userData.username;
+
+		const userId =
+			( response && response.signup_sandbox_user_id ) ||
+			( response && response.user_id ) ||
+			userData.ID;
+
+		const email = ( response && response.email ) || ( userData && userData.user_email );
+
+		const registrationUserData = {
+			ID: userId,
+			username,
+			email,
+		};
+
+		// Fire after a new user registers.
+		recordRegistration( {
+			userData: registrationUserData,
+			flow: flowName,
+			type: signupType,
+		} );
+
+		const providedDependencies = assign( { username }, bearerToken );
+
+		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
+			assign( providedDependencies, {
+				oauth2_client_id: queryArgs.oauth2_client_id,
+				oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
+			} );
+		}
+
+		callback( undefined, providedDependencies );
+	};
+
 	if ( service ) {
 		// We're creating a new social account
 		wpcom.undocumented().usersSocialNew(
@@ -405,53 +474,7 @@ export function createAccount(
 				signup_flow_name: flowName,
 				...userData,
 			},
-			( error, response ) => {
-				const errors =
-					error && error.error
-						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
-						: undefined;
-
-				if ( errors ) {
-					callback( errors );
-					return;
-				}
-
-				if ( ! response || ! response.bearer_token ) {
-					// something odd happened...
-					//eslint-disable-next-line no-console
-					console.error(
-						'Expected either an error or a bearer token. got %o, %o.',
-						error,
-						response
-					);
-				}
-
-				debug( 'Social Signup: response: ', response );
-				debug( 'Social Signup: userData: ', userData );
-
-				const userId =
-					( response && response.signup_sandbox_user_id ) ||
-					( response && response.user_id ) ||
-					userData.ID;
-
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
-				const email = ( response && response.email ) || ( userData && userData.user_email );
-
-				const registrationUserData = {
-					ID: userId,
-					username: username,
-					email,
-				};
-
-				// Fire after a new user registers.
-				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'social' } );
-
-				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
-			}
+			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
 	} else {
 		wpcom.undocumented().usersNew(
@@ -480,59 +503,7 @@ export function createAccount(
 				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
 				recaptchaToken ? { 'g-recaptcha-response': recaptchaToken } : null
 			),
-			( error, response ) => {
-				const errors =
-					error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
-
-				if ( errors ) {
-					callback( errors );
-					return;
-				}
-
-				// we should either have an error with an error property, or we should have a response with a bearer_token
-				const bearerToken = {};
-				if ( response && response.bearer_token ) {
-					bearerToken.bearer_token = response.bearer_token;
-				} else {
-					// something odd happened...
-					//eslint-disable-next-line no-console
-					console.error(
-						'Expected either an error or a bearer token. got %o, %o.',
-						error,
-						response
-					);
-				}
-
-				const username =
-					( response && response.signup_sandbox_username ) ||
-					( response && response.username ) ||
-					userData.username;
-
-				const userId =
-					( response && response.signup_sandbox_user_id ) ||
-					( response && response.user_id ) ||
-					userData.ID;
-
-				const registrationUserData = {
-					ID: userId,
-					username,
-					email: userData.email,
-				};
-
-				// Fire after a new user registers.
-				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'default' } );
-
-				const providedDependencies = assign( { username }, bearerToken );
-
-				if ( oauth2Signup ) {
-					assign( providedDependencies, {
-						oauth2_client_id: queryArgs.oauth2_client_id,
-						oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
-					} );
-				}
-
-				callback( undefined, providedDependencies );
-			}
+			responseHandler( SIGNUP_TYPE_DEFAULT )
 		);
 	}
 }
