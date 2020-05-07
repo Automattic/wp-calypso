@@ -202,6 +202,8 @@ class BackupsPage extends Component {
 										gmtOffset,
 										hasRealtimeBackups,
 										onDateChange: this.onDateChange,
+										deltas,
+										metaDiff,
 									} }
 								/>
 								{ doesRewindNeedCredentials && (
@@ -211,11 +213,10 @@ class BackupsPage extends Component {
 						) }
 					</div>
 
-					{ ! isLoadingBackups && lastBackup && (
+					{ ! isLoadingBackups && hasRealtimeBackups && lastBackup && (
 						<BackupDelta
 							{ ...{
 								deltas,
-								hasRealtimeBackups,
 								realtimeBackups,
 								allowRestore,
 								moment,
