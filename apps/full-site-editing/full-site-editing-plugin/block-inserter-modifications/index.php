@@ -53,4 +53,4 @@ function enqueue_new_blocks_showcase_script() {
 	enqueue_script( 'new-blocks-showcase', false );
 }
 
-add_action( 'init', __NAMESPACE__ . '\enqueue_new_blocks_showcase_script' );
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_new_blocks_showcase_script', 0 );
