@@ -85,7 +85,7 @@ class Security extends React.Component {
 				<React.Fragment>
 					<p>
 						{ translate(
-							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most so if you’re running into delays please let us know so we can help you out.'
+							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most. If you’re running into delays please let us know so we can help you out.'
 						) }
 					</p>
 					<Button onClick={ this.props.showInlineHelpPopover }>
@@ -127,7 +127,7 @@ class Security extends React.Component {
 				<ul>
 					{ [
 						translate( 'Trust indicators that reassure your visitors your site is safe ' ),
-						translate( 'Secure data transmission of data sent through forms' ),
+						translate( 'Secure data transmission for all your forms' ),
 						translate( 'Safe shopping experience with secure payments' ),
 						translate( 'Protection against hackers trying to mimic your site' ),
 						translate( 'Improved Google search rankings' ),

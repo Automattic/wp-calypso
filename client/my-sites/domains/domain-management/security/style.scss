@@ -17,10 +17,10 @@
 			}
 
 			&.disabled svg {
-				fill: var( --studio-pink-50 );
+				fill: var( --color-error );
 			}
 			&.active svg {
-				fill: var( --studio-green-40 );
+				fill: var( --color-success );
 			}
 		}
 	}
