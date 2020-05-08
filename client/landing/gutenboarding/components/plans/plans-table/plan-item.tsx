@@ -82,17 +82,22 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			</div>
 			<div className="plan-item__domain">
 				<div className="plan-item__domain-summary">{ __( 'Free domain for 1 year' ) }</div>
-				<div className="plan-item__domain-name">
-					<Button
-						className={ classNames( 'plan-item__domain-picker-button', {
-							'has-domain': hasDomain,
-						} ) }
-						isLink
-					>
-						<span>{ hasDomain ? domainName : __( 'Choose domain' ) }</span>
-						<Icon icon="arrow-down-alt2" size={ 14 }></Icon>
-					</Button>
-				</div>
+				{ hasDomain && (
+					<div className="plan-item__domain-name">
+						{ /*
+						<Button
+							className={ classNames( 'plan-item__domain-picker-button', {
+								'has-domain': hasDomain,
+							} ) }
+							isLink
+						>
+							<span>{ hasDomain ? domainName : __( 'Choose domain' ) }</span>
+							<Icon icon="arrow-down-alt2" size={ 14 }></Icon>
+						</Button>
+						*/ }
+						{ domainName }
+					</div>
+				) }
 			</div>
 			<div className="plan-item__features">
 				<ul className="plan-item__feature-item-group">
