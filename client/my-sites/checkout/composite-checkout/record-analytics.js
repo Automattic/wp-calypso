@@ -73,17 +73,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'STEP_LOAD_ERROR':
-				reduxDispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'composite checkout load error',
-						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-						extra: {
-							type: 'step_load',
-							message: String( action.payload ),
-						},
-					} )
-				);
+				reduxDispatch( logStashEventAction( 'step_load', String( action.payload ) ) );
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
@@ -93,15 +83,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'SUBMIT_BUTTON_LOAD_ERROR':
 				reduxDispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'composite checkout load error',
-						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-						extra: {
-							type: 'submit_button_load',
-							message: String( action.payload ),
-						},
-					} )
+					reduxDispatch( logStashEventAction( 'submit_button_load', String( action.payload ) ) )
 				);
 
 				return reduxDispatch(
@@ -112,15 +94,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'PAYMENT_METHOD_LOAD_ERROR':
 				reduxDispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'composite checkout load error',
-						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-						extra: {
-							type: 'payment_method_load',
-							message: String( action.payload ),
-						},
-					} )
+					reduxDispatch( logStashEventAction( 'payment_method_load', String( action.payload ) ) )
 				);
 
 				return reduxDispatch(
@@ -131,15 +105,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'PAGE_LOAD_ERROR':
 				reduxDispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'composite checkout load error',
-						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-						extra: {
-							type: 'page_load',
-							message: String( action.payload ),
-						},
-					} )
+					reduxDispatch( logStashEventAction( 'page_load', String( action.payload ) ) )
 				);
 
 				return reduxDispatch(
@@ -487,4 +453,17 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 		}
 	};
+}
+
+function logStashEventAction( type, message ) {
+	return logToLogstash( {
+		feature: 'calypso_client',
+		message: 'composite checkout load error',
+		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		extra: {
+			env: config( 'env_id' ),
+			type,
+			message,
+		},
+	} );
 }

@@ -17,7 +17,7 @@ import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from '../types';
-import { isPlan } from 'lib/products-values';
+import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -139,15 +139,16 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
-	let label;
+	let label = product_name || '';
 	let sublabel;
 	if ( isPlan( serverCartItem ) ) {
-		label = product_name || '';
 		sublabel = String( translate( 'Plan Subscription' ) );
 	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
-		label = product_name || '';
 		sublabel = '';
-	} else {
+	} else if (
+		meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
 		label = meta;
 		sublabel = product_name || '';
 	}
