@@ -112,27 +112,86 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		...tracksProps,
 	} );
 
-	const { product_slug, extra, meta } = renewItem;
-	const { purchaseId, purchaseDomain } = extra;
-	if ( ! purchaseId ) {
+	if ( ! renewItem.extra.purchaseId ) {
 		notices.error( 'Could not find purchase id for renewal.' );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
-	if ( ! product_slug ) {
+	if ( ! renewItem.product_slug ) {
 		notices.error( 'Could not find product slug for renewal.' );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
-	// There is a product with this weird slug, but left to itself the slug will
-	// cause a routing error since it contains a slash, so we encode it here and
-	// then decode it in the checkout code before adding to the cart.
-	const productSlug = product_slug === 'no-adverts/no-adverts.php' ? 'no-ads' : product_slug;
-	const productList = meta ? `${ productSlug }:${ meta }` : productSlug;
-	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${
-		siteSlug || purchaseDomain || ''
+	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
+
+	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+		siteSlug || renewItem.purchaseDomain || ''
 	}`;
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
+}
+
+/**
+ * Adds all purchases renewal to the cart and redirects to checkout.
+ *
+ * @param {Array} purchases - the purchases to be renewed
+ * @param {string} siteSlug - the site slug to renew the purchase for
+ * @param {object} tracksProps - where was the renew button clicked from
+ */
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+	purchases.forEach( ( purchase ) => {
+		// Track the renew now submit.
+		recordTracksEvent( 'calypso_purchases_renew_now_click', {
+			product_slug: purchase.productSlug,
+			...tracksProps,
+		} );
+	} );
+
+	const renewItems = purchases.map( ( otherPurchase ) =>
+		getRenewalItemFromProduct( otherPurchase, {
+			domain: otherPurchase.meta,
+		} )
+	);
+	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
+
+	if ( purchaseIds.length === 0 ) {
+		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		throw new Error( 'Could not find product slug or purchase id for renewal.' );
+	}
+
+	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+		siteSlug || renewItems[ 0 ].purchaseDomain || ''
+	}`;
+	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
+
+	page( renewalUrl );
+}
+
+function getProductSlugsAndPurchaseIds( renewItems ) {
+	const productSlugs = [];
+	const purchaseIds = [];
+
+	renewItems.forEach( ( currentRenewItem ) => {
+		if ( ! currentRenewItem.extra.purchaseId ) {
+			debug( 'Could not find purchase id for renewal.', currentRenewItem );
+			return null;
+		}
+		if ( ! currentRenewItem.product_slug ) {
+			debug( 'Could not find product slug for renewal.', currentRenewItem );
+			return null;
+		}
+		// There is a product with this weird slug, but left to itself the slug will
+		// cause a routing error since it contains a slash, so we encode it here and
+		// then decode it in the checkout code before adding to the cart.
+		const productSlug =
+			currentRenewItem.product_slug === 'no-adverts/no-adverts.php'
+				? 'no-ads'
+				: currentRenewItem.product_slug;
+		productSlugs.push(
+			currentRenewItem.meta ? `${ productSlug }:${ currentRenewItem.meta }` : productSlug
+		);
+		purchaseIds.push( currentRenewItem.extra.purchaseId );
+	} );
+	return { productSlugs, purchaseIds };
 }
 
 function hasIncludedDomain( purchase ) {
@@ -521,6 +580,7 @@ export {
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
+	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasIncludedDomain,

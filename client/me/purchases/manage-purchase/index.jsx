@@ -23,6 +23,7 @@ import {
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
+	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
@@ -147,7 +148,11 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+		handleRenewNowClick( this.props.purchase, this.props.siteSlug, {} );
+	};
+
+	handleRenewMultiplePurchases = ( purchases ) => {
+		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug, {} );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
@@ -551,6 +556,7 @@ class ManagePurchase extends Component {
 					<PurchaseNotice
 						isDataLoading={ isDataLoading( this.props ) }
 						handleRenew={ this.handleRenew }
+						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
 						selectedSite={ site }
 						purchase={ purchase }
 						renewableSitePurchases={ renewableSitePurchases }

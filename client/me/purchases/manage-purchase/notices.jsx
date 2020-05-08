@@ -39,6 +39,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 
 /**
  * Style dependencies
@@ -51,10 +52,15 @@ class PurchaseNotice extends Component {
 	static propTypes = {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
+		handleRenewMultiplePurchases: PropTypes.func,
 		purchase: PropTypes.object,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+	};
+
+	state = {
+		showUpcomingRenewalsDialog: false,
 	};
 
 	getExpiringText( purchase ) {
@@ -180,6 +186,21 @@ class PurchaseNotice extends Component {
 		}
 	};
 
+	handleExpiringNoticeRenewAll = () => {
+		const { renewableSitePurchases } = this.props;
+		this.trackClick( 'purchase-expiring-renew-all' );
+		if ( this.props.handleRenewMultiplePurchases ) {
+			this.props.handleRenewMultiplePurchases( renewableSitePurchases );
+		}
+	};
+
+	handleExpiringNoticeRenewSelection = ( selectedRenewableSitePurchases ) => {
+		this.trackClick( 'purchase-expiring-renew-selected' );
+		if ( this.props.handleRenewMultiplePurchases ) {
+			this.props.handleRenewMultiplePurchases( selectedRenewableSitePurchases );
+		}
+	};
+
 	renderPurchaseExpiringNotice() {
 		const { moment, purchase } = this.props;
 		let noticeStatus = 'is-info';
@@ -222,6 +243,13 @@ class PurchaseNotice extends Component {
 
 		return (
 			<>
+				<UpcomingRenewalsDialog
+					isVisible={ this.state.showUpcomingRenewalsDialog }
+					purchases={ renewableSitePurchases }
+					site={ selectedSite }
+					onConfirm={ this.handleExpiringNoticeRenewSelection }
+					onClose={ this.closeUpcomingRenewalsDialog }
+				/>
 				<Notice
 					className="manage-purchase__other-purchases-expiring-notice"
 					showDismiss={ false }
@@ -237,6 +265,14 @@ class PurchaseNotice extends Component {
 			</>
 		);
 	}
+
+	openUpcomingRenewalsDialog = () => {
+		this.setState( { showUpcomingRenewalsDialog: true } );
+	};
+
+	closeUpcomingRenewalsDialog = () => {
+		this.setState( { showUpcomingRenewalsDialog: false } );
+	};
 
 	getOtherPurchasesExpiringText() {
 		const { translate, purchase, moment } = this.props;
