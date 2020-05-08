@@ -33,7 +33,7 @@ $illustration-height: 250px;
 			height: auto;
 			line-height: 1.2;
 			font-family: $serif;
-			margin-top: $illustration-height + 24px;
+			margin-top: $illustration-height + 40px;
 
 			@include break-small {
 				margin-top: unset;
@@ -58,6 +58,7 @@ $illustration-height: 250px;
 .editor-deprecation-dialog__illustration {
 	background: url( '/calypso/images/illustrations/block-library.svg' ) no-repeat;
 	background-color: #007cba;
+	background-origin: content-box;
 	background-position: bottom;
 	background-size: auto;
 	margin: 0;
@@ -67,10 +68,13 @@ $illustration-height: 250px;
 	bottom: 0;
 	height: $illustration-height;
 	width: 100%;
+	padding-top: 16px;
 
 	@include break-small {
 		background-size: 70% auto;
+		background-origin: unset;
 		width: 45%;
 		height: unset;
+		padding: 0;
 	}
 }
