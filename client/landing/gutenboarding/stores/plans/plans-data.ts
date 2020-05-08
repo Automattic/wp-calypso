@@ -21,7 +21,6 @@ export type PlanDetails = Array< PlanDetail >;
 
 export type FortifiedPlan = {
 	name?: string;
-	price?: string;
 	features?: Array< string >;
 	isPopular?: boolean;
 	isSelected?: boolean;

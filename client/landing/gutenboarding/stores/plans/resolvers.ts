@@ -3,11 +3,10 @@
  */
 import { apiFetch } from '@wordpress/data-controls';
 
-import { supportedPlanSlugs } from './reducer';
-
 /**
  * Internal dependencies
  */
+import { supportedPlanSlugs } from './reducer';
 import { setPrices } from './actions';
 import { APIPlan } from './types';
 
