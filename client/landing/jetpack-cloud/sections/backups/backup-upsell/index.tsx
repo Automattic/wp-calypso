@@ -28,7 +28,7 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 		<Upsell
 			headerText={ translate( 'Your site has VaultPress' ) }
 			bodyText={ translate(
-				'Your site already is backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
+				'Your site is already backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
 			) }
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
