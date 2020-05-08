@@ -22,10 +22,6 @@
 
 	@include banner-color( var( --color-accent ) );
 
-	&.is-jetpack {
-		@include banner-color( var( --color-jetpack ) );
-	}
-
 	.card__link-indicator {
 		align-items: center;
 		color: var( --color-neutral );
@@ -99,21 +95,6 @@
 		.banner__icon-circle {
 			display: flex;
 		}
-	}
-}
-
-.banner__icon-plan {
-	display: flex;
-	margin-right: 16px;
-	flex-shrink: 0;
-
-	.product-icon {
-		height: 32px;
-		width: 32px;
-	}
-
-	@include breakpoint( '>480px' ) {
-		align-items: center;
 	}
 }
 
