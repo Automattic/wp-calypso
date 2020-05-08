@@ -46,7 +46,7 @@
 	flex: 1;
 
 	@include break-small {
-		display: inline;
+		display: inline-block;
 	}
 }
 
