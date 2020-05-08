@@ -70,7 +70,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -110,7 +110,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
@@ -253,7 +253,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -285,7 +285,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
@@ -302,11 +302,11 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has an id', function () {
 				expect( clientCart.items[ 1 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.items[ 1 ].label ).toBe( '.cash Domain Registration' );
+			it( 'has the expected label (the domain name)', function () {
+				expect( clientCart.items[ 1 ].label ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected sublabel (the domain name)', function () {
-				expect( clientCart.items[ 1 ].sublabel ).toBe( 'foo.cash' );
+			it( 'has the expected sublabel', function () {
+				expect( clientCart.items[ 1 ].sublabel ).toBe( '.cash Domain Registration' );
 			} );
 			it( 'has the expected meta (the domain name)', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
@@ -501,7 +501,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			coupon_discounts_integer: [],
 		};
 
-		const clientCart = translateResponseCartToWPCOMCart( ( x ) => x, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -530,7 +530,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 2 ].id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
+				expect( clientCart.items[ 2 ].sublabel ).toBe( 'G Suite' );
 			} );
 			it( 'has the expected product_id', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.product_id ).toBe( 69 );
@@ -666,9 +666,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			is_coupon_applied: true,
 		};
 
-		const clientCart = translateResponseCartToWPCOMCart( ( string, substitution ) => {
-			return substitution ? string.replace( '%s', substitution.args ) : string;
-		}, serverResponse );
+		const clientCart = translateResponseCartToWPCOMCart( serverResponse );
 
 		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
@@ -708,7 +706,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
 			it( 'has the expected type', function () {
-				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
+				expect( clientCart.items[ 0 ].type ).toBe( 'plan' );
 			} );
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );

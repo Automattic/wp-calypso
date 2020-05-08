@@ -88,7 +88,7 @@ export default function WPCheckout( {
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const domainName = firstDomainItem ? firstDomainItem.wpcom_meta.meta : siteUrl;
 	const isDomainFieldsVisible = !! firstDomainItem;
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
@@ -412,7 +412,11 @@ function InactiveOrderReview() {
 		<SummaryContent>
 			<ProductList>
 				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
-					return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
+					return (
+						<ProductListItem key={ product.id }>
+							{ isLineItemADomain( product ) ? <strong>{ product.label }</strong> : product.label }
+						</ProductListItem>
+					);
 				} ) }
 			</ProductList>
 		</SummaryContent>
@@ -476,7 +480,13 @@ const ProductList = styled.ul`
 `;
 
 const ProductListItem = styled.li`
-	margin: 0;
+	color: ${( props ) => props.theme.colors.textColor};
+	font-size: 14px;
+	margin: 0 0 6px;
 	padding: 0;
 	list-style-type: none;
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
 `;
