@@ -646,6 +646,17 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should not duplicate already selected media items', () => {
+			const state = {
+				[ site.ID ]: [ mediaItem.ID ],
+			};
+			const result = selectedItems( deepFreeze( state ), receiveMedia( siteId, [ mediaItem ] ) );
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ mediaItem.ID ],
+			} );
+		} );
+
 		test( 'should deselect any transient media item after its corresponding media was successfully uploaded', () => {
 			const state = {
 				[ site.ID ]: [ 1, mediaId, 2 ],
