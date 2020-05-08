@@ -179,6 +179,7 @@ export class Banner extends Component {
 			compact,
 			list,
 			price,
+			primaryButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -225,7 +226,7 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary={ this.props.primaryButton } target={ target }>
+								<Button compact primary={ primaryButton } target={ target }>
 									{ callToAction }
 								</Button>
 							) : (
@@ -233,7 +234,7 @@ export class Banner extends Component {
 									compact
 									href={ this.getHref() }
 									onClick={ this.handleClick }
-									primary={ this.props.primaryButton }
+									primary={ primaryButton }
 									target={ target }
 								>
 									{ callToAction }

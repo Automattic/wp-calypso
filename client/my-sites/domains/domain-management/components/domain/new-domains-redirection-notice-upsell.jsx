@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -44,8 +44,9 @@ class NewDomainsRedirectionNoticeUpsell extends React.Component {
 		}
 
 		return (
-			<Banner
+			<UpsellNudge
 				className="new-domains-redirection-notice-upsell__banner"
+				showIcon={ true }
 				icon="info"
 				href={ `/checkout/${ selectedSiteId }/personal` }
 				title={ '' }
