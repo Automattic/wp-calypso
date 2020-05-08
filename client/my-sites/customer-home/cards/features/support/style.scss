@@ -11,7 +11,7 @@
 		width: 137px;
 		height: 119px;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			display: none;
 		}
 	}
@@ -19,7 +19,7 @@
 	.vertical-nav {
 		width: 60%;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			width: 100%;
 		}
 	}

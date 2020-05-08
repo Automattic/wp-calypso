@@ -5,7 +5,7 @@
 	padding-top: 0.5rem;
 	font-size: 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		background: transparent;
 	}
 
@@ -16,7 +16,7 @@
 	display: flex;
 	justify-content: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: flex-start;
 	}
 }
@@ -32,7 +32,7 @@
 .backup-date-picker__select-date--previous {
 	text-align: left;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 153px;
 	}
 }
@@ -40,7 +40,7 @@
 .backup-date-picker__select-date--next {
 	text-align: right;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: space-between;
 	}
 }
@@ -50,7 +50,7 @@
 	flex: 1;
 	align-items: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 153px;
 	}
 }

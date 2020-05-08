@@ -1,12 +1,15 @@
 
 // ==========================================================================
 // Breakpoint Mixin
+// This has been deprecated. New breakpoints should be created using Gutenberg breakpoints:
+// https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss
+//
 // See https://wpcalypso.wordpress.com/devdocs/docs/coding-guidelines/css.md#media-queries
 // ==========================================================================
 
 $breakpoints: 480px, 660px, 800px, 960px, 1040px, 1280px, 1400px; // Think very carefully before adding a new breakpoint
 
-@mixin breakpoint( $sizes... ) {
+@mixin breakpoint-deprecated( $sizes... ) {
 	@each $size in $sizes {
 		@if type-of( $size ) == string {
 			$approved-value: 0;

@@ -40,7 +40,7 @@
 			right: 30px;
 		user-select: none;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}

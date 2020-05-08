@@ -74,7 +74,7 @@
 }
 
 
-@include breakpoint('<800px') {
+@include breakpoint-deprecated('<800px') {
 	&.migrate__plan-upsell {
 		flex-wrap: wrap;
 		margin: 16px 0;
@@ -235,7 +235,7 @@
 .migrate__section-header {
 	.formatted-header__title {
 		font-size: 24px;
-		@include breakpoint('>660px') {
+		@include breakpoint-deprecated('>660px') {
 			font-size: 32px;
 		}
 	}

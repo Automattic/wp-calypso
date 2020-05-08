@@ -1,5 +1,5 @@
 &.store-location__edit-dialog {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 660px;
 	}
 }

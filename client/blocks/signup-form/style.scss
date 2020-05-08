@@ -21,7 +21,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			white-space: pre;
 		}
 	}

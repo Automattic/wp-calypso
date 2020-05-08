@@ -14,7 +14,7 @@
 	margin-bottom: 16px;
 	line-height: 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 24px;
 	}
 }
@@ -24,7 +24,7 @@
 	margin: 0 auto;
 	width: 48px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0;
 		padding: 0;
 	}
@@ -50,7 +50,7 @@
 	line-height: 1;
 	margin: 32px 0 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 36px;
 		font-weight: 600;
 		margin: 32px 0 24px;
@@ -72,7 +72,7 @@
 	width: 100%;
 	text-align: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: auto;
 		text-align: left;
 	}

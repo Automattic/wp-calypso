@@ -7,11 +7,11 @@
 		padding: 0;
 		width: auto;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			min-width: $sidebar-width-min;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			min-width: $sidebar-width-max;
 		}
 

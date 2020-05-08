@@ -15,11 +15,11 @@
 
 			.product-card {
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					flex-basis: calc( 50% - 1em );
 				}
 				&:first-child:last-child {
-					@include breakpoint( '>960px' ) {
+					@include breakpoint-deprecated( '>960px' ) {
 						margin-left: auto;
 						margin-right: auto;
 						flex-basis: 520px;
@@ -68,12 +68,12 @@
 	margin: 0 0 16px;
 	padding: 0 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-bottom: 28px;
 		padding: 0 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-left: auto;
 		margin-right: auto;
 		padding: 0;
@@ -88,7 +88,7 @@
 	font-weight: 600;
 	color: var( --color-text );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		font-size: 24px;
 		font-weight: 400;
 	}

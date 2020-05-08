@@ -7,7 +7,7 @@
 	flex-wrap: wrap;
 	padding: 10px 16px 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 0;
 		padding: 10px 0 0;
 	}
@@ -43,7 +43,7 @@
 	padding-left: 40px;
 	flex-basis: 100%;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex: 1;
 	}
 }

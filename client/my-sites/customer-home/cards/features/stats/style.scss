@@ -1,5 +1,5 @@
 .stats .card {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 16px 24px;
 	}
 }
@@ -11,7 +11,7 @@
 .stats .chart {
 	margin: 0 -16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 -24px;
 	}
 
@@ -23,7 +23,7 @@
 		padding: 16px;
 		margin: -16px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 16px 24px;
 			margin: -16px -24px;
 		}
@@ -75,12 +75,12 @@
 		padding-right: 24px;
 		border-right: none;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding: 16px;
 		}
 	}
 
-	@include breakpoint( '1040px-1280px', '<960px' ) {
+	@include breakpoint-deprecated( '1040px-1280px', '<960px' ) {
 		width: 50%;
 
 		&:nth-child( 1 ),
