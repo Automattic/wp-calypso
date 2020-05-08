@@ -14,6 +14,7 @@ import { useHistory } from 'react-router-dom';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
@@ -81,6 +82,7 @@ const Header: React.FunctionComponent = () => {
 	const { createSite, resetOnboardStore, setDomain, setIsRedirecting } = useDispatch(
 		ONBOARD_STORE
 	);
+	const { resetPlan } = useDispatch( PLANS_STORE );
 
 	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
@@ -193,6 +195,7 @@ const Header: React.FunctionComponent = () => {
 				blogId: newSite.blogid,
 			} );
 			resetOnboardStore();
+			resetPlan();
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
@@ -203,6 +206,7 @@ const Header: React.FunctionComponent = () => {
 		newSite,
 		newUser,
 		resetOnboardStore,
+		resetPlan,
 		setIsRedirecting,
 	] );
 

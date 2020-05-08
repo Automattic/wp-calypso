@@ -10,3 +10,5 @@ export const resetPlan = () => {
 		type: 'RESET_PLAN' as const,
 	};
 };
+
+export type PlanAction = ReturnType< typeof setPlan | typeof resetPlan >;
