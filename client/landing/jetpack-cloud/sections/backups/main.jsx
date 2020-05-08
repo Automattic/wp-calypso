@@ -169,54 +169,57 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				<div className="backups__last-backup-status">
-					<BackupDatePicker
-						onDateChange={ this.onDateChange }
-						selectedDate={ this.getSelectedDate() }
-						siteId={ siteId }
-						oldestDateAvailable={ oldestDateAvailable }
-						today={ today }
-						siteSlug={ siteSlug }
-					/>
+				<div className="backups__main-wrap">
+					<div className="backups__last-backup-status">
+						<BackupDatePicker
+							onDateChange={ this.onDateChange }
+							selectedDate={ this.getSelectedDate() }
+							siteId={ siteId }
+							oldestDateAvailable={ oldestDateAvailable }
+							today={ today }
+							siteSlug={ siteSlug }
+						/>
 
-					{ isLoadingBackups && <div className="backups__is-loading" /> }
+						{ isLoadingBackups && <div className="backups__is-loading" /> }
 
-					{ ! isLoadingBackups && (
-						<>
-							<DailyBackupStatus
-								{ ...{
-									allowRestore,
-									siteUrl,
-									siteSlug,
-									backup: lastBackup,
-									lastDateAvailable,
-									selectedDate: this.getSelectedDate(),
-									timezone,
-									gmtOffset,
-									hasRealtimeBackups,
-									onDateChange: this.onDateChange,
-								} }
-							/>
-							{ doesRewindNeedCredentials && (
-								<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-							) }
-						</>
+						{ ! isLoadingBackups && (
+							<>
+								<DailyBackupStatus
+									{ ...{
+										allowRestore,
+										siteUrl,
+										siteSlug,
+										backup: lastBackup,
+										lastDateAvailable,
+										selectedDate: this.getSelectedDate(),
+										timezone,
+										gmtOffset,
+										hasRealtimeBackups,
+										onDateChange: this.onDateChange,
+										deltas,
+										metaDiff,
+									} }
+								/>
+								{ doesRewindNeedCredentials && (
+									<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+								) }
+							</>
+						) }
+					</div>
+
+					{ ! isLoadingBackups && hasRealtimeBackups && lastBackup && (
+						<BackupDelta
+							{ ...{
+								deltas,
+								realtimeBackups,
+								allowRestore,
+								moment,
+								siteSlug,
+								metaDiff,
+							} }
+						/>
 					) }
 				</div>
-
-				{ ! isLoadingBackups && lastBackup && (
-					<BackupDelta
-						{ ...{
-							deltas,
-							hasRealtimeBackups,
-							realtimeBackups,
-							allowRestore,
-							moment,
-							siteSlug,
-							metaDiff,
-						} }
-					/>
-				) }
 			</Main>
 		);
 	}
