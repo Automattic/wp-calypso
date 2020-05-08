@@ -90,8 +90,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const allSuggestions = useDomainSuggestions( { locale: i18nLocale, quantity } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
-	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const unSortedPaidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
+	const recommendedSuggestion = getRecommendedDomainSuggestion( unSortedPaidSuggestions );
+
+	// put the recommended suggestion on top
+	const paidSuggestions = unSortedPaidSuggestions?.sort( ( suggestion ) =>
+		suggestion === recommendedSuggestion ? -1 : 1
+	);
+
 	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
 
 	const ConfirmButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
@@ -202,22 +208,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							</div>
 						) }
 						<div className="domain-picker__suggestion-item-group">
-							{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-							{ freeSuggestions &&
-								( freeSuggestions.length ? (
-									<SuggestionItem
-										suggestion={ freeSuggestions[ 0 ] }
-										isSelected={
-											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
-										}
-										onSelect={ setCurrentSelection }
-										railcarId={ railcarId ? `${ railcarId }0` : undefined }
-										recordAnalytics={ recordAnalytics || undefined }
-										uiPosition={ 0 }
-									/>
-								) : (
-									<SuggestionNone />
-								) ) }
 							{ ! paidSuggestions &&
 								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 							{ paidSuggestions &&
@@ -234,6 +224,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											uiPosition={ i + 1 }
 										/>
 									) )
+								) : (
+									<SuggestionNone />
+								) ) }
+							{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+							{ freeSuggestions &&
+								( freeSuggestions.length ? (
+									<SuggestionItem
+										suggestion={ freeSuggestions[ 0 ] }
+										isSelected={
+											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
+										}
+										onSelect={ setCurrentSelection }
+										railcarId={ railcarId ? `${ railcarId }0` : undefined }
+										recordAnalytics={ recordAnalytics || undefined }
+										uiPosition={ 0 }
+									/>
 								) : (
 									<SuggestionNone />
 								) ) }
