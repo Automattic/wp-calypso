@@ -96,6 +96,9 @@ class AllSites extends Component {
 	}
 }
 
+// don't instantiate function in `connect`
+const isSiteVisible = ( { visible = true } ) => visible;
+
 export default connect( ( state, props ) => {
 	// If sites or count are not specified as props, fetch the default values from Redux
 	const {
@@ -103,8 +106,10 @@ export default connect( ( state, props ) => {
 		userSitesCount = getCurrentUserVisibleSiteCount( state ),
 	} = props;
 
+	const visibleSiteCount = sites.filter( isSiteVisible ).length;
+
 	return {
 		sites,
-		count: config.isEnabled( 'realtime-site-count' ) ? sites.length : userSitesCount,
+		count: config.isEnabled( 'realtime-site-count' ) ? visibleSiteCount : userSitesCount,
 	};
 } )( localize( AllSites ) );
