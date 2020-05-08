@@ -10,6 +10,7 @@
  */
 
 namespace A8C\FSE\Common;
+use function A8C\FSE\is_full_site_editing_active;
 
 /**
  * Can be used to determine if the current screen is the block editor.
@@ -52,7 +53,8 @@ function is_homepage_title_hidden() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden();
+	// TODO - remove is_F_S_E check when we remove the "block patterns moved" notice plugin.
+	return (bool) is_homepage_title_hidden() || ! is_full_site_editing_active();
 }
 
 /**

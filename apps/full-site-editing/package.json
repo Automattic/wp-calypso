@@ -86,6 +86,7 @@
 		"@wordpress/element": "*",
 		"@wordpress/hooks": "*",
 		"@wordpress/html-entities": "*",
+		"@wordpress/icons": "*",
 		"@wordpress/i18n": "*",
 		"@wordpress/keycodes": "*",
 		"@wordpress/plugins": "*",
