@@ -21,6 +21,15 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
+const BackupsUpsellIcon: FunctionComponent = () => (
+	<div className="backup-upsell__icon-header">
+		<img
+			src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
+			alt="jetpack cloud backup error"
+		/>
+	</div>
+);
+
 const BackupsVPActiveBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -33,14 +42,7 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'cloud_backups_vaultpress_click' ) ) }
-			iconComponent={
-				<div className="backup-upsell__icon-header">
-					<img
-						src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
-						alt="jetpack cloud backup error"
-					/>
-				</div>
-			}
+			iconComponent={ <BackupsUpsellIcon /> }
 		/>
 	);
 };
@@ -57,14 +59,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			) }
 			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'cloud_backups_upsell_click' ) ) }
-			iconComponent={
-				<div className="backup-upsell__icon-header">
-					<img
-						src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
-						alt="jetpack cloud backup error"
-					/>
-				</div>
-			}
+			iconComponent={ <BackupsUpsellIcon /> }
 		/>
 	);
 };
