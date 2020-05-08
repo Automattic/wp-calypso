@@ -42,7 +42,7 @@ const BlockPatternsMoved = () => {
 							'You can now find them in the block inserter under the "patterns" tab.  The block inserter can be found in the top-left corner of your screen by selecting the following icon:'
 						) }
 					</p>
-					<Button icon={ plus } onClick={ openInserter } />
+					<Button isPrimary icon={ plus } onClick={ openInserter } />
 				</PanelBody>
 			</PluginSidebar>
 		</>
