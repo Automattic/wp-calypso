@@ -14,7 +14,6 @@ import { useHistory } from 'react-router-dom';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
@@ -29,41 +28,6 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
-import wp from '../../../../lib/wp';
-import { recordOnboardingComplete } from '../../lib/analytics';
-
-const wpcom = wp.undocumented();
-
-interface Cart {
-	blog_id: number;
-	cart_key: number;
-	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
-	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
-	next_domain_is_free: boolean;
-	next_domain_condition: string;
-	products: unknown[];
-	total_cost: number;
-	currency: string;
-	total_cost_display: string;
-	total_cost_integer: number;
-	temporary: boolean;
-	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
-	sub_total_integer: number;
-	total_tax: number;
-	total_tax_display: string;
-	total_tax_integer: number;
-	credits: number;
-	credits_display: string;
-	credits_integer: number;
-	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
-	messages: Record< 'errors' | 'success', unknown >;
-}
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -74,16 +38,10 @@ const Header: React.FunctionComponent = () => {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
-	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ) ).getSelectedPlan();
-	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 
 	const makePath = usePath();
 
-	const { createSite, resetOnboardStore, setDomain, setIsRedirecting } = useDispatch(
-		ONBOARD_STORE
-	);
-	const { resetPlan } = useDispatch( PLANS_STORE );
+	const { createSite, setDomain } = useDispatch( ONBOARD_STORE );
 
 	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
@@ -159,92 +117,6 @@ const Header: React.FunctionComponent = () => {
 			handleCreateSite( newUser.username, newUser.bearerToken );
 		}
 	}, [ newSite, newUser, handleCreateSite ] );
-
-	React.useEffect( () => {
-		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
-		if ( newSite && ! isRedirecting ) {
-			setIsRedirecting( true );
-
-			if ( selectedPlan ) {
-				const planProduct = {
-					meta: selectedPlan.getTitle(),
-					product_id: selectedPlan.getProductId(),
-					product_slug: selectedPlan.getStoreSlug(),
-					extra: {
-						source: 'gutenboarding',
-					},
-				};
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, planProduct, domainProduct ],
-					} );
-					resetPlan();
-					resetOnboardStore();
-					window.location.replace(
-						`/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`
-					);
-				};
-				go();
-				return;
-			}
-
-			if ( hasPaidDomain ) {
-				// I'd rather not make my own product, but this works.
-				// lib/cart-items helpers did not perform well.
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, domainProduct ],
-					} );
-					resetOnboardStore();
-					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
-				};
-				go();
-				return;
-			}
-
-			recordOnboardingComplete( {
-				isNewSite: !! newSite,
-				isNewUser: !! newUser,
-				blogId: newSite.blogid,
-			} );
-			resetOnboardStore();
-
-			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
-		}
-	}, [
-		domain,
-		hasPaidDomain,
-		selectedPlan,
-		isRedirecting,
-		newSite,
-		newUser,
-		resetOnboardStore,
-		resetPlan,
-		setIsRedirecting,
-	] );
 
 	return (
 		<div
