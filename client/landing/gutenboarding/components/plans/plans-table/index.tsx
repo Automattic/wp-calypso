@@ -21,22 +21,18 @@ const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSele
 
 	return (
 		<div className="plans-table">
-			<div className="plans-table__body">
-				<div className="plans-table__items">
-					{ supportedPlans.map( ( plan, i ) => (
-						<PlanItem
-							key={ i }
-							slug={ plan.getStoreSlug() }
-							features={ plan.features }
-							isPopular={ plan.isPopular }
-							price={ plan.price }
-							name={ plan.getTitle() }
-							isSelected={ plan.getStoreSlug() === selectedPlanSlug }
-							onSelect={ onPlanSelect }
-						></PlanItem>
-					) ) }
-				</div>
-			</div>
+			{ supportedPlans.map( ( plan ) => (
+				<PlanItem
+					key={ plan.getStoreSlug() }
+					slug={ plan.getStoreSlug() }
+					features={ plan.features }
+					isPopular={ plan.isPopular }
+					price={ plan.price }
+					name={ plan.getTitle() }
+					isSelected={ plan.getStoreSlug() === selectedPlanSlug }
+					onSelect={ onPlanSelect }
+				></PlanItem>
+			) ) }
 		</div>
 	);
 };
