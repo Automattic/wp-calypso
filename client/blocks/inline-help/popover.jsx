@@ -45,6 +45,7 @@ import { isEnabled } from 'config';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { activatePlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -61,6 +62,7 @@ class InlineHelpPopover extends Component {
 		activatePlugin: PropTypes.func,
 		fetchAtomicPlugins: PropTypes.func,
 		sitePlugins: PropTypes.array,
+		showErrorNotice: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -234,11 +236,15 @@ class InlineHelpPopover extends Component {
 	};
 
 	checkForClassicEditorOnAtomic() {
-		const { siteId, sitePlugins } = this.props;
+		const { siteId, sitePlugins, showErrorNotice, translate } = this.props;
 		const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
 
 		if ( ! classicPlugin ) {
-			//TODO: In theory we should never get here but should add some sort of error message just in case.
+			showErrorNotice(
+				translate(
+					'There was a problem activating the Classic editor on your site. Please contact support.'
+				)
+			);
 			return;
 		}
 
@@ -376,6 +382,7 @@ const mapDispatchToProps = {
 	resetContactForm: resetInlineHelpContactForm,
 	activatePlugin,
 	fetchAtomicPlugins: fetchPlugins,
+	showErrorNotice: errorNotice,
 };
 
 export default compose(
