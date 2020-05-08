@@ -197,6 +197,12 @@ export class MediaLibraryContent extends React.Component {
 					message = translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
 					break;
+
+				case MediaValidationErrors.SERVICE_UNAVAILABLE:
+					message = this.getServiceUnavailableMessageForSource();
+					tryAgain = true;
+					break;
+
 				default:
 					message = translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
@@ -226,6 +232,20 @@ export class MediaLibraryContent extends React.Component {
 
 		// Generic message. Nothing should use this, but just in case.
 		return translate( 'Your service has been disconnected. Please reconnect to continue.' );
+	}
+
+	getServiceUnavailableMessageForSource() {
+		const { translate, source } = this.props;
+
+		if ( source === 'pexels' ) {
+			return translate(
+				'We were unable to connect to the Pexels service. Please try again later.'
+			);
+		}
+
+		return translate(
+			'We were unable to connect to the external service. Please try again later.'
+		);
 	}
 
 	renderTryAgain() {

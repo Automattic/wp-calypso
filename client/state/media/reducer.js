@@ -96,6 +96,8 @@ export const errors = ( state = {}, action ) => {
 						return MediaValidationErrors.SERVICE_AUTH_FAILED;
 					case 'servicefail':
 						return MediaValidationErrors.SERVICE_FAILED;
+					case 'service_unavailable':
+						return MediaValidationErrors.SERVICE_UNAVAILABLE;
 					default:
 						return MediaValidationErrors.SERVER_ERROR;
 				}
