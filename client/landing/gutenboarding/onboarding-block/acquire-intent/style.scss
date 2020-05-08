@@ -186,3 +186,9 @@
 .madlib__input:not( :empty ) ~ .site-title__placeholder {
 	display: none;
 }
+
+.madlib__input:focus ~ .site-title__placeholder {
+	@include break-small {
+		display: none;
+	}
+}
