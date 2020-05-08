@@ -8,6 +8,9 @@ import PopupMonitor from '@automattic/popup-monitor';
  *
  * @callback requestCallback
  * @param {object} result Received authentication data.
+ * @param {number} result.keyring_id
+ * @param {string} result.id_token
+ * @param {object} result.user
  */
 
 /**
