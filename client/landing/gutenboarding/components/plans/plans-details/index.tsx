@@ -4,19 +4,23 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
+import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { details, PlanFeature, PlanDetail } from './mock-data';
+import './style.scss';
 
-const PlanDetails: React.FunctionComponent = () => {
+const PlansDetails: React.FunctionComponent = () => {
+	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
+
 	const { __ } = useI18n();
 
 	return (
-		<table className="plan-details">
+		<table className="plans-details">
 			<thead>
-				<tr className="plan-details__header-row">
+				<tr className="plans-details__header-row">
 					<th>{ __( 'Feature' ) }</th>
 					<th>{ __( 'Free' ) }</th>
 					<th>{ __( 'Personal' ) }</th>
@@ -25,15 +29,15 @@ const PlanDetails: React.FunctionComponent = () => {
 					<th>{ __( 'Commerce' ) }</th>
 				</tr>
 			</thead>
-			{ details.map( ( detail: PlanDetail ) => (
+			{ plansDetails.map( ( detail ) => (
 				<tbody key={ detail.id }>
 					{ detail.name && (
-						<tr className="plan-details__header-row">
+						<tr className="plans-details__header-row">
 							<th colSpan={ 6 }>{ detail.name }</th>
 						</tr>
 					) }
-					{ detail.features.map( ( feature: PlanFeature, i ) => (
-						<tr className="plan-details__feature-row" key={ i }>
+					{ detail.features.map( ( feature, i ) => (
+						<tr className="plans-details__feature-row" key={ i }>
 							<th>{ feature.name }</th>
 							{ feature.data.map( ( value, j ) => (
 								<td key={ j }>
@@ -61,4 +65,4 @@ const PlanDetails: React.FunctionComponent = () => {
 	);
 };
 
-export default PlanDetails;
+export default PlansDetails;

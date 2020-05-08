@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
-import { Plan } from '../../../lib/plans';
 
 /**
  * Style dependencies
@@ -19,21 +18,22 @@ import './style.scss';
 
 interface Props extends Partial< PlansGridProps > {
 	isOpen: boolean;
-	onConfirm: ( plan: Plan ) => void;
+	selectedPlanSlug: string;
+	onConfirm: ( plan: string ) => void;
 	onClose: () => void;
 }
 
 const PlansGridModal: React.FunctionComponent< Props > = ( {
 	isOpen,
-	currentPlan,
+	selectedPlanSlug,
 	onConfirm,
 	onClose,
 } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
 
-	const handleConfirm = ( plan: Plan ) => {
-		onConfirm( plan );
+	const handleConfirm = ( planSlug: string ) => {
+		onConfirm( planSlug );
 		onClose();
 	};
 
@@ -49,8 +49,8 @@ const PlansGridModal: React.FunctionComponent< Props > = ( {
 			bodyOpenClassName="has-plans-modal"
 		>
 			<PlansGrid
-				renderConfirmButton={ ( plan: Plan ) => (
-					<Button isPrimary onClick={ () => handleConfirm( plan ) }>
+				renderConfirmButton={ ( planSlug: string ) => (
+					<Button isPrimary onClick={ () => handleConfirm( planSlug ) }>
 						{ __( 'Confirm' ) }
 					</Button>
 				) }
@@ -59,7 +59,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( {
 						{ __( 'Close' ) }
 					</Button>
 				}
-				currentPlan={ currentPlan }
+				selectedPlanSlug={ selectedPlanSlug }
 			/>
 		</Modal>
 	);

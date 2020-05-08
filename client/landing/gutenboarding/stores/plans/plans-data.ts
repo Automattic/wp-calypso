@@ -1,20 +1,34 @@
+/**
+ * External dependencies
+ */
+import {
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '../../../../lib/plans/constants';
+
 export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
 
-export type PlanDetail = { id: string; name: string | null; features: Array< PlanFeature > };
+export type PlanDetail = {
+	id: string;
+	name: string | null;
+	features: Array< PlanFeature >;
+};
 
 export type PlanDetails = Array< PlanDetail >;
 
-export type Plan = {
-	id: string;
-	name: string;
-	price: string;
-	features: Array< string >;
+export type FortifiedPlan = {
+	name?: string;
+	price?: string;
+	features?: Array< string >;
 	isPopular?: boolean;
 	isSelected?: boolean;
 	domainName?: string;
 };
 
-export type Plans = Array< Plan >;
+type FortifiedPlans = Record< string, FortifiedPlan >;
 
 const mainFeatures = [
 	'Remove WordPress ads',
@@ -29,43 +43,31 @@ const mainFeatures = [
 	'Accept Payments in 60+ Countries',
 ];
 
-export const plans: Plans = [
-	{
-		id: 'free',
-		name: 'Free',
+export const planFeatures: FortifiedPlans = {
+	[ PLAN_FREE ]: {
 		price: '$0',
 		features: [ '3 GB', ...mainFeatures.slice( 0, 1 ) ],
-		domainName: 'roastingbeans.wordpress.com',
 	},
-	{
-		id: 'personal',
-		name: 'Personal',
+	[ PLAN_PERSONAL ]: {
 		price: '$5',
 		features: [ '6 GB', ...mainFeatures.slice( 0, 4 ) ],
-		isSelected: true,
 	},
-	{
-		id: 'premium',
-		name: 'Premium',
+	[ PLAN_PREMIUM ]: {
 		price: '$8',
 		features: [ '13 GB', ...mainFeatures.slice( 0, 9 ) ],
 		isPopular: true,
 	},
-	{
-		id: 'business',
-		name: 'Business',
+	[ PLAN_BUSINESS ]: {
 		price: '$25',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 10 ) ],
 	},
-	{
-		id: 'commerce',
-		name: 'Commerce',
+	[ PLAN_ECOMMERCE ]: {
 		price: '$45',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 11 ) ],
 	},
-];
+};
 
-export const details: PlanDetails = [
+export const planDetails: PlanDetails = [
 	{
 		id: 'general',
 		name: null,
