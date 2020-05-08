@@ -993,7 +993,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: localizeUrl( 'https://en.support.wordpress.com/domain-mapping-vs-domain-transfer/' ),
-			post_id: 41298,
+			post_id: 157655,
 			title: translate( 'Connect an Existing Domain' ),
 			description: translate(
 				'You can connect an existing domain you own that’s registered elsewhere by either mapping or transferring. Domain mapping lets you connect a domain while keeping it registered at the current registrar (where you purchased the domain from). Domain transferring moves the domain to WordPress.com so we become the new registrar.'
