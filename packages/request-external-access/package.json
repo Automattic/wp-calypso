@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/request-external-access",
 	"version": "1.0.0",
-	"description": "Utility for requesting external access using the popup window.",
+	"description": "Utility for requesting authorization of sharing services.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
