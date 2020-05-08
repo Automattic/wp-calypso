@@ -31,6 +31,7 @@
 		"@babel/runtime": "^7.8.4",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "10.0.27",
+		"@fullstory/browser": "1.4.4",
 		"@github/webauthn-json": "0.4.1",
 		"@wordpress/api-fetch": "^3.12.0",
 		"@wordpress/base-styles": "^1.5.0",

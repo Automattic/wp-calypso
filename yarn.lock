@@ -1596,6 +1596,11 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
+"@fullstory/browser@1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@fullstory/browser/-/browser-1.4.4.tgz#56e8db9f97b036892e419f5d6d1a510a3b68dd39"
+  integrity sha512-gV028/krZRvseyR6WEpphrZdlskoKTPV7x8mAbU9X0dOoUUZEdIr3J9ADyFPxcWGJgKL45zrplvgifBQXdKgVg==
+
 "@github/webauthn-json@0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@github/webauthn-json/-/webauthn-json-0.4.1.tgz#1666441e10806c5871f3ac26e8bca169407560b3"
