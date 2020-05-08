@@ -33,13 +33,6 @@
 		padding-left: 32px;
 	}
 
-	// JITMs need to be constrained to match layout column
-	> .upsell-nudge {
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 1040px;
-	}
-
 	// Themes sets it own padding/margin
 	.is-section-theme &,
 	.is-section-themes.has-no-sidebar & {
