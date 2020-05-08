@@ -13,6 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSitesIcon from './all-sites-icon';
+import config from 'config';
 import Count from 'components/count';
 import getSites from 'state/selectors/get-sites';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
@@ -97,6 +98,13 @@ class AllSites extends Component {
 
 export default connect( ( state, props ) => {
 	// If sites or count are not specified as props, fetch the default values from Redux
-	const { sites = getSites( state ), count = getCurrentUserVisibleSiteCount( state ) } = props;
-	return { sites, count };
+	const {
+		sites = getSites( state ),
+		userSitesCount = getCurrentUserVisibleSiteCount( state ),
+	} = props;
+
+	return {
+		sites,
+		count: config.isEnabled( 'realtime-site-count' ) ? sites.length : userSitesCount,
+	};
 } )( localize( AllSites ) );
