@@ -2,7 +2,8 @@
 	"name": "@automattic/request-external-access",
 	"version": "1.0.0",
 	"description": "Utility for requesting external access using the popup window.",
-	"main": "dist/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
 	"keywords": [
 		"wordpress",
 		"access",
@@ -26,7 +27,11 @@
 		"dist",
 		"src"
 	],
-	"scripts": {},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
+	},
 	"dependencies": {
 		"@automattic/popup-monitor": "1.0.0"
 	}
