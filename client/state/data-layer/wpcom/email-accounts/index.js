@@ -14,10 +14,28 @@ import {
 	receiveGetEmailAccountsSuccess,
 	receiveGetEmailAccountsFailure,
 } from 'state/email-accounts/actions';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const getEmailAccounts = ( action ) => {
+	if ( action.useBuffer ) {
+		return receiveGetEmailAccountsSuccess( action.siteId, {
+			accounts: [
+				{
+					email: 'sample@domain.com',
+					mailbox: 'sample',
+					site_id: action.siteId,
+					domain: 'domain.com',
+					firstname: 'First',
+					lastname: 'Last',
+					fullname: 'First Last',
+					suspended: false,
+					product_slug: 'titan',
+					product_name: 'Titan',
+				},
+			],
+		} );
+	}
+
 	return http(
 		{
 			method: 'GET',
