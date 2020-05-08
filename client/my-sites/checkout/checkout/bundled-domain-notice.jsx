@@ -8,7 +8,12 @@ import React from 'react';
  */
 import { translate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { hasPlan, hasJetpackPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import {
+	hasDomainRegistration,
+	hasPlan,
+	hasJetpackPlan,
+	isNextDomainFree,
+} from 'lib/cart-values/cart-items';
 import { getPlan, getBillingMonthsForTerm } from 'lib/plans';
 import { REGISTER_DOMAIN } from 'lib/url/support';
 import { translationExists } from 'lib/i18n-utils';
@@ -47,9 +52,14 @@ export default function BundledDomainNotice( { cart } ) {
 		return null;
 	}
 
-	const domainRegistrationLink = (
+	let domainRegistrationLink = (
 		<a href={ REGISTER_DOMAIN } target="_blank" rel="noopener noreferrer" />
 	);
+
+	// Hide the registration link when the cart already has a domain registration.
+	if ( hasDomainRegistration( cart ) ) {
+		domainRegistrationLink = <React.Fragment />;
+	}
 
 	let copy = translate(
 		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.',
