@@ -18,7 +18,6 @@ import { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
-import { isEnabled } from '../../../config';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
@@ -49,7 +48,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	}, [ siteTitle, siteVertical, wasVerticalSkipped ] );
 
 	const canUseStyleStep = useCallback( (): boolean => {
-		return !! selectedDesign && isEnabled( 'gutenboarding/style-preview' );
+		return !! selectedDesign;
 	}, [ selectedDesign ] );
 
 	const canUseCreateSiteStep = useCallback( (): boolean => {
