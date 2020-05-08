@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
@@ -44,7 +44,7 @@ const NonPrimaryDomainPlanUpsell = ( {
 	}
 
 	return (
-		<Banner
+		<UpsellNudge
 			title={ translate( 'This domain is being forwarded to %(primaryDomain)s', {
 				args: {
 					primaryDomain: selectedSite.slug,
@@ -67,6 +67,7 @@ const NonPrimaryDomainPlanUpsell = ( {
 			tracksImpressionName={ tracksImpressionName }
 			tracksClickName={ tracksClickName }
 			event="calypso_non_primary_domain_plan_upsell"
+			showIcon
 		/>
 	);
 };
