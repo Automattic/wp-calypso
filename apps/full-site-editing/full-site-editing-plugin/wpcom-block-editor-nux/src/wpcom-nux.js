@@ -61,75 +61,73 @@ function WpcomNux() {
 			finishButtonText={ __( 'Get started' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			<NuxPage
-				heading={ __( 'Welcome to your website' ) }
-				description={ __(
-					'Edit your homepage, add the pages you need, and change your site’s look and feel.'
-				) }
-				imgSrc={ editorImage }
-				alignBottom
-			/>
-
-			{ ! isGutenboarding && (
-				<NuxPage
-					heading={ __( 'Create pages and add your content' ) }
-					description={ __(
-						'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
-					) }
-					imgSrc={ blockImage }
-				/>
-			) }
-
-			<NuxPage
-				heading={
-					isGutenboarding ? __( 'Add or edit your content' ) : __( 'Add (almost) anything' )
-				}
-				description={
-					isGutenboarding
-						? __(
-								'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.'
-						  )
-						: __(
-								'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
-						  )
-				}
-				imgSrc={ blockPickerImage }
-			/>
-
-			{ isGutenboarding && (
-				<NuxPage
-					heading={ __( 'Preview your site as you go' ) }
-					description={ __(
-						'As you edit your site content, click “Preview” to see your site the way your visitors will.'
-					) }
-					imgSrc={ previewImage }
-					alignBottom
-				/>
-			) }
-
-			{ isGutenboarding && (
-				/* @TODO: hide for sites that are already public */
-				<NuxPage
-					heading={
-						isGutenboarding
-							? __( 'Private until you’re ready' )
-							: __( "Private until you're ready to launch" )
-					}
-					description={
-						isGutenboarding
-							? __(
-									'Your site will remain private as you make changes until you’re ready to launch and share with the world.'
-							  )
-							: __(
-									"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
-							  )
-					}
-					imgSrc={ privateImage }
-					alignBottom
-				/>
-			) }
+			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage, index ) => (
+				<NuxPage key={ index } { ...nuxPage } />
+			) ) }
 		</Guide>
 	);
+}
+
+/**
+ * @param   { boolean } isGutenboarding Whether the flow is Gutenboarding or not
+ * @returns { Array }                   a collection of <NuxPage /> props filtered by whether the flow is Gutenboarding or not
+ */
+function getWpcomNuxPages( isGutenboarding ) {
+	return [
+		{
+			heading: __( 'Welcome to your website' ),
+			description: __(
+				'Edit your homepage, add the pages you need, and change your site’s look and feel.'
+			),
+			imgSrc: editorImage,
+			alignBottom: true,
+			shouldRender: true,
+		},
+		{
+			heading: __( 'Create pages and add your content' ),
+			description: __(
+				'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
+			),
+			imgSrc: blockImage,
+			shouldRender: ! isGutenboarding,
+		},
+		{
+			heading: isGutenboarding ? __( 'Add or edit your content' ) : __( 'Add (almost) anything' ),
+			description: isGutenboarding
+				? __(
+						'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.'
+				  )
+				: __(
+						'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
+				  ),
+			imgSrc: blockPickerImage,
+			shouldRender: true,
+		},
+		{
+			heading: __( 'Preview your site as you go' ),
+			description: __(
+				'As you edit your site content, click “Preview” to see your site the way your visitors will.'
+			),
+			imgSrc: previewImage,
+			shouldRender: isGutenboarding,
+			alignBottom: true,
+		},
+		{
+			heading: isGutenboarding
+				? __( 'Private until you’re ready' )
+				: __( "Private until you're ready to launch" ),
+			description: isGutenboarding
+				? __(
+						'Your site will remain private as you make changes until you’re ready to launch and share with the world.'
+				  )
+				: __(
+						"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
+				  ),
+			imgSrc: privateImage,
+			shouldRender: isGutenboarding,
+			alignBottom: true,
+		},
+	].filter( ( nuxPage ) => nuxPage.shouldRender );
 }
 
 function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
