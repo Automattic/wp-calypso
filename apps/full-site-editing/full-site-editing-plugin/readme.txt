@@ -41,6 +41,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 1.4 =
+* Update Premium Block Style and Behaviour
+* Support for Premium Content in email subscription and reader.
 * Add plugin to notify users of Block Patterns new location.
 * Add default link colors to the editor.
 
