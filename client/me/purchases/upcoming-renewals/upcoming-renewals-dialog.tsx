@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState, useEffect, useCallback } from 'react';
+import React, {
+	FunctionComponent,
+	Fragment,
+	useState,
+	useEffect,
+	useCallback,
+	useMemo,
+} from 'react';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -52,6 +59,11 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const moment = useLocalizedMoment();
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
+	const purchasesSortByRecentExpiryDate = useMemo(
+		() => purchases.sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
+		[ purchases ]
+	);
+
 	useEffect( () => {
 		if ( isVisible ) {
 			setSelectedPurchases( purchases.map( ( purchase ) => purchase.id ) );
@@ -74,12 +86,12 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 				{ translate( 'Site: %(siteName)s', { args: { siteName: site.domain } } ) }
 			</h3>
 			<hr />
-			{ purchases.map( ( purchase ) => {
+			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
 				const expiresText = isExpired( purchase )
-					? translate( 'Expired %(expiry)s', {
+					? translate( 'expired %(expiry)s', {
 							args: { expiry: moment( purchase.expiryDate ).fromNow() },
 					  } )
-					: translate( 'Expires %(expiry)s', {
+					: translate( 'expires %(expiry)s', {
 							args: { expiry: moment( purchase.expiryDate ).fromNow() },
 					  } );
 				const onChange = () => {
@@ -90,8 +102,8 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 					}
 				};
 				return (
-					<>
-						<div className="upcoming-renewals-dialog__row" key={ purchase.id }>
+					<Fragment key={ purchase.id }>
+						<div className="upcoming-renewals-dialog__row">
 							<FormLabel
 								optional={ false }
 								required={ false }
@@ -108,7 +120,10 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								<div className="upcoming-renewals-dialog__name">
 									{ getName( purchase ) }
 									<div className="upcoming-renewals-dialog__detail">
-										{ purchaseType( purchase ) }: { expiresText }
+										{ purchaseType( purchase ) }:&nbsp;
+										<span className={ isExpired( purchase ) ? 'expired' : '' }>
+											{ expiresText }
+										</span>
 									</div>
 								</div>
 							</FormLabel>
@@ -126,7 +141,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 							</div>
 						</div>
 						<hr />
-					</>
+					</Fragment>
 				);
 			} ) }
 			<div className="upcoming-renewals-dialog__actions">

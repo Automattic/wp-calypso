@@ -1,9 +1,12 @@
 .upcoming-renewals-dialog {
 	.button {
-		margin-right: 10px;
-		margin-bottom: 8px;
+		margin-left: 10px;
 		padding: 8px 10px;
-		text-align: left;
+	}
+
+	hr {
+		margin-bottom: 1em;
+		margin-top: 1em;
 	}
 
 	&.dialog {
@@ -39,6 +42,9 @@
 	&__detail {
 		font-size: 14px;
 		color: var( --color-neutral-50 );
+		.expired {
+			color: var( --color-error-dark );
+		}
 	}
 	&__side {
 		text-align: right;
@@ -53,5 +59,6 @@
 	}
 	&__actions {
 		text-align: right;
+		margin-top: 1.5em;
 	}
 }
