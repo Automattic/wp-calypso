@@ -17,7 +17,6 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import './style.scss';
-import blockImage from './images/block.svg';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
 import previewImage from './images/preview.svg';
@@ -51,7 +50,7 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
-	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to serve copy that hasn't been translated before initial launch */
+	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
 
 	return (
@@ -61,8 +60,8 @@ function WpcomNux() {
 			finishButtonText={ __( 'Get started' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage, index ) => (
-				<NuxPage key={ index } { ...nuxPage } />
+			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
+				<NuxPage { ...nuxPage } />
 			) ) }
 		</Guide>
 	);
@@ -81,27 +80,13 @@ function getWpcomNuxPages( isGutenboarding ) {
 			),
 			imgSrc: editorImage,
 			alignBottom: true,
-			shouldRender: true,
 		},
 		{
-			heading: __( 'Create pages and add your content' ),
+			heading: __( 'Add or edit your content' ),
 			description: __(
-				'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
+				'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.'
 			),
-			imgSrc: blockImage,
-			shouldRender: ! isGutenboarding,
-		},
-		{
-			heading: isGutenboarding ? __( 'Add or edit your content' ) : __( 'Add (almost) anything' ),
-			description: isGutenboarding
-				? __(
-						'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.'
-				  )
-				: __(
-						'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
-				  ),
 			imgSrc: blockPickerImage,
-			shouldRender: true,
 		},
 		{
 			heading: __( 'Preview your site as you go' ),
@@ -109,25 +94,19 @@ function getWpcomNuxPages( isGutenboarding ) {
 				'As you edit your site content, click “Preview” to see your site the way your visitors will.'
 			),
 			imgSrc: previewImage,
-			shouldRender: isGutenboarding,
 			alignBottom: true,
 		},
 		{
-			heading: isGutenboarding
-				? __( 'Private until you’re ready' )
-				: __( "Private until you're ready to launch" ),
-			description: isGutenboarding
-				? __(
-						'Your site will remain private as you make changes until you’re ready to launch and share with the world.'
-				  )
-				: __(
-						"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
-				  ),
+			heading: __( 'Private until you’re ready' ),
+			description: __(
+				'Your site will remain private as you make changes until you’re ready to launch and share with the world.'
+			),
 			imgSrc: privateImage,
-			shouldRender: isGutenboarding,
+			// @TODO: hide for sites that are already public
+			shouldHide: ! isGutenboarding,
 			alignBottom: true,
 		},
-	].filter( ( nuxPage ) => nuxPage.shouldRender );
+	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
 }
 
 function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
