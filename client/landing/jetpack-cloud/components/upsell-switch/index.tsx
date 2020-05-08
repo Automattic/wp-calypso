@@ -43,7 +43,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 		isLoading: true,
 	} );
 	useEffect( () => {
-		if ( ! siteState ) {
+		if ( ! siteState || siteState?.state === 'uninitialized' ) {
 			return setState( {
 				isLoading: true,
 				showUpsell: true,
