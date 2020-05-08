@@ -170,6 +170,9 @@ function getLastCursorPosition( recentPositions ) {
 function useSharedRef( inputRef ) {
 	const numberInputRef = useRef();
 	useEffect( () => {
+		if ( ! inputRef ) {
+			return;
+		}
 		if ( typeof inputRef === 'function' ) {
 			inputRef( numberInputRef.current );
 		} else {
