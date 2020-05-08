@@ -82,7 +82,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			lastPathSegment;
 		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
-		if ( localeSlug ) {
+		if ( localeSlug && ! isDefaultLocale( localeSlug ) ) {
 			setupTranslationChunks( localeSlug, reduxStore );
 		}
 	}
