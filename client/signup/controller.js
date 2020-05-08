@@ -44,6 +44,10 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  */
 let initialContext;
 
+const removeWhiteBackground = function () {
+	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+};
+
 export default {
 	redirectTests( context, next ) {
 		waitForData( {
@@ -54,10 +58,12 @@ export default {
 				if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
 					window.location = window.location.origin + '/new';
 				} else {
+					removeWhiteBackground();
 					next();
 				}
 			} )
 			.catch( () => {
+				removeWhiteBackground();
 				next();
 			} );
 	},
