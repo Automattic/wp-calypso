@@ -4,3 +4,9 @@ export const setPlan = ( slug: string | undefined ) => {
 		slug,
 	};
 };
+
+export const resetPlan = () => {
+	return {
+		type: 'RESET_PLAN' as const,
+	};
+};

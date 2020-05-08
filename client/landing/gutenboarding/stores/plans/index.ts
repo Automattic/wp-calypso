@@ -3,13 +3,16 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
+import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
+/**
+ * Internal dependencies
+ */
 import { STORE_KEY } from './constants';
 import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 use( plugins.persistence, persistOptions );
 

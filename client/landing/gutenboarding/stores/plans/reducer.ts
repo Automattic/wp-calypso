@@ -1,7 +1,12 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import * as plans from '../../../../lib/plans/constants';
+
+/**
+ * Internal dependencies
+ */
+import { freePlan } from './constants';
 
 export const supportedPlanSlugs = [
 	plans.PLAN_FREE,
@@ -24,7 +29,12 @@ const DEFAUlT_STATE: {
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 	switch ( action.type ) {
 		case 'SET_PLAN':
-			return { ...state, selectedPlanSlug: action.slug };
+			return {
+				...state,
+				selectedPlanSlug: action.slug !== freePlan ? action.slug : DEFAUlT_STATE.selectedPlanSlug,
+			};
+		case 'RESET_PLAN':
+			return DEFAUlT_STATE;
 		default:
 			return state;
 	}

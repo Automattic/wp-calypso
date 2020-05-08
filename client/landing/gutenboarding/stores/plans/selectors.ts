@@ -1,13 +1,14 @@
 /**
+ * External dependencies
+ */
+import { getPlan, getPlanPath } from '../../../../lib/plans';
+
+/**
  * Internal dependencies
  */
 import { State, supportedPlanSlugs } from './reducer';
-import * as plans from 'lib/plans/constants';
-import { getPlan, getPlanPath } from 'lib/plans';
 import { planFeatures, planDetails } from './plans-data';
-
-const freePlan = plans.PLAN_FREE;
-const defaultPaidPlan = plans.PLAN_PREMIUM;
+import { defaultPaidPlan, freePlan } from './constants';
 
 function getFortifiedPlan( slug: string | undefined ) {
 	if ( ! slug ) {
