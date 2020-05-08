@@ -145,8 +145,11 @@ function translateReponseCartProductToWPCOMCartItem(
 		sublabel = String( translate( 'Plan Subscription' ) );
 	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
 		sublabel = '';
-	} else if ( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) ) {
-		label = meta || product_name || '';
+	} else if (
+		meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
+		label = meta;
 		sublabel = product_name || '';
 	}
 
