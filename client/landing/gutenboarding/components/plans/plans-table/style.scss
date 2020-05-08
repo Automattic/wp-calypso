@@ -1,6 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../../mixins.scss';
 @import '../../../variables.scss';
+@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 
 .plans-table {
 	display: flex;
@@ -43,6 +44,11 @@
 	font-weight: 600;
 	font-size: 32px;
 	line-height: 24px;
+
+	&[data-is-loading='true'] {
+		max-width: 60px;
+		@include placeholder();
+	}
 }
 
 .plan-item__price-note {

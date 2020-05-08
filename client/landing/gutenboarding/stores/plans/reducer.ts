@@ -20,9 +20,11 @@ export const supportedPlanSlugs = [
 const DEFAUlT_STATE: {
 	selectedPlanSlug: string | undefined;
 	supportedPlanSlugs: Array< string >;
+	prices: Record< string, string >;
 } = {
 	supportedPlanSlugs,
 	selectedPlanSlug: undefined,
+	prices: {},
 };
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
@@ -31,6 +33,11 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 			return {
 				...state,
 				selectedPlanSlug: action.slug !== freePlan ? action.slug : DEFAUlT_STATE.selectedPlanSlug,
+			};
+		case 'SET_PRICES':
+			return {
+				...state,
+				prices: action.prices,
 			};
 		case 'RESET_PLAN':
 			return DEFAUlT_STATE;

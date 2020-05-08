@@ -45,24 +45,19 @@ const mainFeatures = [
 
 export const planFeatures: FortifiedPlans = {
 	[ PLAN_FREE ]: {
-		price: '$0',
 		features: [ '3 GB', ...mainFeatures.slice( 0, 1 ) ],
 	},
 	[ PLAN_PERSONAL ]: {
-		price: '$5',
 		features: [ '6 GB', ...mainFeatures.slice( 0, 4 ) ],
 	},
 	[ PLAN_PREMIUM ]: {
-		price: '$8',
 		features: [ '13 GB', ...mainFeatures.slice( 0, 9 ) ],
 		isPopular: true,
 	},
 	[ PLAN_BUSINESS ]: {
-		price: '$25',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 10 ) ],
 	},
 	[ PLAN_ECOMMERCE ]: {
-		price: '$45',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 11 ) ],
 	},
 };

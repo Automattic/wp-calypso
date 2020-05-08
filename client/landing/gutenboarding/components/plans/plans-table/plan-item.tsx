@@ -52,6 +52,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const hasDomain = !! domainName;
 
+	// show a nbps in price while loading to prevent a janky UI
+	const nbsp = '\u00A0';
+
 	return (
 		<div className="plan-item">
 			<div className="plan-item__heading">
@@ -59,7 +62,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 				{ isPopular && <div className="plan-item__badge">{ __( 'Popular' ) }</div> }
 			</div>
 			<div className="plan-item__price">
-				<div className="plan-item__price-amount">{ price }</div>
+				<div className="plan-item__price-amount" data-is-loading={ ! price }>
+					{ price || nbsp }
+				</div>
 				<div className="plan-item__price-note">{ __( 'per month, billed yearly' ) }</div>
 			</div>
 			<div className="plan-item__actions">

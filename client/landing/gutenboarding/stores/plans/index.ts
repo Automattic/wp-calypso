@@ -12,11 +12,13 @@ import { STORE_KEY } from './constants';
 import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import * as resolvers from './resolvers';
 import persistOptions from './persist';
 
 use( plugins.persistence, persistOptions );
 
 registerStore< State >( STORE_KEY, {
+	resolvers,
 	actions,
 	controls,
 	reducer: reducer as any,
