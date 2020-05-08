@@ -148,11 +148,11 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.siteSlug, {} );
+		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug, {} );
+		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
