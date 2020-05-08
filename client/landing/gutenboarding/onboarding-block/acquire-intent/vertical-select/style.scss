@@ -40,13 +40,20 @@
 	}
 }
 
+.vertical-select__whitespace {
+	display: inline-block;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
 .vertical-select__suggestions-wrapper {
 	position: relative;
 	display: block;
 	flex: 1;
 
 	@include break-small {
-		display: inline-block;
+		display: inline;
 	}
 }
 
