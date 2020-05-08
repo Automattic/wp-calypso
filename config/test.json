@@ -37,6 +37,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"editor/before-deprecation": false,
 		"gdpr-banner": false,
 		"google-my-business": false,
 		"help": true,
