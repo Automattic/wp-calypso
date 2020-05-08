@@ -15,6 +15,11 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import { CURRENCY_OPTIONS } from '.';
+
 const API_STATE_NOT_REQUESTING = 0;
 const API_STATE_REQUESTING = 1;
 
@@ -82,10 +87,7 @@ export default function Inspector( props ) {
 								label="Currency"
 								onChange={ ( set ) => setAttributes( { newPlanCurrency: set } ) }
 								value={ attributes.newPlanCurrency }
-								options={ currencies.map( ( currency ) => ( {
-									label: currency.label,
-									value: currency.label,
-								} ) ) }
+								options={ CURRENCY_OPTIONS }
 							></SelectControl>
 							<TextControl
 								label="Price"
@@ -136,108 +138,3 @@ export default function Inspector( props ) {
 		</InspectorControls>
 	);
 }
-
-Inspector.defaultProps = {
-	currencies: [
-		{
-			label: 'USD',
-			symbol: '$',
-		},
-		{
-			label: 'GBP',
-			symbol: '&#163;',
-		},
-		{
-			label: 'JPY',
-			symbol: '&#165;',
-		},
-		{
-			label: 'BRL',
-			symbol: 'R$',
-		},
-		{
-			label: 'EUR',
-			symbol: '&#8364;',
-		},
-		{
-			label: 'NZD',
-			symbol: 'NZ$',
-		},
-		{
-			label: 'AUD',
-			symbol: 'A$',
-		},
-		{
-			label: 'CAD',
-			symbol: 'C$',
-		},
-		{
-			label: 'INR',
-			symbol: '\u20b9',
-		},
-		{
-			label: 'ILS',
-			symbol: '\u20aa',
-		},
-		{
-			label: 'RUB',
-			symbol: '\u20bd',
-		},
-		{
-			label: 'MXN',
-			symbol: 'MX$',
-		},
-		{
-			label: 'SEK',
-			symbol: 'SEK',
-		},
-		{
-			label: 'HUF',
-			symbol: 'Ft',
-		},
-		{
-			label: 'CHF',
-			symbol: 'CHF',
-		},
-		{
-			label: 'CZK',
-			symbol: 'K\u010d',
-		},
-		{
-			label: 'DKK',
-			symbol: 'Dkr',
-		},
-		{
-			label: 'HKD',
-			symbol: 'HK$',
-		},
-		{
-			label: 'NOK',
-			symbol: 'Kr',
-		},
-		{
-			label: 'PHP',
-			symbol: '\u20b1',
-		},
-		{
-			label: 'PLN',
-			symbol: 'PLN',
-		},
-		{
-			label: 'SGD',
-			symbol: 'S$',
-		},
-		{
-			label: 'TWD',
-			symbol: 'NT$',
-		},
-		{
-			label: 'THB',
-			symbol: '\u0e3f',
-		},
-		{
-			label: 'TRY',
-			symbol: 'TL',
-		},
-	],
-};
