@@ -530,7 +530,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 				expect( clientCart.items[ 2 ].id ).toBeDefined();
 			} );
 			it( 'has the expected label', function () {
-				expect( clientCart.items[ 2 ].sublabel ).toBe( 'G Suite' );
+				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
 			} );
 			it( 'has the expected product_id', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.product_id ).toBe( 69 );
