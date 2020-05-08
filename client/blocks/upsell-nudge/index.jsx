@@ -5,20 +5,29 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
+import {
+	planMatches,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+} from 'lib/plans';
 import Banner from 'components/banner';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import { GROUP_JETPACK, GROUP_WPCOM, FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isFreePlan } from 'lib/products-values';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isVipSite from 'state/selectors/is-vip-site';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
-import { preventWidows } from 'lib/formatting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -28,6 +37,7 @@ import './style.scss';
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
+	canUserUpgrade,
 	className,
 	compact,
 	customerType,
@@ -40,10 +50,10 @@ export const UpsellNudge = ( {
 	forceHref,
 	horizontal,
 	href,
-	icon,
 	isJetpackDevDocs,
 	jetpack,
 	isVip,
+	siteIsWPForTeams,
 	list,
 	onClick,
 	onDismissClick,
@@ -53,6 +63,7 @@ export const UpsellNudge = ( {
 	primaryButton,
 	showIcon = false,
 	site,
+	siteSlug,
 	target,
 	title,
 	tracksClickName,
@@ -62,8 +73,6 @@ export const UpsellNudge = ( {
 	tracksImpressionName,
 	tracksImpressionProperties,
 } ) => {
-	const classes = classnames( 'upsell-nudge', className );
-
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -80,16 +89,48 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	if ( ! href && site && ! customerType ) {
-		href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
+	// No upsells for WP for Teams sites
+	if ( config.isEnabled( 'signup/wpforteams' ) && siteIsWPForTeams ) {
+		return null;
 	}
+
+	let upsellHref = href;
+
+	if ( ! href && siteSlug && canUserUpgrade ) {
+		if ( customerType ) {
+			upsellHref = `/plans/${ siteSlug }?customerType=${ customerType }`;
+		}
+
+		const baseUrl = `/plans/${ siteSlug }`;
+
+		if ( feature || plan ) {
+			upsellHref = addQueryArgs(
+				{
+					feature,
+					plan,
+				},
+				baseUrl
+			);
+		}
+	}
+
+	const classes = classnames(
+		'upsell-nudge',
+		className,
+		{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },
+		{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
+		{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
+		{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
+		{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
+		{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
+		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
+	);
 
 	return (
 		<Banner
-			callToAction={ preventWidows( callToAction ) }
+			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
-			customerType={ customerType }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
@@ -97,8 +138,8 @@ export const UpsellNudge = ( {
 			feature={ feature }
 			forceHref={ forceHref }
 			horizontal={ horizontal }
-			href={ href }
-			icon={ icon }
+			href={ upsellHref }
+			icon="star"
 			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			list={ list }
 			onClick={ onClick }
@@ -132,5 +173,8 @@ export default connect( ( state, ownProps ) => {
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		jetpack: isJetpackSite( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
+		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
 } )( localize( UpsellNudge ) );
