@@ -21,6 +21,7 @@ use A8C\FSE\Earn\PremiumContent\SubscriptionService\{
 	Subscription_Service,
 	Jetpack_Token_Subscription_Service,
 	Unconfigured_Subscription_Service,
+	WPCOM_Offline_Subscription_Service,
 	WPCOM_Token_Subscription_Service
 };
 
@@ -118,6 +119,7 @@ function premium_content_current_visitor_can_access( $attributes ) {
 	if ( ! isset( $attributes['selectedPlanId'] ) ) {
 		return false;
 	}
+
 	$paywall  = premium_content_subscription_service();
 	$can_view = $paywall->visitor_can_view_content( array( $attributes['selectedPlanId'] ) );
 
@@ -267,6 +269,10 @@ function premium_content_subscription_service() {
 function premium_content_default_service( $service ) {
 	if ( $service !== null ) {
 		return $service;
+	}
+
+	if ( WPCOM_Offline_Subscription_Service::available() ) {
+		return new WPCOM_Offline_Subscription_Service();
 	}
 
 	if ( WPCOM_Token_Subscription_Service::available() ) {

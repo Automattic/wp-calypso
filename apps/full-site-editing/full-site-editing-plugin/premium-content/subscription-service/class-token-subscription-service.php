@@ -152,7 +152,7 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 	 *
 	 * @return bool
 	 */
-	private function validate_subscriptions( $valid_plan_ids, $token_subscriptions ) {
+	protected function validate_subscriptions( $valid_plan_ids, $token_subscriptions ) {
 		// Create a list of product_ids to compare against:
 		$product_ids = array();
 		foreach ( $valid_plan_ids as $plan_id ) {
