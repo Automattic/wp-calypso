@@ -20,6 +20,7 @@ import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import { recordOnboardingStart } from './lib/analytics';
+import useOnSiteCreation from './hooks/use-on-site-creation';
 
 registerBlockType( name, settings );
 
@@ -34,6 +35,8 @@ const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } /
 
 export function Gutenboard() {
 	const { __ } = useI18n();
+
+	useOnSiteCreation();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
