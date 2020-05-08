@@ -22,12 +22,12 @@
 	&.components-button {
 		@include onboarding-medium-text;
 		background: var( --studio-blue-0 );
-		color: var( --studio-blue-40 );
-		padding: 5px 12px;
-		margin-top: 2px;
-		height: auto; // prevent clipping when there are 2 lines
-		text-align: left;
 		border-radius: $radius-round-rectangle;
+		color: var( --studio-blue-40 );
+		height: auto; // prevent clipping when there are 2 lines
+		margin-top: 2px;
+		padding: 5px 12px;
+		text-align: left;
 
 		&:focus,
 		&:hover[type] {
