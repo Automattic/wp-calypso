@@ -56,7 +56,6 @@ export class UpsellNudge extends Component {
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
-		icon: PropTypes.string,
 		isJetpackDevDocs: PropTypes.bool,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
@@ -146,7 +145,7 @@ export class UpsellNudge extends Component {
 	};
 
 	getIcon() {
-		const { icon, isJetpackDevDocs, jetpack, showIcon } = this.props;
+		const { isJetpackDevDocs, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -164,10 +163,10 @@ export class UpsellNudge extends Component {
 		return (
 			<div className="upsell-nudge__icons">
 				<div className="upsell-nudge__icon">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
+					<Gridicon icon="star" size={ 18 } />
 				</div>
 				<div className="upsell-nudge__icon-circle">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
+					<Gridicon icon="star" size={ 18 } />
 				</div>
 			</div>
 		);
