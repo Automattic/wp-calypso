@@ -194,6 +194,8 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanError() {
+		const { siteId, siteSlug, dispatchScanRun } = this.props;
+
 		return (
 			<>
 				<SecurityIcon icon="scan-error" />
@@ -205,6 +207,15 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ this.renderContactSupportButton() }
+				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
+					<Button
+						href={ `/scan/${ siteSlug }` }
+						className="scan__button scan__retry-bottom"
+						onClick={ () => dispatchScanRun( siteId ) }
+					>
+						{ translate( 'Retry Scan' ) }
+					</Button>
+				) }
 			</>
 		);
 	}
@@ -230,7 +241,7 @@ class ScanPage extends Component< Props > {
 			return this.renderScanning();
 		}
 
-		const errorFound = !! mostRecent.error;
+		const errorFound = !! mostRecent?.error;
 		const threatsFound = threats.length > 0;
 
 		if ( errorFound && ! threatsFound ) {
