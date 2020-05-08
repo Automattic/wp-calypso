@@ -26,11 +26,11 @@ It's also possible to build an entirely custom form using the other components e
 ## How to use this package
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
- - [createApplePayMethod](#createapplepaymethod)
+ - [createApplePayMethod](#createApplePayMethod)
  - [createExistingCardMethod](#createExistingCardMethod)
  - [createFullCreditsMethod](#createFullCreditsMethod)
  - [createPayPalMethod](#createpaypalmethod)
- - [createStripeMethod](#createstripemethod)
+ - [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
  - [useAllPaymentMethods](#useAllPaymentMethods)
@@ -240,11 +240,8 @@ An optional boolean prop, `collapsed`, can be used to simplify the output for wh
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
-- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `stripe: object`. The configured stripe object.
+- `stripeConfiguration: object`. The stripe configuration object.
 
 ### createRegistry
 
@@ -289,13 +286,13 @@ The object returned by this function **must have** the following property added 
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
-- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `store: StripeStore`. The result of calling [createStripePaymentMethodStore](#createStripePaymentMethodStore).
 - `stripe: object`. The configured stripe object.
 - `stripeConfiguration: object`. The stripe configuration object.
+
+### createStripeMethodStore
+
+Creates a data store for use by [createStripeMethod](#createStripeMethod).
 
 ### defaultRegistry
 
