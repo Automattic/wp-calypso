@@ -389,6 +389,18 @@ describe( 'numDigitsBeforeIndex', () => {
 } );
 
 describe( 'getUpdatedCursorPosition', () => {
+	test( 'should return position after plus if appending only plus', () => {
+		equal( getUpdatedCursorPosition( '', '+', 1 ), 1 );
+	} );
+
+	test( 'should return position after plus if deleting to only plus', () => {
+		equal( getUpdatedCursorPosition( '+5', '+', 2 ), 1 );
+	} );
+
+	test( 'should return position after plus if replacing to only plus', () => {
+		equal( getUpdatedCursorPosition( '555', '+', 3 ), 1 );
+	} );
+
 	test( 'should return last position for appending without special characters', () => {
 		equal( getUpdatedCursorPosition( '23', '234', 2 ), 3 );
 	} );

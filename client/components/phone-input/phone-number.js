@@ -291,6 +291,10 @@ export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition 
 	const toList = ( str ) => str.split( '' );
 	const unmask = ( list ) => list.filter( ( char ) => /\d/.test( char ) );
 
+	if ( newValue.match( /^\+$/ ) ) {
+		return 1;
+	}
+
 	// Find the leftmost index point from the right end where
 	// the old and new (unmasked!) values agree (from right to
 	// left). We start by assuming this point is where the edits
