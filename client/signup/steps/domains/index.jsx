@@ -272,6 +272,8 @@ class DomainsStep extends React.Component {
 			  } )
 			: undefined;
 
+		const isUserless = this.props.userless || false;
+
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
@@ -283,6 +285,7 @@ class DomainsStep extends React.Component {
 					isPurchasingItem,
 					siteUrl,
 					stepSectionName: this.props.stepSectionName,
+					isUserless,
 				},
 				this.getThemeArgs()
 			),

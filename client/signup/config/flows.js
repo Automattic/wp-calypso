@@ -107,7 +107,7 @@ function filterDestination( destination, dependencies ) {
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'plans-before-checkout' : 'main';
 }
 
 const Flows = {

@@ -126,6 +126,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'plans-before-checkout': {
+			steps: [ 'domain-before-checkout', 'plan-before-checkout' ],
+			destination: getSignupDestination,
+			description: 'Remove user step.',
+			lastModified: '2020-05-07',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

@@ -169,6 +169,16 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plan-before-checkout': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				userless: true,
+			},
+		},
+
 		'plans-ecommerce': {
 			stepName: 'plans-ecommerce',
 			apiRequestFunction: addPlanToCart,
@@ -318,6 +328,16 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: true,
 				shouldShowDomainTestCopy: false,
+			},
+		},
+
+		'domain-before-checkout': {
+			stepName: 'domains',
+			apiRequestFunction: addDomainToCart,
+			providesDependencies: [ 'domainItem' ],
+			props: {
+				isDomainOnly: false,
+				userless: true,
 			},
 		},
 

@@ -65,10 +65,13 @@ export class PlansStep extends Component {
 			} );
 		}
 
+		const isUserless = this.props.userless || false;
+
 		const step = {
 			stepName,
 			stepSectionName,
 			cartItem,
+			isUserless,
 			...additionalStepData,
 		};
 

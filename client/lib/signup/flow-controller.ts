@@ -278,9 +278,11 @@ export default class SignupFlowController {
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
 
+		const isUserless = get( steps, [ step.stepName, 'props', 'userless' ], false );
+
 		return (
 			dependenciesSatisfied &&
-			( providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( providesToken || this._canMakeAuthenticatedRequests() || isUserless ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}
@@ -328,10 +330,12 @@ export default class SignupFlowController {
 		apiFunction(
 			( errors, providedDependencies ) => {
 				this._processingSteps.delete( step.stepName );
+				console.log( 'in callback' );
 
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					console.log( 'in else part' );
 					recordTracksEvent( 'calypso_signup_actions_complete_step', {
 						step: step.stepName,
 						flow: this._flowName,
