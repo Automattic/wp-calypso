@@ -11,7 +11,7 @@ import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
-jest.mock( 'lib/user', () => null );
+jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view', () => ( {} ) );
