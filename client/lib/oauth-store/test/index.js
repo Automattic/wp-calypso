@@ -15,28 +15,11 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 describe( 'oAuthStore', () => {
-	let oAuthStore, oAuthToken, originalDocumentProperties;
+	let oAuthStore, oAuthToken;
 
 	beforeEach( () => {
 		oAuthToken = require( 'lib/oauth-token' );
 		oAuthStore = require( 'lib/oauth-store' );
-
-		// global.document.location is not configurable and global.document has an empty setter
-		// so the only way to mock global.document.location.replace is do a full replacement
-		// of global.document using a property descriptor
-		originalDocumentProperties = Object.getOwnPropertyDescriptors( global ).document;
-		Object.defineProperty( global, 'document', {
-			writable: true,
-			value: {
-				location: {
-					replace: sinon.stub(),
-				},
-			},
-		} );
-	} );
-
-	afterEach( () => {
-		Object.defineProperty( global, 'document', originalDocumentProperties );
 	} );
 
 	test( 'is in progress when attempting login', () => {
@@ -109,6 +92,7 @@ describe( 'oAuthStore', () => {
 	} );
 
 	test( 'sets OAuth token when login is correct', () => {
+		sinon.stub( global.document.location, 'replace' );
 		sinon.stub( oAuthToken, 'setToken' );
 
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
@@ -134,6 +118,7 @@ describe( 'oAuthStore', () => {
 			errorLevel: false,
 		} );
 
+		global.document.location.replace.restore();
 		oAuthToken.setToken.restore();
 	} );
 } );
