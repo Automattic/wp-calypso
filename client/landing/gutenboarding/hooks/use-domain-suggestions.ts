@@ -58,7 +58,6 @@ export function useDomainSuggestions( {
 				quantity,
 				locale,
 				vendor: DOMAIN_SUGGESTION_VENDOR,
-				...( siteVertical && { vertical: siteVertical?.id } ),
 				...( tlds && { tlds } ),
 			} );
 		},
