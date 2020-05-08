@@ -18,6 +18,7 @@ export interface Props {
 
 const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSelect } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 
 	return (
 		<div className="plans-table">
@@ -27,7 +28,7 @@ const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSele
 					slug={ plan.getStoreSlug() }
 					features={ plan.features }
 					isPopular={ plan.isPopular }
-					price={ plan.price }
+					price={ prices[ plan.getStoreSlug() ] }
 					name={ plan.getTitle() }
 					isSelected={ plan.getStoreSlug() === selectedPlanSlug }
 					onSelect={ onPlanSelect }

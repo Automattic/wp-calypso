@@ -25,3 +25,5 @@ export const getSupportedPlans = ( state: State ) =>
 export const getPlanByPath = ( state: State, path: string | undefined ) =>
 	getFortifiedPlan( supportedPlanSlugs.find( ( slug ) => getPlanPath( slug ) === path ) );
 export const getPlansDetails = () => planDetails;
+
+export const getPrices = ( state: State ) => state.prices;
