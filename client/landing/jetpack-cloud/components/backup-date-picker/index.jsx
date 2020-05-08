@@ -145,7 +145,7 @@ class BackupDatePicker extends Component {
 						onClick={ this.goToNextDay }
 						onKeyDown={ this.onSpace( this.goToNextDay ) }
 					>
-						<div className="date-picker__next-date-link">
+						<div className="backup-date-picker__next-date-link">
 							<span
 								className={ classNames( 'backup-date-picker__display-date', {
 									disabled: ! this.canGoToNextDay(),
