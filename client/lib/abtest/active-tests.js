@@ -118,8 +118,8 @@ export default {
 	domainStepPlanStepSwap: {
 		datestamp: '20200415',
 		variations: {
-			variantShowSwapped: 50,
-			control: 50,
+			variantShowSwapped: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
