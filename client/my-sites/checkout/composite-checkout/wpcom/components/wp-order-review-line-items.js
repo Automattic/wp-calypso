@@ -58,7 +58,7 @@ function WPLineItem( {
 				<LineItemPrice item={ item } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta>
+				<LineItemMeta singleLine={ true }>
 					{ 'plan' !== item.type || ! shouldShowVariantSelector
 						? translate( '%(sublabel)s: %(interval)s', {
 								args: {
@@ -179,7 +179,7 @@ export const LineItemUI = styled( WPLineItem )`
 
 const LineItemMeta = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
-	display: flex;
+	display: ${( { singleLine } ) => ( singleLine ? 'flex' : 'block') };
 	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
@@ -322,11 +322,11 @@ const WPOrderReviewListItem = styled.li`
 
 function GSuiteUsersList( { users } ) {
 	return (
-		<div>
+		<LineItemMeta singleLine={ false }>
 			{ users.map( ( { email } ) => (
 				<div key={ email }>{ email }</div>
 			) ) }
-		</div>
+		</LineItemMeta>
 	);
 }
 
