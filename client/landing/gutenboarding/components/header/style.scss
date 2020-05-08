@@ -6,6 +6,32 @@
 $margin-left--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
 
+@keyframes gutenboarding_domain-slide-in {
+	from {
+		max-width: 0;
+		opacity: 0;
+		padding: 5px 0;
+	}
+
+	79% {
+		max-width: 0;
+		opacity: 0;
+		padding: 5px 0;
+	}
+
+	80% {
+		max-width: 0;
+		opacity: 0.5;
+		padding: 5px 12px;
+	}
+
+	to {
+		max-width: 500px;
+		opacity: 1;
+		padding: 5px 12px;
+	}
+}
+
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
 	display: flex;
@@ -51,11 +77,19 @@ $padding--gutenboarding__header: $grid-unit-10;
 }
 
 .gutenboarding__header-domain-picker-button {
-	padding: 0.3em 0.5em;
-}
+	max-width: 0;
+	opacity: 0;
 
-.gutenboarding__header-domain-picker-button-domain {
-	&.placeholder {
-		@include placeholder();
+	&.has-content {
+		animation-duration: 5s;
+		animation-name: gutenboarding_domain-slide-in;
+		max-width: 1500px;
+		opacity: 1;
+		@include reduce-motion( 'animation' );
+	}
+
+	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		@include reduce-motion( 'animation' );
 	}
 }
