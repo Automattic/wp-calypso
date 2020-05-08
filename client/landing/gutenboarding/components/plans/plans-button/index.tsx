@@ -15,7 +15,6 @@ import config from 'config';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
-
 import { usePlanRouteParam } from '../../../path';
 import PlansModal from '../plans-modal';
 

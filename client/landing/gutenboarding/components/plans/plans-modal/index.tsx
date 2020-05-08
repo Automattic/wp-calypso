@@ -18,9 +18,9 @@ import './style.scss';
 
 interface Props extends Partial< PlansGridProps > {
 	isOpen: boolean;
+	selectedPlanSlug: string;
 	onConfirm: ( plan: string ) => void;
 	onClose: () => void;
-	selectedPlanSlug: string;
 }
 
 const PlansGridModal: React.FunctionComponent< Props > = ( {

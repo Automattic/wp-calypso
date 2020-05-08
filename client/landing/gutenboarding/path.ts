@@ -3,13 +3,11 @@
  */
 import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
-import { getLanguageRouteParam } from '../../lib/i18n-utils';
 import { ValuesType } from 'utility-types';
 
-/**
- * Internal dependencies
- */
-import { supportedPlansPaths } from './lib/plans';
+import { getLanguageRouteParam } from '../../lib/i18n-utils';
+import * as plans from '../../lib/plans/constants';
+import { getPlanPath } from '../../lib/plans';
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
 // `undefined`, as that's what matching our `path` pattern against a route with no explicit
@@ -26,6 +24,15 @@ export const Step = {
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
 export const steps = Object.values( Step ).filter( Boolean );
+
+export const supportedPlans: string[] = [
+	plans.PLAN_FREE,
+	plans.PLAN_PERSONAL,
+	plans.PLAN_PREMIUM,
+	plans.PLAN_BUSINESS,
+	plans.PLAN_ECOMMERCE,
+];
+export const supportedPlansPaths: string[] = supportedPlans.map( getPlanPath );
 
 const routeFragments = {
 	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
