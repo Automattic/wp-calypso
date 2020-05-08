@@ -100,3 +100,43 @@ function enqueue_script_and_style() {
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
+
+/**
+ * Inject editor styles
+ *
+ * @param  array $settings Editor settings.
+ * @return array $settings Editor settings.
+ */
+function append_gutenberg_editor_styles( $settings ) {
+	if ( ! function_exists( 'gutenberg_dir_path' ) ) {
+		return $settings;
+	}
+
+	// If Gutenberg hasn't enqueued styles, we don't need to add any.
+	if ( empty( $settings['styles'] ) ) {
+		return $settings;
+	}
+
+	// Check Gutenberg version.
+	$gutenberg_version     = null;
+	$gutenberg_plugin_data = get_plugin_data( gutenberg_dir_path() . 'gutenberg.php' );
+	if ( isset( $gutenberg_plugin_data['Version'] ) ) {
+		$gutenberg_version = $gutenberg_plugin_data['Version'];
+	}
+
+	/**
+	 * Replace Gutenberg 8.0.0 editor styles.
+	 *
+	 * @see
+	 *   - https://github.com/Automattic/wp-calypso/issues/41844
+	 *   - https://github.com/WordPress/gutenberg/issues/22139
+	 *   - https://github.com/WordPress/gutenberg/pull/22160
+	 *   - https://github.com/WordPress/gutenberg/blob/c9ce32fb147b864d7f1d15df8ede97699ded4e91/lib/client-assets.php#L563-L622
+	 */
+	if ( '8.0.0' === $gutenberg_version ) {
+		$settings['styles'][] = array( 'css' => 'a{color:#0073aa}' );
+	}
+
+	return $settings;
+}
+add_action( 'block_editor_settings', __NAMESPACE__ . '\append_gutenberg_editor_styles', 100 );
