@@ -19,6 +19,7 @@ import {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	addOrRemoveFromProgressStore,
@@ -39,6 +40,7 @@ export default generateSteps( {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	addOrRemoveFromProgressStore,
@@ -47,6 +49,7 @@ export default generateSteps( {
 export function isDomainStepSkippable( flowName ) {
 	return (
 		flowName === 'test-fse' ||
+		flowName === 'onboarding-plan-first' ||
 		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
 	);
 }
