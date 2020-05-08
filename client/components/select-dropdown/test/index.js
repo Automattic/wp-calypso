@@ -197,7 +197,7 @@ describe( 'index', () => {
 			const escapeKeyCode = 27;
 			const escEvent = createKeyEvent( escapeKeyCode );
 
-			const dropdown = mountDropdown( true );
+			const dropdown = mountDropdown();
 			dropdown.setState( { isOpen: true } );
 
 			const container = dropdown.find( '.select-dropdown__container' );
@@ -206,7 +206,6 @@ describe( 'index', () => {
 			sinon.assert.calledOnce( escEvent.preventDefault );
 			// check that container was focused
 			expect( container.instance() ).to.equal( document.activeElement );
-			dropdown.unmount();
 		} );
 
 		describe( "permits to open the dropdown, and navigate through the dropdown's options by ", () => {
@@ -233,12 +232,9 @@ describe( 'index', () => {
 	 * Utilities
 	 */
 
-	function mountDropdown( attach = false ) {
+	function mountDropdown() {
 		const dropdownOptions = getDropdownOptions();
-		return mount(
-			<SelectDropdown options={ dropdownOptions } />,
-			attach ? { attachTo: document.body } : undefined
-		);
+		return mount( <SelectDropdown options={ dropdownOptions } /> );
 	}
 
 	function shallowRenderDropdown( props ) {

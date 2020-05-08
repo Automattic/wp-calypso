@@ -14,7 +14,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 	border-bottom: 1px solid $light-gray-500;
 	height: $gutenboarding-header-height;
 	background: $white;
-	z-index: z-index( '.interface-interface-skeleton__header' );
+	z-index: z-index( '.block-editor-editor-skeleton__header' );
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
