@@ -80,12 +80,9 @@ $padding--gutenboarding__header: $grid-unit-10;
 	max-width: 0;
 	opacity: 0;
 
-	&.has-content:not( .is-modal-open ):not( .is-open ):not( .picked-domain ) {
+	&.has-content {
 		animation-duration: 5s;
 		animation-name: slideIn;
-	}
-
-	&.has-content {
 		max-width: 1500px;
 		opacity: 1;
 	}

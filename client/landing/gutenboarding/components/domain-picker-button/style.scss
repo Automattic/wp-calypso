@@ -50,29 +50,6 @@
 	&.is-modal-open {
 		display: none; // Hide domain picker button when modal is open
 	}
-
-	&.picked-domain .domain-picker-button__label {
-		animation-duration: 0.3s;
-		animation-name: wriggle;
-		animation-delay: 0.3s;
-	}
-}
-
-@keyframes wriggle {
-	from {
-		transform: scale( 1 );
-		padding: 0;
-	}
-
-	50% {
-		transform: scale( 1.05 );
-		padding: 2px;
-	}
-
-	to {
-		transform: scale( 1 );
-		padding:0;
-	}
 }
 
 // Remove focus styling from clicking a button
