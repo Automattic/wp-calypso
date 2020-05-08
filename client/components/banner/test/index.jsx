@@ -35,26 +35,9 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { Banner } from '../index';
-import {
-	PLAN_FREE,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
-import PlanPrice from 'my-sites/plan-price/';
 
 const props = {
 	callToAction: null,
-	plan: PLAN_FREE,
 	title: 'banner title',
 };
 
@@ -96,31 +79,9 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( 'Button' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should have .is-jetpack class and JetpackLogo if jetpack prop is defined', () => {
-		const { plan, ...propsWithoutPlan } = props;
-		const comp = shallow( <Banner { ...propsWithoutPlan } jetpack /> );
-		expect( comp.find( '.is-jetpack' ) ).toHaveLength( 1 );
-		expect( comp.find( 'JetpackLogo' ) ).toHaveLength( 1 );
-	} );
-
 	test( 'should render have .is-horizontal class if horizontal prop is defined', () => {
 		const comp = shallow( <Banner { ...props } horizontal /> );
 		expect( comp.find( '.is-horizontal' ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should render a <PlanPrice /> when price is specified', () => {
-		const comp = shallow( <Banner { ...props } price={ 100 } /> );
-		expect( comp.find( PlanPrice ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should render two <PlanPrice /> components when there are two prices', () => {
-		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		expect( comp.find( PlanPrice ) ).toHaveLength( 2 );
-	} );
-
-	test( 'should render no <PlanPrice /> components when there are no prices', () => {
-		const comp = shallow( <Banner { ...props } /> );
-		expect( comp.find( PlanPrice ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
@@ -199,43 +160,5 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Button' ).props().href ).toBeUndefined();
 		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
-	} );
-} );
-
-describe( 'Banner should have a class name corresponding to appropriate plan', () => {
-	[
-		PLAN_PERSONAL,
-		PLAN_PERSONAL_2_YEARS,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Personal', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
-		} );
-	} );
-
-	[
-		PLAN_PREMIUM,
-		PLAN_PREMIUM_2_YEARS,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Premium', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
-		} );
-	} );
-
-	[
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Business', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
-		} );
 	} );
 } );
