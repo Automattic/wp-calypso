@@ -195,7 +195,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							primary
 							className="scan-threats__fix-all-threats-button"
 							onClick={ openFixAllThreatsDialog }
-							disabled={ updatingThreats.length === threats.length }
+							disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
 						>
 							{ translate( 'Fix all' ) }
 						</Button>
@@ -207,7 +207,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						threat={ threat }
 						onFixThreat={ () => openDialog( 'fix', threat ) }
 						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-						isFixing={ !! updatingThreats.find( ( t ) => t.id === threat.id ) }
+						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
 						isPlaceholder={ false }
 					/>

@@ -45,7 +45,7 @@ const ScanHistoryPage = ( {
 	filter,
 	dispatchRecordTracksEvent,
 } ) => {
-	const { selectedThreat, setSelectedThreat, updateThreat } = useThreats( siteId );
+	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const dispatch = useDispatch();
 	const handleOnFilterChange = React.useCallback(
@@ -102,9 +102,6 @@ const ScanHistoryPage = ( {
 		return threats.filter( ( entry ) => entry.status === filterValue );
 	}, [ currentFilter, threats ] );
 
-	// @todo: make this work
-	const fixingThreats = [];
-
 	return (
 		<Main className="history">
 			<DocumentHead title={ translate( 'History' ) } />
@@ -131,7 +128,7 @@ const ScanHistoryPage = ( {
 						key={ threat.id }
 						threat={ threat }
 						onFixThreat={ () => openDialog( threat ) }
-						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
+						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( siteSlug ) }
 						isPlaceholder={ isRequestingHistory }
 					/>
