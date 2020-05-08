@@ -201,8 +201,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
+	const shouldHideDomainStep = ! siteUrl && 'onboarding-plan-first' === flowToCheck;
 
-	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
+	if ( shouldSkipDomainStep || shouldHideFreePlan || shouldHideDomainStep ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( signupDependencies, 'username' ) ||
