@@ -4,6 +4,7 @@
 	"description": "Utility for requesting external access using the popup window.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"sideEffects": false,
 	"keywords": [
 		"wordpress",
 		"access",
