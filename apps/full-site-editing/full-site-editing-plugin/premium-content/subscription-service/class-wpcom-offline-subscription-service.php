@@ -17,7 +17,13 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 	 * @return boolean
 	 */
 	public static function available() {
-		return parent::available() && is_user_logged_in();
+		// Return available if on WPCOM and
+		// either running a job (sending email subscription) or handling API request (reader)
+		// and the user is logged in
+		return defined( 'IS_WPCOM' ) && IS_WPCOM === true && (
+				( defined( 'IS_JOBS' ) && IS_JOBS ) ||
+				( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST )
+			) && is_user_logged_in();
 	}
 
 	/**
@@ -30,37 +36,32 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 		if ( empty( $subscriptions ) ) {
 			return false;
 		}
+		//format the subscriptions so that they can be validated
+		$subscriptions = self::abbreviate_subscriptions( $subscriptions );
 		return $this->validate_subscriptions( $valid_plan_ids, $subscriptions );
 	}
 
 	/**
-	 * Return true if any ID/date pairs are valid. Otherwise false.
+	 * Report the subscriptions as an ID => [ 'end_date' => ]. mapping
+	 * @param array $subscriptions_from_bd
 	 *
-	 * @param int[]        $valid_plan_ids
-	 * @param array<array> $_subscriptions : ID must exist in the provided <code>$valid_subscriptions</code> parameter.
-	 *                                                             The provided end date needs to be greater than <code>now()</code>.
-	 *
-	 * @return bool
+	 * @return array<int, array>
 	 */
-	private function validate_subscriptions( $valid_plan_ids, $_subscriptions ) {
-		// Create a list of product_ids to compare against:
-		$product_ids = array();
-		foreach ( $valid_plan_ids as $plan_id ) {
-			$product_id = (int) get_post_meta( $plan_id, 'jetpack_memberships_product_id', true );
-			if ( isset( $product_id ) ) {
-				$product_ids[] = $product_id;
+	static function abbreviate_subscriptions( $subscriptions_from_bd ) {
+		$subscriptions = [];
+		foreach ( $subscriptions_from_bd as $subscription ) {
+			// We are picking the expiry date that is the most in the future.
+			if (
+				$subscription['status'] === 'active' && (
+					! isset( $subscriptions[ $subscription['product_id'] ] ) ||
+					empty( $subscription['end_date'] ) || // Special condition when subscription has no expiry date - we will default to a year from now for the purposes of the token.
+					strtotime( $subscription['end_date'] ) > strtotime( (string) $subscriptions[ $subscription['product_id'] ]['end_date'] )
+				)
+			) {
+				$subscriptions[ $subscription['product_id'] ] = new \stdClass();
+				$subscriptions[ $subscription['product_id'] ]->end_date = empty( $subscription['end_date'] ) ? ( time() + 365 * 24 * 3600 ) : $subscription['end_date'];
 			}
 		}
-
-		/**
-		 * @var int $product_id
-		 * @var array $_subscription
-		 */
-		foreach ( $_subscriptions as $_subscription ) {
-			if ( in_array( (int) $_subscription['product_id'], $product_ids, true ) && strtotime( $_subscription['end_date'] ) > time() ) {
-				return true;
-			}
-		}
-		return false;
+		return $subscriptions;
 	}
 }
