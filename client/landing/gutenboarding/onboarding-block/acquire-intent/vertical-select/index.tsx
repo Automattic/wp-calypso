@@ -201,7 +201,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
-					{ ! isMobile && ' ' }
+					{ ! isMobile && <span className="vertical-select__whitespace"></span> }
 					<span
 						className={ classnames( 'vertical-select__input-wrapper', {
 							'vertical-select__input-wrapper--with-arrow': showArrow,
