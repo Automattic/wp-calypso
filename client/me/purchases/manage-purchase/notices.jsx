@@ -28,12 +28,22 @@ import {
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'lib/purchases';
-import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	isPlan,
+	isDomainRegistration,
+} from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+
+/**
+ * Style dependencies
+ */
+import './notices.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 
@@ -42,6 +52,7 @@ class PurchaseNotice extends Component {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
 		purchase: PropTypes.object,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
@@ -197,6 +208,95 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderOtherPurchasesExpiringNotice() {
+		const { translate, purchase, selectedSite, renewableSitePurchases } = this.props;
+
+		const showOtherPurchasesExpiringNotice =
+			selectedSite &&
+			renewableSitePurchases.length > 1 &&
+			renewableSitePurchases.some( ( otherPurchase ) => otherPurchase.id === purchase.id );
+
+		if ( ! showOtherPurchasesExpiringNotice ) {
+			return null;
+		}
+
+		return (
+			<>
+				<Notice
+					className="manage-purchase__other-purchases-expiring-notice"
+					showDismiss={ false }
+					status="is-info"
+					icon="notice"
+					text={ this.getOtherPurchasesExpiringText() }
+				>
+					<NoticeAction onClick={ this.handleExpiringNoticeRenewAll }>
+						{ translate( 'Renew all' ) }
+					</NoticeAction>
+					{ this.trackImpression( 'other-purchases-expiring' ) }
+				</Notice>
+			</>
+		);
+	}
+
+	getOtherPurchasesExpiringText() {
+		const { translate, purchase, moment } = this.props;
+		const expiry = moment( purchase.expiryDate );
+		const translateOptions = {
+			args: {
+				purchaseName: getName( purchase ),
+				expiry: expiry.fromNow(),
+			},
+			components: {
+				link: (
+					<button
+						className="manage-purchase__other-upgrades-button"
+						onClick={ this.openUpcomingRenewalsDialog }
+					/>
+				),
+			},
+		};
+
+		if ( isExpired( purchase ) ) {
+			if ( isDomainRegistration( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s domain expired %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+					translateOptions
+				);
+			}
+
+			if ( isPlan( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s plan expired %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+					translateOptions
+				);
+			}
+
+			return translate(
+				'Your %(purchaseName)s subscription expired %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+				translateOptions
+			);
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			return translate(
+				'Your %(purchaseName)s domain will expire %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+				translateOptions
+			);
+		}
+
+		if ( isPlan( purchase ) ) {
+			return translate(
+				'Your %(purchaseName)s plan will expire %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+				translateOptions
+			);
+		}
+
+		return translate(
+			'Your %(purchaseName)s subscription will expire %(expiry)s and some of your {{link}}other upgrades{{/link}} on this site will be removed soon unless you take an action.',
+			translateOptions
+		);
+	}
+
 	onClickUpdateCreditCardDetails = () => {
 		this.trackClick( 'credit-card-expiring' );
 	};
@@ -312,6 +412,11 @@ class PurchaseNotice extends Component {
 		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
 		if ( consumedConciergeSessionNotice ) {
 			return consumedConciergeSessionNotice;
+		}
+
+		const otherPurchasesExpiringNotice = this.renderOtherPurchasesExpiringNotice();
+		if ( otherPurchasesExpiringNotice ) {
+			return otherPurchasesExpiringNotice;
 		}
 
 		const expiredNotice = this.renderExpiredRenewNotice();

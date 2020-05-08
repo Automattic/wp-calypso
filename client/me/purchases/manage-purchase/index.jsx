@@ -38,7 +38,11 @@ import {
 	getName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	getRenewableSitePurchases,
+} from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
@@ -96,6 +100,7 @@ class ManagePurchase extends Component {
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -513,7 +518,14 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { site, siteId, siteSlug, purchase, isPurchaseTheme } = this.props;
+		const {
+			site,
+			siteId,
+			siteSlug,
+			renewableSitePurchases,
+			purchase,
+			isPurchaseTheme,
+		} = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
@@ -541,6 +553,7 @@ class ManagePurchase extends Component {
 						handleRenew={ this.handleRenew }
 						selectedSite={ site }
 						purchase={ purchase }
+						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
 					<AsyncLoad
@@ -562,6 +575,7 @@ class ManagePurchase extends Component {
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const siteId = purchase ? purchase.siteId : null;
+	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
 	const site = getSite( state, siteId );
@@ -578,6 +592,7 @@ export default connect( ( state, props ) => {
 		purchase,
 		siteId,
 		site,
+		renewableSitePurchases,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
