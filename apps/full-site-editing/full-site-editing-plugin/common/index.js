@@ -36,10 +36,11 @@ const BlockPatternsMoved = () => {
 				className="common__block-patterns-moved"
 			>
 				<PanelBody>
-					<h2>{ __( 'Block Patterns have moved!' ) }</h2>
+					<h2>{ ( __( 'Block Patterns have moved!' ), 'full-site-editing' ) }</h2>
 					<p>
 						{ __(
-							'You can now find them in the block inserter under the "patterns" tab.  The block inserter can be found in the top-left corner of your screen by selecting the following icon:'
+							'You can now find them in the block inserter under the "patterns" tab.  The block inserter can be found in the top-left corner of your screen by selecting the following icon:',
+							'full-site-editing'
 						) }
 					</p>
 					<Button isPrimary icon={ plus } onClick={ openInserter } />
