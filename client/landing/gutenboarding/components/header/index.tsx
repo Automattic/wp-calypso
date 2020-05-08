@@ -75,6 +75,7 @@ const Header: React.FunctionComponent = () => {
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
+	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ) ).getSelectedPlan();
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 
 	const makePath = usePath();
@@ -163,6 +164,41 @@ const Header: React.FunctionComponent = () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
+
+			if ( selectedPlan ) {
+				const planProduct = {
+					meta: selectedPlan.getTitle(),
+					product_id: selectedPlan.getProductId(),
+					product_slug: selectedPlan.getStoreSlug(),
+					extra: {
+						source: 'gutenboarding',
+					},
+				};
+				const domainProduct = {
+					meta: domain?.domain_name,
+					product_id: domain?.product_id,
+					extra: {
+						privacy_available: domain?.supports_privacy,
+						privacy: domain?.supports_privacy,
+						source: 'gutenboarding',
+					},
+				};
+				const go = async () => {
+					const cart: Cart = await wpcom.getCart( newSite.site_slug );
+					await wpcom.setCart( newSite.blogid, {
+						...cart,
+						products: [ ...cart.products, planProduct, domainProduct ],
+					} );
+					resetPlan();
+					resetOnboardStore();
+					window.location.replace(
+						`/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`
+					);
+				};
+				go();
+				return;
+			}
+
 			if ( hasPaidDomain ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
@@ -195,13 +231,13 @@ const Header: React.FunctionComponent = () => {
 				blogId: newSite.blogid,
 			} );
 			resetOnboardStore();
-			resetPlan();
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
 	}, [
 		domain,
 		hasPaidDomain,
+		selectedPlan,
 		isRedirecting,
 		newSite,
 		newUser,
