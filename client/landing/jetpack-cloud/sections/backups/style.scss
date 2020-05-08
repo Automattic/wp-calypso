@@ -24,10 +24,6 @@
 	}
 }
 
-.backups__last-backup-status-grow {
-	flex-grow: 1;
-}
-
 .backups__main-wrap {
 	display: flex;
 	flex-direction: column;
@@ -35,6 +31,10 @@
 	overflow-y: scroll;
 	margin-left: -16px;
 	margin-right: -16px;
+
+	div:last-child {
+		flex-grow: 1;
+	}
 }
 
 .backups__search {

@@ -170,13 +170,7 @@ class BackupsPage extends Component {
 				<QueryRewindCapabilities siteId={ siteId } />
 
 				<div className="backups__main-wrap">
-					<div
-						className={
-							hasRealtimeBackups
-								? 'backups__last-backup-status'
-								: 'backups__last-backup-status-grow'
-						}
-					>
+					<div className="backups__last-backup-status">
 						<BackupDatePicker
 							onDateChange={ this.onDateChange }
 							selectedDate={ this.getSelectedDate() }
