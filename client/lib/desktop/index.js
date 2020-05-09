@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:desktop' );
 import { newPost } from 'lib/paths';
 import userFactory from 'lib/user';
 const user = userFactory();
-import { ipcRenderer as ipc } from 'electron'; // From Electron
+import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
@@ -44,8 +44,9 @@ const Desktop = {
 		this.store = await getReduxStore();
 
 		this.editorLoadedStatus();
+		this.subscribeCannotOpenEditor();
 
-		// Send some events immediatley - this sets the app state
+		// Send some events immediately - this sets the app state
 		this.notificationStatus();
 		this.sendUserLoginStatus();
 	},
@@ -167,6 +168,15 @@ const Desktop = {
 
 				previousLoaded = loaded;
 			}
+		} );
+	},
+
+	subscribeCannotOpenEditor: function () {
+		window.addEventListener( 'desktop-notify-cannot-open-editor', ( event ) => {
+			const { site, editorUrl, reason } = event.detail;
+			debug( 'Cannot load editor for site: ', site.URL );
+
+			ipc.send( 'cannot-open-editor', { origin: site.URL, editorUrl, reason } );
 		} );
 	},
 

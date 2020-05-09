@@ -17,7 +17,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, getSiteOption } from 'state/sites/selectors';
+import { getSiteUrl, getSiteOption, getSite } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
@@ -75,6 +75,18 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
+// TODO: Make these state selectors
+function isSiteJetpack( state, siteId ) {
+	const site = getSite( state, siteId );
+	return site.jetpack ? site.jetpack : false;
+}
+
+function ssoEnabled( state, siteId ) {
+	const site = getSite( state, siteId );
+	const siteActiveModules = site.options.active_modules;
+	return siteActiveModules ? siteActiveModules.includes( 'sso' ) : false;
+}
+
 /**
  * Ensures the user is authenticated in WP Admin so the iframe can be loaded successfully.
  *
@@ -94,13 +106,19 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
+	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
-	const isAuthenticated =
+	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
 		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
-		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
+		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
+
+	if ( isDesktop && isSiteJetpack( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
+		isAuthenticated = false;
+	}
+
 	if ( isAuthenticated ) {
 		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
@@ -125,7 +143,20 @@ export const authenticate = ( context, next ) => {
 
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
-	window.location.replace( wpAdminLoginUrl );
+
+	if ( isDesktop ) {
+		window.dispatchEvent(
+			new window.CustomEvent( 'desktop-notify-cannot-open-editor', {
+				detail: {
+					site: getSite( state, siteId ),
+					editorUrl: wpAdminLoginUrl,
+					reason: 'JETPACK-REQUIRES-SSO',
+				},
+			} )
+		);
+	} else {
+		window.location.replace( wpAdminLoginUrl );
+	}
 };
 
 export const redirect = async ( context, next ) => {
