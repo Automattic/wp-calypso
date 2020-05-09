@@ -6,6 +6,7 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
+	withStorageKey,
 } from 'state/utils';
 import {
 	EMAIL_ACCOUNTS_REQUEST,
@@ -61,11 +62,14 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	return state;
 } );
 
-export default keyedReducer(
-	'siteId',
-	combineReducers( {
-		users: usersReducer,
-		requesting: requestingReducer,
-		requestError: requestErrorReducer,
-	} )
+export default withStorageKey(
+	'emailAccounts',
+	keyedReducer(
+		'siteId',
+		combineReducers( {
+			users: usersReducer,
+			requesting: requestingReducer,
+			requestError: requestErrorReducer,
+		} )
+	)
 );

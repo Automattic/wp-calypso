@@ -43,7 +43,6 @@ import experiments from './experiments/reducer';
 import exporter from './exporter/reducers';
 import googleMyBusiness from './google-my-business/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
-import emailAccounts from './email-accounts/reducer';
 import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
@@ -124,7 +123,6 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	domains,
-	emailAccounts,
 	emailForwarding,
 	embeds,
 	experiments,

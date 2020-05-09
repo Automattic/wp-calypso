@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import 'state/email-accounts/init';
 
 /**
  * Determines whether the list of email accounts is being requested.
@@ -10,6 +11,6 @@ import { get } from 'lodash';
  * @param {number} siteId - identifier of the site
  * @returns {?boolean} true if the list is being requested, false otherwise
  */
-export default function isRequestingGSuiteUsers( state, siteId ) {
+export default function isRequestingEmailAccounts( state, siteId ) {
 	return get( state, [ 'emailAccounts', siteId, 'requesting' ], false );
 }

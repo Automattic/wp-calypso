@@ -7,6 +7,7 @@ import {
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import 'state/email-accounts/init';
 import 'state/data-layer/wpcom/email-accounts';
 
 export const getEmailAccounts = ( siteId, useBuffer = true ) => {
