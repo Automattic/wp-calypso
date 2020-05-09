@@ -110,9 +110,10 @@ export class SearchPurchase extends Component {
 
 	componentDidUpdate() {
 		const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
+		const status = this.getStatus();
 
 		if (
-			this.getStatus() === NOT_CONNECTED_JETPACK &&
+			status === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
 			! forceRemoteInstall &&
 			! this.state.redirecting
@@ -120,11 +121,17 @@ export class SearchPurchase extends Component {
 			return this.goToRemoteAuth( this.props.siteHomeUrl );
 		}
 
-		if ( this.getStatus() === IS_DOT_COM ) {
-			return this.goToCheckout( this.state.currentUrl );
+		if ( status === IS_DOT_COM || status === ALREADY_CONNECTED ) {
+			const product = window.location.href.split( '/' )[ 5 ];
+
+			let redirectTo = '/checkout/' + urlToSlug( this.state.currentUrl );
+			if ( product ) {
+				redirectTo += '/' + product;
+			}
+			page.redirect( redirectTo );
 		}
 
-		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
+		if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( isMobileAppFlow ) {
 				return this.redirectToMobileApp( 'already-connected' );
 			}
@@ -138,8 +145,8 @@ export class SearchPurchase extends Component {
 		}
 
 		if (
-			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ||
-			( this.getStatus() === NOT_CONNECTED_JETPACK && forceRemoteInstall )
+			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) ||
+			( status === NOT_CONNECTED_JETPACK && forceRemoteInstall )
 		) {
 			if (
 				config.isEnabled( 'jetpack/connect/remote-install' ) &&
@@ -294,9 +301,9 @@ export class SearchPurchase extends Component {
 			return SITE_BLACKLISTED;
 		}
 
-		if ( this.checkProperty( 'userOwnsSite' ) ) {
-			return ALREADY_OWNED;
-		}
+		// if ( this.checkProperty( 'userOwnsSite' ) ) {
+		// 	return ALREADY_OWNED;
+		// }
 
 		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
 			return NOT_JETPACK;
