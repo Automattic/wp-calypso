@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -11,12 +12,14 @@ import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 
 const cardComponents = {
 	'home-task-site-setup-checklist': SiteSetupList,
 	'home-task-connect-accounts': ConnectAccounts,
 	'home-task-find-domain': FindDomain,
 	'home-task-webinars': Webinars,
+	'home-feature-go-mobile-on-mobile': GoMobile,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
@@ -24,6 +27,13 @@ const Primary = ( { checklistMode, cards } ) => {
 		return null;
 	}
 
+	// Hard-coded. To be removed after D43129-code is merged
+	if ( ! isDesktop() ) {
+		// Prevent duplicates once D43129-code is merged
+		if ( -1 === cards.indexOf( 'home-feature-go-mobile-on-mobile' ) ) {
+			cards.push( 'home-feature-go-mobile-on-mobile' );
+		}
+	}
 	return (
 		<>
 			{ cards.map( ( card, index ) =>
