@@ -21,14 +21,11 @@ export const getEmailAccounts = ( action ) => {
 		return receiveGetEmailAccountsSuccess( action.siteId, {
 			accounts: [
 				{
-					email: 'sample@domain.com',
 					mailbox: 'sample',
 					site_id: action.siteId,
 					domain: 'domain.com',
-					firstname: 'First',
-					lastname: 'Last',
-					fullname: 'First Last',
-					suspended: false,
+					first_name: 'First',
+					last_name: 'Last',
 					product_slug: 'titan',
 					product_name: 'Titan',
 				},
