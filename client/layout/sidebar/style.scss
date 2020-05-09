@@ -67,6 +67,20 @@
 	margin-right: 11px;
 }
 
+// Checklist progress
+.sidebar__checklist-progress {
+	width: 30%;
+
+	.sidebar__checklist-progress-text {
+		font-size: 10px;
+		margin: 0;
+	}
+
+	.progress-bar {
+		height: 6px;
+	}
+}
+
 // Menu links: The actual anchor tags that contain links to
 // various sections of Calypso.
 .sidebar__menu-link {
