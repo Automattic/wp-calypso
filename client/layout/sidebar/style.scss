@@ -78,6 +78,10 @@
 
 	.progress-bar {
 		height: 6px;
+
+		.progress-bar__progress {
+			background-color: var( --color-sidebar-menu-selected-text );
+		}
 	}
 }
 
