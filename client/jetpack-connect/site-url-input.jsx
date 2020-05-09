@@ -139,20 +139,19 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					{ product === 'jetpack_search' ? (
+					<FormTextInput
+						ref={ this.refInput }
+						id="siteUrl"
+						autoCapitalize="off"
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						onChange={ onChange }
+						disabled={ isFetching }
+						placeholder={ 'https://yourjetpack.blog' }
+						onKeyUp={ this.handleKeyPress }
+						value={ url }
+					/>
+					{ product === 'jetpack_search' && (
 						<SitesDropdown isPlaceholder={ requestingMissingSites } onSiteSelect={ onSelect } />
-					) : (
-						<FormTextInput
-							ref={ this.refInput }
-							id="siteUrl"
-							autoCapitalize="off"
-							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							onChange={ onChange }
-							disabled={ isFetching }
-							placeholder={ 'https://yourjetpack.blog' }
-							onKeyUp={ this.handleKeyPress }
-							value={ url }
-						/>
 					) }
 					{ isFetching ? <Spinner /> : null }
 				</div>
