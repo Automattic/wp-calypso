@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose, noop, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -42,6 +42,9 @@ import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 import { isEnabled } from 'config';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { activatePlugin } from 'state/plugins/installed/actions';
+import { getPlugins } from 'state/plugins/installed/selectors';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -54,6 +57,9 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForChecklist: PropTypes.bool.isRequired,
+		isAtomic: PropTypes.bool,
+		activatePlugin: PropTypes.func,
+		sitePlugins: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -205,12 +211,23 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	checkForClassicEditorOnAtomic( siteId, sitePlugins ) {
+		const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
+		if ( ! classicPlugin.isActive ) {
+			this.props.activatePlugin( siteId, classicPlugin );
+		}
+	}
+
 	switchToClassicEditor = () => {
-		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
+		const { siteId, onClose, optOut, classicUrl, translate, isAtomic, sitePlugins } = this.props;
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
+
 		if ( proceed ) {
+			if ( isAtomic ) {
+				this.checkForClassicEditorOnAtomic( siteId, sitePlugins );
+			}
 			optOut( siteId, classicUrl );
 			onClose();
 		}
@@ -291,6 +308,8 @@ function mapStateToProps( state ) {
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
+	const isAtomic = isAtomicSite( state, siteId );
+	const sitePlugins = getPlugins( state, [ siteId ] );
 
 	return {
 		searchQuery: getSearchQuery( state ),
@@ -303,6 +322,8 @@ function mapStateToProps( state ) {
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
+		isAtomic,
+		sitePlugins,
 	};
 }
 
@@ -312,6 +333,7 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
+	activatePlugin,
 };
 
 export default compose(
