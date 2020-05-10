@@ -4,9 +4,8 @@
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { layout, plus } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin } from '@wordpress/plugins';
+import { registerPlugin, getPlugins, getPlugin } from '@wordpress/plugins';
 import { PanelBody, Button } from '@wordpress/components';
-import { EntitiesSavedStates } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -58,9 +57,8 @@ const BlockPatternsMoved = () => {
 };
 
 // Atomic sites without Gutenberg enabled don't need to this plugin.
-// Since there is no core import for 'BlockPattern' to see if that exists,
-// we can check another recent addition to the editor library. If
-// 'EntitiesSavedStates' exists, then we are running Gutenberg.
-if ( EntitiesSavedStates ) {
+// Check that gutenberg is enabled.
+if ( getPlugin( 'gutenberg' ) || window.wpcomGutenberg ) {
 	registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
 }
+console.log( getPlugins() );
