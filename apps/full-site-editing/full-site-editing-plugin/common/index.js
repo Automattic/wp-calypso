@@ -58,6 +58,11 @@ const BlockPatternsMoved = () => {
 
 // Atomic sites without Gutenberg enabled don't need to this plugin.
 // Check that gutenberg is enabled.
-if ( getPlugin( 'gutenberg' ) || window.wpcomGutenberg ) {
+if (
+	// for Atomic (this doesn't work... need a different check)
+	getPlugin( 'gutenberg' ) ||
+	// for Simple, check for wpcomGutenberg on window.
+	window.wpcomGutenberg
+) {
 	registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
 }
