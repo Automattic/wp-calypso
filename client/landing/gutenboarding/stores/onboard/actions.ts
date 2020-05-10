@@ -16,8 +16,7 @@ import type { FontPair } from '../../constants';
 import type { DomainCategory } from '../../domains-constants';
 import { PLAN_ECOMMERCE } from '../plans/constants';
 
-// Commenting this since `public` doesn't seem to be in the schema we are using
-// type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 
@@ -104,7 +103,7 @@ export function* createSite(
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 	const isPublicSite = planSlug === PLAN_ECOMMERCE;
 
-	const params /*: CreateSiteParams */ = {
+	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
 		public: isPublicSite ? 1 : -1,
