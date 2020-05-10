@@ -8,7 +8,7 @@ import { getPlan, getPlanPath } from '../../../../lib/plans';
  */
 import { State, supportedPlanSlugs } from './reducer';
 import { planFeatures, planDetails } from './plans-data';
-import { defaultPaidPlan, freePlan } from './constants';
+import { DEFAULT_PAID_PLAN, PLAN_FREE } from './constants';
 
 function getFortifiedPlan( slug: string | undefined ) {
 	if ( ! slug ) {
@@ -19,7 +19,7 @@ function getFortifiedPlan( slug: string | undefined ) {
 
 export const getSelectedPlan = ( state: State ) => getFortifiedPlan( state.selectedPlanSlug );
 export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) =>
-	hasPaidDomain ? getFortifiedPlan( defaultPaidPlan ) : getFortifiedPlan( freePlan );
+	hasPaidDomain ? getFortifiedPlan( DEFAULT_PAID_PLAN ) : getFortifiedPlan( PLAN_FREE );
 export const getSupportedPlans = ( state: State ) =>
 	state.supportedPlanSlugs.map( getFortifiedPlan );
 export const getPlanByPath = ( state: State, path: string | undefined ) =>

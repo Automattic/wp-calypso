@@ -6,7 +6,13 @@ import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { ValuesType } from 'utility-types';
 
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
-import * as plans from '../../lib/plans/constants';
+import {
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from './stores/plans/constants';
 import { getPlanPath } from '../../lib/plans';
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
@@ -26,11 +32,11 @@ export const Step = {
 export const steps = Object.values( Step ).filter( Boolean );
 
 export const supportedPlans: string[] = [
-	plans.PLAN_FREE,
-	plans.PLAN_PERSONAL,
-	plans.PLAN_PREMIUM,
-	plans.PLAN_BUSINESS,
-	plans.PLAN_ECOMMERCE,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 ];
 export const supportedPlansPaths: string[] = supportedPlans.map( getPlanPath );
 

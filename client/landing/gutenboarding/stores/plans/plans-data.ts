@@ -1,13 +1,7 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '../../../../lib/plans/constants';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 
 export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
 
