@@ -16,6 +16,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
+import { PLAN_FREE } from '../../stores/plans/constants';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
@@ -131,7 +132,7 @@ const Header: React.FunctionComponent = () => {
 			handleCreateSite(
 				newUser.username,
 				newUser.bearerToken,
-				selectedPlan ? selectedPlan.getStoreSlug() : 'free'
+				selectedPlan ? selectedPlan.getStoreSlug() : PLAN_FREE
 			);
 		}
 	}, [ newSite, newUser, handleCreateSite ] );

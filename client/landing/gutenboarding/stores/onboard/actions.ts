@@ -14,6 +14,7 @@ import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 import type { DomainCategory } from '../../domains-constants';
+import { PLAN_ECOMMERCE } from '../plans/constants';
 
 // Commenting this since `public` doesn't seem to be in the schema we are using
 // type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
@@ -101,7 +102,7 @@ export function* createSite(
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
-	const isPublicSite = planSlug === 'ecommerce-bundle';
+	const isPublicSite = planSlug === PLAN_ECOMMERCE;
 
 	const params /*: CreateSiteParams */ = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],

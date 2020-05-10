@@ -19,6 +19,7 @@ import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
+import { PLAN_FREE } from '../../stores/plans/constants';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
@@ -59,7 +60,7 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			const planSlug = selectedPlan ? selectedPlan.getStoreSlug() : 'free';
+			const planSlug = selectedPlan ? selectedPlan.getStoreSlug() : PLAN_FREE;
 			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
 		},
 		[ createSite, freeDomainSuggestion, selectedPlan ]
