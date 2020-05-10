@@ -96,9 +96,11 @@ export default function useOnSiteCreation() {
 					} );
 					resetPlan();
 					resetOnboardStore();
-					window.location.replace(
-						`/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`
-					);
+					const redirectionUrl =
+						selectedPlan.getStoreSlug() === 'ecommerce-bundle'
+							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
+							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+					window.location.replace( redirectionUrl );
 				};
 				go();
 				return;

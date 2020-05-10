@@ -15,7 +15,8 @@ import type { State } from '.';
 import type { FontPair } from '../../constants';
 import type { DomainCategory } from '../../domains-constants';
 
-type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+// Commenting this since `public` doesn't seem to be in the schema we are using
+// type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 
@@ -90,7 +91,8 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
-	bearerToken?: string
+	bearerToken?: string,
+	planSlug?: string
 ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
@@ -99,10 +101,12 @@ export function* createSite(
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+	const isPublicSite = planSlug === 'ecommerce-bundle';
 
-	const params: CreateSiteParams = {
+	const params /*: CreateSiteParams */ = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
+		public: isPublicSite ? 1 : -1,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,

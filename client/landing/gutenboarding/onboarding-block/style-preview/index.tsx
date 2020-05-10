@@ -18,16 +18,17 @@ import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
+import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
-
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -58,9 +59,10 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken );
+			const planSlug = selectedPlan ? selectedPlan.getStoreSlug() : 'free';
+			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
 		},
-		[ createSite, freeDomainSuggestion ]
+		[ createSite, freeDomainSuggestion, selectedPlan ]
 	);
 
 	return (
