@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
-import { get, memoize } from 'lodash';
+import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
 
 /**
@@ -16,7 +16,6 @@ import { ProgressBar } from '@automattic/components';
  */
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
@@ -49,8 +48,11 @@ import {
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import { getCompletionStatus } from 'lib/checklist';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -172,7 +174,7 @@ export class MySitesSidebar extends Component {
 			path,
 			siteSuffix,
 			siteId,
-			taskCount,
+			taskCompletion,
 			translate,
 		} = this.props;
 
@@ -198,7 +200,7 @@ export class MySitesSidebar extends Component {
 				{ ! hideTaskProgress && (
 					<div className="sidebar__checklist-progress">
 						<p className="sidebar__checklist-progress-text">{ translate( 'Finish setup' ) }</p>
-						<ProgressBar value={ 2 } total={ taskCount } />
+						<ProgressBar value={ taskCompletion.completed } total={ taskCompletion.total } />
 					</div>
 				) }
 			</SidebarItem>
@@ -890,7 +892,7 @@ function mapStateToProps( state ) {
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-		taskCount: get( getSiteChecklist( state, siteId ), 'tasks.length' ),
+		taskCompletion: getSiteTaskList( state, siteId ).getCompletionStatus(),
 		hideTaskProgress:
 			isSiteChecklistComplete( state, siteId ) || ! getSiteChecklist( state, siteId ),
 	};
