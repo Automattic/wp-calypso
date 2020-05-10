@@ -22,6 +22,8 @@ import getSupportVariation, {
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
+import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
+import { useHasPlanInCart } from '../hooks/has-plan';
 
 export default function WPCheckoutOrderSummary() {
 	const reduxDispatch = useDispatch();
@@ -53,16 +55,7 @@ export default function WPCheckoutOrderSummary() {
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				<CheckoutSummaryFeaturesList>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Email and live chat support' ) }
-					</CheckoutSummaryFeaturesListItem>
-					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon />
-						{ translate( 'Money back guarantee' ) }
-					</CheckoutSummaryFeaturesListItem>
-				</CheckoutSummaryFeaturesList>
+				<CheckoutSummaryFeaturesList />
 				<CheckoutSummaryHelp onClick={ handleHelpButtonClicked }>
 					{ isSupportChatUser
 						? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
@@ -102,6 +95,49 @@ export default function WPCheckoutOrderSummary() {
 	);
 }
 
+function CheckoutSummaryFeaturesList() {
+	const hasDomainsInCart = useHasDomainsInCart();
+	const domains = useDomainsInCart();
+	const hasPlanInCart = useHasPlanInCart();
+	const translate = useTranslate();
+
+	const supportText = hasPlanInCart
+		? translate( 'Email and live chat support' )
+		: translate( 'Email support' );
+
+	let refundText = translate( 'Money back guarantee' );
+	if ( hasDomainsInCart && ! hasPlanInCart ) {
+		refundText = translate( '4 day money back guarantee' );
+	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
+		refundText = translate( '30 day money back guarantee' );
+	}
+
+	return (
+		<CheckoutSummaryFeaturesListUI>
+			{ hasDomainsInCart &&
+				domains.map( ( domain ) => {
+					return (
+						<CheckoutSummaryFeaturesListItem>
+							<WPCheckoutCheckIcon />
+							<strong>{ domain.wpcom_meta?.meta }</strong>
+							{ domain.wpcom_meta?.is_bundled && (
+								<BundledDomainFreeUI>{ translate( 'free with plan' ) }</BundledDomainFreeUI>
+							) }
+						</CheckoutSummaryFeaturesListItem>
+					);
+				} ) }
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon />
+				{ supportText }
+			</CheckoutSummaryFeaturesListItem>
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon />
+				{ refundText }
+			</CheckoutSummaryFeaturesListItem>
+		</CheckoutSummaryFeaturesListUI>
+	);
+}
+
 const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
 	border-bottom: none 0;
 `;
@@ -117,10 +153,10 @@ const CheckoutSummaryFeatures = styled.div`
 const CheckoutSummaryFeaturesTitle = styled.h3`
 	font-size: 16px;
 	font-weight: ${( props ) => props.theme.weights.normal};
-	margin-bottom: 4px;
+	margin-bottom: 6px;
 `;
 
-const CheckoutSummaryFeaturesList = styled.ul`
+const CheckoutSummaryFeaturesListUI = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
@@ -139,11 +175,20 @@ const CheckoutSummaryHelp = styled.button`
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
 	fill: ${( props ) => props.theme.colors.success};
 	margin-right: 4px;
-	vertical-align: bottom;
+	position: absolute;
+	top: 0;
+	left: 0;
 `;
 
 const CheckoutSummaryFeaturesListItem = styled.li`
 	margin-bottom: 4px;
+	padding-left: 24px;
+	position: relative;
+`;
+
+const BundledDomainFreeUI = styled.div`
+	color: ${( props ) => props.theme.colors.success};
+	font-style: italic;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
