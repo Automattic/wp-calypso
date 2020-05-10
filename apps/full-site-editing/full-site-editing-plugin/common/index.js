@@ -4,7 +4,7 @@
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { layout, plus } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin, getPlugins, getPlugin } from '@wordpress/plugins';
+import { registerPlugin, getPlugin } from '@wordpress/plugins';
 import { PanelBody, Button } from '@wordpress/components';
 
 /**
@@ -61,4 +61,3 @@ const BlockPatternsMoved = () => {
 if ( getPlugin( 'gutenberg' ) || window.wpcomGutenberg ) {
 	registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
 }
-console.log( getPlugins() );
