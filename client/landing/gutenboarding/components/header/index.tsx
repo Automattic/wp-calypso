@@ -135,7 +135,7 @@ const Header: React.FunctionComponent = () => {
 				selectedPlan ? selectedPlan.getStoreSlug() : PLAN_FREE
 			);
 		}
-	}, [ newSite, newUser, handleCreateSite ] );
+	}, [ newSite, newUser, handleCreateSite, selectedPlan ] );
 	return (
 		<div
 			className="gutenboarding__header"
