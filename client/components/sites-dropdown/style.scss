@@ -68,10 +68,6 @@
 	padding: 0;
 	position: static;
 	overflow-y: auto;
-
-	&.is-large {
-		margin-top: 50px;
-	}
 }
 
 .sites-dropdown .site-selector__sites {
@@ -81,7 +77,6 @@
 
 .sites-dropdown .site-selector .search {
 	position: absolute;
-	top: 67px;
 	left: 0;
 	right: 0;
 }
@@ -89,8 +84,4 @@
 .sites-dropdown .site-selector .search input {
 	margin: 0;
 	background-color: var( --color-surface );
-}
-
-.sites-dropdown .site-selector .site {
-	flex-grow: 1;
 }
