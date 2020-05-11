@@ -8,17 +8,13 @@ import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 import config from 'config';
 
-const cardFeatureFlags = [
-	config.isEnabled( 'editor/before-deprecation' ) && 'editor/before-deprecation',
-];
-
 const requestLayout = ( action ) => {
 	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			query: { flags: encodeURIComponent( cardFeatureFlags.join() ) },
+			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
 		},
 		action
 	);
