@@ -11,15 +11,20 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import PlansGrid from '../../components/plans/plans-grid';
 import SignupForm from '../../components/signup-form';
+import Link from '../../components/link';
 import useSelectedPlan from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { usePath, Step } from '../../path';
+
+import './style.scss';
 
 export default function PlansStep() {
 	const { __ } = useI18n();
+	const makePath = usePath();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -40,7 +45,7 @@ export default function PlansStep() {
 	};
 
 	return (
-		<div>
+		<>
 			<PlansGrid
 				renderConfirmButton={ () => (
 					<Button
@@ -54,8 +59,13 @@ export default function PlansStep() {
 				) }
 				onPlanChange={ setPlan }
 				selectedPlanSlug={ plan.getStoreSlug() }
+				cancelButton={
+					<Link className="plans__back-link" isLink to={ makePath( Step.Style ) }>
+						{ __( 'Go back' ) }
+					</Link>
+				}
 			/>
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
-		</div>
+		</>
 	);
 }
