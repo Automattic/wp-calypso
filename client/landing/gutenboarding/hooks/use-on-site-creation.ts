@@ -103,7 +103,7 @@ export default function useOnSiteCreation() {
 						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
 							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
 							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
-					window.location.replace( redirectionUrl );
+					window.location.href = redirectionUrl;
 				};
 				go();
 				return;
@@ -130,7 +130,7 @@ export default function useOnSiteCreation() {
 					} );
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
-					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
+					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
 				};
 				go();
 				return;
@@ -144,7 +144,7 @@ export default function useOnSiteCreation() {
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
-			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
+			window.location.href = `/block-editor/page/${ newSite.site_slug }/home`;
 		}
 	}, [
 		domain,

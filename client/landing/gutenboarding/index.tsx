@@ -26,7 +26,7 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path } from './path';
+import { path, Step } from './path';
 import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
@@ -117,35 +117,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	try {
-		// if ( pathname !== '/' + GUTENBOARDING_BASE_NAME ) {
-		const selectedSiteDetails = await waitForSelectedSite();
-		console.log( 'The results of the selectedSiteDetails wait are:' );
-		console.log( selectedSiteDetails );
-
-		if ( selectedSiteDetails ) {
-			const createdAtString = selectedSiteDetails?.options?.created_at;
-			// "2020-05-11T01:08:15+00:00"
-
-			if ( createdAtString ) {
-				const createdAt = new Date( createdAtString );
-				const diff = Date.now() - createdAt.getTime();
-				const diffMinutes = diff / 1000 / 60;
-				console.log( diffMinutes );
-				if ( diffMinutes < 10 ) {
-					console.log( 'created within 10 minutes' );
-					// window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
-				} else {
-					console.log( 'created greater than 10 minutes' );
-					// dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
-				}
-			}
-		}
-		// } else {
-		// 	// Always reset selected site if booting from `/new`
-		// 	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
-		// }
-
-		// window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
+		checkAndRedirectIfSiteWasCreatedRecently();
 	} catch {}
 
 	ReactDom.render(
@@ -237,33 +209,53 @@ function waitForCurrentUser(): Promise< User | undefined > {
 	} ).finally( unsubscribe );
 }
 
+async function checkAndRedirectIfSiteWasCreatedRecently() {
+	const shouldPathCauseRedirectForSelectedSite = () => {
+		return [ Step.CreateSite, Step.Plans, Step.Style ].some( ( step ) => {
+			if ( window.location.pathname.startsWith( `/${ GUTENBOARDING_BASE_NAME }/${ step }` ) ) {
+				return true;
+			}
+		} );
+	};
+
+	if ( shouldPathCauseRedirectForSelectedSite() ) {
+		const selectedSiteDetails = await waitForSelectedSite();
+
+		if ( selectedSiteDetails ) {
+			const createdAtString = selectedSiteDetails?.options?.created_at;
+			// "2020-05-11T01:08:15+00:00"
+
+			if ( createdAtString ) {
+				const createdAt = new Date( createdAtString );
+				const diff = Date.now() - createdAt.getTime();
+				const diffMinutes = diff / 1000 / 60;
+				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
+					window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
+					return;
+				}
+			}
+		}
+	}
+
+	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
+}
+
 function waitForSelectedSite(): Promise< Site | undefined > {
 	let unsubscribe: () => void = () => undefined;
 	return new Promise< Site | undefined >( ( resolve ) => {
-		let attempts = 0;
 		const selectedSite = select( ONBOARD_STORE ).getSelectedSite();
-		console.log( 'selectedSite', selectedSite );
 		if ( ! selectedSite ) {
-			console.log( 'bailing' );
 			return resolve( undefined );
 		}
-		console.log( 'let us try to get this site' );
 		unsubscribe = subscribe( () => {
-			console.log( selectedSite );
-			console.log( 'waiting...' );
-			console.log( attempts );
-			console.log( select( 'core/data' ) );
 			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
 			if ( resolvedSelectedSite ) {
-				console.log( 'Yep, found resolved site, now do redirect logic!' );
 				resolve( resolvedSelectedSite );
 			}
 
 			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
-				console.log( "Finished resolving, but didn't get anything" );
 				resolve( undefined );
 			}
-			// resolve( resolvedSelectedSite );
 		} );
 		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
