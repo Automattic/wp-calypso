@@ -37,6 +37,18 @@ function enqueue_script( $filename, $in_footer = false ) {
 		$asset['version'],
 		$in_footer
 	);
+
+	// Enqueue styles.
+	$style_file = is_rtl()
+		? $filename . '.rtl.css'
+		: $filename . '.css';
+
+	wp_enqueue_style(
+		'starter-page-templates',
+		plugins_url( 'dist/' . $style_file, __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+	);
 }
 
 /**

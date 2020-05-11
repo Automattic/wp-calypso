@@ -11,6 +11,8 @@ import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@w
 import { registerPlugin } from '@wordpress/plugins';
 import { Tip } from '@wordpress/components';
 
+import './index.scss';
+
 /**
  * Internal dependencies
  */
