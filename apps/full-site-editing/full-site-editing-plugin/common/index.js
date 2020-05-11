@@ -4,8 +4,9 @@
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { layout, plus } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin, getPlugin } from '@wordpress/plugins';
+import { registerPlugin } from '@wordpress/plugins';
 import { PanelBody, Button } from '@wordpress/components';
+import { __experimentalLibrary } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -56,13 +57,8 @@ const BlockPatternsMoved = () => {
 	);
 };
 
-// Atomic sites without Gutenberg enabled don't need to this plugin.
-// Check that gutenberg is enabled.
-if (
-	// for Atomic (this doesn't work... need a different check)
-	getPlugin( 'gutenberg' ) ||
-	// for Simple, check for wpcomGutenberg on window.
-	window.wpcomGutenberg
-) {
+// Gutenberg 8 includes `Library` as `@wordpres/block-editor` experimental export.
+// The experimental Library component contains the patterns in their new location.
+if ( typeof __experimentalLibrary !== 'undefined' ) {
 	registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
 }
