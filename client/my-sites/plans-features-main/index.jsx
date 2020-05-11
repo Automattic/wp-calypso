@@ -200,6 +200,7 @@ export class PlansFeaturesMain extends Component {
 					popularPlanSpec={ getPopularPlanSpec( {
 						customerType,
 						isJetpack,
+						availablePlans,
 					} ) }
 					siteId={ siteId }
 				/>
