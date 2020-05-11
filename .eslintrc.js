@@ -129,6 +129,11 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					// Use request-external-access package instead of lib util.
+					{
+						name: 'lib/sharing',
+						message: 'Please use @automattic/request-external-access instead.',
+					},
 				],
 			},
 		],
