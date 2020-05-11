@@ -27,7 +27,8 @@ export const getEmailAccounts = ( action ) => {
 					first_name: 'First',
 					last_name: 'Last',
 					product_slug: 'titan',
-					product_name: 'Titan',
+					product_name: 'Titan Basic',
+					provider_slug: 'Titan',
 				},
 			],
 		} );
