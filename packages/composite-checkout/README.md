@@ -26,16 +26,18 @@ It's also possible to build an entirely custom form using the other components e
 ## How to use this package
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
- - [createApplePayMethod](#createapplepaymethod)
+ - [createApplePayMethod](#createApplePayMethod)
  - [createExistingCardMethod](#createExistingCardMethod)
  - [createFullCreditsMethod](#createFullCreditsMethod)
  - [createPayPalMethod](#createpaypalmethod)
- - [createStripeMethod](#createstripemethod)
+ - [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
  - [useAllPaymentMethods](#useAllPaymentMethods)
  - [useEvents](#useEvents)
  - [useFormStatus](#useFormStatus)
+ - [useTransactionStatus](#useTransactionStatus)
+ - [usePaymentProcessor](#usePaymentProcessor)
  - [useMessages](#useMessages)
  - [useDispatch](#useDispatch)
  - [useLineItems](#useLineItems)
@@ -92,6 +94,10 @@ Within the components, the Hook `usePaymentMethod()` will return an object of th
 
 When the `submitButton` component has been clicked, it should use the functions provided by [useFormStatus](#useFormStatus) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'complete', which will cause [Checkout](#Checkout) to call `onPaymentComplete` (see [CheckoutProvider](#CheckoutProvider)).
 
+When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument.
+
+The actual steps needed to submit the payment will vary for every payment method, but typically a payment processor function will return a Promise that will resolve when the payment is complete or reject for an error and the React component that called it can use the result to change the [form status](#useFormStatus) to 'complete' or 'ready' as appropriate. The component should also change the [transaction status](#useTransactionStatus) to 'complete' or 'error' (or whatever status is appropriate for that response).
+
 ## Line Items
 
 Each item is an object with the following properties:
@@ -138,6 +144,7 @@ It has the following props.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`: An array of [Payment Method objects](#payment-methods).
+- `paymentProcessors: object`: A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
 - `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
@@ -233,11 +240,8 @@ An optional boolean prop, `collapsed`, can be used to simplify the output for wh
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `fetchStripeConfiguration: async ?object => object`. An async function that fetches the stripe configuration (we use Stripe for Apple Pay).
-- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
+- `stripe: object`. The configured stripe object.
+- `stripeConfiguration: object`. The stripe configuration object.
 
 ### createRegistry
 
@@ -282,13 +286,13 @@ The object returned by this function **must have** the following property added 
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
 
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async object => object`. An async function that sends the request to the endpoint.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
-- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
+- `store: StripeStore`. The result of calling [createStripePaymentMethodStore](#createStripePaymentMethodStore).
 - `stripe: object`. The configured stripe object.
 - `stripeConfiguration: object`. The stripe configuration object.
+
+### createStripeMethodStore
+
+Creates a data store for use by [createStripeMethod](#createStripeMethod).
 
 ### defaultRegistry
 
@@ -332,7 +336,7 @@ A React Hook that will return the `onEvent` callback as passed to `CheckoutProvi
 
 ### useFormStatus
 
-A React Hook that will return an object with the following properties:
+A React Hook that will return an object with the following properties. Used to represent and change the current status of the checkout form (eg: causing it to be disabled). This differs from the status of the transaction itself, which is handled by [useTransactionStatus](#useTransactionStatus).
 
 - `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'validating', 'submitting', or 'complete'.
 - `setFormReady: () => void`. Function to change the form status to 'ready'.
@@ -371,6 +375,10 @@ A React Hook that will return an object containing all the information about the
 
 A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method. Only works within [CheckoutProvider](#CheckoutProvider).
 
+### usePaymentProcessor
+
+A React Hook that returns a payment processor function as passed to the `paymentProcessors` prop of [CheckoutProvider](#CheckoutProvider). Takes one argument which is the key of the processor function to return. Throws an Error if the key does not match a processor function. See [Payment Methods](#payment-methods) for an explanation of how this is used. Only works within [CheckoutProvider](#CheckoutProvider).
+
 ### useRegisterStore
 
 A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -386,6 +394,20 @@ A React Hook that accepts a callback which is provided the `select` function fro
 ### useTotal
 
 A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
+
+### useTransactionStatus
+
+A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus).
+
+- `transactionStatus: string`. The current status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
+- `transactionError: string | null`. The most recent error message encountered by the transaction if its status is 'error'.
+- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing`, `setTransactionRedirecting`, or `setTransactionComplete`.
+- `resetTransaction: () => void`. Function to change the transaction status to 'not-started'.
+- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to 'complete' and save the response object in `transactionLastResponse`.
+- `setTransactionError: ( string ) => void`. Function to change the transaction status to 'error' and save the error in `transactionError`.
+- `setTransactionPending: () => void`. Function to change the transaction status to 'pending'.
+- `setTransactionRedirecting: ( object ) => void`. Function to change the transaction status to 'redirecting' and save the response object in `transactionLastResponse`.
+- `setTransactionAuthorizing: ( object ) => void`. Function to change the transaction status to 'authorizing' and save the response object in `transactionLastResponse`.
 
 ## FAQ
 
