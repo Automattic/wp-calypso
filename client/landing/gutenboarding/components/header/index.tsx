@@ -149,12 +149,12 @@ const Header: React.FunctionComponent = () => {
 						<Icon icon="wordpress-alt" size={ 24 } />
 					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : __( 'Start your website' ) }
 					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
 					{
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
@@ -178,6 +178,7 @@ const Header: React.FunctionComponent = () => {
 								</DomainPickerButton>
 							)
 					}
+					&nbsp;
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
 					<PlansButton />

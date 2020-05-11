@@ -76,20 +76,44 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 }
 
-.gutenboarding__header-domain-picker-button {
-	max-width: 0;
-	opacity: 0;
+.gutenboarding__header-site-title-section {
+	display: none;
 
-	&.has-content {
-		animation-duration: 5s;
-		animation-name: gutenboarding_domain-slide-in;
-		max-width: 1500px;
-		opacity: 1;
-		@include reduce-motion( 'animation' );
+	@include break-mobile {
+		display: block;
 	}
+}
 
-	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		@include reduce-motion( 'animation' );
+.gutenboarding__header-domain-section {
+	position: relative;
+	width: 100%;
+	flex-grow: 1;
+}
+
+.gutenboarding__header-domain-picker-button {
+	position: absolute;
+	top: -6px;
+	left: 0;
+	max-width: 100%;
+
+	// Temp fix: Animation only on desktop/tablet devices.
+	@include break-mobile {
+		position: relative;
+		top: 0;
+		max-width: 0;
+		opacity: 0;
+
+		&.has-content {
+			animation-duration: 5s;
+			animation-name: gutenboarding_domain-slide-in;
+			max-width: 1500px;
+			opacity: 1;
+			@include reduce-motion( 'animation' );
+		}
+
+		&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			@include reduce-motion( 'animation' );
+		}
 	}
 }
