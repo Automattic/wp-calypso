@@ -19,6 +19,8 @@ const CelebrateSiteSetupComplete = () => {
 			) }
 			noticeId="site-setup-complete"
 			title={ translate( 'Site setup complete!' ) }
+			showSkip={ true }
+			skipText={ translate( 'Dismiss' ) }
 		/>
 	);
 };
