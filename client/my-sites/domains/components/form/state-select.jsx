@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -20,7 +20,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import Input from './input';
 
-class StateSelect extends Component {
+class StateSelect extends PureComponent {
 	static instances = 0;
 
 	inputRef = ( element ) => {

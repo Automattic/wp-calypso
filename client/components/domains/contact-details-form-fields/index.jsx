@@ -83,6 +83,7 @@ export class ContactDetailsFormFields extends Component {
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		shouldForceRenderOnPropChange: PropTypes.bool,
+		isManaged: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -112,7 +113,7 @@ export class ContactDetailsFormFields extends Component {
 		super( props );
 		this.state = {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
-			form: null,
+			form: {},
 			submissionCount: 0,
 		};
 
@@ -125,6 +126,9 @@ export class ContactDetailsFormFields extends Component {
 	// `formState` forces multiple updates to `this.state`
 	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
+		if ( nextProps.isManaged ) {
+			return true;
+		}
 		return (
 			nextProps.shouldForceRenderOnPropChange === true ||
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
@@ -140,17 +144,29 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	UNSAFE_componentWillMount() {
-		this.formStateController = formState.Controller( {
-			debounceWait: 500,
-			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
-			loadFunction: this.loadFormState,
-			onNewState: this.setFormState,
-			onError: this.handleFormControllerError,
-			sanitizerFunction: this.sanitize,
-			skipSanitizeAndValidateOnFieldChange: true,
-			validatorFunction: this.validate,
-		} );
+	componentDidMount() {
+		if ( ! this.props.isManaged ) {
+			this.formStateController = formState.Controller( {
+				debounceWait: 500,
+				fieldNames: CONTACT_DETAILS_FORM_FIELDS,
+				loadFunction: this.loadFormState,
+				onNewState: this.setFormState,
+				onError: this.handleFormControllerError,
+				sanitizerFunction: this.sanitize,
+				skipSanitizeAndValidateOnFieldChange: true,
+				validatorFunction: this.validate,
+			} );
+		}
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( props.isManaged ) {
+			return {
+				...state,
+				...getStateFromContactDetails( props.contactDetails, props.contactDetailsErrors ),
+			};
+		}
+		return null;
 	}
 
 	loadFormState = ( loadFieldValuesIntoState ) =>
@@ -159,8 +175,8 @@ export class ContactDetailsFormFields extends Component {
 			pick( this.props.contactDetails, CONTACT_DETAILS_FORM_FIELDS )
 		);
 
-	getMainFieldValues() {
-		const mainFieldValues = formState.getAllFieldValues( this.state.form );
+	getMainFieldValues = ( form ) => {
+		const mainFieldValues = formState.getAllFieldValues( form );
 		const { needsFax } = this.props;
 		const { countryCode } = mainFieldValues;
 		let state = mainFieldValues.state;
@@ -188,12 +204,26 @@ export class ContactDetailsFormFields extends Component {
 			...mainFieldValues,
 			fax,
 			state,
-			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
+			phone: mainFieldValues.phone
+				? toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] )
+				: '',
 		};
-	}
+	};
 
-	setFormState = ( form ) =>
-		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
+	getFormState = () => {
+		// Primarily for tests to use
+		return this.state.form;
+	};
+
+	setStateAndUpdateParent = ( newState ) => {
+		this.setState( newState, () => {
+			this.props.onContactDetailsChange( this.getMainFieldValues( newState.form ) );
+		} );
+	};
+
+	setFormState = ( form ) => {
+		this.setStateAndUpdateParent( { form } );
+	};
 
 	handleFormControllerError = ( error ) => {
 		throw error;
@@ -224,12 +254,15 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	handleBlur = () => {
-		this.formStateController.sanitize();
-		this.formStateController._debouncedValidate();
+		if ( this.formStateController ) {
+			this.formStateController.sanitize();
+			this.formStateController._debouncedValidate();
+		}
 	};
 
 	validate = ( fieldValues, onComplete ) =>
-		this.props.onValidate && this.props.onValidate( this.getMainFieldValues(), onComplete );
+		this.props.onValidate &&
+		this.props.onValidate( this.getMainFieldValues( this.state.form ), onComplete );
 
 	getRefCallback( name ) {
 		if ( ! this.inputRefCallbacks[ name ] ) {
@@ -282,52 +315,71 @@ export class ContactDetailsFormFields extends Component {
 
 	handleSubmitButtonClick = ( event ) => {
 		event.preventDefault();
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			this.recordSubmit();
-			if ( hasErrors ) {
-				this.focusFirstError();
-				return;
-			}
-			this.props.onSubmit( this.getMainFieldValues() );
-		} );
+		if ( this.formStateController ) {
+			this.formStateController.handleSubmit( ( hasErrors ) => {
+				this.recordSubmit();
+				if ( hasErrors ) {
+					this.focusFirstError();
+					return;
+				}
+				this.props.onSubmit( this.getMainFieldValues( this.state.form ) );
+			} );
+			return;
+		}
+		this.recordSubmit();
+		this.props.onSubmit( this.getMainFieldValues( this.state.form ) );
 	};
 
 	handleFieldChange = ( event ) => {
 		const { name, value } = event.target;
-		const { phone = {} } = this.state.form;
+		const newState = { ...this.state };
+
+		if ( name === 'country-code' && value && ! newState.phone?.value ) {
+			newState.phoneCountryCode = value;
+		}
+
+		if ( this.props.isManaged ) {
+			newState.form = updateFormWithContactChange( newState.form, name, value );
+			if ( name === 'country-code' ) {
+				newState.form = updateFormWithContactChange( newState.form, 'state', '', {
+					isShowingErrors: false,
+				} );
+			}
+
+			this.setStateAndUpdateParent( newState );
+			return;
+		}
 
 		if ( name === 'country-code' ) {
-			this.formStateController.handleFieldChange( {
+			this.formStateController?.handleFieldChange( {
 				name: 'state',
 				value: '',
 				hideError: true,
 			} );
-
-			if ( value && ! phone.value ) {
-				this.setState( {
-					phoneCountryCode: value,
-				} );
-			}
 		}
 
-		this.formStateController.handleFieldChange( {
+		this.formStateController?.handleFieldChange( {
 			name,
 			value,
 		} );
 	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
-		this.formStateController.handleFieldChange( {
-			name: 'phone',
-			value,
-		} );
+		const newState = { ...this.state };
 
-		if ( ! countries[ countryCode ] ) {
+		if ( countries[ countryCode ] ) {
+			newState.phoneCountryCode = countryCode;
+		}
+
+		if ( this.props.isManaged ) {
+			newState.form = updateFormWithContactChange( newState.form, 'phone', value );
+			this.setStateAndUpdateParent( newState );
 			return;
 		}
 
-		this.setState( {
-			phoneCountryCode: countryCode,
+		this.formStateController?.handleFieldChange( {
+			name: 'phone',
+			value,
 		} );
 	};
 
@@ -357,7 +409,7 @@ export class ContactDetailsFormFields extends Component {
 
 	createField = ( name, componentClass, additionalProps, fieldPropOptions = {} ) => {
 		return createElement( componentClass, {
-			...this.getFieldProps( name, { ...fieldPropOptions } ),
+			...this.getFieldProps( name, fieldPropOptions ),
 			...additionalProps,
 		} );
 	};
@@ -582,3 +634,36 @@ export default connect( ( state, props ) => {
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );
+
+function getStateFromContactDetails( contactDetails, contactDetailsErrors ) {
+	const form = Object.keys( contactDetails ).reduce( ( newForm, key ) => {
+		const value = contactDetails[ key ];
+		const error = contactDetailsErrors[ key ];
+		const errors = error ? [ error ] : [];
+		return {
+			...newForm,
+			[ key ]: {
+				value,
+				errors,
+				isShowingErrors: true,
+				isPendingValidation: false,
+				isValidating: false,
+			},
+		};
+	}, {} );
+	return { form };
+}
+
+function updateFormWithContactChange( form, key, value, additionalProperties ) {
+	return {
+		...form,
+		[ camelCase( key ) ]: {
+			value,
+			errors: [],
+			isShowingErrors: true,
+			isPendingValidation: false,
+			isValidating: false,
+			...( additionalProperties ?? {} ),
+		},
+	};
+}
