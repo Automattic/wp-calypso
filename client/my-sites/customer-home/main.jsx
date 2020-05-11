@@ -100,7 +100,7 @@ const Home = ( {
 						checklistMode={ checklistMode }
 						displayChecklist={ displayChecklist }
 					/>
-					<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+					<Primary cards={ layout.primary } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">

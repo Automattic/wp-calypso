@@ -29,7 +29,7 @@ const cardComponents = {
 	'home-notice-celebrate-site-setup-complete': CelebrateSiteSetupComplete,
 };
 
-const Primary = ( { checklistMode, cards } ) => {
+const Primary = ( { cards } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -39,7 +39,6 @@ const Primary = ( { checklistMode, cards } ) => {
 			{ cards.map( ( card, index ) =>
 				React.createElement( cardComponents[ card ], {
 					key: index,
-					checklistMode: card === 'home-task-site-setup-checklist' ? checklistMode : null,
 					isIos: card === 'home-task-go-mobile-ios' ? true : null,
 				} )
 			) }
