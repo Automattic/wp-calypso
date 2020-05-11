@@ -143,6 +143,7 @@
 .plan-item__domain-summary {
 	font-size: 14px;
 	line-height: 22px;
+	min-height: 44px; // temporary until domain picker is in
 }
 
 .plan-item__select-button.components-button {

@@ -5,6 +5,7 @@ import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import classNames from 'classnames';
+import { PLAN_FREE } from '../../../stores/plans/constants';
 
 const TickIcon = (
 	<Icon
@@ -87,7 +88,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</Button>
 				</div>
 				<div className="plan-item__domain">
-					<div className="plan-item__domain-summary">{ __( 'Free domain for 1 year' ) }</div>
+					<div className="plan-item__domain-summary">
+						{ slug === PLAN_FREE
+							? __( 'Free WordPress.com subdomain' )
+							: __( 'Free domain for 1 year' ) }
+					</div>
 					{ hasDomain && (
 						<div className="plan-item__domain-name">
 							{ /*
