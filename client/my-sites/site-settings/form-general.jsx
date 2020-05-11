@@ -18,7 +18,6 @@ import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { languages } from 'languages';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -277,78 +276,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	visibilityOptions() {
-		const {
-			fields,
-			handleRadio,
-			updateFields,
-			isRequestingSettings,
-			eventTracker,
-			siteIsJetpack,
-			trackEvent,
-			translate,
-		} = this.props;
-
-		const currentValue = parseInt( fields.blog_public, 10 );
-
-		return (
-			<FormFieldset>
-				{ ! siteIsJetpack && (
-					<FormLabel className="site-settings__visibility-label">
-						<FormRadio
-							name="blog_public"
-							value="1"
-							checked={ [ 0, 1 ].indexOf( currentValue ) !== -1 }
-							onChange={ handleRadio }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-						/>
-						<span>{ translate( 'Public' ) }</span>
-					</FormLabel>
-				) }
-
-				<FormSettingExplanation isIndented>
-					{ translate( 'Your site is visible to everyone.' ) }
-				</FormSettingExplanation>
-
-				<FormLabel className="site-settings__visibility-label is-checkbox">
-					<FormInputCheckbox
-						name="blog_public"
-						value="0"
-						checked={ 0 === currentValue }
-						onChange={ () => {
-							const newValue = currentValue === 0 ? 1 : 0;
-							trackEvent( `Set blog_public to ${ newValue }` );
-							updateFields( { blog_public: newValue } );
-						} }
-						disabled={ isRequestingSettings }
-						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					/>
-					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
-				</FormLabel>
-
-				{ ! siteIsJetpack && (
-					<>
-						<FormLabel className="site-settings__visibility-label">
-							<FormRadio
-								name="blog_public"
-								value="-1"
-								checked={ -1 === currentValue }
-								onChange={ handleRadio }
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							/>
-							<span>{ translate( 'Private' ) }</span>
-						</FormLabel>
-						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is only visible to you and users you approve.' ) }
-						</FormSettingExplanation>
-					</>
-				) }
-			</FormFieldset>
-		);
-	}
-
 	visibilityOptionsComingSoon() {
 		const {
 			fields,
@@ -563,13 +490,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const {
-			isRequestingSettings,
-			translate,
-			handleSubmitForm,
-			isSavingSettings,
-			withComingSoonOption,
-		} = this.props;
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
 
 		return (
 			<>
@@ -582,9 +503,7 @@ export class SiteSettingsFormGeneral extends Component {
 					title={ translate( 'Privacy' ) }
 				/>
 				<Card>
-					<form>
-						{ withComingSoonOption ? this.visibilityOptionsComingSoon() : this.visibilityOptions() }
-					</form>
+					<form>{ this.visibilityOptionsComingSoon() }</form>
 				</Card>
 			</>
 		);
@@ -757,9 +676,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 	};
 
-	if ( settings.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ) ) {
-		formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
-	}
+	formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
@@ -773,10 +690,5 @@ const getFormSettings = ( settings ) => {
 
 export default flowRight(
 	connectComponent,
-	wrapSettingsForm( getFormSettings ),
-	connect( ( state, ownProps ) => ( {
-		withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
-			? ownProps.withComingSoonOption
-			: ownProps?.settings?.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ),
-	} ) )
+	wrapSettingsForm( getFormSettings )
 )( SiteSettingsFormGeneral );
