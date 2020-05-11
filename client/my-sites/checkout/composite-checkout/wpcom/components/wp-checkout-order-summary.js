@@ -119,9 +119,19 @@ function CheckoutSummaryFeaturesList() {
 					return (
 						<CheckoutSummaryFeaturesListItem key={ domain.id }>
 							<WPCheckoutCheckIcon />
-							<strong>{ domain.wpcom_meta?.meta }</strong>
-							{ domain.wpcom_meta?.is_bundled && (
-								<BundledDomainFreeUI>{ translate( 'free with plan' ) }</BundledDomainFreeUI>
+							{ domain.wpcom_meta.is_bundled ? (
+								translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										domain: domain.wpcom_meta.meta,
+										bundled: translate( 'free with plan' ),
+									},
+									comment: 'domain name and bundling message, separated by a dash',
+								} )
+							) : (
+								<strong>{ domain.wpcom_meta.meta }</strong>
 							) }
 						</CheckoutSummaryFeaturesListItem>
 					);
@@ -184,11 +194,6 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 	margin-bottom: 4px;
 	padding-left: 24px;
 	position: relative;
-`;
-
-const BundledDomainFreeUI = styled.div`
-	color: ${( props ) => props.theme.colors.success};
-	font-style: italic;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
