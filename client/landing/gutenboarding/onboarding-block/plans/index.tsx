@@ -47,10 +47,11 @@ export default function PlansStep() {
 	return (
 		<>
 			<PlansGrid
-				renderConfirmButton={ () => (
+				renderConfirmButton={ ( planSlug ) => (
 					<Button
 						isPrimary
 						onClick={ () => {
+							setPlan( planSlug );
 							currentUser ? handleCreateSite( currentUser.username ) : setShowSignupDialog( true );
 						} }
 					>

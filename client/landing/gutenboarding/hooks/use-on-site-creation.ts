@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -109,7 +110,7 @@ export default function useOnSiteCreation() {
 				return;
 			}
 
-			if ( hasPaidDomain ) {
+			if ( hasPaidDomain && ! isEnabled( 'gutenboarding/plans-grid' ) ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
