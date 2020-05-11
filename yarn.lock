@@ -4872,15 +4872,6 @@
     sprintf-js "^1.1.1"
     tannin "^1.2.0"
 
-"@wordpress/icons@*":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-1.4.0.tgz#805732a5527eb2178bd97b53decac67451b2b1b3"
-  integrity sha512-YNW1ocZddZ6c40QHiR/Q3yIPYzh4Fdcq/J4sJIkegwqEXltVknYa90RNaDG9xr+qMvXN5/wotYaLA+AP6pUfHA==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/element" "^2.13.1"
-    "@wordpress/primitives" "^1.4.0"
-
 "@wordpress/icons@1.2.0", "@wordpress/icons@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-1.2.0.tgz#734c8d684c8a02d688e8d96e5ce57de574d5c388"
@@ -5023,15 +5014,6 @@
   dependencies:
     "@babel/runtime" "^7.8.3"
     "@wordpress/element" "^2.12.0"
-    classnames "^2.2.5"
-
-"@wordpress/primitives@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/primitives/-/primitives-1.4.0.tgz#ea236061d65d6e0ab960a7f6670c655451576c94"
-  integrity sha512-mlP7ikqBw761VK37RL7q5+tnjJujGFuDfJhjhxCXacM/06CpddPSfX+XctWTTn0Oaw1XI/nzK1wlqlIj7uwlrg==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/element" "^2.13.1"
     classnames "^2.2.5"
 
 "@wordpress/priority-queue@1.5.1", "@wordpress/priority-queue@^1.5.1":
