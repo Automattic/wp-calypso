@@ -18,24 +18,12 @@ import './style.scss';
 
 interface Props extends Partial< PlansGridProps > {
 	isOpen: boolean;
-	selectedPlanSlug: string;
-	onConfirm: ( plan: string ) => void;
 	onClose: () => void;
 }
 
-const PlansGridModal: React.FunctionComponent< Props > = ( {
-	isOpen,
-	selectedPlanSlug,
-	onConfirm,
-	onClose,
-} ) => {
+const PlansGridModal: React.FunctionComponent< Props > = ( { isOpen, onClose } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
-
-	const handleConfirm = ( planSlug: string ) => {
-		onConfirm( planSlug );
-		onClose();
-	};
 
 	React.useEffect( () => {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
@@ -49,17 +37,16 @@ const PlansGridModal: React.FunctionComponent< Props > = ( {
 			bodyOpenClassName="has-plans-modal"
 		>
 			<PlansGrid
-				renderConfirmButton={ ( planSlug: string ) => (
-					<Button isPrimary onClick={ () => handleConfirm( planSlug ) }>
+				confirmButton={
+					<Button isPrimary onClick={ onClose }>
 						{ __( 'Confirm' ) }
 					</Button>
-				) }
+				}
 				cancelButton={
 					<Button isLink onClick={ onClose }>
 						{ __( 'Close' ) }
 					</Button>
 				}
-				selectedPlanSlug={ selectedPlanSlug }
 			/>
 		</Modal>
 	);

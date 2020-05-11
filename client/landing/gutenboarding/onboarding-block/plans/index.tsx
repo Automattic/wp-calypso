@@ -15,7 +15,6 @@ import Link from '../../components/link';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { usePath, Step } from '../../path';
@@ -31,7 +30,6 @@ export default function PlansStep() {
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
-	const { setPlan } = useDispatch( PLANS_STORE );
 	const plan = useSelectedPlan();
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
@@ -53,19 +51,16 @@ export default function PlansStep() {
 	return (
 		<>
 			<PlansGrid
-				renderConfirmButton={ ( planSlug ) => (
+				confirmButton={
 					<Button
 						isPrimary
 						onClick={ () => {
-							setPlan( planSlug );
 							currentUser ? handleCreateSite( currentUser.username ) : setShowSignupDialog( true );
 						} }
 					>
 						{ __( 'Continue' ) }
 					</Button>
-				) }
-				onPlanChange={ setPlan }
-				selectedPlanSlug={ plan.getStoreSlug() }
+				}
 				cancelButton={
 					<Link className="plans__back-link" isLink to={ makePath( Step.Style ) }>
 						{ __( 'Go back' ) }
