@@ -188,14 +188,18 @@ class PurchaseNotice extends Component {
 
 	handleExpiringNoticeRenewAll = () => {
 		const { renewableSitePurchases } = this.props;
-		this.trackClick( 'purchase-expiring-renew-all' );
+		this.trackClick( 'other-purchases-expiring-renew-all' );
 		if ( this.props.handleRenewMultiplePurchases ) {
 			this.props.handleRenewMultiplePurchases( renewableSitePurchases );
 		}
 	};
 
 	handleExpiringNoticeRenewSelection = ( selectedRenewableSitePurchases ) => {
-		this.trackClick( 'purchase-expiring-renew-selected' );
+		const { renewableSitePurchases } = this.props;
+		this.props.recordTracksEvent( 'calypso_subscription_upcoming_renewals_dialog_submit', {
+			selected: selectedRenewableSitePurchases.length,
+			available: renewableSitePurchases.length,
+		} );
 		if ( this.props.handleRenewMultiplePurchases ) {
 			this.props.handleRenewMultiplePurchases( selectedRenewableSitePurchases );
 		}
@@ -267,6 +271,7 @@ class PurchaseNotice extends Component {
 	}
 
 	openUpcomingRenewalsDialog = () => {
+		this.trackClick( 'other-purchases-expiring-upcoming-renewals-dialog' );
 		this.setState( { showUpcomingRenewalsDialog: true } );
 	};
 
