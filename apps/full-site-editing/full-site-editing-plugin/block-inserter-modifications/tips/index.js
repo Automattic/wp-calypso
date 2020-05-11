@@ -66,8 +66,11 @@ const ContextualTips = function () {
 	);
 };
 
-registerPlugin( 'insert-menu-contextual-tips', {
-	render() {
-		return <ContextualTips />;
-	},
-} );
+// Check if the experimental slot is available before to register plugin.
+if ( typeof InserterMenuExtension !== 'undefined' ) {
+	registerPlugin( 'insert-menu-contextual-tips', {
+		render() {
+			return <ContextualTips />;
+		},
+	} );
+}
