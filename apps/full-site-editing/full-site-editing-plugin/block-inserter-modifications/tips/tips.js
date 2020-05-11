@@ -69,8 +69,8 @@ const tips = [
 		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 	{
-		context: 'colors',
-		keywords: [ 'colors', __( 'colors' ) ],
+		context: 'color',
+		keywords: [ 'color', __( 'color' ) ],
 		description: tipDescription(
 			__( 'colors - You can visit the the <a>Customizer</a> to edit the colors on your site.' ),
 			{
