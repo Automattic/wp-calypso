@@ -103,23 +103,6 @@ class ScanPage extends Component< Props > {
 			</Button>
 		);
 	}
-	// @todo: missing copy and design for this state
-	renderUnavailable() {
-		return (
-			<>
-				<SecurityIcon icon="scan-error" />
-				{ this.renderHeader( 'Scan is unavailable' ) }
-				<p>
-					{ translate(
-						'The scan was unable to process the themes directory and did not completed ' +
-							'successfully. In order to complete the scan you will need to speak to support ' +
-							'who can help determine what went wrong.'
-					) }
-				</p>
-				{ this.renderContactSupportButton() }
-			</>
-		);
-	}
 
 	renderScanOkay() {
 		const { scanState, siteId, siteSlug, moment, dispatchScanRun, applySiteOffset } = this.props;
@@ -219,11 +202,6 @@ class ScanPage extends Component< Props > {
 
 		if ( state === 'provisioning' ) {
 			return this.renderProvisioning();
-		}
-
-		// @todo: missing copy and design for these states
-		if ( state === 'unavailable' ) {
-			return this.renderUnavailable();
 		}
 
 		if ( state === 'scanning' ) {
