@@ -184,36 +184,43 @@ function useSharedRef( inputRef ) {
 
 function usePhoneNumberState( value, countryCode, countriesList, freezeSelection ) {
 	const previousValue = useRef( value );
-	const [ phoneNumberState, setPhoneNumberState ] = useState(
+	const previousCountry = useRef( countryCode );
+	const [ phoneNumberState, setPhoneNumberState ] = useState( () =>
 		getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
 	);
 	const { rawValue, displayValue } = phoneNumberState;
-	const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
 
 	useEffect( () => {
 		// No need to update if the value has not changed
-		if ( previousValue.current === value ) {
+		if ( previousValue.current === value && previousCountry.current === countryCode ) {
 			return;
 		}
 		previousValue.current = value;
+		previousCountry.current = countryCode;
 		// No need to update if the prop value is equal to one form of the current value
-		if ( value === rawValue || value === displayValue || value === icannValue ) {
+		const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
+		if (
+			previousCountry.current === countryCode &&
+			( value === rawValue || value === displayValue || value === icannValue )
+		) {
 			return;
 		}
-		debug(
-			'props changed, updating value; raw value is',
+		const newState = getPhoneNumberStatesFromProp(
+			value,
+			countryCode,
+			countriesList,
+			freezeSelection
+		);
+		debug( 'props changed, updating value; ', {
 			rawValue,
-			'display value is',
 			displayValue,
-			'icannValue is',
 			icannValue,
-			'and prop value is',
-			value
-		);
-		setPhoneNumberState(
-			getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
-		);
-	}, [ rawValue, displayValue, icannValue, value, countryCode, countriesList, freezeSelection ] );
+			value,
+			countryCode,
+			newState,
+		} );
+		setPhoneNumberState( newState );
+	}, [ rawValue, displayValue, value, countryCode, countriesList, freezeSelection ] );
 
 	return [ phoneNumberState, setPhoneNumberState ];
 }
