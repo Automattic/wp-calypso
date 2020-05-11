@@ -2,6 +2,8 @@
  * External dependencies
  */
 import moment from 'moment';
+import page from 'page';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Internal dependencies
@@ -13,6 +15,8 @@ import {
 	hasPaymentMethod,
 	maybeWithinRefundPeriod,
 	subscribedWithinPastWeek,
+	handleRenewNowClick,
+	handleRenewMultiplePurchasesClick,
 } from '../index';
 
 import {
@@ -31,8 +35,15 @@ import {
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( 'page', () => jest.fn() );
 
 describe( 'index', () => {
+	beforeEach( () => {
+		page.mockClear();
+		recordTracksEvent.mockClear();
+	} );
+
 	describe( '#isRemovable', () => {
 		test( 'should not be removable when domain registration purchase is not expired', () => {
 			expect( isRemovable( DOMAIN_PURCHASE ) ).toEqual( false );
@@ -194,6 +205,96 @@ describe( 'index', () => {
 			).toEqual( true );
 		} );
 	} );
+
+	describe( '#handleRenewNowClick', () => {
+		const purchase = {
+			id: 1,
+			currencyCode: 'USD',
+			expiryDate: '2020-05-20T00:00:00+00:00',
+			productSlug: 'personal-bundle',
+			productName: 'Personal Plan',
+			amount: 100,
+		};
+		const siteSlug = 'my-site.wordpress.com';
+
+		test( 'should redirect to the checkout page', () => {
+			handleRenewNowClick( purchase, siteSlug );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/personal-bundle/renew/1/my-site.wordpress.com'
+			);
+		} );
+
+		test( 'should send the tracks events', () => {
+			const trackProps = { extra: 'extra' };
+			handleRenewNowClick( purchase, siteSlug, trackProps );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_purchases_renew_now_click', {
+				product_slug: 'personal-bundle',
+				extra: 'extra',
+			} );
+		} );
+
+		describe( 'when the purchase id does not exist', () => {
+			test( 'should reject', () => {
+				expect( () => handleRenewNowClick( { ...purchase, id: null }, siteSlug ) ).toThrowError(
+					'Could not find purchase id for renewal.'
+				);
+			} );
+		} );
+
+		describe( 'when the product slug does not exist', () => {
+			test( 'should reject', () => {
+				expect( () =>
+					handleRenewNowClick( { ...purchase, productSlug: '' }, siteSlug )
+				).toThrowError( 'This product cannot be renewed.' );
+			} );
+		} );
+	} );
+
+	describe( '#handleRenewMultiplePurchasesClick', () => {
+		const purchases = [
+			{
+				id: 1,
+				currencyCode: 'USD',
+				expiryDate: '2020-05-20T00:00:00+00:00',
+				productSlug: 'personal-bundle',
+				productName: 'Personal Plan',
+				amount: 100,
+			},
+			{
+				id: 2,
+				currencyCode: 'USD',
+				expiryDate: '2020-05-15T00:00:00+00:00',
+				productSlug: 'dotlive_domain',
+				meta: 'personalsitetest1234.live',
+				productName: 'DotLive Domain Registration',
+				isDomainRegistration: true,
+				amount: 200,
+			},
+		];
+		const siteSlug = 'my-site.wordpress.com';
+		test( 'should redirect to the checkout page', () => {
+			handleRenewMultiplePurchasesClick( purchases, siteSlug );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/personal-bundle,dotlive_domain:personalsitetest1234.live/renew/1,2/my-site.wordpress.com'
+			);
+		} );
+		describe( 'when the none of the purchase ids exist', () => {
+			test( 'should reject', () => {
+				const purchasesWithoutId = purchases.map( ( purchase ) => ( { ...purchase, id: null } ) );
+				expect( () =>
+					handleRenewMultiplePurchasesClick( purchasesWithoutId, siteSlug )
+				).toThrowError( 'Could not find product slug or purchase id for renewal.' );
+			} );
+		} );
+
+		describe( 'when at least one purchase can be renewed', () => {
+			test( 'should redirect to checkout with only the valid purchases to renew', () => {
+				const purchasesPartiallyValid = [ purchases[ 1 ], { ...purchases[ 0 ], id: null } ];
+				handleRenewMultiplePurchasesClick( purchasesPartiallyValid, siteSlug );
+				expect( page ).toHaveBeenCalledWith(
+					'/checkout/dotlive_domain:personalsitetest1234.live/renew/2/my-site.wordpress.com'
+				);
+			} );
 		} );
 	} );
 } );
