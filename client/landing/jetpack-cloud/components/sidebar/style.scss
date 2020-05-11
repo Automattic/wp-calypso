@@ -39,6 +39,10 @@
 		font-weight: 400;
 	}
 
+	.sidebar__expandable-title .badge > a {
+		color: inherit;
+	}
+
 	// Footer
 	.sidebar__footer {
 		margin-top: auto;
