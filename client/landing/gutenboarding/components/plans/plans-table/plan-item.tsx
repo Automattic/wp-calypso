@@ -57,39 +57,40 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div className="plan-item">
-			<div className="plan-item__heading">
-				<div className="plan-item__name">{ name }</div>
-				{ isPopular && <div className="plan-item__badge">{ __( 'Popular' ) }</div> }
-			</div>
-			<div className="plan-item__price">
-				<div className="plan-item__price-amount" data-is-loading={ ! price }>
-					{ price || nbsp }
+			<div className="plan-item__viewport">
+				<div className="plan-item__heading">
+					<div className="plan-item__name">{ name }</div>
+					{ isPopular && <div className="plan-item__badge">{ __( 'Popular' ) }</div> }
 				</div>
-				<div className="plan-item__price-note">{ __( 'per month, billed yearly' ) }</div>
-			</div>
-			<div className="plan-item__actions">
-				<Button
-					className={ classNames( 'plan-item__select-button', { 'is-selected': isSelected } ) }
-					onClick={ () => {
-						onSelect( slug );
-					} }
-					isLarge
-				>
-					{ isSelected ? (
-						<>
-							{ TickIcon }
-							<span>{ __( 'Selected' ) }</span>
-						</>
-					) : (
-						<span>{ __( 'Select' ) }</span>
-					) }
-				</Button>
-			</div>
-			<div className="plan-item__domain">
-				<div className="plan-item__domain-summary">{ __( 'Free domain for 1 year' ) }</div>
-				{ hasDomain && (
-					<div className="plan-item__domain-name">
-						{ /*
+				<div className="plan-item__price">
+					<div className="plan-item__price-amount" data-is-loading={ ! price }>
+						{ price || nbsp }
+					</div>
+					<div className="plan-item__price-note">{ __( 'per month, billed yearly' ) }</div>
+				</div>
+				<div className="plan-item__actions">
+					<Button
+						className={ classNames( 'plan-item__select-button', { 'is-selected': isSelected } ) }
+						onClick={ () => {
+							onSelect( slug );
+						} }
+						isLarge
+					>
+						{ isSelected ? (
+							<>
+								{ TickIcon }
+								<span>{ __( 'Selected' ) }</span>
+							</>
+						) : (
+							<span>{ __( 'Select' ) }</span>
+						) }
+					</Button>
+				</div>
+				<div className="plan-item__domain">
+					<div className="plan-item__domain-summary">{ __( 'Free domain for 1 year' ) }</div>
+					{ hasDomain && (
+						<div className="plan-item__domain-name">
+							{ /*
 						<Button
 							className={ classNames( 'plan-item__domain-picker-button', {
 								'has-domain': hasDomain,
@@ -100,18 +101,19 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							<Icon icon="arrow-down-alt2" size={ 14 }></Icon>
 						</Button>
 						*/ }
-						{ domainName }
-					</div>
-				) }
-			</div>
-			<div className="plan-item__features">
-				<ul className="plan-item__feature-item-group">
-					{ features.map( ( feature, i ) => (
-						<li key={ i } className="plan-item__feature-item">
-							{ feature }
-						</li>
-					) ) }
-				</ul>
+							{ domainName }
+						</div>
+					) }
+				</div>
+				<div className="plan-item__features">
+					<ul className="plan-item__feature-item-group">
+						{ features.map( ( feature, i ) => (
+							<li key={ i } className="plan-item__feature-item">
+								{ feature }
+							</li>
+						) ) }
+					</ul>
+				</div>
 			</div>
 		</div>
 	);

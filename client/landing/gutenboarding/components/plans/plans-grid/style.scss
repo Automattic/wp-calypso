@@ -19,6 +19,10 @@
 }
 
 .plans-grid__details-heading {
+	overflow-x: scroll;
+	@include break-medium {
+		overflow-x: initial;
+	}
 	.gutenboarding-title {
 		color: var( --studio-black );
 		margin-bottom: 40px;
