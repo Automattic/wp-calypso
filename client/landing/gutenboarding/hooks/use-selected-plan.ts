@@ -10,7 +10,7 @@ import { STORE_KEY as PLANS_STORE } from '../stores/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
 
-export function useSelectedPlan( { withDefault = true } = {} ) {
+export function useSelectedPlan() {
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	const planPath = usePlanRouteParam();
@@ -27,5 +27,5 @@ export function useSelectedPlan( { withDefault = true } = {} ) {
 	 * 2. having the plan slug in the URL
 	 * 3. selecting a paid domain
 	 */
-	return selectedPlan || planFromPath || ( withDefault ? defaultPlan : undefined );
+	return selectedPlan || planFromPath || defaultPlan;
 }
