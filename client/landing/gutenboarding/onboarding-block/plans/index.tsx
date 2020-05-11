@@ -19,8 +19,6 @@ import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { usePath, Step } from '../../path';
 
-import './style.scss';
-
 export default function PlansStep() {
 	const { __ } = useI18n();
 	const makePath = usePath();
@@ -49,7 +47,7 @@ export default function PlansStep() {
 	};
 
 	return (
-		<>
+		<div className="plans">
 			<PlansGrid
 				confirmButton={
 					<Button
@@ -68,6 +66,6 @@ export default function PlansStep() {
 				}
 			/>
 			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
-		</>
+		</div>
 	);
 }

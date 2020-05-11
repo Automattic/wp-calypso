@@ -1,6 +1,0 @@
-@import '../../mixins.scss';
-
-.plans__back-link.is-link {
-	@include onboarding-medium-text;
-	color: var( --studio-gray-40 ) !important;
-}
