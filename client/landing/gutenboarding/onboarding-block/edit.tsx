@@ -18,6 +18,8 @@ import { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
+import Plans from './plans';
+import { isEnabled } from '../../../config';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
@@ -54,6 +56,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	const canUseCreateSiteStep = useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
+
+	const canUsePlansStep = useCallback( (): boolean => {
+		return isEnabled( 'gutenboarding/plans-grid' );
+	}, [] );
 
 	const getLatestStepPath = (): string => {
 		if ( canUseStyleStep() ) {
@@ -115,6 +121,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					) : (
 						<Redirect to={ makePath( Step.DesignSelection ) } />
 					) }
+				</Route>
+
+				<Route path={ makePath( Step.Plans ) }>
+					{ canUsePlansStep() ? <Plans /> : <Redirect to={ makePath( Step.Style ) } /> }
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>
