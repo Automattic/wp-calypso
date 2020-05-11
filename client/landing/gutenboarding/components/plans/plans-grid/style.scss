@@ -16,6 +16,8 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+}
+
 .plans-grid__details {
 	margin-bottom: 120px;
 }
@@ -72,8 +74,4 @@
 	svg {
 		margin-left: 2px;
 	}
-}
-
-.plans-grid__details {
-	margin-bottom: 120px;
 }
