@@ -30,7 +30,10 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { backupMainPath, backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import {
+	backupsStatusPath,
+	backupActivityPath,
+} from 'landing/jetpack-cloud/sections/backups/paths';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';
@@ -110,10 +113,10 @@ class JetpackCloudSidebar extends Component {
 									label={ translate( 'Latest backups', {
 										comment: 'Jetpack Cloud / Backup sidebar navigation item',
 									} ) }
-									link={ backupMainPath( selectedSiteSlug ) }
+									link={ backupsStatusPath( selectedSiteSlug ) }
 									onNavigate={ this.onNavigate( 'Jetpack Cloud Backup / Latest backups' ) }
 									selected={
-										itemLinkMatches( backupMainPath(), this.props.path ) &&
+										itemLinkMatches( backupsStatusPath(), this.props.path ) &&
 										! itemLinkMatches( backupActivityPath(), this.props.path )
 									}
 								/>

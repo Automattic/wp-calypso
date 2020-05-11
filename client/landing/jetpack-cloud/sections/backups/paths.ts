@@ -3,7 +3,7 @@
  */
 import { addQueryArgs } from 'lib/url';
 
-export const backupMainPath = ( siteName?: string | null, query = {} ) =>
+export const backupsStatusPath = ( siteName?: string | null, query = {} ) =>
 	siteName ? addQueryArgs( query, `/backups/${ siteName }` ) : '/backups';
 
 export const backupActivityPath = ( siteName?: string | null ) =>

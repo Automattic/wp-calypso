@@ -1,12 +1,12 @@
-.backups__page {
+.backups-status {
+	padding-bottom: 0;
+	overflow-y: auto;
+
 	.current-section {
 		margin-bottom: 0;
 	}
 	.filterbar .filterbar__wrap.card {
 		display: flex;
-	}
-	.main {
-		padding-bottom: 0;
 	}
 }
 
@@ -23,10 +23,8 @@
 		margin: 0;
 	}
 }
-.main {
-	overflow-y: auto;
-}
-.backups__main-wrap {
+
+.backups-status__content {
 	display: flex;
 	flex-direction: column;
 	height: calc( 100vh - 120px );

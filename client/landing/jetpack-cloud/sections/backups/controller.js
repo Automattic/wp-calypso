@@ -9,7 +9,7 @@ import React from 'react';
 import BackupActivityLogPage from './backup-activity-log';
 import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
-import BackupsPage from './main';
+import BackupsStatusPage from './backups-status';
 import UpsellSwitch from 'landing/jetpack-cloud/components/upsell-switch';
 import BackupsUpsell from './backup-upsell';
 import getRewindState from 'state/selectors/get-rewind-state';
@@ -27,11 +27,11 @@ export function showUpsellIfNoBackup( context, next ) {
 	next();
 }
 
-/* handles /backups/:site, see `backupMainPath` */
-export function backups( context, next ) {
+/* handles /backups/:site, see `backupsStatusPath` */
+export function backupsStatus( context, next ) {
 	const { date } = context.query;
 
-	context.primary = <BackupsPage queryDate={ date } />;
+	context.primary = <BackupsStatusPage date={ date } />;
 	next();
 }
 

@@ -16,15 +16,15 @@ import {
 	backupDetail,
 	backupDownload,
 	backupRestore,
-	backups,
+	backupsStatus,
 	showUpsellIfNoBackup,
 } from 'landing/jetpack-cloud/sections/backups/controller';
 import {
-	backupMainPath,
 	backupActivityPath,
-	backupRestorePath,
-	backupDownloadPath,
 	backupDetailPath,
+	backupDownloadPath,
+	backupRestorePath,
+	backupsStatusPath,
 } from './paths';
 
 export default function () {
@@ -77,18 +77,18 @@ export default function () {
 				clientRender
 			);
 		}
-		/* handles /backups/:site, see `backupMainPath` */
+		/* handles /backups/:site, see `backupsStatusPath` */
 		page(
-			backupMainPath( ':site' ),
+			backupsStatusPath( ':site' ),
 			siteSelection,
 			navigation,
-			backups,
+			backupsStatus,
 			wrapInSiteOffsetProvider,
 			showUpsellIfNoBackup,
 			makeLayout,
 			clientRender
 		);
-		/* handles /backups, see `backupMainPath` */
-		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
+		/* handles /backups, see `backupsStatusPath` */
+		page( backupsStatusPath(), siteSelection, sites, makeLayout, clientRender );
 	}
 }
