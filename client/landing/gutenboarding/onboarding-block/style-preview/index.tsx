@@ -6,6 +6,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { useHistory } from 'react-router-dom';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -24,7 +25,6 @@ import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
-import { isEnabled } from '../../../../config';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
