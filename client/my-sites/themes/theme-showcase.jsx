@@ -220,6 +220,7 @@ class ThemeShowcase extends React.Component {
 			title,
 			filterString,
 			isMultisite,
+			locale,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -293,7 +294,10 @@ class ThemeShowcase extends React.Component {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
-									return getScreenshotOption( theme ).getUrl( theme );
+
+									const localePrefix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
+
+									return localePrefix + getScreenshotOption( theme ).getUrl( theme );
 								} }
 								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
@@ -327,7 +331,6 @@ class ThemeShowcase extends React.Component {
 							</div>
 						</>
 					) }
-
 					<div
 						ref={ this.scrollRef }
 						className={
@@ -375,7 +378,10 @@ class ThemeShowcase extends React.Component {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
-								return getScreenshotOption( theme ).getUrl( theme );
+
+								const localePrefix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
+
+								return localePrefix + getScreenshotOption( theme ).getUrl( theme );
 							} }
 							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {

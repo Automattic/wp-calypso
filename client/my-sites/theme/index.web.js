@@ -4,6 +4,7 @@
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
 import { siteSelection } from 'calypso/my-sites/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 function redirectToLoginIfSiteRequested( context, next ) {
 	if ( context.params.site_id ) {
@@ -15,8 +16,10 @@ function redirectToLoginIfSiteRequested( context, next ) {
 }
 
 export default function ( router ) {
+	const langParam = getLanguageRouteParam();
+
 	router(
-		'/theme/:slug/:section(setup|support)?/:site_id?',
+		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		redirectToLoginIfSiteRequested,
 		siteSelection,
 		fetchThemeDetailsData,
