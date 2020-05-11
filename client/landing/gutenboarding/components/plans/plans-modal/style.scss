@@ -5,7 +5,10 @@
 }
 
 .plans-modal {
-	@include onboarding-block-margin;
+	margin: 0 30px;
+	@include break-xlarge {
+		margin: 0 88px;
+	}
 
 	.action-buttons {
 		.components-button.is-link {

@@ -12,19 +12,28 @@
 }
 
 .plans-table {
+
 	display: flex;
 	flex-direction: row;
-	margin-left: -8px;
-	margin-right: -8px;
-
+	margin: 0 -4px;
+	@include break-xlarge {
+		margin: 0 -10px;
+	}
 	.plan-item {
 		flex-basis: 193px;
 		flex-grow: 0.5;
 		flex-shrink: 0;
-		margin: 0 8px;
+		margin: 0 4px;
 		border: 1px solid $light-gray-500;
-		padding: 20px;
+		padding: 16px;
 		margin-bottom: 24px;
+		@include break-large {
+			flex-shrink: 0.2;
+		}
+		@include break-xlarge {
+			padding: 20px;
+			margin: 0 10px;
+		}
 	}
 }
 
@@ -111,7 +120,7 @@
 }
 
 .plan-item__domain-picker-button.components-button {
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 19px;
 	letter-spacing: 0.2px;
 	word-break: break-word;
@@ -141,8 +150,8 @@
 }
 
 .plan-item__feature-item {
-	font-size: 16px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
 	letter-spacing: 0.2px;
 	margin: 12px 0;
 }
