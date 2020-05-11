@@ -116,25 +116,7 @@ function CheckoutSummaryFeaturesList() {
 		<CheckoutSummaryFeaturesListUI>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return (
-						<CheckoutSummaryFeaturesListItem key={ domain.id }>
-							<WPCheckoutCheckIcon />
-							{ domain.wpcom_meta.is_bundled ? (
-								translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
-									components: {
-										strong: <strong />,
-									},
-									args: {
-										domain: domain.wpcom_meta.meta,
-										bundled: translate( 'free with plan' ),
-									},
-									comment: 'domain name and bundling message, separated by a dash',
-								} )
-							) : (
-								<strong>{ domain.wpcom_meta.meta }</strong>
-							) }
-						</CheckoutSummaryFeaturesListItem>
-					);
+					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
 				} ) }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
@@ -145,6 +127,29 @@ function CheckoutSummaryFeaturesList() {
 				{ refundText }
 			</CheckoutSummaryFeaturesListItem>
 		</CheckoutSummaryFeaturesListUI>
+	);
+}
+
+function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
+	const translate = useTranslate();
+	return (
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon />
+			{ domain.wpcom_meta.is_bundled ? (
+				translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						domain: domain.wpcom_meta.meta,
+						bundled: translate( 'free with plan' ),
+					},
+					comment: 'domain name and bundling message, separated by a dash',
+				} )
+			) : (
+				<strong>{ domain.wpcom_meta.meta }</strong>
+			) }
+		</CheckoutSummaryFeaturesListItem>
 	);
 }
 
