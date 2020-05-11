@@ -35,11 +35,13 @@ const ProductCardOptions = ( {
 			{ ! hideRadios && optionsLabel && (
 				<h4 className="product-card__options-label">
 					{ optionsLabel }
-					<InfoPopover position="right">
-						{ translate(
-							'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
-						) }
-					</InfoPopover>
+					{ selectedSlug === 'jetpack_search' && (
+						<InfoPopover position="right">
+							{ translate(
+								'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
+							) }
+						</InfoPopover>
+					) }
 				</h4>
 			) }
 			<div className="product-card__options">
