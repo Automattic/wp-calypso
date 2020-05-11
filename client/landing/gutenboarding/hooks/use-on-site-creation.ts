@@ -63,7 +63,7 @@ export default function useOnSiteCreation() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 
-	const { resetOnboardStore, setIsRedirecting } = useDispatch( ONBOARD_STORE );
+	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
 
 	React.useEffect( () => {
@@ -97,11 +97,13 @@ export default function useOnSiteCreation() {
 					} );
 					resetPlan();
 					resetOnboardStore();
+					setSelectedSite( newSite.blogid );
+
 					const redirectionUrl =
 						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
 							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
 							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
-					window.location.replace( redirectionUrl );
+					window.location.href = redirectionUrl;
 				};
 				go();
 				return;
@@ -127,7 +129,8 @@ export default function useOnSiteCreation() {
 						products: [ ...cart.products, domainProduct ],
 					} );
 					resetOnboardStore();
-					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
+					setSelectedSite( newSite.blogid );
+					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
 				};
 				go();
 				return;
@@ -139,8 +142,9 @@ export default function useOnSiteCreation() {
 				blogId: newSite.blogid,
 			} );
 			resetOnboardStore();
+			setSelectedSite( newSite.blogid );
 
-			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
+			window.location.href = `/block-editor/page/${ newSite.site_slug }/home`;
 		}
 	}, [
 		domain,
@@ -152,5 +156,6 @@ export default function useOnSiteCreation() {
 		resetOnboardStore,
 		resetPlan,
 		setIsRedirecting,
+		setSelectedSite,
 	] );
 }

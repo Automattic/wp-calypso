@@ -16,7 +16,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
-import { subscribe, select } from '@wordpress/data';
+import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 
 /**
@@ -26,8 +26,10 @@ import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path } from './path';
+import { path, Step } from './path';
+import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 
 /**
  * Style dependencies
@@ -53,6 +55,7 @@ const USE_TRANSLATION_CHUNKS: string =
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 type User = import('@automattic/data-stores').User.CurrentUser;
+type Site = import('@automattic/data-stores').Site.SiteDetails;
 
 interface AppWindow extends Window {
 	currentUser?: User;
@@ -106,6 +109,10 @@ window.AppBoot = async () => {
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
 			switchWebpackCSS( true );
 		}
+	} catch {}
+
+	try {
+		checkAndRedirectIfSiteWasCreatedRecently();
 	} catch {}
 
 	ReactDom.render(
@@ -194,6 +201,58 @@ function waitForCurrentUser(): Promise< User | undefined > {
 			}
 		} );
 		select( USER_STORE ).getCurrentUser();
+	} ).finally( unsubscribe );
+}
+
+async function checkAndRedirectIfSiteWasCreatedRecently() {
+	const shouldPathCauseRedirectForSelectedSite = () => {
+		return [ Step.CreateSite, Step.Plans, Step.Style ].some( ( step ) => {
+			if ( window.location.pathname.startsWith( `/${ GUTENBOARDING_BASE_NAME }/${ step }` ) ) {
+				return true;
+			}
+		} );
+	};
+
+	if ( shouldPathCauseRedirectForSelectedSite() ) {
+		const selectedSiteDetails = await waitForSelectedSite();
+
+		if ( selectedSiteDetails ) {
+			const createdAtString = selectedSiteDetails?.options?.created_at;
+			// "2020-05-11T01:08:15+00:00"
+
+			if ( createdAtString ) {
+				const createdAt = new Date( createdAtString );
+				const diff = Date.now() - createdAt.getTime();
+				const diffMinutes = diff / 1000 / 60;
+				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
+					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
+					return;
+				}
+			}
+		}
+	}
+
+	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
+}
+
+function waitForSelectedSite(): Promise< Site | undefined > {
+	let unsubscribe: () => void = () => undefined;
+	return new Promise< Site | undefined >( ( resolve ) => {
+		const selectedSite = select( ONBOARD_STORE ).getSelectedSite();
+		if ( ! selectedSite ) {
+			return resolve( undefined );
+		}
+		unsubscribe = subscribe( () => {
+			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
+			if ( resolvedSelectedSite ) {
+				resolve( resolvedSelectedSite );
+			}
+
+			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
+				resolve( undefined );
+			}
+		} );
+		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
 }
 
