@@ -63,14 +63,14 @@ class ScanPage extends Component< Props > {
 	renderProvisioning() {
 		return (
 			<>
-				<SecurityIcon icon="in-progress" />
+				<SecurityIcon />
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
-					Lorem ipsum. We need to change this text. The scan was unable to process the themes
-					directory and did not completed successfully. In order to complete the scan you will need
-					to speak to support who can help determine what went wrong.
+					{ translate(
+						'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
+							'and the results will be with you soon.'
+					) }
 				</p>
-				{ this.renderContactSupportButton() }
 			</>
 		);
 	}
