@@ -16,6 +16,25 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+.plans-grid__details {
+	margin-bottom: 120px;
+}
+
+.plans-grid__details-container {
+	// Makes detailed comparison looks like
+	// it's overflowing the page on mobile
+	width: calc( 100% + 20px + 20px );
+	margin-right: -20px;
+	overflow: hidden;
+
+	@include break-mobile {
+		width: 100%;
+		margin-right: 0;
+	}
+
+	+ .plans-grid__details-toggle-button {
+		margin-top: 60px;
+	}
 }
 
 .plans-grid__details-heading {

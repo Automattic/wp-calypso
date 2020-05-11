@@ -2,11 +2,25 @@
 @import '../../../mixins.scss';
 @import '../../../variables.scss';
 
-.plans-details {
+.plans-details__viewport {
+	// Allows user to pan plans table left & right
+	// on mobile without overflowing body's scrollbar.
+	overflow: auto;
+	padding: 20px 0;
+
+	.plans-details__table {
+		min-width: 750px;
+	}
+
+	@include break-mobile {
+		padding: 0;
+	}
+}
+
+.plans-details__table {
 	width: 100%;
 	min-width: 652px;
 	table-layout: fixed;
-	margin-bottom: 110px;
 
 	th,
 	td {
@@ -14,7 +28,11 @@
 
 		&:first-child {
 			padding-left: 0;
-			width: 40%;
+			width: 25%;
+
+			@include break-mobile {
+				width: 40%;
+			}
 		}
 
 		&:not( :first-child ) {
