@@ -259,7 +259,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.needsOrganization() && this.renderOrganizationField() }
+				{ this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
