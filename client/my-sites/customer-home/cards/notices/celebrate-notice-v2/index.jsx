@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelCta from 'components/action-panel/cta';
+import Spinner from 'components/spinner';
 import { requestHomeLayout } from 'state/home/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -38,6 +40,7 @@ const CelebrateNotice = ( {
 	siteId,
 	title,
 } ) => {
+	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
 
@@ -48,7 +51,7 @@ const CelebrateNotice = ( {
 	const dismissalPreferenceKey = `dismissible-card-home-notice-${ noticeId }-${ siteId }`;
 
 	const showNextTask = () => {
-		setIsVisible( false );
+		setIsLoading( true );
 		dispatch( savePreference( dismissalPreferenceKey, true ) );
 		dispatch( requestHomeLayout( siteId ) );
 	};
@@ -60,7 +63,10 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<ActionPanel className="celebrate-notice-v2 task">
+		<ActionPanel
+			className={ classnames( 'celebrate-notice-v2', 'task', { 'is-loading': isLoading } ) }
+		>
+			{ isLoading && <Spinner /> }
 			<ActionPanelBody>
 				{ isDesktop() && (
 					<ActionPanelFigure align="right">

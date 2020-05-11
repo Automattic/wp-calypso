@@ -1,3 +1,21 @@
-.celebrate-notice-v2.task .action-panel__figure {
-	max-width: 25%;
+.celebrate-notice-v2.task {
+	@include breakpoint( '>480px' ) {
+		padding-top: 32px;
+	}
+
+	.action-panel__figure {
+		max-width: 25%;
+	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+
+	&.is-loading .action-panel__body {
+		visibility: hidden;
+	}
 }
