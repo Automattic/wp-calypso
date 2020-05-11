@@ -21,9 +21,5 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  * @param siteId {number}	id of the site to look up
  */
 export const getSite = ( state: State, siteId: number ) => {
-	const site = state.sites[ siteId ];
-	if ( ! site ) {
-		dispatch( 'core/data' ).invalidateResolution( STORE_KEY, 'getSite', [ siteId ] );
-	}
-	return site;
+	return state.sites[ siteId ];
 };

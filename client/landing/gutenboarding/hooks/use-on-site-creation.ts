@@ -63,7 +63,7 @@ export default function useOnSiteCreation() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 
-	const { resetOnboardStore, setIsRedirecting } = useDispatch( ONBOARD_STORE );
+	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
 
 	React.useEffect( () => {
@@ -97,6 +97,8 @@ export default function useOnSiteCreation() {
 					} );
 					resetPlan();
 					resetOnboardStore();
+					setSelectedSite( newSite.blogid );
+
 					const redirectionUrl =
 						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
 							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
@@ -127,6 +129,7 @@ export default function useOnSiteCreation() {
 						products: [ ...cart.products, domainProduct ],
 					} );
 					resetOnboardStore();
+					setSelectedSite( newSite.blogid );
 					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
 				};
 				go();
@@ -139,6 +142,7 @@ export default function useOnSiteCreation() {
 				blogId: newSite.blogid,
 			} );
 			resetOnboardStore();
+			setSelectedSite( newSite.blogid );
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home` );
 		}
@@ -152,5 +156,6 @@ export default function useOnSiteCreation() {
 		resetOnboardStore,
 		resetPlan,
 		setIsRedirecting,
+		setSelectedSite,
 	] );
 }

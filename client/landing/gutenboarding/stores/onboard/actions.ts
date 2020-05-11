@@ -78,7 +78,7 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
-export const setSelectedSite = ( selectedSite: number ) => ( {
+export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
 } );

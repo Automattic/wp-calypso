@@ -16,7 +16,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
-import { subscribe, select } from '@wordpress/data';
+import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 
 /**
@@ -27,7 +27,9 @@ import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
 import { path } from './path';
+import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 
 /**
  * Style dependencies
@@ -53,6 +55,7 @@ const USE_TRANSLATION_CHUNKS: string =
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 type User = import('@automattic/data-stores').User.CurrentUser;
+type Site = import('@automattic/data-stores').Site.SiteDetails;
 
 interface AppWindow extends Window {
 	currentUser?: User;
@@ -111,6 +114,38 @@ window.AppBoot = async () => {
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
 			switchWebpackCSS( true );
 		}
+	} catch {}
+
+	try {
+		// if ( pathname !== '/' + GUTENBOARDING_BASE_NAME ) {
+		const selectedSiteDetails = await waitForSelectedSite();
+		console.log( 'The results of the selectedSiteDetails wait are:' );
+		console.log( selectedSiteDetails );
+
+		if ( selectedSiteDetails ) {
+			const createdAtString = selectedSiteDetails?.options?.created_at;
+			// "2020-05-11T01:08:15+00:00"
+
+			if ( createdAtString ) {
+				const createdAt = new Date( createdAtString );
+				const diff = Date.now() - createdAt.getTime();
+				const diffMinutes = diff / 1000 / 60;
+				console.log( diffMinutes );
+				if ( diffMinutes < 10 ) {
+					console.log( 'created within 10 minutes' );
+					// window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
+				} else {
+					console.log( 'created greater than 10 minutes' );
+					// dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
+				}
+			}
+		}
+		// } else {
+		// 	// Always reset selected site if booting from `/new`
+		// 	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
+		// }
+
+		// window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
 	} catch {}
 
 	ReactDom.render(
@@ -199,6 +234,38 @@ function waitForCurrentUser(): Promise< User | undefined > {
 			}
 		} );
 		select( USER_STORE ).getCurrentUser();
+	} ).finally( unsubscribe );
+}
+
+function waitForSelectedSite(): Promise< Site | undefined > {
+	let unsubscribe: () => void = () => undefined;
+	return new Promise< Site | undefined >( ( resolve ) => {
+		let attempts = 0;
+		const selectedSite = select( ONBOARD_STORE ).getSelectedSite();
+		console.log( 'selectedSite', selectedSite );
+		if ( ! selectedSite ) {
+			console.log( 'bailing' );
+			return resolve( undefined );
+		}
+		console.log( 'let us try to get this site' );
+		unsubscribe = subscribe( () => {
+			console.log( selectedSite );
+			console.log( 'waiting...' );
+			console.log( attempts );
+			console.log( select( 'core/data' ) );
+			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
+			if ( resolvedSelectedSite ) {
+				console.log( 'Yep, found resolved site, now do redirect logic!' );
+				resolve( resolvedSelectedSite );
+			}
+
+			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
+				console.log( "Finished resolving, but didn't get anything" );
+				resolve( undefined );
+			}
+			// resolve( resolvedSelectedSite );
+		} );
+		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
 }
 
