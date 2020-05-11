@@ -6,34 +6,75 @@
 .plans-grid__table {
 	overflow-x: auto;
 	margin-bottom: 70px;
+
 	@include break-large {
 		overflow-x: initial;
 	}
 }
 
-.plans-table {
+// Make panning edge-to-edge
+.plans-grid__table {
+	width: calc( 100% + 30px + 30px );
+	margin-left: -30px;
+	margin-right: -30px;
 
+	@include break-mobile {
+		width: auto;
+		margin-left: 0;
+		margin-right: 0;
+
+		.plans-table {
+			padding: 0;
+		}
+	}
+}
+
+.plans-table {
 	display: flex;
 	flex-direction: row;
 	margin: 0 -4px;
 	@include break-xlarge {
 		margin: 0 -10px;
 	}
+
 	.plan-item {
 		flex-basis: 193px;
 		flex-grow: 0.5;
 		flex-shrink: 0;
 		margin: 0 4px;
-		border: 1px solid $light-gray-500;
-		padding: 16px;
 		margin-bottom: 24px;
+
+		&:first-child {
+			border-left: 30px solid transparent;
+		}
+
+		&:last-child {
+			border-right: 30px solid transparent;
+		}
+
 		@include break-large {
 			flex-shrink: 0.2;
+
+			&:first-child {
+				border-left: 0;
+			}
+
+			&:last-child {
+				border-right: 0;
+			}
 		}
-		@include break-xlarge {
-			padding: 20px;
-			margin: 0 10px;
-		}
+	}
+}
+
+.plan-item__viewport {
+	border: 1px solid $light-gray-500;
+	width: 100%;
+	height: 100%;
+	padding: 16px;
+
+	@include break-xlarge {
+		padding: 20px;
+		margin: 0 10px;
 	}
 }
 
