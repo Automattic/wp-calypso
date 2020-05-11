@@ -20,7 +20,7 @@ const popupMonitorMocks = {
 PopupMonitor.mockImplementation( () => ( { ...popupMonitorMocks } ) );
 
 describe( 'requestExternalAccess', () => {
-	const serviceURL = 'https://foobar.com';
+	const serviceURL = 'http://example.com';
 	const callback = jest.fn();
 
 	beforeEach( () => {
@@ -38,7 +38,7 @@ describe( 'requestExternalAccess', () => {
 
 	test( 'sets the popup "open" event listener with correct params', () => {
 		expect( popupMonitorMocks.open ).toHaveBeenCalledWith(
-			'https://foobar.com',
+			'http://example.com',
 			null,
 			'toolbar=0,location=0,status=0,menubar=0,<screenSpecs>'
 		);
