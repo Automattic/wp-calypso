@@ -619,9 +619,9 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		const { getByText } = renderResult;
+		const { getByText, getAllByText } = renderResult;
 		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getByText( 'foo.cash' ) ).toBeInTheDocument();
+		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
@@ -655,7 +655,7 @@ describe( 'CompositeCheckout', () => {
 		const { getByText, getAllByText } = renderResult;
 		expect( getByText( 'Domain Mapping: billed annually' ) ).toBeInTheDocument();
 		expect( getByText( 'Domain Registration: billed annually' ) ).toBeInTheDocument();
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+		expect( getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {

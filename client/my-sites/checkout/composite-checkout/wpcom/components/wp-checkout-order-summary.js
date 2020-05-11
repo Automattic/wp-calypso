@@ -117,7 +117,7 @@ function CheckoutSummaryFeaturesList() {
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
 					return (
-						<CheckoutSummaryFeaturesListItem>
+						<CheckoutSummaryFeaturesListItem key={ domain.id }>
 							<WPCheckoutCheckIcon />
 							<strong>{ domain.wpcom_meta?.meta }</strong>
 							{ domain.wpcom_meta?.is_bundled && (
