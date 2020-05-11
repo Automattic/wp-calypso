@@ -162,11 +162,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 								</Button>
 							</p>
 
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ __( 'Create account' ) }
 							</ModalSubmitButton>
-
-							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 						</div>
 					</fieldset>
 				</form>
