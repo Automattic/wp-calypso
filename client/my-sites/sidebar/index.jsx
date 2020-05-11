@@ -37,6 +37,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
@@ -188,7 +189,7 @@ export class MySitesSidebar extends Component {
 			label = translate( 'Home' );
 		}
 
-		const checklistCompletion = siteTasklist.getCompletionStatus();
+		const { completed, total } = siteTasklist.getCompletionStatus();
 
 		return (
 			<SidebarItem
@@ -202,10 +203,7 @@ export class MySitesSidebar extends Component {
 				{ ! hideChecklistProgress && (
 					<div className="sidebar__checklist-progress">
 						<p className="sidebar__checklist-progress-text">{ translate( 'Finish setup' ) }</p>
-						<ProgressBar
-							value={ checklistCompletion.completed }
-							total={ checklistCompletion.total }
-						/>
+						<ProgressBar value={ completed } total={ total } />
 					</div>
 				) }
 			</SidebarItem>
@@ -899,7 +897,9 @@ function mapStateToProps( state ) {
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		siteTasklist: getSiteTaskList( state, siteId ),
 		hideChecklistProgress:
-			isSiteChecklistComplete( state, siteId ) || ! getSiteChecklist( state, siteId ),
+			isSiteChecklistComplete( state, siteId ) ||
+			! getSiteChecklist( state, siteId ) ||
+			! isEligibleForDotcomChecklist( state, siteId ),
 	};
 }
 
