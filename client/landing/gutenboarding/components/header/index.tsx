@@ -15,13 +15,12 @@ import { useHistory } from 'react-router-dom';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
-import { PLAN_FREE } from '../../stores/plans/constants';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import useSelectedPlan from '../../hooks/use-selected-plan';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -37,7 +36,7 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
+	const selectedPlan = useSelectedPlan();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -129,11 +128,7 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite(
-				newUser.username,
-				newUser.bearerToken,
-				selectedPlan ? selectedPlan.getStoreSlug() : PLAN_FREE
-			);
+			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlan.getStoreSlug() );
 		}
 	}, [ newSite, newUser, handleCreateSite, selectedPlan ] );
 	return (
