@@ -50,6 +50,7 @@ export const UpsellNudge = ( {
 	plan,
 	planHasFeature,
 	price,
+	primaryButton,
 	showIcon = false,
 	site,
 	target,
@@ -104,6 +105,7 @@ export const UpsellNudge = ( {
 			onDismissClick={ onDismissClick }
 			plan={ plan }
 			price={ price }
+			primaryButton={ primaryButton }
 			showIcon={ showIcon }
 			target={ target }
 			title={ title }
@@ -115,6 +117,10 @@ export const UpsellNudge = ( {
 			tracksImpressionProperties={ tracksImpressionProperties }
 		/>
 	);
+};
+
+UpsellNudge.defaultProps = {
+	primaryButton: true,
 };
 
 export default connect( ( state, ownProps ) => {
