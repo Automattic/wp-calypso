@@ -149,7 +149,7 @@ const Header: React.FunctionComponent = () => {
 						<Icon icon="wordpress-alt" size={ 24 } />
 					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : __( 'Start your website' ) }
 					</div>

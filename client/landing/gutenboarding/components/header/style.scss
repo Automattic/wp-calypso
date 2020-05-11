@@ -76,6 +76,14 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 }
 
+.gutenboarding__header-site-title-section {
+	display: none;
+
+	@include break-mobile {
+		display: block;
+	}
+}
+
 .gutenboarding__header-domain-section {
 	position: relative;
 	width: 100%;
