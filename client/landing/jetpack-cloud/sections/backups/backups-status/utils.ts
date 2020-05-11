@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { default as moment, Moment } from 'moment';
+import moment, { Moment } from 'moment';
 
 /**
  * Internal dependencies

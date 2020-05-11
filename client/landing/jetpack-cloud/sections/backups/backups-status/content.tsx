@@ -1,53 +1,64 @@
 /**
  * External dependencies
  */
+import { useSelector } from 'react-redux';
+import moment, { Moment } from 'moment';
 import React, { FunctionComponent } from 'react';
-import { Moment } from 'moment';
 
 /**
  * Internal dependencies
  */
 import { IndexedActivities } from './utils';
+import BackupDatePicker from 'landing/jetpack-cloud/components/backup-date-picker';
+// import DailyBackupStatus from 'landing/jetpack-cloud/components/daily-backup-status';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 interface Props {
 	indexedLogs: IndexedActivities;
 	selectedDate: Moment;
 }
 
-const BackupsPageContent: FunctionComponent< Props > = () => (
-	<div className="backups-status__content">
-		{ /* <div className="backups__last-backup-status">
-			<BackupDatePicker
-				onDateChange={ this.onDateChange }
-				selectedDate={ this.getSelectedDate() }
-				siteId={ siteId }
-				oldestDateAvailable={ oldestDateAvailable }
-				today={ today }
-				siteSlug={ siteSlug }
-			/>
+const BackupsPageContent: FunctionComponent< Props > = ( {
+	selectedDate,
+	indexedLogs: { oldestDateAvailable },
+} ) => {
+	const today = moment();
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
-			<DailyBackupStatus
-				{ ...{
-					allowRestore,
-					siteUrl,
-					siteSlug,
-					backup: lastBackup,
-					lastDateAvailable,
-					selectedDate: this.getSelectedDate(),
-					// timezone,
-					// gmtOffset,
-					hasRealtimeBackups,
-					onDateChange: this.onDateChange,
-					deltas,
-					metaDiff,
-				} }
-			/>
-			{ doesRewindNeedCredentials && (
+	return (
+		<div className="backups-status__content">
+			<div className="backups-status__last-backup-status">
+				<BackupDatePicker
+					selectedDate={ selectedDate }
+					siteId={ siteId }
+					oldestDateAvailable={ oldestDateAvailable }
+					today={ today }
+					siteSlug={ siteSlug }
+				/>
+
+				{ /* <DailyBackupStatus
+					{ ...{
+						allowRestore,
+						siteUrl,
+						siteSlug,
+						backup: lastBackup,
+						lastDateAvailable,
+						selectedDate,
+						// timezone,
+						// gmtOffset,
+						hasRealtimeBackups,
+						onDateChange: this.onDateChange,
+						deltas,
+						metaDiff,
+					} }
+				/> */ }
+				{ /* { doesRewindNeedCredentials && (
 				<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-			) }
-		</div>
+			) } */ }
+			</div>
 
-		{ hasRealtimeBackups && lastBackup && (
+			{ /* { hasRealtimeBackups && lastBackup && (
 			<BackupDelta
 				{ ...{
 					deltas,
@@ -59,7 +70,8 @@ const BackupsPageContent: FunctionComponent< Props > = () => (
 				} }
 			/>
 		) } */ }
-	</div>
-);
+		</div>
+	);
+};
 
 export default BackupsPageContent;

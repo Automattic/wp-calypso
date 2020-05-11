@@ -23,7 +23,6 @@ import {
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
-import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/backups-status/utils';
 import BackupChanges from './backup-changes';
 
 /**
@@ -217,13 +216,7 @@ class DailyBackupStatus extends Component {
 							{
 								args: { displayNextDate },
 								components: {
-									link: (
-										<a
-											href={ backupsStatusPath( siteSlug, {
-												date: nextDate.format( INDEX_FORMAT ),
-											} ) }
-										/>
-									),
+									link: <a href={ backupsStatusPath( siteSlug, nextDate ) } />,
 								},
 							}
 						) }
@@ -278,13 +271,7 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
 						args: { lastBackupDay, lastBackupTime },
 						components: {
-							link: (
-								<a
-									href={ backupsStatusPath( siteSlug, {
-										date: lastBackupDate.format( INDEX_FORMAT ),
-									} ) }
-								/>
-							),
+							link: <a href={ backupsStatusPath( siteSlug, lastBackupDate ) } />,
 						},
 					} ) }
 				</div>

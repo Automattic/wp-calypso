@@ -14,7 +14,10 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Button from 'components/forms/form-button';
 import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'components/gridicon';
-import { backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import {
+	backupActivityPath,
+	backupsStatusPath,
+} from 'landing/jetpack-cloud/sections/backups/paths';
 
 /**
  * Style dependencies
@@ -25,7 +28,6 @@ class BackupDatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.object.isRequired,
-		onDateChange: PropTypes.func.isRequired,
 		oldestDateAvailable: PropTypes.object.isRequired,
 	};
 
@@ -109,28 +111,29 @@ class BackupDatePicker extends Component {
 		return (
 			<div className="backup-date-picker">
 				<div className="backup-date-picker__select-date">
-					<div
-						className="backup-date-picker__select-date--previous"
-						role="button"
-						tabIndex={ 0 }
-						onClick={ this.goToPreviousDay }
-						onKeyDown={ this.onSpace( this.goToPreviousDay ) }
-					>
-						<Button compact borderless className="backup-date-picker__button--previous">
-							<Gridicon
-								icon="chevron-left"
-								className={ ! this.canGoToPreviousDay() && 'disabled' }
-							/>
-						</Button>
-
-						<span
-							className={ classNames( 'backup-date-picker__display-date', {
-								disabled: ! this.canGoToPreviousDay(),
-							} ) }
+					<a href={ backupsStatusPath( siteSlug, previousDate ) }>
+						<div
+							className="backup-date-picker__select-date--previous"
+							role="button"
+							tabIndex={ 0 }
+							onKeyDown={ this.onSpace( this.goToPreviousDay ) }
 						>
-							{ previousDisplayDate }
-						</span>
-					</div>
+							<Button compact borderless className="backup-date-picker__button--previous">
+								<Gridicon
+									icon="chevron-left"
+									className={ ! this.canGoToPreviousDay() && 'disabled' }
+								/>
+							</Button>
+
+							<span
+								className={ classNames( 'backup-date-picker__display-date', {
+									disabled: ! this.canGoToPreviousDay(),
+								} ) }
+							>
+								{ previousDisplayDate }
+							</span>
+						</div>
+					</a>
 
 					<DateRangeSelector
 						siteId={ siteId }
@@ -142,7 +145,7 @@ class BackupDatePicker extends Component {
 						className="backup-date-picker__select-date--next"
 						role="button"
 						tabIndex={ 0 }
-						onClick={ this.goToNextDay }
+						// onClick={ this.goToNextDay }
 						onKeyDown={ this.onSpace( this.goToNextDay ) }
 					>
 						<span
