@@ -18,6 +18,18 @@ import Upsell from 'landing/jetpack-cloud/components/upsell';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+function ScanMultisiteBody() {
+	const translate = useTranslate();
+	return (
+		<Upsell
+			headerText={ translate( 'Your site does not have scan' ) }
+			bodyText={ translate( 'Scan is currently not supported on WordPress Multi-site setups.' ) }
+			buttonLink={ false }
+			iconComponent={ <SecurityIcon icon="info" /> }
+		/>
+	);
+}
+
 function ScanVPActiveBody() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -52,15 +64,23 @@ function ScanUpsellBody() {
 	);
 }
 
+function renderUpsell( reason ) {
+	if ( 'multisite_not_supported' === reason ) {
+		return <ScanMultisiteBody />;
+	}
+	if ( 'vp_active_on_site' === reason ) {
+		return <ScanVPActiveBody />;
+	}
+	return <ScanUpsellBody />;
+}
+
 export default function ScanUpsellPage( { reason } ) {
 	return (
 		<Main className="scan__main">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
-			<div className="scan__content">
-				{ 'vp_active_on_site' === reason ? <ScanVPActiveBody /> : <ScanUpsellBody /> }
-			</div>
+			<div className="scan__content">{ renderUpsell( reason ) }</div>
 			<StatsFooter
 				noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
 				noticeLink="https://jetpack.com/upgrade/backups"
