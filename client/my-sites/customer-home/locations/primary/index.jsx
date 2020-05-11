@@ -12,7 +12,7 @@ import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
-import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
+import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
 
 const cardComponents = {
 	'home-task-site-setup-checklist': SiteSetupList,
@@ -30,8 +30,8 @@ const Primary = ( { checklistMode, cards } ) => {
 	// Hard-coded. To be removed after D43129-code is merged
 	if ( ! isDesktop() ) {
 		// Prevent duplicates once D43129-code is merged
-		if ( -1 === cards.indexOf( 'home-feature-go-mobile-on-mobile' ) ) {
-			cards.push( 'home-feature-go-mobile-on-mobile' );
+		if ( -1 === cards.indexOf( 'home-task-go-mobile' ) ) {
+			cards.push( 'home-task-go-mobile' );
 		}
 	}
 	return (
