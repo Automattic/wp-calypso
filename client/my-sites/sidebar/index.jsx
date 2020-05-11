@@ -170,11 +170,11 @@ export class MySitesSidebar extends Component {
 	customerHome() {
 		const {
 			canUserUseCustomerHome,
-			hideTaskProgress,
+			hideChecklistProgress,
 			path,
 			siteSuffix,
 			siteId,
-			taskCompletion,
+			siteTasklist,
 			translate,
 		} = this.props;
 
@@ -188,6 +188,8 @@ export class MySitesSidebar extends Component {
 			label = translate( 'Home' );
 		}
 
+		const checklistCompletion = siteTasklist.getCompletionStatus();
+
 		return (
 			<SidebarItem
 				materialIcon="home"
@@ -197,10 +199,13 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( [ '/home' ], path ) }
 				link={ '/home' + siteSuffix }
 			>
-				{ ! hideTaskProgress && (
+				{ ! hideChecklistProgress && (
 					<div className="sidebar__checklist-progress">
 						<p className="sidebar__checklist-progress-text">{ translate( 'Finish setup' ) }</p>
-						<ProgressBar value={ taskCompletion.completed } total={ taskCompletion.total } />
+						<ProgressBar
+							value={ checklistCompletion.completed }
+							total={ checklistCompletion.total }
+						/>
 					</div>
 				) }
 			</SidebarItem>
@@ -892,8 +897,8 @@ function mapStateToProps( state ) {
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-		taskCompletion: getSiteTaskList( state, siteId ).getCompletionStatus(),
-		hideTaskProgress:
+		siteTasklist: getSiteTaskList( state, siteId ),
+		hideChecklistProgress:
 			isSiteChecklistComplete( state, siteId ) || ! getSiteChecklist( state, siteId ),
 	};
 }
