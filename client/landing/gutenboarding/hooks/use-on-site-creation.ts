@@ -11,7 +11,7 @@ import { isEnabled } from 'config';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { STORE_KEY as PLANS_STORE } from '../stores/plans';
-import { PLAN_ECOMMERCE } from '../stores/plans/constants';
+import { PLAN_FREE, PLAN_ECOMMERCE } from '../stores/plans/constants';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
@@ -72,7 +72,7 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan ) {
+			if ( selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
 				const planProduct = {
 					meta: selectedPlan.getTitle(),
 					product_id: selectedPlan.getProductId(),
