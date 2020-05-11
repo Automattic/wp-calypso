@@ -168,7 +168,7 @@ describe( 'Banner basic tests', () => {
 
 		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Button' ).props().href ).toBe( '/' );
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
 		expect( comp.find( 'Button' ).props().onClick ).toBe( comp.instance().handleClick );
 	} );
 
@@ -182,6 +182,6 @@ describe( 'Banner basic tests', () => {
 
 		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Button' ).props().href ).toBeUndefined();
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
 	} );
 } );
