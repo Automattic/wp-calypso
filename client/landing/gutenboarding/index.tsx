@@ -230,7 +230,7 @@ async function checkAndRedirectIfSiteWasCreatedRecently() {
 				const diff = Date.now() - createdAt.getTime();
 				const diffMinutes = diff / 1000 / 60;
 				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
-					window.location.replace( `/block-editor/page/${ selectedSiteDetails.ID }/home` );
+					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
 					return;
 				}
 			}
