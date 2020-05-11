@@ -107,11 +107,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		const { name, value } = event.target;
 		const newState = { ...this.state };
 
-		if ( name === 'country-code' && value && ! newState.phone?.value ) {
+		if ( name === 'country-code' && value && ! newState.form.phone?.value ) {
 			newState.phoneCountryCode = value;
 		}
 
 		newState.form = updateFormWithContactChange( newState.form, name, value );
+
 		if ( name === 'country-code' ) {
 			newState.form = updateFormWithContactChange( newState.form, 'state', '', {
 				isShowingErrors: false,
