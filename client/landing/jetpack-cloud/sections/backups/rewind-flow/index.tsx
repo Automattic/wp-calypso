@@ -13,7 +13,7 @@ import {
 	useApplySiteOffset,
 } from 'landing/jetpack-cloud/components/site-offset';
 import { Card } from '@automattic/components';
-import { getHttpData } from 'state/data-layer/http-data';
+import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestActivityId, requestActivity } from 'state/data-getters';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { RewindFlowPurpose } from './types';
@@ -52,7 +52,9 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 		error: activityRequestError,
 	} = useSelector( () => getHttpData( getRequestActivityId( siteId, rewindId ) ) );
 
-	const loadingActivity = ! [ 'success', 'failure' ].includes( activityRequestState );
+	const loadingActivity = ! [ DataState.Success, DataState.Failure ].includes(
+		activityRequestState
+	);
 
 	useEffect( () => {
 		requestActivity( siteId, rewindId );
@@ -102,6 +104,13 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 					errorText={ translate( 'The activity referenced by %(rewindId)s is not rewindable.', {
 						args: { rewindId },
 					} ) }
+				/>
+			);
+		} else if ( DataState.Success !== activityRequestState ) {
+			return (
+				<Error
+					siteUrl={ siteUrl }
+					errorText={ translate( 'An error occurred while trying to retrieve the activity' ) }
 				/>
 			);
 		}
