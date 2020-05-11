@@ -118,7 +118,7 @@ export function generateFlows( {
 		},
 
 		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains', 'upsell-plan', 'plans-plan-only' ],
+			steps: [ 'user', 'plans', 'domains' ],
 			destination: getSignupDestination,
 			description:
 				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
