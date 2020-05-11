@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 
 /* eslint-enable import/no-extraneous-dependencies */
 
-const EnrichInserterMenu = function() {
+const EnrichInserterMenu = function () {
 	const [ debouncedFilterValue, setFilterValue ] = useState( '' );
 
 	const debouncedSetFilterValue = debounce( setFilterValue, 400 );
@@ -31,17 +31,11 @@ const EnrichInserterMenu = function() {
 					debouncedSetFilterValue( filterValue );
 				}
 
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				const blocksNotFound = (
-					<p className="block-editor-inserter__no-results">{ __( 'No blocks found.' ) }</p>
-				);
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
-
-				let blocksNotFoundTip = null;
+				let searchingResults = null;
 
 				switch ( filterValue ) {
 					case 'css':
-						blocksNotFoundTip = (
+						searchingResults = (
 							<Tip>
 								You can visit the{ ' ' }
 								<a href="/customize.php?autofocus[section]=custom_css" target="_blank">
@@ -52,7 +46,7 @@ const EnrichInserterMenu = function() {
 						);
 						break;
 					case 'theme':
-						blocksNotFoundTip = (
+						searchingResults = (
 							<Tip>
 								You can visit the{ ' ' }
 								<a href="/themes.php" target="_blank">
@@ -63,7 +57,7 @@ const EnrichInserterMenu = function() {
 						);
 						break;
 					case 'plugin':
-						blocksNotFoundTip = (
+						searchingResults = (
 							<Tip>
 								You can visit the{ ' ' }
 								<a href="/plugin-install.php" target="_blank">
@@ -74,7 +68,7 @@ const EnrichInserterMenu = function() {
 						);
 						break;
 					case 'header':
-						blocksNotFoundTip = (
+						searchingResults = (
 							<Tip>
 								You can visit the{ ' ' }
 								<a href="/customize.php?autofocus[section]=title_tagline" target="_blank">
@@ -85,7 +79,7 @@ const EnrichInserterMenu = function() {
 						);
 						break;
 					case 'colors':
-						blocksNotFoundTip = (
+						searchingResults = (
 							<Tip>
 								You can visit the{ ' ' }
 								<a href="/customize.php?autofocus[section]=colors" target="_blank">
@@ -96,15 +90,12 @@ const EnrichInserterMenu = function() {
 						);
 						break;
 					default:
-						blocksNotFoundTip = null;
+						searchingResults = __( 'No blocks found.' );
 				}
 
-				return (
-					<>
-						{ blocksNotFound }
-						{ blocksNotFoundTip }
-					</>
-				);
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				return <p className="block-editor-inserter__no-results">{ searchingResults }</p>;
+				/* eslint-enable wpcalypso/jsx-classname-namespace */
 			} }
 		</InserterMenuExtension>
 	);
