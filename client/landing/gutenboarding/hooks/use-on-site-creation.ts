@@ -72,7 +72,7 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
+			if ( selectedPlan && selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
 				const planProduct = {
 					meta: selectedPlan.getTitle(),
 					product_id: selectedPlan.getProductId(),

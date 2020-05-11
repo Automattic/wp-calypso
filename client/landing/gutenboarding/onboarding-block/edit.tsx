@@ -26,9 +26,13 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const {
+		siteTitle,
+		siteVertical,
+		selectedDesign,
+		selectedFonts,
+		wasVerticalSkipped,
+	} = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { createSite } = useDispatch( STORE_KEY );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
@@ -58,10 +62,14 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	}, [ isCreatingSite, isRedirecting ] );
 
 	const canUsePlansStep = useCallback( (): boolean => {
-		return isEnabled( 'gutenboarding/plans-grid' );
-	}, [] );
+		return !! selectedDesign && !! selectedFonts && isEnabled( 'gutenboarding/plans-grid' );
+	}, [ selectedDesign, selectedFonts ] );
 
 	const getLatestStepPath = (): string => {
+		if ( canUsePlansStep() ) {
+			return makePath( Step.Plans );
+		}
+
 		if ( canUseStyleStep() ) {
 			return makePath( Step.Style );
 		}
