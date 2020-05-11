@@ -15,6 +15,7 @@ import { PLAN_FREE, PLAN_ECOMMERCE } from '../stores/plans/constants';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
+import { useSelectedPlan } from './use-selected-plan';
 
 const wpcom = wp.undocumented();
 
@@ -60,9 +61,9 @@ export default function useOnSiteCreation() {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
-	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ) ).getSelectedPlan();
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const selectedPlan = useSelectedPlan();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );

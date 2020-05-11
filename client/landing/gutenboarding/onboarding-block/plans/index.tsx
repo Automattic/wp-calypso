@@ -17,7 +17,6 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { usePath, Step } from '../../path';
 
 export default function PlansStep() {
@@ -28,7 +27,6 @@ export default function PlansStep() {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const { setPlan } = useDispatch( PLANS_STORE );
 
 	const plan = useSelectedPlan();
 
@@ -45,12 +43,7 @@ export default function PlansStep() {
 	} ) );
 
 	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		const planSlug = plan.getStoreSlug();
-		// if there is no explicit plan selection, we just consider valid the one displayed to the user
-		// eg: Premium plan if there is a paid domain selected or any plan included in the URL
-		setPlan( planSlug );
-
-		createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+		createSite( username, freeDomainSuggestion, bearerToken, plan.getStoreSlug() );
 	};
 
 	return (
