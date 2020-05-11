@@ -13,60 +13,91 @@ jest.mock( '@automattic/popup-monitor' );
 const popupMonitorMocks = {
 	open: jest.fn(),
 	once: jest.fn(),
-	on: jest.fn( ( _, cb ) =>
-		cb( {
-			keyring_id: '123',
-			id_token: 'abc123',
-			user: {
-				name: 'Foo',
-			},
-		} )
-	),
-	getScreenCenterSpecs: jest.fn( () => 'screenSpecs' ),
+	on: jest.fn(),
+	getScreenCenterSpecs: jest.fn( () => '<screenSpecs>' ),
 };
 
 PopupMonitor.mockImplementation( () => ( { ...popupMonitorMocks } ) );
 
-const serviceURL = 'https://foobar.com';
-const callback = jest.fn();
-
 describe( 'requestExternalAccess', () => {
-	beforeAll( () => {
+	const serviceURL = 'https://foobar.com';
+	const callback = jest.fn();
+
+	beforeEach( () => {
 		requestExternalAccess( serviceURL, callback );
+	} );
+
+	afterEach( () => {
+		Object.values( popupMonitorMocks ).forEach( ( fn ) => fn.mockClear() );
+		callback.mockClear();
 	} );
 
 	afterAll( () => {
 		PopupMonitor.mockReset();
 	} );
 
-	test( 'opens popup window with correct params', () => {
+	test( 'sets the popup "open" event listener with correct params', () => {
 		expect( popupMonitorMocks.open ).toHaveBeenCalledWith(
 			'https://foobar.com',
 			null,
-			'toolbar=0,location=0,status=0,menubar=0,screenSpecs'
+			'toolbar=0,location=0,status=0,menubar=0,<screenSpecs>'
 		);
 	} );
 
-	test( 'calls for correct screen center specs', () => {
+	test( 'calls for correct popup screen center specs', () => {
 		expect( popupMonitorMocks.getScreenCenterSpecs ).toHaveBeenCalledWith( 780, 700 );
 	} );
 
-	test( 'sets the popup window "close" event listener with correct params', () => {
+	test( 'sets the popup "close" event listener with correct params', () => {
 		expect( popupMonitorMocks.once ).toHaveBeenCalledWith( 'close', expect.any( Function ) );
 	} );
 
-	test( 'on popup window close, calls the callback function and passes correct result object', () => {
-		popupMonitorMocks.once.mock.calls[ 0 ][ 1 ]();
-		expect( callback ).toHaveBeenCalledWith( {
-			keyring_id: 123,
-			id_token: 'abc123',
-			user: {
-				name: 'Foo',
-			},
-		} );
+	test( 'sets the popup "message" event listener with correct params', () => {
+		expect( popupMonitorMocks.on ).toHaveBeenCalledWith( 'message', expect.any( Function ) );
 	} );
 
-	test( 'sets the "message" event listener for the popup window', () => {
-		expect( popupMonitorMocks.on ).toHaveBeenCalledWith( 'message', expect.any( Function ) );
+	describe( 'on popup close', () => {
+		let popupMessageCallback;
+		let popupCloseCallback;
+
+		beforeEach( () => {
+			popupMessageCallback = popupMonitorMocks.on.mock.calls[ 0 ][ 1 ];
+			popupCloseCallback = popupMonitorMocks.once.mock.calls[ 0 ][ 1 ];
+		} );
+
+		test( 'calls the callback with result object containing correct entries if keyring_id is available', () => {
+			popupMessageCallback( {
+				keyring_id: '123',
+				id_token: 'abc123',
+				user: {
+					name: 'Foo',
+				},
+			} );
+			popupCloseCallback();
+
+			expect( callback ).toHaveBeenCalledWith( {
+				keyring_id: 123,
+				id_token: 'abc123',
+				user: {
+					name: 'Foo',
+				},
+			} );
+		} );
+
+		test( 'calls the callback with empty result object if keyring_id is unavailable', () => {
+			popupMessageCallback( {
+				keyring_id: undefined,
+			} );
+			popupCloseCallback();
+
+			expect( callback ).toHaveBeenCalledWith( {} );
+		} );
+
+		test( 'calls the callback with empty result object if message object is unavailable', () => {
+			popupMessageCallback( undefined );
+			popupCloseCallback();
+
+			expect( callback ).toHaveBeenCalledWith( {} );
+		} );
 	} );
 } );
