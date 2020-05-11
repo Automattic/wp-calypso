@@ -14,6 +14,7 @@ import config from 'config';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
+import { useCurrentStep, Step } from '../../../path';
 
 /**
  * Style dependencies
@@ -22,6 +23,7 @@ import './style.scss';
 
 const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
 	const { __ } = useI18n();
+	const currentStep = useCurrentStep();
 
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
@@ -29,7 +31,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const [ isPlansModalVisible, setIsPlanModalVisible ] = React.useState( false );
 
 	const handleButtonClick = () => {
-		if ( config.isEnabled( 'gutenboarding/plans-grid' ) ) {
+		if ( config.isEnabled( 'gutenboarding/plans-grid' ) && Step[ currentStep ] !== 'plans' ) {
 			setIsPlanModalVisible( ( isVisible ) => ! isVisible );
 		}
 	};
