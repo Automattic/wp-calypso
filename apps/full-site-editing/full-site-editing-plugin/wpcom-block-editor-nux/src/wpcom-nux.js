@@ -56,8 +56,8 @@ function WpcomNux() {
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
-			contentLabel={ __( 'Welcome to your website' ) }
-			finishButtonText={ __( 'Get started' ) }
+			contentLabel={ __( 'Welcome to your website', 'full-site-editing' ) }
+			finishButtonText={ __( 'Get started', 'full-site-editing' ) }
 			onFinish={ dismissWpcomNux }
 		>
 			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
@@ -68,38 +68,45 @@ function WpcomNux() {
 }
 
 /**
+ * This function returns a filtered collection of NUX slide data
+ * Function arguments can be extended to customize the slides for specific environments, e.g., Gutenboarding
+ *
  * @param   { boolean } isGutenboarding Whether the flow is Gutenboarding or not
  * @returns { Array }                   a collection of <NuxPage /> props filtered by whether the flow is Gutenboarding or not
  */
 function getWpcomNuxPages( isGutenboarding ) {
 	return [
 		{
-			heading: __( 'Welcome to your website' ),
+			heading: __( 'Welcome to your website', 'full-site-editing' ),
 			description: __(
-				'Edit your homepage, add the pages you need, and change your site’s look and feel.'
+				'Edit your homepage, add the pages you need, and change your site’s look and feel.',
+				'full-site-editing'
 			),
 			imgSrc: editorImage,
 			alignBottom: true,
 		},
 		{
-			heading: __( 'Add or edit your content' ),
+			heading: __( 'Add or edit your content', 'full-site-editing' ),
 			description: __(
-				'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.'
+				'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.',
+				'full-site-editing'
 			),
 			imgSrc: blockPickerImage,
 		},
 		{
-			heading: __( 'Preview your site as you go' ),
+			heading: __( 'Preview your site as you go', 'full-site-editing' ),
 			description: __(
-				'As you edit your site content, click “Preview” to see your site the way your visitors will.'
+				'As you edit your site content, click “Preview” to see your site the way your visitors will.',
+				'full-site-editing'
 			),
 			imgSrc: previewImage,
 			alignBottom: true,
 		},
 		{
-			heading: __( 'Private until you’re ready' ),
+			heading: __( 'Private until you’re ready', 'full-site-editing' ),
 			description: __(
-				'Your site will remain private as you make changes until you’re ready to launch and share with the world.'
+				'Your site will remain private as you make changes until you’re ready to launch and share with the world.',
+				'full-site-editing'
 			),
 			imgSrc: privateImage,
 			// @TODO: hide for sites that are already public
