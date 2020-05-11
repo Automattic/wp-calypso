@@ -20,7 +20,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { UpsellNudge } from '../index';
+import { Banner } from '../index';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -38,10 +38,10 @@ import {
 
 const props = {
 	callToAction: null,
-	title: 'upsellnudge title',
+	title: 'banner title',
 };
 
-describe( 'UpsellNudge should have a class name corresponding to appropriate plan', () => {
+describe( 'Banner should have a class name corresponding to appropriate plan', () => {
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
@@ -49,7 +49,7 @@ describe( 'UpsellNudge should have a class name corresponding to appropriate pla
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Personal', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
+			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -61,7 +61,7 @@ describe( 'UpsellNudge should have a class name corresponding to appropriate pla
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Premium', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
+			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -73,7 +73,7 @@ describe( 'UpsellNudge should have a class name corresponding to appropriate pla
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Business', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
+			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
 		} );
 	} );
