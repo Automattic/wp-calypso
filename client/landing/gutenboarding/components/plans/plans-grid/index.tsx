@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Button, Icon } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import { Spring } from 'react-spring/renderprops';
 
 /**
  * Internal dependencies
@@ -68,10 +69,20 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__details">
 				{ showDetails && (
-					<div className="plans-grid__details-heading">
-						<Title>{ __( 'Detailed comparison' ) }</Title>
-						<PlansDetails />
-					</div>
+					<Spring
+						from={ { maxHeight: '0px' } }
+						to={ { maxHeight: '2000px' } }
+						config={ { duration: 500 } }
+					>
+						{ ( props ) => (
+							<div className="plans-grid__details-container" style={ props }>
+								<div className="plans-grid__details-heading">
+									<Title>{ __( 'Detailed comparison' ) }</Title>
+								</div>
+								<PlansDetails />
+							</div>
+						) }
+					</Spring>
 				) }
 				<Button
 					className="plans-grid__details-toggle-button"

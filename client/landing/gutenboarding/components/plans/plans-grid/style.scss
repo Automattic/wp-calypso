@@ -18,6 +18,10 @@
 	align-items: center;
 }
 
+.plans-grid__details-container {
+	overflow: hidden;
+}
+
 .plans-grid__details-heading {
 	.gutenboarding-title {
 		color: var( --studio-black );
