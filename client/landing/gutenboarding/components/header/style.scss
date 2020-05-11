@@ -93,3 +93,8 @@ $padding--gutenboarding__header: $grid-unit-10;
 		@include reduce-motion( 'animation' );
 	}
 }
+
+
+.gutenboarding__header-site-title-section {
+	white-space: nowrap;
+}
