@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -36,8 +36,14 @@ export default function PlansStep() {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
+	// Keep a copy of the selected plan locally so it's available when the component is unmounting
+	const selectedPlanRef = useRef();
+	useEffect( () => {
+		selectedPlanRef.current = plan?.getStoreSlug();
+	}, [ plan ] );
+
 	useTrackStep( 'Plans', () => ( {
-		selected_plan: plan.getStoreSlug(),
+		selected_plan: selectedPlanRef.current,
 	} ) );
 
 	const handleCreateSite = ( username: string, bearerToken?: string ) => {
