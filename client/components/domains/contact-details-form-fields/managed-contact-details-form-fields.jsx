@@ -176,7 +176,6 @@ export class ManagedContactDetailsFormFields extends Component {
 							text: translate( '+ Add organization name' ),
 						},
 						{
-							needsChildRef: true,
 							customErrorMessage: this.props.contactDetailsErrors?.organization,
 						}
 					) }
@@ -205,7 +204,6 @@ export class ManagedContactDetailsFormFields extends Component {
 							enableStickyCountry: false,
 						},
 						{
-							needsChildRef: true,
 							customErrorMessage: this.props.contactDetailsErrors?.phone,
 						}
 					) }
@@ -221,7 +219,6 @@ export class ManagedContactDetailsFormFields extends Component {
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.countryCode,
-							needsChildRef: true,
 						}
 					) }
 				</div>
