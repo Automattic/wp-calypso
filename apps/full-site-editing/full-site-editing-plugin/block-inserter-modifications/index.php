@@ -48,7 +48,7 @@ function enqueue_new_blocks_showcase_script() {
 	 * blocks are registered, so they're all available for filter that sets the
 	 * "New" category.
 	 */
-	enqueue_script( 'new-blocks-showcase', false );
+	enqueue_script( 'index', false );
 }
 
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_new_blocks_showcase_script', 0 );

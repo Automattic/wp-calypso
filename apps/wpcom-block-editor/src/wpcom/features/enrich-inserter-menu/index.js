@@ -32,7 +32,6 @@ const EnrichInserterMenu = function () {
 				}
 
 				let searchingResults = null;
-
 				switch ( filterValue ) {
 					case 'css':
 						searchingResults = (
@@ -90,12 +89,14 @@ const EnrichInserterMenu = function () {
 						);
 						break;
 					default:
-						searchingResults = __( 'No blocks found.' );
+						searchingResults = (
+							/* eslint-disable wpcalypso/jsx-classname-namespace */
+							<p className="block-editor-inserter__no-results">{ __( 'No blocks found.' ) }</p>
+						);
+					/* eslint-enable wpcalypso/jsx-classname-namespace */
 				}
 
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				return <p className="block-editor-inserter__no-results">{ searchingResults }</p>;
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
+				return searchingResults;
 			} }
 		</InserterMenuExtension>
 	);
