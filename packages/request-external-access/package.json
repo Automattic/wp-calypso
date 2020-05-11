@@ -34,6 +34,6 @@
 		"prepare": "transpile"
 	},
 	"dependencies": {
-		"@automattic/popup-monitor": "1.0.0"
+		"@automattic/popup-monitor": "^1.0.0"
 	}
 }
