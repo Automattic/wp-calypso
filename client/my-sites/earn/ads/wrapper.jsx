@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import {
 	isWordadsInstantActivationEligible,
+	isWordadsInstantActivationEligibleButNotOwner,
 	canUpgradeToUseWordAds,
 	canAccessAds,
 } from 'lib/ads/utils';
@@ -189,6 +190,16 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderOwnerRequiredMessage() {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/wordAds.svg"
+				illustrationWidth={ 400 }
+				title={ this.props.translate( 'Only site owners are eligible to activate WordAds.' ) }
+			/>
+		);
+	}
+
 	renderUpsell() {
 		const { siteSlug, translate } = this.props;
 		const bannerURL = `/checkout/${ siteSlug }/premium`;
@@ -250,9 +261,7 @@ class AdsWrapper extends Component {
 		let component = this.props.children;
 		let notice = null;
 
-		if ( ! canAccessAds( site ) ) {
-			component = this.renderEmptyContent();
-		} else if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
@@ -260,12 +269,14 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( ! canAccessAds( site ) ) {
-			component = this.renderEmptyContent();
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligibleButNotOwner( site ) ) {
+			component = this.renderOwnerRequiredMessage( component );
 		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
 			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();
+		} else if ( ! canAccessAds( site ) ) {
+			component = this.renderEmptyContent();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
 			component = null;
 		}
