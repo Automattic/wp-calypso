@@ -38,7 +38,7 @@ const mainFeatures = [
 
 export const planFeatures: FortifiedPlans = {
 	[ PLAN_FREE ]: {
-		features: [ '3 GB', ...mainFeatures.slice( 0, 1 ) ],
+		features: [ '3 GB' ],
 	},
 	[ PLAN_PERSONAL ]: {
 		features: [ '6 GB', ...mainFeatures.slice( 0, 4 ) ],
