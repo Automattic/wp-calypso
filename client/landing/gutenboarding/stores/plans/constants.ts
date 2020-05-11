@@ -1,12 +1,18 @@
 /**
  * External dependencies
  */
-import { PLAN_FREE, PLAN_PREMIUM } from '../../../../lib/plans/constants';
+import {
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '../../../../lib/plans/constants';
 
 export const STORE_KEY = 'automattic/onboard/plans';
 
-export const freePlan = PLAN_FREE;
-export const defaultPaidPlan = PLAN_PREMIUM;
+export { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE };
+export const DEFAULT_PAID_PLAN = PLAN_PREMIUM;
 
 interface Currency {
 	format: 'SYMBOL_THEN_AMOUNT' | 'AMOUNT_THEN_SYMBOL';

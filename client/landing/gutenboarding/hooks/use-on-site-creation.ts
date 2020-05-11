@@ -10,6 +10,7 @@ import wp from '../../../lib/wp';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { STORE_KEY as PLANS_STORE } from '../stores/plans';
+import { PLAN_ECOMMERCE } from '../stores/plans/constants';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
@@ -96,9 +97,11 @@ export default function useOnSiteCreation() {
 					} );
 					resetPlan();
 					resetOnboardStore();
-					window.location.replace(
-						`/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`
-					);
+					const redirectionUrl =
+						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
+							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
+							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+					window.location.replace( redirectionUrl );
 				};
 				go();
 				return;
