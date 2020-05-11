@@ -72,6 +72,10 @@
 	height: 100%;
 	padding: 16px;
 
+	@include break-large {
+		border: none;
+	}
+
 	@include break-xlarge {
 		padding: 20px;
 		margin: 0 10px;
