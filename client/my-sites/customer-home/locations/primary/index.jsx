@@ -19,7 +19,7 @@ const cardComponents = {
 	'home-task-connect-accounts': ConnectAccounts,
 	'home-task-find-domain': FindDomain,
 	'home-task-webinars': Webinars,
-	'home-feature-go-mobile-on-mobile': GoMobile,
+	'home-task-go-mobile': GoMobile,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
