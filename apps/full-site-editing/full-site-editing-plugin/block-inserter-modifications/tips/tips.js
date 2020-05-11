@@ -10,7 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { select } from '@wordpress/data';
 
 function tipDescription( text, conversion, textFallback ) {
-	if ( createInterpolateElement ) {
+	if ( typeof createInterpolateElement !== 'undefined' ) {
 		return createInterpolateElement( text, conversion );
 	}
 
