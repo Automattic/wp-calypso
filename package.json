@@ -144,7 +144,7 @@
 		"@automattic/calypso-build": "^6.1.0",
 		"@automattic/calypso-color-schemes": "^2.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"@automattic/color-studio": "2.3.0",
+		"@automattic/color-studio": "^2.3.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
