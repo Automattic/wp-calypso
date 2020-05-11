@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -15,7 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSelect from 'components/forms/form-select';
 
-class CountrySelect extends React.PureComponent {
+class CountrySelect extends React.Component {
 	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
 			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
@@ -23,9 +23,38 @@ class CountrySelect extends React.PureComponent {
 	};
 
 	render() {
-		const { countriesList, value, additionalClasses } = this.props;
-		const classes = classNames( additionalClasses, 'country' );
-		const options = getOptionsFromCountriesList( countriesList );
+		const { countriesList } = this.props;
+		const classes = classNames( this.props.additionalClasses, 'country' );
+
+		let options = [];
+		let { value } = this.props;
+		value = value || '';
+
+		if ( isEmpty( countriesList ) ) {
+			options.push( {
+				key: 'loading',
+				label: this.props.translate( 'Loading…' ),
+			} );
+		} else {
+			options = options.concat( [
+				{ key: 'select-country', label: this.props.translate( 'Select Country' ), value: '' },
+				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' },
+			] );
+
+			options = options.concat(
+				countriesList.map( ( country, index ) => {
+					if ( isEmpty( country.code ) ) {
+						return { key: index, label: '', disabled: 'disabled', value: '-' };
+					}
+
+					return {
+						key: index,
+						label: country.name,
+						value: country.code,
+					};
+				} )
+			);
+		}
 
 		const validationId = `validation-field-${ this.props.name }`;
 
@@ -39,7 +68,7 @@ class CountrySelect extends React.PureComponent {
 						aria-describedby={ validationId }
 						name={ this.props.name }
 						id={ this.props.name }
-						value={ value || '' }
+						value={ value }
 						disabled={ this.props.disabled }
 						inputRef={ this.props.inputRef }
 						onChange={ this.props.onChange }
@@ -60,44 +89,6 @@ class CountrySelect extends React.PureComponent {
 			</div>
 		);
 	}
-}
-
-function getOptionsFromCountriesList( countriesList ) {
-	if ( isEmpty( countriesList ) ) {
-		return [
-			{
-				key: 'loading',
-				label: translate( 'Loading…' ),
-			},
-		];
-	}
-
-	const initialOptions = [
-		{ key: 'select-country', label: translate( 'Select Country' ), value: '' },
-		{ key: 'divider1', label: '', disabled: 'disabled', value: '-' },
-	];
-
-	const countryOptions = countriesList.reduce( ( collected, country, index ) => {
-		if ( isEmpty( country.code ) ) {
-			return [
-				...collected,
-				{ key: `inner-divider${ index }`, label: '', disabled: 'disabled', value: '-' },
-			];
-		}
-
-		const duplicates = collected.filter( ( prevCountry ) => prevCountry.value === country.code );
-
-		return [
-			...collected,
-			{
-				key: `${ country.code }-${ duplicates.length }`,
-				label: country.name,
-				value: country.code,
-			},
-		];
-	}, [] );
-
-	return [ ...initialOptions, ...countryOptions ];
 }
 
 export default localize( CountrySelect );

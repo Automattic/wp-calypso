@@ -21,6 +21,8 @@ import {
 import update from 'immutability-helper';
 
 function Controller( options ) {
+	let debounceWait;
+
 	if ( ! ( this instanceof Controller ) ) {
 		return new Controller( options );
 	}
@@ -45,7 +47,7 @@ function Controller( options ) {
 	this._pendingValidation = null;
 	this._onValidationComplete = null;
 
-	const debounceWait = isUndefined( options.debounceWait ) ? 1000 : options.debounceWait;
+	debounceWait = isUndefined( options.debounceWait ) ? 1000 : options.debounceWait;
 	this._debouncedSanitize = debounce( this.sanitize, debounceWait );
 	this._debouncedValidate = debounce( this.validate, debounceWait );
 
@@ -77,10 +79,10 @@ assign( Controller.prototype, {
 	},
 
 	handleFieldChange: function ( change ) {
-		const formState = this._currentState;
-		const name = camelCase( change.name );
-		const value = change.value;
-		const hideError = this._hideFieldErrorsOnChange || change.hideError;
+		let formState = this._currentState,
+			name = camelCase( change.name ),
+			value = change.value,
+			hideError = this._hideFieldErrorsOnChange || change.hideError;
 
 		this._setState( changeFieldValue( formState, name, value, hideError ) );
 
@@ -135,8 +137,8 @@ assign( Controller.prototype, {
 	},
 
 	validate: function () {
-		const fieldValues = getAllFieldValues( this._currentState );
-		const id = uniqueId();
+		let fieldValues = getAllFieldValues( this._currentState ),
+			id = uniqueId();
 
 		this._setState( setFieldsValidating( this._currentState ) );
 
@@ -174,12 +176,13 @@ assign( Controller.prototype, {
 } );
 
 function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
-	const fieldState = getField( formState, name );
-	const command = {};
+	let fieldState = getField( formState, name ),
+		command = {},
+		errors;
 
 	// We reset the errors if we weren't showing them already to avoid a flash of
 	// error messages when the user starts typing.
-	const errors = fieldState.isShowingErrors ? fieldState.errors : [];
+	errors = fieldState.isShowingErrors ? fieldState.errors : [];
 
 	command[ name ] = {
 		$merge: {
@@ -281,7 +284,7 @@ function createInitialFormState( fieldValues ) {
 }
 
 function getField( formState, fieldName ) {
-	return formState[ camelCase( fieldName ) ] ?? {};
+	return formState[ camelCase( fieldName ) ];
 }
 
 function getFieldValue( formState, fieldName ) {

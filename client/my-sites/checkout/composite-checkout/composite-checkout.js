@@ -308,8 +308,8 @@ export default function CompositeCheckout( {
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 				}
 				onContactDetailsChange={ updateDomainContactFields }
+				shouldForceRenderOnPropChange={ true }
 				getIsFieldDisabled={ getIsFieldDisabled }
-				isManaged={ true }
 			/>
 		);
 	};
