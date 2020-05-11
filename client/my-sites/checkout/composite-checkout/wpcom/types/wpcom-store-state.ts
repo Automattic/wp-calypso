@@ -445,9 +445,9 @@ function prepareCaDomainContactExtraDetailsErrors(
 ): CaDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.ca ) {
 		return {
-			lang: details.tldExtraFields.ca.lang.errors[ 0 ],
-			legalType: details.tldExtraFields.ca.legalType.errors[ 0 ],
-			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
+			lang: details.tldExtraFields.ca?.lang?.errors?.[ 0 ],
+			legalType: details.tldExtraFields.ca?.legalType?.errors?.[ 0 ],
+			ciraAgreementAccepted: details.tldExtraFields.ca?.ciraAgreementAccepted?.errors?.[ 0 ],
 		};
 	}
 	return null;
@@ -476,9 +476,9 @@ function prepareUkDomainContactExtraDetailsErrors(
 		};
 
 		return {
-			registrantType: details.tldExtraFields.uk.registrantType.errors.map( toErrorPayload ),
-			registrationNumber: details.tldExtraFields.uk.registrationNumber.errors.map( toErrorPayload ),
-			tradingName: details.tldExtraFields.uk.tradingName.errors.map( toErrorPayload ),
+			registrantType: details.tldExtraFields.uk?.registrantType?.errors?.map( toErrorPayload ),
+			registrationNumber: details.tldExtraFields.uk?.registrationNumber?.errors?.map( toErrorPayload ),
+			tradingName: details.tldExtraFields.uk?.tradingName?.errors?.map( toErrorPayload ),
 		};
 	}
 	return null;
@@ -503,10 +503,10 @@ function prepareFrDomainContactExtraDetailsErrors(
 ): FrDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.fr ) {
 		return {
-			registrantType: details.tldExtraFields.fr.registrantType.errors[ 0 ],
+			registrantType: details.tldExtraFields.fr?.registrantType?.errors?.[ 0 ],
 			registrantVatId: details.vatId.errors[ 0 ],
-			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.errors[ 0 ],
-			sirenSirat: details.tldExtraFields.fr.sirenSirat.errors[ 0 ],
+			trademarkNumber: details.tldExtraFields.fr?.trademarkNumber?.errors?.[ 0 ],
+			sirenSirat: details.tldExtraFields.fr?.sirenSirat?.errors?.[ 0 ],
 		};
 	}
 	return null;
