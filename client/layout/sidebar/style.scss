@@ -72,7 +72,7 @@
 	width: 30%;
 
 	.sidebar__checklist-progress-text {
-		font-size: 10px;
+		font-size: 12px;
 		margin: 0;
 	}
 
@@ -80,7 +80,11 @@
 		height: 6px;
 
 		.progress-bar__progress {
-			background-color: var( --color-sidebar-menu-selected-text );
+			background-color: var( --color-sidebar-text );
+
+			.selected & {
+				background-color: var( --color-sidebar-menu-selected-text );
+			}
 		}
 	}
 }
