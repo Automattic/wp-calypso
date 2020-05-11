@@ -29,9 +29,13 @@ import './style.scss';
 
 interface Purchase {
 	id: number;
+	saleAmount?: number;
+	amount: number;
+	meta?: string;
+	isDomainRegistration?: boolean;
+	productName: string;
 	currencyCode: string;
 	expiryDate: string;
-	taxText: string;
 	productSlug: string;
 }
 
@@ -60,7 +64,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
-		() => purchases.sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
+		() => [ ...purchases ].sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
 		[ purchases ]
 	);
 
