@@ -388,7 +388,7 @@ class ActivityLogItem extends Component {
 						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
-							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
+							'{{time/}} is the selected point to create a download backup. You will get a notification when the backup is ready to download.',
 							{
 								components: {
 									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,

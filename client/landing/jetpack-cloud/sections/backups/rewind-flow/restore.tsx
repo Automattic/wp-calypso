@@ -174,9 +174,21 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download error"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">
-				{ translate( 'An error occurred while restoring your site' ) }
+			<h3 className="rewind-flow__title error">
+				{ translate( 'Restore failed: %s', {
+					args: [ backupDisplayDate ],
+				} ) }
 			</h3>
+			<p className="rewind-flow__info">
+				{ translate(
+					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
+					{
+						components: {
+							button: <Button className="rewind-flow__error-retry-button" onClick={ onConfirm } />,
+						},
+					}
+				) }
+			</p>
 			<Button
 				className="rewind-flow__primary-button"
 				href={ contactSupportUrl( siteUrl, 'error' ) }

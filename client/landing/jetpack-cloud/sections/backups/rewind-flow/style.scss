@@ -1,7 +1,7 @@
 .rewind-flow__header {
 	display: flex;
 	justify-content: center;
-	padding-bottom: 32px;
+	padding-bottom: 16px;
 	padding-top: 32px;
 	.gridicon {
 		fill: var( --color-primary );
@@ -13,9 +13,14 @@
 }
 
 .rewind-flow__title {
+	text-align: center;
 	font-size: 22px;
 	font-weight: 600;
 	padding-bottom: 32px;
+
+	&.error {
+		color: var( --color-error );
+	}
 }
 
 .rewind-flow__title-placeholder {
@@ -141,4 +146,29 @@ a.rewind-flow-notice__title-warning:visited {
 
 .theme-jetpack-cloud .main.rewind-flow {
 	margin-left: auto;
+}
+
+/* This is a button that's meant to be styled as a link */
+.rewind-flow__info .rewind-flow__error-retry-button {
+	padding: initial;
+	border: initial;
+	font-weight: normal;
+	vertical-align: initial;
+	font-size: initial;
+	color: var( --color-link );
+
+	&:hover, &:active, &:focus {
+		background: initial;
+		color: var( --color-link-dark );
+	}
+
+	&:hover, &:active {
+		outline: initial;
+	}
+
+	&:focus {
+		outline: thin dotted;
+		box-shadow: initial;
+		border: initial;
+	}
 }
