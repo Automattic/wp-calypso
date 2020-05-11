@@ -30,6 +30,9 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { login } from 'lib/paths';
+import { waitForData } from 'state/data-layer/http-data';
+import { requestGeoLocation } from 'state/data-getters';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -41,7 +44,29 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  */
 let initialContext;
 
+const removeWhiteBackground = function () {
+	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+};
+
 export default {
+	redirectTests( context, next ) {
+		waitForData( {
+			geo: () => requestGeoLocation(),
+		} )
+			.then( ( { geo } ) => {
+				const countryCode = geo.data.body.country_short;
+				if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+					window.location = window.location.origin + '/new';
+				} else {
+					removeWhiteBackground();
+					next();
+				}
+			} )
+			.catch( () => {
+				removeWhiteBackground();
+				next();
+			} );
+	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {

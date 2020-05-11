@@ -133,4 +133,15 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	newSiteGutenbergOnboarding: {
+		datestamp: '20200501',
+		variations: {
+			gutenberg: 10,
+			control: 90,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
+	},
 };
