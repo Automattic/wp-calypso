@@ -131,7 +131,7 @@ const FixAllThreatsDialog = ( {
 					<p className="fix-all-threats-dialog__warning-message">
 						{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
 					</p>
-					<div className="fix-all-threats-dialog__warning">
+					<div className="fix-all-threats-dialog__threats-section">
 						<Gridicon
 							className="fix-all-threats-dialog__icon fix-all-threats-dialog__icon--confirmation"
 							icon="info"
@@ -145,7 +145,7 @@ const FixAllThreatsDialog = ( {
 									count: threats.length,
 								}
 							) }
-							<ul className="fix-all-threats-dialog__list">
+							<ul className="fix-all-threats-dialog__threats">
 								{ threats.map( ( threat ) => (
 									<li key={ threat.id }>
 										<strong>

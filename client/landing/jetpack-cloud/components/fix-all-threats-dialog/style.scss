@@ -19,8 +19,10 @@
 			margin: 8px 0;
 		}
 
-		&__warning {
+		&__threats-section {
 			display: flex;
+			overflow-y: auto;
+			max-height: 240px;
 		}
 
 		&__icon {
@@ -37,7 +39,7 @@
 			fill: var( --color-primary-40 );
 		}
 
-		&__list {
+		&__threats {
 			margin-left: 12px;
 			margin-top: 8px;
 		}
