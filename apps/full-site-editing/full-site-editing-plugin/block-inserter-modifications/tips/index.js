@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { debounce, get, filter, deburr, lowerCase, includes } from 'lodash';
+import { debounce, get, filter, deburr, lowerCase, includes, uniq } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -31,8 +31,9 @@ function ContextualTip( { searchTerm, random = false } ) {
 
 	const foundTips = filter(
 		tips,
-		( { keywords } ) =>
-			filter( keywords, ( keyword ) => includes( normalizedSearchTerm, keyword ) ).length
+		( { keywords, permission } ) =>
+			permission() &&
+			filter( uniq( keywords ), ( keyword ) => includes( normalizedSearchTerm, keyword ) ).length
 	);
 
 	if ( ! foundTips.length ) {

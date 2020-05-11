@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -6,9 +5,9 @@
 /**
  * WordPress dependencies
  */
-
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
+import { select } from '@wordpress/data';
 
 function tipDescription( text, conversion, textFallback ) {
 	if ( createInterpolateElement ) {
@@ -18,7 +17,7 @@ function tipDescription( text, conversion, textFallback ) {
 	return textFallback;
 }
 
-export default [
+const tips = [
 	{
 		context: 'theme',
 		keywords: [ 'theme', __( 'theme' ) ],
@@ -31,6 +30,7 @@ export default [
 			},
 			__( 'theme - You can visit the theme directory to select a different design for your site.' )
 		),
+		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 	{
 		context: 'css',
@@ -42,6 +42,7 @@ export default [
 			},
 			__( 'CSS - You can visit the the Customizer to edit the CSS on your site.' )
 		),
+		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 	{
 		context: 'plugin',
@@ -53,6 +54,7 @@ export default [
 			},
 			__( 'plugin - You can visit the plugin directory to install additional plugins.' )
 		),
+		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 	{
 		context: 'header',
@@ -64,6 +66,7 @@ export default [
 			},
 			__( 'header - You can visit the the Customizer to edit your logo and site title.' )
 		),
+		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 	{
 		context: 'colors',
@@ -75,5 +78,11 @@ export default [
 			},
 			__( 'colors - You can visit the the Customizer to edit the colors on your site.' )
 		),
+		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
 	},
 ];
+
+// Pre populate permissions state tree.
+tips.forEach( ( { permission } ) => permission() );
+
+export default tips;
