@@ -3,13 +3,28 @@
 @import '../../../variables.scss';
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 
+.plans-grid__table {
+	overflow-x: auto;
+	margin-bottom: 70px;
+	@include break-large {
+		overflow-x: initial;
+	}
+}
+
 .plans-table {
 	display: flex;
 	flex-direction: row;
-	margin-bottom: 70px;
+	margin-left: -8px;
+	margin-right: -8px;
 
 	.plan-item {
-		width: 20%;
+		flex-basis: 193px;
+		flex-grow: 0.5;
+		flex-shrink: 0;
+		margin: 0 8px;
+		border: 1px solid $light-gray-500;
+		padding: 20px;
+		margin-bottom: 24px;
 	}
 }
 
@@ -72,8 +87,8 @@
 }
 
 .plan-item__domain-summary {
-	font-size: 16px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
 }
 
 .plan-item__select-button.components-button {
