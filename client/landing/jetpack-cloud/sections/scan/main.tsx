@@ -230,7 +230,7 @@ class ScanPage extends Component< Props > {
 			return this.renderScanning();
 		}
 
-		const errorFound = !! mostRecent.error;
+		const errorFound = !! mostRecent?.error;
 		const threatsFound = threats.length > 0;
 
 		if ( errorFound && ! threatsFound ) {
