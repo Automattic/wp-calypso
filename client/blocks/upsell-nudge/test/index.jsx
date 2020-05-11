@@ -38,7 +38,7 @@ import {
 
 const props = {
 	callToAction: null,
-	title: 'banner title',
+	title: 'upsellnudge title',
 };
 
 describe( 'UpsellNudge should have a class name corresponding to appropriate plan', () => {
