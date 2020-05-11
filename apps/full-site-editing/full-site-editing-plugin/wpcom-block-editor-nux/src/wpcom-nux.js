@@ -61,7 +61,7 @@ function WpcomNux() {
 			onFinish={ dismissWpcomNux }
 		>
 			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
-				<NuxPage { ...nuxPage } />
+				<NuxPage key={ nuxPage.heading } { ...nuxPage } />
 			) ) }
 		</Guide>
 	);
