@@ -227,7 +227,7 @@ const sections = [
 	},
 	{
 		name: 'domains',
-		paths: [ '/domains' ],
+		paths: [ '/domains', '/me/domains' ],
 		module: 'my-sites/domains',
 		secondary: true,
 		group: 'sites',

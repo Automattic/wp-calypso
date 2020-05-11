@@ -15,7 +15,7 @@ export function domainAddNew( siteName, searchTerm ) {
 }
 
 export function domainManagementRoot() {
-	return '/domains/manage';
+	return '/me/domains';
 }
 
 export function domainManagementList( siteName ) {

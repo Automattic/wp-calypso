@@ -60,6 +60,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import EmptyContentComponent from 'components/empty-content';
 import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
+import SidebarComponent from 'me/sidebar';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -86,6 +87,12 @@ function createNavigation( context ) {
 
 	if ( siteFragment ) {
 		basePath = sectionify( context.pathname );
+	}
+
+	if ( startsWith( context.pathname, '/me/domains' ) ) {
+		return React.createElement( SidebarComponent, {
+			context: context,
+		} );
 	}
 
 	return (
