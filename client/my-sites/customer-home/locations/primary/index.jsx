@@ -12,6 +12,9 @@ import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import DeprecateEditor from 'my-sites/customer-home/cards/tasks/deprecate-editor';
 import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
+import CelebrateSiteCreation from 'my-sites/customer-home/cards/notices/celebrate-site-creation-v2';
+import CelebrateSiteLaunch from 'my-sites/customer-home/cards/notices/celebrate-site-launch-v2';
+import CelebrateSiteSetupComplete from 'my-sites/customer-home/cards/notices/celebrate-site-setup-complete-v2';
 
 const cardComponents = {
 	'home-task-site-setup-checklist': SiteSetupList,
@@ -21,6 +24,9 @@ const cardComponents = {
 	'home-task-editor-deprecation': DeprecateEditor,
 	'home-task-go-mobile-android': GoMobile,
 	'home-task-go-mobile-ios': GoMobile,
+	'home-notice-celebrate-site-creation': CelebrateSiteCreation,
+	'home-notice-celebrate-site-launch': CelebrateSiteLaunch,
+	'home-notice-celebrate-site-setup-complete': CelebrateSiteSetupComplete,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
