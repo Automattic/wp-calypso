@@ -95,11 +95,10 @@ export const UpsellNudge = ( {
 	}
 
 	if ( ! href && siteSlug && canUserUpgrade ) {
+		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
 		if ( customerType ) {
 			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
 		}
-
-		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
 	}
 
 	const classes = classnames(
