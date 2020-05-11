@@ -22,7 +22,7 @@ import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
@@ -97,7 +97,7 @@ class ScanPage extends Component< Props > {
 					} )
 				}
 			>
-				{ translate( 'Contact Support {{externalIcon/}}', {
+				{ translate( 'Contact support {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
 			</Button>
@@ -122,7 +122,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { scanState, siteId, siteSlug, moment, dispatchScanRun, applySiteOffset } = this.props;
+		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset } = this.props;
 		const lastScanTimestamp = scanState?.mostRecent?.timestamp;
 		let lastScanSiteTime = '';
 		if ( lastScanTimestamp && applySiteOffset ) {
@@ -150,12 +150,7 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
-					<Button
-						primary
-						href={ `/scan/${ siteSlug }` }
-						className="scan__button"
-						onClick={ () => dispatchScanRun( siteId ) }
-					>
+					<Button primary className="scan__button" onClick={ () => dispatchScanRun( siteId ) }>
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
@@ -194,7 +189,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanError() {
-		const { siteId, siteSlug, dispatchScanRun } = this.props;
+		const { siteId, dispatchScanRun } = this.props;
 
 		return (
 			<>
@@ -209,11 +204,10 @@ class ScanPage extends Component< Props > {
 				{ this.renderContactSupportButton() }
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
-						href={ `/scan/${ siteSlug }` }
 						className="scan__button scan__retry-bottom"
 						onClick={ () => dispatchScanRun( siteId ) }
 					>
-						{ translate( 'Retry Scan' ) }
+						{ translate( 'Retry scan' ) }
 					</Button>
 				) }
 			</>
@@ -284,12 +278,10 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state ) as Site;
 		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
 		if ( ! siteId ) {
 			return {
 				site,
 				siteId,
-				siteSlug,
 			};
 		}
 		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
@@ -301,7 +293,6 @@ export default connect(
 			site,
 			siteId,
 			siteUrl,
-			siteSlug,
 			scanState,
 			scanProgress,
 			isInitialScan,
