@@ -1096,7 +1096,7 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
+						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 					/>
 				);
 			}, this );
@@ -1142,12 +1142,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFreeDomainExplainer() {
-		return (
-			<FreeDomainExplainer
-				onSkip={ this.props.hideFreePlan }
-				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
-			/>
-		);
+		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
 	onAddDomain = ( suggestion ) => {
@@ -1256,7 +1251,7 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-				showFreeDomainExplainerForFreePlan={ this.props.showFreeDomainExplainerForFreePlan }
+				shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 			>
 				{ this.props.isEligibleVariantForDomainTest &&
 					hasResults &&
