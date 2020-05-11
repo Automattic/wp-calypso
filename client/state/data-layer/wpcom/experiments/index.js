@@ -33,7 +33,7 @@ export const handleFetchExperiments = ( action ) =>
 		{
 			apiNamespace: 'wpcom',
 			method: 'GET',
-			path: '/v2/experiments/calypso',
+			path: '/v2/experiments/0.1.0/assignments/calypso',
 			query: {
 				anon_id: action.anonId,
 			},
@@ -46,7 +46,7 @@ export const handleFetchExperiments = ( action ) =>
  *
  * @param anonId The anonymous identifier to send to the API
  */
-export const fetchExperiments = anonId => ( {
+export const fetchExperiments = ( anonId ) => ( {
 	type: EXPERIMENT_FETCH,
 	anonId: anonId == null ? getAnonIdFromCookie() : anonId,
 } );
