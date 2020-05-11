@@ -155,7 +155,7 @@ export default function WPCheckout( {
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
-					<WPCheckoutOrderSummary />
+					<WPCheckoutOrderSummary isCartPendingUpdate={ isCartPendingUpdate } />
 					<UpsellWrapperUI>
 						<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
 					</UpsellWrapperUI>

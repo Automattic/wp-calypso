@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/core';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard,
@@ -25,7 +26,7 @@ import getSupportVariation, {
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart } from '../hooks/has-plan';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummary( { isCartPendingUpdate } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
@@ -50,12 +51,16 @@ export default function WPCheckoutOrderSummary() {
 	};
 
 	return (
-		<CheckoutSummaryCardUI>
+		<CheckoutSummaryCardUI className={ isCartPendingUpdate ? 'is-loading' : '' }>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				<CheckoutSummaryFeaturesList />
+				{ isCartPendingUpdate ? (
+					<LoadingCheckoutSummaryFeaturesList />
+				) : (
+					<CheckoutSummaryFeaturesList />
+				) }
 				<CheckoutSummaryHelp onClick={ handleHelpButtonClicked }>
 					{ isSupportChatUser
 						? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
@@ -92,6 +97,16 @@ export default function WPCheckoutOrderSummary() {
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
 		</CheckoutSummaryCardUI>
+	);
+}
+
+function LoadingCheckoutSummaryFeaturesList() {
+	return (
+		<>
+			<LoadingCopy />
+			<LoadingCopy />
+			<LoadingCopy />
+		</>
 	);
 }
 
@@ -152,6 +167,20 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
+
+const pulse = keyframes`
+	0% {
+		opacity: 1;
+	}
+
+	70% {
+		opacity: 0.25;
+	}
+
+	100% {
+		opacity: 1;
+	}
+`;
 
 const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
 	border-bottom: none 0;
@@ -214,8 +243,37 @@ const CheckoutSummaryLineItem = styled.div`
 	flex-wrap: wrap;
 	justify-content: space-between;
 	margin-bottom: 4px;
+
+	.is-loading & {
+		animation: ${pulse} 1.5s ease-in-out infinite;
+	}
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${( props ) => props.theme.weights.bold};
+`;
+
+const LoadingCopy = styled.p`
+	animation: ${pulse} 1.5s ease-in-out infinite;
+	background: ${( props ) => props.theme.colors.borderColorLight};
+	border-radius: 2px;
+	color: ${( props ) => props.theme.colors.borderColorLight};
+	content: '';
+	font-size: 14px;
+	height: 18px;
+	margin: 8px 0 0 26px;
+	padding: 0;
+	position: relative;
+
+	:before {
+		content: '';
+		display: block;
+		position: absolute;
+		left: -26px;
+		top: 0;
+		width: 18px;
+		height: 18px;
+		background: ${( props ) => props.theme.colors.borderColorLight};
+		border-radius: 100%;
+	}
 `;
