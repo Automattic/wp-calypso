@@ -1,5 +1,9 @@
 .dialog.fix-all-threats-dialog {
-	max-width: 676px;
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		max-width: 676px;
+	}
 
 	.fix-all-threats-dialog {
 		&__header {
@@ -43,21 +47,16 @@
 			font-size: 14px;
 		}
 
-		&__buttons {
-			display: flex;
-			justify-content: center;
-		}
-
 		&__btn {
 			width: 100%;
 
 			@include breakpoint( '>480px' ) {
-				width: 200px;
+				width: 140px;
 			}
 		}
+	}
 
-		&__btn--cancel {
-			margin-right: 16px;
-		}
+	.dialog__action-buttons {
+		background: var( --studio-gray-0 );
 	}
 }

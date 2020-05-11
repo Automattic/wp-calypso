@@ -42,8 +42,41 @@ const FixAllThreatsDialog = ( {
 	const firstStep = userHasCredentials ? 'confirmation' : 'server-credentials';
 	const [ currentStep, setCurrentStep ] = React.useState< ProcessStep >( firstStep );
 
+	const buttons = React.useMemo(
+		() => [
+			...( firstStep !== currentStep
+				? [
+						<Button
+							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
+							onClick={ () => setCurrentStep( 'server-credentials' ) }
+						>
+							{ translate( 'Go back' ) }
+						</Button>,
+				  ]
+				: [] ),
+			...( firstStep === currentStep
+				? [
+						<Button
+							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
+							onClick={ onCloseDialog }
+						>
+							{ translate( 'Go back' ) }
+						</Button>,
+				  ]
+				: [] ),
+			<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
+				{ translate( 'Fix all threats' ) }
+			</Button>,
+		],
+		[ firstStep, currentStep, onCloseDialog, onConfirmation ]
+	);
+
 	return (
-		<Dialog additionalClassNames="fix-all-threats-dialog" isVisible={ showDialog }>
+		<Dialog
+			additionalClassNames="fix-all-threats-dialog"
+			isVisible={ showDialog }
+			buttons={ buttons }
+		>
 			<h1 className="fix-all-threats-dialog__header">{ translate( 'Fix all threats' ) }</h1>
 			{ currentStep === 'server-credentials' && (
 				<>
@@ -124,27 +157,6 @@ const FixAllThreatsDialog = ( {
 								) ) }
 							</ul>
 						</div>
-					</div>
-					<div className="fix-all-threats-dialog__buttons">
-						{ firstStep !== currentStep && (
-							<Button
-								className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-								onClick={ () => setCurrentStep( 'server-credentials' ) }
-							>
-								Go back
-							</Button>
-						) }
-						{ firstStep === currentStep && (
-							<Button
-								className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-								onClick={ onCloseDialog }
-							>
-								{ translate( 'Cancel' ) }
-							</Button>
-						) }
-						<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
-							{ translate( 'Fix all threats' ) }
-						</Button>
 					</div>
 				</>
 			) }
