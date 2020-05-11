@@ -2,8 +2,6 @@
  * Internal dependencies
  */
 import { State } from './reducer';
-import { dispatch } from '@wordpress/data';
-import { STORE_KEY } from './constants';
 
 export const getState = ( state: State ) => state;
 
