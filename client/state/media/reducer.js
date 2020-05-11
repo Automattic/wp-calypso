@@ -19,12 +19,21 @@ import {
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
+	MEDIA_SET_QUERY,
 	MEDIA_SOURCE_CHANGE,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 import { validateMediaItem } from 'lib/media/utils';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+
+import {
+	areQueriesMatching,
+	cleanQuery,
+	isItemMatchingQuery,
+	pluckActiveQueryAndMedia,
+	getSafeNextListStoreState,
+} from 'state/media/list-store-utils';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
@@ -334,6 +343,115 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 
 	return state;
 } );
+
+/**
+ * @typedef {object} MediaListStoreState
+ * @property { {[siteId: string]: object} } activeQueries The active query for each site
+ * @property { {[siteId: string]: number[]} } media An unordered list of media ids for each site
+ */
+
+export const listStore = withoutPersistence(
+	/**
+	 * @param {MediaListStoreState} state Current state
+	 * @param {object} action Action payload
+	 * @returns {MediaListStoreState} Updated state
+	 */
+	( state = { activeQueries: {}, media: {} }, action ) => {
+		switch ( action.type ) {
+			case MEDIA_REQUESTING: {
+				const { siteId } = action;
+				const { activeQuery } = pluckActiveQueryAndMedia( state, siteId );
+				return getSafeNextListStoreState( state, siteId, {
+					activeQuery: { ...activeQuery, isFetchingNextPage: true },
+				} );
+			}
+			case MEDIA_ITEM_REQUEST_SUCCESS: {
+				const { siteId } = action;
+				const { activeQuery } = pluckActiveQueryAndMedia( state, siteId );
+				return getSafeNextListStoreState( state, siteId, {
+					activeQuery: { ...activeQuery, isFetchingNextPage: false },
+				} );
+			}
+			case MEDIA_ITEM_REQUEST_FAILURE:
+				return state;
+
+			case MEDIA_SET_QUERY: {
+				const { siteId, query: newQuery } = action;
+				const { activeQuery: existingQuery } = pluckActiveQueryAndMedia( state, siteId );
+
+				// if the new query isn't effectively the same as the old query, then we need to clear the list of media ids
+				const shouldClearMedia = ! areQueriesMatching( existingQuery, newQuery );
+
+				// don't use safety util so we can remove the media list for the site
+				return {
+					...state,
+					activeQueries: {
+						[ siteId ]: cleanQuery( newQuery ),
+					},
+					media: shouldClearMedia ? omit( state.media, siteId ) : state.media,
+				};
+			}
+			case MEDIA_SOURCE_CHANGE: {
+				const { siteId } = action;
+				const { activeQuery } = pluckActiveQueryAndMedia( state, siteId );
+
+				// don't use safety util so we can remove the media list for the site
+				return {
+					...state,
+					media: omit( state.media, siteId ),
+					activeQueries: {
+						...state.activeQueries,
+						[ siteId ]: {
+							...omit( activeQuery, 'nextPageHandle' ),
+							// reset isFetchingNextPage to false for the site being cleared
+							isFetchingNextPage: false,
+						},
+					},
+				};
+			}
+			case MEDIA_ITEM_CREATE: {
+				const { site, transientMedia } = action;
+				const { activeQuery, media: existingMedia } = pluckActiveQueryAndMedia( state, site.ID );
+
+				if ( ! isItemMatchingQuery( transientMedia, activeQuery ) ) {
+					return state;
+				}
+
+				return getSafeNextListStoreState( state, site.ID, {
+					media: [ ...existingMedia, transientMedia.ID ],
+				} );
+			}
+			case MEDIA_RECEIVE: {
+				const { siteId, media, query } = action;
+
+				const { media: existingMedia } = pluckActiveQueryAndMedia( state, siteId );
+
+				const nextMedia = [
+					...existingMedia,
+					media.filter(
+						( mediaItem ) =>
+							! existingMedia.includes( mediaItem.ID ) && isItemMatchingQuery( mediaItem, query )
+					),
+				];
+
+				return getSafeNextListStoreState( state, siteId, {
+					...state,
+					media: nextMedia,
+				} );
+			}
+			case MEDIA_DELETE: {
+				const { siteId, mediaIds: deletedMediaIds } = action;
+				const { media: existingMedia } = pluckActiveQueryAndMedia( state, siteId );
+
+				return getSafeNextListStoreState( state, siteId, {
+					media: existingMedia.filter(
+						( existingMediaId ) => ! deletedMediaIds.includes( existingMediaId )
+					),
+				} );
+			}
+		}
+	}
+);
 
 export default combineReducers( {
 	errors,

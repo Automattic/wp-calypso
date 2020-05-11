@@ -165,7 +165,7 @@ export function failMediaItemRequest( siteId, mediaId, error = null ) {
 
 /**
  * Returns an action object used in signalling that a request for media item(s)
- * has failed.
+ * has succeeded.
  *
  * @param  {number} siteId  Site ID
  * @param  {number} mediaId Media ID

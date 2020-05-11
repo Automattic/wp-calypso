@@ -93,12 +93,12 @@ MediaActions.fetchNextPage = function ( siteId ) {
 		return;
 	}
 
+	const query = MediaListStore.getNextPageQuery( siteId );
+
 	Dispatcher.handleViewAction( {
 		type: 'FETCH_MEDIA_ITEMS',
 		siteId: siteId,
 	} );
-
-	const query = MediaListStore.getNextPageQuery( siteId );
 
 	const mediaReceived = ( error, data ) => {
 		Dispatcher.handleServerAction( {
