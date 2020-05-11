@@ -13,9 +13,8 @@ const updating = keyedReducer( 'siteId', ( state = [], { type, ...payload } ) =>
 		// Every time we get a response from `/scan` we want to include here
 		// threats that are being updated.
 		case JETPACK_SCAN_UPDATE: {
-			// @todo: format the `fixer_status` property at the data-layer level
 			return payload.threats
-				? payload.threats.filter( ( threat ) => threat.fixer_status === 'in_progress' )
+				? payload.threats.filter( ( threat ) => threat.fixerStatus === 'in_progress' )
 				: [];
 		}
 		case JETPACK_SCAN_UPDATE_THREAT:
