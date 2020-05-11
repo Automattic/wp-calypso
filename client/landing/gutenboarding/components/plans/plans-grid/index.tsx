@@ -68,8 +68,10 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__details">
 				{ showDetails && (
-					<div className="plans-grid__details-heading">
-						<Title>{ __( 'Detailed comparison' ) }</Title>
+					<div className="plans-grid__details-container">
+						<div className="plans-grid__details-heading">
+							<Title>{ __( 'Detailed comparison' ) }</Title>
+						</div>
 						<PlansDetails />
 					</div>
 				) }

@@ -18,11 +18,32 @@
 	align-items: center;
 }
 
-.plans-grid__details-heading {
-	overflow-x: scroll;
-	@include break-medium {
-		overflow-x: initial;
+.plans-grid__details {
+	margin-bottom: 120px;
+}
+
+.plans-grid__details-container {
+	// Edge-to-edge panning
+	.plans-details {
+		width: calc( 100% + 30px + 30px );
+		margin-left: -30px;
+		margin-right: -30px;
+		overflow: hidden;
+
+		@include break-medium {
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+			overflow: auto;
+		}
 	}
+
+	+ .plans-grid__details-toggle-button {
+		margin-top: 60px;
+	}
+}
+
+.plans-grid__details-heading {
 	.gutenboarding-title {
 		color: var( --studio-black );
 		margin-bottom: 40px;
@@ -53,8 +74,4 @@
 	svg {
 		margin-left: 2px;
 	}
-}
-
-.plans-grid__details {
-	margin-bottom: 120px;
 }
