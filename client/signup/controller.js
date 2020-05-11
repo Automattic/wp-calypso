@@ -50,22 +50,26 @@ const removeWhiteBackground = function () {
 
 export default {
 	redirectTests( context, next ) {
-		waitForData( {
-			geo: () => requestGeoLocation(),
-		} )
-			.then( ( { geo } ) => {
-				const countryCode = geo.data.body.country_short;
-				if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-					window.location = window.location.origin + '/new';
-				} else {
+		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else {
+			waitForData( {
+				geo: () => requestGeoLocation(),
+			} )
+				.then( ( { geo } ) => {
+					const countryCode = geo.data.body.country_short;
+					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+						window.location = window.location.origin + '/new';
+					} else {
+						removeWhiteBackground();
+						next();
+					}
+				} )
+				.catch( () => {
 					removeWhiteBackground();
 					next();
-				}
-			} )
-			.catch( () => {
-				removeWhiteBackground();
-				next();
-			} );
+				} );
+		}
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
