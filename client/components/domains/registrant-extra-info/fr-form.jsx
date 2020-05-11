@@ -223,22 +223,18 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				return map( uniq( validationErrors.sirenSiret ?? [] ), renderValidationError );
 			}
 
-            let sirenSiretValidationMessage = null;
-            if ( validationErrors.sirenSiret ) {
-                if (validationErrors.sirenSiret.indexOf('checksum') >= 0) {
-                    sirenSiretValidationMessage = renderValidationError(
-                        translate('This is not a valid SIREN/SIRET number')
-                    );
-                } else {
-                    sirenSiretValidationMessage = renderValidationError(
-                        translate(
-                            'The SIREN/SIRET field must be either a ' +
-                            '9 digit SIREN number, or a 14 digit SIRET number'
-                        )
-                    )
-                }
-            }
-            return sirenSiretValidationMessage;
+			if ( validationErrors.sirenSiret ) {
+				if ( validationErrors.sirenSiret.indexOf( 'checksum' ) >= 0 ) {
+					return renderValidationError( translate( 'This is not a valid SIREN/SIRET number' ) );
+				}
+
+				return renderValidationError(
+					translate(
+						'The SIREN/SIRET field must be either a ' +
+							'9 digit SIREN number, or a 14 digit SIRET number'
+					)
+				);
+			}
 		};
 
 		const sirenSiretIsError = () => {
@@ -253,7 +249,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				return false;
 			}
 
-			return Boolean( sirenSiretValidationMessage );
+			return Boolean( sirenSiretValidationMessage() );
 		};
 
 		const trademarkNumberStrings = {
