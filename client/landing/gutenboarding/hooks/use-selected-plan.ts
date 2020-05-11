@@ -10,7 +10,7 @@ import { STORE_KEY as PLANS_STORE } from '../stores/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
 
-export default function useSelectedPlan( { withDefault = true } = {} ) {
+export function useSelectedPlan( { withDefault = true } = {} ) {
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	const planPath = usePlanRouteParam();

@@ -12,7 +12,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import PlansGrid from '../../components/plans/plans-grid';
 import SignupForm from '../../components/signup-form';
 import Link from '../../components/link';
-import useSelectedPlan from '../../hooks/use-selected-plan';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { STORE_KEY as PLANS_STORE } from '../../stores/plans';

@@ -20,7 +20,7 @@ import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import useSelectedPlan from '../../hooks/use-selected-plan';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,

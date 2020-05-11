@@ -22,7 +22,7 @@ import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
-import useSelectedPlan from '../../hooks/use-selected-plan';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import { isEnabled } from '../../../../config';
 import './style.scss';

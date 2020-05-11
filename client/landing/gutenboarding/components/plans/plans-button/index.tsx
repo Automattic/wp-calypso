@@ -15,7 +15,7 @@ import config from 'config';
 import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
 import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import PlansModal from '../plans-modal';
-import useSelectedPlan from '../../../hooks/use-selected-plan';
+import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 
 /**
  * Style dependencies
