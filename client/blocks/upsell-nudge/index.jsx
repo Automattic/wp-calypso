@@ -94,24 +94,12 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	let upsellHref = href;
-
 	if ( ! href && siteSlug && canUserUpgrade ) {
 		if ( customerType ) {
-			upsellHref = `/plans/${ siteSlug }?customerType=${ customerType }`;
+			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
 		}
 
-		const baseUrl = `/plans/${ siteSlug }`;
-
-		if ( feature || plan ) {
-			upsellHref = addQueryArgs(
-				{
-					feature,
-					plan,
-				},
-				baseUrl
-			);
-		}
+		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
 	}
 
 	const classes = classnames(
@@ -138,7 +126,7 @@ export const UpsellNudge = ( {
 			feature={ feature }
 			forceHref={ forceHref }
 			horizontal={ horizontal }
-			href={ upsellHref }
+			href={ href }
 			icon="star"
 			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			list={ list }
