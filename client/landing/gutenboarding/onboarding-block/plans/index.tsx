@@ -36,7 +36,7 @@ export default function PlansStep() {
 	} ) );
 
 	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		createSite( username, freeDomainSuggestion, bearerToken );
+		createSite( username, freeDomainSuggestion, bearerToken, plan.getStoreSlug() );
 	};
 
 	return (
