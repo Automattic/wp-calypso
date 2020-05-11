@@ -10,17 +10,19 @@ import { useState } from '@wordpress/element';
 import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
 import { registerPlugin } from '@wordpress/plugins';
 import { Tip } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
 import tips from './tips';
 
-function getTipByTerm( searchTerm, random = false ) {
+function ContextualTip( { searchTerm, random = false } ) {
 	if ( ! searchTerm ) {
-		return;
+		return null;
 	}
 
 	if ( ! tips.length ) {
-		return;
+		return null;
 	}
 
 	const normalizedSearchTerm = deburr( lowerCase( searchTerm ) ).replace( /^\//, '' );
@@ -32,16 +34,14 @@ function getTipByTerm( searchTerm, random = false ) {
 	);
 
 	if ( ! foundTips.length ) {
-		return;
+		return null;
 	}
 
 	const index = random ? Math.floor( Math.random() * foundTips.length ) : 0;
 	return <Tip> { get( foundTips, [ index, 'description' ] ) }</Tip>;
 }
 
-/* eslint-enable import/no-extraneous-dependencies */
-
-const EnrichInserterMenu = function () {
+const ContextualTips = function () {
 	const [ debouncedFilterValue, setFilterValue ] = useState( '' );
 
 	const debouncedSetFilterValue = debounce( setFilterValue, 400 );
@@ -57,22 +57,14 @@ const EnrichInserterMenu = function () {
 					debouncedSetFilterValue( filterValue );
 				}
 
-				const tip = getTipByTerm( filterValue );
-
-				return tip ? (
-					tip
-				) : (
-					/* eslint-disable wpcalypso/jsx-classname-namespace */
-					<p className="block-editor-inserter__no-results">{ __( 'No blocks found.' ) }</p>
-				);
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
+				return <ContextualTip searchTerm={ filterValue } />;
 			} }
 		</InserterMenuExtension>
 	);
 };
 
-registerPlugin( 'enrich-inserter-menu', {
+registerPlugin( 'insert-menu-contextual-tips', {
 	render() {
-		return <EnrichInserterMenu />;
+		return <ContextualTips />;
 	},
 } );
