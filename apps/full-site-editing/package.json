@@ -54,7 +54,7 @@
 		"build:premium-content": "check-npm-client && NODE_ENV=production yarn run premium-content",
 		"block-inserter-modifications": "check-npm-client && npm-run-all --parallel block-inserter-modifications-*",
 		"block-inserter-modifications-new-blocks-showcase": "check-npm-client && calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
-		"block-inserter-modifications-contextual-tips": "check-npm-client && calypso-build --source='block-inserter-modifications/tips'",
+		"block-inserter-modifications-contextual-tips": "check-npm-client && calypso-build --source='block-inserter-modifications/contextual-tips'",
 		"dev:block-inserter-modifications": "check-npm-client && yarn run block-inserter-modifications",
 		"build:block-inserter-modifications": "check-npm-client && NODE_ENV=production yarn run block-inserter-modifications",
 		"dev": "check-npm-client && node bin/npm-run-build.js --dev",

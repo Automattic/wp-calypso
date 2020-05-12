@@ -13,8 +13,8 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Internal dependencies
  */
-import ContextualTip from './tips/contextual-tip';
-import './tips/style.scss';
+import ContextualTip from './contextual-tips/contextual-tip';
+import './contextual-tips/style.scss';
 
 const ContextualTips = function () {
 	const [ debouncedFilterValue, setFilterValue ] = useState( '' );
