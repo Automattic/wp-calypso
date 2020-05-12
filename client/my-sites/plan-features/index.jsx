@@ -582,7 +582,6 @@ export class PlanFeatures extends Component {
 			cartItemForPlan,
 			checkoutUrl,
 			siteIsPrivateAndGoingAtomic,
-			productSlug,
 		} = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
@@ -601,16 +600,7 @@ export class PlanFeatures extends Component {
 				// Let signup do its thing
 				return;
 			}
-			if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-				// When coming soon feature is enabled, we don't want to show any warnings
-				page( checkoutUrlWithArgs );
-				return;
-			}
-			this.setState( {
-				checkoutUrl: checkoutUrlWithArgs,
-				choosingPlanSlug: productSlug,
-				showingSiteLaunchDialog: true,
-			} );
+			page( checkoutUrlWithArgs );
 			return;
 		}
 
