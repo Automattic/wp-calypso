@@ -379,7 +379,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
+		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		// 'subdomain' flow coming from .blog landing pages
@@ -402,7 +402,8 @@ class DomainsStep extends React.Component {
 			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
+			'blog' === get( signupDependencies, 'siteType' ) ||
+			'blog' === siteType
 		) {
 			return true;
 		}
