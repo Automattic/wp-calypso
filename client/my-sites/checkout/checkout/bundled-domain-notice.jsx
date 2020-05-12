@@ -57,22 +57,15 @@ export default function BundledDomainNotice( { cart } ) {
 	);
 
 	const oneYearCopy = translate(
-		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.',
-		{
-			context: 'checkout',
-		}
+		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.'
 	);
 	const twoYearCopy = translate(
-		'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.',
-		{
-			context: 'checkout',
-		}
+		'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.'
 	);
 	const afterFirstYear = translate(
 		'After the first year, you’ll continue to have access to your WordPress.com plan features but will need to renew the domain name.',
 		{
 			comment: 'After the first year of the bundled domain...',
-			context: 'checkout',
 		}
 	);
 	const registrationLink = translate(
@@ -80,7 +73,6 @@ export default function BundledDomainNotice( { cart } ) {
 		{
 			comment:
 				'The custom domain here is a free bundled domain. "To select" can be replaced with "to register" or "to claim".',
-			context: 'checkout',
 			components: {
 				domainRegistrationLink,
 			},
