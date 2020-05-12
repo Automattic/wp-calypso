@@ -96,7 +96,7 @@ export class ManagedContactDetailsFormFields extends Component {
 				getMainFieldValues(
 					newState.form,
 					this.props.countryCode,
-					this.state.phoneCountryCode,
+					newState.phoneCountryCode,
 					this.props.hasCountryStates
 				)
 			);
