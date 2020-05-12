@@ -122,7 +122,7 @@
 	}
 
 	p {
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 
 		@include breakpoint( '>660px' ) {
 			font-size: 14px;
@@ -131,7 +131,7 @@
 
 	a,
 	button {
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 
 		@include breakpoint( '>660px' ) {
 			font-size: 14px;
@@ -405,7 +405,7 @@
 	font-style: italic;
 
 	@include breakpoint( '>660px' ) {
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 }
 

@@ -51,7 +51,7 @@
 	}
 
 	@include breakpoint( '>480px' ) {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 	}
 }
 

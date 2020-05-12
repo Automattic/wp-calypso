@@ -39,7 +39,7 @@ Button.propTypes = {
 const CallToAction = styled.button`
 	display: block;
 	width: ${ ( props ) => ( props.fullWidth ? '100%' : 'auto')  };
-	font-size: 16px;
+	font-size: var( --font-body );
 	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '3px')  };
 	padding: ${ ( props ) => props.padding };
 	background: ${ getBackgroundColor };

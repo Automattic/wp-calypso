@@ -44,7 +44,7 @@
 }
 
 .help__support-link-title {
-	font-size: 16px;
+	font-size: var( --font-body );
 	color: var( --color-primary );
 	@include breakpoint( '>660px' ) {
 		font-size: 21px;

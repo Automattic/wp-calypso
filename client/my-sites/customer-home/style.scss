@@ -21,6 +21,7 @@
 .customer-home__heading {
 	display: flex;
 	border-bottom: 1px solid var( --color-neutral-5 );
+	font-size: var( --font-title-small );
 
 	@include breakpoint( '<660px' ) {
 		padding-right: 16px;
@@ -84,7 +85,7 @@
 
 .customer-home__section-heading {
 	font-family: 'Recoleta', serif;
-	font-size: 1.25rem;
+	font-size: var( --font-title-small );
 	margin: 32px 0 16px;
 
 	@include breakpoint( '<660px' ) {
@@ -101,7 +102,7 @@
 .customer-home__main .card-heading,
 .customer-home__main .foldable-card__header {
 	margin-top: 0;
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 600;
 }
 

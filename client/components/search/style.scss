@@ -65,7 +65,7 @@
 		height: 36px;
 		.search__input {
 			height: 36px;
-			font-size: 12px;
+			font-size: var( --font-body-extra-small );
 		}
 
 		.search__open-icon {
@@ -161,7 +161,7 @@
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
-		font-size: 16px;
+		font-size: var( --font-body );
 		border-radius: inherit;
 		&::before {
 			@include long-content-fade(

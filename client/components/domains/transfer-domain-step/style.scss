@@ -156,7 +156,7 @@
 		color: var( --color-neutral-50 );
 		align-items: center;
 		display: flex;
-		font-size: 16px;
+		font-size: var( --font-body );
 		justify-content: space-between;
 	}
 
@@ -198,7 +198,7 @@
 }
 
 .transfer-domain-step__lock-status {
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	display: flex;
 	align-items: center;
 	margin-left: 10px;
@@ -291,6 +291,6 @@ input {
 
 		color: var( --color-neutral-70 );
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 }

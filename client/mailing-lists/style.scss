@@ -52,12 +52,12 @@
 	}
 
 	h1 {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		line-height: 1.2;
 		color: var( --color-neutral-70 );
 
 		@include breakpoint( '>480px' ) {
-			font-size: 32px;
+			font-size: var( --font-title-large );
 		}
 	}
 

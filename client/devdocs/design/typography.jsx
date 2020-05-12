@@ -57,7 +57,7 @@ export default class Typography extends React.PureComponent {
 							{ '\n\t' }
 							font-family: $sans;
 							{ '\n\t' }
-							font-size: 16px;
+							font-size: var( --font-body );
 							{ '\n\t' }
 							font-weight: 400;
 							{ '\n\t' }

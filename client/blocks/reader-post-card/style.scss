@@ -84,7 +84,7 @@
 			.reader-post-card__title .reader-post-card__title-link {
 				color: var( --color-text-inverted );
 				display: inline;
-				font-size: 12px;
+				font-size: var( --font-body-extra-small );
 				letter-spacing: 0.01em;
 			}
 
@@ -369,7 +369,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
-		font-size: 32px !important;
+		font-size: var( --font-title-large ) !important;
 		line-height: 32px !important;
 	}
 }
@@ -442,7 +442,7 @@
 }
 
 .reader-post-card .reader-excerpt {
-	font-size: 16px;
+	font-size: var( --font-body );
 	line-height: 1.55;
 	font-weight: 400;
 	margin-top: 9px;

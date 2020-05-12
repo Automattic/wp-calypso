@@ -20,7 +20,7 @@
 
 	p {
 		color: var( --color-neutral-70 );
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		margin-bottom: 0;
 
 		@include breakpoint( '>960px' ) {

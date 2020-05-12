@@ -262,7 +262,7 @@ const CheckoutSummaryTitleLink = styled.button`
 	border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
 	color: ${( props ) => props.theme.colors.textColor};
 	display: flex;
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: ${( props ) => props.theme.weights.bold};
 	justify-content: space-between;
 	padding: 20px 23px 20px 14px;
@@ -363,7 +363,7 @@ const UpsellWrapperUI = styled.div`
 
 		.section-header__label {
 			color: ${( props ) => props.theme.colors.textColor};
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 	}
 
@@ -450,7 +450,7 @@ const CheckoutTermsUI = styled.div`
 	}
 
 	p {
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		margin: 0;
 		word-break: break-word;
 	}

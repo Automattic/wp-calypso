@@ -4,13 +4,13 @@
 	max-width: 720px;
 
 	@include breakpoint( '>800px' ) {
-		font-size: 16px;
+		font-size: var( --font-body );
 		padding: 20px 0;
 		width: 720px;
 	}
 
 	&__title {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 
 		@include breakpoint( '<660px' ) {
 			text-align: center;

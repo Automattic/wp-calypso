@@ -3,7 +3,7 @@ $devdocs-max-width: 720px;
 // Sidebar Title
 .devdocs__title {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 24px;
+	font-size: var( --font-title-medium );
 	padding: 24px;
 }
 
@@ -253,7 +253,7 @@ $devdocs-max-width: 720px;
 		font-family: $code;
 		text-decoration: underline;
 		font-weight: bold;
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 
 	.docs-selectors__result-description {
@@ -262,7 +262,7 @@ $devdocs-max-width: 720px;
 
 	.docs-selectors__result-io {
 		display: none;
-		font-size: 16px;
+		font-size: var( --font-body );
 
 		.docs-selectors__result-arguments {
 			flex: 3;
@@ -341,7 +341,7 @@ $devdocs-max-width: 720px;
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
 	margin: 32px 20px;
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-family: $serif;
 
 	@include breakpoint( '>660px' ) {
@@ -373,12 +373,12 @@ $devdocs-max-width: 720px;
 	}
 
 	h2 {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		color: var( --color-neutral-70 );
 	}
 
 	h3 {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 	}
 
 	p,

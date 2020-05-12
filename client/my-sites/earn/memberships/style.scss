@@ -39,7 +39,7 @@
 }
 
 .memberships__onboarding-header {
-	font-size: 24px;
+	font-size: var( --font-title-medium );
 	margin-bottom: 24px;
 }
 .memberships__onboarding-paragraph {
@@ -111,7 +111,7 @@
 	@include breakpoint( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 }
 
@@ -160,7 +160,7 @@
 
 .memberships__subscriber-username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
@@ -187,7 +187,7 @@
 
 .memberships__subscriber-subscribed {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	margin-top: 4px;
 }
 
@@ -216,7 +216,7 @@
 }
 .memberships__products-product-price {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: var( --font-body );
 	line-height: 1.5;
 }
 .memberships__products-product-title {
@@ -228,7 +228,7 @@
 	color: var( --color-neutral-30 );
 	padding-bottom: 12px;
 	padding-top: 24px;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	line-height: 1.6;
 	font-style: italic;
 	text-align: center;

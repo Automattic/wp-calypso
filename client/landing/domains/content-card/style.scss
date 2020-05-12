@@ -8,7 +8,7 @@
 		margin-bottom: 1em;
 
 		@include breakpoint( '<660px' ) {
-			font-size: 24px;
+			font-size: var( --font-title-medium );
 		}
 	}
 
@@ -24,7 +24,7 @@
 		}
 
 		@include breakpoint( '<660px' ) {
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 	}
 
@@ -35,7 +35,7 @@
 		margin-bottom: 16px;
 
 		@include breakpoint( '<660px' ) {
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 	}
 

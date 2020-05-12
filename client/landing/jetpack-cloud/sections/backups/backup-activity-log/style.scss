@@ -17,7 +17,7 @@
 	// use sub-section styling at mobile sizes
 	@include breakpoint( '<660px' ) {
 		h2 {
-			font-size: 16px;
+			font-size: var( --font-body );
 			font-weight: 600;
 			line-height: 23px;
 		}

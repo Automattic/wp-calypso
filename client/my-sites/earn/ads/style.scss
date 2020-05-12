@@ -67,7 +67,7 @@
 	@include breakpoint( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 }
 
@@ -121,7 +121,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&:first-child, &:last-child {
-			font-size: 12px;
+			font-size: var( --font-body-extra-small );
 		}
 	}
 }

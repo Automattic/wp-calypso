@@ -234,15 +234,15 @@
 
 .migrate__section-header {
 	.formatted-header__title {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		@include breakpoint('>660px') {
-			font-size: 32px;
+			font-size: var( --font-title-large );
 		}
 	}
 
 	.formatted-header__subtitle {
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 }
 

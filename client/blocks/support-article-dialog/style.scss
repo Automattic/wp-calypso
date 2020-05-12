@@ -81,7 +81,7 @@
 	}
 
 	@include breakpoint( '480px-960px' ) {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		line-height: 40px;
 	}
 

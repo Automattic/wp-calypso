@@ -36,7 +36,7 @@
 .rewind-flow__rewind-config-editor-label {
 	align-items: center;
 	display: flex;
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: normal;
 	margin-bottom: 15px;
 
@@ -72,7 +72,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	a,
 	h4,
 	p {
-		font-size: 16px;
+		font-size: var( --font-body );
 	}
 
 	// this allows the gridicon and text to align on their centers
@@ -87,7 +87,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 
 // when the reminder is default make the header more bold
 .rewind-flow-notice__title-reminder h4 {
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: bold;
 }
 
@@ -130,17 +130,17 @@ a.rewind-flow-notice__title-warning:visited {
 
 	p {
 		color: var( --color-neutral-light );
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		margin: 0;
 	}
 }
 
 .rewind-flow__info {
-	font-size: 16px;
+	font-size: var( --font-body );
 }
 
 .rewind-flow__cta {
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: bold;
 }
 

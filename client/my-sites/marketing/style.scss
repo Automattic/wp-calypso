@@ -827,7 +827,7 @@
 	display: inline-block;
 	margin: 8px 8px 0 0;
 	cursor: default;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	border-radius: 3px;
 	color: #777;
 	background: #f8f8f8;
@@ -968,7 +968,7 @@
 
 		.sharing-buttons-preview-button {
 			border-width: 1px 1px 2px;
-			font-weight: 500;
+			font-weight: 600;
 			box-shadow: none;
 			box-sizing: border-box;
 			line-height: 1;
@@ -1026,7 +1026,7 @@
 }
 
 .sharing-buttons-preview__panel-heading {
-	font-size: 20px;
+	font-size: var( --font-title-small );
 	font-weight: normal;
 	color: var( --color-neutral-70 );
 }

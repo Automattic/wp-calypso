@@ -28,10 +28,10 @@
 		margin-bottom: 16px;
 	}
 	h1 {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 	}
 	h2 {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 	}
 	h3 {
 		font-size: 21px;
@@ -80,7 +80,7 @@
 	background: var( --color-surface );
 	color: var( --color-neutral-light );
 	cursor: pointer;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	text-transform: uppercase;
 
 	&:focus {

@@ -22,7 +22,7 @@
 }
 
 .tools__header-description {
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 400;
 }
 
@@ -139,7 +139,7 @@
 
 	.google-voucher__initial-step .purchase-detail__button {
 		float: right;
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		line-height: 1;
 		padding: 7px;
 	}

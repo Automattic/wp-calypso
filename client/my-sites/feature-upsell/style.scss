@@ -54,7 +54,7 @@ $feature-upsell-break-at: '1040px';
 }
 
 .feature-upsell__header-section {
-	font-size: 32px;
+	font-size: var( --font-title-large );
 	line-height: 1;
 	font-weight: 400;
 	margin-top: 40px;
@@ -66,11 +66,11 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	@include breakpoint( '<660px' ) {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 	}
 
 	&.is-bold {
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	&.is-left {
@@ -78,7 +78,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&.is-h4 {
-		font-size: 20px;
+		font-size: var( --font-title-small );
 		@include breakpoint( '<1280px' ) {
 			&.is-h4 {
 				font-size: 18px;
@@ -87,7 +87,7 @@ $feature-upsell-break-at: '1040px';
 
 		//@include breakpoint( '<660px' ) {
 		//	&.is-h4 {
-		//		font-size: 16px;
+		//		font-size: var( --font-body );
 		//	}
 		//}
 	}
@@ -102,12 +102,12 @@ $feature-upsell-break-at: '1040px';
 
 	&-button {
 		display: block;
-		font-size: 16px;
+		font-size: var( --font-body );
 		padding: 14px 48px;
 		line-height: 1.2;
 
 		@include breakpoint( '<1280px' ) {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 		}
 
 		@include breakpoint( '<660px' ) {
@@ -217,11 +217,11 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-header.is-title {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 		}
 	}
 
@@ -240,7 +240,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-content {
-		font-size: 16px;
+		font-size: var( --font-body );
 		line-height: 1.625;
 		margin-top: 20px;
 		@include breakpoint( '<660px' ) {
@@ -292,7 +292,7 @@ $feature-upsell-break-at: '1040px';
 		flex: 0;
 		flex-basis: 340px;
 		margin-left: 32px;
-		font-size: 16px;
+		font-size: var( --font-body );
 		line-height: 1.625;
 
 		@include breakpoint( '<1280px' ) {
@@ -342,16 +342,16 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-name {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		font-weight: 600;
 		color: var( --color-neutral-60 );
 		@include breakpoint( '<1280px' ) {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 		}
 	}
 
 	&-description {
-		font-size: 16px;
+		font-size: var( --font-body );
 		line-height: 1.625;
 		margin-top: 10px;
 		@include breakpoint( '<660px' ) {
@@ -505,7 +505,7 @@ $feature-upsell-break-at: '1040px';
 		margin: 11px 0 0;
 
 		@include breakpoint( '<1040px' ) {
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 	}
 

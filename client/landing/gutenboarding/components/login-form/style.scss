@@ -7,14 +7,14 @@
 	
 	.components-modal__header {
 		.components-modal__header-heading {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 			font-weight: normal;
 		}
 	}
 
 	.components-text-control__input {
 		padding: 7px 14px;
-		font-size: 16px;
+		font-size: var( --font-body );
 		line-height: 1.5;
 	}
 

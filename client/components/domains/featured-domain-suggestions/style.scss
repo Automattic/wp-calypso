@@ -10,7 +10,7 @@
 
 	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
 		.domain-suggestion__action {
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 	}
 
@@ -77,13 +77,13 @@
     }
 
     .domain-registration-suggestion__title {
-		font-size: 20px;
+		font-size: var( --font-title-small );
 		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
 
 		@include breakpoint( '>480px' ) {
-			font-size: 24px;
+			font-size: var( --font-title-medium );
 			margin-bottom: 0.125em;
 		}
 	}
@@ -104,7 +104,7 @@
 	.domain-registration-suggestion__progress-bar {
 		align-items: center;
 		display: flex;
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		margin-top: 10px;
 		order: 2;
 
@@ -120,7 +120,7 @@
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;

@@ -37,7 +37,7 @@ $illustration-height: 250px;
 
 			@include break-small {
 				margin-top: unset;
-				font-size: 32px;
+				font-size: var( --font-title-large );
 			}
 		}
 	}

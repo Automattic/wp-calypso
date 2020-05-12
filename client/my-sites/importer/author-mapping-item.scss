@@ -21,7 +21,7 @@
 		width: 100%;
 
 		@include breakpoint( '<480px' ) {
-			font-size: 12px;
+			font-size: var( --font-body-extra-small );
 		}
 	}
 }

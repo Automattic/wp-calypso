@@ -59,7 +59,7 @@
 	.gutenboarding-title {
 		color: var( --studio-black );
 		margin-bottom: 40px;
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		line-height: 40px;
 		letter-spacing: 0.2px;
 	}
@@ -69,7 +69,7 @@
 	display: block;
 	width: 100%;
 	height: 60px;
-	font-size: 16px;
+	font-size: var( --font-body );
 	line-height: 19px;
 	letter-spacing: 0.2px;
 	border: 1px solid var( --studio-gray-5 );

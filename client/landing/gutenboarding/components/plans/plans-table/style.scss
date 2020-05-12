@@ -91,7 +91,7 @@
 
 .plan-item__name {
 	font-weight: 700;
-	font-size: 20px;
+	font-size: var( --font-title-small );
 	line-height: 24px;
 	display: inline-block;
 }
@@ -111,7 +111,7 @@
 
 .plan-item__price-amount {
 	font-weight: 600;
-	font-size: 32px;
+	font-size: var( --font-title-large );
 	line-height: 24px;
 
 	&[data-is-loading='true'] {
@@ -121,7 +121,7 @@
 }
 
 .plan-item__price-note {
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	line-height: 19px;
 	letter-spacing: -0.4px;
 	color: var( --studio-gray-40 );

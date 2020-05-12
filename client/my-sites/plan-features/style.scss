@@ -264,7 +264,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 0.7;
 
 	@include breakpoint( '<960px' ) {
-		font-size: 20px;
+		font-size: var( --font-title-small );
 	}
 }
 
@@ -324,7 +324,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-timeframe {
 	margin-bottom: 1.4em;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	font-style: italic;
 	font-weight: 400;
 	color: var( --color-text-subtle );
@@ -446,7 +446,7 @@ $plan-features-sidebar-width: 272px;
 	color: var( --color-neutral-70 );
 
 	@include breakpoint( '<960px' ) {
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 	}
 
 	@include breakpoint( '<1040px' ) {
@@ -859,7 +859,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__header-title {
 		color: var( --color-text );
 		font-weight: 600;
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		margin-bottom: 6px;
 	}
 

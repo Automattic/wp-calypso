@@ -7,7 +7,7 @@
 
 	.reading-widget__heading {
 		h2 {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 			margin-bottom: 16px;
 		}
 
@@ -37,7 +37,7 @@
 
 			span {
 				color: var( --color-neutral-70 );
-				font-size: 12px;
+				font-size: var( --font-body-extra-small );
 			}
 		}
 	}

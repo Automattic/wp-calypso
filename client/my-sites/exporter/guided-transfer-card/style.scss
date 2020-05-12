@@ -72,7 +72,7 @@
 .guided-transfer-card__in-progress {
 	padding-top: 32px;
 	padding-bottom: 32px;
-	font-size: 16px;
+	font-size: var( --font-body );
 	text-align: center;
 
 	@include breakpoint( '>660px' ) {
@@ -98,7 +98,7 @@
 }
 
 .guided-transfer-card__in-progress-title {
-	font-size: 24px;
+	font-size: var( --font-title-medium );
 	color: var( --color-neutral-70 );
 }
 

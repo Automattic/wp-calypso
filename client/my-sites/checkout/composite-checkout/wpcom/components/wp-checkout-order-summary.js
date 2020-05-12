@@ -115,7 +115,7 @@ const CheckoutSummaryFeatures = styled.div`
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: ${( props ) => props.theme.weights.normal};
 	margin-bottom: 4px;
 `;

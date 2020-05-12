@@ -18,7 +18,7 @@
 
 	.mailchimp__getting-started-list-header {
 		font-weight: 400;
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		line-height: 1.2em;
 		margin-bottom: 16px;
 	}
@@ -36,7 +36,7 @@
 
 .mailchimp__getting-started-subtitle-text {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	line-height: 18px;
 	padding-bottom: 4px;
 }
@@ -120,7 +120,7 @@
 }
 
 .mailchimp__setup-dialog-title {
-	font-size: 24px;
+	font-size: var( --font-title-medium );
 }
 
 .setup-steps__login-title {
@@ -146,13 +146,13 @@
 }
 
 .setup-steps__campaign-defaults-title {
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 600;
 	margin-bottom: 8px;
 }
 
 .setup-steps__mailchimp-api-intro-notice {
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 600;
 	margin-bottom: 16px;
 }
@@ -235,7 +235,7 @@
 		0 1px 2px var( --color-neutral-0 );
 	flex-grow: 0;
 	width: 255px;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	background: var( --color-surface );
 
 	@include breakpoint( '<960px' ) {
@@ -288,7 +288,7 @@
 
 .mailchimp__header-description {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	line-height: 18px;
 }
 

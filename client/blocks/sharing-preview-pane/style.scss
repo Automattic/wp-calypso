@@ -116,13 +116,13 @@
 	font-family: $sans;
 
 	.sharing-preview-pane__title {
-		font-size: 16px;
+		font-size: var( --font-body );
 		font-weight: normal;
 		margin: 0;
 	}
 
 	.sharing-preview-pane__description {
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 	}
 
 	@include breakpoint( '>660px' ) {

@@ -17,7 +17,7 @@
 	}
 
 	@include breakpoint( '<960px' ) {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 	}
 }
 
@@ -51,7 +51,7 @@
 .plan-price__fraction,
 .plan-price__tax-amount {
 	vertical-align: super;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 }
 
 .plan-price.is-discounted .plan-price__currency-symbol {

@@ -11,7 +11,7 @@
 
 	.edit__transfer-text-fail {
 		font-size: 18px;
-		font-weight: 500;
+		font-weight: 600;
 		margin-bottom: 1em;
 	}
 
@@ -65,7 +65,7 @@
 
 	.domain-status__card {
 		h2 {
-			font-size: 32px;
+			font-size: var( --font-title-large );
 			overflow: hidden;
 			text-overflow: ellipsis;
 
@@ -74,13 +74,13 @@
 					font-size: 28px;
 				}
 				&.mobile-l {
-					font-size: 24px;
+					font-size: var( --font-title-medium );
 				}
 				&.mobile-xl {
-					font-size: 20px;
+					font-size: var( --font-title-small );
 				}
 				&.mobile-xxl {
-					font-size: 16px;
+					font-size: var( --font-body );
 				}
 			}
 
@@ -89,19 +89,19 @@
 					font-size: 28px;
 				}
 				&.desktop-l {
-					font-size: 24px;
+					font-size: var( --font-title-medium );
 				}
 				&.desktop-xl {
-					font-size: 20px;
+					font-size: var( --font-title-small );
 				}
 				&.desktop-xxl {
-					font-size: 16px;
+					font-size: var( --font-body );
 				}
 			}
 		}
 
 		> .domain-status__icon {
-			font-size: 16px;
+			font-size: var( --font-body );
 			display: flex;
 			align-items: center;
 			border-bottom: 0;

@@ -46,7 +46,7 @@
 
 .people-profile__username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: var( --font-body );
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
@@ -78,7 +78,7 @@
 
 .people-profile__subscribed {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	margin-top: 4px;
 }
 

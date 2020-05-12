@@ -230,14 +230,14 @@
 				height: 32px !important;
 				width: 32px !important;
 				line-height: 32px !important;
-				font-size: 32px !important;
+				font-size: var( --font-title-large ) !important;
 
 				.gridicon {
 					@include breakpoint( '<660px' ) {
 						height: 32px !important;
 						width: 32px !important;
 						line-height: 32px !important;
-						font-size: 32px !important;
+						font-size: var( --font-title-large ) !important;
 					}
 				}
 			}
@@ -434,7 +434,7 @@
 	}
 
 	@include breakpoint( '480px-960px' ) {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		line-height: 40px;
 	}
 

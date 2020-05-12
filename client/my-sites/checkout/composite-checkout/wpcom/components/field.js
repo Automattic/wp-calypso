@@ -108,7 +108,7 @@ const Input = styled.input`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
-	font-size: 16px;
+	font-size: var( --font-body );
 	border: 1px solid
 		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
 	padding: 13px ${( props ) => ( props.icon ? '60px' : '10px') } 12px 10px;

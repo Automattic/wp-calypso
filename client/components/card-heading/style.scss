@@ -22,11 +22,11 @@
 }
 
 .card-heading-32 {
-	font-size: 32px;
+	font-size: var( --font-title-large );
 }
 
 .card-heading-24 {
-	font-size: 24px;
+	font-size: var( --font-title-medium );
 }
 
 .card-heading-21 {
@@ -34,7 +34,7 @@
 }
 
 .card-heading-16 {
-	font-size: 16px;
+	font-size: var( --font-body );
 }
 
 .card-heading-14 {

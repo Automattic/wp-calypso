@@ -70,7 +70,7 @@
 
 .products__form .token-field__input,
 .products__form .token-field__token-text {
-	font-size: 16px;
+	font-size: var( --font-body );
 }
 
 .products__product-form-details-wrapper {
@@ -619,7 +619,7 @@
 	h2 {
 		margin-bottom: 0;
 		font-weight: bold;
-		font-size: 20px;
+		font-size: var( --font-title-small );
 	}
 
 	.products__product-form-variation-description {

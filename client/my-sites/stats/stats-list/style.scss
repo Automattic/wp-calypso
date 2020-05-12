@@ -26,7 +26,7 @@
 	// List item height shorter on 2-column modules
 	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: var( --font-body-extra-small );
 			line-height: 28px;
 		}
 	}
@@ -94,7 +94,7 @@
 			line-height: 28px;
 
 			span {
-				font-size: 12px;
+				font-size: var( --font-body-extra-small );
 				// Always let child elements inherit line heights
 				line-height: inherit;
 			}
@@ -256,7 +256,7 @@
 	// Icons smaller on 2col
 	@include breakpoint( '>960px' ) {
 		.stats__module-list & .stats-list__icon {
-			font-size: 20px;
+			font-size: var( --font-title-small );
 			line-height: 1.3;
 		}
 
@@ -649,12 +649,12 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		margin-right: 10px;
 	}
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .stats-list__icon {
-		font-size: 32px;
+		font-size: var( --font-title-large );
 		line-height: 32px;
 		width: 32px;
 		height: 32px;

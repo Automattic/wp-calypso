@@ -130,7 +130,7 @@ $theme-info-height: 54px;
 	padding: 18px 10px 0;
 	color: var( --color-primary-0 );
 	text-transform: uppercase;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	font-weight: 600;
 }
 
@@ -235,7 +235,7 @@ $theme-info-height: 54px;
 		cursor: pointer;
 		color: var( --color-neutral-light );
 		padding: 15px 19px;
-		font-size: 20px;
+		font-size: var( --font-title-small );
 		font-weight: 600;
 		font-weight: bold;
 

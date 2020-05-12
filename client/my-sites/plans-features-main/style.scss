@@ -89,7 +89,7 @@
 	color: var( --color-text );
 
 	@include breakpoint( '>480px' ) {
-		font-size: 24px;
+		font-size: var( --font-title-medium );
 		font-weight: 400;
 	}
 }

@@ -80,7 +80,7 @@
 	.login__header-subtitle {
 		color: var( --color-primary-10 );
 		margin-top: 1em;
-		font-size: 16px;
+		font-size: var( --font-body );
 		line-height: 24px;
 		font-weight: 400;
 	}
@@ -122,7 +122,7 @@
 		display: block;
 		font-size: 14px;
 		line-height: 1.5;
-		font-weight: 500;
+		font-weight: 600;
 		margin-bottom: 5px;
 	}
 

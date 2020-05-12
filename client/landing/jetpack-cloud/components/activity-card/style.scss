@@ -46,7 +46,7 @@
 
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
-	font-size: 16px;
+	font-size: var( --font-body );
 	word-wrap: break-word;
 
 	@include breakpoint( '>660px' ) {
@@ -71,11 +71,11 @@
 	a,
 	button.button.is-borderless.is-compact {
 		font-weight: 400;
-		font-size: 12px;
+		font-size: var( --font-body-extra-small );
 		display: flex;
 		align-items: center;
 		@include breakpoint( '>660px' ) {
-			font-size: 16px;
+			font-size: var( --font-body );
 		}
 
 		// gridicons within buttons have very specific rules for font sizes, disable them to let flex take care of it
@@ -143,6 +143,6 @@
 
 .activity-card__streams-item-title {
 	margin-bottom: 12px;
-	font-size: 12px;
+	font-size: var( --font-body-extra-small );
 	text-align: left;
 }

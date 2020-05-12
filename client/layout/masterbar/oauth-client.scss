@@ -106,7 +106,7 @@
 		box-shadow: none;
 		box-sizing: border-box;
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: 600;
 		height: 45px;
 		line-height: normal;
 		padding: 13px 40px 12px;
@@ -233,7 +233,7 @@
 			margin-top: 0;
 
 			@include breakpoint( '>480px' ) {
-				font-size: 32px;
+				font-size: var( --font-title-large );
 				margin-bottom: 65px;
 			}
 		}
@@ -249,7 +249,7 @@
 			span {
 				background-color: transparent;
 				color: var( --color-text );
-				font-size: 20px;
+				font-size: var( --font-title-small );
 				font-weight: 600;
 			}
 		}
@@ -259,7 +259,7 @@
 
 			@include breakpoint( '>660px' ) {
 				display: block;
-				font-size: 20px;
+				font-size: var( --font-title-small );
 				font-weight: 600;
 				margin: 0 0 30px;
 				text-align: center;
@@ -636,7 +636,7 @@
 
 	.logged-out-form label,
 	.login__form-userdata label {
-		font-size: 16px;
+		font-size: var( --font-body );
 		font-weight: normal;
 	}
 
@@ -667,7 +667,7 @@
 		a,
 		button {
 			border: none;
-			font-size: 16px;
+			font-size: var( --font-body );
 			font-weight: normal;
 			line-height: 3em;
 			text-align: center;
