@@ -22,7 +22,6 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -108,9 +107,8 @@ class ActivityCard extends Component {
 		const { activity, showContentLink } = this.props;
 		return showContentLink !== undefined
 			? showContentLink
-			: !! (
-					activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
-			  ) || isSuccessfulDailyBackup( activity );
+			: !! activity.streams &&
+					activity.streams.some( ( stream ) => stream.activityMedia?.available );
 	}
 
 	renderContentLink() {
