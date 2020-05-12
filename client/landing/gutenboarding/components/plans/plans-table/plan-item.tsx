@@ -35,6 +35,7 @@ export interface Props {
 	features: Array< string >;
 	domainName?: string;
 	isPopular?: boolean;
+	isFree?: boolean;
 	isSelected?: boolean;
 	onSelect: ( slug: string ) => void;
 }
@@ -45,6 +46,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	price,
 	isPopular = false,
 	isSelected = false,
+	isFree = false,
 	domainName,
 	features,
 	onSelect,
@@ -67,7 +69,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					<div className="plan-item__price-amount" data-is-loading={ ! price }>
 						{ price || nbsp }
 					</div>
-					<div className="plan-item__price-note">{ __( 'per month, billed yearly' ) }</div>
+					<div className="plan-item__price-note">
+						{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
+					</div>
 				</div>
 				<div className="plan-item__actions">
 					<Button
