@@ -190,7 +190,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		inputRef.current.innerText = siteVertical?.label || '';
 		const isFreeForm = ! siteVertical?.slug && !! siteVertical?.label.length;
 		recordVerticalSelection( getSelectedVerticalUntranslatedLabel(), isFreeForm );
-	}, [ siteVertical, inputRef ] ); //eslint-disable-line react-hooks/exhaustive-deps
+	}, [ siteVertical, inputRef, getSelectedVerticalUntranslatedLabel ] );
 
 	React.useEffect( () => {
 		if ( !! suggestions.length && isMobile ) {
