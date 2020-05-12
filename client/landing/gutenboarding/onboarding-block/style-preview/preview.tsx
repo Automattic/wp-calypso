@@ -24,18 +24,20 @@ function getFontsLoadingHTML() {
 	// matrix: regular,bold * regular,italic
 	const axis = 'ital,wght@0,400;0,700;1,400;1,700';
 
-	const head = fontPairings.reduce( ( acc, pairing ) => {
-		const query = [
+	// create a query for all fonts together
+	const query = fontPairings.reduce( ( acc, pairing ) => {
+		acc.push(
 			`family=${ encodeURI( pairing.headings ) }:${ axis }`,
-			`family=${ encodeURI( pairing.base ) }:${ axis }`,
-		];
-		const l = document.createElement( 'link' );
-		l.rel = 'stylesheet';
-		l.type = 'text/css';
-		l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
-		acc += l.outerHTML;
+			`family=${ encodeURI( pairing.base ) }:${ axis }`
+		);
 		return acc;
-	}, '' );
+	}, [] as string[] );
+
+	const l = document.createElement( 'link' );
+	l.rel = 'stylesheet';
+	l.type = 'text/css';
+	l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
+	const head = l.outerHTML;
 
 	// Chrome doesn't load the fonts in memory until they're actually used,
 	// this keeps the fonts used and ready in memory.
