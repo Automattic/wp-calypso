@@ -147,6 +147,7 @@
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
+		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
 		"resume-editing": true,

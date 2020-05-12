@@ -105,6 +105,10 @@
 	margin-bottom: 20px;
 	position: relative;
 
+	&.is-seen {
+		opacity: 0.5;
+	}
+
 	&.is-selected {
 		&::before {
 			content: '';

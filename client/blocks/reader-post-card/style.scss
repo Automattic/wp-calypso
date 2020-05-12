@@ -30,6 +30,10 @@
 		}
 	}
 
+	&.is-seen {
+		opacity: 0.5;
+	}
+
 	&.has-thumbnail {
 		.reader-featured-image {
 			flex-basis: auto;
