@@ -93,6 +93,13 @@ export const getSiteAuthorName = ( site ) => {
 	return decodeEntities( authorFullName );
 };
 
+/**
+ * Get section unseen data
+ *
+ * @param unseenStatuses for all sections
+ * @param section identifier
+ * @returns {{subsections: [], status: boolean}|*} status and subsections
+ */
 export const getSectionUnseen = ( unseenStatuses, section ) => {
 	if ( unseenStatuses && typeof unseenStatuses[ section ] !== 'undefined' ) {
 		return unseenStatuses[ section ];
@@ -101,6 +108,14 @@ export const getSectionUnseen = ( unseenStatuses, section ) => {
 	return { status: false, subsections: [] };
 };
 
+/**
+ * Whether or not a subsection has unseen content
+ *
+ * @param section data
+ * @param subSection identifier
+ *
+ * @returns {boolean|*} subsection unseen status
+ */
 export const hasSubSectionUnseen = ( section, subSection ) => {
 	if (
 		section &&
@@ -113,6 +128,13 @@ export const hasSubSectionUnseen = ( section, subSection ) => {
 	return false;
 };
 
+/**
+ * Whether or not a section has unseen content
+ *
+ * @param unseenStatuses for all sections
+ * @param section identifier
+ * @returns {boolean} section unseen status
+ */
 export const hasSectionUnseen = ( unseenStatuses, section ) => {
 	const sectionUnseen = getSectionUnseen( unseenStatuses, section );
 	return sectionUnseen.status;
