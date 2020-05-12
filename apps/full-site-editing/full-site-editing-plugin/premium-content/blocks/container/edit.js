@@ -19,10 +19,7 @@ import Inspector from './inspector';
 import StripeNudge from './stripe-nudge';
 import Context from './context';
 import apiFetch from '@wordpress/api-fetch';
-import {
-	isPriceValid,
-	minimumTransactionAmountForCurrency,
-} from '.';
+import { isPriceValid, minimumTransactionAmountForCurrency } from '.';
 
 /**
  * @typedef { import('./plan').Plan } Plan
@@ -40,7 +37,7 @@ const tabs = [
 	},
 	{
 		id: 'wall',
-		label: <span>{ __( 'Logged Out View', 'premium-content' ) }</span>,
+		label: <span>{ __( 'Non-Subscriber View', 'premium-content' ) }</span>,
 		className: 'wp-premium-content-logged-out-view',
 	},
 ];
@@ -114,10 +111,10 @@ function Edit( props ) {
 
 		const newPrice = parseFloat( attributes.newPlanPrice );
 		const minPrice = minimumTransactionAmountForCurrency( attributes.newPlanCurrency );
-		const minimumPriceNote = sprintf( __( 'Minimum allowed price is %s.', 'premium-content' ), formatCurrency(
-			minPrice,
-			attributes.newPlanCurrency
-		) );
+		const minimumPriceNote = sprintf(
+			__( 'Minimum allowed price is %s.', 'premium-content' ),
+			formatCurrency( minPrice, attributes.newPlanCurrency )
+		);
 
 		if ( newPrice < minPrice ) {
 			onError( props, minimumPriceNote );
