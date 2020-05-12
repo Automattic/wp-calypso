@@ -37,7 +37,18 @@ function enqueue_script( $filename, $in_footer = false ) {
 		$asset['version'],
 		$in_footer
 	);
+}
 
+
+/**
+ * Enqueues a submodule style by its filename.
+ *
+ * @param string  $filename  Name of the style file w/o extension.
+ * @param boolean $in_footer Whether to enqueue the style before </body> instead of in the <head> (optional).
+ *
+ * @throws RuntimeException If the asset file doesn't exist.
+ */
+function enqueue_style( $filename, $in_footer = false ) {
 	// Enqueue styles.
 	$style_file = is_rtl()
 		? $filename . '.rtl.css'
@@ -47,20 +58,24 @@ function enqueue_script( $filename, $in_footer = false ) {
 		'starter-page-templates',
 		plugins_url( 'dist/' . $style_file, __FILE__ ),
 		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file ),
+		$in_footer
 	);
 }
 
 /**
- * Enqueue script for the New Blocks Showcase submodule.
+ * Enqueue script for the Block Inserter modifications.
  */
-function enqueue_new_blocks_showcase_script() {
+function enqueue_block_inserter_modifications() {
 	/**
 	 * We're enqueuing the script in the head because we need it to run before any
 	 * blocks are registered, so they're all available for filter that sets the
 	 * "New" category.
 	 */
-	enqueue_script( 'index', false );
+	enqueue_script( 'new-blocks-showcase', false );
+
+	enqueue_script( 'tips', true );
+	enqueue_style( 'tips', true );
 }
 
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_new_blocks_showcase_script', 0 );
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );
