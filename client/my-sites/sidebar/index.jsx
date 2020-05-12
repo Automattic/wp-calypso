@@ -53,7 +53,6 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
-import { getCompletionStatus } from 'lib/checklist';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
