@@ -36,5 +36,10 @@ export default function ( { searchTerm, random = false } ) {
 	}
 
 	const index = random ? Math.floor( Math.random() * foundTips.length ) : 0;
-	return <Tip> { get( foundTips, [ index, 'description' ] ) }</Tip>;
+
+	return (
+		<div className="contextual-tip">
+			<Tip>{ get( foundTips, [ index, 'description' ] ) }</Tip>
+		</div>
+	);
 }

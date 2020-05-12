@@ -75,7 +75,7 @@ function enqueue_block_inserter_modifications() {
 	enqueue_script( 'new-blocks-showcase', false );
 
 	enqueue_script( 'tips', true );
-	enqueue_style( 'tips', true );
+	enqueue_style( 'tips', false );
 }
 
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );
