@@ -37,7 +37,6 @@ class ActivityCard extends Component {
 	};
 
 	static defaultProps = {
-		showActions: true,
 		summarize: false,
 	};
 
@@ -141,6 +140,11 @@ class ActivityCard extends Component {
 		return <a className="activity-card__detail-link">{ translate( 'Changes in this backup' ) }</a>;
 	}
 
+	shouldRenderActionButtons() {
+		const { activity, showActions } = this.props;
+		return activity.activityIsRewindable && showActions;
+	}
+
 	renderActionButton( isTopToolbar = true ) {
 		const { activity, siteSlug, translate } = this.props;
 
@@ -200,22 +204,21 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const { showActions } = this.props;
-
 		const shouldRenderContentLink = this.shouldRenderContentLink();
+		const shouldRenderActionButtons = this.shouldRenderActionButtons();
 
-		return ! ( shouldRenderContentLink || showActions ) ? null : (
+		return ! ( shouldRenderContentLink || shouldRenderActionButtons ) ? null : (
 			<>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! shouldRenderContentLink && showActions
+						! shouldRenderContentLink && shouldRenderActionButtons
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
 					{ shouldRenderContentLink && this.renderContentLink() }
-					{ showActions && this.renderActionButton( isTopToolbar ) }
+					{ shouldRenderActionButtons && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</>
 		);
