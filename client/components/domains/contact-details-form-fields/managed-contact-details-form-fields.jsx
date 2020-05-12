@@ -7,6 +7,7 @@ import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import { camelCase } from 'lodash';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/f
 import FormFieldset from 'components/forms/form-fieldset';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { countries } from 'components/phone-input/data';
-import formState from 'lib/form-state';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import getCountries from 'state/selectors/get-countries';
@@ -32,6 +32,8 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  * Style dependencies
  */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -79,76 +81,73 @@ export class ManagedContactDetailsFormFields extends Component {
 		super( props );
 		this.state = {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
-			form: {},
 		};
 	}
 
-	static getDerivedStateFromProps( props, state ) {
-		return {
-			...state,
-			...getStateFromContactDetails( props.contactDetails, props.contactDetailsErrors ),
-		};
-	}
-
-	setStateAndUpdateParent = ( newState ) => {
-		this.setState( newState, () => {
-			this.props.onContactDetailsChange(
-				getMainFieldValues(
-					newState.form,
-					this.props.countryCode,
-					newState.phoneCountryCode,
-					this.props.hasCountryStates
-				)
-			);
-		} );
+	updateParentState = ( form, phoneCountryCode ) => {
+		debug( 'setting parent state with', form );
+		this.props.onContactDetailsChange(
+			getMainFieldValues(
+				form,
+				this.props.countryCode,
+				phoneCountryCode,
+				this.props.hasCountryStates
+			)
+		);
 	};
 
 	handleFieldChange = ( event ) => {
 		const { name, value } = event.target;
-		const newState = { ...this.state };
+		let form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		let phoneCountryCode = this.state.phoneCountryCode;
 
-		if ( name === 'country-code' && value && ! newState.form.phone?.value ) {
-			newState.phoneCountryCode = value;
+		if ( name === 'country-code' && value && ! form.phone?.value ) {
+			phoneCountryCode = value;
+			this.setState( { phoneCountryCode } );
 		}
 
-		newState.form = updateFormWithContactChange( newState.form, name, value );
+		form = updateFormWithContactChange( form, name, value );
 
-		if ( name === 'country-code' ) {
-			newState.form = updateFormWithContactChange( newState.form, 'state', '', {
-				isShowingErrors: false,
-			} );
-		}
-
-		this.setStateAndUpdateParent( newState );
+		this.updateParentState( form, phoneCountryCode );
 		return;
 	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
-		const newState = { ...this.state };
+		let form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		let phoneCountryCode = this.state.phoneCountryCode;
 
 		if ( countries[ countryCode ] ) {
-			newState.phoneCountryCode = countryCode;
+			phoneCountryCode = countryCode;
+			this.setState( { phoneCountryCode } );
 		}
 
-		newState.form = updateFormWithContactChange( newState.form, 'phone', value );
-		this.setStateAndUpdateParent( newState );
+		form = updateFormWithContactChange( form, 'phone', value );
+		this.updateParentState( form, phoneCountryCode );
 		return;
 	};
 
 	getFieldProps = ( name, { customErrorMessage = null } ) => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
-		const { form } = this.state;
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		const camelName = camelCase( name );
 
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
-			disabled: getIsFieldDisabled( name ) || formState.isFieldDisabled( form, name ),
-			isError: formState.isFieldInvalid( form, name ),
-			errorMessage:
-				customErrorMessage ||
-				( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join( '\n' ),
+			disabled: getIsFieldDisabled( name ),
+			isError: !! form[ camelName ]?.errors?.length,
+			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
 			onChange: this.handleFieldChange,
-			value: formState.getFieldValue( form, name ) || '',
+			value: form[ camelName ]?.value ?? '',
 			name,
 			eventFormName,
 		};
@@ -163,7 +162,11 @@ export class ManagedContactDetailsFormFields extends Component {
 
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates } = this.props;
-		const countryCode = this.state.form.countryCode?.value ?? '';
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		const countryCode = form.countryCode?.value ?? '';
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -251,6 +254,11 @@ export class ManagedContactDetailsFormFields extends Component {
 
 	render() {
 		const { translate, contactDetailsErrors } = this.props;
+		const form = getFormFromContactDetails(
+			this.props.contactDetails,
+			this.props.contactDetailsErrors
+		);
+		debug( 'rendering with form', form );
 
 		return (
 			<FormFieldset className="contact-details-form-fields">
@@ -281,7 +289,7 @@ export class ManagedContactDetailsFormFields extends Component {
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
 					<GSuiteFields
-						countryCode={ this.state.form.countryCode?.value ?? '' }
+						countryCode={ form.countryCode?.value ?? '' }
 						countriesList={ this.props.countriesList }
 						contactDetailsErrors={ this.props.contactDetailsErrors }
 						getFieldProps={ this.getFieldProps }
@@ -313,8 +321,8 @@ export default connect( ( state, props ) => {
 	};
 } )( localize( ManagedContactDetailsFormFields ) );
 
-function getStateFromContactDetails( contactDetails, contactDetailsErrors ) {
-	const form = Object.keys( contactDetails ).reduce( ( newForm, key ) => {
+function getFormFromContactDetails( contactDetails, contactDetailsErrors ) {
+	return Object.keys( contactDetails ).reduce( ( newForm, key ) => {
 		const value = contactDetails[ key ];
 		const error = contactDetailsErrors[ key ];
 		const errors = error ? [ error ] : [];
@@ -323,13 +331,9 @@ function getStateFromContactDetails( contactDetails, contactDetailsErrors ) {
 			[ key ]: {
 				value,
 				errors,
-				isShowingErrors: true,
-				isPendingValidation: false,
-				isValidating: false,
 			},
 		};
 	}, {} );
-	return { form };
 }
 
 function updateFormWithContactChange( form, key, value, additionalProperties ) {
@@ -338,26 +342,20 @@ function updateFormWithContactChange( form, key, value, additionalProperties ) {
 		[ camelCase( key ) ]: {
 			value,
 			errors: [],
-			isShowingErrors: true,
-			isPendingValidation: false,
-			isValidating: false,
 			...( additionalProperties ?? {} ),
 		},
 	};
 }
 
 function getMainFieldValues( form, countryCode, phoneCountryCode, hasCountryStates ) {
-	const mainFieldValues = formState.getAllFieldValues( form );
+	const mainFieldValues = Object.keys( form ).reduce( ( values, key ) => {
+		return { ...values, [ key ]: form[ key ].value };
+	}, {} );
 	let state = mainFieldValues.state;
-
-	const validatedHasCountryStates =
-		mainFieldValues.countryCode === countryCode
-			? hasCountryStates
-			: !! getCountryStates( state, countryCode )?.length;
 
 	// domains registered according to ancient validation rules may have state set even though not required
 	if (
-		! validatedHasCountryStates &&
+		! hasCountryStates &&
 		( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
 			CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) )
 	) {
@@ -401,4 +399,11 @@ function GSuiteFields( {
 			/>
 		</div>
 	);
+}
+
+function getFirstError( formData ) {
+	if ( ! formData?.errors?.length ) {
+		return '';
+	}
+	return formData.errors[ 0 ];
 }
