@@ -23,7 +23,7 @@ function ScanMultisiteBody() {
 	return (
 		<Upsell
 			headerText={ translate( 'Your site does not support scan' ) }
-			bodyText={ translate( 'Scan is currently not supported on WordPress Multi-site setups.' ) }
+			bodyText={ translate( 'Scan is currently not supported on WordPress multi-site networks.' ) }
 			buttonLink={ false }
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
