@@ -4,7 +4,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import config from 'config';
 
 /**
@@ -164,4 +163,4 @@ export default connect( ( state, ownProps ) => {
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
-} )( localize( UpsellNudge ) );
+} )( UpsellNudge );

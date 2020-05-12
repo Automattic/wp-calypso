@@ -1,16 +1,3 @@
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
-
 /**
  * External dependencies
  */
@@ -20,7 +7,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { Banner } from '../index';
+import { UpsellNudge } from '../index';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -41,7 +28,7 @@ const props = {
 	title: 'banner title',
 };
 
-describe( 'Banner should have a class name corresponding to appropriate plan', () => {
+describe( 'UpsellNudge should render a Banner with a class name corresponding to appropriate plan', () => {
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
@@ -49,7 +36,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Personal', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -61,7 +48,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Premium', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -73,7 +60,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Business', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
 		} );
 	} );
