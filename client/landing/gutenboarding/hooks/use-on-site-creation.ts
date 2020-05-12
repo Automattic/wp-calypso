@@ -130,6 +130,7 @@ export default function useOnSiteCreation() {
 						...cart,
 						products: [ ...cart.products, domainProduct ],
 					} );
+					resetPlan();
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
@@ -143,6 +144,7 @@ export default function useOnSiteCreation() {
 				isNewUser: !! newUser,
 				blogId: newSite.blogid,
 			} );
+			resetPlan();
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );
 
