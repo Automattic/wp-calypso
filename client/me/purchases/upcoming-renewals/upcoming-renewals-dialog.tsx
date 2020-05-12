@@ -15,7 +15,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { getName, getRenewalPrice, purchaseType, isExpired } from 'lib/purchases';
+import { getName, getRenewalPrice, purchaseType, isExpired, isAutoRenewing } from 'lib/purchases';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { Button, Dialog } from '@automattic/components';
@@ -50,6 +50,26 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: ( purchases: Purchase[] ) => void;
+}
+
+function getExpiresText(
+	translate: ReturnType< typeof useTranslate >,
+	moment: ReturnType< typeof useLocalizedMoment >,
+	purchase: Purchase
+): TranslateResult {
+	if ( isAutoRenewing( purchase ) ) {
+		return translate( 'renews %(expiry)s', {
+			args: { expiry: moment( purchase.expiryDate ).fromNow() },
+		} );
+	}
+	if ( isExpired( purchase ) ) {
+		return translate( 'expired %(expiry)s', {
+			args: { expiry: moment( purchase.expiryDate ).fromNow() },
+		} );
+}
+	return translate( 'expires %(expiry)s', {
+		args: { expiry: moment( purchase.expiryDate ).fromNow() },
+	} );
 }
 
 const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
@@ -91,13 +111,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 			</h3>
 			<hr />
 			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
-				const expiresText = isExpired( purchase )
-					? translate( 'expired %(expiry)s', {
-							args: { expiry: moment( purchase.expiryDate ).fromNow() },
-					  } )
-					: translate( 'expires %(expiry)s', {
-							args: { expiry: moment( purchase.expiryDate ).fromNow() },
-					  } );
+				const expiresText = getExpiresText( translate, moment, purchase );
 				const onChange = () => {
 					if ( selectedPurchases.includes( purchase.id ) ) {
 						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.id ) );

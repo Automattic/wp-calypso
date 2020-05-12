@@ -21,6 +21,7 @@ import {
 	isPlan,
 	isTheme,
 	isConciergeSession,
+	isJetpackProduct,
 } from 'lib/products-values';
 import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
 
@@ -540,7 +541,7 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'Site Plan' );
 	}
 
-	if ( isDomainRegistration( purchase ) ) {
+	if ( isDomainRegistration( purchase ) || isJetpackProduct( purchase ) ) {
 		return purchase.productName;
 	}
 
@@ -584,6 +585,7 @@ export {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasIncludedDomain,
+	isAutoRenewing,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

@@ -15,6 +15,7 @@ import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	getName,
+	isAutoRenewing,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -238,6 +239,7 @@ class PurchaseNotice extends Component {
 
 		const showOtherPurchasesExpiringNotice =
 			selectedSite &&
+			! isAutoRenewing( purchase ) &&
 			renewableSitePurchases.length > 1 &&
 			renewableSitePurchases.some( ( otherPurchase ) => otherPurchase.id === purchase.id );
 

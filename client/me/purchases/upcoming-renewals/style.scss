@@ -25,7 +25,7 @@
 	&__row {
 		display: flex;
 	}
-	&__label {
+	&__label.form-label {
 		display: flex;
 		flex-grow: 1;
 		font-weight: normal;
