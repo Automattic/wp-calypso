@@ -1,4 +1,4 @@
-export const usersSchema = {
+export default {
 	type: 'array',
 	items: {
 		oneOf: [
@@ -6,7 +6,7 @@ export const usersSchema = {
 				type: 'object',
 				required: [
 					'domain',
-					'mailbox',
+					'email',
 					'first_name',
 					'last_name',
 					'product_name',
@@ -16,7 +16,7 @@ export const usersSchema = {
 				],
 				properties: {
 					domain: { type: 'string' },
-					mailbox: { type: 'string' },
+					email: { type: 'string' },
 					first_name: { type: 'string' },
 					last_name: { type: 'string' },
 					is_suspended: { type: 'boolean' },

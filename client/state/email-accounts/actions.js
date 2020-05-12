@@ -10,11 +10,10 @@ import {
 import 'state/email-accounts/init';
 import 'state/data-layer/wpcom/email-accounts';
 
-export const getEmailAccounts = ( siteId, useBuffer = true ) => {
+export const getEmailAccounts = ( siteId ) => {
 	return {
 		type: EMAIL_ACCOUNTS_REQUEST,
 		siteId,
-		useBuffer,
 	};
 };
 

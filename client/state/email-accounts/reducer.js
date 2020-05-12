@@ -13,24 +13,27 @@ import {
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { usersSchema } from './schema';
+import emailAccountsSchema from './schema';
 
-export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case EMAIL_ACCOUNTS_REQUEST_FAILURE:
-			return null;
+export const emailAccountsReducer = withSchemaValidation(
+	emailAccountsSchema,
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case EMAIL_ACCOUNTS_REQUEST_FAILURE:
+				return null;
 
-		case EMAIL_ACCOUNTS_REQUEST_SUCCESS: {
-			const {
-				response: { accounts },
-			} = action;
+			case EMAIL_ACCOUNTS_REQUEST_SUCCESS: {
+				const {
+					response: { accounts },
+				} = action;
 
-			return accounts;
+				return accounts;
+			}
 		}
-	}
 
-	return state;
-} );
+		return state;
+	}
+);
 
 export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -67,7 +70,7 @@ export default withStorageKey(
 	keyedReducer(
 		'siteId',
 		combineReducers( {
-			users: usersReducer,
+			accounts: emailAccountsReducer,
 			requesting: requestingReducer,
 			requestError: requestErrorReducer,
 		} )

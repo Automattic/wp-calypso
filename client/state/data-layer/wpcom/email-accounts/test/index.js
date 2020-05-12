@@ -12,12 +12,15 @@ import {
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { isErrorNotice } from '../test-utils';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+const isErrorNotice = ( action ) => {
+	return action && action.notice && 'is-error' === action.notice.status;
+};
+
 describe( 'wpcom-api', () => {
-	describe( 'email accounts get users request', () => {
+	describe( 'email accounts request', () => {
 		const siteId = 1,
 			action = {
 				type: EMAIL_ACCOUNTS_REQUEST,
@@ -39,7 +42,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#getEmailAccountsFailure', () => {
-			const message = 'An error has occured';
+			const message = 'An error has occurred';
 
 			test( 'should dispatch a get email accounts failure action on error', () => {
 				const resultActions = getEmailAccountsFailure( action, { message } );
@@ -79,7 +82,7 @@ describe( 'wpcom-api', () => {
 				expect( resultActions[ 1 ] ).to.eql( {
 					type: EMAIL_ACCOUNTS_REQUEST_FAILURE,
 					siteId,
-					error: { message: 'No response.' },
+					error: { message: 'Failed to retrieve your email accounts. No response was received' },
 				} );
 			} );
 		} );
