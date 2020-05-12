@@ -6,6 +6,7 @@ import { layout, plus } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { PanelBody, Button } from '@wordpress/components';
+import { __experimentalLibrary } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -56,4 +57,8 @@ const BlockPatternsMoved = () => {
 	);
 };
 
-registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
+// Gutenberg 8 includes `Library` as `@wordpres/block-editor` experimental export.
+// The experimental Library component contains the patterns in their new location.
+if ( typeof __experimentalLibrary !== 'undefined' ) {
+	registerPlugin( 'block-patterns-moved', { render: BlockPatternsMoved } );
+}

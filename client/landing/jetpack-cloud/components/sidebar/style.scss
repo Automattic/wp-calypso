@@ -39,6 +39,11 @@
 		font-weight: 400;
 	}
 
+	.sidebar__expandable-title > a {
+		display: block;
+		color: inherit;
+	}
+
 	// Footer
 	.sidebar__footer {
 		margin-top: auto;

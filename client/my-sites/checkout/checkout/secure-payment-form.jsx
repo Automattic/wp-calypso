@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
@@ -202,7 +201,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+		const { isJetpack, siteIsPrivate } = this.props;
 
 		if ( isJetpack || ! siteIsPrivate ) {
 			return;
@@ -216,18 +215,6 @@ export class SecurePaymentForm extends Component {
 			} )
 		) {
 			return;
-		}
-
-		if ( 'variant' !== abtest( 'ATPrivacy' ) ) {
-			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-			debug( 'Setting site to public because it is an Atomic plan' );
-			const response = await this.props.saveSiteSettings( selectedSiteId, {
-				blog_public: 1,
-			} );
-
-			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-				throw 'Invalid response';
-			}
 		}
 	}
 

@@ -76,6 +76,7 @@ export const createSiteDomainObject = ( domain ) => {
 		registrationDate: String( domain.registration_date ),
 		renewableUntil: String( domain.renewable_until ),
 		redeemableUntil: String( domain.redeemable_until ),
+		sslStatus: ! domain.ssl_status ? null : String( domain.ssl_status ),
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		supportsGdprConsentManagement: Boolean( domain.supports_gdpr_consent_management ),

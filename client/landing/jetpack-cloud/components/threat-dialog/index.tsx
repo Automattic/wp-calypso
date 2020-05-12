@@ -73,7 +73,7 @@ class ThreatDialog extends React.PureComponent< Props > {
 						{ action === 'fix'
 							? getThreatFix( threat.fixable )
 							: translate(
-									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}%s{{/strong}}.',
+									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site "{{strong}}%s{{/strong}}".',
 									{
 										args: [ siteName ],
 										components: {

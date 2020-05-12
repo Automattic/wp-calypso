@@ -36,6 +36,18 @@ const filterOptions = [
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
+const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
+	return isPlaceholder ? (
+		<div className="history__filters is-placeholder"></div>
+	) : (
+		<SimplifiedSegmentedControl
+			className="history__filters"
+			options={ filterOptions }
+			onSelect={ onSelect }
+		/>
+	);
+};
+
 const ScanHistoryPage = ( {
 	siteId,
 	siteName,
@@ -45,7 +57,7 @@ const ScanHistoryPage = ( {
 	filter,
 	dispatchRecordTracksEvent,
 } ) => {
-	const { selectedThreat, setSelectedThreat, updateThreat } = useThreats( siteId );
+	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const dispatch = useDispatch();
 	const handleOnFilterChange = React.useCallback(
@@ -102,9 +114,6 @@ const ScanHistoryPage = ( {
 		return threats.filter( ( entry ) => entry.status === filterValue );
 	}, [ currentFilter, threats ] );
 
-	// @todo: make this work
-	const fixingThreats = [];
-
 	return (
 		<Main className="history">
 			<DocumentHead title={ translate( 'History' ) } />
@@ -117,21 +126,21 @@ const ScanHistoryPage = ( {
 					'The scanning history contains a record of all previously active threats on your site.'
 				) }
 			</p>
-			<div className="history__filters-wrapper">
-				<SimplifiedSegmentedControl
-					className="history__filters"
-					options={ filterOptions }
-					onSelect={ handleOnFilterChange }
-					initialSelected={ currentFilter.value }
-				/>
-			</div>
+			{ filteredEntries.length > 0 && (
+				<div className="history__filters-wrapper">
+					<ThreatStatusFilter
+						isPlaceholder={ isRequestingHistory }
+						onSelect={ handleOnFilterChange }
+					/>
+				</div>
+			) }
 			<div className="history__entries">
 				{ filteredEntries.map( ( threat ) => (
 					<ThreatItem
 						key={ threat.id }
 						threat={ threat }
 						onFixThreat={ () => openDialog( threat ) }
-						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
+						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 						contactSupportUrl={ contactSupportUrl( siteSlug ) }
 						isPlaceholder={ isRequestingHistory }
 					/>

@@ -352,27 +352,23 @@ export function generateFlows( {
 		};
 	}
 
-	if ( isEnabled( 'gutenboarding' ) ) {
-		flows[ 'new-launch' ] = {
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'Launch flow for a site created from /new',
-			lastModified: '2020-04-28',
-			pageTitle: translate( 'Launch your site' ),
-			providesDependenciesInQuery: [ 'siteSlug', 'source' ],
-		};
-	}
+	flows[ 'new-launch' ] = {
+		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+		destination: getLaunchDestination,
+		description: 'Launch flow for a site created from /new',
+		lastModified: '2020-04-28',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+	};
 
-	if ( isEnabled( 'gutenboarding' ) ) {
-		flows.prelaunch = {
-			steps: [ 'plans-with-domain' ],
-			destination: getEditorDestination,
-			description: 'Gutenboarding flow for creating a site with a paid domain',
-			lastModified: '2020-04-06',
-			pageTitle: translate( 'Get a domain for your site' ),
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		};
-	}
+	flows.prelaunch = {
+		steps: [ 'plans-with-domain' ],
+		destination: getEditorDestination,
+		description: 'Flow for creating a site with a paid domain from /new',
+		lastModified: '2020-04-08',
+		pageTitle: translate( 'Get a domain for your site' ),
+		providesDependenciesInQuery: [ 'siteSlug' ],
+	};
 
 	return flows;
 }

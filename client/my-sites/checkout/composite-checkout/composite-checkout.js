@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -60,6 +60,7 @@ import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
 import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
+import { applePayProcessor, stripeCardProcessor } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import createContactValidationCallback from './contact-validation';
@@ -335,6 +336,11 @@ export default function CompositeCheckout( {
 		[ addItem, products ]
 	);
 
+	const paymentProcessors = useMemo(
+		() => ( { 'apple-pay': applePayProcessor, card: stripeCardProcessor } ),
+		[]
+	);
+
 	return (
 		<React.Fragment>
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
@@ -348,6 +354,7 @@ export default function CompositeCheckout( {
 				showSuccessMessage={ showSuccessMessage }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
 				registry={ defaultRegistry }
 				isLoading={
 					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1

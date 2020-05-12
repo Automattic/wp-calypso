@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
  */
 import { bumpStat } from 'lib/analytics/mc';
 import getMediaErrors from 'state/selectors/get-media-errors';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
 import { blockSave } from 'state/ui/editor/save-blockers/actions';
@@ -89,15 +89,13 @@ class TinyMCEDropZone extends React.Component {
 	};
 
 	insertMedia = () => {
-		const { site, onInsertMedia, onRenderModal, mediaValidationErrors } = this.props;
+		const { site, onInsertMedia, onRenderModal, mediaValidationErrors, selectedItems } = this.props;
 
 		if ( ! site ) {
 			return;
 		}
 
-		// Find selected images. Non-images will still be uploaded, but not
-		// inserted directly into the post contents.
-		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
+		// Non-images will still be uploaded, but not inserted directly into the post contents.
 		const isSingleImage =
 			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
@@ -143,6 +141,7 @@ export default connect(
 		return {
 			site,
 			mediaValidationErrors: getMediaErrors( state, site?.ID ),
+			selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		};
 	},
 	{ blockSave }

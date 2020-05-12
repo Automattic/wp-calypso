@@ -2,24 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
+import { fixThreat, ignoreThreat } from 'state/jetpack-scan/threats/actions';
 import { FixableThreat, Threat } from 'landing/jetpack-cloud/components/threat-item/types';
+import getSiteScanUpdatingThreats from 'state/selectors/get-site-scan-updating-threats';
 
 export const useThreats = ( siteId: number ) => {
-	// @todo: we need to move the state about threats being updated into our store. Otherwise, components
-	// can't react to those state changes. This component needs to be aware of the threats that are being
-	// updated because, for instance, it needs to block the [Fix all threats] button while the update is
-	// happening. The same applies for the individual buttons of each ThreatItem. Having that piece of state
-	// here doesn't work because we don't know when the update finishes. We need to capture that at the
-	// data-layer level.
-	const [ updatingThreats, setUpdatingThreats ] = React.useState< Array< Threat > >( [] );
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >();
+	const updatingThreats = useSelector( ( state ) => getSiteScanUpdatingThreats( state, siteId ) );
 	const dispatch = useDispatch();
 
 	const updateThreat = React.useCallback(
@@ -33,9 +28,8 @@ export const useThreats = ( siteId: number ) => {
 						threat_signature: selectedThreat.signature,
 					} )
 				);
-				setUpdatingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
-				const actionCreator = action === 'fix' ? fixThreatAlert : ignoreThreatAlert;
-				dispatch( actionCreator( siteId, selectedThreat.id, true ) );
+				const actionCreator = action === 'fix' ? fixThreat : ignoreThreat;
+				dispatch( actionCreator( siteId, selectedThreat.id ) );
 			}
 		},
 		[ dispatch, selectedThreat, siteId ]
@@ -50,16 +44,14 @@ export const useThreats = ( siteId: number ) => {
 				} )
 			);
 			fixableThreats.forEach( ( threat ) => {
-				dispatch( fixThreatAlert( siteId, threat.id ) );
+				dispatch( fixThreat( siteId, threat.id ) );
 			} );
-			setUpdatingThreats( fixableThreats );
 		},
 		[ dispatch, siteId ]
 	);
 
 	return {
 		updatingThreats,
-		setUpdatingThreats,
 		selectedThreat,
 		setSelectedThreat,
 		fixThreats,

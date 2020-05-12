@@ -12,7 +12,6 @@ import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts
 import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
 import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
 
 const cardComponents = {
@@ -50,7 +49,6 @@ const Primary = ( { checklistMode, cards } ) => {
 					isIos: card === 'home-task-go-mobile-ios' ? true : null,
 				} )
 			) }
-			<PerformanceTrackerStop />
 		</>
 	);
 };

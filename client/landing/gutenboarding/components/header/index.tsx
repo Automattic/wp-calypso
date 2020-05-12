@@ -20,6 +20,7 @@ import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -35,6 +36,7 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
+	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -114,8 +116,8 @@ const Header: React.FunctionComponent = () => {
 	);
 
 	const handleCreateSite = React.useCallback(
-		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken );
+		( username: string, bearerToken?: string, planSlug?: string ) => {
+			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);
@@ -126,10 +128,9 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken );
+			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
 		}
-	}, [ newSite, newUser, handleCreateSite ] );
-
+	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
 	return (
 		<div
 			className="gutenboarding__header"
@@ -143,12 +144,12 @@ const Header: React.FunctionComponent = () => {
 						<Icon icon="wordpress-alt" size={ 24 } />
 					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : __( 'Start your website' ) }
 					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
 					{
 						// We display the DomainPickerButton as soon as we have a domain suggestion,
 						// unless we're still at the IntentGathering step. In that case, we only
@@ -172,6 +173,7 @@ const Header: React.FunctionComponent = () => {
 								</DomainPickerButton>
 							)
 					}
+					&nbsp;
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
 					<PlansButton />

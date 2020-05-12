@@ -44,8 +44,6 @@
 		"help": true,
 		"help/courses": true,
 		"inline-help": true,
-		"ive/me": false,
-		"ive/use-external-defs": false,
 		"ive/use-external-assignment": false,
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,

@@ -25,7 +25,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 import memoizeLast from 'lib/memoize-last';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -130,7 +129,6 @@ class StatModuleChartTabs extends Component {
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
 				/>
-				<PerformanceTrackerStop />
 			</Card>
 		);
 	}

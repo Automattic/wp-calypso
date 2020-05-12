@@ -31,6 +31,7 @@ export const formatScanThreat = ( threat ) => ( {
 	firstDetected: new Date( threat.first_detected ),
 	fixedOn: new Date( threat.fixed_on ),
 	fixable: threat.fixable,
+	fixerStatus: threat.fixer_status,
 	filename: threat.filename,
 	extension: threat.extension,
 	rows: threat.rows,

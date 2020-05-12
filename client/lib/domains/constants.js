@@ -96,3 +96,9 @@ export const domainConnect = {
 	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',
 	API_URL: 'public-api.wordpress.com/rest/v1.3/domain-connect',
 };
+
+export const sslStatuses = {
+	SSL_DISABLED: 'disabled',
+	SSL_PENDING: 'pending',
+	SSL_ACTIVE: 'active',
+};

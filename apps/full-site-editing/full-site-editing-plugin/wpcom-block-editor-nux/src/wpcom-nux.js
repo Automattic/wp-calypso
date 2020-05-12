@@ -17,10 +17,10 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import './style.scss';
-import blockImage from './images/block.svg';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
-//import privateImage from './images/private.svg';
+import previewImage from './images/preview.svg';
+import privateImage from './images/private.svg';
 
 function WpcomNux() {
 	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
@@ -50,67 +50,70 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
+	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-	const welcomeHeading = isGutenboarding
-		? __( 'Welcome to your website' )
-		: __( 'Welcome to the WordPress editor' );
 
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
-			contentLabel={ welcomeHeading }
-			finishButtonText={ __( 'Get started' ) }
+			contentLabel={ __( 'Welcome to your website', 'full-site-editing' ) }
+			finishButtonText={ __( 'Get started', 'full-site-editing' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			<NuxPage
-				heading={ welcomeHeading }
-				description={
-					isGutenboarding
-						? __(
-								'Edit your homepage, add the pages you need, and change your site’s look and feel.'
-						  )
-						: __( 'Create and edit site pages, and customize the look and feel of each page.' )
-				}
-				imgSrc={ editorImage }
-				alignBottom
-			/>
-
-			<NuxPage
-				heading={
-					isGutenboarding
-						? __( 'Customize your content' )
-						: __( 'Create pages and add your content' )
-				}
-				description={
-					isGutenboarding
-						? __( 'Start with an existing layout and make it your own.' )
-						: __(
-								'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
-						  )
-				}
-				imgSrc={ blockImage }
-			/>
-
-			<NuxPage
-				heading={ __( 'Add (almost) anything' ) }
-				description={ __(
-					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page until they’re just right.'
-				) }
-				imgSrc={ blockPickerImage }
-			/>
-
-			{ /* @TODO: hide for sites that are already public
-			<NuxPage
-				heading={ __( "Private until you're ready to launch" ) }
-				description={ __(
-					"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
-				) }
-				imgSrc={ privateImage }
-				alignBottom
-			/>
-			*/ }
+			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
+				<NuxPage key={ nuxPage.heading } { ...nuxPage } />
+			) ) }
 		</Guide>
 	);
+}
+
+/**
+ * This function returns a filtered collection of NUX slide data
+ * Function arguments can be extended to customize the slides for specific environments, e.g., Gutenboarding
+ *
+ * @param   { boolean } isGutenboarding Whether the flow is Gutenboarding or not
+ * @returns { Array }                   a collection of <NuxPage /> props filtered by whether the flow is Gutenboarding or not
+ */
+function getWpcomNuxPages( isGutenboarding ) {
+	return [
+		{
+			heading: __( 'Welcome to your website', 'full-site-editing' ),
+			description: __(
+				'Edit your homepage, add the pages you need, and change your site’s look and feel.',
+				'full-site-editing'
+			),
+			imgSrc: editorImage,
+			alignBottom: true,
+		},
+		{
+			heading: __( 'Add or edit your content', 'full-site-editing' ),
+			description: __(
+				'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.',
+				'full-site-editing'
+			),
+			imgSrc: blockPickerImage,
+		},
+		{
+			heading: __( 'Preview your site as you go', 'full-site-editing' ),
+			description: __(
+				'As you edit your site content, click “Preview” to see your site the way your visitors will.',
+				'full-site-editing'
+			),
+			imgSrc: previewImage,
+			alignBottom: true,
+		},
+		{
+			heading: __( 'Private until you’re ready', 'full-site-editing' ),
+			description: __(
+				'Your site will remain private as you make changes until you’re ready to launch and share with the world.',
+				'full-site-editing'
+			),
+			imgSrc: privateImage,
+			// @TODO: hide for sites that are already public
+			shouldHide: ! isGutenboarding,
+			alignBottom: true,
+		},
+	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
 }
 
 function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {

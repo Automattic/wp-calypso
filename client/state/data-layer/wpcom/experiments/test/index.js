@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { fetchExperiments, experimentUpdate } from 'state/data-layer/wpcom/experiments';
+import { handleFetchExperiments, experimentUpdate } from 'state/data-layer/wpcom/experiments';
 import { EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -10,14 +10,14 @@ describe( 'wpcom-api', () => {
 		describe( '#fetchExperiments', () => {
 			test( 'should dispatch request to experiments endpoint', () => {
 				const action = { type: EXPERIMENT_FETCH, anonId: 'abc' };
-				expect( fetchExperiments( action ) ).toEqual(
+				expect( handleFetchExperiments( action ) ).toEqual(
 					http(
 						{
 							apiNamespace: 'wpcom',
 							method: 'GET',
-							path: '/v2/experiments/calypso',
+							path: '/v2/experiments/0.1.0/assignments/calypso',
 							query: {
-								anonId: 'abc',
+								anon_id: 'abc',
 							},
 						},
 						action

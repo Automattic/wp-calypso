@@ -50,9 +50,7 @@
 		// animation using width: 0% to width: 100%.
 		white-space: nowrap;
 		overflow: hidden;
-		// This is for mobile later on long domains.
-		// Commented out for now.
-		// text-overflow: ellipsis;
+		text-overflow: ellipsis;
 	}
 
 	.dashicon {

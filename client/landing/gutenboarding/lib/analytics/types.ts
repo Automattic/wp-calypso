@@ -71,8 +71,16 @@ type TracksDomainSelectEventProperties = {
 	selected_domain: string | undefined;
 };
 
+type TracksPlanSelectEventProperties = {
+	/**
+	 * The selected level domain name
+	 */
+	selected_plan: string | undefined;
+};
+
 export type TracksEventProperties =
 	| TracksVerticalSelectEventProperties
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
-	| TracksDomainSelectEventProperties;
+	| TracksDomainSelectEventProperties
+	| TracksPlanSelectEventProperties;

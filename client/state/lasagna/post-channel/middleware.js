@@ -17,7 +17,7 @@ import { lasagna } from '../middleware';
 
 const debug = debugFactory( 'lasagna:channel' );
 const topicPrivateScheme = 'push';
-const topicPublicScheme = 'push:no_auth';
+const topicPublicScheme = 'push-no_auth';
 const topicIss = 'wordpress.com';
 const topicSubPrefix = 'wp_post';
 

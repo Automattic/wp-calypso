@@ -22,7 +22,7 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"lasagna_url": "wss://horizon.lasagna.pub/socket",
+	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
 	"mc_analytics_enabled": false,
@@ -139,6 +139,5 @@
 	},
 	"site_filter": [],
 	"theme": "default",
-	"site_name": "WordPress.com",
-	"speedcurve_id": "511719913"
+	"site_name": "WordPress.com"
 }

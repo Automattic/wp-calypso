@@ -21,7 +21,6 @@ import { chunkCssLinks } from './utils';
 import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from 'server/sanitize';
-import { PerformanceTrackerInstall } from 'lib/performance-tracking';
 
 class Document extends React.Component {
 	render() {
@@ -105,8 +104,6 @@ class Document extends React.Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 				>
-					<PerformanceTrackerInstall nonce={ inlineScriptNonce } />
-
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
@@ -123,6 +120,7 @@ class Document extends React.Component {
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
+						'is-white-signup': sectionName === 'signup',
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
