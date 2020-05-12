@@ -28,7 +28,7 @@ import { managePurchase } from '../paths';
  */
 import './style.scss';
 
-interface Purchase {
+export interface Purchase {
 	id: number;
 	saleAmount?: number;
 	amount: number;

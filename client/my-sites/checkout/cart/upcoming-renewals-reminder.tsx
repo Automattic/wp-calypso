@@ -2,13 +2,15 @@
  * External dependencies
  */
 import React, { FunctionComponent, useMemo, useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
  */
+import { ReduxDispatch } from 'state/redux-store';
+import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
@@ -19,7 +21,9 @@ import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import UpcomingRenewalsDialog, {
+	Purchase,
+} from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -60,8 +64,9 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 	siteId,
 	siteUrl,
 } ) => {
+	const reduxDispatch = useDispatch< ReduxDispatch >();
 	const translate = useTranslate();
-	const renewableSitePurchases = useSelector( ( state ) =>
+	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
 		getRenewableSitePurchases( state, siteId )
 	);
 
@@ -81,7 +86,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] = useState( false );
 
 	const addPurchasesToCart = useCallback(
-		( purchases: { meta?: string }[] ) => {
+		( purchases: Purchase[] ) => {
 			purchases.forEach( ( purchase ) => {
 				const planCartItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
 				addItemToCart( planCartItem );
@@ -90,9 +95,39 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 		[ addItemToCart ]
 	);
 
-	const addAllToCart = useCallback( () => {
+	const addSelectedPurchasesToCart = useCallback(
+		( purchases ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
+					selected: purchases.length,
+					available: purchaseRenewalsNotAlreadyInCart.length,
+				} )
+			);
+			addPurchasesToCart( purchases );
+		},
+		[ addPurchasesToCart, reduxDispatch, purchaseRenewalsNotAlreadyInCart ]
+	);
+
+	const addAllPurchasesToCart = useCallback( () => {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
+				available: purchaseRenewalsNotAlreadyInCart.length,
+			} )
+		);
 		addPurchasesToCart( purchaseRenewalsNotAlreadyInCart );
-	}, [ addPurchasesToCart, purchaseRenewalsNotAlreadyInCart ] );
+	}, [ addPurchasesToCart, reduxDispatch, purchaseRenewalsNotAlreadyInCart ] );
+
+	const onConfirm = useCallback(
+		( selectedPurchases ) => {
+			addSelectedPurchasesToCart( selectedPurchases );
+			setUpcomingRenewalsDialogVisible( false );
+		},
+		[ addSelectedPurchasesToCart, setUpcomingRenewalsDialogVisible ]
+	);
+
+	const onClose = useCallback( () => {
+		setUpcomingRenewalsDialogVisible( false );
+	}, [ setUpcomingRenewalsDialogVisible ] );
 
 	const arePurchasesLoaded = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -134,11 +169,8 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 							domain: siteUrl,
 							slug: siteUrl,
 						} }
-						onConfirm={ ( selectedPurchases ) => {
-							addPurchasesToCart( selectedPurchases );
-							setUpcomingRenewalsDialogVisible( false );
-						} }
-						onClose={ () => setUpcomingRenewalsDialogVisible( false ) }
+						onConfirm={ onConfirm }
+						onClose={ onClose }
 						showManagePurchaseLinks={ false }
 						submitButtonText={ translate( 'Add to cart' ) }
 					/>
@@ -148,9 +180,9 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 					/>
 					<div className="cart__upsell-body">
 						<p>{ message }</p>
-						<Button onClick={ addAllToCart }>{ translate( 'Renew all' ) }</Button>
+						<Button onClick={ addAllPurchasesToCart }>{ translate( 'Renew all' ) }</Button>
 					</div>
-					<TrackComponentView eventName="calypso_non_dwpo_checkout_plan_upsell_impression" />
+					<TrackComponentView eventName="calypso_checkout_upcoming_renewals_impression" />
 				</div>
 			) }
 		</>
