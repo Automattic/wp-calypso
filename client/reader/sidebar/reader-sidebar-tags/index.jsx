@@ -22,6 +22,7 @@ export class ReaderSidebarTags extends Component {
 	static propTypes = {
 		tags: PropTypes.array,
 		path: PropTypes.string.isRequired,
+		hasUnseen: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		onClick: PropTypes.func,
 		currentTag: PropTypes.string,
@@ -53,9 +54,11 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
+		const { tags, isOpen, translate, onClick, hasUnseen } = this.props;
 		return (
-			<ul>
+			<ul className={ hasUnseen ? 'has-unseen' : '' }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				{ hasUnseen && <span className="sidebar__bubble" /> }
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }

@@ -142,6 +142,7 @@ class ReaderPostCard extends React.Component {
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
+			'is-seen': !! post.is_seen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
 		} );

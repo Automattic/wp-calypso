@@ -115,6 +115,7 @@ class ReaderCombinedCardPost extends React.Component {
 		const classes = classnames( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,
+			'is-seen': !! post.is_seen,
 			'has-featured-asset': !! featuredAsset,
 		} );
 

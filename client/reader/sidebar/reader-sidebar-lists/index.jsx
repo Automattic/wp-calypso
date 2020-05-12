@@ -15,6 +15,7 @@ import ReaderSidebarListsList from './list';
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
 		lists: PropTypes.array,
+		hasUnseen: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		isOpen: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -28,16 +29,22 @@ export class ReaderSidebarLists extends Component {
 	};
 
 	render() {
-		const { translate, isOpen, onClick, ...passedProps } = this.props;
+		const { translate, isOpen, onClick, hasUnseen, ...passedProps } = this.props;
 		return (
-			<ExpandableSidebarMenu
-				expanded={ isOpen }
-				title={ translate( 'Lists' ) }
-				onClick={ onClick }
-				hideAddButton
-			>
-				<ReaderSidebarListsList { ...passedProps } />
-			</ExpandableSidebarMenu>
+			<div className={ hasUnseen ? 'has-unseen' : '' }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				{ hasUnseen && <span className="sidebar__bubble" /> }
+				<ExpandableSidebarMenu
+					hasNew={ hasUnseen }
+					expanded={ isOpen }
+					title={ translate( 'Lists' ) }
+					onClick={ onClick }
+					materialIcon={ 'list' }
+					hideAddButton
+				>
+					<ReaderSidebarListsList { ...passedProps } />
+				</ExpandableSidebarMenu>
+			</div>
 		);
 	}
 }

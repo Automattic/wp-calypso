@@ -2,14 +2,49 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
+import { connect, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Stream from 'reader/stream';
+import { Button } from '@automattic/components';
+import SectionHeader from 'components/section-header';
+import { requestMarkAllAsSeen, requestMarkAllAsUnseen } from 'state/reader/seen-posts/actions';
+import { SECTION_A8C_FOLLOWING } from 'state/reader/seen-posts/constants';
+import { sectionHasUnseen } from 'state/reader/seen-posts/selectors';
 
 const TeamStream = ( props ) => {
-	return <Stream { ...props } shouldCombineCards={ false } />;
+	const { translate } = props;
+	const dispatch = useDispatch();
+
+	const markAllAsSeen = () => {
+		dispatch( requestMarkAllAsSeen( { section: SECTION_A8C_FOLLOWING } ) );
+	};
+
+	const markAllAsUnSeen = () => {
+		dispatch( requestMarkAllAsUnseen( { section: SECTION_A8C_FOLLOWING } ) );
+	};
+
+	return (
+		<Stream { ...props } shouldCombineCards={ false }>
+			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
+				{ ! props.hasUnseen && (
+					<Button compact onClick={ markAllAsUnSeen }>
+						{ translate( 'Mark All as Unseen' ) }
+					</Button>
+				) }
+				{ props.hasUnseen && (
+					<Button compact onClick={ markAllAsSeen }>
+						{ translate( 'Mark All as Seen' ) }
+					</Button>
+				) }
+			</SectionHeader>
+		</Stream>
+	);
 };
 
-export default TeamStream;
+export default connect( ( state ) => ( {
+	hasUnseen: sectionHasUnseen( state, SECTION_A8C_FOLLOWING ),
+} ) )( localize( TeamStream ) );
