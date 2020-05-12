@@ -11,11 +11,11 @@
 }
 
 .plan-item {
-	width: 20%; // 100% / 5 plans
+	width: $plan-item-width;
 	min-width: $plan-item-min-width;
 
 	+ .plan-item {
-		margin-left: 20px;
+		margin-left: $plan-item-gutter;
 	}
 }
 
