@@ -169,6 +169,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title error">
 				{ translate( 'Download failed: %s', {
 					args: [ backupDisplayDate ],
+					comment: '%s is a time/date string',
 				} ) }
 			</h3>
 			<p className="rewind-flow__info">
