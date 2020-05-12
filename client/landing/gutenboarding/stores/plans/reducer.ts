@@ -27,7 +27,7 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 		case 'SET_PLAN':
 			return {
 				...state,
-				selectedPlanSlug: action.slug !== PLAN_FREE ? action.slug : DEFAUlT_STATE.selectedPlanSlug,
+				selectedPlanSlug: action.slug,
 			};
 		case 'SET_PRICES':
 			return {

@@ -5,6 +5,8 @@ import React, { useCallback, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
+import { useHistory } from 'react-router-dom';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -18,18 +20,17 @@ import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
-import { PLAN_FREE } from '../../stores/plans/constants';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedFonts, hasPaidDomain } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
+	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -38,6 +39,7 @@ const StylePreview: React.FunctionComponent = () => {
 	const hasSelectedDesign = !! selectedDesign;
 
 	const { __ } = useI18n();
+	const history = useHistory();
 	const makePath = usePath();
 	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
 
@@ -60,11 +62,19 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			const planSlug = selectedPlan ? selectedPlan.getStoreSlug() : PLAN_FREE;
-			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+			createSite( username, freeDomainSuggestion, bearerToken, selectedPlanSlug );
 		},
-		[ createSite, freeDomainSuggestion, selectedPlan ]
+		[ createSite, freeDomainSuggestion, selectedPlanSlug ]
 	);
+
+	const handleContinue = () => {
+		if ( isEnabled( 'gutenboarding/plans-grid' ) && hasPaidDomain() ) {
+			history.push( makePath( Step.Plans ) );
+			return;
+		}
+
+		currentUser ? handleCreateSite( currentUser.username ) : handleSignup();
+	};
 
 	return (
 		<>
@@ -86,9 +96,7 @@ const StylePreview: React.FunctionComponent = () => {
 								className="style-preview__actions-continue-button"
 								isPrimary
 								isLarge
-								onClick={ () =>
-									currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-								}
+								onClick={ handleContinue }
 							>
 								{ __( 'Continue' ) }
 							</Button>
@@ -101,12 +109,7 @@ const StylePreview: React.FunctionComponent = () => {
 				</div>
 				{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 			</div>
-			<BottomBarMobile
-				backUrl={ makePath( Step.DesignSelection ) }
-				onContinue={ () =>
-					currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-				}
-			/>
+			<BottomBarMobile backUrl={ makePath( Step.DesignSelection ) } onContinue={ handleContinue } />
 		</>
 	);
 };

@@ -18,15 +18,21 @@ import { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
+import Plans from './plans';
+import { isEnabled } from '../../../config';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
 import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const {
+		siteTitle,
+		siteVertical,
+		selectedDesign,
+		selectedFonts,
+		wasVerticalSkipped,
+	} = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { createSite } = useDispatch( STORE_KEY );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
@@ -55,7 +61,15 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
+	const canUsePlansStep = useCallback( (): boolean => {
+		return !! selectedDesign && !! selectedFonts && isEnabled( 'gutenboarding/plans-grid' );
+	}, [ selectedDesign, selectedFonts ] );
+
 	const getLatestStepPath = (): string => {
+		if ( canUsePlansStep() ) {
+			return makePath( Step.Plans );
+		}
+
 		if ( canUseStyleStep() ) {
 			return makePath( Step.Style );
 		}
@@ -115,6 +129,10 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					) : (
 						<Redirect to={ makePath( Step.DesignSelection ) } />
 					) }
+				</Route>
+
+				<Route path={ makePath( Step.Plans ) }>
+					{ canUsePlansStep() ? <Plans /> : <Redirect to={ makePath( Step.Style ) } /> }
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>
