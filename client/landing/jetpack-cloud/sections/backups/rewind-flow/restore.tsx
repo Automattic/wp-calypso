@@ -177,6 +177,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title error">
 				{ translate( 'Restore failed: %s', {
 					args: [ backupDisplayDate ],
+					comment: '%s is a time/date string',
 				} ) }
 			</h3>
 			<p className="rewind-flow__info">
