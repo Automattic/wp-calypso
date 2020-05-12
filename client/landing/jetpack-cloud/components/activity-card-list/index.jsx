@@ -110,9 +110,6 @@ class ActivityCardList extends Component {
 							<ActivityCard
 								{ ...{
 									key: activity.activityId,
-									showContentLink: isActivityBackup( activity )
-										? dateLogs.length > 1 || hasMore
-										: undefined,
 									showActions: hasRealtimeBackups || isActivityBackup( activity ),
 									moment,
 									activity,

@@ -4,7 +4,7 @@
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -21,7 +21,6 @@ import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -32,7 +31,6 @@ import downloadIcon from './download-icon.svg';
 class ActivityCard extends Component {
 	static propTypes = {
 		showActions: PropTypes.bool,
-		showContentLink: PropTypes.bool,
 		summarize: PropTypes.bool,
 	};
 
@@ -70,13 +68,16 @@ class ActivityCard extends Component {
 	};
 
 	renderStreams( streams = [] ) {
-		return streams.map( ( item ) => {
+		return streams.map( ( item, index ) => {
 			const activityMedia = item.activityMedia;
 
 			return (
 				activityMedia &&
 				activityMedia.available && (
-					<div key={ item.rewindId } className="activity-card__streams-item">
+					<div
+						key={ `activity-card__streams-item-${ index }` }
+						className="activity-card__streams-item"
+					>
 						<div className="activity-card__streams-item-title">{ activityMedia.name }</div>
 						<ActivityMedia
 							name={ activityMedia.name }
@@ -102,42 +103,33 @@ class ActivityCard extends Component {
 		);
 	}
 
-	shouldRenderContentLink() {
-		const { activity, showContentLink } = this.props;
-		return showContentLink !== undefined
-			? showContentLink
-			: !! (
-					activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
-			  ) || isSuccessfulDailyBackup( activity );
+	hasStreamContent() {
+		const { activity } = this.props;
+		return (
+			activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
+		);
 	}
 
-	renderContentLink() {
-		const { activity, translate } = this.props;
+	renderStreamContent() {
+		const { translate } = this.props;
 
 		// todo: handle the rest of cases
-		if (
-			activity.streams &&
-			activity.streams.some( ( stream ) => stream.activityMedia?.available )
-		) {
-			return (
-				<Button
-					compact
-					borderless
-					className="activity-card__see-content-link"
-					onClick={ this.toggleSeeContent }
-					onKeyDown={ this.onSpace( this.toggleSeeContent ) }
-				>
-					{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
-					<Gridicon
-						size={ 18 }
-						icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
-						className="activity-card__see-content-icon"
-					/>
-				</Button>
-			);
-		}
-		// eslint-disable-next-line jsx-a11y/anchor-is-valid
-		return <a className="activity-card__detail-link">{ translate( 'Changes in this backup' ) }</a>;
+		return this.hasStreamContent() ? (
+			<Button
+				compact
+				borderless
+				className="activity-card__see-content-link"
+				onClick={ this.toggleSeeContent }
+				onKeyDown={ this.onSpace( this.toggleSeeContent ) }
+			>
+				{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
+				<Gridicon
+					size={ 18 }
+					icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
+					className="activity-card__see-content-icon"
+				/>
+			</Button>
+		) : null;
 	}
 
 	shouldRenderActionButtons() {
@@ -204,23 +196,23 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const shouldRenderContentLink = this.shouldRenderContentLink();
 		const shouldRenderActionButtons = this.shouldRenderActionButtons();
+		const hasStreamContent = this.hasStreamContent();
 
-		return ! ( shouldRenderContentLink || shouldRenderActionButtons ) ? null : (
-			<>
+		return ! ( hasStreamContent || shouldRenderActionButtons ) ? null : (
+			<Fragment key={ `activity-card__toolbar-${ isTopToolbar ? 'top' : 'bottom' }` }>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! shouldRenderContentLink && shouldRenderActionButtons
+						! hasStreamContent && shouldRenderActionButtons
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ shouldRenderContentLink && this.renderContentLink() }
+					{ this.renderStreamContent() }
 					{ shouldRenderActionButtons && this.renderActionButton( isTopToolbar ) }
 				</div>
-			</>
+			</Fragment>
 		);
 	}
 
