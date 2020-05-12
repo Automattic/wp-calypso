@@ -23,7 +23,7 @@ import 'state/data-layer/wpcom/seen-posts/seen/all/new/index';
 import 'state/data-layer/wpcom/seen-posts/seen/all/delete/index';
 import 'state/data-layer/wpcom/seen-posts/status/unseen/all/index';
 
-export const requestUnseenStatusAll = ( { showSubsections = true } ) => ( {
+export const requestUnseenStatusAll = ( { showSubsections = true } = {} ) => ( {
 	type: READER_SEEN_UNSEEN_STATUS_ALL_REQUEST,
 	showSubsections,
 } );
