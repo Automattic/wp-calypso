@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,30 +12,27 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 
 interface Props {
 	isVisible?: boolean;
 	isMobile?: boolean; // needed as a prop to be defined when component mounts
+	onSubmit: () => void;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onSubmit } ) => {
 	const { __ } = useI18n();
 	const { siteTitle, siteVertical, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
 	const { setSiteTitle } = useDispatch( STORE_KEY );
-	const history = useHistory();
-	const makePath = usePath();
 	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 
 	const handleKeyDown = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
 		if ( e.keyCode === ENTER ) {
 			// As last input on first step, hitting 'Enter' should direct to next step.
 			e.preventDefault();
-			recordSiteTitleSelection( siteTitle );
-			history.push( makePath( Step.DesignSelection ) );
+			onSubmit();
 		}
 	};
 
