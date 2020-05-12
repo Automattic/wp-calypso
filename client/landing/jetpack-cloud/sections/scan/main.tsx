@@ -123,7 +123,11 @@ class ScanPage extends Component< Props > {
 
 	renderScanOkay() {
 		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset } = this.props;
-		const lastScanTimestamp = scanState?.mostRecent?.timestamp;
+
+		const lastScanTimestamp = scanState?.mostRecent?.timestamp
+			? Date.parse( scanState.mostRecent.timestamp ) + scanState.mostRecent.duration
+			: false;
+
 		let lastScanSiteTime = '';
 		if ( lastScanTimestamp && applySiteOffset ) {
 			lastScanSiteTime = applySiteOffset( moment.utc( lastScanTimestamp ) )?.fromNow();
