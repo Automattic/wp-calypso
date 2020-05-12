@@ -51,8 +51,7 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 
 	return (
 		<div className="scan-threats__error">
-			{ translate( 'The scanner was unable to check all files and errored before completion.' ) }
-			<br />
+			{ translate( 'The scanner was unable to check all files and errored before completion. ' ) }
 			{ isEnabled( 'jetpack-cloud/on-demand-scan' )
 				? translate(
 						'Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
