@@ -32,10 +32,12 @@ class ActivityCard extends Component {
 	static propTypes = {
 		showActions: PropTypes.bool,
 		summarize: PropTypes.bool,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		summarize: false,
+		compact: false,
 	};
 
 	topPopoverContext = React.createRef();
@@ -68,12 +70,13 @@ class ActivityCard extends Component {
 	};
 
 	renderStreams( streams = [] ) {
+		const { allowRestore, moment, siteSlug } = this.props;
+
 		return streams.map( ( item, index ) => {
 			const activityMedia = item.activityMedia;
 
-			return (
-				activityMedia &&
-				activityMedia.available && (
+			if ( activityMedia && activityMedia.available ) {
+				return (
 					<div
 						key={ `activity-card__streams-item-${ index }` }
 						className="activity-card__streams-item"
@@ -84,7 +87,18 @@ class ActivityCard extends Component {
 							fullImage={ activityMedia.medium_url || activityMedia.thumbnail_url }
 						/>
 					</div>
-				)
+				);
+			}
+			return (
+				<ActivityCard
+					activity={ item }
+					allowRestore={ allowRestore }
+					compact
+					key={ item.activityId }
+					moment={ moment }
+					showActions={ false }
+					siteSlug={ siteSlug }
+				/>
 			);
 		} );
 	}
@@ -105,9 +119,7 @@ class ActivityCard extends Component {
 
 	hasStreamContent() {
 		const { activity } = this.props;
-		return (
-			activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
-		);
+		return !! activity.streams;
 	}
 
 	renderStreamContent() {
@@ -217,7 +229,15 @@ class ActivityCard extends Component {
 	}
 
 	render() {
-		const { activity, allowRestore, className, gmtOffset, summarize, timezone } = this.props;
+		const {
+			activity,
+			allowRestore,
+			compact,
+			className,
+			gmtOffset,
+			summarize,
+			timezone,
+		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -229,7 +249,9 @@ class ActivityCard extends Component {
 		const { activityMedia } = activity;
 
 		return (
-			<div className={ classnames( className, 'activity-card' ) }>
+			<div
+				className={ classnames( className, compact ? 'activity-card-compact' : 'activity-card' ) }
+			>
 				{ ! summarize && (
 					<div className="activity-card__time">
 						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />

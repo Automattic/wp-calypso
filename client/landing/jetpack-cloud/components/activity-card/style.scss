@@ -1,11 +1,21 @@
-.activity-card .card {
-	border-radius: 3px;
-}
+.activity-card,
+.activity-card-compact {
+	.card {
+		border-radius: 3px;
+	}
 
-.activity-card .activity-log-item__actor {
-	margin-left: 0;
-	display: flex;
-	align-items: center;
+	.activity-log-item__actor {
+		margin-left: 0;
+		display: flex;
+		align-items: center;
+	}
+
+	.activity-log-item__actor-info .activity-log-item__actor-name,
+	.activity-log-item__actor-info .activity-log-item__actor-role,
+	.activity-card__activity-title {
+		font-size: 0.8rem;
+		color: rgb( 100, 105, 112 );
+	}
 }
 
 .activity-card__time {
@@ -30,13 +40,6 @@
 
 .activity-log-item__actor-info {
 	margin-left: 1rem;
-}
-
-.activity-card .activity-log-item__actor-info .activity-log-item__actor-name,
-.activity-card .activity-log-item__actor-info .activity-log-item__actor-role,
-.activity-card__activity-title {
-	font-size: 0.8rem;
-	color: rgb( 100, 105, 112 );
 }
 
 .activity-card__activity-title {
