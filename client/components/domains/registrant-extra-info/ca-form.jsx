@@ -40,6 +40,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -149,7 +150,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
-		this.props.onContactDetailsChange?.( { ...newContactDetails } );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		}
 	};
 
 	needsOrganization() {
@@ -157,7 +161,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	organizationFieldIsValid() {
-		return isEmpty( this.getOrganizationErrorMessage() );
+		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
 	}
 
 	getOrganizationErrorMessage() {
@@ -170,6 +174,14 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			);
 		}
 		return message;
+	}
+
+	getCiraAgreementAcceptedErrorMessage() {
+		if ( this.props.isManaged ) {
+			return this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
+		}
+
+		return this.props.translate( 'Required' );
 	}
 
 	renderOrganizationField() {
@@ -240,7 +252,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 							} ) }
 						</span>
 						{ ciraAgreementAccepted || (
-							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
+							<FormInputValidation
+								text={ this.getCiraAgreementAcceptedErrorMessage() }
+								isError={ true }
+							/>
 						) }
 					</FormLabel>
 				</FormFieldset>
