@@ -55,6 +55,9 @@ export interface SiteDetails {
 	name: string;
 	description: string;
 	URL: string;
+	options: {
+		created_at: string;
+	};
 }
 
 export interface SiteError {

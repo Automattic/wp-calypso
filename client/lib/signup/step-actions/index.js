@@ -27,7 +27,7 @@ import guessTimezone from 'lib/i18n-utils/guess-timezone';
 
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { recordRegistration } from 'lib/analytics/signup';
 import {
@@ -197,9 +197,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		validate: false,
 	};
 
-	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
+	newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
@@ -523,9 +521,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		validate: false,
 	};
 
-	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
-	}
+	data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;

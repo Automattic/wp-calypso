@@ -5,21 +5,7 @@
 }
 
 .plans-modal {
-	margin: 0 30px;
-	@include break-xlarge {
-		margin: 0 88px;
-	}
-
-	.action-buttons {
-		.components-button.is-link {
-			@include onboarding-medium-text;
-			color: var( --studio-gray-40 );
-		}
-		.components-button.is-primary {
-			height: auto;
-			padding: 13px 29px;
-		}
-	}
+	@include onboarding-block-margin;
 }
 
 // Hide onboarding block when modal is open

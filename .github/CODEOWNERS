@@ -57,9 +57,6 @@
 /client/state/data-layer/wpcom/gsuite-users @Automattic/cobalt
 /client/state/gsuite-users @Automattic/cobalt
 
-# Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/cylon @Automattic/ajax
-
 # Payments
 /client/blocks/credit-card-form/ @Automattic/payments
 /client/blocks/payment-methods/ @Automattic/payments
@@ -106,19 +103,15 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing/* @Automattic/cylon @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/* @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/* @Automattic/cylon
+/apps/full-site-editing/full-site-editing-plugin/* @Automattic/cylon
 /apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/cylon
 /apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
 
 # FSE Workflow Files
 /.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
-
-# WPcom Block Editor
-/apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
 
 # Gutenboarding
 /client/landing/gutenboarding @Automattic/luna

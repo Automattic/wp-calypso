@@ -28,7 +28,7 @@ const PlansDetails: React.FunctionComponent = () => {
 							<th>{ __( 'Personal' ) }</th>
 							<th>{ __( 'Premium' ) }</th>
 							<th>{ __( 'Business' ) }</th>
-							<th>{ __( 'Commerce' ) }</th>
+							<th>{ __( 'eCommerce' ) }</th>
 						</tr>
 					</thead>
 					{ plansDetails.map( ( detail ) => (

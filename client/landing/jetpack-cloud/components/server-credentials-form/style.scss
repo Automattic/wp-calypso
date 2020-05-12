@@ -6,6 +6,10 @@
 		width: 100%;
 	}
 
+	.dialog__action-buttons::before {
+		background: initial;
+	}
+
 	&__buttons {
 		background: var( --studio-gray-0 );
 		margin: 0 -24px;

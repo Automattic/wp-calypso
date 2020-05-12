@@ -11,8 +11,10 @@ import { useInterval } from '../../../../lib/interval/use-interval';
 /**
  * Internal dependencies
  */
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { STORE_KEY } from '../../stores/onboard';
+import { PLAN_FREE } from '../../stores/plans/constants';
 import './style.scss';
 
 // Total time to perform "loading"
@@ -22,11 +24,12 @@ const DURATION_IN_MS = 6000;
 const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
+	const plan = useSelectedPlan();
 
 	const steps = React.useRef< string[] >(
 		[
 			__( 'Building your site' ),
-			hasPaidDomain && __( 'Getting your domain' ),
+			hasPaidDomain && plan.getStoreSlug() !== PLAN_FREE && __( 'Getting your domain' ),
 			__( 'Applying design' ),
 		].filter( Boolean ) as string[]
 	);

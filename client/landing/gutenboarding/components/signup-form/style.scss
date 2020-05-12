@@ -108,7 +108,7 @@
 	}
 
 	.signup-form__terms-of-service-link {
-		@include onboarding-x-small-text;
+		@include onboarding-medium-text;
 		text-align: center;
 		color: var( --studio-gray-30 );
 		margin: 15px 0 20px;

@@ -55,7 +55,7 @@
 		"jetpack/search-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
-		"lasagna": false,
+		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/nps-survey-notice": true,

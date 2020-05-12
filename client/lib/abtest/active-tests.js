@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	ATPrivacy: {
-		datestamp: '20200331',
-		variations: {
-			variant: 100,
-			control: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 	domainStepPlanStepSwap: {
 		datestamp: '20200415',
 		variations: {
@@ -124,13 +115,15 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showActiveTicketsNotice: {
-		datestamp: '20200430',
+	newSiteGutenbergOnboarding: {
+		datestamp: '20200501',
 		variations: {
-			showNotice: 50,
-			control: 50,
+			gutenberg: 10,
+			control: 90,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
 	},
 };

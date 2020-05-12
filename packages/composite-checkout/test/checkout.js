@@ -28,6 +28,8 @@ import {
 	createRegistry,
 	useRegisterStore,
 	useIsStepComplete,
+	useTransactionStatus,
+	usePaymentProcessor,
 } from '../src/public-api';
 
 const noop = () => {};
@@ -52,6 +54,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -117,6 +120,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
 					>
 						<Checkout />
@@ -182,6 +186,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -226,6 +231,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -270,6 +276,7 @@ describe( 'Checkout', () => {
 							showInfoMessage={ noop }
 							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ getMockPaymentProcessors() }
 						>
 							<Checkout>
 								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
@@ -564,8 +571,11 @@ function createMockMethod() {
 
 function MockSubmitButton( { disabled } ) {
 	const { setFormSubmitting } = useFormStatus();
+	const { setTransactionComplete } = useTransactionStatus();
+	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
 		setFormSubmitting();
+		process().then( ( result ) => setTransactionComplete( result ) );
 	};
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
@@ -781,4 +791,10 @@ function StepWithEditableField() {
 			<input id="username-field" type="text" value={ value } onChange={ onChange } />
 		</div>
 	);
+}
+
+function getMockPaymentProcessors() {
+	return {
+		mock: async () => ( { success: true } ),
+	};
 }
