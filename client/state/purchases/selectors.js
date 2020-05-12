@@ -79,13 +79,16 @@ export const getSitePurchases = ( state, siteId ) =>
  * @param {number} siteId     the site id
  * @returns {Array} the matching expiring purchases if there are some
  */
-export const getRenewableSitePurchases = ( state, siteId ) =>
-	getSitePurchases( state, siteId ).filter(
-		( purchase ) =>
-			( isExpiring( purchase ) || isExpired( purchase ) ) &&
-			canExplicitRenew( purchase ) &&
-			moment( purchase.expiryDate ).diff( Date.now(), 'days' ) < 90
-	);
+export const getRenewableSitePurchases = createSelector(
+	( state, siteId ) =>
+		getSitePurchases( state, siteId ).filter(
+			( purchase ) =>
+				( isExpiring( purchase ) || isExpired( purchase ) ) &&
+				canExplicitRenew( purchase ) &&
+				moment( purchase.expiryDate ).diff( Date.now(), 'days' ) < 90
+		),
+	( state, siteId ) => [ state.purchases.data, siteId ]
+);
 
 /**
  * Whether a site has an active Jetpack backup purchase.
