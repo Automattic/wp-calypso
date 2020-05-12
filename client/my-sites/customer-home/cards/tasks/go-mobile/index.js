@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import Task from '../task';
+import { preventWidows } from 'lib/formatting';
 import AppsBadge from 'blocks/get-apps/apps-badge';
 
 /**
@@ -42,9 +43,11 @@ const GoMobile = ( { isIos } ) => {
 
 	return (
 		<Task
-			title={ translate( 'Update and manage on the go' ) }
-			description={ translate(
-				'Inspiration strikes any time, anywhere. Post, read, check stats, and more with the Wordpress app at your fingertips.'
+			title={ preventWidows( translate( 'Update and manage on the go' ) ) }
+			description={ preventWidows(
+				translate(
+					'Inspiration strikes any time, anywhere. Post, read, check stats, and more with the Wordpress app at your fingertips.'
+				)
 			) }
 			actionButton={ actionButton }
 			timing={ 2 }
