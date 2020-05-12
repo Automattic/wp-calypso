@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal Dependencies
@@ -38,6 +39,7 @@ import { abtest } from 'lib/abtest';
  * Constants
  */
 const basePageTitle = 'Signup'; // used for analytics, doesn't require translation
+const gutenboardingFlowID = 'gutenboarding'; // used for analytics of the /new onboarding flow
 
 /**
  * Module variables
@@ -59,6 +61,7 @@ export default {
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+						recordTracksEvent( 'calypso_newsite_init', { flow: gutenboardingFlowID } );
 						window.location = window.location.origin + '/new';
 					} else {
 						removeWhiteBackground();
