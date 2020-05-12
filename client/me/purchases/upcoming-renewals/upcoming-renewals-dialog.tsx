@@ -66,7 +66,7 @@ function getExpiresText(
 		return translate( 'expired %(expiry)s', {
 			args: { expiry: moment( purchase.expiryDate ).fromNow() },
 		} );
-}
+	}
 	return translate( 'expires %(expiry)s', {
 		args: { expiry: moment( purchase.expiryDate ).fromNow() },
 	} );
