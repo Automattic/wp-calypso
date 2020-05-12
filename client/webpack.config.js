@@ -340,4 +340,13 @@ if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
 	);
 }
 
+// Remove @wordpress/component's dashicons component. It's legacy, quite large, and unused in Calypso.
+webpackConfig.plugins.push(
+	new webpack.NormalModuleReplacementPlugin( /(.*)\/dashicon/, ( resource ) => {
+		if ( resource.context.includes( '@wordpress/components' ) ) {
+			resource.request = 'lodash-es/noop';
+		}
+	} )
+);
+
 module.exports = webpackConfig;

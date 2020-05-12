@@ -129,6 +129,13 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					// Prevent importing @wordpress/component's Dashicon.
+					{
+						name: '@wordpress/components',
+						importNames: [ 'Dashicon' ],
+						message:
+							'The `Dashicon` component is extremely large and should not be used in Calypso.',
+					},
 				],
 			},
 		],
