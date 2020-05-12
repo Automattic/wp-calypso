@@ -46,46 +46,55 @@ export default function BundledDomainNotice( { cart } ) {
 	// TODO: the following lines of code should be removed once all translations are ready.
 	if (
 		! translationExists(
-			'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.'
+			'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.'
 		)
 	) {
 		return null;
 	}
 
-	let domainRegistrationLink = (
+	const domainRegistrationLink = (
 		<a href={ REGISTER_DOMAIN } target="_blank" rel="noopener noreferrer" />
 	);
 
-	// Hide the registration link when the cart already has a domain registration.
-	if ( hasDomainRegistration( cart ) ) {
-		domainRegistrationLink = <React.Fragment />;
-	}
-
-	let copy = translate(
-		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.',
+	const oneYearCopy = translate(
+		'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.',
 		{
+			context: 'checkout',
+		}
+	);
+	const twoYearCopy = translate(
+		'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one year of a custom domain name.',
+		{
+			context: 'checkout',
+		}
+	);
+	const afterFirstYear = translate(
+		'After the first year, you’ll continue to have access to your WordPress.com plan features but will need to renew the domain name.',
+		{
+			comment: 'After the first year of the bundled domain...',
+			context: 'checkout',
+		}
+	);
+	const registrationLink = translate(
+		'To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}.',
+		{
+			comment:
+				'The custom domain here is a free bundled domain. "To select" can be replaced with "to register" or "to claim".',
+			context: 'checkout',
 			components: {
 				domainRegistrationLink,
 			},
 		}
 	);
 
-	if ( hasBiennialPlan( cart ) ) {
-		copy = translate(
-			'Purchasing a two-year subscription to a WordPress.com plan gives you two years of access to your plan’s features and one-year of a custom domain name. To select your custom domain, follow {{domainRegistrationLink}}the registration instructions{{/domainRegistrationLink}}. ' +
-				'After the first year, you’ll continue to have access to your WordPress.com plan features but will need to renew the domain name.',
-			{
-				components: {
-					domainRegistrationLink,
-				},
-			}
-		);
-	}
-
 	return (
 		<div className="checkout__bundled-domain-notice">
 			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ copy }</p>
+			<p>
+				{ hasBiennialPlan( cart ) ? twoYearCopy : oneYearCopy }{ ' ' }
+				{ hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
+				{ hasBiennialPlan( cart ) ? afterFirstYear : null }
+			</p>
 		</div>
 	);
 }
