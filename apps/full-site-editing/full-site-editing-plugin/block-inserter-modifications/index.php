@@ -39,7 +39,6 @@ function enqueue_script( $filename, $in_footer = false ) {
 	);
 }
 
-
 /**
  * Enqueues a submodule style by its filename.
  *

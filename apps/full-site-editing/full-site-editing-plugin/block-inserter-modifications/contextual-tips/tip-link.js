@@ -6,9 +6,9 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { isGutenframed } from './utils';
+import { inIframe } from './utils';
 
-const isEditorIFramed = isGutenframed();
+const isEditorIFramed = inIframe();
 const isSimpleSite = !! (
 	window &&
 	window._currentSiteType &&
@@ -17,7 +17,12 @@ const isSimpleSite = !! (
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
-	let href = '#';
+	let autofocus,
+		editorSelector,
+		href = '#',
+		postId,
+		postType,
+		returnLink;
 
 	switch ( section ) {
 		case 'themes':
@@ -31,17 +36,17 @@ export default function ( { section, children, subsection } ) {
 			break;
 
 		case 'customizer':
-			const editorSelector = select( 'core/editor' );
-			const postId = editorSelector.getCurrentPostId();
-			const postType = editorSelector.getCurrentPostType();
-			const returnLink =
+			editorSelector = select( 'core/editor' );
+			postId = editorSelector.getCurrentPostId();
+			postType = editorSelector.getCurrentPostType();
+			returnLink =
 				isEditorIFramed && ! isSimpleSite
 					? '&' +
 					  encodeURIComponent(
 							`return=https://wordpress.com/block-editor/${ postType }/${ hostname }/${ postId }`
 					  )
 					: '';
-			const autofocus = `autofocus[section]=${ subsection }`;
+			autofocus = `autofocus[section]=${ subsection }`;
 
 			href =
 				isEditorIFramed && isSimpleSite

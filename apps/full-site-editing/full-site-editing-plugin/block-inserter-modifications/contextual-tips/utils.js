@@ -3,7 +3,7 @@
  *
  * @returns {boolean} `True` is the editor is iFramed. Otherwise, `False`.
  */
-export const isGutenframed = () => {
+export const inIframe = () => {
 	try {
 		return window.self !== window.top;
 	} catch ( e ) {
