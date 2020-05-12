@@ -36,6 +36,18 @@ const filterOptions = [
 	{ value: 'ignored', label: 'Ignored' },
 ];
 
+const ThreatStatusFilter = ( { isPlaceholder, onSelect } ) => {
+	return isPlaceholder ? (
+		<div className="history__filters is-placeholder"></div>
+	) : (
+		<SimplifiedSegmentedControl
+			className="history__filters"
+			options={ filterOptions }
+			onSelect={ onSelect }
+		/>
+	);
+};
+
 const ScanHistoryPage = ( {
 	siteId,
 	siteName,
@@ -116,11 +128,9 @@ const ScanHistoryPage = ( {
 			</p>
 			{ filteredEntries.length > 0 && (
 				<div className="history__filters-wrapper">
-					<SimplifiedSegmentedControl
-						className="history__filters"
-						options={ filterOptions }
+					<ThreatStatusFilter
+						isPlaceholder={ isRequestingHistory }
 						onSelect={ handleOnFilterChange }
-						initialSelected={ currentFilter.value }
 					/>
 				</div>
 			) }
