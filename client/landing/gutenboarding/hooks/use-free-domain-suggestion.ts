@@ -25,7 +25,6 @@ export function useFreeDomainSuggestion() {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				quantity: 1,
-				...{ vertical: siteVertical?.id },
 			} )?.[ 0 ];
 		},
 		[ domainSearch, siteVertical ]
