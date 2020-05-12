@@ -12,7 +12,6 @@ import statsController from './controller';
 import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
-import { trackNavigationStart } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -20,15 +19,7 @@ import { trackNavigationStart } from 'lib/performance-tracking';
 import './style.scss';
 
 const trackedPage = ( url, controller ) => {
-	page(
-		url,
-		trackNavigationStart( 'stats' ),
-		siteSelection,
-		navigation,
-		controller,
-		makeLayout,
-		clientRender
-	);
+	page( url, siteSelection, navigation, controller, makeLayout, clientRender );
 };
 
 export default function () {
@@ -103,15 +94,7 @@ export default function () {
 		trackedPage( '/stats/follows/comment/:page_num/:site', statsController.follows );
 
 		// Can't convert to trackedPage because it uses `sites` instead of `navigation`
-		page(
-			'/stats/activity',
-			trackNavigationStart( 'stats' ),
-			siteSelection,
-			sites,
-			redirectToAcivity,
-			makeLayout,
-			clientRender
-		);
+		page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
 
 		trackedPage( '/stats/activity/:site', redirectToAcivity );
 
