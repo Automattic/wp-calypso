@@ -2,8 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { isDesktop } from '@automattic/viewport';
-import userAgent from 'lib/user-agent';
 
 /**
  * Internal dependencies
@@ -28,18 +26,6 @@ const Primary = ( { checklistMode, cards } ) => {
 		return null;
 	}
 
-	// Hard-coded. To be removed after D43129-code is merged
-	if ( ! isDesktop() ) {
-		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
-		const isIos = isiPad || isiPod || isiPhone;
-		if ( isAndroid || isIos ) {
-			const emulatedTask = isAndroid ? 'home-task-go-mobile-android' : 'home-task-go-mobile-ios';
-			// Prevent duplicates once D43129-code is merged
-			if ( -1 === cards.indexOf( emulatedTask ) ) {
-				cards.push( emulatedTask );
-			}
-		}
-	}
 	return (
 		<>
 			{ cards.map( ( card, index ) =>
