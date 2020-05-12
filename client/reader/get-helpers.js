@@ -92,3 +92,28 @@ export const getSiteAuthorName = ( site ) => {
 
 	return decodeEntities( authorFullName );
 };
+
+export const getSectionUnseen = ( unseenStatuses, section ) => {
+	if ( unseenStatuses && typeof unseenStatuses[ section ] !== 'undefined' ) {
+		return unseenStatuses[ section ];
+	}
+
+	return { status: false, subsections: [] };
+};
+
+export const hasSubSectionUnseen = ( section, subSection ) => {
+	if (
+		section &&
+		typeof section.subsections !== 'undefined' &&
+		typeof section.subsections[ subSection ] !== 'undefined'
+	) {
+		return section.subsections[ subSection ];
+	}
+
+	return false;
+};
+
+export const hasSectionUnseen = ( unseenStatuses, section ) => {
+	const sectionUnseen = getSectionUnseen( unseenStatuses, section );
+	return sectionUnseen.status;
+};
