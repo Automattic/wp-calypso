@@ -129,7 +129,7 @@ const getPlanEcommerceDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getDescription: () => {
 		return i18n.translate(
-			'{{strong}}Best for online Stores:{{/strong}} Sell products or services with this powerful, ' +
+			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
 				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
 				'so it’ll grow with you as your business grows.',
 			plansDescriptionHeadingComponent
