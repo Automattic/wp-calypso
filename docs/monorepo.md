@@ -156,7 +156,7 @@ git checkout master
 git pull
 git status (should be clean!)
 yarn run distclean
-yarn install
+yarn install --frozen-lockfile
 yarn run build-packages
 ```
 

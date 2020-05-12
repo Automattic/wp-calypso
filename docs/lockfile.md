@@ -14,5 +14,5 @@ Yarn will automattically generate and update the lock file whenever `yarn`, `yar
 To verify that the new `yarn.lock` works:
 
 - Run `yarn run distclean` to delete local `node_modules`
-- Run `yarn install`
+- Run `yarn install --frozen-lockfile`
 - Verify that Calypso works as expected and that tests pass

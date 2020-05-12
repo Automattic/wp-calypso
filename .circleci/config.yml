@@ -120,7 +120,7 @@ references:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'

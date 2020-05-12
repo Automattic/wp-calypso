@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Installs `node_modules` with `yarn install`. Since that's a costly operation,
+ * Installs `node_modules` with `yarn install --frozen-lockfile`. Since that's a costly operation,
  * it will only perform it if needed, that is, if the packages
  * installed at `node_modules` aren't in sync over what
  * `yarn.lock` has. For that, modification times of both
@@ -52,7 +52,7 @@ function install() {
 		process.exit( cleanResult.status );
 	}
 
-	const installResult = spawnSync( 'yarn', [ 'install' ], {
+	const installResult = spawnSync( 'yarn', [ 'install', '--frozen-lockfile' ], {
 		shell: true,
 		stdio: 'inherit',
 		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
