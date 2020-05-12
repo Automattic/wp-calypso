@@ -31,9 +31,9 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
-import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
+import SecondaryCartPromotions from './secondary-cart-promotions';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -139,10 +139,6 @@ export default function WPCheckout( {
 		setActiveStepNumber( 1 );
 	};
 
-	// By this point we have definitely loaded the cart using useShoppingCart
-	// so we mock the loaded property the CartStore would inject.
-	const mockCart = { ...responseCart, hasLoadedFromServer: true };
-
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -158,9 +154,12 @@ export default function WPCheckout( {
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
 					<WPCheckoutOrderSummary />
-					<UpsellWrapperUI>
-						<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-					</UpsellWrapperUI>
+					<SecondaryCartPromotions
+						siteId={ siteId }
+						siteUrl={ siteUrl }
+						responseCart={ responseCart }
+						addItemToCart={ addItemToCart }
+					/>
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
@@ -325,60 +324,6 @@ const CheckoutSummaryBody = styled.div`
 
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		display: block;
-	}
-`;
-
-const UpsellWrapperUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		margin-top: 24px;
-	}
-
-	.cart__upsell-wrapper {
-		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-			border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-			border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		}
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		}
-	}
-
-	.cart__upsell-header {
-		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		box-shadow: none;
-		margin-left: 20px;
-		margin-right: 20px;
-		padding-left: 0;
-		padding-right: 0;
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			border-top: none;
-			border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-			margin-left: 0;
-			margin-right: 0;
-			padding-left: 20px;
-			padding-right: 20px;
-		}
-
-		.section-header__label {
-			color: ${( props ) => props.theme.colors.textColor};
-			font-size: 16px;
-		}
-	}
-
-	.cart__upsell-body {
-		padding: 0 20px 20px;
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			padding: 20px;
-		}
-
-		p {
-			margin-bottom: 1.2em;
-		}
 	}
 `;
 
