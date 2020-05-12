@@ -31,7 +31,10 @@
 
 .backup-date-picker__select-date--previous {
 	text-align: left;
-	max-width: 153px;
+
+	@include breakpoint( '>660px' ) {
+		max-width: 153px;
+	}
 }
 
 .backup-date-picker__select-date--next {
@@ -46,7 +49,10 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-	max-width: 153px;
+
+	@include breakpoint( '>660px' ) {
+		max-width: 153px;
+	}
 }
 
 .backup-date-picker__search-link {
