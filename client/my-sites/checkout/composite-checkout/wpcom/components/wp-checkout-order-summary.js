@@ -9,9 +9,10 @@ import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard,
 	renderDisplayValueMarkdown,
+	useEvents,
+	useFormStatus,
 	useLineItemsOfType,
 	useTotal,
-	useEvents,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -26,12 +27,15 @@ import getSupportVariation, {
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart } from '../hooks/has-plan';
 
-export default function WPCheckoutOrderSummary( { isCartPendingUpdate } ) {
+export default function WPCheckoutOrderSummary() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
 	const total = useTotal();
+	const { formStatus } = useFormStatus();
+
+	const isCartUpdating = 'validating' === formStatus;
 
 	const isSupportChatUser = useSelector( ( state ) => {
 		return (
@@ -51,12 +55,12 @@ export default function WPCheckoutOrderSummary( { isCartPendingUpdate } ) {
 	};
 
 	return (
-		<CheckoutSummaryCardUI className={ isCartPendingUpdate ? 'is-loading' : '' }>
+		<CheckoutSummaryCardUI className={ isCartUpdating ? 'is-loading' : '' }>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartPendingUpdate ? (
+				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
 					<CheckoutSummaryFeaturesList />
