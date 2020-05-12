@@ -280,7 +280,7 @@ class PurchaseNotice extends Component {
 	};
 
 	getOtherPurchasesExpiringText() {
-		const { translate, purchase, moment } = this.props;
+		const { translate, purchase, moment, renewableSitePurchases } = this.props;
 		const expiry = moment( purchase.expiryDate );
 		const translateOptions = {
 			args: {
@@ -318,22 +318,47 @@ class PurchaseNotice extends Component {
 			);
 		}
 
+		const hasPurchaseExpiringSoon = renewableSitePurchases.some(
+			( otherPurchase ) => moment( otherPurchase.expiryDate ).diff( Date.now(), 'days' ) < 30
+		);
+
+		if ( hasPurchaseExpiringSoon ) {
+			if ( isDomainRegistration( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			if ( isPlan( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			return translate(
+				'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+				translateOptions
+			);
+		}
+
 		if ( isDomainRegistration( purchase ) ) {
 			return translate(
-				'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+				'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
 				translateOptions
 			);
 		}
 
 		if ( isPlan( purchase ) ) {
 			return translate(
-				'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+				'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
 				translateOptions
 			);
 		}
 
 		return translate(
-			'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+			'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
 			translateOptions
 		);
 	}
