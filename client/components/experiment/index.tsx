@@ -21,14 +21,14 @@ export { default as LoadingVariations } from './loading-variations';
  *
  * @param props The properties that describe the experiment
  */
-export const Experiment: FunctionComponent< ExperimentProps > = props => {
+export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children } = props;
 	return (
 		<>
 			<QueryExperiments />
-			{ React.Children.map( children, elem =>
-				React.cloneElement( elem, { variation, isLoading: loading } )
-			) }
+			{ React.Children.map( children, ( elem ) => {
+				return React.cloneElement( elem, { variation, isLoading: loading } );
+			} ) }
 		</>
 	);
 };
