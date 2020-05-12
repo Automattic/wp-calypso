@@ -195,8 +195,6 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 		if ( previousValue.current === value && previousCountry.current === countryCode ) {
 			return;
 		}
-		previousValue.current = value;
-		previousCountry.current = countryCode;
 		// No need to update if the prop value is equal to one form of the current value
 		const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
 		if (
@@ -205,6 +203,8 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 		) {
 			return;
 		}
+		previousValue.current = value;
+		previousCountry.current = countryCode;
 		const newState = getPhoneNumberStatesFromProp(
 			value,
 			countryCode,
@@ -217,6 +217,7 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 			icannValue,
 			value,
 			countryCode,
+			oldCountry: previousCountry.current,
 			newState,
 		} );
 		setPhoneNumberState( newState );
