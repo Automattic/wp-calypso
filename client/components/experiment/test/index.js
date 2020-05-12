@@ -17,7 +17,7 @@ import Experiment, { Variation, DefaultVariation } from '../index';
 import { LoadingVariations } from 'components/experiment';
 
 function renderWithStore( element, initialState ) {
-	const store = createStore( state => state, initialState );
+	const store = createStore( ( state ) => state, initialState );
 	return {
 		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,
@@ -36,7 +36,7 @@ function createState( variation, isLoading ) {
 }
 
 describe( 'Experiment Component', () => {
-	const testComponent = state =>
+	const testComponent = ( state ) =>
 		renderWithStore(
 			<Experiment name={ 'test' }>
 				<DefaultVariation name={ 'a' }>Default</DefaultVariation>
