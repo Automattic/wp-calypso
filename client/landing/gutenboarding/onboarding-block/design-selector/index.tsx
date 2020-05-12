@@ -81,9 +81,7 @@ const DesignSelector: React.FunctionComponent = () => {
 								// Update fonts to the design defaults
 								setFonts( design.fonts );
 
-								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
-									push( makePath( Step.Style ) );
-								}
+								push( makePath( Step.Style ) );
 							} }
 						>
 							<span className="design-selector__image-frame">

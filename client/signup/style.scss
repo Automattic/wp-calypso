@@ -4,6 +4,20 @@ body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
 
+	&.is-white-signup {
+		background: var( --studio-white );
+
+		.layout:not( .dops ) .wpcom-site__logo {
+			fill: var( --color-neutral-10 );
+			opacity: 1;
+
+			path {
+				fill: var( --color-neutral-10 );
+				opacity: 1;
+			}
+		}
+	}
+
 	// Adjust the padding as we no longer
 	// show the masterbar.
 	.layout__content {

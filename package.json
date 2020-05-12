@@ -144,7 +144,7 @@
 		"@automattic/calypso-build": "^6.1.0",
 		"@automattic/calypso-color-schemes": "^2.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"@automattic/color-studio": "2.3.0",
+		"@automattic/color-studio": "^2.3.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
@@ -354,6 +354,7 @@
 		"webpack-node-externals": "^1.7.2",
 		"whybundled": "^1.4.2",
 		"wp-calypso": "^0.17.0",
+		"wp-e2e-tests": "^0.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
 		"yargs": "^13.3.0"

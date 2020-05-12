@@ -14,6 +14,7 @@ import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 import type { DomainCategory } from '../../domains-constants';
+import { PLAN_ECOMMERCE } from '../plans/constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -77,7 +78,7 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
-export const setSelectedSite = ( selectedSite: number ) => ( {
+export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
 } );
@@ -90,7 +91,8 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
-	bearerToken?: string
+	bearerToken?: string,
+	planSlug?: string
 ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
@@ -99,10 +101,12 @@ export function* createSite(
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+	const isPublicSite = planSlug === PLAN_ECOMMERCE;
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
+		public: isPublicSite ? 1 : -1,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,

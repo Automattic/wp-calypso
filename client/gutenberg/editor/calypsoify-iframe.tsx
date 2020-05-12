@@ -10,7 +10,6 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
@@ -297,9 +296,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding =
-				config.isEnabled( 'gutenboarding' ) &&
-				this.props.siteCreationFlow === 'gutenboarding' &&
-				this.props.isSiteUnlaunched;
+				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`,
@@ -573,7 +570,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	render() {
-		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
+		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -622,19 +619,17 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<EditorMediaModal
-						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
-						enabledFilters={ getEnabledFilters( allowedTypes ) }
-						galleryViewEnabled={ isUsingClassicBlock }
-						isGutenberg={ ! isUsingClassicBlock }
-						onClose={ this.closeMediaModal }
-						onInsertMedia={ this.insertClassicBlockMedia }
-						single={ ! multiple }
-						source=""
-						visible={ isMediaModalVisible }
-					/>
-				</MediaLibrarySelectedData>
+				<EditorMediaModal
+					disabledDataSources={ getDisabledDataSources( allowedTypes ) }
+					enabledFilters={ getEnabledFilters( allowedTypes ) }
+					galleryViewEnabled={ isUsingClassicBlock }
+					isGutenberg={ ! isUsingClassicBlock }
+					onClose={ this.closeMediaModal }
+					onInsertMedia={ this.insertClassicBlockMedia }
+					single={ ! multiple }
+					source=""
+					visible={ isMediaModalVisible }
+				/>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }

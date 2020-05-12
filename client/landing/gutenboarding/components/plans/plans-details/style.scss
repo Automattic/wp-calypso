@@ -1,0 +1,70 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../../mixins.scss';
+@import '../../../variables.scss';
+
+.plans-details__viewport {
+	overflow: auto;
+
+	.plans-details__table {
+		border-left: 30px solid transparent;
+		border-right: 30px solid transparent;
+
+		@include break-medium {
+			border-left: 0;
+			border-right: 0;
+		}
+	}
+}
+
+.plans-details__table {
+	width: 100%;
+	min-width: $break-medium;
+	table-layout: fixed;
+
+	th,
+	td {
+		padding: 16px 24px;
+
+		&:first-child {
+			padding-left: 0;
+			width: 25%;
+
+			@include break-mobile {
+				width: 40%;
+			}
+		}
+
+		&:not( :first-child ) {
+			white-space: nowrap;
+		}
+	}
+
+	// TODO: Deal with a11y later.
+	.hidden {
+		display: none;
+	}
+}
+
+.plans-details__header-row {
+	th {
+		font-weight: 600;
+		font-size: 14px;
+		line-height: 20px;
+		text-transform: uppercase;
+		color: var( --studio-gray-20 );
+		padding-top: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px solid #eaeaeb;
+	}
+}
+
+.plans-details__feature-row {
+	th,
+	td {
+		font-size: 14px;
+		line-height: 17px;
+		letter-spacing: 0.2px;
+		border-bottom: 1px solid #eaeaeb;
+		vertical-align: top;
+	}
+}

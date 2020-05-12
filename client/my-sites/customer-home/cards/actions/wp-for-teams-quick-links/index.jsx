@@ -54,7 +54,7 @@ export const QuickLinks = ( {
 	const translate = useTranslate();
 
 	const quickLinks = (
-		<div className="wp-for-teams-quick-links__boxes quick-links-compact__boxes">
+		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }

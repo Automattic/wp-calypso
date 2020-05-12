@@ -14,11 +14,11 @@ import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
-import Plans from './plans';
 import { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
+import Plans from './plans';
 import { isEnabled } from '../../../config';
 import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
 
@@ -26,9 +26,13 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteTitle, siteVertical, selectedDesign, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const {
+		siteTitle,
+		siteVertical,
+		selectedDesign,
+		selectedFonts,
+		wasVerticalSkipped,
+	} = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { createSite } = useDispatch( STORE_KEY );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
@@ -50,14 +54,22 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	}, [ siteTitle, siteVertical, wasVerticalSkipped ] );
 
 	const canUseStyleStep = useCallback( (): boolean => {
-		return !! selectedDesign && isEnabled( 'gutenboarding/style-preview' );
+		return !! selectedDesign;
 	}, [ selectedDesign ] );
 
 	const canUseCreateSiteStep = useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
+	const canUsePlansStep = useCallback( (): boolean => {
+		return !! selectedDesign && !! selectedFonts && isEnabled( 'gutenboarding/plans-grid' );
+	}, [ selectedDesign, selectedFonts ] );
+
 	const getLatestStepPath = (): string => {
+		if ( canUsePlansStep() ) {
+			return makePath( Step.Plans );
+		}
+
 		if ( canUseStyleStep() ) {
 			return makePath( Step.Style );
 		}
@@ -120,7 +132,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>
-					<Plans />
+					{ canUsePlansStep() ? <Plans /> : <Redirect to={ makePath( Step.Style ) } /> }
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

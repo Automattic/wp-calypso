@@ -2,14 +2,13 @@
 Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nrqsnchz, nosolosw, obenland, okenobi, owolski, themeshaper, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 1.2
+Tested up to: 5.4
+Stable tag: 1.4
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
-
 
 == Description ==
 
@@ -40,6 +39,20 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.4 =
+* Update Premium Block Style and Behaviour
+* Support for Premium Content in email subscription and reader.
+* Add plugin to notify users of Block Patterns new location.
+* Add default link colors to the editor.
+
+= 1.3 =
+* Update Premium Content Block icon.
+* Add Showcase New Blocks module.
+* Add new patterns, and update pattern order.
+* Bump newspack-blocks version to 1.5.0.
+* Remove page layout preview from document settings.
+* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
 
 = 1.2 =
 * New Posts Carousel block.

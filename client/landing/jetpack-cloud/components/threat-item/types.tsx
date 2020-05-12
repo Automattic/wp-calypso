@@ -27,6 +27,7 @@ export interface BaseThreat {
 	firstDetected: Date;
 	fixedOn?: Date;
 	fixable: false | ThreatFix;
+	fixerStatus?: string;
 	filename?: string;
 	extension?: Extension;
 	rows?: number;

@@ -8,7 +8,7 @@ import { isBusiness, isPremium, isEcommerce } from 'lib/products-values';
 /**
  * Returns true if the site has WordAds access
  *
- * @param  {Site} site Site object
+ * @param  site Site object
  * @returns {boolean}      true if site has WordAds access
  */
 export function canAccessWordads( site ) {
@@ -37,15 +37,16 @@ export function canAccessAds( site ) {
 	);
 }
 
-export function isWordadsInstantActivationEligible( site ) {
-	if (
-		( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) ) &&
-		userCan( 'activate_wordads', site )
-	) {
-		return true;
-	}
+export function hasWordadsPlan( site ) {
+	return isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan );
+}
 
-	return false;
+export function isWordadsInstantActivationEligible( site ) {
+	return hasWordadsPlan( site ) && userCan( 'activate_wordads', site );
+}
+
+export function isWordadsInstantActivationEligibleButNotOwner( site ) {
+	return hasWordadsPlan( site ) && ! userCan( 'activate_wordads', site );
 }
 
 export function canUpgradeToUseWordAds( site ) {

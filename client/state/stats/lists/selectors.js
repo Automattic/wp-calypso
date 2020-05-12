@@ -237,7 +237,15 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		} );
 	} );
 
-	const sortedTopPosts = Object.values( topPosts ).sort( ( a, b ) => a.views > b.views );
+	const sortedTopPosts = Object.values( topPosts ).sort( ( a, b ) => {
+		if ( a.views > b.views ) {
+			return -1;
+		}
+		if ( a.views < b.views ) {
+			return 1;
+		}
+		return 0;
+	} );
 
 	if ( ! sortedTopPosts.length ) {
 		return {

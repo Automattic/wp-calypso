@@ -2,41 +2,41 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-
-import { Plan, supportedPlans, getPlanTitle } from '../../../lib/plans';
+import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import { Title, SubTitle } from '../../titles';
 import ActionButtons from '../../action-buttons';
+import PlansTable from '../plans-table';
+import PlansDetails from '../plans-details';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { useSelectedPlan } from 'landing/gutenboarding/hooks/use-selected-plan';
 
 export interface Props {
-	currentPlan: Plan;
-	renderConfirmButton: ( plan: Plan ) => React.ReactElement;
+	confirmButton: React.ReactElement;
 	cancelButton?: React.ReactElement;
-	onPlanChange?: ( plan: Plan ) => void;
 }
 
-const PlansGrid: React.FunctionComponent< Props > = ( {
-	currentPlan,
-	renderConfirmButton,
-	cancelButton,
-	onPlanChange = () => undefined,
-} ) => {
+const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelButton } ) => {
 	const { __ } = useI18n();
-	const [ selectedPlan, setSelectedPlan ] = React.useState< Plan >( currentPlan );
 
-	const handlePlanSelect = ( plan: Plan ) => {
-		setSelectedPlan( plan );
-		onPlanChange( plan );
+	const selectedPlan = useSelectedPlan();
+
+	const { setPlan } = useDispatch( PLANS_STORE );
+
+	const [ showDetails, setShowDetails ] = React.useState( false );
+
+	const handleDetailsToggleButtonClick = () => {
+		setShowDetails( ! showDetails );
 	};
 
 	return (
@@ -50,26 +50,42 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						) }
 					</SubTitle>
 				</div>
-				<ActionButtons
-					primaryButton={ renderConfirmButton( selectedPlan ) }
-					secondaryButton={ cancelButton }
-				/>
+				<ActionButtons primaryButton={ confirmButton } secondaryButton={ cancelButton } />
 			</div>
 
-			{ /* @TODO: Replace with real grid */ }
 			<div className="plans-grid__table">
-				{ supportedPlans.map( ( plan, index ) => (
-					<div key={ index } className="plans-grid__column">
-						{ getPlanTitle( plan ) }
-						<Button
-							isPrimary
-							className={ selectedPlan === plan ? 'plans-grid__button--active' : '' }
-							onClick={ () => handlePlanSelect( plan ) }
-						>
-							Select { getPlanTitle( plan ) }
-						</Button>
+				<PlansTable
+					selectedPlanSlug={ selectedPlan.getStoreSlug() }
+					onPlanSelect={ setPlan }
+				></PlansTable>
+			</div>
+
+			<div className="plans-grid__details">
+				{ showDetails && (
+					<div className="plans-grid__details-container">
+						<div className="plans-grid__details-heading">
+							<Title>{ __( 'Detailed comparison' ) }</Title>
+						</div>
+						<PlansDetails />
 					</div>
-				) ) }
+				) }
+				<Button
+					className="plans-grid__details-toggle-button"
+					isLarge
+					onClick={ handleDetailsToggleButtonClick }
+				>
+					{ showDetails ? (
+						<>
+							<span>{ __( 'Less details' ) } </span>
+							<Icon icon="arrow-up" size={ 20 }></Icon>
+						</>
+					) : (
+						<>
+							<span>{ __( 'More details' ) } </span>
+							<Icon icon="arrow-down" size={ 20 }></Icon>
+						</>
+					) }
+				</Button>
 			</div>
 		</div>
 	);

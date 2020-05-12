@@ -33,6 +33,7 @@ export interface CreateSiteParams {
 	blog_name: string;
 	blog_title?: string;
 	authToken?: string;
+	public?: number;
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
@@ -54,6 +55,9 @@ export interface SiteDetails {
 	name: string;
 	description: string;
 	URL: string;
+	options: {
+		created_at: string;
+	};
 }
 
 export interface SiteError {

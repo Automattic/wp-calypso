@@ -200,6 +200,7 @@ export class PlansFeaturesMain extends Component {
 					popularPlanSpec={ getPopularPlanSpec( {
 						customerType,
 						isJetpack,
+						availablePlans,
 					} ) }
 					siteId={ siteId }
 				/>
@@ -303,8 +304,8 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	isPersonalCustomerTypePlanVisible() {
-		const { hidePersonalPlan, hidePremiumPlan } = this.props;
-		return ! hidePersonalPlan || ! hidePremiumPlan;
+		const { hidePersonalPlan } = this.props;
+		return ! hidePersonalPlan;
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {

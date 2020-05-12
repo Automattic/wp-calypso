@@ -37,6 +37,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 
 /**
  * Style dependencies
@@ -181,6 +182,7 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
+							<NewDomainsRedirectionNoticeUpsell />
 							<RegisterDomainStep
 								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }

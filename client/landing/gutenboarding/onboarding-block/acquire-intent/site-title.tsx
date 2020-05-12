@@ -75,6 +75,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 						onKeyDown={ handleKeyDown }
 						onKeyUp={ handleKeyUp }
 					/>
+					<span className="site-title__placeholder"></span>
 				</span>
 			),
 		}

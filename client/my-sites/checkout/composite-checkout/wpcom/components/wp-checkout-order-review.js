@@ -33,7 +33,7 @@ export default function WPCheckoutOrderReview( {
 	const isPurchaseFree = total.amount.value === 0;
 
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const domainUrl = firstDomainItem ? firstDomainItem.label : siteUrl;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>

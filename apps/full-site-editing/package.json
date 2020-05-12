@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "1.2.0",
+	"version": "1.4.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -72,6 +72,7 @@
 		"prepare": "check-npm-client && yarn run sync:newspack-blocks --nodemodules"
 	},
 	"dependencies": {
+		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "*",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
@@ -85,6 +86,7 @@
 		"@wordpress/element": "*",
 		"@wordpress/hooks": "*",
 		"@wordpress/html-entities": "*",
+		"@wordpress/icons": "*",
 		"@wordpress/i18n": "*",
 		"@wordpress/keycodes": "*",
 		"@wordpress/plugins": "*",

@@ -49,6 +49,7 @@ const Task = ( {
 	taskId,
 	timing,
 	title,
+	actionButton,
 } ) => {
 	const [ isTaskVisible, setIsTaskVisible ] = useState( true );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
@@ -152,16 +153,17 @@ const Task = ( {
 					<ActionPanelTitle>{ title }</ActionPanelTitle>
 					<p className="task__description">{ description }</p>
 					<ActionPanelCta>
-						<Button
-							className="task__action"
-							primary
-							onClick={ startTask }
-							href={ actionUrl }
-							target={ actionTarget }
-						>
-							{ actionText }
-						</Button>
-
+						{ actionButton || (
+							<Button
+								className="task__action"
+								primary
+								onClick={ startTask }
+								href={ actionUrl }
+								target={ actionTarget }
+							>
+								{ actionText }
+							</Button>
+						) }
 						<Button
 							className="task__skip is-link"
 							ref={ skipButtonRef }
@@ -172,7 +174,6 @@ const Task = ( {
 							{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
 							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 						</Button>
-
 						{ enableSkipOptions && areSkipOptionsVisible && (
 							<PopoverMenu
 								context={ skipButtonRef.current }

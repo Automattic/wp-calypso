@@ -139,9 +139,9 @@ class JetpackCloudSidebar extends Component {
 									this.props.isScanSectionOpen ? (
 										scanTitle
 									) : (
-										<>
+										<a href={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }>
 											{ scanTitle } { scanBadge }{ ' ' }
-										</>
+										</a>
 									)
 								}
 								materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here

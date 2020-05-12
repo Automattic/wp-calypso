@@ -24,6 +24,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
+import BackupChanges from './backup-changes';
 
 /**
  * Style dependencies
@@ -77,7 +78,7 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, hasRealtimeBackups, siteSlug, translate } = this.props;
+		const { allowRestore, hasRealtimeBackups, siteSlug, deltas, metaDiff, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
@@ -100,6 +101,7 @@ class DailyBackupStatus extends Component {
 					disabledRestore={ ! allowRestore }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
+				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
 			</>
 		);
 	}
@@ -260,17 +262,20 @@ class DailyBackupStatus extends Component {
 		const hoursForNextBackup =
 			parseInt( lastBackupDate.format( 'H' ) ) - parseInt( today.format( 'H' ) ) + 3;
 
+		const nextBackupHoursText =
+			hoursForNextBackup === 1
+				? translate( 'In the next hour' )
+				: translate( 'In the next %d hour', 'In the next %d hours', {
+						args: [ hoursForNextBackup ],
+						count: hoursForNextBackup,
+				  } );
+
 		return (
 			<>
 				<Gridicon className="daily-backup-status__gridicon-backup-scheduled" icon="cloud-upload" />
 				<div className="daily-backup-status__static-title">
 					{ translate( 'Backup Scheduled:' ) }
-					<div>
-						{ translate( 'In the next %d hour', 'In the next %d hours', {
-							args: [ hoursForNextBackup ],
-							count: hoursForNextBackup,
-						} ) }
-					</div>
+					<div>{ nextBackupHoursText }</div>
 				</div>
 				<div className="daily-backup-status__no-backup-last-backup">
 					{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
@@ -295,7 +300,6 @@ class DailyBackupStatus extends Component {
 		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
-				<div className="daily-backup-status__realtime-details-title">Backup details</div>
 				<div className="daily-backup-status__realtime-details-card">
 					<ActivityCard
 						{ ...{

@@ -10,10 +10,9 @@
 	}
 }
 
+.backups__last-backup-status-grow,
 .backups__last-backup-status {
 	background: var( --studio-white );
-	margin-left: -16px;
-	margin-right: -16px;
 	padding-left: 16px;
 	padding-right: 16px;
 	padding-top: 24px;
@@ -22,6 +21,23 @@
 		background: var( --color-surface-backdrop );
 		padding: 0;
 		margin: 0;
+	}
+}
+.main {
+	overflow-y: auto;
+}
+.backups__main-wrap {
+	display: flex;
+	flex-direction: column;
+	height: calc( 100vh - 120px );
+	margin-left: -16px;
+	margin-right: -16px;
+
+	div:last-child {
+		flex-grow: 1;
+	}
+	@include breakpoint( '>660px' ) {
+		height: auto;
 	}
 }
 

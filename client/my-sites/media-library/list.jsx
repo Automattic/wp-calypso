@@ -11,6 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import MediaActions from 'lib/media/actions';
 import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
@@ -27,7 +28,7 @@ export class MediaLibraryList extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		media: PropTypes.arrayOf( PropTypes.object ),
-		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
+		selectedItems: PropTypes.arrayOf( PropTypes.object ),
 		filter: PropTypes.string,
 		filterRequiresUpgrade: PropTypes.bool.isRequired,
 		search: PropTypes.string,
@@ -44,7 +45,6 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	static defaultProps = {
-		mediaLibrarySelectedItems: Object.freeze( [] ),
 		containerWidth: 0,
 		rowPadding: 10,
 		mediaHasNextPage: false,
@@ -104,9 +104,9 @@ export class MediaLibraryList extends React.Component {
 		// seeking to select a single item
 		let selectedItems;
 		if ( this.props.single ) {
-			selectedItems = filter( this.props.mediaLibrarySelectedItems, { ID: item.ID } );
+			selectedItems = filter( this.props.selectedItems, { ID: item.ID } );
 		} else {
-			selectedItems = clone( this.props.mediaLibrarySelectedItems );
+			selectedItems = clone( this.props.selectedItems );
 		}
 
 		const selectedItemsIndex = findIndex( selectedItems, { ID: item.ID } );
@@ -162,7 +162,7 @@ export class MediaLibraryList extends React.Component {
 
 	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
-		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const selectedItems = this.props.selectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
 		const ref = this.getItemRef( item );
 
@@ -261,6 +261,7 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
+export default connect( ( state, { site } ) => ( {
 	mediaScale: getPreference( state, 'mediaScale' ),
+	selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 } ) )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

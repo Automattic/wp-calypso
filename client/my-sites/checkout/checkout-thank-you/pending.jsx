@@ -29,6 +29,7 @@ class CheckoutPending extends PureComponent {
 		error: PropTypes.object,
 		errorNotice: PropTypes.func,
 		localize: PropTypes.func,
+		redirectTo: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -38,7 +39,8 @@ class CheckoutPending extends PureComponent {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
-		const { translate, showErrorNotice, siteSlug, redirectTo } = this.props;
+		const { translate, showErrorNotice, siteSlug } = this.props;
+		const redirectTo = this.props.redirectTo || `/checkout/thank-you/${ siteSlug }/pending`;
 
 		const retryOnError = () => {
 			page( `/checkout/${ siteSlug }` );

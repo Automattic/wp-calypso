@@ -62,6 +62,7 @@ describe( 'CheckoutProvider', () => {
 				showInfoMessage={ noop }
 				showSuccessMessage={ noop }
 				paymentMethods={ [ mockMethod ] }
+				paymentProcessors={ {} }
 			>
 				<CustomForm />
 			</CheckoutProvider>

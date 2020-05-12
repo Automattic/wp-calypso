@@ -156,6 +156,17 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should return a service unavailable error when service was unavailable during an external media request', () => {
+			const error = { error: 'service_unavailable' };
+			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+
+			expect( state ).to.eql( {
+				[ siteId ]: {
+					0: [ MediaValidationErrors.SERVICE_UNAVAILABLE ],
+				},
+			} );
+		} );
+
 		test( 'should return a generic server error for any other error during external media request', () => {
 			const error = { error: 'something' };
 			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
@@ -643,6 +654,17 @@ describe( 'reducer', () => {
 
 			expect( result ).to.deep.eql( {
 				[ site.ID ]: [ 1, 2, mediaItem.ID ],
+			} );
+		} );
+
+		test( 'should not duplicate already selected media items', () => {
+			const state = {
+				[ site.ID ]: [ mediaItem.ID ],
+			};
+			const result = selectedItems( deepFreeze( state ), receiveMedia( siteId, [ mediaItem ] ) );
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ mediaItem.ID ],
 			} );
 		} );
 

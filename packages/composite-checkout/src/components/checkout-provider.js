@@ -15,6 +15,7 @@ import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
 import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -36,6 +37,7 @@ export const CheckoutProvider = ( props ) => {
 		showSuccessMessage,
 		theme,
 		paymentMethods,
+		paymentProcessors,
 		registry,
 		onEvent,
 		isLoading,
@@ -55,6 +57,7 @@ export const CheckoutProvider = ( props ) => {
 	}, [ paymentMethods, prevPaymentMethods ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
@@ -79,6 +82,8 @@ export const CheckoutProvider = ( props ) => {
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
+			transactionStatusManager,
+			paymentProcessors,
 		} ),
 		[
 			formStatus,
@@ -89,6 +94,8 @@ export const CheckoutProvider = ( props ) => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
+			transactionStatusManager,
+			paymentProcessors,
 		]
 	);
 
@@ -140,6 +147,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showInfoMessage,
 		showSuccessMessage,
 		paymentMethods,
+		paymentProcessors,
 	} = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
@@ -149,6 +157,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
 		validateLineItems( items );
+		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
 		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
@@ -160,6 +169,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		onPaymentComplete,
 		paymentMethods,
+		paymentProcessors,
 		propsToValidate,
 		showErrorMessage,
 		showInfoMessage,
