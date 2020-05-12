@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import reducer, {
 	queryRequests,
 	mediaItemRequests,
 	selectedItems,
+	mediaItems,
 } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 import {
@@ -53,6 +55,7 @@ describe( 'reducer', () => {
 			'queryRequests',
 			'mediaItemRequests',
 			'selectedItems',
+			'mediaItems',
 		] );
 	} );
 
@@ -703,6 +706,249 @@ describe( 'reducer', () => {
 			const state = selectedItems( baseState, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'mediaItems()', () => {
+		const siteId = 2916284;
+		const site = {
+			ID: siteId,
+		};
+		const anotherSiteId = 87654321;
+		const mediaId = 42;
+		const mediaItem = {
+			ID: [ mediaId ],
+		};
+		const transientMediaItem = {
+			...mediaItem,
+			ID: uniqueId( 'transientMedia-' ),
+		};
+		const baseState = deepFreeze( {
+			[ siteId ]: {
+				actual: { [ mediaId ]: mediaItem },
+				transient: { [ transientMediaItem.ID ]: transientMediaItem },
+			},
+		} );
+
+		const getUniqueMediaItem = () => ( {
+			ID: uniqueId( 'mediaItem-' ),
+		} );
+
+		test( 'should default to an empty object', () => {
+			const state = mediaItems( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		describe( 'changeMediaSource', () => {
+			test( "should clear the site's media items", () => {
+				const state = mediaItems( { ...baseState }, changeMediaSource( siteId ) );
+
+				expect( state ).to.deep.eql( {
+					[ siteId ]: {
+						actual: {},
+						transient: {},
+					},
+				} );
+			} );
+
+			test( 'should not clear the media items of other sites', () => {
+				const state = mediaItems(
+					{ ...baseState, [ anotherSiteId ]: { [ mediaId ]: mediaItem } },
+					changeMediaSource( anotherSiteId )
+				);
+
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ anotherSiteId ]: {
+						actual: {},
+						transient: {},
+					},
+				} );
+			} );
+
+			test( 'should handle empty state', () => {
+				const state = mediaItems( {}, changeMediaSource( siteId ) );
+
+				expect( state ).to.deep.eql( {
+					[ siteId ]: {
+						actual: {},
+						transient: {},
+					},
+				} );
+			} );
+		} );
+
+		describe( 'createMediaItem', () => {
+			test( 'should save the transient media', () => {
+				const transientMedia = { ...mediaItem, transient: true, ID: uniqueId( 'transient-' ) };
+				const state = mediaItems( baseState, createMediaItem( site, transientMedia ) );
+
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						transient: {
+							...baseState[ siteId ].transient,
+							[ transientMedia.ID ]: transientMedia,
+						},
+					},
+				} );
+			} );
+
+			test( 'should handle empty state', () => {
+				const state = mediaItems( {}, createMediaItem( site, mediaItem ) );
+
+				expect( state ).to.deep.eql( {
+					[ siteId ]: {
+						transient: {
+							[ mediaItem.ID ]: mediaItem,
+						},
+					},
+				} );
+			} );
+		} );
+
+		describe( 'receiveMedia', () => {
+			test( 'should add the new media', () => {
+				const newMedia = [ getUniqueMediaItem(), getUniqueMediaItem(), getUniqueMediaItem() ];
+
+				const state = mediaItems( baseState, receiveMedia( siteId, newMedia ) );
+
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						actual: {
+							...baseState[ siteId ].actual,
+							[ newMedia[ 0 ].ID ]: newMedia[ 0 ],
+							[ newMedia[ 1 ].ID ]: newMedia[ 1 ],
+							[ newMedia[ 2 ].ID ]: newMedia[ 2 ],
+						},
+					},
+				} );
+			} );
+
+			test( 'should not duplicate existing media', () => {
+				const existingMedia = [ getUniqueMediaItem(), getUniqueMediaItem(), getUniqueMediaItem() ];
+
+				const beginningState = {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						actual: {
+							...baseState[ siteId ].actual,
+							[ existingMedia[ 0 ].ID ]: existingMedia[ 0 ],
+							[ existingMedia[ 1 ].ID ]: existingMedia[ 1 ],
+							[ existingMedia[ 2 ].ID ]: existingMedia[ 2 ],
+						},
+					},
+				};
+
+				const newMedia = existingMedia.map( ( item ) => ( { ...item, isNew: true } ) );
+				const state = mediaItems( beginningState, receiveMedia( siteId, newMedia ) );
+
+				/**
+				 * assert that the existing media were overwritten with the
+				 * "new media" version of the media item with the same ID
+				 */
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						actual: {
+							...baseState[ siteId ].actual,
+							[ existingMedia[ 0 ].ID ]: newMedia[ 0 ],
+							[ existingMedia[ 1 ].ID ]: newMedia[ 1 ],
+							[ existingMedia[ 2 ].ID ]: newMedia[ 2 ],
+						},
+					},
+				} );
+			} );
+
+			test( 'should handle empty state', () => {
+				const newMedia = [ getUniqueMediaItem(), getUniqueMediaItem(), getUniqueMediaItem() ];
+
+				const state = mediaItems( {}, receiveMedia( siteId, newMedia ) );
+
+				expect( state ).to.deep.eql( {
+					[ siteId ]: {
+						actual: {
+							[ newMedia[ 0 ].ID ]: newMedia[ 0 ],
+							[ newMedia[ 1 ].ID ]: newMedia[ 1 ],
+							[ newMedia[ 2 ].ID ]: newMedia[ 2 ],
+						},
+					},
+				} );
+			} );
+		} );
+
+		describe( 'deleteMedia', () => {
+			test( "should remove all the media from the site's actual media", () => {
+				const existingMedia = [ getUniqueMediaItem(), getUniqueMediaItem(), getUniqueMediaItem() ];
+
+				const beginningState = {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						actual: {
+							...baseState[ siteId ].actual,
+							[ existingMedia[ 0 ].ID ]: existingMedia[ 0 ],
+							[ existingMedia[ 1 ].ID ]: existingMedia[ 1 ],
+							[ existingMedia[ 2 ].ID ]: existingMedia[ 2 ],
+						},
+					},
+				};
+				const state = mediaItems(
+					beginningState,
+					deleteMedia(
+						siteId,
+						existingMedia.map( ( m ) => m.ID )
+					)
+				);
+
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ siteId ]: {
+						...baseState[ siteId ],
+						actual: {
+							[ mediaId ]: mediaItem, // it only removed the media ids that were passed in
+						},
+					},
+				} );
+			} );
+
+			test( 'should handle empty state', () => {
+				const state = mediaItems( {}, deleteMedia( siteId, mediaId ) );
+
+				expect( state ).to.deep.eql( { [ siteId ]: { actual: {} } } );
+			} );
+		} );
+
+		describe.each( [ successMediaItemRequest, failMediaItemRequest ] )( '%p', ( actionFn ) => {
+			test( 'should remove the media item from the store', () => {
+				const state = mediaItems( baseState, actionFn( siteId, transientMediaItem.ID ) );
+
+				expect( state ).to.deep.eql( {
+					...baseState,
+					[ siteId ]: {
+						actual: {
+							...baseState[ siteId ].actual,
+						},
+						transient: {},
+					},
+				} );
+			} );
+
+			test( 'should handle empty state', () => {
+				const state = mediaItems( {}, actionFn( siteId, transientMediaItem.ID ) );
+
+				expect( state ).to.deep.eql( {
+					[ siteId ]: {
+						transient: {},
+					},
+				} );
+			} );
 		} );
 	} );
 } );

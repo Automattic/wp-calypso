@@ -346,10 +346,129 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
+export const mediaItems = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_SOURCE_CHANGE: {
+			/**
+			 * Clear the media for the site.
+			 *
+			 * Dispatched when the media source changes (e.g., switching from uploaded media to
+			 * external media like Google Photos).
+			 */
+			const { siteId } = action;
+			return {
+				...state,
+				[ siteId ]: {
+					actual: {},
+					transient: {},
+				},
+			};
+		}
+
+		case MEDIA_ITEM_CREATE: {
+			/**
+			 * Eagerly save the transient media.
+			 *
+			 * Dispatched right before an item is uploaded to be created.
+			 *
+			 * See related handlers MEDIA_REQUEST_SUCCESS and MEDIA_SUCCESS_FAILURE
+			 */
+			const { site, transientMedia } = action;
+			const { [ site.ID ]: { transient = {} } = {} } = state;
+
+			return {
+				...state,
+				[ site.ID ]: {
+					...state[ site.ID ],
+					transient: {
+						...transient,
+						[ transientMedia.ID ]: transientMedia,
+					},
+				},
+			};
+		}
+		case MEDIA_RECEIVE: {
+			/**
+			 * Handle either a new page of media or a successfully uploaded media.
+			 *
+			 * Dispatched when:
+			 * 1. a media item is successfully uploaded; or
+			 * 2. a new page of media items is received (as in a search or page navigation); or
+			 * 3. a media item is edited/changed; or
+			 * 4. a single media item is retrieved.
+			 *
+			 * Because we're handling all of these in one action, and because we eagerly set
+			 * newly uploaded media in MEDIA_ITEM_CREATE, we need to be careful
+			 * not to duplicate. Luckily here we just overwrite the ids in our `reduce`
+			 * and forget about it.
+			 */
+			const { siteId, media: newMedia } = action;
+			const { [ siteId ]: { actual: existingMedia = {} } = {} } = state;
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					actual: newMedia.reduce(
+						( aggregatedMedia, newMediaItem ) => ( {
+							...aggregatedMedia,
+							[ newMediaItem.ID ]: newMediaItem,
+						} ),
+						existingMedia
+					),
+				},
+			};
+		}
+		case MEDIA_DELETE: {
+			/**
+			 * Remove the media from the site's media.
+			 *
+			 * Dispatched when a media item is deleted.
+			 */
+			const { siteId, mediaIds } = action;
+			const { [ siteId ]: { actual: existingMedia = {} } = {} } = state;
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					actual: omit( existingMedia, mediaIds ),
+				},
+			};
+		}
+		case MEDIA_ITEM_REQUEST_FAILURE:
+		case MEDIA_ITEM_REQUEST_SUCCESS: {
+			/**
+			 * We've eagerly saved the transient media in MEDIA_ITEM_CREATE, and
+			 * now we know the upload was successful, so we can remove the transient
+			 * item. MEDIA_RECEIVE will handle saving the actual final version of
+			 * the uploaded media item.
+			 *
+			 * Likewise, in the case of a failure, we must also remove the failed
+			 * media item.
+			 *
+			 * Dispatched when uploading the media item is successful.
+			 */
+			const { siteId, mediaId } = action;
+			const { [ siteId ]: { transient = {} } = {} } = state;
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					transient: omit( transient, mediaId ),
+				},
+			};
+		}
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	errors,
 	queries,
 	queryRequests,
 	mediaItemRequests,
 	selectedItems,
+	mediaItems,
 } );
