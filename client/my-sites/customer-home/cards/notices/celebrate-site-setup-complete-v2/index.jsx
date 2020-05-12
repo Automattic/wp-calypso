@@ -9,6 +9,11 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice-v2';
 
+/**
+ * Image dependencies
+ */
+import checklistIllustration from 'assets/images/customer-home/illustration--checklist-complete.svg';
+
 const CelebrateSiteSetupComplete = () => {
 	const translate = useTranslate();
 	return (
@@ -19,6 +24,7 @@ const CelebrateSiteSetupComplete = () => {
 			) }
 			noticeId="site-setup-complete"
 			title={ translate( 'Site setup complete!' ) }
+			illustration={ checklistIllustration }
 			showSkip={ true }
 			skipText={ translate( 'Dismiss' ) }
 		/>

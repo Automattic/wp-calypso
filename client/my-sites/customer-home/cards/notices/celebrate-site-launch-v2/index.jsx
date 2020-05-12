@@ -15,6 +15,11 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import { getSelectedSiteId } from 'state/ui/selectors';
 import CelebrateNotice from '../celebrate-notice-v2';
 
+/**
+ * Image dependencies
+ */
+import launchedIllustration from 'assets/images/customer-home/illustration--rocket.svg';
+
 const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -40,6 +45,7 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 			) }
 			noticeId="site-launched"
 			title={ translate( 'You launched your site!' ) }
+			illustration={ launchedIllustration }
 			showSkip={ true }
 			skipText={ isSiteSetupComplete ? translate( 'Dismiss' ) : translate( 'Skip site setup' ) }
 			onSkip={ ! isSiteSetupComplete ? skipSiteSetup : null }

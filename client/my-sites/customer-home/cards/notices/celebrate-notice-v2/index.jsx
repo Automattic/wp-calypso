@@ -28,12 +28,13 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
+import fireworksIllustration from 'assets/images/customer-home/illustration--fireworks-v2.svg';
 
 const CelebrateNotice = ( {
 	actionText,
 	description,
 	noticeId,
+	illustration = fireworksIllustration,
 	onSkip,
 	showSkip = false,
 	skipText,
@@ -70,7 +71,7 @@ const CelebrateNotice = ( {
 			<ActionPanelBody>
 				{ isDesktop() && (
 					<ActionPanelFigure align="right">
-						<img src={ fireworksIllustration } alt="" />
+						<img src={ illustration } alt="" />
 					</ActionPanelFigure>
 				) }
 				<div className="celebrate-notice-v2__text task__text">

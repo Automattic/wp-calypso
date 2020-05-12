@@ -9,6 +9,11 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice-v2';
 
+/**
+ * Image dependencies
+ */
+import migrationIllustration from 'assets/images/customer-home/illustration--import-complete.svg';
+
 const CelebrateSiteMigration = () => {
 	const translate = useTranslate();
 	return (
@@ -19,6 +24,7 @@ const CelebrateSiteMigration = () => {
 			) }
 			noticeId="site-migrated"
 			title={ translate( 'Your site has been imported!' ) }
+			illustration={ migrationIllustration }
 			showSkip={ true }
 			skipText={ translate( 'Dismiss' ) }
 		/>
