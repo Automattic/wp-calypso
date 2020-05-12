@@ -47,7 +47,7 @@ export default function PlansStep() {
 	};
 
 	return (
-		<div className="plans">
+		<div className="gutenboarding-page plans">
 			<PlansGrid
 				confirmButton={
 					<Button
