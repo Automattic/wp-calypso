@@ -25,6 +25,7 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 	reduxStore.dispatch( setLocaleRawData( locale ) );
 
+	let userTranslations;
 	const loadedTranslationChunks = {};
 	const loadTranslationForChunkIfNeeded = ( chunkId ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
@@ -33,7 +34,7 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
 			( translations ) => {
-				i18n.addTranslations( translations );
+				i18n.addTranslations( { ...translations, ...userTranslations } );
 				loadedTranslationChunks[ chunkId ] = true;
 			}
 		);
@@ -51,6 +52,14 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
 	} );
+
+	const userTranslationsPromise = loadUserUndeployedTranslations( localeSlug );
+
+	if ( userTranslationsPromise ) {
+		userTranslationsPromise.then( ( translations ) => {
+			userTranslations = translations;
+		} );
+	}
 };
 
 export const setupLocale = ( currentUser, reduxStore ) => {

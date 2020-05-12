@@ -360,17 +360,17 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		'export-translations',
 	].join( '/' );
 
-	const query = {
+	const searchParams = new URLSearchParams( {
 		'filters[user_login]': username,
 		'filters[status]': translationStatus,
 		format: 'json',
-	};
+	} );
 
 	const requestUrl = getUrlFromParts( {
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
-		query,
+		searchParams,
 	} );
 
 	return window
@@ -379,7 +379,11 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 			credentials: 'include',
 		} )
 		.then( ( res ) => res.json() )
-		.then( ( translations ) => i18n.addTranslations( translations ) );
+		.then( ( translations ) => {
+			i18n.addTranslations( translations );
+
+			return { translations };
+		} );
 }
 
 /*
