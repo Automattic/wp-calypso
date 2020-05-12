@@ -152,6 +152,16 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		fixThreats( allFixableThreats );
 	}, [ allFixableThreats, fixThreats ] );
 
+	const isFixing = React.useCallback(
+		( threat: Threat ) => {
+			return (
+				!! updatingThreats.find( ( threatId ) => threatId === threat.id ) ||
+				threat.fixerStatus === 'in_progress'
+			);
+		},
+		[ updatingThreats ]
+	);
+
 	return (
 		<>
 			<SecurityIcon icon="error" />
@@ -195,7 +205,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							primary
 							className="scan-threats__fix-all-threats-button"
 							onClick={ openFixAllThreatsDialog }
-							disabled={ updatingThreats.length === threats.length }
+							disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
 						>
 							{ translate( 'Fix all' ) }
 						</Button>
@@ -207,7 +217,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						threat={ threat }
 						onFixThreat={ () => openDialog( 'fix', threat ) }
 						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-						isFixing={ !! updatingThreats.find( ( t ) => t.id === threat.id ) }
+						isFixing={ isFixing( threat ) }
 						contactSupportUrl={ contactSupportUrl( site.URL ) }
 						isPlaceholder={ false }
 					/>
