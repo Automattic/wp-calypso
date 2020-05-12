@@ -23,7 +23,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 .signup.is-crowdsignal .formatted-header__title {
 	font-family: 'Recoleta', serif;
 	font-size: 32px;
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 10px;
 }
 
@@ -32,7 +32,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	font-size: 15px;
 
 	a {
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {

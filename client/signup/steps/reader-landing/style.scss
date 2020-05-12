@@ -75,7 +75,7 @@
 
 .reader-landing__feature-heading {
 	font-size: 1.2em;
-	font-weight: bold;
+	font-weight: 600;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 1.6em;

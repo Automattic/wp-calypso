@@ -367,7 +367,7 @@
 		}
 
 		.checkout__new-card-header {
-			font-weight: bold;
+			font-weight: 600;
 			margin-bottom: 15px;
 		}
 	}
@@ -729,7 +729,7 @@
 .credit-card-payment-box__switch-link {
 	color: var( --color-link-dark );
 	font-style: italic;
-	font-weight: 800;
+	font-weight: 700;
 	line-height: 40px;
 	display: block;
 	clear: both;
@@ -930,13 +930,13 @@
 		margin-bottom: 0;
 
 		.section-nav-tabs__list > span {
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		.section-nav-tab__link {
 			background: transparent;
 			color: var( --color-primary );
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		.section-nav-tab.is-selected {
@@ -1054,7 +1054,7 @@
 
 	.select-dropdown__item-text {
 		top: 4px;
-		font-weight: bold;
+		font-weight: 600;
 
 		img {
 			vertical-align: middle;

@@ -297,7 +297,7 @@
 
 .sharing-service.reconnect .sharing-service__description,
 .sharing-service.must-disconnect .sharing-service__description {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .sharing-service__content-toggle {
@@ -785,7 +785,7 @@
 	border-bottom: 0;
 	font-size: 11px;
 	line-height: 1;
-	font-weight: bold;
+	font-weight: 600;
 	text-transform: uppercase;
 	text-align: center;
 	color: var( --color-neutral-light );
@@ -802,7 +802,7 @@
 	display: block;
 	margin: 8px 0;
 	font-size: 11px;
-	font-weight: bold;
+	font-weight: 600;
 	line-height: 1.2;
 	text-transform: uppercase;
 	color: #767676;

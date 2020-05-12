@@ -595,7 +595,7 @@ ul.module-content-list-legend {
 	@extend %placeholder;
 
 	color: var( --color-text-subtle );
-	font-weight: bold;
+	font-weight: 600;
 
 	// Limit width when loading for placeholders to take less visual space
 	.stats-module.is-loading & {
