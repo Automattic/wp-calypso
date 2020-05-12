@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -10,7 +9,12 @@ import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { select } from '@wordpress/data';
 
-function tipDescription( text, conversion, textFallback ) {
+/**
+ * Internal dependencies
+ */
+import TipLink from './tip-link';
+
+function getTipDescription( text, conversion, textFallback ) {
 	if ( typeof createInterpolateElement !== 'undefined' ) {
 		return createInterpolateElement( text, conversion );
 	}
@@ -22,10 +26,10 @@ const tips = [
 	{
 		context: 'theme',
 		keywords: [ 'theme', __( 'theme' ) ],
-		description: tipDescription(
+		description: getTipDescription(
 			__( 'You can visit the <a>theme directory</a> to select a different design for your site.' ),
 			{
-				a: <a href="./themes.php" target="_blank" />,
+				a: <TipLink section="themes" />,
 			},
 			__( 'You can visit the theme directory to select a different design for your site.' )
 		),
@@ -34,10 +38,10 @@ const tips = [
 	{
 		context: 'css',
 		keywords: [ 'css', __( 'css' ), 'style', __( 'style' ) ],
-		description: tipDescription(
+		description: getTipDescription(
 			__( 'You can visit the the <a>Customizer</a> to edit the CSS on your site.' ),
 			{
-				a: <a href="./customize.php?autofocus[section]=custom_css" target="_blank" />,
+				a: <TipLink section="customizer" subsection="custom_css" />,
 			},
 			__( 'You can visit the the Customizer to edit the CSS on your site.' )
 		),
@@ -46,10 +50,10 @@ const tips = [
 	{
 		context: 'plugin',
 		keywords: [ 'plugin', __( 'plugin' ) ],
-		description: tipDescription(
+		description: getTipDescription(
 			__( 'You can visit the <a>plugin directory</a> to install additional plugins.' ),
 			{
-				a: <a href="./plugin-install.php" target="_blank" />,
+				a: <TipLink section="plugins" />,
 			},
 			__( 'You can visit the plugin directory to install additional plugins.' )
 		),
@@ -58,10 +62,10 @@ const tips = [
 	{
 		context: 'header',
 		keywords: [ 'header', __( 'header' ) ],
-		description: tipDescription(
+		description: getTipDescription(
 			__( 'You can visit the the <a>Customizer</a> to edit your logo and site title.' ),
 			{
-				a: <a href="./customize.php?autofocus[section]=title_tagline" target="_blank" />,
+				a: <TipLink section="customizer" subsection="title_tagline" />,
 			},
 			__( 'You can visit the the Customizer to edit your logo and site title.' )
 		),
@@ -70,10 +74,10 @@ const tips = [
 	{
 		context: 'color',
 		keywords: [ 'color', __( 'color' ) ],
-		description: tipDescription(
+		description: getTipDescription(
 			__( 'You can visit the the <a>Customizer</a> to edit the colors on your site.' ),
 			{
-				a: <a href="./customize.php?autofocus[section]=colors" target="_blank" />,
+				a: <TipLink section="customizer" subsection="colors" />,
 			},
 			__( 'You can visit the the Customizer to edit the colors on your site.' )
 		),
