@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -32,6 +32,7 @@ import Notices from 'my-sites/customer-home/locations/notices';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
 import Tertiary from 'my-sites/customer-home/locations/tertiary';
+import Experiment, { LoadingVariations, DefaultVariation, Variation } from 'components/experiment';
 
 /**
  * Style dependencies
@@ -49,6 +50,14 @@ const Home = ( {
 	trackViewSiteAction,
 } ) => {
 	const translate = useTranslate();
+	// use an effect to fire the exposure event only if the site id changes or first view
+	useEffect( () => {
+		if ( canUserUseCustomerHome ) {
+			recordTracksEvent( 'calypso_saw_a_a_test', {
+				siteId,
+			} );
+		}
+	}, [ siteId, canUserUseCustomerHome ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -60,6 +69,21 @@ const Home = ( {
 		);
 	}
 
+	const header = (
+		<div className="customer-home__heading">
+			<FormattedHeader
+				headerText={ translate( 'My Home' ) }
+				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
+				align="left"
+			/>
+			<div className="customer-home__view-site-button">
+				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+					{ translate( 'View site' ) }
+				</Button>
+			</div>
+		</div>
+	);
+
 	return (
 		<Main className="customer-home__main is-wide-layout">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
@@ -67,20 +91,16 @@ const Home = ( {
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 			<SidebarNavigation />
-			<div className="customer-home__heading">
-				<FormattedHeader
-					headerText={ translate( 'My Home' ) }
-					subHeaderText={ translate(
-						'Your home base for posting, editing, and growing your site.'
-					) }
-					align="left"
-				/>
-				<div className="customer-home__view-site-button">
-					<Button href={ site.URL } onClick={ trackViewSiteAction }>
-						{ translate( 'View site' ) }
-					</Button>
-				</div>
-			</div>
+			<Experiment name="user_home_test">
+				<LoadingVariations>
+					{ /* Normally, we'd load variations before this page could be visible. However, we'll just pretend
+					     we did that so users have an unchanged experience.
+					   */ }
+					{ header }
+				</LoadingVariations>
+				<DefaultVariation name={ 'control' }>{ header }</DefaultVariation>
+				<Variation name={ 'treatment' }>{ header }</Variation>
+			</Experiment>
 			{ layout ? (
 				<>
 					<Notices
