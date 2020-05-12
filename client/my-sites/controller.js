@@ -47,6 +47,7 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
+	domainManagementRoot,
 } from 'my-sites/domains/paths';
 import {
 	emailManagement,
@@ -89,7 +90,7 @@ function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	if ( startsWith( context.pathname, '/me/domains' ) ) {
+	if ( startsWith( context.pathname, domainManagementRoot() ) ) {
 		return <AsyncLoad require="me/sidebar" context={ context } />;
 	}
 
