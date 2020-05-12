@@ -9,18 +9,19 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
-import { Card } from '@automattic/components';
-import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
-import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
-import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import { applySiteOffset } from 'lib/site/timezone';
-import PopoverMenu from 'components/popover/menu';
 import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
+import { Card } from '@automattic/components';
+import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
+import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
+import Button from 'components/forms/form-button';
+import Gridicon from 'components/gridicon';
+import PopoverMenu from 'components/popover/menu';
+import StreamsMediaPreview from './activity-card-streams-media-preview';
 
 /**
  * Style dependencies
@@ -228,6 +229,30 @@ class ActivityCard extends Component {
 		);
 	}
 
+	renderMediaPreview() {
+		const {
+			activity: { streams, activityMedia },
+		} = this.props;
+
+		if (
+			streams &&
+			streams.filter( ( { activityMedia: streamActivityMedia } ) => streamActivityMedia?.available )
+				.length > 2
+		) {
+			return <StreamsMediaPreview streams={ streams } />;
+		} else if ( activityMedia?.available ) {
+			return (
+				<ActivityMedia
+					className="activity-card__activity-media"
+					name={ activityMedia.name }
+					thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
+					fullImage={ false }
+				/>
+			);
+		}
+		return null;
+	}
+
 	render() {
 		const {
 			activity,
@@ -245,8 +270,6 @@ class ActivityCard extends Component {
 		} ).format( 'LT' );
 
 		const showActivityContent = this.state.showContent;
-
-		const { activityMedia } = activity;
 
 		return (
 			<div
@@ -268,14 +291,7 @@ class ActivityCard extends Component {
 						} }
 					/>
 					<div className="activity-card__activity-description">
-						{ activityMedia && activityMedia.available && (
-							<ActivityMedia
-								className="activity-card__activity-media"
-								name={ activityMedia.name }
-								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
-								fullImage={ false }
-							/>
-						) }
+						{ this.renderMediaPreview() }
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
