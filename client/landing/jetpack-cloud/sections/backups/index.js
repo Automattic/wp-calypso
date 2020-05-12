@@ -13,19 +13,12 @@ import { makeLayout, render as clientRender } from 'controller';
 import wrapInSiteOffsetProvider from 'landing/jetpack-cloud/lib/wrap-in-site-offset';
 import {
 	backupActivity,
-	backupDetail,
 	backupDownload,
 	backupRestore,
 	backups,
 	showUpsellIfNoBackup,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import {
-	backupMainPath,
-	backupActivityPath,
-	backupRestorePath,
-	backupDownloadPath,
-	backupDetailPath,
-} from './paths';
+import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
@@ -44,16 +37,6 @@ export default function () {
 			clientRender
 		);
 
-		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
-		page(
-			backupDetailPath( ':site', ':backupId' ),
-			siteSelection,
-			navigation,
-			backupDetail,
-			wrapInSiteOffsetProvider,
-			makeLayout,
-			clientRender
-		);
 		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
 			backupDownloadPath( ':site', ':rewindId' ),

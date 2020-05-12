@@ -18,9 +18,6 @@ const backupSubSectionPath = (
 		? `/backups/${ siteName }/${ subSection }/${ subSectionId }`
 		: `/backups/${ siteName }/${ subSection }`;
 
-export const backupDetailPath = ( siteName: string, backupId: string ) =>
-	backupSubSectionPath( siteName, 'detail', backupId );
-
 export const backupRestorePath = ( siteName: string, rewindId: string ) =>
 	backupSubSectionPath( siteName, 'restore', rewindId );
 
