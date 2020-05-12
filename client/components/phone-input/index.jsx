@@ -193,6 +193,7 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 	useEffect( () => {
 		// No need to update if the value has not changed
 		if ( previousValue.current === value && previousCountry.current === countryCode ) {
+			debug( 'props change did not change value or country' );
 			return;
 		}
 		// No need to update if the prop value is equal to one form of the current value
@@ -201,6 +202,7 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 			previousCountry.current === countryCode &&
 			( value === rawValue || value === displayValue || value === icannValue )
 		) {
+			debug( 'props change did not change normalized value', value );
 			return;
 		}
 		previousValue.current = value;
