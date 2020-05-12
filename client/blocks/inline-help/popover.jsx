@@ -61,7 +61,7 @@ class InlineHelpPopover extends Component {
 		isAtomic: PropTypes.bool,
 		activatePlugin: PropTypes.func,
 		fetchAtomicPlugins: PropTypes.func,
-		sitePlugins: PropTypes.array,
+		classicPlugin: PropTypes.object,
 		showErrorNotice: PropTypes.func,
 	};
 
@@ -84,11 +84,9 @@ class InlineHelpPopover extends Component {
 	}
 
 	componentDidUpdate() {
-		const { sitePlugins } = this.props;
+		const { classicPlugin } = this.props;
 
 		if ( this.state.activatingClassicOnAtomic ) {
-			const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
-
 			if ( classicPlugin?.active ) {
 				this.redirectToClassicEditor();
 			}
@@ -236,13 +234,12 @@ class InlineHelpPopover extends Component {
 	};
 
 	checkForClassicEditorOnAtomic() {
-		const { siteId, sitePlugins, showErrorNotice, translate } = this.props;
-		const classicPlugin = find( sitePlugins, { slug: 'classic-editor' } );
+		const { siteId, classicPlugin, showErrorNotice, translate } = this.props;
 
 		if ( ! classicPlugin ) {
 			showErrorNotice(
 				translate(
-					'There was a problem activating the Classic editor on your site. Please contact support.'
+					'There was a problem activating the Classic editor on your site. Please go to the plugins page and activate the Classic Editor plugin there.'
 				)
 			);
 			return;
@@ -258,7 +255,7 @@ class InlineHelpPopover extends Component {
 	}
 
 	switchToClassicEditor = () => {
-		const { siteId, translate, isAtomic, sitePlugins } = this.props;
+		const { translate, isAtomic } = this.props;
 
 		const proceed =
 			typeof window === 'undefined' ||
@@ -266,7 +263,7 @@ class InlineHelpPopover extends Component {
 
 		if ( proceed ) {
 			if ( isAtomic && isEnabled( 'editor/after-deprecation' ) ) {
-				this.checkForClassicEditorOnAtomic( siteId, sitePlugins );
+				this.checkForClassicEditorOnAtomic();
 				return;
 			}
 			this.redirectToClassicEditor();
@@ -370,7 +367,7 @@ function mapStateToProps( state ) {
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
 		isAtomic,
-		sitePlugins,
+		classicPlugin: find( sitePlugins, { slug: 'classic-editor' } ),
 	};
 }
 
