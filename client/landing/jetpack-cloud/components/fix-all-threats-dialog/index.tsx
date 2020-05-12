@@ -44,7 +44,7 @@ const FixAllThreatsDialog = ( {
 
 	return (
 		<Dialog additionalClassNames="fix-all-threats-dialog" isVisible={ showDialog }>
-			<h1 className="fix-all-threats-dialog__header">Fix all threats</h1>
+			<h1 className="fix-all-threats-dialog__header">{ translate( 'Fix all threats' ) }</h1>
 			{ currentStep === 'server-credentials' && (
 				<>
 					<h3 className="fix-all-threats-dialog__threat-title">
