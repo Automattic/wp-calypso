@@ -114,14 +114,16 @@ const ScanHistoryPage = ( {
 					'The scanning history contains a record of all previously active threats on your site.'
 				) }
 			</p>
-			<div className="history__filters-wrapper">
-				<SimplifiedSegmentedControl
-					className="history__filters"
-					options={ filterOptions }
-					onSelect={ handleOnFilterChange }
-					initialSelected={ currentFilter.value }
-				/>
-			</div>
+			{ filteredEntries.length > 0 && (
+				<div className="history__filters-wrapper">
+					<SimplifiedSegmentedControl
+						className="history__filters"
+						options={ filterOptions }
+						onSelect={ handleOnFilterChange }
+						initialSelected={ currentFilter.value }
+					/>
+				</div>
+			) }
 			<div className="history__entries">
 				{ filteredEntries.map( ( threat ) => (
 					<ThreatItem
