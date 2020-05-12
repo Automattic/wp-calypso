@@ -48,7 +48,7 @@ const GoMobile = ( { isIos } ) => {
 			) }
 			actionButton={ actionButton }
 			timing={ 2 }
-			taskId="go-mobile"
+			taskId={ isIos ? 'go-mobile-ios' : 'go-mobile-android' }
 		/>
 	);
 };
