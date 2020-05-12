@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
+import { useTrackModal } from '../../../hooks/use-track-modal';
+import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 
 /**
  * Style dependencies
@@ -17,21 +19,32 @@ import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
 import './style.scss';
 
 interface Props extends Partial< PlansGridProps > {
-	isOpen: boolean;
 	onClose: () => void;
 }
 
-const PlansGridModal: React.FunctionComponent< Props > = ( { isOpen, onClose } ) => {
+const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
 
+	const plan = useSelectedPlan();
+
 	React.useEffect( () => {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
-	}, [ isOpen ] );
+	}, [] );
+
+	// Keep a copy of the selected plan locally so it's available when the component is unmounting
+	const selectedPlanRef = React.useRef();
+	React.useEffect( () => {
+		selectedPlanRef.current = plan?.getStoreSlug();
+	}, [ plan ] );
+
+	useTrackModal( 'PlansGrid', () => ( {
+		selected_plan: selectedPlanRef.current,
+	} ) );
 
 	return (
 		<Modal
-			isOpen={ isOpen }
+			isOpen
 			className="gutenboarding-page plans-modal"
 			overlayClassName="plans-modal-overlay"
 			bodyOpenClassName="has-plans-modal"
