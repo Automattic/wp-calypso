@@ -44,22 +44,17 @@ function enqueue_script( $filename, $in_footer = false ) {
  * Enqueues a submodule style by its filename.
  *
  * @param string  $filename  Name of the style file w/o extension.
- * @param boolean $in_footer Whether to enqueue the style before </body> instead of in the <head> (optional).
- *
- * @throws RuntimeException If the asset file doesn't exist.
  */
-function enqueue_style( $filename, $in_footer = false ) {
-	// Enqueue styles.
+function enqueue_style( $filename ) {
 	$style_file = is_rtl()
 		? $filename . '.rtl.css'
 		: $filename . '.css';
 
 	wp_enqueue_style(
-		'starter-page-templates',
+		$filename,
 		plugins_url( 'dist/' . $style_file, __FILE__ ),
 		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file ),
-		$in_footer
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 	);
 }
 
@@ -77,5 +72,4 @@ function enqueue_block_inserter_modifications() {
 	enqueue_script( 'contextual-tips', true );
 	enqueue_style( 'contextual-tips', false );
 }
-
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );
