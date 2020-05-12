@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
+import { ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
 import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -35,6 +37,8 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
@@ -45,6 +49,8 @@ import {
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
@@ -135,7 +141,6 @@ export class MySitesSidebar extends Component {
 		if ( siteId && ! canUserViewStats ) {
 			return null;
 		}
-
 		const statsLink = getStatsPathForTab( 'day', site ? site.slug : siteId );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -163,7 +168,15 @@ export class MySitesSidebar extends Component {
 	};
 
 	customerHome() {
-		const { canUserUseCustomerHome, path, siteSuffix, siteId, translate } = this.props;
+		const {
+			canUserUseCustomerHome,
+			hideChecklistProgress,
+			path,
+			siteSuffix,
+			siteId,
+			siteTasklist,
+			translate,
+		} = this.props;
 
 		if ( ! siteId || ! canUserUseCustomerHome ) {
 			return null;
@@ -175,6 +188,8 @@ export class MySitesSidebar extends Component {
 			label = translate( 'Home' );
 		}
 
+		const { completed, total } = siteTasklist.getCompletionStatus();
+
 		return (
 			<SidebarItem
 				materialIcon="home"
@@ -183,7 +198,16 @@ export class MySitesSidebar extends Component {
 				label={ label }
 				selected={ itemLinkMatches( [ '/home' ], path ) }
 				link={ '/home' + siteSuffix }
-			/>
+			>
+				{ ! hideChecklistProgress && (
+					<div className="sidebar__checklist-progress">
+						<p className="sidebar__checklist-progress-text">
+							{ translate( 'Setup', { context: 'verb' } ) }
+						</p>
+						<ProgressBar value={ completed } total={ total } />
+					</div>
+				) }
+			</SidebarItem>
 		);
 	}
 
@@ -749,6 +773,8 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
+				<QuerySiteChecklist siteId={ this.props.siteId } />
+
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
 					expanded={ this.props.isSiteSectionOpen }
@@ -870,6 +896,11 @@ function mapStateToProps( state ) {
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		siteTasklist: getSiteTaskList( state, siteId ),
+		hideChecklistProgress:
+			isSiteChecklistComplete( state, siteId ) ||
+			! getSiteChecklist( state, siteId ) ||
+			! isEligibleForDotcomChecklist( state, siteId ),
 	};
 }
 
