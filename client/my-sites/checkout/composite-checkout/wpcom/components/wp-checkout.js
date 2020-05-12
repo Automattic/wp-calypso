@@ -413,19 +413,34 @@ function InactiveOrderReview() {
 	return (
 		<SummaryContent>
 			<ProductList>
-				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
-					return (
-						<ProductListItem key={ product.id }>
-							{ isLineItemADomain( product ) ? <strong>{ product.label }</strong> : product.label }
-						</ProductListItem>
-					);
+				{ items.filter( shouldLineItemBeShownWhenStepInactive ).map( ( product ) => {
+					return <InactiveOrderReviewLineItem key={ product.id } product={ product } />;
 				} ) }
 			</ProductList>
 		</SummaryContent>
 	);
 }
 
-function shouldItemBeInSummary( item ) {
+function InactiveOrderReviewLineItem( { product } ) {
+	const gSuiteUsersCount = product.wpcom_meta?.extra?.google_apps_users?.length ?? 0;
+	if ( gSuiteUsersCount ) {
+		return (
+			<ProductListItem>
+				{ product.label } ({ gSuiteUsersCount })
+			</ProductListItem>
+		);
+	}
+	if ( isLineItemADomain( product ) ) {
+		return (
+			<ProductListItem>
+				<strong>{ product.label }</strong>
+			</ProductListItem>
+		);
+	}
+	return <ProductListItem>{ product.label }</ProductListItem>;
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
