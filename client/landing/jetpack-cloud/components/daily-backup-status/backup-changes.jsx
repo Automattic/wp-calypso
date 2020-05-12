@@ -36,7 +36,11 @@ const BackupChanges = ( { deltas, metaDiff } ) => {
 		<div key={ item.activityId } className="daily-backup-status__media-image">
 			<img
 				alt=""
-				src={ item.activityMedia.available ? item.activityMedia.thumbnail_url : mediaImage }
+				src={
+					item.activityMedia && item.activityMedia.available
+						? item.activityMedia.thumbnail_url
+						: mediaImage
+				}
 			/>
 			<div className="daily-backup-status__media-title">
 				<Gridicon icon="plus" />
