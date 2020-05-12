@@ -19,7 +19,7 @@ import TranslatableString from 'components/translatable/proptype';
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = isExternalLink && ! props.forceInternalLink;
-	const classes = classnames( props.className, { selected: props.selected } );
+	const classes = classnames( props.className, props.tipTarget, { selected: props.selected } );
 	const { materialIcon, materialIconStyle, icon, customIcon } = props;
 
 	let _preloaded = false;

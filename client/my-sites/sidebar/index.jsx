@@ -201,7 +201,9 @@ export class MySitesSidebar extends Component {
 			>
 				{ ! hideChecklistProgress && (
 					<div className="sidebar__checklist-progress">
-						<p className="sidebar__checklist-progress-text">{ translate( 'Finish setup' ) }</p>
+						<p className="sidebar__checklist-progress-text">
+							{ translate( 'Setup', { context: 'verb' } ) }
+						</p>
 						<ProgressBar value={ completed } total={ total } />
 					</div>
 				) }
