@@ -5,6 +5,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -145,7 +146,11 @@ const FixAllThreatsDialog = ( {
 									count: threats.length,
 								}
 							) }
-							<ul className="fix-all-threats-dialog__threats">
+							<ul
+								className={ classnames( 'fix-all-threats-dialog__threats', {
+									'is-long-list': threats.length > 3,
+								} ) }
+							>
 								{ threats.map( ( threat ) => (
 									<li key={ threat.id }>
 										<strong>

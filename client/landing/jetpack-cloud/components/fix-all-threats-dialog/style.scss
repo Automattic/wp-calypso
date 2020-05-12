@@ -42,6 +42,27 @@
 		&__threats {
 			margin-left: 12px;
 			margin-top: 8px;
+
+			&.is-long-list {
+				&::after {
+					content: '';
+					position: absolute;
+					left: 0;
+					bottom: 100px;
+					width: 100%;
+					height: 75px;
+					background: linear-gradient(
+						0deg,
+						rgba( 255, 255, 255, 1 ) 0%,
+						rgba( 255, 255, 255, 0 ) 100%
+					);
+					pointer-events: none;
+
+					@include breakpoint( '>660px' ) {
+						bottom: 70px;
+					}
+				}
+			}
 		}
 
 		&__warning-message {
@@ -56,6 +77,10 @@
 				width: 140px;
 			}
 		}
+	}
+
+	.dialog__content {
+		overflow-x: hidden;
 	}
 
 	.dialog__action-buttons {
