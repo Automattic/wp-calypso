@@ -277,7 +277,11 @@ export default function switchLocale( localeSlug ) {
 		// the manifest and all installed translation chunks for
 		// the requested locale
 		getLanguageManifestFile( localeSlug, window.BUILD_TARGET )
-			.then( ( { translatedChunks, locale } ) => {
+			.then( ( { translatedChunks, locale } = {} ) => {
+				if ( ! locale ) {
+					return;
+				}
+
 				const installedChunks = new Set(
 					( window.installedChunks || [] )
 						.concat( window.__requireChunkCallback__.getInstalledChunks() )
@@ -290,6 +294,10 @@ export default function switchLocale( localeSlug ) {
 				return Promise.all( [ Promise.resolve( locale ), ...chunksPromises ] );
 			} )
 			.then( ( localeArray ) => {
+				if ( ! localeArray ) {
+					return;
+				}
+
 				const body = localeArray.reduce( ( acc, item ) => ( { ...acc, ...item } ), {} );
 
 				i18n.setLocale( body );
@@ -360,17 +368,17 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		'export-translations',
 	].join( '/' );
 
-	const query = {
+	const searchParams = new URLSearchParams( {
 		'filters[user_login]': username,
 		'filters[status]': translationStatus,
 		format: 'json',
-	};
+	} );
 
 	const requestUrl = getUrlFromParts( {
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
-		query,
+		searchParams,
 	} );
 
 	return window
@@ -379,7 +387,11 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 			credentials: 'include',
 		} )
 		.then( ( res ) => res.json() )
-		.then( ( translations ) => i18n.addTranslations( translations ) );
+		.then( ( translations ) => {
+			i18n.addTranslations( translations );
+
+			return translations;
+		} );
 }
 
 /*

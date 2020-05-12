@@ -25,6 +25,7 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 	reduxStore.dispatch( setLocaleRawData( locale ) );
 
+	let userTranslations;
 	const loadedTranslationChunks = {};
 	const loadTranslationForChunkIfNeeded = ( chunkId ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
@@ -33,7 +34,7 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
 			( translations ) => {
-				i18n.addTranslations( translations );
+				i18n.addTranslations( { ...translations, ...userTranslations } );
 				loadedTranslationChunks[ chunkId ] = true;
 			}
 		);
@@ -51,22 +52,17 @@ const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 
 		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
 	} );
+
+	const userTranslationsPromise = loadUserUndeployedTranslations( localeSlug );
+
+	if ( userTranslationsPromise ) {
+		userTranslationsPromise.then( ( translations ) => {
+			userTranslations = translations;
+		} );
+	}
 };
 
 export const setupLocale = ( currentUser, reduxStore ) => {
-	if ( window.i18nLocaleStrings ) {
-		// Use the locale translation data that were boostrapped by the server
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
-		if ( languageSlug ) {
-			loadUserUndeployedTranslations( languageSlug );
-		}
-	} else if ( currentUser && currentUser.localeSlug ) {
-		// Use the current user's and load traslation data with a fetch request
-		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
-	}
-
 	const useTranslationChunks =
 		config.isEnabled( 'use-translation-chunks' ) ||
 		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
@@ -85,6 +81,19 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		if ( localeSlug && ! isDefaultLocale( localeSlug ) ) {
 			setupTranslationChunks( localeSlug, reduxStore );
 		}
+	}
+
+	if ( window.i18nLocaleStrings ) {
+		// Use the locale translation data that were boostrapped by the server
+		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
+		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
+		if ( languageSlug ) {
+			loadUserUndeployedTranslations( languageSlug );
+		}
+	} else if ( currentUser && currentUser.localeSlug ) {
+		// Use the current user's and load traslation data with a fetch request
+		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale
