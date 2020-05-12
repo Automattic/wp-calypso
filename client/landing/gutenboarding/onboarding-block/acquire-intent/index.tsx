@@ -26,13 +26,12 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedVertical, getSelectedSiteTitle } = useSelect( ( select ) =>
-		select( STORE_KEY )
-	);
-
-	const { siteVertical, siteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const {
+		getSelectedVertical,
+		getSelectedVerticalUntranslatedLabel,
+		getSelectedSiteTitle,
+		wasVerticalSkipped,
+	} = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
@@ -48,20 +47,20 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical: getSelectedVertical()?.slug,
+		selected_vertical: getSelectedVerticalUntranslatedLabel(),
 		selected_site_title: getSelectedSiteTitle(),
 	} ) );
 
+	const showSiteTitleAndNext = !! (
+		getSelectedVertical() ||
+		getSelectedSiteTitle() ||
+		wasVerticalSkipped()
+	);
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'I donʼt know' );
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
-	const siteTitleInput = (
-		<SiteTitle
-			isVisible={ !! ( siteVertical || siteTitle || wasVerticalSkipped ) }
-			isMobile={ isMobile }
-		/>
-	);
+	const siteTitleInput = <SiteTitle isVisible={ showSiteTitleAndNext } isMobile={ isMobile } />;
 	const verticalSelect = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
 	const nextStepButton = (
 		<Link
@@ -69,7 +68,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 			isPrimary
 			to={ makePath( Step.DesignSelection ) }
 		>
-			{ siteTitle ? __( 'Choose a design' ) : skipLabel }
+			{ getSelectedSiteTitle() ? __( 'Choose a design' ) : skipLabel }
 		</Link>
 	);
 	const skipButton = (
@@ -77,6 +76,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 			{ skipLabel }
 		</Button>
 	);
+
+	const siteVertical = getSelectedVertical();
 
 	return (
 		<div
@@ -110,10 +111,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 						? nextStepButton
 						: ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) }
 
-				{ /* On desktop we render skipButton when vertical and site title inputs are empty and the user didn't skipped vertical selection.
-				For other cases we always render nextStepButton */ }
-				{ ! isMobile &&
-					( siteVertical || siteTitle || wasVerticalSkipped ? nextStepButton : skipButton ) }
+				{ /* On desktop we always render nextStepButton when we render site title
+				Otherwise we render skipButton  */ }
+				{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
 			</div>
 		</div>
 	);

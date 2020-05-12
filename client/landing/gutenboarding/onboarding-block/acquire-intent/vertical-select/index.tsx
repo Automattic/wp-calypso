@@ -16,9 +16,10 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
-import { SiteVertical } from '../../../stores/onboard/types';
 import useTyper from '../../../hooks/use-typer';
 import Arrow from '../arrow';
+import { recordVerticalSelection } from '../../../lib/analytics';
+import type { SiteVertical } from '../../../stores/onboard/types';
 
 /**
  * Style dependencies
@@ -61,6 +62,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	);
 
 	const { siteVertical, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { getSelectedVerticalUntranslatedLabel } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
+	);
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -184,7 +188,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 
 	React.useEffect( () => {
 		inputRef.current.innerText = siteVertical?.label || '';
-	}, [ siteVertical, inputRef ] );
+		const isFreeForm = ! siteVertical?.slug && !! siteVertical?.label.length;
+		recordVerticalSelection( getSelectedVerticalUntranslatedLabel(), isFreeForm );
+	}, [ siteVertical, inputRef ] ); //eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
 		if ( !! suggestions.length && isMobile ) {

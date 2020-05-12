@@ -14,6 +14,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
+import { recordSiteTitleSelection } from '../../lib/analytics';
 
 interface Props {
 	isVisible?: boolean;
@@ -34,12 +35,17 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 		if ( e.keyCode === ENTER ) {
 			// As last input on first step, hitting 'Enter' should direct to next step.
 			e.preventDefault();
+			recordSiteTitleSelection( siteTitle );
 			history.push( makePath( Step.DesignSelection ) );
 		}
 	};
 
 	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) =>
 		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
+
+	const handleBlur = () => {
+		recordSiteTitleSelection( siteTitle );
+	};
 
 	React.useEffect( () => {
 		if ( siteTitle ) {
@@ -74,6 +80,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile } ) 
 						className="madlib__input"
 						onKeyDown={ handleKeyDown }
 						onKeyUp={ handleKeyUp }
+						onBlur={ handleBlur }
 					/>
 					<span className="site-title__placeholder"></span>
 				</span>

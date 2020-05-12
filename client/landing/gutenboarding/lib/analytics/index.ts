@@ -8,8 +8,8 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import { FLOW_ID } from '../../constants';
-import { StepNameType } from '../../path';
-import { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
+import type { StepNameType } from '../../path';
+import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
 
 /**
  * Make tracks call with embedded flow.
@@ -165,5 +165,29 @@ export function recordLeaveStep( stepName: StepNameType, eventProperties?: Track
 export function recordEnterStep( stepName: StepNameType ) {
 	trackEventWithFlow( 'calypso_newsite_step_enter', {
 		step: stepName,
+	} );
+}
+
+/**
+ * Records selecting a vertical in tracks
+ *
+ * @param verticalLabel The slug of the selected vertical or the free-form user input
+ * @param isFreeForm User entered and selected a free-form text
+ */
+export function recordVerticalSelection( verticalLabel?: string, isFreeForm = false ) {
+	trackEventWithFlow( 'calypso_newsite_vertical_selected', {
+		selected_vertical: verticalLabel,
+		free_form: isFreeForm,
+	} );
+}
+
+/**
+ * Records entering a site title in tracks
+ *
+ * @param siteTitle The site title entered by the user
+ */
+export function recordSiteTitleSelection( siteTitle?: string ) {
+	trackEventWithFlow( 'calypso_newsite_site_title_selected', {
+		selected_site_title: siteTitle,
 	} );
 }
