@@ -10,6 +10,7 @@
  */
 
 namespace A8C\FSE\Common;
+
 use function A8C\FSE\is_full_site_editing_active;
 
 /**
@@ -54,7 +55,9 @@ function is_homepage_title_hidden() {
  */
 function should_load_assets() {
 	// TODO - remove is_F_S_E check when we remove the "block patterns moved" notice plugin.
-	return (bool) is_homepage_title_hidden() || ! is_full_site_editing_active();
+	$has_dotcom_fse_inserter = ! is_full_site_editing_active() && 'page' === get_current_screen()->post_type;
+
+	return (bool) is_homepage_title_hidden() || ! $has_dotcom_fse_inserter;
 }
 
 /**
