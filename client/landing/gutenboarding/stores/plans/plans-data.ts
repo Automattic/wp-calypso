@@ -152,7 +152,7 @@ export const planDetails: PlanDetails = [
 				data: [ false, true, true, true, true ],
 			},
 			{
-				name: 'Sell single items (simple payments',
+				name: 'Sell single items (simple payments)',
 				type: 'checkbox',
 				data: [ false, false, true, true, true ],
 			},
