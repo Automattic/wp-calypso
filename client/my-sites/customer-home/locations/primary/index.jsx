@@ -10,7 +10,6 @@ import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts
 import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 const cardComponents = {
 	'home-task-site-setup-checklist': SiteSetupList,
@@ -32,7 +31,6 @@ const Primary = ( { checklistMode, cards } ) => {
 					checklistMode: card === 'home-task-site-setup-checklist' ? checklistMode : null,
 				} )
 			) }
-			<PerformanceTrackerStop />
 		</>
 	);
 };
