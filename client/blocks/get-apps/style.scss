@@ -173,7 +173,7 @@
 	padding: 0 24px;
 
 	@include breakpoint('>480px') {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 	}
 }
 

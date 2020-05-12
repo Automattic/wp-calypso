@@ -61,7 +61,7 @@
 
 .reader-subscription-list-item {
 	display: flex;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	padding: 15px 0;
 
 	@include breakpoint( '<660px' ) {

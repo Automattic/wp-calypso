@@ -52,7 +52,7 @@
 	.list-header {
 		background: var( --color-neutral-0 );
 		font-weight: 600;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 
 		.list-item-field {
 			padding-top: 12px;
@@ -118,7 +118,7 @@
 	}
 
 	.shipping-zone__method-title {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		width: 50%;
 
 		@include breakpoint( '>660px' ) {
@@ -127,7 +127,7 @@
 	}
 
 	.shipping-zone__method-summary {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		width: 30%;
 
 		@include breakpoint( '<660px' ) {
@@ -178,7 +178,7 @@
 	}
 
 	.shipping-zone__location-title {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		width: 100%;
 
 		@include breakpoint( '>660px' ) {
@@ -187,7 +187,7 @@
 	}
 
 	.shipping-zone__location-summary {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		width: 70%;
 
 		@include breakpoint( '<660px' ) {

@@ -15,7 +15,7 @@
 	padding: 4px 2px;
 
 	@include breakpoint( '>660px' ) {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		line-height: 18px;
 		padding: 8px 12px;
 	}

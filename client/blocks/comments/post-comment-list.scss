@@ -28,7 +28,7 @@
 	color: var( --color-text-subtle );
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 1;
 	margin-bottom: 15px !important; // to overwrite 10px value
 

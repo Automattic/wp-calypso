@@ -17,7 +17,7 @@
 }
 
 .reviews__list {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	.pagination {
 		margin-top: 16px;
 	}
@@ -322,7 +322,7 @@
 	border-top: 1px solid var( --color-neutral-0 );
 
 	textarea {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		border-color: transparent;
 		margin: 2px;
 		width: calc( 100% - 4px );
@@ -424,7 +424,7 @@
 
 		.button {
 			margin-left: 16px;
-			font-size: 14px;
+			font-size: var( --font-body-small );
 			font-weight: 400;
 		}
 	}

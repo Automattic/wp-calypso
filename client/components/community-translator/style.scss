@@ -52,14 +52,14 @@
 	.community-translator__string-description {
 		margin-right: 7px;
 		flex-basis: 15%;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-style: italic;
 		color: var( --color-neutral-20 );
 	}
 	dfn {
 		margin-bottom: 5px;
 		display: block;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 	}
 	textarea {
 		min-height: auto;

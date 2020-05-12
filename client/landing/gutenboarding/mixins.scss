@@ -15,22 +15,22 @@
 
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
-	font-size: var( --font-title-large );
+	font-size: 32px;
 	line-height: 40px;
 }
 
 @mixin onboarding-large-text {
-	font-size: var( --font-body );
+	font-size: 16px;
 	line-height: 24px;
 }
 
 @mixin onboarding-medium-text {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 17px;
 }
 
 @mixin onboarding-small-text {
-	font-size: var( --font-body-extra-small );
+	font-size: 12px;
 	line-height: 14px;
 }
 

@@ -185,7 +185,7 @@
 .search-stream__headers {
 	color: var( --color-text-subtle );
 	display: flex;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 	list-style-type: none;
 	margin: 17px 0 0;

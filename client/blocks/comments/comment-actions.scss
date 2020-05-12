@@ -1,7 +1,7 @@
 // Actions for Individual Comments
 .comments__comment-actions {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	list-style: none;
 	margin-top: -6px;
 
@@ -12,7 +12,7 @@
 		margin-right: 8px;
 		margin-top: 0;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 
 		.gridicon {
 			position: relative;

@@ -500,7 +500,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-description {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		line-height: 1.6;
 		margin: 11px 0 0;
 

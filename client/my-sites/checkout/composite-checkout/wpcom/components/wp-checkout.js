@@ -481,7 +481,7 @@ const ProductList = styled.ul`
 
 const ProductListItem = styled.li`
 	color: ${( props ) => props.theme.colors.textColor};
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	margin: 0 0 6px;
 	padding: 0;
 	list-style-type: none;

@@ -58,7 +58,7 @@
 // Table Body
 .billing-history__transaction {
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	height: 66px;
 	border-bottom: 1px solid var( --color-neutral-0 );
 

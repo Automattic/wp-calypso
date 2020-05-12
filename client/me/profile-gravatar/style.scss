@@ -8,7 +8,7 @@
 .profile-gravatar__user-secondary-info {
 	margin-bottom: 30px;
 	text-align: center;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 
 	.profile-gravatar.is-in-sidebar & {
 		color: var( --color-sidebar-text-alternative );

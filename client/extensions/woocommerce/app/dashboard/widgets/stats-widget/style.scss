@@ -45,7 +45,7 @@
 
 		span {
 			color: var( --color-text-subtle );
-			font-size: 14px;
+			font-size: var( --font-body-small );
 		}
 	}
 
@@ -66,7 +66,7 @@
 	}
 
 	.table.is-compact-table .table-item {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		color: var( --color-neutral-50 );
 	}
 
@@ -172,7 +172,7 @@
 	.stats-widget__more {
 		text-align: left;
 		padding: 0 8px 0 16px;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		margin-top: -14px;
 	}
 

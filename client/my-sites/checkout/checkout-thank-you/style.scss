@@ -295,7 +295,7 @@
 
 .checkout-thank-you__jetpack-error-explanation {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-style: italic;
 	font-weight: 400;
 }

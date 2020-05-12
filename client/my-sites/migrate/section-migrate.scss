@@ -145,7 +145,7 @@
 
 .migrate__plan-feature-header {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .migrate__plan-upsell-item {
@@ -204,7 +204,7 @@
 	li {
 		list-style-type: none;
 		line-height: 30px;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 	}
 }
 
@@ -259,7 +259,7 @@
 	height: 1.5rem;
 	margin-bottom: 8px;
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .migrate__progress-item {
@@ -267,7 +267,7 @@
 	list-style-type: none;
 	margin-left: 8px;
 	margin-bottom: 8px;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 24px;
 	display: flex;
 }

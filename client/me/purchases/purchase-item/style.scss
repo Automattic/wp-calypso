@@ -79,7 +79,7 @@
 .purchase-item__title {
 	color: var( --color-text );
 	display: block;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 1.2em;
 	margin: 4px 20px 4px 0;
 	overflow: hidden;

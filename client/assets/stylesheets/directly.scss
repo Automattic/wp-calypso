@@ -59,7 +59,7 @@ textarea {
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 	vertical-align: top;
 	box-sizing: border-box;
 	line-height: 21px;
@@ -230,7 +230,7 @@ textarea {
 		}
 		strong {
 			margin-top: 0;
-			font-weight: 500;
+			font-weight: 600;
 		}
 	}
 }
@@ -301,7 +301,7 @@ textarea {
 .author {
 	.name-wrapper {
 		font-size: 12px;
-		font-weight: 500;
+		font-weight: 600;
 	}
 	.profile .reputation {
 		color: var( --color-neutral-20 );
@@ -419,7 +419,7 @@ textarea {
 	.notification {
 		background: var( --color-primary );
 		font-size: 12px;
-		font-weight: 500;
+		font-weight: 600;
 		min-width: 24px;
 		line-height: 24px;
 		margin-top: -3px;

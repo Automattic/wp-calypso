@@ -1,6 +1,6 @@
 .card.activity-log-tasklist {
 	padding-bottom: 4px;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 
 	.activity-log-tasklist__heading {
 		display: flex;

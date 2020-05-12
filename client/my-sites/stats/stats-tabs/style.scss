@@ -32,7 +32,7 @@
 			float: none;
 			width: 100%;
 			text-align: left;
-			font-size: 14px;
+			font-size: var( --font-body-small );
 
 			&:first-child {
 				border-top: none;
@@ -50,7 +50,7 @@
 				float: left;
 				text-transform: none;
 				letter-spacing: 0;
-				font-size: 14px;
+				font-size: var( --font-body-small );
 			}
 
 			.gridicon {
@@ -236,7 +236,7 @@
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 			line-height: 24px;
 			float: left;
 		}

@@ -99,9 +99,9 @@
 	border-radius: 4px;
 	box-shadow: none;
 	color: var( --contrastColor );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	// stylelint-disable-next-line scales/font-weight
-	font-weight: 500;
+	font-weight: 600;
 	letter-spacing: 0;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations

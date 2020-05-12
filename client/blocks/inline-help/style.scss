@@ -125,7 +125,7 @@
 		font-size: var( --font-body-extra-small );
 
 		@include breakpoint( '>660px' ) {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 		}
 	}
 
@@ -134,7 +134,7 @@
 		font-size: var( --font-body-extra-small );
 
 		@include breakpoint( '>660px' ) {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 		}
 	}
 
@@ -218,7 +218,7 @@
 
 .inline-help__view-heading {
 	display: block;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 	margin-bottom: 5px;
 }
@@ -228,7 +228,7 @@
 
 	.inline-help__richresult__title {
 		display: block;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-weight: 600;
 		margin-bottom: 5px;
 	}
@@ -351,7 +351,7 @@
 
 .inline-help__results-item {
 	margin: 0;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 
 	@include breakpoint( '>660px' ) {
 		font-size: 18px;
@@ -400,7 +400,7 @@
 .inline-help__empty-results {
 	padding: 16px 0 0;
 	margin: 0;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	color: var( --color-text-subtle );
 	font-style: italic;
 

@@ -104,7 +104,7 @@
 
 		& img {
 			display: block;
-			font-size: 14px;
+			font-size: var( --font-body-small );
 			height: auto;
 			width: 100%;
 		}

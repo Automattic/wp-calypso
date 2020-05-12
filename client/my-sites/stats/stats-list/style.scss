@@ -20,7 +20,7 @@
 
 .module-content-list-item {
 	// Smaller font-size for narrower, two-column modules
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 40px;
 
 	// List item height shorter on 2-column modules
@@ -84,7 +84,7 @@
 	padding: 0 24px;
 
 	span {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		// Always let child elements inherit line heights
 		line-height: inherit;
 	}

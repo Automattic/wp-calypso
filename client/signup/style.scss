@@ -266,7 +266,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-align: center;
 		text-decoration: underline;
 		color: var( --studio-gray-60 );
-		font-size: 14px;
+		font-size: var( --font-body-small );
 	}
 
 	.signup-form__terms-of-service-link {

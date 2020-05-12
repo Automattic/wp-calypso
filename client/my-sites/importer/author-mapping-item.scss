@@ -35,7 +35,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 
 	@include breakpoint( '<480px' ) {

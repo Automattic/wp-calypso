@@ -81,7 +81,7 @@
 }
 
 .product-card__subtitle {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
@@ -101,7 +101,7 @@
 		&,
 		& * {
 			@include breakpoint( '>660px' ) {
-				font-size: 14px;
+				font-size: var( --font-body-small );
 				vertical-align: baseline;
 			}
 		}
@@ -152,7 +152,7 @@
 		vertical-align: baseline;
 
 		@include breakpoint( '>960px' ) {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 		}
 	}
 
@@ -168,7 +168,7 @@
 
 // Description
 .product-card__description {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 20px;
 	color: var( --color-text-subtle );
 
@@ -191,7 +191,7 @@
 
 .product-card__options-label {
 	margin-top: 16px;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	text-align: center;
 	color: var( --color-text-subtle );
 
@@ -262,7 +262,7 @@
 
 .product-card__option-name {
 	margin-bottom: 2px;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 	line-height: 20px;
 	text-align: center;
@@ -276,7 +276,7 @@
 
 .product-card__action-intro {
 	margin-bottom: 12px;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 	color: var( --color-neutral-90 );
 }
@@ -312,7 +312,7 @@
 	color: var( --studio-white );
 	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
 	background-size: contain;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-weight: 600;
 	line-height: 17px;
 	text-align: center;
@@ -332,7 +332,7 @@
 	strong {
 		display: block;
 		color: var( --color-text );
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-weight: 600;
 		text-transform: none;
 	}

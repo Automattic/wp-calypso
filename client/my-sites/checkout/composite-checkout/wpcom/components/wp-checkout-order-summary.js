@@ -123,7 +123,7 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 const CheckoutSummaryFeaturesList = styled.ul`
 	margin: 0;
 	list-style: none;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 `;
 
 const CheckoutSummaryHelp = styled.button`

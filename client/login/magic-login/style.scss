@@ -66,9 +66,9 @@
 .magic-login__form-label {
 	color: var( --color-neutral-70 );
 	display: block;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 1.5;
-	font-weight: 500;
+	font-weight: 600;
 	margin-bottom: 5px;
 }
 
@@ -87,8 +87,8 @@
 		color: var( --color-neutral-50 );
 		display: block;
 		line-height: 4em;
-		font-size: 14px;
-		font-weight: 500;
+		font-size: var( --font-body-small );
+		font-weight: 600;
 		padding: 0 24px;
 		text-align: center;
 		text-decoration: none;

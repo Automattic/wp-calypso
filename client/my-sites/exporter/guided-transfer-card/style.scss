@@ -1,6 +1,6 @@
 .guided-transfer-card__options {
 	display: flex;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .guided-transfer-card__options-header-title-container {
@@ -20,7 +20,7 @@
 .guided-transfer-card__subtitle {
 	color: var( --color-text-subtle );
 	font-style: italic;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .guided-transfer-card__price {
@@ -30,7 +30,7 @@
 
 .guided-transfer-card__details {
 	background-color: var( --color-neutral-0 );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .guided-transfer-card__details-container {

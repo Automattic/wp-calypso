@@ -75,7 +75,7 @@ WPCheckoutOrderReview.propTypes = {
 
 const DomainURL = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	margin-top: -10px;
 	word-break: break-word;
 `;

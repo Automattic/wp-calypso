@@ -8,7 +8,7 @@
 		color: var( --color-neutral );
 		text-decoration: underline;
 		cursor: pointer;
-		font-size: 14px !important;
+		font-size: var( --font-body-small ) !important;
 	}
 
 	@include breakpoint( '>480px' ) {

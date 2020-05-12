@@ -27,7 +27,7 @@
 	border-width: 0;
 	border-bottom-width: 1px;
 	background: var( --color-surface );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	-webkit-appearance: none;
 }
 
@@ -90,7 +90,7 @@ input[type=checkbox].post-selector__input {
 	}
 
 	.post-selector.is-compact & {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		margin-top: 0;
 	}
 

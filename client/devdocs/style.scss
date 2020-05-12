@@ -23,7 +23,7 @@ $devdocs-max-width: 720px;
 	}
 
 	.devdocs__result-path {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-family: $code;
 		color: var( --color-text-subtle );
 	}
@@ -319,7 +319,7 @@ $devdocs-max-width: 720px;
 		}
 
 		.docs-selectors__param-type {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 		}
 
 		p {

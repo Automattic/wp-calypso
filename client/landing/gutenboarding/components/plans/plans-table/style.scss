@@ -91,7 +91,7 @@
 
 .plan-item__name {
 	font-weight: 700;
-	font-size: var( --font-title-small );
+	font-size: 20px;
 	line-height: 24px;
 	display: inline-block;
 }
@@ -111,7 +111,7 @@
 
 .plan-item__price-amount {
 	font-weight: 600;
-	font-size: var( --font-title-large );
+	font-size: 32px;
 	line-height: 24px;
 
 	&[data-is-loading='true'] {
@@ -121,7 +121,7 @@
 }
 
 .plan-item__price-note {
-	font-size: var( --font-body-extra-small );
+	font-size: 12px;
 	line-height: 19px;
 	letter-spacing: -0.4px;
 	color: var( --studio-gray-40 );
@@ -141,7 +141,7 @@
 }
 
 .plan-item__domain-summary {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 22px;
 	min-height: 44px; // temporary until domain picker is in
 }
@@ -166,7 +166,7 @@
 }
 
 .plan-item__domain-picker-button.components-button {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 19px;
 	letter-spacing: 0.2px;
 	word-break: break-word;
@@ -196,7 +196,7 @@
 }
 
 .plan-item__feature-item {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 22px;
 	letter-spacing: 0.2px;
 	margin: 12px 0;

@@ -292,7 +292,7 @@
 	.cart__coupon {
 		cursor: pointer;
 		display: none;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		margin: 0;
 		padding: 10px 0;
 
@@ -379,7 +379,7 @@
 	.checkout__summary-toggle {
 		cursor: pointer;
 		display: block;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		padding: 10px;
 		margin: 0 auto;
 
@@ -625,7 +625,7 @@
 
 			h6 {
 				color: var( --color-neutral-50 );
-				font-size: 14px;
+				font-size: var( --font-body-small );
 				font-weight: 600;
 			}
 
@@ -694,7 +694,7 @@
 
 	strong {
 		display: block;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-weight: normal;
 		line-height: 130%;
 	}

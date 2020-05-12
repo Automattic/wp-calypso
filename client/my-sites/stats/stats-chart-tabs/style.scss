@@ -67,7 +67,7 @@ ul.module-tabs {
 			text-transform: uppercase;
 
 			@include breakpoint( '<480px' ) {
-				font-size: 14px;
+				font-size: var( --font-body-small );
 				line-height: 24px;
 				float: left;
 			}
@@ -197,7 +197,7 @@ ul.module-tabs {
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: var( --font-body-small );
 			line-height: 24px;
 			float: left;
 		}

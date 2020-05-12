@@ -16,7 +16,7 @@
 
 // Body
 .action-panel__body {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 20px;
 	color: var( --color-text-subtle );
 	overflow: hidden;
@@ -80,7 +80,7 @@ a.action-panel__body-text-link {
 	width: 100%;
 	padding: 12px 16px;
 	border-top: solid 1px var( --color-neutral-10 );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 

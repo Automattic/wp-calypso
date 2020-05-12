@@ -44,7 +44,7 @@
 
 .search-preview__url {
 	color: #006621; // matching Google results
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	height: 17px;
 	line-height: 16px;
 	max-width: 616px;

@@ -1,8 +1,8 @@
 .checkout__subscription-text {
 	color: var( --color-neutral-light );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	font-style: italic;
-	font-weight: 200;
+	font-weight: 400;
 	line-height: 40px;
 	margin: 0 0 0 10px;
 	white-space: nowrap;

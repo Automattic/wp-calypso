@@ -71,7 +71,7 @@ const Label = styled.label< LabelProps >`
 	display: block;
 	color: ${( props ) => props.theme.colors.textColor};
 	font-weight: ${( props ) => props.theme.weights.bold};
-	font-size: 14px;
+	font-size: var( --font-body-small );
 	margin-bottom: 8px;
 
 	:hover {
@@ -123,7 +123,7 @@ const Description = styled.p< DescriptionProps >`
 	color: ${( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 `;
 
 export default FormFieldAnnotation;

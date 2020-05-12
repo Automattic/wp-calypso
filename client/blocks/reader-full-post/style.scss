@@ -361,7 +361,7 @@
 
 .reader-full-post__sidebar .comment-button__label,
 .reader-full-post__sidebar .like-button__label {
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .reader-full-post__sidebar .comment-button {

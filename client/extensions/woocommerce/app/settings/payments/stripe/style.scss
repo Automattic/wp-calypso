@@ -1,6 +1,6 @@
 .stripe__connect-account {
 	.stripe__connect-account-heading {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-weight: 600;
 		margin-bottom: 8px;
 	}
@@ -32,7 +32,7 @@
 			flex-direction: column;
 
 			.stripe__connect-account-name {
-				font-size: 14px;
+				font-size: var( --font-body-small );
 				font-weight: 400;
 				margin-bottom: 1px;
 				margin-right: 4px;

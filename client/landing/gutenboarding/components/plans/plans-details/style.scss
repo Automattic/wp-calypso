@@ -48,7 +48,7 @@
 .plans-details__header-row {
 	th {
 		font-weight: 600;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		line-height: 20px;
 		text-transform: uppercase;
 		color: var( --studio-gray-20 );
@@ -61,7 +61,7 @@
 .plans-details__feature-row {
 	th,
 	td {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		line-height: 17px;
 		letter-spacing: 0.2px;
 		border-bottom: 1px solid #eaeaeb;

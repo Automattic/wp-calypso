@@ -46,7 +46,7 @@
 	}
 
 	.site-type__option-description {
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		color: var( --color-text-subtle );
 	}
 
@@ -92,7 +92,7 @@
 	.button.is-borderless {
 		padding: 0;
 		color: var( --color-text-inverted );
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		font-weight: 600;
 		text-decoration: underline;
 	}

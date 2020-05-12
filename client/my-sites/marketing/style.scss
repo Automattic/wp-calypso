@@ -148,7 +148,7 @@
 
 	.connections__sharing-service-tip {
 		margin-top: 16px;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		color: var( --color-neutral-40 );
 
 		.gridicons-info {
@@ -284,7 +284,7 @@
 .sharing-service__description {
 	margin: 0;
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: var( --font-body-small );
 
 	@include breakpoint( '<480px' ) {
 		display: none;

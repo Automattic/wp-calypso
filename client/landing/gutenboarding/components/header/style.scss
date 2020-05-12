@@ -58,7 +58,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 	width: 100%;
 	align-items: center;
-	font-size: 14px;
+	font-size: var( --font-body-small );
 }
 
 .gutenboarding__header-section-item {

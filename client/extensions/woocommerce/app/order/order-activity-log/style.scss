@@ -109,7 +109,7 @@
 		border-color: var( --color-border-inverted );
 		resize: vertical;
 		display: block;
-		font-size: 14px;
+		font-size: var( --font-body-small );
 
 		&::placeholder {
 			color: var( --color-text-subtle );

@@ -53,7 +53,7 @@
 
 	.quick-links__action-box-subtitle {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: var( --font-body-small );
 		display: none;
 
 		@include breakpoint( '>480px' ) {
