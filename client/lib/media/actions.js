@@ -294,6 +294,8 @@ MediaActions.update = function ( siteId, item, editMediaFile = false ) {
 	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
 	Dispatcher.handleViewAction( updateAction );
 
+	reduxDispatch( receiveMedia( siteId, updateAction.data ) );
+
 	const method = editMediaFile ? 'edit' : 'update';
 
 	wpcom

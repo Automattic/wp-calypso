@@ -309,9 +309,20 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 				return state;
 			}
 
+			const { [ siteId ]: existingMediaIds = [] } = state;
+
+			const nextMediaIds = media.reduce(
+				( aggregatedMediaIds, mediaItem ) =>
+					// avoid duplicating IDs
+					existingMediaIds.includes( mediaItem.ID )
+						? aggregatedMediaIds
+						: [ ...aggregatedMediaIds, mediaItem.ID ],
+				[ ...existingMediaIds ]
+			);
+
 			return {
 				...state,
-				[ siteId ]: [ ...( state[ siteId ] ?? [] ), ...media.map( ( mediaItem ) => mediaItem.ID ) ],
+				[ siteId ]: nextMediaIds,
 			};
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
