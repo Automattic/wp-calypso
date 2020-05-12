@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { isDesktop } from '@automattic/viewport';
+import userAgent from 'lib/user-agent';
 
 /**
  * Internal dependencies
@@ -19,7 +20,8 @@ const cardComponents = {
 	'home-task-connect-accounts': ConnectAccounts,
 	'home-task-find-domain': FindDomain,
 	'home-task-webinars': Webinars,
-	'home-task-go-mobile': GoMobile,
+	'home-task-go-mobile-android': GoMobile,
+	'home-task-go-mobile-ios': GoMobile,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
@@ -29,9 +31,14 @@ const Primary = ( { checklistMode, cards } ) => {
 
 	// Hard-coded. To be removed after D43129-code is merged
 	if ( ! isDesktop() ) {
-		// Prevent duplicates once D43129-code is merged
-		if ( -1 === cards.indexOf( 'home-task-go-mobile' ) ) {
-			cards.push( 'home-task-go-mobile' );
+		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
+		if ( isAndroid || isIos ) {
+			const emulatedTask = isAndroid ? 'home-task-go-mobile-android' : 'home-task-go-mobile-ios';
+			// Prevent duplicates once D43129-code is merged
+			if ( -1 === cards.indexOf( emulatedTask ) ) {
+				cards.push( emulatedTask );
+			}
 		}
 	}
 	return (
@@ -40,6 +47,7 @@ const Primary = ( { checklistMode, cards } ) => {
 				React.createElement( cardComponents[ card ], {
 					key: index,
 					checklistMode: card === 'home-task-site-setup-checklist' ? checklistMode : null,
+					isIos: card === 'home-task-go-mobile-ios' ? true : null,
 				} )
 			) }
 			<PerformanceTrackerStop />
