@@ -3,17 +3,33 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
+import { savePreference } from 'state/preferences/actions';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import CelebrateNotice from '../celebrate-notice-v2';
 
-const CelebrateSiteLaunch = ( { isSiteSetupComplete } ) => {
+const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, siteId } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const skipSiteSetup = () => {
+		// Mark all pending tasks as completed.
+		pendingSiteSetupTasks.forEach( ( task ) =>
+			dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) )
+		);
+
+		// Dismisses the site setup complete celebratory notice.
+		dispatch(
+			savePreference( `dismissible-card-home-notice-site-setup-complete-${ siteId }`, true )
+		);
+	};
+
 	return (
 		<CelebrateNotice
 			actionText={
@@ -26,13 +42,23 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete } ) => {
 			title={ translate( 'You launched your site!' ) }
 			showSkip={ true }
 			skipText={ isSiteSetupComplete ? translate( 'Dismiss' ) : translate( 'Skip site setup' ) }
+			onSkip={ ! isSiteSetupComplete ? skipSiteSetup : null }
 		/>
 	);
 };
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const isSiteSetupComplete = isSiteChecklistComplete( state, siteId );
+	let pendingSiteSetupTasks = [];
+	if ( ! isSiteSetupComplete ) {
+		const tasks = getSiteTaskList( state, siteId ).getAll();
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		pendingSiteSetupTasks = tasks.filter( ( task ) => ! task.isCompleted );
+	}
 	return {
-		isSiteSetupComplete: isSiteChecklistComplete( state, siteId ),
+		isSiteSetupComplete,
+		pendingSiteSetupTasks,
+		siteId,
 	};
 } )( CelebrateSiteLaunch );
