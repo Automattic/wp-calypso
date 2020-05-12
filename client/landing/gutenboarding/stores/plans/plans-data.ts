@@ -41,17 +41,17 @@ export const planFeatures: FortifiedPlans = {
 		features: [ '3 GB' ],
 	},
 	[ PLAN_PERSONAL ]: {
-		features: [ '6 GB', ...mainFeatures.slice( 0, 4 ) ],
+		features: [ '6 GB', ...mainFeatures.slice( 0, 3 ) ],
 	},
 	[ PLAN_PREMIUM ]: {
-		features: [ '13 GB', ...mainFeatures.slice( 0, 9 ) ],
+		features: [ '13 GB', ...mainFeatures.slice( 0, 8 ) ],
 		isPopular: true,
 	},
 	[ PLAN_BUSINESS ]: {
-		features: [ '200 GB', ...mainFeatures.slice( 0, 10 ) ],
+		features: [ '200 GB', ...mainFeatures.slice( 0, 9 ) ],
 	},
 	[ PLAN_ECOMMERCE ]: {
-		features: [ '200 GB', ...mainFeatures.slice( 0, 11 ) ],
+		features: [ '200 GB', ...mainFeatures ],
 	},
 };
 
