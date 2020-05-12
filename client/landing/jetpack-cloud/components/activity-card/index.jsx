@@ -31,14 +31,11 @@ import downloadIcon from './download-icon.svg';
 
 class ActivityCard extends Component {
 	static propTypes = {
-		showActions: PropTypes.bool,
 		summarize: PropTypes.bool,
-		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		summarize: false,
-		compact: false,
 	};
 
 	topPopoverContext = React.createRef();
@@ -71,7 +68,7 @@ class ActivityCard extends Component {
 	};
 
 	renderStreams( streams = [] ) {
-		const { allowRestore, moment, siteSlug } = this.props;
+		const { allowRestore, moment, siteSlug, translate } = this.props;
 
 		return streams.map( ( item, index ) => {
 			const activityMedia = item.activityMedia;
@@ -97,8 +94,8 @@ class ActivityCard extends Component {
 					compact
 					key={ item.activityId }
 					moment={ moment }
-					showActions={ false }
 					siteSlug={ siteSlug }
+					translate={ translate }
 				/>
 			);
 		} );
@@ -118,16 +115,10 @@ class ActivityCard extends Component {
 		);
 	}
 
-	hasStreamContent() {
-		const { activity } = this.props;
-		return !! activity.streams;
-	}
-
-	renderStreamContent() {
+	renderExpandContentControl() {
 		const { translate } = this.props;
 
-		// todo: handle the rest of cases
-		return this.hasStreamContent() ? (
+		return (
 			<Button
 				compact
 				borderless
@@ -142,12 +133,7 @@ class ActivityCard extends Component {
 					className="activity-card__see-content-icon"
 				/>
 			</Button>
-		) : null;
-	}
-
-	shouldRenderActionButtons() {
-		const { activity, showActions } = this.props;
-		return activity.activityIsRewindable && showActions;
+		);
 	}
 
 	renderActionButton( isTopToolbar = true ) {
@@ -209,21 +195,22 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const shouldRenderActionButtons = this.shouldRenderActionButtons();
-		const hasStreamContent = this.hasStreamContent();
+		const {
+			activity: { activityIsRewindable, streams },
+		} = this.props;
 
-		return ! ( hasStreamContent || shouldRenderActionButtons ) ? null : (
+		return ! ( streams || activityIsRewindable ) ? null : (
 			<Fragment key={ `activity-card__toolbar-${ isTopToolbar ? 'top' : 'bottom' }` }>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! hasStreamContent && shouldRenderActionButtons
+						! streams && activityIsRewindable
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ this.renderStreamContent() }
-					{ shouldRenderActionButtons && this.renderActionButton( isTopToolbar ) }
+					{ streams && this.renderExpandContentControl() }
+					{ activityIsRewindable && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</Fragment>
 		);
@@ -254,15 +241,7 @@ class ActivityCard extends Component {
 	}
 
 	render() {
-		const {
-			activity,
-			allowRestore,
-			compact,
-			className,
-			gmtOffset,
-			summarize,
-			timezone,
-		} = this.props;
+		const { activity, allowRestore, className, gmtOffset, summarize, timezone } = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -272,9 +251,7 @@ class ActivityCard extends Component {
 		const showActivityContent = this.state.showContent;
 
 		return (
-			<div
-				className={ classnames( className, compact ? 'activity-card-compact' : 'activity-card' ) }
-			>
+			<div className={ classnames( className, 'activity-card' ) }>
 				{ ! summarize && (
 					<div className="activity-card__time">
 						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
