@@ -1,5 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../../mixins.scss';
+@import '../variables.scss';
 
 .plans-grid {
 	// Space to accomodate sticky footer
@@ -30,7 +31,63 @@
 	align-items: center;
 }
 
+.plans-grid__table-container {
+	// This ensure when plans table overflow,
+	// the overflowing content is not clipped by the
+	// onboarding block's margin.
+	@include onboarding-block-edge2edge-container;
+
+	// When plan items overflow, this ensure there is a gap on
+	// the left & right end of the content. Transparent borders
+	// is used instead of margins because browsers do not consider
+	// margins as part of the content itself.
+	.plan-item {
+		@include onboarding-block-edge2edge-columns;
+
+		// This ensure borders are not calculated as part of the
+		// element's width because the first and last plan item
+		// has extended borders.
+		box-sizing: content-box !important;
+
+		// This reverts the content-box box-sizing
+		// for immediate child elements.
+		> * {
+			box-sizing: border-box !important;
+		}
+	}
+}
+
+.plans-grid.is-mobile .plans-grid__table-container {
+	// On a desktop device, when plan items overflow,
+	// let user scroll using the browser's scrollbar,
+	// this is because users are used to scrolling this way.
+
+	// On a mobile device, when plan items overflow,
+	// let user scroll using the element's scrollbar,
+	// this allows user to pan through the plan items
+	// while keep the rest of the content intact.
+	overflow-x: auto;
+
+	// This lets the overlay scrollbar appears right
+	// below the plan item when panning horizontally.
+	padding: 20px 0;
+	margin-top: -20px;
+	margin-bottom: -20px;
+
+	// On mobile portrait view, ensure plan item takes up
+	// about 70% of the viewport width, leaving just enough
+	// room for the next plan itme to peak out from the side.
+	.plan-item {
+		min-width: $plan-item-min-width-mobile-portrait;
+
+		@include break-mobile {
+			min-width: $plan-item-min-width;
+		}
+	}
+}
+
 .plans-grid__details {
+	margin-top: 70px;
 	margin-bottom: 120px;
 }
 

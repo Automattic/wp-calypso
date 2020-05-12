@@ -1,0 +1,10 @@
+@import '../../variables.scss';
+
+$plan-item-count: 5;
+$plan-item-gutter: 20px;
+$plan-item-width: #{100% / $plan-item-count};
+$plan-item-min-width: #{(
+		$break-wide - ( $gutenboarding-block-margin-medium * 2 ) -
+			( $plan-item-gutter * ( $plan-item-count - 1 ) )
+	) / $plan-item-count};
+$plan-item-min-width-mobile-portrait: 70vw;

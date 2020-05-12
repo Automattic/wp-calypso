@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,6 +21,9 @@ import PlansDetails from '../plans-details';
  */
 import './style.scss';
 import { useSelectedPlan } from 'landing/gutenboarding/hooks/use-selected-plan';
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
 
 export interface Props {
 	confirmButton: React.ReactElement;
@@ -40,7 +44,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 	};
 
 	return (
-		<div className="plans-grid">
+		<div className={ classNames( 'plans-grid', { 'is-mobile': isMobile } ) }>
 			<div className="plans-grid__header">
 				<div>
 					<Title>{ __( 'Choose a plan' ) }</Title>
@@ -54,10 +58,12 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 			</div>
 
 			<div className="plans-grid__table">
-				<PlansTable
-					selectedPlanSlug={ selectedPlan.getStoreSlug() }
-					onPlanSelect={ setPlan }
-				></PlansTable>
+				<div className="plans-grid__table-container">
+					<PlansTable
+						selectedPlanSlug={ selectedPlan.getStoreSlug() }
+						onPlanSelect={ setPlan }
+					></PlansTable>
+				</div>
 			</div>
 
 			<div className="plans-grid__details">
