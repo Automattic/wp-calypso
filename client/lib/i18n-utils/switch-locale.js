@@ -382,7 +382,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		.then( ( translations ) => {
 			i18n.addTranslations( translations );
 
-			return { translations };
+			return translations;
 		} );
 }
 
