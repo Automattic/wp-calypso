@@ -30,7 +30,7 @@ import './style.scss';
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts, hasPaidDomain } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const selectedPlan = useSelectedPlan();
+	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
 
@@ -62,10 +62,9 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			const planSlug = selectedPlan.getStoreSlug();
-			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+			createSite( username, freeDomainSuggestion, bearerToken, selectedPlanSlug );
 		},
-		[ createSite, freeDomainSuggestion, selectedPlan ]
+		[ createSite, freeDomainSuggestion, selectedPlanSlug ]
 	);
 
 	const handleContinue = () => {

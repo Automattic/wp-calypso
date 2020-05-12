@@ -36,7 +36,7 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const selectedPlan = useSelectedPlan();
+	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -128,9 +128,9 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlan.getStoreSlug() );
+			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
 		}
-	}, [ newSite, newUser, handleCreateSite, selectedPlan ] );
+	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
 	return (
 		<div
 			className="gutenboarding__header"
