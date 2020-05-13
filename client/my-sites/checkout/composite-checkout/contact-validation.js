@@ -16,7 +16,6 @@ export default function createContactValidationCallback( {
 	validateDomainContact,
 	recordEvent,
 	showErrorMessage,
-	translate,
 } ) {
 	return function contactValidationCallback(
 		paymentMethodId,
