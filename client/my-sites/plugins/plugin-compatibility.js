@@ -13,7 +13,6 @@ const incompatiblePlugins = new Set( [
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
-	'armember-membership',
 	'autoptimize',
 	'backup',
 	'better-wp-security',
@@ -132,7 +131,7 @@ const incompatiblePlugins = new Set( [
 	'wp-optimize-by-xtraffic',
 	'wpematico',
 	'yuzo-related-post',
-	'zapp-proxy-server',
+	'zapp-proxy-server'
 ] );
 
 export function isCompatiblePlugin( pluginSlug ) {
