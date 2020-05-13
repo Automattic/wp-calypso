@@ -1,4 +1,4 @@
-const HOUR_IN_MS = 1000 * 60 * 60;
+const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Returns false if the site is unlauched or is younger than 1 hour
@@ -7,10 +7,10 @@ const HOUR_IN_MS = 1000 * 60 * 60;
  */
 export function getShouldShowAppBanner( site: any ): boolean {
 	if ( site && site.options ) {
-		const olderThanAnHour = Date.now() - new Date( site.options.created_at ).getTime() > HOUR_IN_MS;
+		const olderThanAWeek = Date.now() - new Date( site.options.created_at ).getTime() > WEEK_IN_MS;
 		const isLaunched = site.launch_status !== 'unlaunched';
 
-		return olderThanAnHour && isLaunched;
+		return olderThanAWeek && isLaunched;
 	}
 	return false;
 }
