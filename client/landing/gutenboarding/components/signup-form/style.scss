@@ -64,11 +64,16 @@
 
 	.components-text-control__input {
 		padding: 18px 14px;
-		@include onboarding-medium-text;
+		font-size: 16px;
+		line-height: 17px;
 		border-radius: 0;
 		border: 1px solid var( --studio-gray-10 );
 		width: 100%;
 		max-width: 100%;
+
+		&::placeholder {
+			@include onboarding-medium-text;
+		}
 
 		@include break-mobile {
 			max-width: 400px;

@@ -143,6 +143,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							value={ passwordVal }
 							disabled={ isFetchingNewUser }
 							type="password"
+							autoComplete="new-password"
 							onChange={ setPasswordVal }
 							placeholder={ __( 'Password' ) }
 							required
