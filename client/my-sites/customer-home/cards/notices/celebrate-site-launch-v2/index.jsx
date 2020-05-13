@@ -40,9 +40,15 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 			actionText={
 				isSiteSetupComplete ? translate( "Show me what's next" ) : translate( 'Show site setup' )
 			}
-			description={ translate(
-				"Don't forget to share your hard work with everyone. Keep up the momentum with some guidance on what to do next."
-			) }
+			description={
+				isSiteSetupComplete
+					? translate(
+							"Don't forget to share your hard work with everyone. Keep up the momentum with some guidance on what to do next."
+					  )
+					: translate(
+							"Don't forget to share your hard work with everyone. Then keep working through your site setup list."
+					  )
+			}
 			noticeId="site-launched"
 			title={ translate( 'You launched your site!' ) }
 			illustration={ launchedIllustration }
