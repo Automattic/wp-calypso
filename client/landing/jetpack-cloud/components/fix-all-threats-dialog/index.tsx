@@ -77,6 +77,7 @@ const FixAllThreatsDialog = ( {
 			additionalClassNames="fix-all-threats-dialog"
 			isVisible={ showDialog }
 			buttons={ buttons }
+			onClose={ onCloseDialog }
 		>
 			<h1 className="fix-all-threats-dialog__header">{ translate( 'Fix all threats' ) }</h1>
 			{ currentStep === 'server-credentials' && (
