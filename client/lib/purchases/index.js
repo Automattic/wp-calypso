@@ -141,7 +141,7 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
 	purchases.forEach( ( purchase ) => {
 		// Track the renew now submit.
-		recordTracksEvent( 'calypso_purchases_renew_now_click', {
+		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
 			product_slug: purchase.productSlug,
 			...tracksProps,
 		} );
