@@ -21,3 +21,4 @@ $plans-details-min-width-desktop-small: #{to-number( $plans-table-total-content-
 	$gutenboarding-block-margin-small * 2};
 $plans-details-min-width-desktop-medium: #{to-number( $plans-table-total-content-width ) +
 	$gutenboarding-block-margin-medium * 2};
+$plans-details-min-width-mobile: 700px;

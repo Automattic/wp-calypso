@@ -104,7 +104,7 @@
 // min width of the plans table, to prevent too
 // much white space when scrolling horizontally
 // using the browser's horizontal scrollbar.
-.plans-grid:not( .is-mobile ) .plans-grid__details-container {
+.plans-grid:not( .is-mobile ) .plans-details {
 	min-width: $plans-details-min-width-desktop-mobile;
 
 	@include break-small {
@@ -113,6 +113,38 @@
 
 	@include break-medium {
 		min-width: $plans-details-min-width-desktop-medium;
+	}
+}
+
+.plans-grid.is-mobile .plans-grid__details-container {
+	// On a desktop device, when plan details overflow,
+	// let user scroll using the browser's scrollbar,
+	// this is because users are used to scrolling this way.
+
+	// On a mobile device, when plan details overflow,
+	// let user scroll using the plan details' scrollbar,
+	// this allows user to pan through the plan items
+	// while keep the rest of the content intact.
+	overflow-x: auto;
+
+	// This lets the overlay scrollbar appears right
+	// below the plan details when panning horizontally.
+	padding: 20px 0;
+	margin-top: -20px;
+	margin-bottom: -20px;
+}
+
+// On mobile, reduce the min-width to reduce
+// the need to scroll too much.
+.plans-grid.is-mobile .plans-details {
+	min-width: $plans-details-min-width-mobile;
+
+	@include break-small {
+		min-width: $plans-details-min-width-mobile;
+	}
+
+	@include break-medium {
+		min-width: $plans-details-min-width-mobile;
 	}
 }
 
