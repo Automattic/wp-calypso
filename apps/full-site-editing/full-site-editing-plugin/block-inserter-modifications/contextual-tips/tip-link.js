@@ -6,14 +6,9 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { inIframe } from './utils';
+import { inIframe, isSimpleSite } from './utils';
 
 const isEditorIFramed = inIframe();
-const isSimpleSite = !! (
-	window &&
-	window._currentSiteType &&
-	window._currentSiteType === 'simple'
-);
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;

@@ -10,3 +10,9 @@ export const inIframe = () => {
 		return true;
 	}
 };
+
+export const isSimpleSite = !! (
+	window &&
+	window._currentSiteType &&
+	window._currentSiteType === 'simple'
+);
