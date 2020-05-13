@@ -94,6 +94,7 @@ const SiteSetupList = ( {
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
+	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
 	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
 	const dispatch = useDispatch();
@@ -119,16 +120,20 @@ const SiteSetupList = ( {
 		}
 	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
 
-	// Move to next task after completing current one.
+	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
+		if ( userSelectedTask ) {
+			return;
+		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
+				setUserSelectedTask( false );
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ tasks ] );
+	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -149,12 +154,14 @@ const SiteSetupList = ( {
 		}
 	}, [
 		currentTaskId,
+		dispatch,
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
 		menusUrl,
 		siteId,
 		siteSlug,
+		tasks,
 		taskUrls,
 		userEmail,
 	] );
@@ -198,6 +205,7 @@ const SiteSetupList = ( {
 							isCompleted={ task.isCompleted }
 							isCurrent={ task.id === currentTask.id }
 							onClick={ () => {
+								setUserSelectedTask( true );
 								setCurrentTaskId( task.id );
 								setCurrentDrillLayoutView( 'task' );
 							} }
@@ -241,7 +249,10 @@ const SiteSetupList = ( {
 							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
 									className="site-setup-list__task-skip task__skip is-link"
-									onClick={ () => skipTask( dispatch, currentTask, siteId ) }
+									onClick={ () => {
+										setUserSelectedTask( false );
+										skipTask( dispatch, currentTask, siteId );
+									} }
 								>
 									{ translate( 'Skip for now' ) }
 								</Button>
