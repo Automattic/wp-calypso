@@ -9,7 +9,7 @@ import React, {
 	useCallback,
 	useMemo,
 } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -112,6 +112,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 			<hr />
 			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
 				const expiresText = getExpiresText( translate, moment, purchase );
+				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
 					if ( selectedPurchases.includes( purchase.id ) ) {
 						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.id ) );
@@ -138,7 +139,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								<div className="upcoming-renewals-dialog__name">
 									{ getName( purchase ) }
 									<div className="upcoming-renewals-dialog__detail">
-										{ purchaseType( purchase ) }:&nbsp;
+										{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
 										<span className={ isExpired( purchase ) ? 'expired' : '' }>
 											{ expiresText }
 										</span>

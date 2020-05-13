@@ -21,7 +21,6 @@ import {
 	isPlan,
 	isTheme,
 	isConciergeSession,
-	isJetpackProduct,
 } from 'lib/products-values';
 import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
 
@@ -541,7 +540,7 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'Site Plan' );
 	}
 
-	if ( isDomainRegistration( purchase ) || isJetpackProduct( purchase ) ) {
+	if ( isDomainRegistration( purchase ) ) {
 		return purchase.productName;
 	}
 
