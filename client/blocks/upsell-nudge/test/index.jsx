@@ -26,6 +26,7 @@ import {
 const props = {
 	callToAction: null,
 	title: 'banner title',
+	forceDisplay: true,
 };
 
 describe( 'UpsellNudge should render a Banner with a class name corresponding to appropriate plan', () => {
@@ -36,7 +37,7 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Personal', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } forceDisplay /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -48,7 +49,7 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Premium', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } forceDisplay /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
 		} );
 	} );
@@ -60,7 +61,7 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Business', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } forceDisplay /> );
+			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
 		} );
 	} );
