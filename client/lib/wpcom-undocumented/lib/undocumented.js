@@ -745,8 +745,7 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	};
 
 	const result = this.wpcom.req.post(
-		{ path: '/me/google-apps/validate' },
-		data,
+		{ path: '/me/google-apps/validate', body: data },
 		callback ? callbackFunction : null
 	);
 
