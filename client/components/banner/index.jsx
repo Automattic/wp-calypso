@@ -9,16 +9,29 @@ import classNames from 'classnames';
 import { noop, size } from 'lodash';
 import Gridicon from 'components/gridicon';
 import JetpackLogo from 'components/jetpack-logo';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
+import {
+	planMatches,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+} from 'lib/plans';
+import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { preventWidows } from 'lib/formatting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -48,6 +61,7 @@ export class Banner extends Component {
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		primaryButton: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
 		tracksImpressionName: PropTypes.string,
@@ -56,6 +70,8 @@ export class Banner extends Component {
 		tracksImpressionProperties: PropTypes.object,
 		tracksClickProperties: PropTypes.object,
 		tracksDismissProperties: PropTypes.object,
+		customerType: PropTypes.string,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -72,7 +88,30 @@ export class Banner extends Component {
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
+		isSiteWPForTeams: false,
 	};
+
+	getHref() {
+		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
+
+		if ( ! href && siteSlug && canUserUpgrade ) {
+			if ( customerType ) {
+				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+			}
+			const baseUrl = `/plans/${ siteSlug }`;
+			if ( feature || plan ) {
+				return addQueryArgs(
+					{
+						feature,
+						plan,
+					},
+					baseUrl
+				);
+			}
+			return baseUrl;
+		}
+		return href;
+	}
 
 	handleClick = ( e ) => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
@@ -137,7 +176,6 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
-			href,
 			compact,
 			list,
 			price,
@@ -189,17 +227,17 @@ export class Banner extends Component {
 						{ callToAction &&
 							( forceHref ? (
 								<Button compact primary={ primaryButton } target={ target }>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) : (
 								<Button
 									compact
-									href={ href }
+									href={ this.getHref() }
 									onClick={ this.handleClick }
 									primary={ primaryButton }
 									target={ target }
 								>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) ) }
 					</div>
@@ -217,15 +255,27 @@ export class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			forceHref,
-			href,
 			horizontal,
 			jetpack,
+			plan,
 		} = this.props;
+
+		// No Banners for WP for Teams sites.
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		const classes = classNames(
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
+			{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },
+			{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
+			{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
+			{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
+			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
+			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
+			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName },
 			{ 'is-horizontal': horizontal },
@@ -249,7 +299,7 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : href }
+				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 			>
 				{ this.getIcon() }
@@ -259,4 +309,10 @@ export class Banner extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( Banner );
+const mapStateToProps = ( state, ownProps ) => ( {
+	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
+	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+	isSiteWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
+} );
+
+export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
