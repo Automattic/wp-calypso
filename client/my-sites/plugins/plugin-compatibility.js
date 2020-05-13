@@ -131,7 +131,7 @@ const incompatiblePlugins = new Set( [
 	'wp-optimize-by-xtraffic',
 	'wpematico',
 	'yuzo-related-post',
-	'zapp-proxy-server'
+	'zapp-proxy-server',
 ] );
 
 export function isCompatiblePlugin( pluginSlug ) {
