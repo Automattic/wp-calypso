@@ -10,11 +10,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelCta from 'components/action-panel/cta';
 import Spinner from 'components/spinner';
 import { requestHomeLayout } from 'state/home/actions';
 import { savePreference } from 'state/preferences/actions';
@@ -64,37 +59,33 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<ActionPanel
-			className={ classnames( 'celebrate-notice-v2', 'task', { 'is-loading': isLoading } ) }
-		>
+		<div className={ classnames( 'celebrate-notice-v2', 'task', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			<ActionPanelBody>
-				{ isDesktop() && (
-					<ActionPanelFigure align="right">
-						<img src={ illustration } alt="" />
-					</ActionPanelFigure>
-				) }
-				<div className="celebrate-notice-v2__text task__text">
-					<ActionPanelTitle>{ title }</ActionPanelTitle>
-					<p className="celebrate-notice-v2__description task__description">{ description }</p>
-					<ActionPanelCta>
-						<Button
-							className="celebrate-notice-v2__action task__action"
-							primary
-							onClick={ showNextTask }
-						>
-							{ actionText }
-						</Button>
+			<div className="celebrate-notice-v2__text task__text">
+				<h2 className="celebrate-notice-v2__title task__title">{ title }</h2>
+				<p className="celebrate-notice-v2__description task__description">{ description }</p>
+				<div className="celebrate-notice-v2__actions task__actions">
+					<Button
+						className="celebrate-notice-v2__action task__action"
+						primary
+						onClick={ showNextTask }
+					>
+						{ actionText }
+					</Button>
 
-						{ showSkip && (
-							<Button className="celebrate-notice-v2__skip task__skip is-link" onClick={ skip }>
-								{ skipText }
-							</Button>
-						) }
-					</ActionPanelCta>
+					{ showSkip && (
+						<Button className="celebrate-notice-v2__skip task__skip is-link" onClick={ skip }>
+							{ skipText }
+						</Button>
+					) }
 				</div>
-			</ActionPanelBody>
-		</ActionPanel>
+			</div>
+			{ isDesktop() && (
+				<div className="celebrate-notice-v2__illustration task__illustration">
+					<img src={ illustration } alt="" />
+				</div>
+			) }
+		</div>
 	);
 };
 

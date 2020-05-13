@@ -1,16 +1,4 @@
 .celebrate-notice-v2.task {
-	@include breakpoint( '>480px' ) {
-		padding-top: 32px;
-	}
-
-	.action-panel__figure {
-		max-width: 25%;
-	}
-
-	.task__text {
-		max-width: 66.6666%;
-	}
-
 	.spinner {
 		position: absolute;
 		left: 50%;
@@ -19,7 +7,7 @@
 		margin-top: -10px;
 	}
 
-	&.is-loading .action-panel__body {
+	&.is-loading > *:not( .spinner ) {
 		visibility: hidden;
 	}
 }
