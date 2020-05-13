@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -29,7 +28,7 @@ const tips = [
 			},
 			__( 'You can visit the theme directory to select a different design for your site.' )
 		),
-		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
+		permission: 'settings',
 	},
 	{
 		context: 'css',
@@ -41,7 +40,7 @@ const tips = [
 			},
 			__( 'You can visit the the Customizer to edit the CSS on your site.' )
 		),
-		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
+		permission: 'settings',
 	},
 	{
 		context: 'plugin',
@@ -53,7 +52,7 @@ const tips = [
 			},
 			__( 'You can visit the plugin directory to install additional plugins.' )
 		),
-		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
+		permission: 'settings',
 	},
 	{
 		context: 'header',
@@ -65,7 +64,7 @@ const tips = [
 			},
 			__( 'You can visit the the Customizer to edit your logo and site title.' )
 		),
-		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
+		permission: 'settings',
 	},
 	{
 		context: 'color',
@@ -77,11 +76,8 @@ const tips = [
 			},
 			__( 'You can visit the the Customizer to edit the colors on your site.' )
 		),
-		permission: () => select( 'core' ).canUser( 'create', 'settings' ),
+		permission: 'settings',
 	},
 ];
-
-// Pre populate permissions state tree.
-tips.forEach( ( { permission } ) => permission() );
 
 export default tips;

@@ -7,13 +7,15 @@ import { get, filter, deburr, lowerCase, includes, uniq } from 'lodash';
  * WordPress dependencies
  */
 import { Tip } from '@wordpress/components';
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import tipsList from './list';
 
-export default function ( { searchTerm, random = false } ) {
+function ContextualTip( { searchTerm, random = false, canUserCreate } ) {
 	if ( ! searchTerm ) {
 		return null;
 	}
@@ -27,7 +29,7 @@ export default function ( { searchTerm, random = false } ) {
 	const foundTips = filter(
 		tipsList,
 		( { keywords, permission } ) =>
-			permission() &&
+			canUserCreate( permission ) &&
 			filter( uniq( keywords ), ( keyword ) => includes( normalizedSearchTerm, keyword ) ).length
 	);
 
@@ -43,3 +45,11 @@ export default function ( { searchTerm, random = false } ) {
 		</div>
 	);
 }
+
+export default compose(
+	withSelect( ( select ) => {
+		return {
+			canUserCreate: ( type ) => select( 'core' ).canUser( 'create', type ),
+		};
+	} )
+)( ContextualTip );
