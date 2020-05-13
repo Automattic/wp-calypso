@@ -90,19 +90,17 @@
 		margin-left: auto;
 	}
 
-	.site-setup-list__task {
-		box-shadow: none;
-		margin: 0;
-		padding: 40px;
-
-		@include breakpoint( '<1040px' ) {
-			padding: 24px;
-		}
-	}
-
 	.site-setup-list__nav-back {
 		padding: 2px 4px;
 		margin: 0 4px 0 -8px;
+	}
+
+	.site-setup-list__task {
+		box-shadow: none;
+	}
+
+	.site-setup-list__task-actions {
+		margin-top: 0;
 	}
 }
 

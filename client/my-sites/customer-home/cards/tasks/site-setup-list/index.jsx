@@ -11,10 +11,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelCta from 'components/action-panel/cta';
 import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
 import { getTaskList } from 'lib/checklist';
@@ -211,52 +207,48 @@ const SiteSetupList = ( {
 				</div>
 			) }
 			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
-				<ActionPanel className="site-setup-list__task task">
-					<ActionPanelBody>
-						<div className="site-setup-list__task-text task__text">
-							{ currentTask.isCompleted ? (
-								<Badge type="info" className="site-setup-list__task-badge task__badge">
-									{ translate( 'Complete' ) }
-								</Badge>
-							) : (
-								<div className="site-setup-list__task-timing task__timing">
-									<Gridicon icon="time" size={ 18 } />
-									<p>
-										{ translate( '%d minute', '%d minutes', {
-											count: currentTask.timing,
-											args: [ currentTask.timing ],
-										} ) }
-									</p>
-								</div>
-							) }
-							<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
-							<p className="site-setup-list__task-description task__description">
-								{ currentTask.description }
-							</p>
-							<ActionPanelCta>
+				<div className="site-setup-list__task task">
+					<div className="site-setup-list__task-text task__text">
+						{ currentTask.isCompleted ? (
+							<Badge type="info" className="site-setup-list__task-badge task__badge">
+								{ translate( 'Complete' ) }
+							</Badge>
+						) : (
+							<div className="site-setup-list__task-timing task__timing">
+								<Gridicon icon="time" size={ 18 } />
+								{ translate( '%d minute', '%d minutes', {
+									count: currentTask.timing,
+									args: [ currentTask.timing ],
+								} ) }
+							</div>
+						) }
+						<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+						<p className="site-setup-list__task-description task__description">
+							{ currentTask.description }
+						</p>
+						<div className="site-setup-list__task-actions task__actions">
+							<Button
+								className="site-setup-list__task-action task__action"
+								primary
+								onClick={ () => startTask( dispatch, currentTask, siteId ) }
+								disabled={
+									currentTask.isDisabled ||
+									( currentTask.isCompleted && currentTask.actionDisableOnComplete )
+								}
+							>
+								{ currentTask.actionText }
+							</Button>
+							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () => startTask( dispatch, currentTask, siteId ) }
-									disabled={
-										currentTask.isDisabled ||
-										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
-									}
+									className="site-setup-list__task-skip task__skip is-link"
+									onClick={ () => skipTask( dispatch, currentTask, siteId ) }
 								>
-									{ currentTask.actionText }
+									{ translate( 'Skip for now' ) }
 								</Button>
-								{ currentTask.isSkippable && ! currentTask.isCompleted && (
-									<Button
-										className="site-setup-list__task-skip task__skip is-link"
-										onClick={ () => skipTask( dispatch, currentTask, siteId ) }
-									>
-										{ translate( 'Skip for now' ) }
-									</Button>
-								) }
-							</ActionPanelCta>
+							) }
 						</div>
-					</ActionPanelBody>
-				</ActionPanel>
+					</div>
+				</div>
 			) }
 		</Card>
 	);

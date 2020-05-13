@@ -6,16 +6,10 @@ import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelCta from 'components/action-panel/cta';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -131,72 +125,70 @@ const Task = ( {
 	};
 
 	return (
-		<ActionPanel className={ classNames( 'task', taskId ) }>
-			<ActionPanelBody>
-				{ isDesktop() && (
-					<ActionPanelFigure align="right">
-						<img src={ illustration } alt="" />
-					</ActionPanelFigure>
+		<div className="task">
+			<div className="task__text">
+				{ timing && (
+					<div className="task__timing">
+						<Gridicon icon="time" size={ 18 } />
+						{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }
+					</div>
 				) }
-				<div className="task__text">
-					{ timing && (
-						<div className="task__timing">
-							<Gridicon icon="time" size={ 18 } />
-							<p>{ translate( '%d minute', '%d minutes', { count: timing, args: [ timing ] } ) }</p>
-						</div>
-					) }
-					{ badgeText && (
-						<Badge type="info" className="task__badge">
-							{ badgeText }
-						</Badge>
-					) }
-					<ActionPanelTitle>{ title }</ActionPanelTitle>
-					<p className="task__description">{ description }</p>
-					<ActionPanelCta>
-						{ actionButton || (
-							<Button
-								className="task__action"
-								primary
-								onClick={ startTask }
-								href={ actionUrl }
-								target={ actionTarget }
-							>
-								{ actionText }
-							</Button>
-						) }
+				{ badgeText && (
+					<Badge type="info" className="task__badge">
+						{ badgeText }
+					</Badge>
+				) }
+				<h2 className="task__title">{ title }</h2>
+				<p className="task__description">{ description }</p>
+				<div className="task__actions">
+					{ actionButton || (
 						<Button
-							className="task__skip is-link"
-							ref={ skipButtonRef }
-							onClick={ () =>
-								enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask( 'never' )
-							}
+							className="task__action"
+							primary
+							onClick={ startTask }
+							href={ actionUrl }
+							target={ actionTarget }
 						>
-							{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
-							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
+							{ actionText }
 						</Button>
-						{ enableSkipOptions && areSkipOptionsVisible && (
-							<PopoverMenu
-								context={ skipButtonRef.current }
-								isVisible={ areSkipOptionsVisible }
-								onClose={ () => setSkipOptionsVisible( false ) }
-								position="bottom"
-								className="task__skip-popover"
-							>
-								<PopoverMenuItem onClick={ () => skipTask( '1d' ) }>
-									{ translate( 'Tomorrow' ) }
-								</PopoverMenuItem>
-								<PopoverMenuItem onClick={ () => skipTask( '1w' ) }>
-									{ translate( 'Next week' ) }
-								</PopoverMenuItem>
-								<PopoverMenuItem onClick={ () => skipTask( 'never' ) }>
-									{ translate( 'Never' ) }
-								</PopoverMenuItem>
-							</PopoverMenu>
-						) }
-					</ActionPanelCta>
+					) }
+					<Button
+						className="task__skip is-link"
+						ref={ skipButtonRef }
+						onClick={ () =>
+							enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask( 'never' )
+						}
+					>
+						{ enableSkipOptions ? translate( 'Remind me' ) : translate( 'Dismiss' ) }
+						{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
+					</Button>
+					{ enableSkipOptions && areSkipOptionsVisible && (
+						<PopoverMenu
+							context={ skipButtonRef.current }
+							isVisible={ areSkipOptionsVisible }
+							onClose={ () => setSkipOptionsVisible( false ) }
+							position="bottom"
+							className="task__skip-popover"
+						>
+							<PopoverMenuItem onClick={ () => skipTask( '1d' ) }>
+								{ translate( 'Tomorrow' ) }
+							</PopoverMenuItem>
+							<PopoverMenuItem onClick={ () => skipTask( '1w' ) }>
+								{ translate( 'Next week' ) }
+							</PopoverMenuItem>
+							<PopoverMenuItem onClick={ () => skipTask( 'never' ) }>
+								{ translate( 'Never' ) }
+							</PopoverMenuItem>
+						</PopoverMenu>
+					) }
 				</div>
-			</ActionPanelBody>
-		</ActionPanel>
+			</div>
+			{ isDesktop() && (
+				<div className="task__illustration">
+					<img src={ illustration } alt="" />
+				</div>
+			) }
+		</div>
 	);
 };
 
