@@ -4,7 +4,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -49,15 +48,12 @@ const SiteSettingsSecurity = ( {
 		);
 	}
 
-	const credentials = find( rewindState.credentials, { role: 'main' } );
-	const isManaged = credentials && credentials.type && 'managed' === credentials.type;
-
 	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
 		rewindState.state
 	);
 	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
 
-	const showCredentials = ! isManaged && ( isRewindActive || hasScanProduct );
+	const showCredentials = isRewindActive || hasScanProduct;
 
 	return (
 		<Main className="settings-security site-settings">
