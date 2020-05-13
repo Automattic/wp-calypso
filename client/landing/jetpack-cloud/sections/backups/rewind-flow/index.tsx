@@ -75,7 +75,9 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				}
 			/>
 			<SidebarNavigation />
-			<Card>{ applySiteOffset && render( applySiteOffset ) }</Card>
+			<div className="rewind-flow__content">
+				<Card>{ applySiteOffset && render( applySiteOffset ) }</Card>
+			</div>
 		</Main>
 	);
 };
