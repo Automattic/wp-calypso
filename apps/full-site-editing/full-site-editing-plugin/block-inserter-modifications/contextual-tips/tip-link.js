@@ -19,10 +19,10 @@ export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
 	let autofocus,
 		editorSelector,
-		href = '#',
 		postId,
 		postType,
-		returnLink;
+		returnLink,
+		href = '#';
 
 	switch ( section ) {
 		case 'themes':
