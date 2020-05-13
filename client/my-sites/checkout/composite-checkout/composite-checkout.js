@@ -65,7 +65,9 @@ import useCreatePaymentMethods from './use-create-payment-methods';
 import { applePayProcessor, stripeCardProcessor } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import createContactValidationCallback from './contact-validation';
+import createContactValidationCallback, {
+	createGSuiteContactValidationCallback,
+} from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
 import {
 	hasGoogleApps,
@@ -86,6 +88,8 @@ const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 const wpcomValidateDomainContactInformation = ( ...args ) =>
 	wpcom.validateDomainContactInformation( ...args );
+const wpcomValidateGSuiteContactInformation = ( ...args ) =>
+	wpcom.validateGoogleAppsContactInformation( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -299,6 +303,12 @@ export default function CompositeCheckout( {
 		translate,
 	} );
 
+	const gSuiteContactValidationCallback = createGSuiteContactValidationCallback( {
+		validateGSuiteContact: wpcomValidateGSuiteContactInformation,
+		recordEvent,
+		showErrorMessage: showErrorMessageBriefly,
+	} );
+
 	const renderDomainContactFields = (
 		domainNames,
 		contactDetails,
@@ -435,6 +445,7 @@ export default function CompositeCheckout( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
+					gSuiteContactValidationCallback={ gSuiteContactValidationCallback }
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
