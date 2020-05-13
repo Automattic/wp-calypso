@@ -6,7 +6,7 @@
 	"protocol": "http",
 	"hostname": "jetpack.cloud.localhost",
 	"i18n_default_locale_slug": "en",
-	"port": 3000,
+	"port": 3001,
 	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",

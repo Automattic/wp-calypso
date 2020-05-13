@@ -34,8 +34,6 @@ export const connect: PageJS.Callback = ( context, next ) => {
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri,
 			scope: 'global',
-			type: 'jetpack-cloud',
-			cobrand: 1,
 		};
 
 		// page.redirect( `${ WP_AUTHORIZE_ENDPOINT  }?${ stringify( params ) }` );
