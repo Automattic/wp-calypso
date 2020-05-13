@@ -30,9 +30,10 @@ export default function ( { section, children, subsection } ) {
 			break;
 
 		case 'plugins':
-			href = isEditorIFramed
-				? `https://wordpress.com/plugins/${ hostname }`
-				: './plugin-install.php';
+			href =
+				isEditorIFramed || isSimpleSite
+					? `https://wordpress.com/plugins/${ hostname }`
+					: './plugin-install.php';
 			break;
 
 		case 'customizer':
