@@ -24,6 +24,7 @@ import {
 import UpcomingRenewalsDialog, {
 	Purchase,
 } from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { MockResponseCart } from 'my-sites/checkout/composite-checkout/wpcom/components/secondary-cart-promotions';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -43,16 +44,8 @@ const OtherPurchasesLink = styled.button`
 	}
 `;
 
-export interface CartProduct {
-	subscription_id?: string;
-	is_renewal: boolean;
-}
-
 interface Props {
-	cart: {
-		hasLoadedFromServer: boolean;
-		products: CartProduct[];
-	};
+	cart: MockResponseCart;
 	addItemToCart: ( product: object ) => void;
 	siteId: number;
 	siteUrl: string;
@@ -71,7 +64,12 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 	);
 
 	const purchasesIdsAlreadyInCart = useMemo(
-		() => cart?.products?.map( ( product ) => Number( product.subscription_id ) ),
+		() =>
+			( cart.products || [] )
+				.map( ( product ) =>
+					product.subscription_id ? Number( product.subscription_id ) : null
+				)
+				.filter( ( purchaseId ) => purchaseId !== null ),
 		[ cart ]
 	);
 

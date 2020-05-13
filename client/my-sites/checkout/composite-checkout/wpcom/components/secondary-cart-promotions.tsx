@@ -8,15 +8,18 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
-import UpcomingRenewalsReminder, {
-	CartProduct,
-} from 'my-sites/checkout/cart/upcoming-renewals-reminder';
+import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
+import { ResponseCart } from '../types';
 
 interface Props {
-	responseCart: { products: CartProduct[] };
+	responseCart: ResponseCart;
 	addItemToCart: () => void;
 	siteId: number;
 	siteUrl: string;
+}
+
+export interface MockResponseCart extends ResponseCart {
+	hasLoadedFromServer: boolean;
 }
 
 const SecondaryCartPromotions: FunctionComponent< Props > = ( {
