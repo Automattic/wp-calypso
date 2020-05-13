@@ -16,7 +16,7 @@ import {
 	isSuccessfulRealtimeBackup,
 } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
-	/*backupDetailPath,*/ backupDownloadPath,
+	backupDownloadPath,
 	backupRestorePath,
 	backupMainPath,
 } from 'landing/jetpack-cloud/sections/backups/paths';

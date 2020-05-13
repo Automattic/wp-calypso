@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import BackupActivityLogPage from './backup-activity-log';
-import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
 import UpsellSwitch from 'landing/jetpack-cloud/components/upsell-switch';
@@ -45,14 +44,6 @@ export function backupActivity( context, next ) {
 			page={ context.query.page }
 		/>
 	);
-	next();
-}
-
-/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
-export function backupDetail( context, next ) {
-	const backupId = context.params.backupId;
-
-	context.primary = <BackupDetailPage backupId={ backupId } />;
 	next();
 }
 

@@ -18,7 +18,6 @@ import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import { applySiteOffset } from 'lib/site/timezone';
 import PopoverMenu from 'components/popover/menu';
 import {
-	backupDetailPath,
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
@@ -114,7 +113,7 @@ class ActivityCard extends Component {
 	}
 
 	renderContentLink() {
-		const { activity, siteSlug, translate } = this.props;
+		const { activity, translate } = this.props;
 
 		// todo: handle the rest of cases
 		if (
@@ -138,14 +137,8 @@ class ActivityCard extends Component {
 				</Button>
 			);
 		}
-		return (
-			<a
-				className="activity-card__detail-link"
-				href={ backupDetailPath( siteSlug, activity.rewindId ) }
-			>
-				{ translate( 'Changes in this backup' ) }
-			</a>
-		);
+		// eslint-disable-next-line jsx-a11y/anchor-is-valid
+		return <a className="activity-card__detail-link">{ translate( 'Changes in this backup' ) }</a>;
 	}
 
 	renderActionButton( isTopToolbar = true ) {
