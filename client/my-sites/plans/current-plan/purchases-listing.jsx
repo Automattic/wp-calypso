@@ -25,8 +25,10 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
+import Gridicon from 'components/gridicon';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
+import { addQueryArgs } from 'lib/url';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -38,6 +40,8 @@ import {
 	isJetpackProduct,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
+	isJetpackBackup,
+	isJetpackScan,
 } from 'lib/products-values';
 
 class PurchasesListing extends Component {
@@ -188,7 +192,7 @@ class PurchasesListing extends Component {
 		let label = translate( 'Manage plan' );
 
 		if ( isJetpackProduct( purchase ) ) {
-			label = translate( 'Manage product' );
+			label = translate( 'Manage Subscription' );
 		}
 
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
@@ -199,6 +203,49 @@ class PurchasesListing extends Component {
 			<Button href={ managePurchase( selectedSiteSlug, purchase.id ) } compact>
 				{ label }
 			</Button>
+		);
+	}
+
+	getProductActionButtons( purchase ) {
+		const { translate, selectedSiteSlug: site } = this.props;
+		const actionButton = this.getActionButton( purchase );
+
+		let serviceButton = null;
+		if ( isJetpackBackup( purchase ) ) {
+			serviceButton = (
+				<Button
+					href={ addQueryArgs(
+						{ site, source: 'jetpack-backup-dash' },
+						'https://jetpack.com/redirect/'
+					) }
+					compact
+				>
+					{ translate( 'View Backups' ) }
+					&nbsp;
+					<Gridicon icon="external" />
+				</Button>
+			);
+		} else if ( isJetpackScan( purchase ) ) {
+			serviceButton = (
+				<Button
+					href={ addQueryArgs(
+						{ site, source: 'jetpack-scan-dash' },
+						'https://jetpack.com/redirect/'
+					) }
+					compact
+				>
+					{ translate( 'Run Scan' ) }
+					&nbsp;
+					<Gridicon icon="external" />
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				{ actionButton }
+				{ serviceButton }
+			</>
 		);
 	}
 
@@ -244,7 +291,7 @@ class PurchasesListing extends Component {
 				{ productPurchases.map( ( purchase ) => (
 					<MyPlanCard
 						key={ purchase.id }
-						action={ this.getActionButton( purchase ) }
+						action={ this.getProductActionButtons( purchase ) }
 						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
