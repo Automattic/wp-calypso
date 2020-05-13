@@ -28,6 +28,7 @@ import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
+	getGoogleApps,
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasInvalidAlternateEmailDomain,
@@ -107,6 +108,7 @@ export class DomainDetailsForm extends PureComponent {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation(
 				fieldValues,
+				this.getGSuiteDomainNames(),
 				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
 			);
 			return;
@@ -124,6 +126,8 @@ export class DomainDetailsForm extends PureComponent {
 		debug( 'Switching to step: ' + newStep );
 		this.setState( { currentStep: newStep } );
 	}
+
+	getGSuiteDomainNames = () => map( getGoogleApps( this.props.cart ), 'meta' );
 
 	getDomainNames = () =>
 		map(
