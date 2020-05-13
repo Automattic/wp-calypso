@@ -60,6 +60,7 @@
 
 .acquire-intent__mobile-back-arrow {
 	transform: rotate( 180deg );
+	margin: 10px 0;
 }
 
 .madlib__input {
@@ -129,6 +130,12 @@
 
 .site-title {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	flex-grow: 1;
+
+	@include break-small {
+		flex-grow: 0;
+	}
 
 	&--hidden {
 		visibility: hidden;
