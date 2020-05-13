@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
+import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,7 +121,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 			</h3>
 			<hr />
 			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
-				const expiresText = getExpiresText( translate, moment, purchase );
+				const expiresText = getExpiresText( translate, moment, purchase ) as string;
 				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
 					if ( selectedPurchases.includes( purchase.id ) ) {
@@ -150,7 +151,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 									<div className="upcoming-renewals-dialog__detail">
 										{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
 										<span className={ isExpired( purchase ) ? 'expired' : '' }>
-											{ expiresText }
+											{ purchaseTypeText ? expiresText : capitalize( expiresText ) }
 										</span>
 									</div>
 								</div>
