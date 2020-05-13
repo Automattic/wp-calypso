@@ -683,8 +683,22 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-bottom: 32px;
 	}
 
-	&.is-offer-reset-test .plan-features__table {
-		max-width: none;
+	&.is-offer-reset-test {
+		.plan-features__table {
+			max-width: none;
+		}
+
+		.plan-features__row .plan-features__item {
+			margin: 0 24px;
+		}
+
+		.plan-features__row .plan-features__item:last-child {
+			margin: 0 24px 12px;
+		}
+
+		.plan-features--signup .plan-features__actions {
+			padding: 0 24px 15px;
+		}
 	}
 }
 
