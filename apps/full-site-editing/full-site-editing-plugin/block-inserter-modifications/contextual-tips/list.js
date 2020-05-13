@@ -46,11 +46,11 @@ const tips = [
 		context: 'plugin',
 		keywords: [ 'plugin', __( 'plugin' ) ],
 		description: getTipDescription(
-			__( 'You can visit the <a>plugin directory</a> to install additional plugins.' ),
+			__( 'You can visit the <a>plugin directory</a> to get started with installing new plugins.' ),
 			{
 				a: <TipLink section="plugins" />,
 			},
-			__( 'You can visit the plugin directory to install additional plugins.' )
+			__( 'You can visit the plugin directory to get started with installing new plugins.' )
 		),
 		permission: 'settings',
 	},
