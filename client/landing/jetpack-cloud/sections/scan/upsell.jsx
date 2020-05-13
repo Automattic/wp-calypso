@@ -23,7 +23,9 @@ function ScanMultisiteBody() {
 	return (
 		<Upsell
 			headerText={ translate( 'Your site does not support Jetpack Scan' ) }
-			bodyText={ translate( 'Jetpack Scan is currently not supported on WordPress multi-site networks.' ) }
+			bodyText={ translate(
+				'Jetpack Scan is currently not supported on WordPress multi-site networks.'
+			) }
 			buttonLink={ false }
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
