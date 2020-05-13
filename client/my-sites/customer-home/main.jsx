@@ -98,8 +98,8 @@ const Home = ( {
 					   */ }
 					{ header }
 				</LoadingVariations>
-				<DefaultVariation name={ 'control' }>{ header }</DefaultVariation>
-				<Variation name={ 'treatment' }>{ header }</Variation>
+				<DefaultVariation name="control">{ header }</DefaultVariation>
+				<Variation name="treatment">{ header }</Variation>
 			</Experiment>
 			{ layout ? (
 				<>
