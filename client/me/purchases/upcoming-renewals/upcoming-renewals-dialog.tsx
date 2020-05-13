@@ -36,6 +36,7 @@ interface Purchase {
 	productName: string;
 	currencyCode: string;
 	expiryDate: string;
+	renewDate: string;
 	productSlug: string;
 }
 
@@ -58,17 +59,25 @@ function getExpiresText(
 	purchase: Purchase
 ): TranslateResult {
 	if ( isAutoRenewing( purchase ) ) {
-		return translate( 'renews %(expiry)s', {
-			args: { expiry: moment( purchase.expiryDate ).fromNow() },
+		return translate( 'renews %(renewDate)s', {
+			comment:
+				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
+			args: { renewDate: moment( purchase.renewDate ).fromNow() },
 		} );
 	}
 	if ( isExpired( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
+			comment:
+				'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
 			args: { expiry: moment( purchase.expiryDate ).fromNow() },
 		} );
 	}
 	return translate( 'expires %(expiry)s', {
-		args: { expiry: moment( purchase.expiryDate ).fromNow() },
+		comment:
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
+		args: {
+			expiry: moment( purchase.expiryDate ).fromNow(),
+		},
 	} );
 }
 
