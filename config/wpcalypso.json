@@ -43,7 +43,6 @@
 		"domains/new-status-design": true,
 		"domains/new-status-design/auto-renew": true,
 		"domains/new-status-design/new-options": true,
-		"email/titan/enabled": true,
 		"domains/new-status-design/security-option": true,
 		"editor/before-deprecation": true,
 		"email-accounts/enabled": true,
