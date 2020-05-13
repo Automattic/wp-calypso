@@ -28,12 +28,9 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const {
-		getSelectedVertical,
-		getSelectedVerticalUntranslatedLabel,
-		getSelectedSiteTitle,
-		wasVerticalSkipped,
-	} = useSelect( ( select ) => select( STORE_KEY ) );
+	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
+		select( STORE_KEY )
+	);
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
@@ -46,7 +43,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical: getSelectedVerticalUntranslatedLabel(),
+		selected_vertical_slug: getSelectedVertical()?.slug,
+		selected_vertical_label: getSelectedVertical()?.label,
 		selected_site_title: getSelectedSiteTitle(),
 	} ) );
 

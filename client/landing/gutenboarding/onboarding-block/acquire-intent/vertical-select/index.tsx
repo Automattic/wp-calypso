@@ -62,9 +62,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	);
 
 	const { siteVertical, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const { getSelectedVerticalUntranslatedLabel } = useSelect( ( select ) =>
-		select( ONBOARD_STORE )
-	);
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -187,10 +184,10 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		inputRef.current.innerText = siteVertical?.label || '';
-		const isFreeForm = ! siteVertical?.slug && !! siteVertical?.label.length;
-		recordVerticalSelection( getSelectedVerticalUntranslatedLabel(), isFreeForm );
-	}, [ siteVertical, inputRef, getSelectedVerticalUntranslatedLabel ] );
+		const { slug, label } = siteVertical || {};
+		inputRef.current.innerText = label || '';
+		recordVerticalSelection( slug, label );
+	}, [ siteVertical, inputRef ] );
 
 	React.useEffect( () => {
 		if ( !! suggestions.length && isMobile ) {

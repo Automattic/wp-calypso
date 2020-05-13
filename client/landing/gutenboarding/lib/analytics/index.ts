@@ -171,13 +171,13 @@ export function recordEnterStep( stepName: StepNameType ) {
 /**
  * Records selecting a site topic in tracks
  *
- * @param verticalLabel The slug of the selected topic or the free-form user input
- * @param isFreeForm User entered and selected a free-form text
+ * @param slug The slug of the selected topic. If undefined, the vertical input is free-form
+ * @param label Translated label of vertical or free-form user input
  */
-export function recordVerticalSelection( verticalLabel?: string, isFreeForm = false ) {
+export function recordVerticalSelection( slug?: string, label?: string ) {
 	trackEventWithFlow( 'calypso_newsite_vertical_selected', {
-		selected_vertical: verticalLabel,
-		free_form: isFreeForm,
+		selected_vertical_slug: slug,
+		selected_vertical_label: label,
 	} );
 }
 

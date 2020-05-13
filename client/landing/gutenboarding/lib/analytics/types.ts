@@ -35,9 +35,14 @@ export interface OnboardingCompleteParameters {
 
 export type TracksAcquireIntentEventProperties = {
 	/**
-	 * The slug of the selected vertical or the free-form user input on the acquire intent page
+	 * The slug of the selected vertical or undefined if the vertical is free-form user input
 	 */
-	selected_vertical: string | undefined;
+	selected_vertical_slug: string | undefined;
+
+	/**
+	 * Translated label of vertical or free-form user input
+	 */
+	selected_vertical_label: string | undefined;
 
 	/**
 	 * The site title that was selected on the acquire intent page
