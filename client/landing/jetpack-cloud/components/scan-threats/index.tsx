@@ -104,7 +104,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	const dispatch = useDispatch();
 
 	const allFixableThreats = threats.filter(
-		( threat ): threat is FixableThreat => threat.fixable !== false
+		( threat ): threat is FixableThreat =>
+			threat.fixable !== false && threat.fixerStatus !== 'in_progress'
 	);
 	const hasFixableThreats = !! allFixableThreats.length;
 
