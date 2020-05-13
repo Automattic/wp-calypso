@@ -69,13 +69,13 @@
 
 // Checklist progress
 .sidebar__menu .myhome .sidebar__menu-link-text {
-	max-width: 75%;
+	max-width: calc( 100% - 80px );
 	white-space: normal;
 	padding-right: 8px;
 }
 
 .sidebar__checklist-progress {
-	width: 25%;
+	width: 80px;
 
 	.sidebar__checklist-progress-text {
 		font-size: 12px;
