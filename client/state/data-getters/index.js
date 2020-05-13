@@ -10,7 +10,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityLogApi, {
+	fromActivityApi,
+} from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
 /**
@@ -89,6 +91,30 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 			freshness,
 			fromApi: () => ( data ) => {
 				return [ [ id, fromActivityLogApi( data ) ] ];
+			},
+		}
+	);
+};
+
+export const getRequestActivityId = ( siteId, rewindId ) =>
+	`activity-single-${ siteId }-${ rewindId }`;
+
+export const requestActivity = ( siteId, rewindId, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const id = getRequestActivityId( siteId, rewindId );
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity/${ rewindId }`,
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => ( data ) => {
+				return [ [ id, fromActivityApi( data ) ] ];
 			},
 		}
 	);
