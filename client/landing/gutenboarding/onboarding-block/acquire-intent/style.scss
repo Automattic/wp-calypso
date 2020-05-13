@@ -72,6 +72,8 @@
 	height: 1.01em;
 	padding: 0;
 	caret-color: var( --mainColor );
+	-webkit-user-select: text;
+	user-select: text;
 
 	color: var( --mainColor );
 	border-bottom: 2px solid var( --mainColor );
