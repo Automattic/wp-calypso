@@ -682,6 +682,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.plans-skip-button {
 		margin-bottom: 32px;
 	}
+
+	&.is-offer-reset-test .plan-features__table {
+		max-width: none;
+	}
 }
 
 .jetpack-connect__plans.placeholder {
