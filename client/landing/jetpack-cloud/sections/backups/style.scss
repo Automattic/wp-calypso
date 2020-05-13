@@ -10,12 +10,9 @@
 	}
 }
 
-.backups__last-backup-status-grow,
 .backups__last-backup-status {
 	background: var( --studio-white );
-	padding-left: 16px;
-	padding-right: 16px;
-	padding-top: 24px;
+	padding: 16px 16px 0;
 
 	@include breakpoint( '>660px' ) {
 		background: var( --color-surface-backdrop );

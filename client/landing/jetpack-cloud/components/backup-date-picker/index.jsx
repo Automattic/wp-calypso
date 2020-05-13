@@ -145,18 +145,22 @@ class BackupDatePicker extends Component {
 						onClick={ this.goToNextDay }
 						onKeyDown={ this.onSpace( this.goToNextDay ) }
 					>
-						<span
-							className={ classNames( 'backup-date-picker__display-date', {
-								disabled: ! this.canGoToNextDay(),
-							} ) }
-						>
-							{ nextDisplayDate }
-						</span>
+						<div className="backup-date-picker__next-date-link">
+							<span
+								className={ classNames( 'backup-date-picker__display-date', {
+									disabled: ! this.canGoToNextDay(),
+								} ) }
+							>
+								{ nextDisplayDate }
+							</span>
 
-						<Button compact borderless className="backup-date-picker__button--next">
-							<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
-						</Button>
-
+							<Button compact borderless className="backup-date-picker__button--next">
+								<Gridicon
+									icon="chevron-right"
+									className={ ! this.canGoToNextDay() && 'disabled' }
+								/>
+							</Button>
+						</div>
 						<a className="backup-date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
 							<Gridicon icon="search" className="backup-date-picker__search-icon" />
 						</a>
