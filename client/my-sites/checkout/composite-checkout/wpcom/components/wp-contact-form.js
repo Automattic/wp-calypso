@@ -9,6 +9,7 @@ import {
 	useDispatch,
 	useFormStatus,
 	useIsStepActive,
+	useLineItems,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -31,14 +32,23 @@ export default function WPContactForm( {
 	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
+	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	if ( summary && isComplete ) {
-		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
+		return (
+			<ContactFormSummary
+				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
+			/>
+		);
 	}
 	if ( ! isActive ) {
 		return null;
@@ -49,6 +59,7 @@ export default function WPContactForm( {
 			<RenderContactDetails
 				translate={ translate }
 				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
 				CountrySelectMenu={ CountrySelectMenu }
@@ -168,11 +179,11 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible } ) {
+function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
-	const showDomainContactSummary = isDomainFieldsVisible;
+	const showDomainContactSummary = isDomainFieldsVisible || isGSuiteInCart;
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -249,9 +260,12 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function getContactDetailsFormat( isDomainFieldsVisible ) {
+function getContactDetailsFormat( isDomainFieldsVisible, isGSuiteInCart ) {
 	if ( isDomainFieldsVisible ) {
 		return 'DOMAINS';
+	}
+	if ( isGSuiteInCart ) {
+		return 'GSUITE';
 	}
 	return 'DEFAULT';
 }
@@ -259,6 +273,7 @@ function getContactDetailsFormat( isDomainFieldsVisible ) {
 function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
+	isGSuiteInCart,
 	contactInfo,
 	renderDomainContactFields,
 	CountrySelectMenu,
@@ -266,12 +281,28 @@ function RenderContactDetails( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 } ) {
-	const format = getContactDetailsFormat( isDomainFieldsVisible );
+	const format = getContactDetailsFormat( isDomainFieldsVisible, isGSuiteInCart );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
 	switch ( format ) {
+		case 'GSUITE':
+			return (
+				<React.Fragment>
+					<ContactDetailsFormDescription>
+						{ translate( 'G Suite Account Information' ) }
+					</ContactDetailsFormDescription>
+					{ renderDomainContactFields(
+						prepareDomainContactDetails( contactInfo ),
+						prepareDomainContactDetailsErrors( contactInfo ),
+						updateDomainContactFields,
+						shouldShowContactDetailsValidationErrors,
+						isDisabled
+					) }
+					{ requiresVatId && <VatIdField /> }
+				</React.Fragment>
+			);
 		case 'DOMAINS':
 			return (
 				<React.Fragment>
