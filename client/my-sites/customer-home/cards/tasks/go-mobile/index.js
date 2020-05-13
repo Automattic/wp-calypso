@@ -46,7 +46,7 @@ const GoMobile = ( { isIos } ) => {
 			title={ preventWidows( translate( 'Update and manage on the go' ) ) }
 			description={ preventWidows(
 				translate(
-					'Inspiration strikes any time, anywhere. Post, read, check stats, and more with the Wordpress app at your fingertips.'
+					'Inspiration strikes any time, anywhere. Post, read, check stats, and more with the WordPress app at your fingertips.'
 				)
 			) }
 			actionButton={ actionButton }
