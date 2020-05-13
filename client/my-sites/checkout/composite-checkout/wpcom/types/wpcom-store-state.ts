@@ -574,7 +574,6 @@ export function prepareGSuiteContactValidationRequest(
 		contact_information: {
 			firstName: details.firstName.value,
 			lastName: details.lastName.value,
-			email: details.email.value || details.alternateEmail.value,
 			alternateEmail: details.alternateEmail.value,
 			postalCode: details.postalCode.value,
 			countryCode: details.countryCode.value,
