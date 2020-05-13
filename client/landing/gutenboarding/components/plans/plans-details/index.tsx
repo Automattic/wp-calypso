@@ -12,7 +12,7 @@ import { useSelect } from '@wordpress/data';
  */
 import './style.scss';
 
-const PlansDetails: React.FunctionComponent = () => {
+const PlansDetails: React.FunctionComponent = ( props ) => {
 	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
 
 	const { __ } = useI18n();
@@ -63,6 +63,7 @@ const PlansDetails: React.FunctionComponent = () => {
 					</tbody>
 				) ) }
 			</table>
+			{ props.children }
 		</div>
 	);
 };
