@@ -76,6 +76,7 @@
 		}
 
 		@include break-mobile {
+			@include onboarding-medium-text;
 			max-width: 400px;
 		}
 	}
