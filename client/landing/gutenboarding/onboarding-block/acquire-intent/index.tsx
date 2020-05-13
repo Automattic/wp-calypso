@@ -50,6 +50,13 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const hasSiteTitle = !! getSelectedSiteTitle();
 	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
+
+	React.useEffect( () => {
+		if ( isMobile ) {
+			window.scrollTo( 0, 0 );
+		}
+	}, [ isSiteTitleActive, isMobile ] );
+
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'I donʼt know' );
 
@@ -99,13 +106,13 @@ const AcquireIntent: React.FunctionComponent = () => {
 		>
 			{ isMobile &&
 				( isSiteTitleActive ? (
-					<>
+					<div>
 						<Arrow
 							className="acquire-intent__mobile-back-arrow"
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
 						{ siteTitleInput }
-					</>
+					</div>
 				) : (
 					verticalSelect
 				) ) }
