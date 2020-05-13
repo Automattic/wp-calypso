@@ -30,6 +30,7 @@ import { path, Step } from './path';
 import { SITE_STORE } from './stores/site';
 import { USER_STORE } from './stores/user';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 
 /**
  * Style dependencies
@@ -88,6 +89,7 @@ window.AppBoot = async () => {
 	// until after the user has completed the gutenboarding flow.
 	// This also saves us from having to pull in lib/user/user and it's dependencies.
 	initializeAnalytics( undefined, generateGetSuperProps() );
+	addHotJarScript();
 	// Add accessible-focus listener.
 	accessibleFocus();
 

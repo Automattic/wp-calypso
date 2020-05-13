@@ -212,6 +212,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 					>
 						<span
 							contentEditable
+							data-hj-whitelist
 							tabIndex={ 0 }
 							role="textbox"
 							aria-multiline="true"
