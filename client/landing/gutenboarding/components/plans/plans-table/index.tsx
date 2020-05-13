@@ -28,6 +28,7 @@ const Plans: React.FunctionComponent< Props > = ( { selectedPlanSlug, onPlanSele
 					slug={ plan.getStoreSlug() }
 					features={ plan.features }
 					isPopular={ plan.isPopular }
+					isFree={ plan.isFree }
 					price={ prices[ plan.getStoreSlug() ] }
 					name={ plan.getTitle() }
 					isSelected={ plan.getStoreSlug() === selectedPlanSlug }

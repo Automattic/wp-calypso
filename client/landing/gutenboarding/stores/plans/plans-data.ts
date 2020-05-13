@@ -19,6 +19,7 @@ export type FortifiedPlan = {
 	isPopular?: boolean;
 	isSelected?: boolean;
 	domainName?: string;
+	isFree?: boolean;
 };
 
 type FortifiedPlans = Record< string, FortifiedPlan >;
@@ -39,6 +40,7 @@ const mainFeatures = [
 export const planFeatures: FortifiedPlans = {
 	[ PLAN_FREE ]: {
 		features: [ '3 GB' ],
+		isFree: true,
 	},
 	[ PLAN_PERSONAL ]: {
 		features: [ '6 GB', ...mainFeatures.slice( 0, 3 ) ],
