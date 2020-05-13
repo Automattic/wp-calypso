@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -92,12 +93,12 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ ! props.hasUnseen && (
+				{ config.isEnabled( 'reader/seen-posts' ) && ! props.hasUnseen && (
 					<Button compact onClick={ markAllAsUnSeen }>
 						{ translate( 'Mark All as Unseen' ) }
 					</Button>
 				) }
-				{ props.hasUnseen && (
+				{ config.isEnabled( 'reader/seen-posts' ) && props.hasUnseen && (
 					<Button compact onClick={ markAllAsSeen }>
 						{ translate( 'Mark All as Seen' ) }
 					</Button>
