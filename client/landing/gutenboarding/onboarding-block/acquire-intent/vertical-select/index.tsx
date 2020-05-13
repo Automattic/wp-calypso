@@ -190,7 +190,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	}, [ siteVertical, inputRef ] );
 
 	React.useEffect( () => {
-		if ( !! suggestions.length && isMobile ) {
+		if ( isMobile ) {
 			window.scrollTo( 0, 0 );
 		}
 	}, [ suggestions, isMobile ] );

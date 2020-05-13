@@ -14,19 +14,11 @@
 	flex-direction: column;
 	justify-content: space-between;
 	margin: 0 -20px;
-	padding: 20px;
+	padding: 25px 20px 20px;
 	transition: color $acquire-intent-transition-duration
 			$acquire-intent-transition-algorithm,
 		background-color $acquire-intent-transition-duration
 			$acquire-intent-transition-algorithm;
-
-	&--mobile-vertical-step {
-		justify-content: center;
-
-		.acquire-intent__footer {
-			margin-top: auto;
-		}
-	}
 
 	@include break-small {
 		margin: 0 -44px; // override block margins
@@ -59,6 +51,8 @@
 }
 
 .acquire-intent__mobile-back-arrow {
+	display: block;
+	margin-bottom: 25px;
 	transform: rotate( 180deg );
 }
 

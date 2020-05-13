@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import classnames from 'classnames';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { Button } from '@wordpress/components';
@@ -50,6 +49,13 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const hasSiteTitle = !! getSelectedSiteTitle();
 	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
+
+	React.useEffect( () => {
+		if ( isMobile ) {
+			window.scrollTo( 0, 0 );
+		}
+	}, [ isSiteTitleActive, isMobile ] );
+
 	// translators: Button label for skipping filling an optional input in onboarding
 	const skipLabel = __( 'I donʼt know' );
 
@@ -92,20 +98,16 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteVertical = getSelectedVertical();
 
 	return (
-		<div
-			className={ classnames( 'gutenboarding-page acquire-intent', {
-				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive && isMobile,
-			} ) }
-		>
+		<div className="gutenboarding-page acquire-intent">
 			{ isMobile &&
 				( isSiteTitleActive ? (
-					<>
+					<div>
 						<Arrow
 							className="acquire-intent__mobile-back-arrow"
 							onClick={ () => setIsSiteTitleActive( false ) }
 						/>
 						{ siteTitleInput }
-					</>
+					</div>
 				) : (
 					verticalSelect
 				) ) }
