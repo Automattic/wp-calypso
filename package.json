@@ -247,7 +247,7 @@
 		"@wordpress/shortcode": "2.6.0",
 		"@wordpress/url": "2.12.0",
 		"@wordpress/viewport": "2.14.0",
-		"acorn": "^6.4.1",
+		"acorn": "^7.0.0",
 		"babel-eslint": "^10.0.3",
 		"babel-jest": "^25.1.0",
 		"babel-plugin-add-module-exports": "^1.0.2",
