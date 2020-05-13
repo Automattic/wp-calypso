@@ -124,7 +124,7 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
 	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.purchaseDomain || ''
+		siteSlug || renewItem.extra.purchaseDomain || ''
 	}`;
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
@@ -160,7 +160,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {
 	}
 
 	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].purchaseDomain || ''
+		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
 	}`;
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
