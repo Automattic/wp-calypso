@@ -66,7 +66,7 @@
 		"prebuild-server": "check-npm-client && mkdirp build",
 		"build-server": "check-npm-client && BROWSERSLIST_ENV=server webpack --config client/webpack.config.node.js --display errors-only",
 		"build-client": "check-npm-client && yarn run build-client-evergreen",
-		"build-client-do": "check-npm-client && node ${NODE_ARGS:---max_old_space_size=8192} ./node_modules/webpack/bin/webpack.js --config client/webpack.config.js --display errors-only && yarn run build-languages-if-enabled",
+		"build-client-do": "check-npm-client && node ${NODE_ARGS:---max_old_space_size=8192} ./node_modules/webpack/bin/webpack.js --config client/webpack.config.js --display errors-only",
 		"build-client-fallback": "check-npm-client && BROWSERSLIST_ENV=defaults yarn run build-client-do",
 		"postbuild-client-fallback": "check-npm-client && yarn run validate-fallback-es5",
 		"build-client-evergreen": "check-npm-client && BROWSERSLIST_ENV=evergreen yarn run build-client-do",
