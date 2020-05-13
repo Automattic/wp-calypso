@@ -25,6 +25,17 @@ export type DomainContactValidationRequest = {
 	};
 };
 
+export type GSuiteContactValidationRequest = {
+	contact_information: {
+		firstName: string;
+		lastName: string;
+		email: string;
+		alternateEmail: string;
+		postalCode: string;
+		countryCode: string;
+	};
+};
+
 export type DomainContactValidationRequestExtraFields = {
 	ca?: {
 		lang: string;

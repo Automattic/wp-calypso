@@ -14,6 +14,7 @@ import {
 } from './backend/domain-contact-details-components';
 import {
 	DomainContactValidationRequest,
+	GSuiteContactValidationRequest,
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
@@ -562,6 +563,21 @@ export function prepareDomainContactValidationRequest(
 			fax: details.fax.value,
 			vatId: details.vatId.value,
 			extra,
+		},
+	};
+}
+
+export function prepareGSuiteContactValidationRequest(
+	details: ManagedContactDetails
+): GSuiteContactValidationRequest {
+	return {
+		contact_information: {
+			firstName: details.firstName.value,
+			lastName: details.lastName.value,
+			email: details.email.value || details.alternateEmail.value,
+			alternateEmail: details.alternateEmail.value,
+			postalCode: details.postalCode.value,
+			countryCode: details.countryCode.value,
 		},
 	};
 }

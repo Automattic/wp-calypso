@@ -4,6 +4,7 @@
 import debugFactory from 'debug';
 import {
 	prepareDomainContactValidationRequest,
+	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areRequiredFieldsNotEmpty,
@@ -82,7 +83,7 @@ export function createGSuiteContactValidationCallback( {
 		contactDetails,
 		applyDomainContactValidationResults
 	) {
-		const { contact_information } = prepareDomainContactValidationRequest( [], contactDetails );
+		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
 		try {
 			recordEvent( {
 				type: 'VALIDATE_DOMAIN_CONTACT_INFO',
