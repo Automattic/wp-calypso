@@ -128,7 +128,6 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 			<div className="rewind-flow__content">
 				<Card>{ render() }</Card>
 			</div>
-
 		</Main>
 	);
 };
