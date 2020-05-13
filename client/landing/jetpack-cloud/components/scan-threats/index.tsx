@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Button } from '@automattic/components';
 
 /**
@@ -21,7 +20,6 @@ import {
 	ThreatAction,
 } from 'landing/jetpack-cloud/components/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
@@ -98,9 +96,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
-	const userHasCredentials = useSelector(
-		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
-	);
 	const dispatch = useDispatch();
 
 	const allFixableThreats = threats.filter(
@@ -240,7 +235,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
 				onConfirmation={ confirmFixAllThreats }
-				userHasCredentials={ userHasCredentials }
 			/>
 		</>
 	);

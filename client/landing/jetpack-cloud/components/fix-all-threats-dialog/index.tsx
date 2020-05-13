@@ -1,10 +1,9 @@
-/* eslint-disable no-console */
 /**
  * External dependencies
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { Button, Dialog } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
 
 /**
@@ -12,7 +11,7 @@ import classnames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
-import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
+import ServerCredentialsWizardDialog from 'landing/jetpack-cloud/components/server-credentials-wizard-dialog';
 import { FixableThreat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 
@@ -27,10 +26,7 @@ interface Props {
 	showDialog: boolean;
 	siteId: number;
 	threats: Array< FixableThreat >;
-	userHasCredentials: boolean;
 }
-
-type ProcessStep = 'server-credentials' | 'confirmation';
 
 const FixAllThreatsDialog = ( {
 	onConfirmation,
@@ -38,135 +34,72 @@ const FixAllThreatsDialog = ( {
 	showDialog,
 	siteId,
 	threats,
-	userHasCredentials = true,
 }: Props ) => {
-	const firstStep = userHasCredentials ? 'confirmation' : 'server-credentials';
-	const [ currentStep, setCurrentStep ] = React.useState< ProcessStep >( firstStep );
-
 	const buttons = React.useMemo(
 		() => [
-			...( firstStep !== currentStep
-				? [
-						<Button
-							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-							onClick={ () => setCurrentStep( 'server-credentials' ) }
-						>
-							{ translate( 'Go back' ) }
-						</Button>,
-				  ]
-				: [] ),
-			...( firstStep === currentStep
-				? [
-						<Button
-							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-							onClick={ onCloseDialog }
-						>
-							{ translate( 'Go back' ) }
-						</Button>,
-				  ]
-				: [] ),
+			<Button className="fix-all-threats-dialog__btn" onClick={ onCloseDialog }>
+				{ translate( 'Go back' ) }
+			</Button>,
 			<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
 				{ translate( 'Fix all threats' ) }
 			</Button>,
 		],
-		[ firstStep, currentStep, onCloseDialog, onConfirmation ]
+		[ onCloseDialog, onConfirmation ]
 	);
 
 	return (
-		<Dialog
-			additionalClassNames="fix-all-threats-dialog"
-			isVisible={ showDialog }
+		<ServerCredentialsWizardDialog
+			siteId={ siteId }
+			showDialog={ showDialog }
+			onCloseDialog={ onCloseDialog }
+			title={ translate( 'Fix all threats' ) }
 			buttons={ buttons }
-			onClose={ onCloseDialog }
 		>
-			<h1 className="fix-all-threats-dialog__header">{ translate( 'Fix all threats' ) }</h1>
-			{ currentStep === 'server-credentials' && (
-				<>
-					<h3 className="fix-all-threats-dialog__threat-title">
-						{ translate( 'You have selected to fix all discovered threats' ) }
-					</h3>
-					<div className="fix-all-threats-dialog__warning">
-						<Gridicon
-							className="fix-all-threats-dialog__icon fix-all-threats-dialog__icon--warning"
-							icon="info"
-							size={ 36 }
-						/>
-						<p className="fix-all-threats-dialog__warning-message">
-							{ translate(
-								"Jetpack is unable to auto fix these threats as we currently do not have access to your website's server. Please supply your SFTP/SSH credentials to enable auto fixing. Alternatively, you will need go back and {{strong}}fix the threats manually{{/strong}}.",
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
-						</p>
-					</div>
-
-					<ServerCredentialsForm
-						className="fix-all-threats-dialog__form"
-						onCancel={ onCloseDialog }
-						onComplete={ () => setCurrentStep( 'confirmation' ) }
-						role="main"
-						siteId={ siteId }
-						labels={ {
-							cancel: translate( 'Go back' ),
-							save: translate( 'Save credentials and fix' ),
-						} }
-					/>
-				</>
-			) }
-			{ currentStep === 'confirmation' && (
-				<>
-					<h3 className="fix-all-threats-dialog__threat-title">
+			<div className="fix-all-threats-dialog">
+				<h3 className="fix-all-threats-dialog__subheader">
+					{ translate(
+						'Please confirm you want to fix %(numberOfThreats)d active threat',
+						'Please confirm you want to fix all %(numberOfThreats)d active threats',
+						{
+							count: threats.length,
+							args: {
+								numberOfThreats: threats.length,
+							},
+						}
+					) }
+				</h3>
+				<p className="fix-all-threats-dialog__warning-message">
+					{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
+				</p>
+				<div className="fix-all-threats-dialog__threats-section">
+					<Gridicon className="fix-all-threats-dialog__icon" icon="info" size={ 36 } />
+					<div className="fix-all-threats-dialog__warning-message">
 						{ translate(
-							'Please confirm you want to fix %(numberOfThreats)d active threat',
-							'Please confirm you want to fix all %(numberOfThreats)d active threats',
+							'This is the threat Jetpack will fix:',
+							'These are the threats Jetpack will fix:',
 							{
 								count: threats.length,
-								args: {
-									numberOfThreats: threats.length,
-								},
 							}
 						) }
-					</h3>
-					<p className="fix-all-threats-dialog__warning-message">
-						{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
-					</p>
-					<div className="fix-all-threats-dialog__threats-section">
-						<Gridicon
-							className="fix-all-threats-dialog__icon fix-all-threats-dialog__icon--confirmation"
-							icon="info"
-							size={ 36 }
-						/>
-						<div className="fix-all-threats-dialog__warning-message">
-							{ translate(
-								'This is the threat Jetpack will fix:',
-								'These are the threats Jetpack will fix:',
-								{
-									count: threats.length,
-								}
-							) }
-							<ul
-								className={ classnames( 'fix-all-threats-dialog__threats', {
-									'is-long-list': threats.length > 3,
-								} ) }
-							>
-								{ threats.map( ( threat ) => (
-									<li key={ threat.id }>
-										<strong>
-											<ThreatItemHeader threat={ threat } isStyled={ false } />
-										</strong>
-										<br />
-										{ getThreatFix( threat.fixable ) }
-									</li>
-								) ) }
-							</ul>
-						</div>
+						<ul
+							className={ classnames( 'fix-all-threats-dialog__threats', {
+								'is-long-list': threats.length > 3,
+							} ) }
+						>
+							{ threats.map( ( threat ) => (
+								<li key={ threat.id }>
+									<strong>
+										<ThreatItemHeader threat={ threat } isStyled={ false } />
+									</strong>
+									<br />
+									{ getThreatFix( threat.fixable ) }
+								</li>
+							) ) }
+						</ul>
 					</div>
-				</>
-			) }
-		</Dialog>
+				</div>
+			</div>
+		</ServerCredentialsWizardDialog>
 	);
 };
 
