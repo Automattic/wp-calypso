@@ -13,6 +13,7 @@
 	justify-content: space-between;
 	display: flex;
 	align-items: center;
+	z-index: z-index( '.block-editor-editor-skeleton__header' );
 
 	@include break-small {
 		padding: 0;
