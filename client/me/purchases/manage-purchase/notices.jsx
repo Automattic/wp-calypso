@@ -320,11 +320,13 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		const hasPurchaseExpiringSoon = renewableSitePurchases.some(
-			( otherPurchase ) => moment( otherPurchase.expiryDate ).diff( Date.now(), 'days' ) < 30
+		const hasOtherPurchaseExpiringSoon = renewableSitePurchases.some(
+			( otherPurchase ) =>
+				otherPurchase.id !== purchase.id &&
+				moment( otherPurchase.expiryDate ).diff( Date.now(), 'days' ) < 30
 		);
 
-		if ( hasPurchaseExpiringSoon ) {
+		if ( hasOtherPurchaseExpiringSoon ) {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate(
 					'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
