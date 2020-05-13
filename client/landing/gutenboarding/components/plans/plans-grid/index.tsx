@@ -68,12 +68,14 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 
 			<div className="plans-grid__details">
 				{ showDetails && (
-					<div className="plans-grid__details-container">
+					<>
 						<div className="plans-grid__details-heading">
 							<Title>{ __( 'Detailed comparison' ) }</Title>
 						</div>
-						<PlansDetails />
-					</div>
+						<div className="plans-grid__details-container">
+							<PlansDetails />
+						</div>
+					</>
 				) }
 				<Button
 					className="plans-grid__details-toggle-button"

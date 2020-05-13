@@ -91,20 +91,14 @@
 	margin-bottom: 120px;
 }
 
+// This makes overflowing content scrolls edge-to-edge.
 .plans-grid__details-container {
-	// Edge-to-edge panning
-	.plans-details {
-		width: calc( 100% + 30px + 30px );
-		margin-left: -30px;
-		margin-right: -30px;
-		overflow: hidden;
+	@include onboarding-block-edge2edge-container;
 
-		@include break-medium {
-			width: 100%;
-			margin-left: 0;
-			margin-right: 0;
-			overflow: auto;
-		}
+	.plans-details__table {
+		@include onboarding-block-edge2edge-content;
+	}
+}
 	}
 
 	+ .plans-grid__details-toggle-button {
