@@ -18,7 +18,7 @@ export const success = ( action, rewindState ) => {
 	const defaultActions = sitesAlertsFixHandlers.success( action, rewindState );
 	return [
 		...defaultActions,
-		requestScanStatus( action.siteId, false ),
+		requestScanStatus( action.siteId, true ),
 		// Since we can fix threats from the History section, we need to update that
 		// information as well.
 		requestJetpackScanHistory( action.siteId ),

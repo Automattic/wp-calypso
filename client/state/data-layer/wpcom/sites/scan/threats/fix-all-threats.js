@@ -14,6 +14,10 @@ import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
+// This approach is not optimal. Some of the request could fail silently and we
+// wouldn't know. The API could provide an endpoint to fix multiple threats at
+// once, and the endpoint could confirm which threats were enqueued and which
+// were not.
 export const request = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Fixing all threats…' ), { duration: 30000 } );
 	const {
@@ -37,6 +41,7 @@ export const request = ( action ) => {
 	];
 };
 
+// We don't have a wait to only execute this path if all request succeeded.
 export const success = ( action ) => [
 	successNotice(
 		i18n.translate(
@@ -47,11 +52,12 @@ export const success = ( action ) => [
 			id: action.noticeId,
 		}
 	),
-	requestScanStatus( action.siteId, false ),
+	requestScanStatus( action.siteId, true ),
 ];
 
+// Not sure if this is even going to happen. Maybe if all of them fail.
 export const failure = ( action ) => [
-	errorNotice( i18n.translate( 'Error fixing threat. Please contact support.' ), {
+	errorNotice( i18n.translate( 'Error fixing threats. Please contact support.' ), {
 		duration: 10000,
 		id: action.noticeId,
 	} ),
