@@ -67,6 +67,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 					{ ! isMobile && ' ' }
 					<span
 						contentEditable
+						data-hj-whitelist
 						tabIndex={ 0 }
 						role="textbox"
 						aria-multiline="true"

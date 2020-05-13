@@ -188,6 +188,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__search">
 						<SearchIcon />
 						<TextControl
+							data-hj-whitelist
 							hideLabelFromVision
 							label={ label }
 							placeholder={ label }
