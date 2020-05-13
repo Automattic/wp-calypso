@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import classnames from 'classnames';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { Button } from '@wordpress/components';
@@ -99,11 +98,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteVertical = getSelectedVertical();
 
 	return (
-		<div
-			className={ classnames( 'gutenboarding-page acquire-intent', {
-				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive && isMobile,
-			} ) }
-		>
+		<div className="gutenboarding-page acquire-intent">
 			{ isMobile &&
 				( isSiteTitleActive ? (
 					<div>
