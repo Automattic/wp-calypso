@@ -16,9 +16,10 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
-import { SiteVertical } from '../../../stores/onboard/types';
 import useTyper from '../../../hooks/use-typer';
 import Arrow from '../arrow';
+import { recordVerticalSelection } from '../../../lib/analytics';
+import type { SiteVertical } from '../../../stores/onboard/types';
 
 /**
  * Style dependencies
@@ -183,7 +184,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		inputRef.current.innerText = siteVertical?.label || '';
+		const { slug, label } = siteVertical || {};
+		inputRef.current.innerText = label || '';
+		recordVerticalSelection( slug, label );
 	}, [ siteVertical, inputRef ] );
 
 	React.useEffect( () => {

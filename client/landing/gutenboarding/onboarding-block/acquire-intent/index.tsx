@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
@@ -18,6 +19,7 @@ import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import Arrow from './arrow';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 
 /**
  * Style dependencies
@@ -26,40 +28,48 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedVertical, getSelectedSiteTitle } = useSelect( ( select ) =>
+	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
 		select( STORE_KEY )
-	);
-
-	const { siteVertical, siteTitle, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
 	);
 
 	const { skipSiteVertical } = useDispatch( STORE_KEY );
 
+	const history = useHistory();
 	const makePath = usePath();
+	const nextStepPath = makePath( Step.DesignSelection );
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 
 	const isMobile = useViewportMatch( 'small', '<' );
 
+	useTrackStep( 'IntentGathering', () => ( {
+		selected_vertical_slug: getSelectedVertical()?.slug,
+		selected_vertical_label: getSelectedVertical()?.label,
+		has_selected_site_title: !! getSelectedSiteTitle(),
+	} ) );
+
+	const hasSiteTitle = !! getSelectedSiteTitle();
+	const showSiteTitleAndNext = !! ( getSelectedVertical() || hasSiteTitle || wasVerticalSkipped() );
+	// translators: Button label for skipping filling an optional input in onboarding
+	const skipLabel = __( 'I donʼt know' );
+
 	const handleSkip = () => {
 		skipSiteVertical();
+		recordVerticalSkip();
 		setIsSiteTitleActive( true );
 	};
 
-	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical: getSelectedVertical()?.slug,
-		selected_site_title: getSelectedSiteTitle(),
-	} ) );
-
-	// translators: Button label for skipping filling an optional input in onboarding
-	const skipLabel = __( 'I donʼt know' );
+	const handleSiteTitleSubmit = () => {
+		history.push( nextStepPath );
+		! hasSiteTitle && recordSiteTitleSkip();
+	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
 	const siteTitleInput = (
 		<SiteTitle
-			isVisible={ !! ( siteVertical || siteTitle || wasVerticalSkipped ) }
+			isVisible={ showSiteTitleAndNext }
 			isMobile={ isMobile }
+			onSubmit={ handleSiteTitleSubmit }
 		/>
 	);
 	const verticalSelect = <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } />;
@@ -67,9 +77,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 		<Link
 			className="acquire-intent__question-skip"
 			isPrimary
-			to={ makePath( Step.DesignSelection ) }
+			onClick={ () => ! hasSiteTitle && recordSiteTitleSkip() }
+			to={ nextStepPath }
 		>
-			{ siteTitle ? __( 'Choose a design' ) : skipLabel }
+			{ hasSiteTitle ? __( 'Choose a design' ) : skipLabel }
 		</Link>
 	);
 	const skipButton = (
@@ -77,6 +88,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 			{ skipLabel }
 		</Button>
 	);
+
+	const siteVertical = getSelectedVertical();
 
 	return (
 		<div
@@ -110,10 +123,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 						? nextStepButton
 						: ( ! siteVertical || siteVertical?.label?.length < 3 ) && skipButton ) }
 
-				{ /* On desktop we render skipButton when vertical and site title inputs are empty and the user didn't skipped vertical selection.
-				For other cases we always render nextStepButton */ }
-				{ ! isMobile &&
-					( siteVertical || siteTitle || wasVerticalSkipped ? nextStepButton : skipButton ) }
+				{ /* On desktop we always render nextStepButton when we render site title
+				Otherwise we render skipButton  */ }
+				{ ! isMobile && ( showSiteTitleAndNext ? nextStepButton : skipButton ) }
 			</div>
 		</div>
 	);

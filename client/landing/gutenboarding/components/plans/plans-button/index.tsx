@@ -52,7 +52,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 				{ isDesktop && planLabel }
 				<JetpackLogo className="plans-button__jetpack-logo" size={ 16 } monochrome />
 			</Button>
-			<PlansModal isOpen={ isPlansModalVisible } onClose={ () => setIsPlanModalVisible( false ) } />
+			{ isPlansModalVisible && <PlansModal onClose={ () => setIsPlanModalVisible( false ) } /> }
 		</>
 	);
 };
