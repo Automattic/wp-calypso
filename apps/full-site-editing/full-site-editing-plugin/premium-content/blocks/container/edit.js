@@ -37,7 +37,7 @@ const tabs = [
 	},
 	{
 		id: 'wall',
-		label: <span>{ __( 'Non-Subscriber View', 'premium-content' ) }</span>,
+		label: <span>{ __( 'Non-subscriber View', 'premium-content' ) }</span>,
 		className: 'wp-premium-content-logged-out-view',
 	},
 ];
