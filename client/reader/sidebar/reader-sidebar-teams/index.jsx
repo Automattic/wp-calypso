@@ -10,14 +10,20 @@ import React, { Component } from 'react';
  */
 import ReaderSidebarTeamsListItem from './list-item';
 
-const renderItems = ( teams, path ) =>
+const renderItems = ( teams, path, hasUnseen ) =>
 	map( teams, ( team ) => (
-		<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
+		<ReaderSidebarTeamsListItem
+			key={ team.slug }
+			team={ team }
+			path={ path }
+			hasUnseen={ hasUnseen }
+		/>
 	) );
 
 export class ReaderSidebarTeams extends Component {
 	static propTypes = {
 		teams: PropTypes.array,
+		hasUnseen: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 	};
 
@@ -26,7 +32,7 @@ export class ReaderSidebarTeams extends Component {
 			return null;
 		}
 
-		return <div>{ renderItems( this.props.teams, this.props.path ) }</div>;
+		return <div>{ renderItems( this.props.teams, this.props.path, this.props.hasUnseen ) }</div>;
 	}
 }
 
