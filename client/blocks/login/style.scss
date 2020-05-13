@@ -19,6 +19,49 @@
 	}
 }
 
+.login__jetpack-cloud-wrapper {
+	svg.wordpress-logo {
+		fill: var( --studio-wordpress-blue );
+	}
+}
+
+// all colors here are taken from client/assets/stylesheets/_calypso-color-scheme-jetpack-cloud.scss
+.layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
+	.login.is-jetpack-cloud {
+		.button.is-primary {
+			color: var( --studio-white );
+			background: var( --studio-jetpack-green-40 );
+			border-color: var( --studio-jetpack-green-40 );
+
+			&:hover,
+			&:focus {
+				background: var( --studio-jetpack-green-30 );
+				border-color: var( --studio-jetpack-green-30 );
+			}
+
+			&:active {
+				background: var( --studio-jetpack-green-50 );
+				border-color: var( --studio-jetpack-green-50 );
+			}
+
+			&[disabled],
+			&:disabled {
+				color: var( --studio-white );
+				background: var( --studio-gray-10 );
+				border-color: var( --studio-gray-10 );
+			}
+		}
+
+		a {
+			color: var( --studio-jetpack-green-40 );
+
+			&:focus {
+				color: var( --studio-jetpack-green-60 );
+			}
+		}
+	}
+}
+
 .layout.is-wccom-oauth-flow {
 	.layout__content {
 		padding-top: 48px;

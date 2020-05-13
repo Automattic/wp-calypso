@@ -15,7 +15,11 @@ import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'lib/oauth2-clients';
 import { addQueryArgs, getUrlParts } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -311,6 +315,16 @@ export class LoginLinks extends React.Component {
 		if ( isGutenboarding ) {
 			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
+		}
+
+		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const oauth2Params = new URLSearchParams( {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			} );
+
+			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 		}
 
 		return (
