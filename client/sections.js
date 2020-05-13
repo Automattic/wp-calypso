@@ -221,7 +221,7 @@ const sections = [
 	},
 	{
 		name: 'theme',
-		paths: [ '/theme' ],
+		paths: [ '/theme', '/[a-zA-Z-]+/theme' ],
 		module: 'calypso/my-sites/theme',
 		enableLoggedOut: true,
 		group: 'sites',
