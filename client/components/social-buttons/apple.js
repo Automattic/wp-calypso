@@ -14,7 +14,7 @@ import { loadScript } from '@automattic/load-script';
  * Internal dependencies
  */
 import { isFormDisabled } from 'state/login/selectors';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 
 /**
  * Style dependencies

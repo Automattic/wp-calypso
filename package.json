@@ -263,6 +263,7 @@
 		"check-npm-client": "^1.1.1",
 		"chokidar-cli": "^2.1.0",
 		"chroma-js": "^2.1.0",
+		"circleci": "^0.3.3",
 		"circular-dependency-plugin": "^5.2.0",
 		"concurrently": "^5.1.0",
 		"cross-env": "^6.0.3",

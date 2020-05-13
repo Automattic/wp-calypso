@@ -17,7 +17,6 @@ import { Env } from 'tinymce/tinymce';
 import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -38,6 +37,7 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import getMediaErrors from 'state/selectors/get-media-errors';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -480,10 +480,9 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	onFilesDrop = () => {
-		const { mediaValidationErrors, site } = this.props;
+		const { mediaValidationErrors, selectedItems, site } = this.props;
 		// Find selected images. Non-images will still be uploaded, but not
 		// inserted directly into the post contents.
-		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
 		const isSingleImage =
 			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
@@ -716,6 +715,7 @@ const mapStateToProps = ( state ) => {
 		site,
 		canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
 		mediaValidationErrors: getMediaErrors( state, site?.ID ),
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 	};
 };
 

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -213,9 +213,8 @@ const mapStateToProps = ( state ) => {
 	const allowRestore =
 		'active' === rewind.state &&
 		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
-		Array.isArray( siteCapabilities ) &&
-		siteCapabilities.includes( 'restore' );
-	const hasRealtimeBackups = siteCapabilities && siteCapabilities.includes( 'backup-realtime' );
+		includes( siteCapabilities, 'restore' );
+	const hasRealtimeBackups = siteCapabilities && includes( siteCapabilities, 'backup-realtime' );
 
 	return {
 		allowRestore,

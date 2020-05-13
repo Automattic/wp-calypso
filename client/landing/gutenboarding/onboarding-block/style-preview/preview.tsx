@@ -16,14 +16,51 @@ import { isEnabled } from 'config';
 type Design = import('../../stores/onboard/types').Design;
 type Font = import('../../constants').Font;
 type SiteVertical = import('../../stores/onboard/types').SiteVertical;
+import { fontPairings } from '../../constants';
+
+function getFontsLoadingHTML() {
+	const baseURL = 'https://fonts.googleapis.com/css2';
+
+	// matrix: regular,bold * regular,italic
+	const axis = 'ital,wght@0,400;0,700;1,400;1,700';
+
+	// create a query for all fonts together
+	const query = fontPairings.reduce( ( acc, pairing ) => {
+		acc.push(
+			`family=${ encodeURI( pairing.headings ) }:${ axis }`,
+			`family=${ encodeURI( pairing.base ) }:${ axis }`
+		);
+		return acc;
+	}, [] as string[] );
+
+	const l = document.createElement( 'link' );
+	l.rel = 'stylesheet';
+	l.type = 'text/css';
+	l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
+	const head = l.outerHTML;
+
+	// Chrome doesn't load the fonts in memory until they're actually used,
+	// this keeps the fonts used and ready in memory.
+	const fontsHolders = fontPairings.reduce( ( acc, pairing ) => {
+		Object.values( pairing ).forEach( ( font ) => {
+			const fontHolder = document.createElement( 'div' );
+			fontHolder.style.fontFamily = font;
+			fontHolder.innerHTML = 'Placeholder';
+			fontHolder.style.visibility = 'hidden';
+			fontHolder.style.position = 'absolute';
+			acc += fontHolder.outerHTML;
+		} );
+		return acc;
+	}, '' );
+
+	return { head, fontsHolders };
+}
 
 interface Props {
 	viewport: T.Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Font > >( new Set() );
-
 	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
@@ -67,14 +104,12 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						console.error( err );
 					}
 					setPreviewHtml( '<h1>Error loading preview.</h1>' );
-					setRequestedFonts( new Set() );
 					return;
 				}
 				const html = await resp.text();
-				setPreviewHtml( html );
-				setRequestedFonts(
-					new Set( selectedFonts ? [ selectedFonts.headings, selectedFonts.base ] : undefined )
-				);
+				const { head, fontsHolders } = getFontsLoadingHTML();
+				// the browser automatically moves the head code to the <head />
+				setPreviewHtml( head + html + fontsHolders );
 			};
 			eff();
 		},
@@ -99,33 +134,6 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			const iframeDocument = iframeWindow.document;
 			if ( selectedFonts ) {
 				const { headings, base } = selectedFonts;
-
-				const baseURL = 'https://fonts.googleapis.com/css2';
-
-				// matrix: regular,bold * regular,italic
-				const axis = 'ital,wght@0,400;0,700;1,400;1,700';
-				const query = [];
-
-				// To replace state
-				const nextFonts = new Set( requestedFonts );
-
-				if ( ! requestedFonts.has( headings ) ) {
-					query.push( `family=${ encodeURI( headings ) }:${ axis }` );
-					nextFonts.add( headings );
-				}
-				if ( ! requestedFonts.has( base ) ) {
-					query.push( `family=${ encodeURI( base ) }:${ axis }` );
-					nextFonts.add( base );
-				}
-
-				if ( query.length ) {
-					const l = iframeDocument.createElement( 'link' );
-					l.rel = 'stylesheet';
-					l.type = 'text/css';
-					l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
-					iframeDocument.head.appendChild( l );
-					setRequestedFonts( nextFonts );
-				}
 				iframeDocument.body.style.setProperty( '--font-headings', headings );
 				iframeDocument.body.style.setProperty( '--font-base', base );
 			} else {
@@ -133,7 +141,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				iframeDocument.body.style.removeProperty( '--font-base' );
 			}
 		}
-	}, [ previewHtml, requestedFonts, selectedFonts ] );
+	}, [ previewHtml, selectedFonts ] );
 
 	return (
 		<div className={ `style-preview__preview is-viewport-${ viewport }` }>

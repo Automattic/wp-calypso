@@ -125,7 +125,10 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				}
 			/>
 			<SidebarNavigation />
-			<Card>{ render() }</Card>
+			<div className="rewind-flow__content">
+				<Card>{ render() }</Card>
+			</div>
+
 		</Main>
 	);
 };

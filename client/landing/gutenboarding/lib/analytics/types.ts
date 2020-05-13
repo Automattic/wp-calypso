@@ -33,16 +33,21 @@ export interface OnboardingCompleteParameters {
 	blogId: number | string | undefined;
 }
 
-type TracksVerticalSelectEventProperties = {
+export type TracksAcquireIntentEventProperties = {
 	/**
-	 * The Vertical selected on the intent gathering page
+	 * The slug of the selected vertical or undefined if the vertical is free-form user input
 	 */
-	selected_vertical: string | undefined;
+	selected_vertical_slug: string | undefined;
 
 	/**
-	 * The site title that was selected on the intent gathering page
+	 * Translated label of vertical or free-form user input
 	 */
-	selected_site_title: string | undefined;
+	selected_vertical_label: string | undefined;
+
+	/**
+	 * Whether site title has been entered on the acquire intent page
+	 */
+	has_selected_site_title: boolean;
 };
 
 type TracksStyleSelectEventProperties = {
@@ -79,7 +84,7 @@ type TracksPlanSelectEventProperties = {
 };
 
 export type TracksEventProperties =
-	| TracksVerticalSelectEventProperties
+	| TracksAcquireIntentEventProperties
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
 	| TracksDomainSelectEventProperties

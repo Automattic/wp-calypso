@@ -1,5 +1,5 @@
 /**
- * Externall dependencies
+ * External dependencies
  */
 import { useSelect } from '@wordpress/data';
 

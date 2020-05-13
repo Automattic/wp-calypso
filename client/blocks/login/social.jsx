@@ -172,13 +172,19 @@ class SocialLoginForm extends Component {
 	trackLoginAndRememberRedirect = ( service ) => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		if ( this.props.redirectTo ) {
+		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
 		}
 	};
 
 	getRedirectUrl = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
+
+		if ( host && window.localStorage?.getItem( 'a8c_testing_redirect_url' ) ) {
+			const { redirectTo } = this.props;
+			return `https://${ host + login( { isNative: true, socialService: service, redirectTo } ) }`;
+		}
+
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 

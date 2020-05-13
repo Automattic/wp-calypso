@@ -22,8 +22,14 @@ function chooseTerserEcmaVersion( browsers ) {
 	if ( ! caniuse.isSupported( 'es6-class', browsers ) ) {
 		return 5;
 	}
+	if ( ! caniuse.isSupported( 'array-includes', browsers ) ) {
+		return 2015;
+	}
+	if ( ! caniuse.isSupported( 'object-entries', browsers ) ) {
+		return 2016;
+	}
 
-	return 6;
+	return 2017;
 }
 
 /**

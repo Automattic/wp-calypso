@@ -99,7 +99,7 @@
 	border-radius: 4px;
 	box-shadow: none;
 	color: var( --contrastColor );
-	font-size: 14px;
+	@include onboarding-medium-text;
 	// stylelint-disable-next-line scales/font-weight
 	font-weight: 500;
 	letter-spacing: 0;
