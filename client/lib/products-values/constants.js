@@ -40,8 +40,8 @@ export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCA
 
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
-	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
+	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 ];
 
 // Jetpack Search tiers
@@ -212,6 +212,33 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_BACKUP_PRODUCTS,
 		},
 	];
+	isEnabled( 'jetpack/scan-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Scan' ),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
+			hasPromo: false,
+			id: PRODUCT_JETPACK_SCAN,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_scan_description',
+					slug: 'learn-more-scan',
+				},
+				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+			},
+			options: {
+				yearly: [ PRODUCT_JETPACK_SCAN ],
+				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames(),
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_SCAN_PRODUCTS,
+		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
@@ -283,33 +310,6 @@ export const getJetpackProducts = () => {
 				);
 			},
 			slugs: JETPACK_SEARCH_PRODUCTS,
-		} );
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: PRODUCT_JETPACK_SCAN,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_scan_description',
-					slug: 'learn-more-scan',
-				},
-				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
-			},
-			options: {
-				yearly: [ PRODUCT_JETPACK_SCAN ],
-				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: JETPACK_SCAN_PRODUCTS,
 		} );
 
 	return output;
