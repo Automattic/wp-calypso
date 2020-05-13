@@ -99,10 +99,20 @@
 		@include onboarding-block-edge2edge-content;
 	}
 }
+
+// On desktop, make sure plans details meets the
+// min width of the plans table, to prevent too
+// much white space when scrolling horizontally
+// using the browser's horizontal scrollbar.
+.plans-grid:not( .is-mobile ) .plans-grid__details-container {
+	min-width: $plans-details-min-width-desktop-mobile;
+
+	@include break-small {
+		min-width: $plans-details-min-width-desktop-small;
 	}
 
-	+ .plans-grid__details-toggle-button {
-		margin-top: 60px;
+	@include break-medium {
+		min-width: $plans-details-min-width-desktop-medium;
 	}
 }
 
