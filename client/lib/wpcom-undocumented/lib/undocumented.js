@@ -716,31 +716,45 @@ Undocumented.prototype.validateDomainContactInformation = function (
 /**
  * Validates the specified Google Apps contact information
  *
+ * The contactInformation keys can be in camelCase or snake_case, and will be
+ * converted to snake_case before being submitted. The returned data keys will
+ * be converted to camelCase before being passed to the callback or the resolved
+ * Promise.
+ *
  * @param {object} contactInformation - user's contact information
- * @param {Function} callback The callback function
- * @returns {Promise} A promise that resolves when the request completes
+ * @param {(error: string, data: object) => void} [callback] The callback function.
+ * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
  */
 Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	contactInformation,
 	callback
 ) {
 	const data = mapKeysRecursively( { contactInformation }, snakeCase );
+	debug( '/me/google-apps/validate', data );
 
-	return this.wpcom.req.post(
+	const callbackFunction = ( error, successData ) => {
+		if ( error ) {
+			return callback( error );
+		}
+
+		const newData = mapKeysRecursively( successData, ( key ) => {
+			return key === '_headers' ? key : camelCase( key );
+		} );
+
+		callback( null, newData );
+	};
+
+	const result = this.wpcom.req.post(
 		{ path: '/me/google-apps/validate' },
 		data,
-		( error, successData ) => {
-			if ( error ) {
-				return callback( error );
-			}
-
-			const newData = mapKeysRecursively( successData, ( key ) => {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			callback( null, newData );
-		}
+		callback ? callbackFunction : null
 	);
+
+	return result.then?.( ( successData ) => {
+		return mapKeysRecursively( successData, ( key ) => {
+			return key === '_headers' ? key : camelCase( key );
+		} );
+	} );
 };
 
 /**
