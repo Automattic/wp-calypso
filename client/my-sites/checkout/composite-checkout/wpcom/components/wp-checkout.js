@@ -20,6 +20,7 @@ import {
 	usePaymentMethod,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -34,6 +35,8 @@ import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
+
+const debug = debugFactory( 'calypso:wp-checkout' );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -76,6 +79,7 @@ export default function WPCheckout( {
 	variantSelectOverride,
 	getItemVariants,
 	domainContactValidationCallback,
+	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
@@ -92,6 +96,9 @@ export default function WPCheckout( {
 		.filter( isLineItemADomain )
 		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const isDomainFieldsVisible = !! firstDomainItem;
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
@@ -120,6 +127,14 @@ export default function WPCheckout( {
 				domainNames,
 				applyDomainContactValidationResults
 			);
+			return ! hasValidationErrors;
+		} else if ( isGSuiteInCart ) {
+			const hasValidationErrors = await gSuiteContactValidationCallback(
+				activePaymentMethod.id,
+				contactInfo,
+				applyDomainContactValidationResults
+			);
+			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
 			return ! hasValidationErrors;
 		}
 
