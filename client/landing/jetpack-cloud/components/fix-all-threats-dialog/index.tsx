@@ -5,6 +5,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,8 +43,42 @@ const FixAllThreatsDialog = ( {
 	const firstStep = userHasCredentials ? 'confirmation' : 'server-credentials';
 	const [ currentStep, setCurrentStep ] = React.useState< ProcessStep >( firstStep );
 
+	const buttons = React.useMemo(
+		() => [
+			...( firstStep !== currentStep
+				? [
+						<Button
+							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
+							onClick={ () => setCurrentStep( 'server-credentials' ) }
+						>
+							{ translate( 'Go back' ) }
+						</Button>,
+				  ]
+				: [] ),
+			...( firstStep === currentStep
+				? [
+						<Button
+							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
+							onClick={ onCloseDialog }
+						>
+							{ translate( 'Go back' ) }
+						</Button>,
+				  ]
+				: [] ),
+			<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
+				{ translate( 'Fix all threats' ) }
+			</Button>,
+		],
+		[ firstStep, currentStep, onCloseDialog, onConfirmation ]
+	);
+
 	return (
-		<Dialog additionalClassNames="fix-all-threats-dialog" isVisible={ showDialog }>
+		<Dialog
+			additionalClassNames="fix-all-threats-dialog"
+			isVisible={ showDialog }
+			buttons={ buttons }
+			onClose={ onCloseDialog }
+		>
 			<h1 className="fix-all-threats-dialog__header">{ translate( 'Fix all threats' ) }</h1>
 			{ currentStep === 'server-credentials' && (
 				<>
@@ -98,7 +133,7 @@ const FixAllThreatsDialog = ( {
 					<p className="fix-all-threats-dialog__warning-message">
 						{ translate( 'Jetpack will be fixing all the detected active threats.' ) }
 					</p>
-					<div className="fix-all-threats-dialog__warning">
+					<div className="fix-all-threats-dialog__threats-section">
 						<Gridicon
 							className="fix-all-threats-dialog__icon fix-all-threats-dialog__icon--confirmation"
 							icon="info"
@@ -112,7 +147,11 @@ const FixAllThreatsDialog = ( {
 									count: threats.length,
 								}
 							) }
-							<ul className="fix-all-threats-dialog__list">
+							<ul
+								className={ classnames( 'fix-all-threats-dialog__threats', {
+									'is-long-list': threats.length > 3,
+								} ) }
+							>
 								{ threats.map( ( threat ) => (
 									<li key={ threat.id }>
 										<strong>
@@ -124,27 +163,6 @@ const FixAllThreatsDialog = ( {
 								) ) }
 							</ul>
 						</div>
-					</div>
-					<div className="fix-all-threats-dialog__buttons">
-						{ firstStep !== currentStep && (
-							<Button
-								className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-								onClick={ () => setCurrentStep( 'server-credentials' ) }
-							>
-								Go back
-							</Button>
-						) }
-						{ firstStep === currentStep && (
-							<Button
-								className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--cancel"
-								onClick={ onCloseDialog }
-							>
-								{ translate( 'Cancel' ) }
-							</Button>
-						) }
-						<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
-							{ translate( 'Fix all threats' ) }
-						</Button>
 					</div>
 				</>
 			) }
