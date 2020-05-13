@@ -12,12 +12,19 @@ const isEditorIFramed = inIframe();
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
-	let autofocus,
-		editorSelector,
-		postId,
-		postType,
-		returnLink,
-		href = '#';
+	const editorSelector = select( 'core/editor' );
+	const postId = editorSelector.getCurrentPostId();
+	const postType = editorSelector.getCurrentPostType();
+	const returnLink =
+		isEditorIFramed && ! isSimpleSite
+			? '&' +
+			  encodeURIComponent(
+					`return=https://wordpress.com/block-editor/${ postType }/${ hostname }/${ postId }`
+			  )
+			: '';
+	const autofocus = `autofocus[section]=${ subsection }`;
+
+	let href = '#';
 
 	switch ( section ) {
 		case 'themes':
@@ -32,18 +39,6 @@ export default function ( { section, children, subsection } ) {
 			break;
 
 		case 'customizer':
-			editorSelector = select( 'core/editor' );
-			postId = editorSelector.getCurrentPostId();
-			postType = editorSelector.getCurrentPostType();
-			returnLink =
-				isEditorIFramed && ! isSimpleSite
-					? '&' +
-					  encodeURIComponent(
-							`return=https://wordpress.com/block-editor/${ postType }/${ hostname }/${ postId }`
-					  )
-					: '';
-			autofocus = `autofocus[section]=${ subsection }`;
-
 			href =
 				isEditorIFramed && isSimpleSite
 					? `https://wordpress.com/customize/${ hostname }?${ autofocus }`
