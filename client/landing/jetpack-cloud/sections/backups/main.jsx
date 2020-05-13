@@ -157,6 +157,7 @@ class BackupsPage extends Component {
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
+		const isToday = today.isSame( this.getSelectedDate(), 'day' );
 
 		return (
 			<Main>
@@ -216,6 +217,7 @@ class BackupsPage extends Component {
 								moment,
 								siteSlug,
 								metaDiff,
+								isToday,
 							} }
 						/>
 					) }
