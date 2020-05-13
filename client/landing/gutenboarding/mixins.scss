@@ -98,24 +98,18 @@
 }
 
 @mixin onboarding-block-edge2edge-container {
-	width: calc(
-		100% + #{$gutenboarding-block-margin-mobile} + #{$gutenboarding-block-margin-mobile}
-	);
+	width: calc( 100% + #{$gutenboarding-block-margin-mobile * 2} );
 	margin-left: #{$gutenboarding-block-margin-mobile * -1};
 	margin-right: #{$gutenboarding-block-margin-mobile * -1};
 
 	@include break-small {
-		width: calc(
-			100% + #{$gutenboarding-block-margin-small} + #{$gutenboarding-block-margin-small}
-		);
+		width: calc( 100% + #{$gutenboarding-block-margin-small * 2} );
 		margin-left: #{$gutenboarding-block-margin-small * -1};
 		margin-right: #{$gutenboarding-block-margin-small * -1};
 	}
 
 	@include break-medium {
-		width: calc(
-			100% + #{$gutenboarding-block-margin-medium} + #{$gutenboarding-block-margin-medium}
-		);
+		width: calc( 100% + #{$gutenboarding-block-margin-medium * 2} );
 		margin-left: #{$gutenboarding-block-margin-medium * -1};
 		margin-right: #{$gutenboarding-block-margin-medium * -1};
 	}
