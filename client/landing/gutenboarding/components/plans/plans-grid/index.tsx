@@ -77,23 +77,27 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 						</div>
 					</>
 				) }
-				<Button
-					className="plans-grid__details-toggle-button"
-					isLarge
-					onClick={ handleDetailsToggleButtonClick }
-				>
-					{ showDetails ? (
-						<>
-							<span>{ __( 'Less details' ) } </span>
-							<Icon icon="arrow-up" size={ 20 }></Icon>
-						</>
-					) : (
-						<>
-							<span>{ __( 'More details' ) } </span>
-							<Icon icon="arrow-down" size={ 20 }></Icon>
-						</>
-					) }
-				</Button>
+				{ /* They are separate buttons to prevent the buttons itself getting
+				     auto-focused and scrolled to when plans details display. */ }
+				{ showDetails ? (
+					<Button
+						className="plans-grid__details-toggle-button is-collapse-button"
+						isLarge
+						onClick={ handleDetailsToggleButtonClick }
+					>
+						<span>{ __( 'Less details' ) } </span>
+						<Icon icon="arrow-up" size={ 20 }></Icon>
+					</Button>
+				) : (
+					<Button
+						className="plans-grid__details-toggle-button is-expand-button"
+						isLarge
+						onClick={ handleDetailsToggleButtonClick }
+					>
+						<span>{ __( 'More details' ) } </span>
+						<Icon icon="arrow-down" size={ 20 }></Icon>
+					</Button>
+				) }
 			</div>
 		</div>
 	);
