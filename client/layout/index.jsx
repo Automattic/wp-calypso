@@ -28,6 +28,7 @@ import {
 	masterbarIsVisible,
 	getSectionGroup,
 	getSectionName,
+	getSelectedSite,
 } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -56,6 +57,7 @@ import LayoutLoader from './loader';
 // goofy import for environment badge, which is SSR'd
 import 'components/environment-badge/style.scss';
 import './style.scss';
+import { getShouldShowAppBanner } from './utils';
 
 class Layout extends Component {
 	static propTypes = {
@@ -69,6 +71,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
+		shouldShowAppBanner: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -161,6 +164,8 @@ class Layout extends Component {
 			return optionalProps;
 		};
 
+		const { shouldShowAppBanner } = this.props;
+
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass
@@ -226,7 +231,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
+				{ shouldShowAppBanner && config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require="blocks/app-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'gdpr-banner' ) && (
@@ -245,6 +250,7 @@ export default connect( ( state ) => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -278,6 +284,7 @@ export default connect( ( state ) => {
 		sectionGroup,
 		sectionName,
 		sectionJitmPath,
+		shouldShowAppBanner,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
