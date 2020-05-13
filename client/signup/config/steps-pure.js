@@ -368,14 +368,26 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 		},
 
 		'oauth2-name': {
 			stepName: 'oauth2-name',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
