@@ -81,10 +81,12 @@ export function createGSuiteContactValidationCallback( {
 	return async function contactValidationCallback(
 		paymentMethodId,
 		contactDetails,
+		domainNames,
 		applyDomainContactValidationResults
 	) {
 		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
 		try {
+			debug( 'GSuite contact info validation for', contact_information, domainNames );
 			recordEvent( {
 				type: 'VALIDATE_DOMAIN_CONTACT_INFO',
 				payload: {
@@ -92,8 +94,8 @@ export function createGSuiteContactValidationCallback( {
 					payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
 				},
 			} );
-			const data = await validateGSuiteContact( contact_information );
-			debug( 'GSuite contact info validation for', contactDetails, 'result:', data );
+			const data = await validateGSuiteContact( contact_information, domainNames );
+			debug( 'GSuite contact info validation result', data );
 			if ( ! data ) {
 				showErrorMessage(
 					translate(
@@ -111,7 +113,7 @@ export function createGSuiteContactValidationCallback( {
 			applyDomainContactValidationResults( formatDomainContactValidationResponse( data ?? {} ) );
 			return ! ( data && data.success && areRequiredFieldsNotEmpty( contactDetails ) );
 		} catch ( error ) {
-			debug( 'GSuite contact info validation for', contactDetails, 'error:', error );
+			debug( 'GSuite contact info validation error:', error );
 			showErrorMessage(
 				translate(
 					'There was an error validating your contact information. Please contact support.'
