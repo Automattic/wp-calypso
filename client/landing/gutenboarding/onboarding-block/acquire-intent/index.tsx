@@ -45,7 +45,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	useTrackStep( 'IntentGathering', () => ( {
 		selected_vertical_slug: getSelectedVertical()?.slug,
 		selected_vertical_label: getSelectedVertical()?.label,
-		selected_site_title: getSelectedSiteTitle(),
+		has_selected_site_title: !! getSelectedSiteTitle(),
 	} ) );
 
 	const hasSiteTitle = !! getSelectedSiteTitle();

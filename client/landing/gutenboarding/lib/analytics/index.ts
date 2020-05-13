@@ -184,11 +184,11 @@ export function recordVerticalSelection( slug?: string, label?: string ) {
 /**
  * Records entering a site title in tracks
  *
- * @param siteTitle The site title entered by the user
+ * @param hasValue The site title entered by the user is not empty
  */
-export function recordSiteTitleSelection( siteTitle?: string ) {
+export function recordSiteTitleSelection( hasValue: boolean ) {
 	trackEventWithFlow( 'calypso_newsite_site_title_selected', {
-		selected_site_title: siteTitle,
+		has_selected_site_title: hasValue,
 	} );
 }
 

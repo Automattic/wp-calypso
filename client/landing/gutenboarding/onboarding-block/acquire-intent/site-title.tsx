@@ -40,7 +40,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
 
 	const handleBlur = () => {
-		recordSiteTitleSelection( siteTitle );
+		recordSiteTitleSelection( !! siteTitle );
 	};
 
 	React.useEffect( () => {

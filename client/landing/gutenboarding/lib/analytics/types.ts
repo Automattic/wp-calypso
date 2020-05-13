@@ -45,9 +45,9 @@ export type TracksAcquireIntentEventProperties = {
 	selected_vertical_label: string | undefined;
 
 	/**
-	 * The site title that was selected on the acquire intent page
+	 * Whether site title has been entered on the acquire intent page
 	 */
-	selected_site_title: string | undefined;
+	has_selected_site_title: boolean;
 };
 
 type TracksStyleSelectEventProperties = {
