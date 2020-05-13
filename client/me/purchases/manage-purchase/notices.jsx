@@ -237,6 +237,10 @@ class PurchaseNotice extends Component {
 	renderOtherPurchasesExpiringNotice() {
 		const { translate, purchase, selectedSite, renewableSitePurchases } = this.props;
 
+		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
+			return null;
+		}
+
 		const showOtherPurchasesExpiringNotice =
 			selectedSite &&
 			! isAutoRenewing( purchase ) &&
