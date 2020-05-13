@@ -157,9 +157,14 @@
 		letter-spacing: 0.2px;
 	}
 }
-
+// On desktop, this should follow the width of the plans table.
 .plans-grid__details-actions {
 	@include onboarding-block-edge2edge-content;
+
+	// On mobile, this should follow the width of the viewport.
+	.plans-grid.is-mobile & {
+		width: 100vw;
+	}
 }
 
 .plans-grid__details-toggle-button.components-button {
