@@ -123,10 +123,15 @@ class ScanPage extends Component< Props > {
 
 	renderScanOkay() {
 		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset } = this.props;
-		const lastScanTimestamp = scanState?.mostRecent?.timestamp;
-		let lastScanSiteTime = '';
-		if ( lastScanTimestamp && applySiteOffset ) {
-			lastScanSiteTime = applySiteOffset( moment.utc( lastScanTimestamp ) )?.fromNow();
+
+		const lastScanStartTime = scanState?.mostRecent?.timestamp;
+		const lastScanDuration = scanState?.mostRecent?.duration;
+
+		let lastScanFinishTime = '';
+		if ( lastScanStartTime && applySiteOffset ) {
+			lastScanFinishTime = applySiteOffset(
+				moment.utc( lastScanStartTime ).add( lastScanDuration, 'seconds' )
+			).fromNow();
 		}
 
 		return (
@@ -141,7 +146,7 @@ class ScanPage extends Component< Props > {
 							'{{br/}}' +
 							'Run a manual scan now or wait for Jetpack to scan your site later today.',
 						{
-							args: [ lastScanSiteTime ],
+							args: [ lastScanFinishTime ],
 							components: {
 								strong: <strong />,
 								br: <br />,
