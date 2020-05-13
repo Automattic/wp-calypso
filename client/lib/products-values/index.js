@@ -12,6 +12,7 @@ import {
 	getJetpackProductsTaglines,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
+	JETPACK_SCAN_PRODUCTS,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -220,6 +221,17 @@ export function isJetpackBackup( product ) {
 	assertValidProduct( product );
 
 	return isJetpackBackupSlug( product.product_slug );
+}
+
+export function isJetpackScanSlug( productSlug ) {
+	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
+}
+
+export function isJetpackScan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isJetpackScanSlug( product.product_slug );
 }
 
 export function isJetpackProductSlug( productSlug ) {
