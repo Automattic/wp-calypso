@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 import { Dialog } from '@automattic/components';
 
@@ -24,8 +25,10 @@ interface Props {
 	showDialog: boolean;
 	siteId: number;
 	children: React.ReactNode;
-	buttons: React.ReactNode;
+	buttons?: React.ReactNode;
+	baseDialogClassName?: string;
 	title: i18nCalypso.TranslateResult;
+	titleClassName?: string;
 }
 
 type WizardStep = 'server-credentials' | 'next-step';
@@ -34,26 +37,32 @@ const ServerCredentialsWizardDialog = ( {
 	onCloseDialog,
 	showDialog,
 	siteId,
-	children,
 	buttons,
 	title,
+	titleClassName,
+	baseDialogClassName,
+	children,
 }: Props ) => {
-	const userHasCredentials = useSelector(
-		( state ) => ! isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
-	);
-	const [ currentStep, setCurrentStep ] = React.useState< WizardStep >(
-		userHasCredentials ? 'next-step' : 'server-credentials'
-	);
-	// const [ currentStep, setCurrentStep ] = React.useState< WizardStep >( 'server-credentials' );
+	// I intentionally disabled this for testing purposes. Now, you will always be
+	// prompted for your server credentials.
+	// const userHasCredentials = useSelector(
+	// 	( state ) => ! isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
+	// );
+	// const [ currentStep, setCurrentStep ] = React.useState< WizardStep >(
+	// 	userHasCredentials ? 'next-step' : 'server-credentials'
+	// );
+	const [ currentStep, setCurrentStep ] = React.useState< WizardStep >( 'server-credentials' );
 
 	return (
 		<Dialog
-			additionalClassNames="server-credentials-wizard-dialog"
+			additionalClassNames={ [ 'server-credentials-wizard-dialog', baseDialogClassName ] }
 			isVisible={ showDialog }
 			buttons={ currentStep === 'server-credentials' ? undefined : buttons }
 			onClose={ onCloseDialog }
 		>
-			<h1 className="server-credentials-wizard-dialog__header">{ title }</h1>
+			<h1 className={ classnames( 'server-credentials-wizard-dialog__header', titleClassName ) }>
+				{ title }
+			</h1>
 			{ currentStep === 'server-credentials' && (
 				<>
 					<h3 className="server-credentials-wizard-dialog__subheader">

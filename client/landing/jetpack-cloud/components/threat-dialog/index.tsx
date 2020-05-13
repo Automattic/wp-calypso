@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button, Dialog } from '@automattic/components';
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -16,48 +16,67 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-header';
+import ServerCredentialsWizardDialog from 'landing/jetpack-cloud/components/server-credentials-wizard-dialog';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
 
 interface Props {
 	threat: Threat;
 	action: 'fix' | 'ignore';
+	siteId: number;
 	siteName: string;
 	showDialog: boolean;
 	onCloseDialog: Function;
 	onConfirmation: Function;
 }
 
-class ThreatDialog extends React.PureComponent< Props > {
-	render() {
-		const { action, onCloseDialog, onConfirmation, siteName, showDialog, threat } = this.props;
-		const isScary = action !== 'fix';
-		const buttons = [
+const ThreatDialog: React.FC< Props > = ( {
+	action,
+	onCloseDialog,
+	onConfirmation,
+	siteId,
+	siteName,
+	showDialog,
+	threat,
+} ) => {
+	const buttons = React.useMemo(
+		() => [
 			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
 				{ translate( 'Go back' ) }
 			</Button>,
-			<Button primary scary={ isScary } className="threat-dialog__btn" onClick={ onConfirmation }>
+			<Button
+				primary
+				scary={ action !== 'fix' }
+				className="threat-dialog__btn"
+				onClick={ onConfirmation }
+			>
 				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
 			</Button>,
-		];
+		],
+		[ action, onCloseDialog, onConfirmation ]
+	);
 
-		return (
-			<Dialog
-				additionalClassNames="threat-dialog"
-				isVisible={ showDialog }
-				onClose={ onCloseDialog }
-				buttons={ buttons }
-			>
-				<h1
-					className={ classnames(
-						'threat-dialog__header',
-						`threat-dialog__header--${ action }-threat`
-					) }
-				>
-					{ action === 'fix'
-						? translate( 'Fix threat' )
-						: translate( 'Do you really want to ignore this threat?' ) }
-				</h1>
+	const titleProps = React.useMemo(
+		() => ( {
+			title:
+				action === 'fix'
+					? translate( 'Fix threat' )
+					: translate( 'Do you really want to ignore this threat?' ),
+			titleClassName: `threat-dialog__header--${ action }-threat`,
+		} ),
+		[ action ]
+	);
+
+	return (
+		<ServerCredentialsWizardDialog
+			siteId={ siteId }
+			showDialog={ showDialog }
+			onCloseDialog={ onCloseDialog }
+			buttons={ buttons }
+			{ ...titleProps }
+			baseDialogClassName={ 'threat-dialog' }
+		>
+			<>
 				<h3 className="threat-dialog__threat-title">{ <ThreatItemHeader threat={ threat } /> }</h3>
 				<div className="threat-dialog__threat-description">{ threat.description }</div>
 				<div className="threat-dialog__warning">
@@ -83,9 +102,9 @@ class ThreatDialog extends React.PureComponent< Props > {
 							  ) }
 					</p>
 				</div>
-			</Dialog>
-		);
-	}
-}
+			</>
+		</ServerCredentialsWizardDialog>
+	);
+};
 
 export default ThreatDialog;
