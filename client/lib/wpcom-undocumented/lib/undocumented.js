@@ -722,15 +722,17 @@ Undocumented.prototype.validateDomainContactInformation = function (
  * Promise.
  *
  * @param {object} contactInformation - user's contact information
+ * @param {string[]} domainNames - domain names for which GSuite is being purchased
  * @param {(error: string, data: object) => void} [callback] The callback function.
  * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
  */
 Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	contactInformation,
+	domainNames,
 	callback
 ) {
-	const data = mapKeysRecursively( { contactInformation }, snakeCase );
-	debug( '/me/google-apps/validate', data );
+	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
+	debug( '/me/google-apps/validate', contact_information, domainNames );
 
 	const callbackFunction = ( error, successData ) => {
 		if ( error ) {
@@ -745,7 +747,7 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	};
 
 	const result = this.wpcom.req.post(
-		{ path: '/me/google-apps/validate', body: data },
+		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
 		callback ? callbackFunction : null
 	);
 
