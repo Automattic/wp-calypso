@@ -126,7 +126,7 @@ const ScanHistoryPage = ( {
 					'The scanning history contains a record of all previously active threats on your site.'
 				) }
 			</p>
-			{ filteredEntries.length > 0 && (
+			{ threats.length > 0 && (
 				<div className="history__filters-wrapper">
 					<ThreatStatusFilter
 						isPlaceholder={ isRequestingHistory }
