@@ -267,7 +267,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component, except for userWpcomLang.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				userWpcomLang: getCurrentUserLocale( state ),
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,
