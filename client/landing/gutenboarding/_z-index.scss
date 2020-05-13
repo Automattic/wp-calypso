@@ -32,6 +32,8 @@
 
 $z-layers: (
 	'.vertical-select__suggestions-wrapper': 2,
+	'.gutenboarding__header': 30,
+	'.gutenboarding__footer': 30,
 );
 
 @function gutenboarding-z-index( $keys... ) {
