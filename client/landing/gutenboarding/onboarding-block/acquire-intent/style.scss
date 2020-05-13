@@ -90,10 +90,14 @@
 
 .madlib__input:empty {
 	border-bottom: 2px solid transparent;
-	position: relative;
+	position: absolute;
 	z-index: 1;
 	vertical-align: middle;
 	width: 100%;
+
+	@include break-small {
+		position: relative;
+	}
 }
 
 // Themed core button component
