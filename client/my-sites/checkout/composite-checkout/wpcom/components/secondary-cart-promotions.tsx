@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
 import { ResponseCart } from '../types';
@@ -39,7 +40,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 		responseCart,
 	] );
 
-	if ( isPurchaseRenewal && siteId ) {
+	if ( config.isEnabled( 'upgrades/upcoming-renewals-notices' ) && isPurchaseRenewal && siteId ) {
 		return (
 			<UpsellWrapperUI>
 				<UpcomingRenewalsReminder
