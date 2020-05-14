@@ -27,27 +27,25 @@ interface Props {
 
 const ActivityDescription: FunctionComponent< Props > = ( {
 	activity: { activityName, activityDescription },
-} ) => {
-	return (
-		<>
-			{ activityDescription.map( ( description, index ) => {
-				const { intent, section, type, url } = description;
+} ) => (
+	<>
+		{ activityDescription.map( ( description, index ) => {
+			const { intent, section, type, url } = description;
 
-				const content =
-					type === 'link' && url?.startsWith( 'https://wordpress.com/' )
-						? { ...description, type: undefined, url: undefined }
-						: description;
+			const content =
+				type === 'link' && url?.startsWith( 'https://wordpress.com/' )
+					? { ...description, type: undefined, url: undefined }
+					: description;
 
-				return (
-					<FormattedBlock
-						content={ content }
-						key={ index }
-						meta={ { activity: activityName, intent, section } }
-					/>
-				);
-			} ) }
-		</>
-	);
-};
+			return (
+				<FormattedBlock
+					content={ content }
+					key={ index }
+					meta={ { activity: activityName, intent, section } }
+				/>
+			);
+		} ) }
+	</>
+);
 
 export default ActivityDescription;
