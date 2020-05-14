@@ -37,7 +37,7 @@ function updateSettingsBar() {
 		clearInterval( awaitSettingsBar );
 
 		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-		const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
+		const saveButton = settingsBar.querySelector( '.editor-post-publish-button__button' );
 		saveButton && ( saveButton.innerText = __( 'Save' ) );
 
 		// Wrap 'Launch' button link to frankenflow.
