@@ -53,6 +53,12 @@ export default {
 	redirectTests( context, next ) {
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
+		} else if (
+			context.pathname.indexOf( 'domain' ) >= 0 ||
+			context.pathname.indexOf( 'plan' ) >= 0
+		) {
+			removeWhiteBackground();
+			next();
 		} else {
 			waitForData( {
 				geo: () => requestGeoLocation(),
