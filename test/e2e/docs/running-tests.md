@@ -21,7 +21,7 @@ npm start
 cd test/e2e
 npm ci
 # Follow these instructions to get the secret (https://fieldguide.automattic.com/automated-end-to-end-testing/
-export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>' 
+export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>'
 export NODE_CONFIG_ENV='decrypted'
 npm run decryptconfig
 # a file `config/local-decrypted.json` will be generated and ignored by git. Make sure to set the `NODE_CONFIG_ENV` variable on every bash/zsh session
@@ -38,9 +38,9 @@ npm run decryptconfig
 
 `./node_modules/.bin/magellan`
 
-See the magellan.json file for the default parameters.  This is the process used in CI.
+See the magellan.json file for the default parameters. This is the process used in CI.
 
-**NOTE!** - The magellan mocha plugin will search for all suites tagged with `@parallel`.  If you add a new test to this repo, you MUST add that tag to ensure that your test is run via CircleCI.
+**NOTE!** - The magellan mocha plugin will search for all suites tagged with `@parallel`. If you add a new test to this repo, you MUST add that tag to ensure that your test is run via CircleCI.
 
 ## To run an individual spec
 
@@ -97,7 +97,7 @@ The `run.sh` script takes the following parameters, which can be combined to exe
 
 ## To run headlessly
 
-By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute.  This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back (although that's mostly been resolved).
+By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back (although that's mostly been resolved).
 
 The easiest way to run "headlessly" without a visible window is to add the `-x` flag when running `run.sh` or using the `HEADLESS=1` environment variable which will run Chrome with the --headless flag.
 

@@ -1,12 +1,13 @@
 # Full Site Editing (FSE) Plugin
 
-This plugin should not be confused with the site editor work in core Gutenberg. This plugin includes many sub-features which add blocks and ophew functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances. 
+This plugin should not be confused with the site editor work in core Gutenberg. This plugin includes many sub-features which add blocks and ophew functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
 
 ## File Architecture
-* `package.json`: The package file for the FSE monorepo app.
-* `.wp-env.json`: Local environment configuration for the FSE plugin.
-* `bin/`: Scripts to assis with your local developmenet environment and testing.
-* `full-site-editing-plugin/`: The root of the FSE plugin.
+
+- `package.json`: The package file for the FSE monorepo app.
+- `.wp-env.json`: Local environment configuration for the FSE plugin.
+- `bin/`: Scripts to assis with your local developmenet environment and testing.
+- `full-site-editing-plugin/`: The root of the FSE plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
   - `blog-posts-block/`: A wrapper for the Newspack Homepage Articles block.
@@ -21,26 +22,25 @@ This plugin should not be confused with the site editor work in core Gutenberg. 
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
   - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
 
-
 ## Build System
 
 _Note: `cd` to `apps/full-site-editing` before running these commands_
 
 - `yarn dev`<br>
-Compiles the plugins and watches for changes.
+  Compiles the plugins and watches for changes.
 
 - `yarn build`<br>
-Compiles and minifies the plugins for production.
+  Compiles and minifies the plugins for production.
 
 Both these scripts will also move all source and PHP files into `/dist` in their respective folders.
 
 The entry point is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
+- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
 
 The output is:
 
-- __Plugin__: `/full-site-editing-plugin/{{plugin-directory}}/dist`
+- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/dist`
 
 ### Building Individual _Plugins_
 
@@ -54,7 +54,9 @@ yarn build:posts-list-block`
 ## Local Development
 
 ### Docker:
+
 For a simple Docker experience, use wp-env.
+
 ```sh
 # From wp-calypso root:
 ./apps/full-site-editing/bin/setup-env.sh
@@ -74,6 +76,7 @@ wp-env run cli wp ... # Runs a wp-cli command.
 Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the FSE plugin as a Docker volume.
 
 ### Other:
+
 Build (or `dev`) and symlink the plugin into a local WordPress install.
 
 E.g.

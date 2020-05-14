@@ -13,7 +13,7 @@ See the root directory's `package.json` for the list of supported browsers for e
 In Node.js, simply require the package:
 
 ```js
-  require( '@automattic/calypso-polyfills' );
+require( '@automattic/calypso-polyfills' );
 ```
 
 In a browser, a similar naked import will include the polyfills (defaulting to the `fallback` set):

@@ -1,5 +1,4 @@
-Sites
-=====
+# Sites
 
 A module for managing site data.
 

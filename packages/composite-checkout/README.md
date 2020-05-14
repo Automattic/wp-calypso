@@ -26,36 +26,39 @@ It's also possible to build an entirely custom form using the other components e
 ## How to use this package
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
- - [createApplePayMethod](#createApplePayMethod)
- - [createExistingCardMethod](#createExistingCardMethod)
- - [createFullCreditsMethod](#createFullCreditsMethod)
- - [createPayPalMethod](#createpaypalmethod)
- - [createStripeMethod](#createStripeMethod)
+
+- [createApplePayMethod](#createApplePayMethod)
+- [createExistingCardMethod](#createExistingCardMethod)
+- [createFullCreditsMethod](#createFullCreditsMethod)
+- [createPayPalMethod](#createpaypalmethod)
+- [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
- - [useAllPaymentMethods](#useAllPaymentMethods)
- - [useEvents](#useEvents)
- - [useFormStatus](#useFormStatus)
- - [useTransactionStatus](#useTransactionStatus)
- - [usePaymentProcessor](#usePaymentProcessor)
- - [useMessages](#useMessages)
- - [useDispatch](#useDispatch)
- - [useLineItems](#useLineItems)
- - [useLineItemsOfType](#useLineItemsOfType)
- - [usePaymentMethod](#usePaymentMethodId)
- - [usePaymentMethodId](#usePaymentMethodId)
- - [useRegisterStore](#useRegisterStore)
- - [useRegistry](#useRegistry)
- - [useSelect](#useSelect)
- - [useTotal](#useTotal)
+
+- [useAllPaymentMethods](#useAllPaymentMethods)
+- [useEvents](#useEvents)
+- [useFormStatus](#useFormStatus)
+- [useTransactionStatus](#useTransactionStatus)
+- [usePaymentProcessor](#usePaymentProcessor)
+- [useMessages](#useMessages)
+- [useDispatch](#useDispatch)
+- [useLineItems](#useLineItems)
+- [useLineItemsOfType](#useLineItemsOfType)
+- [usePaymentMethod](#usePaymentMethodId)
+- [usePaymentMethodId](#usePaymentMethodId)
+- [useRegisterStore](#useRegisterStore)
+- [useRegistry](#useRegistry)
+- [useSelect](#useSelect)
+- [useTotal](#useTotal)
 
 The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
- - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
- - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
- - [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
- - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
- - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
- - [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+
+- [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+- [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
+- [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
+- [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
+- [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+- [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
 
 Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 

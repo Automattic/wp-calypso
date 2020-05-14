@@ -1,5 +1,4 @@
-Sending Order Invoices
-======================
+# Sending Order Invoices
 
 This module is used to track the request of sending a customer an order invoice.
 

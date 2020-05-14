@@ -1,5 +1,4 @@
-Query Sites
-===========================
+# Query Sites
 
 `<QuerySites />` is a React component used in managing network requests for sites.
 
@@ -21,11 +20,11 @@ function AllSites() {
 }
 
 function SingleSite() {
-	return <QuerySites siteId={ 2916284 } />
+	return <QuerySites siteId={ 2916284 } />;
 }
 
 function PrimaryAndRecentSites() {
-	return <QuerySites primaryAndRecent />
+	return <QuerySites primaryAndRecent />;
 }
 ```
 

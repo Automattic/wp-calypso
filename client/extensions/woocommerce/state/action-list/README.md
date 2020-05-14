@@ -3,7 +3,6 @@
 The Action List concept is one that is designed to help update an existing edit
 state into a list of asynchronous actions that can be handled and tracked.
 
-
 ## Why do we need it?
 
 For many of our data updates to the API, we need to handle multiple API requests
@@ -17,7 +16,6 @@ before one can create the Variations for that Product, because each Variation AP
 call must include the Product ID (which is not present until the Product is
 created.)
 
-
 ## What is it?
 
 The action list is a structure that defines the steps needed to be executed.
@@ -28,6 +26,7 @@ Note: Action list objects are copied from action to action and never mutated.
 ### Lifecycle
 
 The action list starts out with a list of steps:
+
 ```
 {
   nextSteps: [ step1, step2, step3, step4, step5 ],
@@ -35,6 +34,7 @@ The action list starts out with a list of steps:
 ```
 
 As the first step starts, it is designated as the `currentStep`
+
 ```
 {
   currentStep: step1,
@@ -45,6 +45,7 @@ As the first step starts, it is designated as the `currentStep`
 Then after it completes, it moves to the `prevSteps` array.
 Note that from this state, it becomes possible to continue the action list
 even after a step fails, although that will not automatically happen.
+
 ```
 {
   prevSteps: [ step1 ],
@@ -54,6 +55,7 @@ even after a step fails, although that will not automatically happen.
 ```
 
 Then step2 is started.
+
 ```
 {
   prevSteps: [ step1 ],
@@ -63,6 +65,7 @@ Then step2 is started.
 ```
 
 And so on...
+
 ```
 {
   prevSteps: [ step1, step2 ],
@@ -72,6 +75,7 @@ And so on...
 ```
 
 Until all steps are complete.
+
 ```
 {
   prevSteps: [ step1, step2, step3, step4, step5 ],
@@ -91,6 +95,7 @@ Each step object consists initially of a description and an `onStep` event.
 Note that the description is designed for user display, so it should be translated.
 
 The `onStep` function has two parameters that are passed to it:
+
 ```
 function onStep( dispatch, actionList ) {}
 ```
@@ -121,7 +126,6 @@ purposes, or to determine acceptable timeouts for a step.
 The `getActionList` selector can be used to retrieve this data about the current
 action-list to show information to the user.
 
-
 ### List Completion events
 
 There are two completion events that can be used to send actions at the end
@@ -148,7 +152,6 @@ function onFailure( dispatch, actionList ) {}
 Note that it's likely that you will want to dispatch `actionListClear()` from each
 of these functions. That is, unless you want the user to be able to review the
 action list results afterwards. Then you can just clear it when they're done.
-
 
 ### Example
 
@@ -182,10 +185,8 @@ the `actionlistStepNext` action which starts the "next" (read: first) step of th
 dispatch( actionListStepNext( actionList ) );
 ```
 
-
 #### More Complex Example
 
 **TBD**
 
 Until then, take a look at the `makeProductActionList` function in `client/extensions/woocommerce/state/data-layer/ui/products`.
-

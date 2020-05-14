@@ -1,5 +1,4 @@
-Keyring Connections
-===================
+# Keyring Connections
 
 A module for managing keyring connections.
 
@@ -23,13 +22,14 @@ class QueryKeyringConnections extends Component {
 		}
 	}
 
-	render() { return null; }
+	render() {
+		return null;
+	}
 }
 
-export default connect(
-	( state ) => ( { isRequesting: isKeyringConnectionsFetching( state ) } ),
-	{ requestKeyringConnections }
-)( QueryKeyringConnections );
+export default connect( ( state ) => ( { isRequesting: isKeyringConnectionsFetching( state ) } ), {
+	requestKeyringConnections,
+} )( QueryKeyringConnections );
 ```
 
 ## Reducer
@@ -69,7 +69,7 @@ Returns a keyring connection object with a specified ID.
 ```js
 import { getKeyringConnectionById } from 'state/sharing/keyring/selectors';
 
-const connection = getKeyringConnectionById( state, 23353);
+const connection = getKeyringConnectionById( state, 23353 );
 ```
 
 #### `getKeyringConnectionsByName( state: object, service: string )`
@@ -82,7 +82,7 @@ import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 ```
 
-#### `getUserConnections( state: object,  userId: number  )`
+#### `getUserConnections( state: object, userId: number )`
 
 Returns an array of keyring connection objects for a specific user.
 

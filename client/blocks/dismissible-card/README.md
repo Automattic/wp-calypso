@@ -1,5 +1,5 @@
-Dismissible Card
-=========
+# Dismissible Card
+
 This is a card component that can be dismissed for a single page load or be hidden
 via user preference.
 
@@ -51,7 +51,7 @@ This function will fire when a user clicks on the cross icon
 	<tr><td>Default</td><td><code>n/a</code></td></tr>
 </table>
 
-The user preference name that we store a boolean against. 
+The user preference name that we store a boolean against.
 Note that we prefix this value with 'dismissible-card-' to avoid namespace collisions.
 
 ### `temporary`

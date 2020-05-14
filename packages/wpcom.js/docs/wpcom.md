@@ -1,4 +1,3 @@
-
 # WPCOM
 
 ### WPCOM('token');
@@ -23,7 +22,7 @@ var me = wpcom.me();
 Create a `Site` object. More info in [Site doc page](./site.md).
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
+var wpcom = require( 'wpcom' )( '<your-token>' );
 var site = wpcom.site();
 ```
 
@@ -32,11 +31,11 @@ var site = wpcom.site();
 View Freshly Pressed posts from the WordPress.com homepage.
 
 ```js
-wpcom.freshlyPressed(function(err, data){
-  if (err) throw err;
-  console.log('"Freshly Pressed" Posts:');
-  data.posts.forEach(function (post) {
-    console.log('  %s - %s', post.title, post.short_URL);
-  });
-});
+wpcom.freshlyPressed( function ( err, data ) {
+	if ( err ) throw err;
+	console.log( '"Freshly Pressed" Posts:' );
+	data.posts.forEach( function ( post ) {
+		console.log( '  %s - %s', post.title, post.short_URL );
+	} );
+} );
 ```

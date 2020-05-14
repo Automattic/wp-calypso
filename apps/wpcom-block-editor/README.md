@@ -173,7 +173,7 @@ Say you have an Atomic site. You visit the block-editor through the iFrame. In t
 
 If we access Gutenberg on the same Atomic site through wp-admin, the same PHP code will run. However, this time it can tell that we are not in the iFrame, so it does _not_ load the **calypso** directory, but still loads default and wpcom.
 
-Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default. 
+Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default.
 
 Then, each bundle contains features for different types of pages. For example, the `editor.js` file is in every directory, since the main goal of this app is to provide features for the editor. Additionally, the `view.js` file exists in the `default` directory in order to provide some code which is always loaded on the front end.
 
@@ -186,7 +186,6 @@ Then, each bundle contains features for different types of pages. For example, t
 	├── view.js     ← script importing features that will be loaded in both editor and front-end.
 	└── view.scss   ← stylesheet importing styles of features that will loaded in both editor and front-end.
 ```
-
 
 ## Build
 

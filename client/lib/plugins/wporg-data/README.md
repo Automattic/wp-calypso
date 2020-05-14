@@ -1,8 +1,7 @@
-WPORG Data
-=======
-
+# WPORG Data
 
 ### Store
+
 The WPorg Store is responsible for storing the state of plugins from .org so that we don't have to fetch them each time.
 
 ####The Data
@@ -42,8 +41,7 @@ The data is stored in a private variable but can be accessed though the stores p
 
 **PluginsStore.get( pluginSlug );**
 
-Returns a plugin object or null
----
+## Returns a plugin object or null
 
 ####Example Component Code:
 
@@ -74,7 +72,7 @@ export class YourComponent extends Component {
 
 	getWPorgPlugins() {
 		return {
-			akismet: PluginsDataStore.get( 'akismet' )
+			akismet: PluginsDataStore.get( 'akismet' ),
 		};
 	}
 
@@ -86,7 +84,6 @@ export class YourComponent extends Component {
 		// ...
 	}
 }
-
 ```
 
 ###Actions
@@ -119,12 +116,7 @@ export class YourComponent extends Component {
 	}
 
 	render() {
-		return (
-			<button onClick={ this.updatePlugin }>
-				Update { this.props.plugin.name }
-			</button>
-		);
+		return <button onClick={ this.updatePlugin }>Update { this.props.plugin.name }</button>;
 	}
 }
-
 ```

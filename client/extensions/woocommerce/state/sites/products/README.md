@@ -1,5 +1,4 @@
-Products
-========
+# Products
 
 This module is used to manage products for a site.
 

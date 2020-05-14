@@ -1,5 +1,4 @@
-Count
-=========
+# Count
 
 Count is a React component that shows positive and negative integer numbers, by default with rounded corners. The component internationalizes the passed number. For example, it's used to show post and draft counts as well as the number of people on a team.
 

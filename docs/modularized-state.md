@@ -1,5 +1,4 @@
-Modularized State
-=================
+# Modularized State
 
 Calypso currently uses Redux for managing state (see [Our Approach to Data](./our-approach-to-data.md) for more details on the current approach, and the history that led to it). This has been a successful strategy in managing state across the application, but the standard Redux approach is not without its issues.
 
@@ -77,7 +76,6 @@ import { registerReducer } from 'state/redux-store';
 import reducer from './reducer';
 
 registerReducer( [ 'subject' ], reducer );
-
 ```
 
 ### Add `package.json` file
@@ -86,9 +84,7 @@ It's generally a good idea to tell `webpack` when a file has side-effects, to pr
 
 ```json
 {
-	"sideEffects": [
-		"./init.js"
-	]
+	"sideEffects": [ "./init.js" ]
 }
 ```
 
@@ -110,7 +106,7 @@ Here's what a modified selector module could look like:
 import 'state/subject/init';
 
 export default function getSubjectMatter( state ) {
-  // ...
+	// ...
 }
 ```
 
@@ -120,7 +116,7 @@ The same goes for an action creator:
 import 'state/subject/init';
 
 export function changeSubjectMatter( matter ) {
-  // ...
+	// ...
 }
 ```
 

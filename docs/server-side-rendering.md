@@ -1,5 +1,4 @@
-Server-side Rendering
-=====================
+# Server-side Rendering
 
 Server-side rendering is great for SEO, as well as progressive enhancement. When rendering on the server, we have a special set of constraints that we need to follow when building components and libraries.
 
@@ -8,17 +7,18 @@ tl;dr: Don't depend on the DOM/BOM; make sure your initial render is synchronous
 #### React Components
 
 React components used on the server will be rendered to HTML by being passed to a [renderToString()](https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring) call, which calls `componentWillMount()` and `render()` _once_. This means that any components used by a server-side rendered section need to satisfy the following constraints:
-* Must not rely on event handling for the initial render.
-* Must not hook up any change listeners, or do anything asynchronous, inside `componentWillMount()`.
-* All data must be available before the initial render.
-* Mutating class-level variables should be avoided, as they will be persisted until a server restart.
-* Must not change component ID during `componentWillMount`.
-* Must not assume that the DOM/BOM exists in `render()` and `componentWillMount()`.
+
+- Must not rely on event handling for the initial render.
+- Must not hook up any change listeners, or do anything asynchronous, inside `componentWillMount()`.
+- All data must be available before the initial render.
+- Mutating class-level variables should be avoided, as they will be persisted until a server restart.
+- Must not change component ID during `componentWillMount`.
+- Must not assume that the DOM/BOM exists in `render()` and `componentWillMount()`.
 
 #### Libraries
 
-* Libraries that are used on the server should be mindful of the DOM not being available on the server, and should either: be modified to work without the DOM; have non-DOM specific fallbacks; or fail in an obvious manner.
-* Singletons should be avoided, as once instantiated they will persist for the entire duration of the `node` process.
+- Libraries that are used on the server should be mindful of the DOM not being available on the server, and should either: be modified to work without the DOM; have non-DOM specific fallbacks; or fail in an obvious manner.
+- Singletons should be avoided, as once instantiated they will persist for the entire duration of the `node` process.
 
 ### Caching
 
@@ -54,6 +54,7 @@ In order to ensure that no module down the dependency chain breaks server-side r
 Occasionally, it may be necessary to conditionally do something client-specific inside an individual source file. This is quite useful for libraries that are heavily DOM dependent, and require a different implementation on the server. Don't do this for React components, as it will likely cause reconciliation errors — factor out your dependencies instead.
 
 Here's how your module's `package.json` should look, if you really want to do this:
+
 ```
 {
 	"main": "index.node.js",
@@ -72,6 +73,7 @@ To view hits and misses on the server render cache, use the following command (o
 `export DEBUG="calypso:server-render"`
 
 Sample debug output:
+
 ```
   calypso:server-render cache access for key +0ms /theme/mood1485514728996
   calypso:server-render cache miss for key +1ms /theme/mood1485514728996

@@ -10,12 +10,12 @@ The following patterns are considered warnings:
 
 ```jsx
 // client/sample-component/index.js
-export default function() {
+export default function () {
 	return <div className="sample" />;
 }
 
 // client/another-sample/index.js
-export default function() {
+export default function () {
 	return (
 		<div className="another-sample">
 			<div className="another-sample-child" />
@@ -28,12 +28,12 @@ The following patterns are not warnings:
 
 ```jsx
 // client/sample-component/index.js
-export default function() {
+export default function () {
 	return <div className="sample-component" />;
 }
 
 // client/another-sample/index.js
-export default function() {
+export default function () {
 	return (
 		<div className="another-sample">
 			<div className="another-sample__child" />
@@ -45,7 +45,8 @@ export default function() {
 ## Options
 
 This rule accepts an object as its first option:
-* `"rootFiles"` (default: `[ index.js, index.jsx ]`) array of filenames allowed to contain root component in each folder.
+
+- `"rootFiles"` (default: `[ index.js, index.jsx ]`) array of filenames allowed to contain root component in each folder.
 
 For example, you can allow `index.jsx` and `main.jsx`:
 
@@ -65,7 +66,7 @@ Examples of **correct** code for this rule with `rootFiles` set to `[ 'foo.js' ]
 ```jsx
 /*eslint jsx-classname-namespace: [ "error", { rootFiles: [ 'foo.js' ] } ]*/
 // client/sample-component/foo.js
-export default function() {
+export default function () {
 	return <div className="sample" />;
 }
 ```
@@ -75,7 +76,7 @@ Examples of **incorrect** code for this rule with `rootFiles` set to `[ 'foo.js'
 ```jsx
 /*eslint jsx-classname-namespace: [ "error", { rootFiles: [ 'foo.js' ] } ]*/
 // client/sample-component/index.js
-export default function() {
+export default function () {
 	return <div className="sample" />;
 }
 ```

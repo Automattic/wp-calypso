@@ -1,5 +1,4 @@
-Plugins Browser List
-====================
+# Plugins Browser List
 
 This component is used to display a list with the a parametrizable number of plugins of a certain category of the wordpress.org public plugin directory.
 
@@ -28,8 +27,8 @@ export default localize( MyPluginsList );
 
 #### Props
 
-* `title`: a string
-* `plugins`: a PluginsData object
-* `size`: a number, the amount of plugins to be shown
-* `site`: a string containing the slug of the selected site
-* `addPlaceholders`: if present, indicates that there should placeholders inserted after the real components list
+- `title`: a string
+- `plugins`: a PluginsData object
+- `size`: a number, the amount of plugins to be shown
+- `site`: a string containing the slug of the selected site
+- `addPlaceholders`: if present, indicates that there should placeholders inserted after the real components list

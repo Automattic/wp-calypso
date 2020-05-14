@@ -1,5 +1,4 @@
-cart
-====
+# cart
 
 This module contains React components for the shopping cart. It appears in two different forms across the site:
 

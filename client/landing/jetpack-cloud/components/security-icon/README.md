@@ -1,5 +1,4 @@
-Security Icon
-=============
+# Security Icon
 
 This is a component that is used for security icons to indicate state in Jetpack Scan.
 
@@ -18,5 +17,5 @@ const SecurityIconExample = () => (
 
 ## Props
 
-* `icon`: ( string ) Can be `okay` or `error`. Defaults to `okay`.
-* `className`: ( string ) Additional classes to add to `img` tag.
+- `icon`: ( string ) Can be `okay` or `error`. Defaults to `okay`.
+- `className`: ( string ) Additional classes to add to `img` tag.

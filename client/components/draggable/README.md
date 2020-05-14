@@ -1,5 +1,4 @@
-Draggable
-======
+# Draggable
 
 Creates a `div` element that can be dragged around using a mouse
 

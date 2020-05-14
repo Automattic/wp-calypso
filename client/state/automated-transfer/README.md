@@ -14,10 +14,10 @@ The status of an automated transfer represents where in the transfer process a g
 The highest-level values of the status are _has never attempted to transfer_, _is transferring_, and _has transferred_.
 However, inside of _is transferring_ there are many sub-states that are more granular in the process tracking.
 
-| status | meaning |
-|:-:|---|
-| `COMPLETE` | Records exist for a transfer but it has previously finished |
-| `CONFLICTS` | No transfer can be created because there are known conflicts preventing a success transfer |
+|   status    | meaning                                                                                        |
+| :---------: | ---------------------------------------------------------------------------------------------- |
+| `COMPLETE`  | Records exist for a transfer but it has previously finished                                    |
+| `CONFLICTS` | No transfer can be created because there are known conflicts preventing a success transfer     |
 | `INQUIRING` | Calypso has requested information about starting a transfer but none has actually been created |
-| `START` | A transfer has been created and is currently in progress |
-| _falsey_ | No information about any transfers exists in Calypso |
+|   `START`   | A transfer has been created and is currently in progress                                       |
+|  _falsey_   | No information about any transfers exists in Calypso                                           |

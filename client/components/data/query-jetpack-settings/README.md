@@ -1,5 +1,4 @@
-Query Jetpack Settings
-======================
+# Query Jetpack Settings
 
 `<QueryJetpackSettings />` is a React component used in managing network requests for Jetpack Settings.
 

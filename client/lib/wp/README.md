@@ -1,5 +1,4 @@
-WP
-======
+# WP
 
 Offers a shared `WPCOM` API instance to interact with the WordPress.com REST API.
 

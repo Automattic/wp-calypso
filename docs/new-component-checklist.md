@@ -69,6 +69,7 @@ class PopoverExample extends PureComponent {
 ## Playground
 
 Components will appear in the [Playground](/devdocs/playground) if they have the following requirements satisfied:
+
 - An example Component in /components/component-name/docs/example.jsx
 - An exampleCode property on the example Component
 - An `export ComponentName from components/component-name` statement in `playground-scope.js`

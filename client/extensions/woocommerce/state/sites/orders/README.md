@@ -1,5 +1,4 @@
-Orders
-======
+# Orders
 
 This module is used to manage orders for a site.
 
@@ -48,7 +47,7 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 				"payment_method": "stripe",
 				…
 			},
-			2: { … } 
+			2: { … }
 		},
 		// Keyed by serialized query (a list of post IDs)
 		"queries": {

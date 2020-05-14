@@ -1,5 +1,4 @@
-CardHeading (JSX)
-=====================
+# CardHeading (JSX)
 
 This component displays a heading for a `<Card>`
 
@@ -22,5 +21,5 @@ render() {
 
 #### Props
 
-* `tagName` (`string`) - The element to wrap the text in
-* `size` (`int`) - The font size of the heading
+- `tagName` (`string`) - The element to wrap the text in
+- `size` (`int`) - The font size of the heading

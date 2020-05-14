@@ -1,5 +1,4 @@
-Query Post Likes
-================
+# Query Post Likes
 
 `<QueryPostLikes />` is a React component used in managing network requests for post likes.
 

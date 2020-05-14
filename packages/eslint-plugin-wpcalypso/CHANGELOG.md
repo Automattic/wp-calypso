@@ -1,4 +1,5 @@
 #### Unreleased
+
 - Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
 - Enhancement: `jsx-classname-namespace` understands Storybook `index.stories.js` files and treats them as root files
 

@@ -1,5 +1,4 @@
-FilePicker
-==========
+# FilePicker
 
 This component opens a native file picker when its children are clicked on.
 It is a very thin wrapper around
@@ -21,8 +20,7 @@ render() {
 
 #### Props
 
-* `multiple`: (bool) Allow selecting multiple files (Defaults to `false`).
-* `directory`: (bool) Allow selecting of a directory (Defaults to `false`).
-* `accept`: (string) Content type MIME to accept. Wildcards (`*`) are supported.
-* `onPick`: (func) Function to call when the user has selected one or more files.
-
+- `multiple`: (bool) Allow selecting multiple files (Defaults to `false`).
+- `directory`: (bool) Allow selecting of a directory (Defaults to `false`).
+- `accept`: (string) Content type MIME to accept. Wildcards (`*`) are supported.
+- `onPick`: (func) Function to call when the user has selected one or more files.

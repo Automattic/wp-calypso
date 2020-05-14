@@ -1,5 +1,4 @@
-Calypso Async Babel Transform Plugin
-====================================
+# Calypso Async Babel Transform Plugin
 
 `babel-plugin-transform-wpcalypso-async` is a Babel plugin to facilitate optional
 code-splitting by applying transformations to a `asyncRequire` global function or the
@@ -13,9 +12,7 @@ Example Babel config file:
 
 ```json
 {
-	"plugins": [
-		[ "@automattic/transform-wpcalypso-async", { "async": true } ]
-	]
+	"plugins": [ [ "@automattic/transform-wpcalypso-async", { "async": true } ] ]
 }
 ```
 
@@ -24,6 +21,7 @@ See [Babel options documentation](http://babeljs.io/docs/usage/options/) for mor
 ## Transformations
 
 `asyncRequire` will transform to one of:
+
 - `require.ensure` if `async` plugin option is true
 - `require` if `async` plugin option is false or unset
 

@@ -1,5 +1,4 @@
-Components
-==========
+# Components
 
 Components are React components used for composing the UI of Calypso.
 

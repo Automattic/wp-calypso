@@ -1,5 +1,4 @@
-CSS/Sass Coding Guidelines
-==========================
+# CSS/Sass Coding Guidelines
 
 Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. These files are all imported into the React components' JavaScript sources and then bundled by webpack to the production CSS files.
 
@@ -9,9 +8,9 @@ This is an example of a declaration:
 
 Two important considerations:
 
-* The `component` fragment matches the folder name of the React component it's providing styles to.
-* The `.is-modifier` class should never be written on its own outside of the component class. This avoids naming collisions and provides a consistent use of modifiers.
-* We don't use `#ids` for style purposes.
+- The `component` fragment matches the folder name of the React component it's providing styles to.
+- The `.is-modifier` class should never be written on its own outside of the component class. This avoids naming collisions and provides a consistent use of modifiers.
+- We don't use `#ids` for style purposes.
 
 #### Example
 
@@ -21,24 +20,25 @@ Take a component called `site/index.jsx` that renders a site item on the picker.
 
 ```scss
 .site__title {
-    color: #333;
+	color: #333;
 
-    &.is-jetpack {
-        color: #444;
-    }
+	&.is-jetpack {
+		color: #444;
+	}
 }
 ```
 
 **Bad**
+
 ```scss
 .site {
-    .title {
-        color: #333;
+	.title {
+		color: #333;
 
-        .jetpack {
-            color: #444;
-        }
-    }
+		.jetpack {
+			color: #444;
+		}
+	}
 }
 ```
 
@@ -47,7 +47,7 @@ The modifier classes are always attached to a base element (the wrapper of a com
 ```scss
 // Modify 'site__title' for in CurrentSite component's display
 .current-site .site__title {
-    color: #444;
+	color: #444;
 }
 ```
 
@@ -101,43 +101,47 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins [provided in `_mixins.scss`](https://github.com/Automattic/wp-calypso/blob/master/assets/stylesheets/shared/mixins/_breakpoints.scss). Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
 
 Bad:
+
 ```scss
 .class-name {
-    margin: 20px; // styles for all devices
-    @include breakpoint( “<480px” ) {
-        margin: 10px; // styles for mobile
-    }
+	margin: 20px; // styles for all devices
+	@include breakpoint( “<480px” ) {
+		margin: 10px; // styles for mobile
+	}
 }
 ```
 
 Good:
+
 ```scss
 .class-name {
-    margin: 10px; // styles for all devices
-    @include breakpoint( “>480px” ) {
-        margin: 20px; // styles for desktop
-    }
+	margin: 10px; // styles for all devices
+	@include breakpoint( “>480px” ) {
+		margin: 20px; // styles for desktop
+	}
 }
 ```
 
 There is only one time when using a `<` breakpoint is ok; when it saves you code:
 
 Bad:
+
 ```scss
 .class-name {
-    width: 50%; // styles for all devices
-    @include breakpoint( “>480px” ) {
-        width: auto; // styles for desktop
-    }
+	width: 50%; // styles for all devices
+	@include breakpoint( “>480px” ) {
+		width: auto; // styles for desktop
+	}
 }
 ```
 
 Good:
+
 ```scss
 .class-name {
-    @include breakpoint( “<480px” ) {
-        width: 50%; // styles for mobile
-    }
+	@include breakpoint( “<480px” ) {
+		width: 50%; // styles for mobile
+	}
 }
 ```
 
@@ -145,51 +149,50 @@ The value passed to this mixin is actually a string rather than a pixel value. A
 
 Adding additional breakpoints should not be undertaken lightly.
 
-
 ### Adding a new Sass file
 
 If you are adding a new Sass file (global or component-specific), you need to import it in some JavaScript source file. Try to avoid creating global styles and favor of styling particular components. JS and CSS code is async-loaded just in time when a particular section or an async-loaded React component is loaded.
 
 ### Imports
 
-* DO declare all of your `@import` dependencies at the top of a file that needs it/them.
-* DON'T `@import` dependencies in a global file and just hope it filters down to your partial.
+- DO declare all of your `@import` dependencies at the top of a file that needs it/them.
+- DON'T `@import` dependencies in a global file and just hope it filters down to your partial.
 
 ### Nesting
 
-* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
-* DO attempt to keep nesting to 2 levels deep at most.
-* DO list items inside a selector in the following order (not all will necessarily be present):
-    1. `@extend`(s).
-    2. property list for the element.
-    3. mixin(s).
-    4. nested selectors, with a space above each to keep them visually distinct.
+- DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
+- DO attempt to keep nesting to 2 levels deep at most.
+- DO list items inside a selector in the following order (not all will necessarily be present):
+  1. `@extend`(s).
+  2. property list for the element.
+  3. mixin(s).
+  4. nested selectors, with a space above each to keep them visually distinct.
 
 Example of the above:
 
 ```scss
 .parent {
-    @extend %awesomeness;
-    border: 1px solid;
-    font-size: 2em;
-    @include moar-awesome( true );
+	@extend %awesomeness;
+	border: 1px solid;
+	font-size: 2em;
+	@include moar-awesome( true );
 
-    &::before {
-        // and so on
-    }
+	&::before {
+		// and so on
+	}
 }
 ```
 
 ### Mixins vs Extends
 
-* DO use `@extend` when in doubt, using the `%placeholder` syntax. This will produce leaner output.
-* DON'T use mixins for anything that doesn't accept an argument. This is `@extend` territory.
-* DO read [this article](http://miguelcamba.com/blog/2013/07/11/sass-placeholders-versus-mixins-and-extends/) if you don't understand `@extend`.
+- DO use `@extend` when in doubt, using the `%placeholder` syntax. This will produce leaner output.
+- DON'T use mixins for anything that doesn't accept an argument. This is `@extend` territory.
+- DO read [this article](http://miguelcamba.com/blog/2013/07/11/sass-placeholders-versus-mixins-and-extends/) if you don't understand `@extend`.
 
 ### Comments
 
-* DO make generous use of comments to explain the whys of what you are doing.
-* DO use `// Comments` rather than `/* comments */`. Multiline comments should be written like this:
+- DO make generous use of comments to explain the whys of what you are doing.
+- DO use `// Comments` rather than `/* comments */`. Multiline comments should be written like this:
 
 ```scss
 // This is a comment
@@ -200,7 +203,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ### Indents
 
-* DO use tabs for indents.
+- DO use tabs for indents.
 
 ## Right-To-Left (RTL)
 
@@ -213,41 +216,44 @@ We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `publi
 ```scss
 /*rtl:ignore*/
 div.alignright {
-  float: right;
-  clear: right;
-  margin: 0.5em 0 0.8em 1.4em;
+	float: right;
+	clear: right;
+	margin: 0.5em 0 0.8em 1.4em;
 }
 /*rtl:ignore*/
 input.email {
-    direction:ltr
+	direction: ltr;
 }
 ```
+
 If you need custom RTL css code, add it to your stylesheet with a .rtl class prefix, and the rtl ignore comment mentioned above. For example:
 
 ```scss
 /*rtl:ignore*/
 .rtl div.onlyinrtl {
-    font-family:Tahoma;
+	font-family: Tahoma;
 }
 ```
+
 Note for either of the above that because of the SCSS build process, if you're nesting things then you might need to place the rtlignore comment inside the value, with Sass interpolation syntax
+
 ```scss
 .rtl {
-  .onlyinrtl {
-    margin-right: 5px #{"/*rtl:ignore*/"};;
-  }
+	.onlyinrtl {
+		margin-right: 5px #{'/*rtl:ignore*/'};
+	}
 }
 ```
 
 You can also define specific values for RTL like so:
+
 ```scss
-  .class {
-    margin-right: 5px #{"/*rtl:2px*/"};;
-  }
+.class {
+	margin-right: 5px #{'/*rtl:2px*/'};
+}
 ```
 
 You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/master/README.md).
-
 
 ## Positioning
 
@@ -255,9 +261,9 @@ When defining positioning properties, indent the top/right/bottom/left one level
 
 ```css
 selector {
-  position: absolute;
-    left: 0;
-    top: 20px;
+	position: absolute;
+	left: 0;
+	top: 20px;
 }
 ```
 
@@ -267,11 +273,12 @@ selector {
 - DO use a single space before an opening brace
 
 ```scss
-@include breakpoint( ">480px" ) {
-  color: rgb( 0, 0, 0 );
-  transform: translate( -50%, -50% ) scale( 1 );
+@include breakpoint( '>480px' ) {
+	color: rgb( 0, 0, 0 );
+	transform: translate( -50%, -50% ) scale( 1 );
 }
 ```
+
 - DO [remove trailing whitespace](trailing-whitespace.md)
 
 ## Z-Index
@@ -282,8 +289,8 @@ add another entry to the `$z-layers` variable in
 
 Because browsers support a hierarchy of stacking contexts rather than a single
 global one, we use a tree with two levels of keys. The first is the name of the
-parent stacking context, and the latter is the selector for the stacking 
-context you've just created.  We keep each level of the tree sorted by z-index 
+parent stacking context, and the latter is the selector for the stacking
+context you've just created. We keep each level of the tree sorted by z-index
 so we can quickly compare z-index values within a given stacking context.
 
 An element creates a new stacking context when any of the following are true:
@@ -300,8 +307,8 @@ So, to add a new z-index:
 
 1. You'll want to make sure the element actually creates a stacking context
 2. Look up its parent stacking context
-3. Put the new rule in the `$z-layers` tree, using the selector of the parent 
-   stacking context as the initial key and the element's full CSS selector as 
+3. Put the new rule in the `$z-layers` tree, using the selector of the parent
+   stacking context as the initial key and the element's full CSS selector as
    the final key.
 
 You can use this handy Chrome
@@ -313,31 +320,32 @@ As a simple example, imagine that we have a page with the following markup:
 ```html
 <div class="masterbar"></div>
 <div class="modal">
-  <div class="modal__icon"></div>
-  <div class="modal__content"></div>
-  <div class="modal__header"></div>
+	<div class="modal__icon"></div>
+	<div class="modal__content"></div>
+	<div class="modal__header"></div>
 </div>
 ```
 
 With CSS of:
+
 ```css
 div {
-    position: relative;
+	position: relative;
 }
 .masterbar {
-    z-index: 2;
+	z-index: 2;
 }
 .modal {
-    z-index: 1;
+	z-index: 1;
 }
 .modal__icon {
-    z-index: 100;
+	z-index: 100;
 }
 .modal__content {
-   z-index: 300;
+	z-index: 300;
 }
 .modal__header {
-   z-index: 200;
+	z-index: 200;
 }
 ```
 
@@ -361,30 +369,31 @@ values sorted from lowest to highest within a stacking context:
 
 ```scss
 $z-layers: (
-    'root': (
-        '.modal': 1,
-        '.masterbar': 2
-    ),
-    '.modal': (
-        '.modal__icon': 100,
-        '.modal__header': 200,
-        '.modal__content': 300
-    )
+	'root': (
+		'.modal': 1,
+		'.masterbar': 2,
+	),
+	'.modal': (
+		'.modal__icon': 100,
+		'.modal__header': 200,
+		'.modal__content': 300,
+	),
 );
 ```
 
 ```scss
 .modal__icon {
-    z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+	z-index: z-index( '.modal', '.modal__icon' ); // returns 100
 }
 ```
 
 While we can support a map with more than 2 layers, there isn't much benefit to doing
-this. Stacking of children are completely resolved within their parent context. So in 
+this. Stacking of children are completely resolved within their parent context. So in
 our example the stacking of `.modal__icon`, `.modal__header`, and `.modal__content` are
-completely resolved within `.modal`. Once this is done the entire `.modal` element is 
+completely resolved within `.modal`. Once this is done the entire `.modal` element is
 passed for stacking in the root element, with it's sibling `.masterbar`.
 
 For further reading on stacking contexts see:
+
 - [https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
 - [Appendix E. Elaborate description of Stacking Contexts](http://www.w3.org/TR/CSS2/zindex.html)

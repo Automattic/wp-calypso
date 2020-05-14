@@ -1,5 +1,4 @@
-Currencies
-==============
+# Currencies
 
 This module is used to fetch and store the available currencies.
 

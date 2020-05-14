@@ -1,5 +1,4 @@
-Infinite Scroll
-===============
+# Infinite Scroll
 
 An infinite scroll component to power list views.
 
@@ -8,6 +7,7 @@ There is an alternative implementation called [InfiniteList](../infinite-list), 
 ### How to use
 
 First, require the component with
+
 ```js
 import InfiniteScroll from 'components/infinite-scroll';
 ```
@@ -24,7 +24,7 @@ The method accepts an object as an argument, with one key `triggeredByScroll`. I
 
 ```jsx
 class List extends Component {
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		if ( this.state.loading || this.state.lastPage ) {
 			return;
 		}

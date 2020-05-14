@@ -1,5 +1,4 @@
-DocumentHead
-====
+# DocumentHead
 
 `<DocumentHead />` is a React component used in assigning a title, unread count, link, or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
 
@@ -14,7 +13,7 @@ import DocumentHead from 'components/data/document-head';
 export default function HomeSection() {
 	let count = 123;
 	let metas = [ { rel: 'some-rel', content: 'some-content' } ];
-	let links = [ { href: 'https://automattic.com', 'rel': 'some-rel' } ];
+	let links = [ { href: 'https://automattic.com', rel: 'some-rel' } ];
 
 	return (
 		<main>

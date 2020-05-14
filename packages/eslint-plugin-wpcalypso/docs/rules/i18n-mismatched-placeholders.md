@@ -10,7 +10,7 @@ The following patterns are considered warnings:
 var count = 21;
 translate( 'One thing', '%d things', {
 	count: count,
-	args: [ count ]
+	args: [ count ],
 } );
 ```
 
@@ -20,6 +20,6 @@ The following patterns are not warnings:
 var count = 21;
 translate( '%d thing', '%d things', {
 	count: count,
-	args: [ count ]
+	args: [ count ],
 } );
 ```

@@ -1,5 +1,4 @@
-Query Posts
-===========
+# Query Posts
 
 Query Posts is a React component used in managing the fetching of posts queries.
 

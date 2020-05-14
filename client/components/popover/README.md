@@ -1,5 +1,4 @@
-Popover
-=======
+# Popover
 
 `Popover` is a react component that can be used to show any content in a
 popover.
@@ -103,15 +102,12 @@ When using a popover within a modal applying the class `is-dialog-visible` to th
 <Popover className="is-dialog-visible" />
 ```
 
-PopoverMenu
-===========
+# PopoverMenu
 
 `PopoverMenu` is a component based on `Popover` used to show a menu of actions
 in a popover. It is fully keyboard accessible.
 
-
-PopoverMenuItem
-===============
+# PopoverMenuItem
 
 `PopoverMenuItem` is a component used to represent a single item in a
 `PopoverMenu`.
@@ -143,7 +139,6 @@ is hovered over.
 #### `children { node } - optional`
 
 The children to render inside of the `PopoverMenuItem`.
-
 
 ### `Popover` Usage
 

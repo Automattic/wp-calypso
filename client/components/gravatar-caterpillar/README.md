@@ -1,5 +1,4 @@
-Gravatar Caterpillar
-====================
+# Gravatar Caterpillar
 
 This component is used to display a row of [gravatars](https://gravatar.com/) for a number of users.
 
@@ -19,6 +18,6 @@ render() {
 
 #### Props
 
-* `users`: an array of users. Required keys: avatar_url, email
-* `maxGravatarsToDisplay`: maximum number of gravatars to display. Defaults to 10.
-* `onClick`: click handler
+- `users`: an array of users. Required keys: avatar_url, email
+- `maxGravatarsToDisplay`: maximum number of gravatars to display. Defaults to 10.
+- `onClick`: click handler

@@ -1,5 +1,4 @@
-Network connection
-=======
+# Network connection
 
 `Network connection` provides simple UI for the cases when the user lost connection to the internet or to our servers.
 
@@ -22,7 +21,6 @@ Network connection keeps current network connection status. To check it use:
 ```js
 NetworkConnectionApp.isConnected();
 ```
-
 
 #### Sending events
 

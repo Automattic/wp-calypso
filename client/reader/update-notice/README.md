@@ -9,10 +9,12 @@ import UpdateNotice from 'reader/update-notice';
 
 class MyComponent extends React.Component {
 	constructor() {
-		this.handleNoticeClick = function( ) { /* do something */ };
+		this.handleNoticeClick = function () {
+			/* do something */
+		};
 	}
 	render() {
-		return ( <UpdateNotice count={ 5 } onClick={ this.handleNoticeClick } /> );
+		return <UpdateNotice count={ 5 } onClick={ this.handleNoticeClick } />;
 	}
 }
 ```

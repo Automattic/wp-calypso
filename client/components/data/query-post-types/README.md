@@ -1,5 +1,4 @@
-Query Post Types
-================
+# Query Post Types
 
 `<QueryPostTypes />` is a React component used in managing network requests for post types.
 

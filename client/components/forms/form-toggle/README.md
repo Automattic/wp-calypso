@@ -1,5 +1,4 @@
-Toggle
-=======
+# Toggle
 
 This component is used to implement toggle switches.
 
@@ -19,7 +18,7 @@ export default function MyComponent() {
 				onKeyDown={ this.props.onKeyDown }
 				className={ this.props.className }
 				wrapperClassName={ this.props.wrapperClassName }
-				aria-label={ this.props['aria-label'] }
+				aria-label={ this.props[ 'aria-label' ] }
 				id="you-rock-uniquely"
 			>
 				My label or label-like children
@@ -31,12 +30,12 @@ export default function MyComponent() {
 
 #### Props
 
-* `checked`: (bool) the current status of the toggle.
-* `toggling`: (bool) whether the toggle is in the middle of being performed.
-* `disabled`: (bool) whether the toggle should be in the disabled state.
-* `onChange`: (callback) what should be executed once the user clicks the toggle.
-* `onKeyDown`: (callback) what should be executed once the user presses a key while the toggle is selected.
-* `className`: (string) a class name that should be added to the toggle `input` control.
-* `wrapperClassName`: (string) a class name that should be added to the `div` wrapping the component.
-* `aria-label`: (string) a label that should be added to the control for accessibility purposes.
-* `id`: (string) the id of the checkbox and the for attribute of the label, should be unique.
+- `checked`: (bool) the current status of the toggle.
+- `toggling`: (bool) whether the toggle is in the middle of being performed.
+- `disabled`: (bool) whether the toggle should be in the disabled state.
+- `onChange`: (callback) what should be executed once the user clicks the toggle.
+- `onKeyDown`: (callback) what should be executed once the user presses a key while the toggle is selected.
+- `className`: (string) a class name that should be added to the toggle `input` control.
+- `wrapperClassName`: (string) a class name that should be added to the `div` wrapping the component.
+- `aria-label`: (string) a label that should be added to the control for accessibility purposes.
+- `id`: (string) the id of the checkbox and the for attribute of the label, should be unique.

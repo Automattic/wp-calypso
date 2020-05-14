@@ -13,7 +13,7 @@ export default function listGSuiteUsers( { gsuiteUsers } ) {
 	return (
 		<div>
 			<QueryGSuiteUsers siteId={ siteId } />
-			{ gsuiteUsers.map( gsuiteUser => (
+			{ gsuiteUsers.map( ( gsuiteUser ) => (
 				<li>{ `${ gsuiteUser.mailbox }@${ gsuiteUser.domain }` }</li>
 			) ) }
 		</div>

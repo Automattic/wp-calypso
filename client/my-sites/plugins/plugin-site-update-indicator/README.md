@@ -1,5 +1,4 @@
-Plugin Site Update Indicator
-============================
+# Plugin Site Update Indicator
 
 This component is used to display a update indicator which can be turned into a update button
 
@@ -22,7 +21,7 @@ render() {
 
 #### Props
 
-* `site`: a site object with the site which would be associated to the component.
-* `notices`: a notices object.
-* `plugin`: a plugin object.
-* `expanded`: (default: false) a boolean indicating if the component should expand into an updating button.
+- `site`: a site object with the site which would be associated to the component.
+- `notices`: a notices object.
+- `plugin`: a plugin object.
+- `expanded`: (default: false) a boolean indicating if the component should expand into an updating button.

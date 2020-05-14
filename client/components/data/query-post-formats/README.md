@@ -1,5 +1,4 @@
-Query Post Formats
-================
+# Query Post Formats
 
 `<QueryPostFormats />` is a React component used in managing network requests for post formats.
 

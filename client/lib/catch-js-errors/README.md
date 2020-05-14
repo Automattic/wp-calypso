@@ -1,5 +1,4 @@
-Catch JS Errors
-=========
+# Catch JS Errors
 
 This module is responsible for catching JS errors in Calypso and sending them to the API for tracking/aggregation.
 
@@ -33,4 +32,3 @@ Generally, whenever you are wondering "what kind of users hit this place?" or yo
 
 Logger is initialized only on non-SSR environment and after initializing redux store. So you want be able to log any redux discrepencies.
 This is actually good, since you dont want to log any action that can flood the endpoint.
-

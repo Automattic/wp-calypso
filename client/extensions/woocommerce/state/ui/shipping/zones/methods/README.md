@@ -1,5 +1,4 @@
-Shipping Zone Methods
-===============
+# Shipping Zone Methods
 
 This module is used to manage the Shipping Methods configured inside of a Shipping Zone.
 
@@ -10,6 +9,7 @@ way to add/edit/remove shipping methods from a zone outside of the "Edit Zone" m
 
 In this part of the state only will be stored the "differences" between what's on the server and what the user has configured.
 So, for example, the initial state would look like this:
+
 ```js
 {
 	methods: {
@@ -21,6 +21,7 @@ So, for example, the initial state would look like this:
 ```
 
 After the user has made some changes, the state could look like this:
+
 ```js
 {
 	zones: {

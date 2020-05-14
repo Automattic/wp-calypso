@@ -1,5 +1,4 @@
-TinyMCE Media Plugin
-====================
+# TinyMCE Media Plugin
 
 The media plugin encapsulates all behavior related to the Calypso media library experience. This includes:
 

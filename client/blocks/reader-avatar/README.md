@@ -7,7 +7,7 @@ If both a feed/site icon and author Gravatar are available, they will be overlai
 ## Example
 
 ```html
-<ReaderAvatar author={ author } siteIcon={ siteIcon } isCompact={ true } />
+<ReaderAvatar author="{" author } siteIcon="{" siteIcon } isCompact="{" true } />
 ```
 
 ## Props
@@ -43,4 +43,3 @@ Show a small version of the avatar. Used in post cards and streams.
 ### `onClick`
 
 Click handler to be executed when avatar is clicked.
-

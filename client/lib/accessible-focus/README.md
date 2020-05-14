@@ -1,5 +1,4 @@
-Accessible-focus
-================
+# Accessible-focus
 
 This module is run at client startup and listens for keyboard events to determine if the user is navigating the page by keyboard. Clicking the tab, arrows, or space keys is considered keyboard navigation.
 

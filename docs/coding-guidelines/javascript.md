@@ -1,5 +1,4 @@
-JavaScript Coding Guidelines
-===========================
+# JavaScript Coding Guidelines
 
 ## Spacing
 
@@ -32,19 +31,20 @@ Object declarations can be made on a single line if they are short (remember the
 
 ```js
 // Bad
-const labels = { facebook: 'Facebook',
-	twitter: 'Twitter', 'google-plus': 'Google Plus' };
+const labels = { facebook: 'Facebook', twitter: 'Twitter', 'google-plus': 'Google Plus' };
 ```
+
 ```js
 // Acceptable for small objects
 const labels = { 'google-plus': 'Google Plus' };
 ```
+
 ```js
 // Good
 const labels = {
 	facebook: 'Facebook',
 	twitter: 'Twitter',
-	'google-plus': 'Google Plus'
+	'google-plus': 'Google Plus',
 };
 ```
 
@@ -67,7 +67,7 @@ foo( node, 'property', 2 );
 // around object literals and callbacks.
 foo( {
 	a: 'alpha',
-	b: 'beta'
+	b: 'beta',
 } );
 
 foo( data, () => {
@@ -83,7 +83,7 @@ if ( condition ) {
 } else if ( otherCondition ) {
 	otherThing( {
 		key: value,
-		otherKey: otherValue
+		otherKey: otherValue,
 	} );
 } else {
 	somethingElse( true );
@@ -121,7 +121,7 @@ Try to return early from a function to avoid functions with deep indentation aki
 function isFreshData( data ) {
 	let isFresh;
 	if ( data ) {
-		if ( data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+		if ( data.timestamp > Date.now() - 20 * 60 * 1000 ) {
 			isFresh = true;
 		} else {
 			isFresh = false;
@@ -133,10 +133,11 @@ function isFreshData( data ) {
 	return isFresh;
 }
 ```
+
 ```js
 // Good
 function isFreshData( data ) {
-	if ( data && data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+	if ( data && data.timestamp > Date.now() - 20 * 60 * 1000 ) {
 		return true;
 	}
 
@@ -186,31 +187,28 @@ When a statement is too long to fit on one line, line breaks must occur after an
 
 ```js
 // Bad
-const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
-	+ ' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
+
 ```js
 // Good
-const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
-	' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
-if ( firstCondition() && secondCondition() &&
-		thirdCondition() ) {
+if ( firstCondition() && secondCondition() && thirdCondition() ) {
 	doStuff();
 }
 ```
-
 
 ## Assignments and Globals
 
 ### Variable Declarations
 
-When possible, variables should be declared using a `const` declaration. Use 
-`let` only when you anticipate that the variable value will be reassigned 
+When possible, variables should be declared using a `const` declaration. Use
+`let` only when you anticipate that the variable value will be reassigned
 during runtime. `var` should not be used in any new code.
 
 Note that `const` does not protect against mutations to an object, so do not
@@ -246,6 +244,7 @@ Variable and function names should be full words, using camel case with a lowerc
 let userIDToDelete;
 let siteURL;
 ```
+
 ```js
 // Good
 let userIdToDelete;
@@ -256,7 +255,7 @@ Names should be descriptive, but not excessively so. Exceptions are allowed for 
 
 Constructors intended for use with new should have a capital first letter (UpperCamelCase).
 
-Variables intended to be used as a [constant](https://en.wikipedia.org/wiki/Constant_(computer_programming)) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
+Variables intended to be used as a [constant](<https://en.wikipedia.org/wiki/Constant_(computer_programming)>) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
 
 ```js
 const DUMMY_VALUE = 10;
@@ -289,10 +288,7 @@ When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
  * @param {string} title - The title of the book.
  * @param {string} author - The author of the book.
  */
-function Book( title, author ) {
-
-}
-
+function Book( title, author ) {}
 ```
 
 Multi-line comments that are not a jsdoc comment should use `//`:
@@ -344,7 +340,7 @@ Though these are the recommended type checks, you generally don't have to know t
 ## Existence and Shape Checks
 
 Prefer using the [power of "truthy"](http://www.ecma-international.org/ecma-262/6.0/#sec-toboolean)
-in JavaScript boolean expressions to validate the existence and shape of an 
+in JavaScript boolean expressions to validate the existence and shape of an
 object to using `typeof`.
 
 The following are all false in boolean expressions:
@@ -361,13 +357,14 @@ But be careful, because these are all true:
 - `{}` the empty object
 - `-1` the number
 
-
 To test the existence of an object (including arrays):
+
 ```js
 if ( object ) { ... }
 ```
 
 To test if a property exists on an object, regardless of value, including `undefined` or other falsey values:
+
 ```js
 // Good:
 if ( 'desired' in object ) { ... }
@@ -377,11 +374,13 @@ if ( has( object, 'desired' ) ) { ... }
 ```
 
 To test if a property is present and has a truthy value:
+
 ```js
 if ( object.desired ) { ... }
 ```
 
 To test if an object exists and has a property:
+
 ```js
 // Good:
 if ( object && 'desired' in object ) { ... }
@@ -410,11 +409,10 @@ has( {}, 'valueOf' ); // false
 
 [`has`](https://lodash.com/docs#has) and [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) are also recommended for testing the presence of an object key using variable input:
 
-
 ```js
 const key = 'someParam';
 const object = {
-	someParam: 'someValue'
+	someParam: 'someValue',
 };
 
 object.hasOwnProperty( key ); // true
@@ -443,9 +441,9 @@ const component = <div className="post"></div>;
 
 ```js
 // Before
-const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
-	' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
+
 ```js
 // After
 const sumLabel = `The sum of ${ a } and ${ b } plus ${ c } is ${ a + b + c }`;
@@ -462,7 +460,6 @@ When using switch statements:
 
 ```js
 switch ( event.keyCode ) {
-
 	// ENTER and SPACE both trigger x()
 	case constants.keyCode.ENTER:
 	case constants.keyCode.SPACE:
@@ -488,6 +485,7 @@ You can prefix a variable with verb only for boolean values when it makes code e
 // Bad
 const play = false;
 ```
+
 ```js
 // Good
 const name = 'John';
@@ -505,6 +503,7 @@ function name() {
 	return 'John';
 }
 ```
+
 ```js
 // Good
 function getName() {
@@ -565,8 +564,8 @@ Instead, use Lodash's [`get`](https://lodash.com/docs#get) function. It will saf
 ```js
 const object = {
 	nestedObject: {
-		property: 'value'
-	}
+		property: 'value',
+	},
 };
 
 // Bad
@@ -578,7 +577,7 @@ nestedProp = get( object, 'nestedObject.property' );
 anotherNestedProp = get( object, 'nestedObject.anotherProperty' ); // safely returns undefined
 ```
 
-## “Yoda” Conditions #
+## “Yoda” Conditions
 
 Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
 
@@ -602,14 +601,12 @@ Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419
 
 Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
 
-__Examples__
+**Examples**
 
 Creating an array of React elements from an array of post objects:
 
 ```js
-posts.map( ( post ) => (
-	<Post post={ post } key={ post.global_ID } />
-) );
+posts.map( ( post ) => <Post post={ post } key={ post.global_ID } /> );
 ```
 
 Check whether every post in an array of post objects is published:
@@ -627,7 +624,7 @@ posts.reduce( ( memo, post ) => {
 }, {} );
 ```
 
-__Rationale: contracts in code__
+**Rationale: contracts in code**
 
 It could be argued that these functional helpers are not so different from `for` and `while`; after all, they are implemented with the same base loops and can't _do_ anything that `for` and `while` can't.
 
@@ -654,7 +651,7 @@ These important statements are part of the abstraction. As for the side effects:
   - Unlike `React.createClass`, methods of components extending `React.Component` are not automatically bound to the instance. Instead, you will need to bind the functions in your component's constructor or use [class instance property initializers](https://github.com/tc39/proposal-class-public-fields)
 - Use [PropTypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) to validate prop types and help set usage expectations for other developers
 - Use [JSX](https://facebook.github.io/jsx/) for creating React elements, like those returned from a component's `render` function
-- Methods that are bound to event handlers should have descriptive names. 
+- Methods that are bound to event handlers should have descriptive names.
   - Avoid naming methods after event handlers like `onClick`, `onSubmit`, etc.
   - You can use fat arrow functions if it makes handling the event cleaner.
 - Avoid prefixing method names with `_`.
@@ -668,13 +665,13 @@ export default class Link extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		onNavigate: PropTypes.func,
-		children: PropTypes.node
+		children: PropTypes.node,
 	};
 
 	navigate = ( event ) => {
 		event.preventDefault();
 		this.props.onNavigate();
-	}
+	};
 
 	render() {
 		const { href, children } = this.props;
@@ -698,7 +695,7 @@ Resources:
 2. [Babel](https://babeljs.io/)
 3. [Overview of ECMAScript 6 features](https://github.com/lukehoban/es6features)
 4. [ECMAScript 6 new features overview & comparison](http://es6-features.org/)
-6. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb
+5. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb
 
 ## ESLint
 
@@ -712,7 +709,7 @@ In cases where ESLint incorrectly identifies code as not following our standards
 
 If you would like to have your changes automatically run through ESLint - there is a git pre-commit hook in `bin/pre-commit-hook.js` that will perform the task. It will be run everytime you do a `git commit`.
 
-If ESLint encounters any issues inside any .jsx or .js files you have updated, an error will be displayed, and the commit will not proceed.  Here is an example of an attempted commit with the hook installed:
+If ESLint encounters any issues inside any .jsx or .js files you have updated, an error will be displayed, and the commit will not proceed. Here is an example of an attempted commit with the hook installed:
 
 ![pre-commit](https://cldup.com/hec5WcVc_L-3000x3000.png)
 
@@ -723,7 +720,6 @@ To lint the entire project, from the root of your working directory run:
 ```bash
 yarn run lint:js
 ```
-
 
 #### Sublime Text
 

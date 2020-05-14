@@ -1,5 +1,4 @@
-Site Selector Modal
-===================
+# Site Selector Modal
 
 Site selector modal component: displays a modal for selecting one of a user's sites.
 

@@ -1,5 +1,4 @@
-HappinessEngineersTray
-==================
+# HappinessEngineersTray
 
 Renders a row of Happiness Engineers' Gravatars.
 

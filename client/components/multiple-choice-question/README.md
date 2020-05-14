@@ -91,7 +91,6 @@ The question to display at the top of the multiple choice
 
 Handler for when the selected answer of the multiple choice is changeed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
 
-
 ### `selectedAnswerId`
 
 - **Type:** `String`

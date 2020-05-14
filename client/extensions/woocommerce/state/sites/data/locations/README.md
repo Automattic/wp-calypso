@@ -1,5 +1,4 @@
-Shipping Zones
-==============
+# Shipping Zones
 
 This module is used to fetch and store the available locations (continents, countries and states) in the world.
 Normally, this could be an static tree, but plugins can modify this information, so it must be fetched in a site-by-site basis.

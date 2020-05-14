@@ -1,5 +1,4 @@
-StripeConnectAccount Settings
-=============================
+# StripeConnectAccount Settings
 
 This module works with WooCommerce Services to create Stripe Connect accounts.
 

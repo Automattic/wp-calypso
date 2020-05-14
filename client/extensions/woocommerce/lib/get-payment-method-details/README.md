@@ -1,5 +1,4 @@
-Get payment method details
-==========
+# Get payment method details
 
 WooCommerce core does not have a concept of:
 

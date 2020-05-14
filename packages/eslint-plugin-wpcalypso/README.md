@@ -16,9 +16,7 @@ Add `wpcalypso` to the plugins section of your `.eslintrc` configuration file. Y
 
 ```json
 {
-    "plugins": [
-        "wpcalypso"
-    ]
+	"plugins": [ "wpcalypso" ]
 }
 ```
 
@@ -26,9 +24,9 @@ Then configure the rules you want to use under the rules section.
 
 ```json
 {
-    "rules": {
-        "wpcalypso/rule-name": 2
-    }
+	"rules": {
+		"wpcalypso/rule-name": 2
+	}
 }
 ```
 
@@ -44,7 +42,7 @@ Then configure the rules you want to use under the rules section.
 - [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md): Ensure JSX className adheres to CSS namespace guidelines
 - [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md): Enforce recommended Gridicon size attributes
 - [`import-docblock`](docs/rules/import-docblock.md): Enforce external, internal dependencies docblocks
-- [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md): Disallow using the wildcard '*' in `postMessage`
+- [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md): Disallow using the wildcard '\*' in `postMessage`
 - [`redux-no-bound-selectors`](docs/rules/redux-no-bound-selectors.md): Disallow creation of selectors bound to Redux state
 
 ## License

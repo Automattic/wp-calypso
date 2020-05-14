@@ -5,7 +5,7 @@ Calypso’s navigation architecture model is based on two key pieces:
 1. Master bar
 2. Left-to-Right
 
-![Calypso IA Model](/calypso/images/devdocs/calypso-ai-model.png "Calypso IA Model")
+![Calypso IA Model](/calypso/images/devdocs/calypso-ai-model.png 'Calypso IA Model')
 
 The [Masterbar](https://intenseminimalism.com/2013/the-master-bar-pattern-design-and-usage/) is the top-level piece of all our UIs across all the devices. It’s designed to work at desktop size, mobile size, web, iOS and Android alike.
 
@@ -20,14 +20,15 @@ We gain also the flexibility to focus on a specific column / view depending on w
 The animations are meant to support this mental model, although this is still a work in progress.
 
 ## Effective to Design Multi-Screen
+
 The model above is born to convert well to multiple devices and screens, so the main benefit of it is that following it allows a more seamless translation between the different screens and platforms, while already mapping to the platform standards.
 
 So this is the current Calypso information architecture, mapped to the masterbar:
 
-![Calypso IA](/calypso/images/devdocs/calypso-ai.png "Calypso IA")
+![Calypso IA](/calypso/images/devdocs/calypso-ai.png 'Calypso IA')
 
 And this is how it translates multi platform:
 
-![Calypso Nav v1](/calypso/images/devdocs/calypso-mobile-fit.png "Calypso Nav v1")
+![Calypso Nav v1](/calypso/images/devdocs/calypso-mobile-fit.png 'Calypso Nav v1')
 
 It’s exactly the same structure, declined on different platform standards. It’s the ideal (and hard) balance between platform standards and our WordPress.com brand.

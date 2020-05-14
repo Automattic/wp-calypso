@@ -1,5 +1,4 @@
-Data Persistence
-================
+# Data Persistence
 
 Persisting our Redux state to browser storage (IndexedDB) allows us to avoid completely rebuilding the
 Redux tree from scratch on each page load and to display cached data in the UI (instead of placeholders)
@@ -27,22 +26,24 @@ but are instead used with the reducer directly to prepare state to be serialized
 deserializing persisted state to an acceptable initialState for the Redux store.
 
 ```javascript
-reducer( reduxStore.getState(), { type: 'SERIALIZE' } )
+reducer( reduxStore.getState(), { type: 'SERIALIZE' } );
 ```
+
 and
 
 ```javascript
-reducer( browserState, { type: 'DESERIALIZE' } )
+reducer( browserState, { type: 'DESERIALIZE' } );
 ```
 
 Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action
 type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
 similar to:
+
 ```javascript
 export function items( state = defaultState, action ) {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
-			return // ...
+			return; // ...
 		case SERIALIZE:
 			return state.toJS();
 		default:
@@ -57,11 +58,12 @@ Be sure to set `hasCustomPersistence` to true, in order to indicate that you hav
 In turn, when the store instance is initialized with the browser storage copy of state, you can convert
 your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
 instead of returning a plain object, we create an Immutable.js instance:
+
 ```javascript
 export function items( state = defaultState, action ) {
 	switch ( action.type ) {
 		case THEMES_RECEIVE:
-			return // ...
+			return; // ...
 		case DESERIALIZE:
 			return fromJS( state );
 		default:
@@ -84,7 +86,7 @@ As time passes, the shape of our data will change very drastically in our Redux 
 persist state, we run into the issue of our persisted data shape no longer matching what the Redux store expects.
 
 As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running master, first
-allow  state to be persisted to the browser and then switch to another branch that contains minor refactors for an
+allow state to be persisted to the browser and then switch to another branch that contains minor refactors for an
 existing sub-tree. What happens when a selector reaches for a data property that doesn't exist or has been renamed?
 Errors!
 
@@ -103,6 +105,7 @@ specifically: what the general shape looks like, which properties must be requir
 properties they might contain. Ideally, we should try to balance readability and strictness.
 
 A simple example schema.js:
+
 ```javascript
 export const itemsSchema = {
 	type: 'object',
@@ -125,11 +128,12 @@ match our described data shape, we should throw it out and rebuild that section 
 
 You can use `withSchemaValidation` to wrap a plain reducer, passing the schema as the first param, and all
 that will be handled for you.
+
 ```javascript
 export const items = withSchemaValidation( itemsSchema, ( state = defaultState, action ) => {
 	switch ( action.type ) {
 		case THEMES_RECEIVE:
-			return // ...
+			return; // ...
 		default:
 			return state;
 	}
@@ -181,30 +185,33 @@ of the default implementation of [combineReducers](http://redux.js.org/docs/api/
 The custom `combineReducers` handles persistence for the reducers it's combining.
 
 To opt-out of persistence we simply combine reducers without any attached schema.
+
 ```javascript
 return combineReducers( {
-    age,
-    height,
+	age,
+	height,
 } );
 ```
 
 To persist, we add the schema by wrapping the reducer with the `withSchemaValidation` util:
+
 ```javascript
 return combineReducers( {
-    age: withSchemaValidation( ageSchema, age ),
-    height,
+	age: withSchemaValidation( ageSchema, age ),
+	height,
 } );
 ```
 
 For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already,
 on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
 incorrectly from the default handling provided by `withSchemaValidation`.
+
 ```javascript
 date.hasCustomPersistence = true;
 return combineReducers( {
-    age,
-    height,
-    date,
+	age,
+	height,
+	date,
 } );
 ```
 

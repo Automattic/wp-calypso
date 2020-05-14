@@ -1,5 +1,4 @@
-Customizer
-==========
+# Customizer
 
 This component enables loading, in an iframe, the Legacy Customizer
 

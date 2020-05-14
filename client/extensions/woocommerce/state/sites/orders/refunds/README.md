@@ -1,5 +1,4 @@
-Order Refunds
-=============
+# Order Refunds
 
 This module is used to manage refunds for orders on a site.
 

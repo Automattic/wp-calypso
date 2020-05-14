@@ -52,7 +52,6 @@ step( 'Can select domain only from the domain first choice page', function() {
 
 or this to directly visit a page:
 
-
 ```
 step( 'Can select domain only from the domain first choice page', function() {
 	const domainFirstChoicePage = await DomainFirstPage.Visit( driver );
@@ -112,7 +111,6 @@ Use destructuring for default values as this makes calling the function explicit
 
 Avoid
 
-
 ```
 constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {
 ```
@@ -131,7 +129,6 @@ new StartPage( driver, { visit: true, domainFirst: true } ).displayed();
 
 instead of:
 
-
 ```
 new StartPage( driver, true, 'en', '', true, '' ).displayed();
 ```
@@ -146,8 +143,8 @@ This is a general structure of an e2e test scenario:
 describe(
 	'An e2e test scenario @parallel',
 	function() {
-		
-		
+
+
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
@@ -159,20 +156,20 @@ describe(
 		step( 'Second step', async function() {
 			// Do something next - this will only execute if the first step doesn't fail
 		} );
-		
+
 		after( async function() {
 			// Do some cleanup
-		} );	
+		} );
 	}
 );
 ```
 
 **Note:** The `describe` blocks shouldn't be `async`
 
-
 ## Catching errors in a step block
 
 Sometimes we don't want a `step` block to fail on error - say if we're cleaning up after doing an action and it doesn't matter what happens. As we use async methods using a standard try/catch won't work as the promise itself will still fail. Instead, return an async method that catches the error result:
+
 ```
 step( 'Can delete our newly created account', async function() {
 	return ( async () => {
@@ -191,6 +188,7 @@ step( 'Can delete our newly created account', async function() {
 When waiting for elements we should always use a quantity of the config value defined as `explicitWaitMS` instead of hardcoding values. This allows us to change it readily, and also adjust this for different environments, for example the live branch environment is not as fast as production so it waits twice as long.
 
 Instead of:
+
 ```
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 	constructor( driver ) {

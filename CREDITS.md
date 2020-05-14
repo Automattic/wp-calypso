@@ -1,10 +1,11 @@
-Credits
-=======
+# Credits
 
 This project makes use of Open Source components. Below is a list of these components included in this project's source code, and their license information. This project also uses js packages released by NPM, see [package.json](/package.json). Source code and license information for each of these packages is available at https://npmjs.org. Many thanks to all of the original authors!
 
 ### https://github.com/thoughtbot/bourbon
+
 #### assets/stylesheets/shared/\_functions.scss
+
 ```text
 The MIT License (MIT)
 
@@ -16,7 +17,9 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
+
 ### https://github.com/facebook/react
+
 ```text
 BSD License
 
@@ -52,15 +55,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 ```
 
 ### https://github.com/WordPress/WordPress
+
 #### client/components/tinymce/plugins/wpcom
+
 #### client/components/tinymce/plugins/wpcom-autoresize
+
 #### client/components/tinymce/plugins/wpcom-view
+
 #### client/components/tinymce/plugins/wpeditimage
+
 #### client/components/tinymce/plugins/wplink
+
 #### client/components/tinymce/plugins/wptextpattern
+
 #### client/lib/media/constants.js
+
 #### client/post-editor/media-modal/markup.js
+
 #### client/lib/formatting/index.js
+
 ```text
 WordPress - Web publishing software
 
@@ -956,7 +969,9 @@ That's all there is to it!
 ```
 
 ### https://github.com/slevithan/xregexp
+
 #### client/state/embeds/utils.js
+
 ```text
 The MIT License
 
@@ -982,7 +997,9 @@ THE SOFTWARE.
 ```
 
 ### https://github.com/kvz/phpjs/
+
 #### client/lib/version-compare
+
 ```text
 Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io)
 and Contributors (http://phpjs.org/authors)
@@ -1007,7 +1024,9 @@ SOFTWARE.
 ```
 
 ### https://github.com/Modernizr/Modernizr
+
 #### client/lib/touch-detect/index.js
+
 ```text
 
 Modernizr is available under the MIT license:
@@ -1032,7 +1051,9 @@ THE SOFTWARE.
 ```
 
 ### https://github.com/strongloop/express
+
 #### server/devdocs/bin/generate-devdocs-index
+
 ```text
 
 (The MIT License)
@@ -1062,7 +1083,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 ### https://github.com/SalesforceEng/secure-filters
+
 #### server/sanitize/index.js
+
 ```text
 
 Copyright (c) 2013, GoInstant Inc., a salesforce.com company
@@ -1080,7 +1103,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ```
 
 ### https://github.com/reactjs/redux/
+
 #### client/state
+
 ```text
 The MIT License (MIT)
 
@@ -1094,7 +1119,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ```
 
 ### https://github.com/gaearon/redux-thunk
+
 #### client/state
+
 ```text
 The MIT License (MIT)
 
@@ -1108,6 +1135,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ```
 
 ### https://github.com/reactjs/react-redux
+
 ```text
 The MIT License (MIT)
 
@@ -1121,6 +1149,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ```
 
 ### https://github.com/sindresorhus/srcset
+
 ```text
 The MIT License (MIT)
 
@@ -1146,6 +1175,7 @@ THE SOFTWARE.
 ```
 
 ### https://github.com/kentor/react-click-outside
+
 ```
 The MIT License (MIT)
 
@@ -1171,6 +1201,7 @@ SOFTWARE.
 ```
 
 ### https://github.com/guille/ms.js
+
 ```text
 (The MIT License)
 
@@ -1195,6 +1226,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 ### https://github.com/avoidwork/filesize.js
+
 ```text
 Copyright (c) 2015, Jason Mulligan
 All rights reserved.
@@ -1226,6 +1258,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
 ### https://github.com/ogt/valid-url
+
 ```text
 Copyright (c) 2013 Odysseas Tsatalos and oDesk Corporation
 
@@ -1252,7 +1285,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <span id="facebook/node-haste"></span>
 
 ### https://github.com/facebook/node-haste
+
 #### server/devdocs/bin/generate-components-usage-counts
+
 ```text
 BSD License
 
@@ -1287,6 +1322,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
 ### https://github.com/mafintosh/is-my-json-valid
+
 ```
 The MIT License (MIT)
 
@@ -1312,7 +1348,9 @@ THE SOFTWARE.
 ```
 
 ### https://github.com/d3/d3
+
 #### client/extensions/woocommerce/components/sparkline/index.js
+
 ```text
 Copyright 2010-2017 Mike Bostock
 All rights reserved.
@@ -1346,6 +1384,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <span id="prism"></span>
 
 ### https://github.com/PrismJS/prism/
+
 ```
 MIT LICENSE
 
@@ -1371,7 +1410,9 @@ THE SOFTWARE.
 ```
 
 ### https://classic.yarnpkg.com/en/
+
 #### .yarn/releases
+
 ```text
 BSD 2-Clause License
 

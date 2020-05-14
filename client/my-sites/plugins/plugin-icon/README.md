@@ -1,5 +1,4 @@
-Plugin Icon
-===========
+# Plugin Icon
 
 This component is used to display the icon for a plugin. It takes a plugin image as a prop.
 
@@ -19,6 +18,6 @@ render() {
 
 #### Props
 
-* `image` (`string`) - an image source.
-* `isPlaceholder` (`bool`) - `true` to display as a placeholder.
-* `className` (`string`) - A string that adds additional class names to this component.
+- `image` (`string`) - an image source.
+- `isPlaceholder` (`bool`) - `true` to display as a placeholder.
+- `className` (`string`) - A string that adds additional class names to this component.

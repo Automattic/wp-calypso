@@ -1,5 +1,4 @@
-Site-Users-Fetcher
-==================
+# Site-Users-Fetcher
 
 This is a fetcher component that will retrieve site users from the UsersStore. It takes a single required prop of siteId and fetches all users for that site and feeds them into the child component (as well as passing along any props that were set on the fetcher).
 
@@ -16,5 +15,6 @@ This module will pass in the following props to its child:
 - `usersCurrentOffset` (integer) offset used for latest query
 
 ## Props
+
 - `fetchOptions`: (object) The fetch paramers that will be passed into `UserActions.fetchUsers()` to fetch users and `UserActions.getUsers()` to match up with the appropriate user-list. Must contain a `siteId` attribute, but all other query parameters are optional.
 - `exclude`: (Array|Function) An array of user IDs that should be excluded or a callback function that returns a boolean.

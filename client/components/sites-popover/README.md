@@ -1,5 +1,4 @@
-Sites Popover
-=============
+# Sites Popover
 
 This component wraps the [Site Selector](../site-selector) component in a [Popover](../popover), allowing a user to pick one of his sites from a list that pops up like a context menu e.g. when clicking on a button.
 

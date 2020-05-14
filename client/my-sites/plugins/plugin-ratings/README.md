@@ -1,5 +1,4 @@
-Plugin Ratings
-=============
+# Plugin Ratings
 
 This component is used to display the detail of how the ratings of a plugin are divided.
 
@@ -18,5 +17,5 @@ render() {
 
 #### Props
 
-* `plugin`: A plugin object
-* `barWidth`: Width in pixels for the percentage bars of the component
+- `plugin`: A plugin object
+- `barWidth`: Width in pixels for the percentage bars of the component

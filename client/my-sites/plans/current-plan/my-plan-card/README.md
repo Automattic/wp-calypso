@@ -1,5 +1,4 @@
-My Plan Card
-=======
+# My Plan Card
 
 My Plan Card is a React component for rendering a box with plan or product name, description and icon, its expiry
 date and a button to manage the payment.
@@ -34,10 +33,10 @@ export default class extends React.Component {
 
 The following props can be passed to the My Plan Card component:
 
-* `action`: ( element | node ) Action button element or node.
-* `isError`: ( bool ) With this flag being set the details string is in an error state (red copy).
-* `isPlaceholder`: ( bool ) Flag indicating that the component in is a loading state
-* `details`: ( string ) Details about a plan or product, e.g. expiration or auto-renew date like `Expires on October 27, 2020`
-* `product`: ( string ) Product or plan slug
-* `tagline`: ( string | element | node ) Plan or product tagline. It can be a string, a node or a React element (e.g. `<Fragment>`)
-* `title`: ( string | element | node ) Plan or product title. It can be a string, a node or a React element (e.g. `<Fragment>`)
+- `action`: ( element | node ) Action button element or node.
+- `isError`: ( bool ) With this flag being set the details string is in an error state (red copy).
+- `isPlaceholder`: ( bool ) Flag indicating that the component in is a loading state
+- `details`: ( string ) Details about a plan or product, e.g. expiration or auto-renew date like `Expires on October 27, 2020`
+- `product`: ( string ) Product or plan slug
+- `tagline`: ( string | element | node ) Plan or product tagline. It can be a string, a node or a React element (e.g. `<Fragment>`)
+- `title`: ( string | element | node ) Plan or product title. It can be a string, a node or a React element (e.g. `<Fragment>`)

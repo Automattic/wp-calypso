@@ -1,5 +1,4 @@
-Email Followers
-===============
+# Email Followers
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for managing a site's email followers in Calypso.
 
@@ -34,7 +33,7 @@ import React from 'react';
 
 /**
  * Internal dependencies
- */ 
+ */
 import EmailFollowersStore from 'lib/followers/wpcom-followers-store';
 import EmailFollowersActions from 'lib/followers/actions';
 
@@ -68,7 +67,7 @@ export default class extends React.Component {
 
 	render() {
 
-	} 
+	}
 } );
 
 ```

@@ -1,27 +1,29 @@
 # Testing Overview
 
 Software testing helps protect code from incoming bugs and improves general quality of the functionalities exposed to the users. When you look at it from the developer's standpoint the first thing that comes to mind is unit testing. However it turns out tests come in many flavors. Robert C. Martin in his [The Clean Coder book](https://www.amazon.com/Clean-Coder-Conduct-Professional-Programmers/dp/0137081073) shares what kinds of tests a professional team should use to ensure that the application remains intact. The following items create a hierarchy:
-* __Unit tests__ (coverage nearly 100%, done by developers) – part of CI.
-* __Component tests__ (~50%, business analysts & QA) – part of CI.
-* __Integration tests__ (~20%, architects) – they should care only about a couple of layers at the time, executed once a night in dev environment.
-* __System tests__ (~10%, Business analysts & architects) – run in staging, at that level you can test 3rd parties.
-* __Manual tests__ (~5%, people) – exploratory, you never follow a handbook.
 
-All of this might feel confusing and overwhelming even for seasoned developers. That's why the short talk [What We Can Learn About Testing From The Wheel](https://www.youtube.com/watch?v=Da9wfQ0frGA) by _Kent C. Dodds_ from _Ignite Fluent 2016_ might help understand differences. The author uses a car metaphor to make it easier to distinguish some of the most popular types of testing.
+- **Unit tests** (coverage nearly 100%, done by developers) – part of CI.
+- **Component tests** (~50%, business analysts & QA) – part of CI.
+- **Integration tests** (~20%, architects) – they should care only about a couple of layers at the time, executed once a night in dev environment.
+- **System tests** (~10%, Business analysts & architects) – run in staging, at that level you can test 3rd parties.
+- **Manual tests** (~5%, people) – exploratory, you never follow a handbook.
+
+All of this might feel confusing and overwhelming even for seasoned developers. That's why the short talk [What We Can Learn About Testing From The Wheel](https://www.youtube.com/watch?v=Da9wfQ0frGA) by *Kent C. Dodds* from _Ignite Fluent 2016_ might help understand differences. The author uses a car metaphor to make it easier to distinguish some of the most popular types of testing.
 
 Next paragraphs explain how all those different types of testing are used to keep Calypso healthy.
 
 ### Server side tests
 
-This test configuration contains unit tests that verify code located in `server` top level folder. 
+This test configuration contains unit tests that verify code located in `server` top level folder.
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
 Tests can be run in 3 different modes:
+
 ```bash
 > # run the entire server suite
 > yarn run test-server
-> # run a configuration customized to work with continuous integration 
+> # run a configuration customized to work with continuous integration
 > yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
 > yarn run test-client:watch
@@ -33,11 +35,12 @@ _Check also how to write [unit tests](unit-tests.md)._
 
 ### Client side tests
 
-This test configuration contains unit and component tests that verify code located in `client` top level folder. 
+This test configuration contains unit and component tests that verify code located in `client` top level folder.
 
-It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test. 
+It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
 Tests can be run in 3 different modes:
+
 ```bash
 > # run the entire client suite
 > yarn run test-client
@@ -51,7 +54,6 @@ They are executed on every push on continuous integration (CircleCI). This is wh
 
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 
-
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
 ### Integration tests
@@ -61,6 +63,7 @@ This test configuration contains integration tests that verify code located in `
 It supports automatic test discovery. We only need to put a test file into a `integration` subfolder, next to the files we want to test.
 
 Tests can be run in 2 different modes:
+
 ```bash
 > # run the entire integration suite
 > yarn run test-integration
@@ -115,12 +118,12 @@ Using `only` is a little bit dangerous, as you may end up committing the `only`,
 Example:
 
 ```js
-describe.only( 'just run this suite', function() {
-	test( 'should run these tests', function() {
+describe.only( 'just run this suite', function () {
+	test( 'should run these tests', function () {
 		// your test
 	} );
 
-	test.only( 'should only run this one test', function() {
+	test.only( 'should only run this one test', function () {
 		// just run this test if the only is present
 	} );
 } );

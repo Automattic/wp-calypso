@@ -1,5 +1,4 @@
-Query Profile Links
-===========================
+# Query Profile Links
 
 `<QueryProfileLinks />` is a React component used to request the profile links of the current user.
 

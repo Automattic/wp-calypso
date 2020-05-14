@@ -1,5 +1,4 @@
-InfoPopover
-===========
+# InfoPopover
 
 `InfoPopover` is a component based on `Popover` used to show a popover as a tooltip to a `Gridicon`.
 
@@ -54,11 +53,8 @@ that can trigger the opening and closing of the InfoPopover then you need to pas
 ### Basic `InfoPopover` Usage
 
 ```js
-<InfoPopover position="bottom left">
-    This is some informational text
-</InfoPopover>
+<InfoPopover position="bottom left">This is some informational text</InfoPopover>
 ```
-
 
 ```js
 handleAction( event ) {

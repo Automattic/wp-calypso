@@ -1,5 +1,4 @@
-Development Workflow
-====================
+# Development Workflow
 
 ## Build
 
@@ -75,7 +74,7 @@ DEBUG=calypso:* yarn start
 
 ### Debugging node
 
-Since building and starting the express server is done via a npm command, the normal method of passing argument to the node process won't work. However, you can start the debugger via the `NODE_ARGS` environment variable. The value of this variable is passed to the node command when executing `yarn start`.  This means you can run the built-in inspector by running `NODE_ARGS="--inspect" yarn start`.  Starting the debugger is similar: `NODE_ARGS="--debug=5858" yarn start`.  If you would like to debug the build process as well, it might be convenient to have the debugger/inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so: `NODE_ARGS="--inspect --debug-brk" yarn start` (note: `--debug-brk` can also be used with the `--debug` flag).
+Since building and starting the express server is done via a npm command, the normal method of passing argument to the node process won't work. However, you can start the debugger via the `NODE_ARGS` environment variable. The value of this variable is passed to the node command when executing `yarn start`. This means you can run the built-in inspector by running `NODE_ARGS="--inspect" yarn start`. Starting the debugger is similar: `NODE_ARGS="--debug=5858" yarn start`. If you would like to debug the build process as well, it might be convenient to have the debugger/inspector break on the first line and wait for you. In that case, you should also pass in the `--debug-brk` option like so: `NODE_ARGS="--inspect --debug-brk" yarn start` (note: `--debug-brk` can also be used with the `--debug` flag).
 
 ## Monitoring builds and tests
 
@@ -94,8 +93,8 @@ One such tool is [AnyBar](https://github.com/tonsky/AnyBar) (_macOS only_), a ve
 - Obtain this [handler shell script](https://gist.github.com/mcsf/56911ae03c6d87ec61429cefc7707cb7/)
 - Optionally, place the script somewhere memorable and make it executable: `chmod +x ~/bin/anybar-calypso`
 - From now on, pipe your Calypso commands through it:
-  * `yarn start | anybar-calypso`
-  * `yarn run test-client:watch client/my-component | anybar-calypso`
+  - `yarn start | anybar-calypso`
+  - `yarn run test-client:watch client/my-component | anybar-calypso`
 - Feel free to tweak the script and share improvements with the Calypso project
 
 ### Other platforms

@@ -1,5 +1,4 @@
-Query Reader Tag Images
-========================
+# Query Reader Tag Images
 
 `<QueryReaderTagImages />` is a React component used in managing network requests for Reader tag images.
 

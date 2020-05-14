@@ -18,9 +18,9 @@ const GSuiteExample = () => {
 		<Card>
 			<GSuiteNewUserList
 				domains={ domains }
-				extraValidation={ user => user }
+				extraValidation={ ( user ) => user }
 				selectedDomainName={ 'test.com' }
-				onUsersChange={ changedUsers => setUsers( changedUsers ) }
+				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 			>
 				<span>

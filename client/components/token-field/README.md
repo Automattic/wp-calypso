@@ -1,5 +1,4 @@
-Token Field
-===========
+# Token Field
 
 A `TokenField` is a field similar to the tags and categories fields in the interim editor chrome, or the "to" field in Mail on OS X. Tokens can be entered by typing them or selecting them from a list of suggested tokens.
 
@@ -20,23 +19,24 @@ The `value` property is handled in a manner similar to controlled form component
 
 - `value` - An array of strings or objects to display as tokens in the field. If objects are present in the array, they **must** have a property of `value`. Here is an example object that could be passed in as a value:
 
-	  ```javascript
-	  {
-	    value: '(string) The value of the token.',
-	    status: "(string) One of 'error', 'validating', or 'success'. Applies styles to token."
-	    tooltip: '(string) If not falsey, will add a tooltip to the token.',
-	    onMouserEnter: '(function) Function to call when onMouseEnter event triggered on token.'
-	    onMouseLeave: '(function) Function to call when onMouseLeave is triggered on token.'
-	  }
-	  ```
-- `displayTransform` - Function to call to transform tokens for display.  (In
+      	  ```javascript
+      	  {
+      	    value: '(string) The value of the token.',
+      	    status: "(string) One of 'error', 'validating', or 'success'. Applies styles to token."
+      	    tooltip: '(string) If not falsey, will add a tooltip to the token.',
+      	    onMouserEnter: '(function) Function to call when onMouseEnter event triggered on token.'
+      	    onMouseLeave: '(function) Function to call when onMouseLeave is triggered on token.'
+      	  }
+      	  ```
+
+- `displayTransform` - Function to call to transform tokens for display. (In
   the editor, this is needed to decode HTML entities embedded in tags -
   otherwise entities like `&` in tag names are double-encoded like `&amp;`,
   once by the REST API and once by React).
-- `saveTransform` - Function to call to transform tokens for saving.  The
-  default is to trim the token value.  This function is also applied when
+- `saveTransform` - Function to call to transform tokens for saving. The
+  default is to trim the token value. This function is also applied when
   matching suggestions against the current value so that matching works
-  correctly with leading or trailing spaces.  (In the editor, this is needed to
+  correctly with leading or trailing spaces. (In the editor, this is needed to
   remove leading and trailing spaces from tag names, like wp-admin does.
   Otherwise the REST API won't save them.)
 - `onChange` - Function to call when the tokens have changed. An array of new

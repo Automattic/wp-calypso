@@ -1,5 +1,4 @@
-Themes
-======
+# Themes
 
 Displays the Theme Showcase, which resides on `/themes` and handles multi-site, single-site and Jetpack-site views.
 

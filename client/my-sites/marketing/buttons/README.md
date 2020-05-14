@@ -1,5 +1,4 @@
-Sharing Buttons
-===============
+# Sharing Buttons
 
 The Sharing Buttons components enable a user to control the appearance and placement of sharing buttons on their sites. Appearance options include button style, share text, and enabled sharing providers. Placement options allow control over the posts for which likes, reblogs, and sharing buttons are shown, and whether links should open in a new or same window.
 

@@ -1,5 +1,4 @@
-Sidebar Navigation
-==================
+# Sidebar Navigation
 
 This component is used to display the mobile sidebar navigation header at the top of content sections. It sets `layout-focus` to `sidebar`.
 

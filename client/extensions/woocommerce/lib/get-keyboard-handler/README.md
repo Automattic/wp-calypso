@@ -1,5 +1,4 @@
-getKeyboardHandler
-==================
+# getKeyboardHandler
 
 ## `getKeyboardHandler( callback: function )`
 
@@ -13,9 +12,30 @@ import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 export default function ExampleNavList() {
 	return (
 		<ul>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
 		</ul>
 	);
 }

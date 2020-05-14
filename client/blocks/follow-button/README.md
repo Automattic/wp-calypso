@@ -1,5 +1,4 @@
-Follow Button
-=========
+# Follow Button
 
 This component is used to display a follow/unfollow button.
 It has two parts, the actual button and a container that works with Redux state.
@@ -21,9 +20,10 @@ render() {
 
 #### Props
 
-* `siteUrl`: string, a site URL to follow or unfollow
+- `siteUrl`: string, a site URL to follow or unfollow
 
 #### How to use the button directly:
+
 ```js
 import FollowButton from 'blocks/follow-button/button';
 
@@ -38,5 +38,5 @@ render() {
 
 #### Props
 
-* `following`: (default: false) a boolean indicating if the current user is currently following the site URL
-* `disabled`: (default: false) a boolean indicating if the button is currently disabled
+- `following`: (default: false) a boolean indicating if the current user is currently following the site URL
+- `disabled`: (default: false) a boolean indicating if the button is currently disabled

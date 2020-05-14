@@ -1,5 +1,4 @@
-Wporg Plugins
-==========
+# Wporg Plugins
 
 A module for managing plugins data received from the WordPress.org plugins API.
 
@@ -18,6 +17,7 @@ dispatch( fetchPluginData( 'akismet' ) );
 ```
 
 ## Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `plugins.wporg`, with the following structure:
 
 ```js

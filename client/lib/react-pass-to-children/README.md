@@ -1,5 +1,4 @@
-Pass to Children
-================
+# Pass to Children
 
 Pass to Children is a utility method to assist in creating a React pass-through component. A common pattern in React is to create [controller-views](https://facebook.github.io/flux/docs/overview.html#views-and-controller-views) which themselves render nothing, but inject and pass along props to a child or set of children.
 
@@ -13,8 +12,8 @@ import passToChildren from 'lib/react-pass-to-children';
 
 export default class extends React.Component {
 	render() {
-		return passToChildren( this, { 
-			data: [ 1, 2, 3 ]
+		return passToChildren( this, {
+			data: [ 1, 2, 3 ],
 		} );
 	}
 }

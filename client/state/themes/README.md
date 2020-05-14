@@ -1,5 +1,4 @@
-Themes State
-============
+# Themes State
 
 When working with `themes` state, it is helpful to bear some assumptions in mind:
 
@@ -61,8 +60,7 @@ data: {
 
 This means that individual theme information (like theme name, description, screenshot link etc) is stored in the `items` object, while the `queries` object associates serialized queries with the corresponding themes (stored per theme ID in `itemKeys`).
 
-Jetpack Sites
--------------
+## Jetpack Sites
 
 Jetpack sites come with a REST API endpoint that triggers installation of a theme from either WordPress.org, or WordPress.com. To tell Jetpack which of either repository to use, we append a `-wpcom` suffix for WP.com themes. The suffix is then also present in the installed theme's ID (and directory name). There's another reason for that, which is to avoid collisions with existing themes in the WordPress.org repository -- otherwise, the WP.com theme would get overridden with a WP.org one of the same name by the self-hosted site's updater. Instead, downloaded WP.com themes include a little plugin that updates them from WP.com.
 

@@ -1,5 +1,4 @@
-Query Site Settings
-===================
+# Query Site Settings
 
 `<QuerySiteSettings />` is a React component used in managing network requests for site settings.
 

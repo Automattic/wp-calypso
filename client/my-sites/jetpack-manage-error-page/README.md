@@ -1,5 +1,4 @@
-Jetpack Manage Error Pages
-==========================
+# Jetpack Manage Error Pages
 
 This component is used to catch Jetpack management errors at a high level,
 and render an appropriate error page before any management tools are rendered.
@@ -20,31 +19,26 @@ You can optionally declare `version` to display what version is necessary (defau
 ```jsx
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
-<JetpackManageErrorPage
-    template="updateJetpack"
-    siteId={ jetpackSiteId }
-    version="3.4"
-/>
+<JetpackManageErrorPage template="updateJetpack" siteId={ jetpackSiteId } version="3.4" />;
 ```
 
 ### default
 
 As stated above, this component renders an `emptyContent` component by default. For example:
 
-
 ### Feature Example
-If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
 
+If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
 
 ```jsx
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 // create the component using properties accepted by EmptyContent
 <JetpackManageErrorPage
-    action={ this.props.translate( 'Manage general settings' ) }
-    actionURL="../../settings/general/"
-    title={ this.props.translate( 'No security configuration is required.' ) }
-    line={ this.props.translate( 'Security management is automatic for WordPress.com sites.' ) }
-    illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-/>
+	action={ this.props.translate( 'Manage general settings' ) }
+	actionURL="../../settings/general/"
+	title={ this.props.translate( 'No security configuration is required.' ) }
+	line={ this.props.translate( 'Security management is automatic for WordPress.com sites.' ) }
+	illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+/>;
 ```

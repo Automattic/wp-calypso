@@ -1,5 +1,4 @@
-Themes Banner
-=============
+# Themes Banner
 
 This component is used to implement a banner with image, text, and button.
 
@@ -37,11 +36,11 @@ export default localize( SmallBusinessBanner );
 
 The following props are used to control the display of the component.
 
-* `themeId`: (string) The ID of the theme
-* `themeName`: (string) Name of the theme
-* `title`: (string) Title to use for the banner
-* `description`: (string) Description to use for the banner
-* `backgroundColor`: (string) Hex color to use for the banner background
-* `image`: (string) Image path to use for the banner image
-* `imageTransform`: (string) The CSS transform properties to be applied to the image
-* `imageWidth`: (number) The width to use for the image. Height adjusts proportionally
+- `themeId`: (string) The ID of the theme
+- `themeName`: (string) Name of the theme
+- `title`: (string) Title to use for the banner
+- `description`: (string) Description to use for the banner
+- `backgroundColor`: (string) Hex color to use for the banner background
+- `image`: (string) Image path to use for the banner image
+- `imageTransform`: (string) The CSS transform properties to be applied to the image
+- `imageWidth`: (number) The width to use for the image. Height adjusts proportionally

@@ -1,5 +1,4 @@
-Plugin Autoupdate Toggle
-=========
+# Plugin Autoupdate Toggle
 
 This component is used to display a plugin autupdate toggle.
 
@@ -24,9 +23,9 @@ render() {
 
 #### Props
 
-* `plugin`: a plugin object.
-* `site`: a site object.
-* `notices`: a notices object.
-* `wporg`: whether the plugin is from .org or not
-* `isMock`: a boolean indicating if the toggle should not launch any real action when interacted
-* `disabled`: a boolean indicating whether the toggle is disabled (grayed out and non interactive) or not
+- `plugin`: a plugin object.
+- `site`: a site object.
+- `notices`: a notices object.
+- `wporg`: whether the plugin is from .org or not
+- `isMock`: a boolean indicating if the toggle should not launch any real action when interacted
+- `disabled`: a boolean indicating whether the toggle is disabled (grayed out and non interactive) or not

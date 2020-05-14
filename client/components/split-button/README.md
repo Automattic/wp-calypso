@@ -1,5 +1,4 @@
-Split Button
-=============
+# Split Button
 
 A React component for displaying a button with a labeled main action plus a secondary, identified by a chevron, that toggles the menu's visibility.
 
@@ -13,12 +12,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (
-		<SplitButton
-			mainFace="Split Button"
-		>
-			<PopoverMenuItem onClick={ onMenuItemClick }>
-				Click Me!
-			</PopoverMenuItem>
+		<SplitButton mainFace="Split Button">
+			<PopoverMenuItem onClick={ onMenuItemClick }>Click Me!</PopoverMenuItem>
 		</SplitButton>
 	);
 }

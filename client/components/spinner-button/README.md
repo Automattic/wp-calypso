@@ -1,5 +1,4 @@
-SpinnerButton
-===========
+# SpinnerButton
 
 `<SpinnerButton />` is a React component for rendering a button with an attached loading indicator.
 

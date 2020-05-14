@@ -1,5 +1,4 @@
-Query Countries
-===============
+# Query Countries
 
 `QueryDomainCountries`, `QueryPaymentCountries`, and `QuerySmsCountries` are React components used in managing network requests for lists of countries.
 
@@ -15,7 +14,9 @@ export default function CountriesList( { countries } ) {
 	return (
 		<ul>
 			<QueryDomainCountries />
-			{ countries.map( ( country ) => <li>{ country.label }</li> ) }
+			{ countries.map( ( country ) => (
+				<li>{ country.label }</li>
+			) ) }
 		</ul>
 	);
 }

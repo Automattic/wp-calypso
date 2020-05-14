@@ -1,5 +1,4 @@
-Premium Plugins
-===============
+# Premium Plugins
 
 A module for managing the automatic install & configuration of premium plugins
 
@@ -35,22 +34,25 @@ Data from the aforementioned actions is added to the global state tree, under `p
 ```js
 state.plugins.premium = {
 	isRequesting: {
-		'exampleSiteId': false
+		exampleSiteId: false,
 	},
 	plugins: {
-		'exampleSiteId': [ {
-			slug: 'vaultpress',
-			name: 'VaultPress',
-			key: 'vp-api-key',
-			status: 'wait',
-			error: null
-		}, {
-			slug: 'akismet',
-			name: 'Akismet',
-			key: 'ak-api-key',
-			status: 'wait',
-			error: null
-		} ]
-	}
-}
+		exampleSiteId: [
+			{
+				slug: 'vaultpress',
+				name: 'VaultPress',
+				key: 'vp-api-key',
+				status: 'wait',
+				error: null,
+			},
+			{
+				slug: 'akismet',
+				name: 'Akismet',
+				key: 'ak-api-key',
+				status: 'wait',
+				error: null,
+			},
+		],
+	},
+};
 ```

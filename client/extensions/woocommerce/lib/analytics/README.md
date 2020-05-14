@@ -1,5 +1,4 @@
-Store Analytics
-===============
+# Store Analytics
 
 This library is for adding analytics code to Store on WP.com
 
@@ -11,7 +10,10 @@ all track event ids, and perhaps to add some common event properties automatical
 ```js
 import { recordTrack } from 'woocommerce/lib/analytics';
 
-recordTrack( 'calypso_woocommerce_event_to_be_tracked', { a_parameter: '1', another_parameter: '2' } );
+recordTrack( 'calypso_woocommerce_event_to_be_tracked', {
+	a_parameter: '1',
+	another_parameter: '2',
+} );
 ```
 
 ### Functions
@@ -19,9 +21,9 @@ recordTrack( 'calypso_woocommerce_event_to_be_tracked', { a_parameter: '1', anot
 #### `recordTrack( eventName, eventProperties )`
 
 Arguments:
-* `eventName`: The name of the event, must be prefixed with `calypso_woocommerce_`.
-* `eventProperties`: The properties of the event to be tracked.
+
+- `eventName`: The name of the event, must be prefixed with `calypso_woocommerce_`.
+- `eventProperties`: The properties of the event to be tracked.
 
 Records a track event with the specified event name and properties.
 Enforces a `calypso_woocommerce_` prefix.
-

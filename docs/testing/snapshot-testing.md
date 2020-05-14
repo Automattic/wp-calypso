@@ -27,15 +27,15 @@ It's very easy to make a snapshot:
 
 ```js
 test( 'foobar test', () => {
-  const foobar = { foo: 'bar' };
-  expect( foobar ).toMatchSnapshot();
+	const foobar = { foo: 'bar' };
+	expect( foobar ).toMatchSnapshot();
 } );
 ```
 
 This is the produced snapshot:
 
 ```js
-exports[`test foobar test 1`] = `
+exports[ `test foobar test 1` ] = `
   Object {
     "foo": "bar",
   }
@@ -47,16 +47,16 @@ see that it's a representation the test data.
 
 ## Advantages
 
-* Trivial and concise to write tests
-* Protect against unintentional changes
-* Simple to work with
-* Reveal internal structures without running the application
+- Trivial and concise to write tests
+- Protect against unintentional changes
+- Simple to work with
+- Reveal internal structures without running the application
 
 ## Disadvantages
 
-* Snapshot tests are not expressive
-* Only catch issues when changes are introduced
-* Are problematic for anything non-deterministic
+- Snapshot tests are not expressive
+- Only catch issues when changes are introduced
+- Are problematic for anything non-deterministic
 
 ## Use cases
 
@@ -72,16 +72,16 @@ import MyComponent from '../my-component';
 import LocaleSuggestions from '../locale-suggestions';
 
 describe( 'MyComponent', () => {
-  test( 'should render', () => {
-    const wrapper = shallow( <MyComponent /> );
-    expect( wrapper ).toMatchSnapshot();
-  } );
+	test( 'should render', () => {
+		const wrapper = shallow( <MyComponent /> );
+		expect( wrapper ).toMatchSnapshot();
+	} );
 
-  test( 'should render with locale suggestions if locale is provided', () => {
-    const wrapper = shallow( <MyComponent locale="es" /> );
-    expect( wrapper ).toMatchSnapshot();
-    expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
-  } );
+	test( 'should render with locale suggestions if locale is provided', () => {
+		const wrapper = shallow( <MyComponent locale="es" /> );
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
+	} );
 } );
 ```
 
@@ -139,10 +139,10 @@ conjunction with other tests that do describe our expectations, like in the exam
 ```
 test( 'should render with locale suggestions if locale is provided', () => {
   const wrapper = shallow( <MyComponent locale="es" /> );
-  
+
   // Snapshot will catch unintended changes
   expect( wrapper ).toMatchSnapshot();
-  
+
   // This is what we actually expect to find in our test
   expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
 } );
@@ -151,13 +151,11 @@ test( 'should render with locale suggestions if locale is provided', () => {
 [`shallow`](http://airbnb.io/enzyme/docs/api/shallow.html) rendering is your friend:
 
 > Shallow rendering is useful to constrain yourself to testing a component as a unit, and to ensure
-that your tests aren't indirectly asserting on behavior of child components.
+> that your tests aren't indirectly asserting on behavior of child components.
 
 It's tempting to snapshot full renders, but that makes for huge snapshots. Additionally, you're no
 longer testing your component, but all of the components in the entire tree. With `shallow`, we
 snapshot just the components that are directly rendered by our component.
-
-
 
 [snapshot testing]: https://facebook.github.io/jest/docs/en/snapshot-testing.html
 [update snapshots]: https://facebook.github.io/jest/docs/en/snapshot-testing.html#updating-snapshots

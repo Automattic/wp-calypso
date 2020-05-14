@@ -1,5 +1,4 @@
-Shipping Zones
-===============
+# Shipping Zones
 
 This module is used to manage Shipping Zones settings. This includes adding, removing and editing shipping zones. Since
 shipping zones have a lot of information, parts of them will be handled by other modules inside this one, such as
@@ -9,6 +8,7 @@ the shipping methods a Zone has configured, or the locations corresponding to a 
 
 In this part of the state only will be stored the "differences" between what's on the server and what the user has configured.
 So, for example, the initial state would look like this:
+
 ```js
 {
 	zones: {
@@ -21,6 +21,7 @@ So, for example, the initial state would look like this:
 ```
 
 After the user has made some changes, the state could look like this:
+
 ```js
 {
 	zones: {

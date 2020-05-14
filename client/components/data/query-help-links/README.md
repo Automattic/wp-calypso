@@ -1,5 +1,4 @@
-Query Help Links
-===================
+# Query Help Links
 
 `<QueryHelpLinks />` is a React component used in managing network requests for help links.
 

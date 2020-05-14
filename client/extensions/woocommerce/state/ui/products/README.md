@@ -1,5 +1,4 @@
-Products
-========
+# Products
 
 This module is used to manage UI state related to products on a site.
 

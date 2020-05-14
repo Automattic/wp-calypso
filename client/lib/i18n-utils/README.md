@@ -1,5 +1,4 @@
-I18n Utils
-==========
+# I18n Utils
 
 I18n-related utilities, for use both client- and server-side.
 

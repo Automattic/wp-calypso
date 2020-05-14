@@ -1,4 +1,3 @@
-
 # Gutenberg block testing
 
 ## Getting started with writing new tests
@@ -39,4 +38,3 @@ step( 'Can start new post', async function() {
 ```
 
 Feel free to use `/specs-blocks/gutenberg-markdown-block-spec.js` as an example, and check `/lib/gutenberg` folder for existing PageObjects already created.
-

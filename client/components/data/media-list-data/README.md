@@ -1,5 +1,4 @@
-MediaListData
-=============
+# MediaListData
 
 MediaListData is a React component intended to be used as a controller-view to simplify binding and interacting with the [media stores and actions](../../../lib/media/).
 

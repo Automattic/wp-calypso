@@ -1,5 +1,4 @@
-Plans
-=====
+# Plans
 
 A module for managing plans data.
 
@@ -10,7 +9,6 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 ### `fetchWordPressPlans()`
 
 Fetches plans
-
 
 ## Action creators
 
@@ -51,6 +49,7 @@ wpcom
 ```
 
 # Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `plans`, with the following structure:
 
 ```js
@@ -64,8 +63,10 @@ state.plans = {
 			product_name_short: 'Free',
 			product_slug: 'free_plan',
 			tagline: 'Just get started',
-			shortdesc: 'Get a free blog and be on your way to publishing your first post in less than five minutes.',
-			description: 'Just start blogging: get a free blog and be on your way to publishing your first post in less than five minutes.',
+			shortdesc:
+				'Get a free blog and be on your way to publishing your first post in less than five minutes.',
+			description:
+				'Just start blogging: get a free blog and be on your way to publishing your first post in less than five minutes.',
 			icon: 'https://s0.wordpress.com/i/store/plan-free.png',
 			icon_active: 'https://s0.wordpress.com/i/store/plan-free-active.png',
 			capability: 'manage_options',
@@ -78,22 +79,18 @@ state.plans = {
 			store: 0,
 			features_highlight: [
 				{
-					items: [
-						'free-blog',
-						'space',
-						'support'
-					]
-				}
+					items: [ 'free-blog', 'space', 'support' ],
+				},
 			],
 			bill_period_label: 'for life',
 			price: '$0',
 			formatted_price: '$0',
-			raw_price: 0
-		}
+			raw_price: 0,
+		},
 	],
-	
+
 	requesting: false,
 
-	errors: false
-}
+	errors: false,
+};
 ```

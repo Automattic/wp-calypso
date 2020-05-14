@@ -1,6 +1,4 @@
-CreditCardNumberInput
-=====================
-
+# CreditCardNumberInput
 
 `CreditCardNumberInput` is a React component that wraps an input field that contains a credit card number and displays the corresponding credit card logo inside this field, on the far right.
 
@@ -12,9 +10,7 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 
 class MyComponent extends React.Component {
 	render() {
-		return (
-			<CreditCardNumberInput value={ this.state.card.number } />
-		);
+		return <CreditCardNumberInput value={ this.state.card.number } />;
 	}
 }
 ```

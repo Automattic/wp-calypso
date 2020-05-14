@@ -1,5 +1,4 @@
-Site Vouchers
-=============
+# Site Vouchers
 
 A module for managing site vouchers data.
 
@@ -59,12 +58,13 @@ wpcom
 
 	// dispacth a success action ...
 	dispatch( vouchersRequestSuccessAction( siteId ) );
-	
+
 	// and populate the global tree dispatching a recieve action
 	dispatch( vouchersReceiveAction( site,id, response.vouchers ) );
 ```
 
 # Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `sites.vouchers`, with the following structure:
 
 ```js
@@ -81,7 +81,7 @@ state.sites.vouchers = {
 			]
 		}
 	},
-	
+
 	requesting: [
 		[ siteId ]: {
 			getAll: Boolean,

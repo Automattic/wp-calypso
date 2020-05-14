@@ -25,8 +25,8 @@ function SomeExperiment(props) {
     <LoadingVariations>
         Show this when we don't know the variation because we haven't called the API yet to get variations.
         <br>
-        Protip: If this experiment is in the middle or end of a flow, try putting 
-        <code>&lt;QueryExperiments&gt;</code> at the beginning of your flow to ensure the variation 
+        Protip: If this experiment is in the middle or end of a flow, try putting
+        <code>&lt;QueryExperiments&gt;</code> at the beginning of your flow to ensure the variation
         assignments are preloaded.
     </LoadingVariations>
 </Experiment>);

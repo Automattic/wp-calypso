@@ -1,9 +1,8 @@
-JetpackLogo (JSX)
-====================
+# JetpackLogo (JSX)
 
 This component is used to display a Jetpack logo
 
--------
+---
 
 #### How to use:
 
@@ -21,7 +20,7 @@ export default function JetpackLogoExample() {
 
 #### Props
 
-* `className` : (string) Custom class name to be added to the SVG element
-* `full` : (bool) Whether or not to show the Jetpack text alongside the icon
-* `monochrome` : (bool) Show a monochrome Jetpack logo. Default is `false`
-* `size` : (number) The height of the SVG. Default is `32`
+- `className` : (string) Custom class name to be added to the SVG element
+- `full` : (bool) Whether or not to show the Jetpack text alongside the icon
+- `monochrome` : (bool) Show a monochrome Jetpack logo. Default is `false`
+- `size` : (number) The height of the SVG. Default is `32`

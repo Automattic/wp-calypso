@@ -27,5 +27,5 @@ export default function InteractiveItem() {
 
 #### Props
 
-* `onClick`: (func) Function called when the button is clicked, or when focused and enter or space are pressed. Required.
-* `onKeyDown`: (func) Function called when focused and any other keyboard event happens (useful for arrow navigation)
+- `onClick`: (func) Function called when the button is clicked, or when focused and enter or space are pressed. Required.
+- `onKeyDown`: (func) Function called when focused and any other keyboard event happens (useful for arrow navigation)

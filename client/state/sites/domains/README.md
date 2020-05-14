@@ -1,5 +1,4 @@
-Site Domains
-============
+# Site Domains
 
 A module for managing site domains data.
 
@@ -51,6 +50,7 @@ wpcom
 ```
 
 # Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `sites.domains`, with the following structure:
 
 ```js

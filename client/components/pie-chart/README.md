@@ -2,14 +2,13 @@
 
 This component renders a dataset as a pie chart. A separate `PieChartLegend` sub-component will render an accompanying legend.
 
-## Props 
+## Props
 
-* **data** — (required) Array of objects holding the data
-	* **value** - (required) (Number) Value of the datum
-	* **name** - (required) (String) Name to represent the datum
-	* **description** - (optional) (String) A longer description of the datum 
-* **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguments
-`translate` and `dataTotal`. This is used to create titles that reference the data total
+- **data** — (required) Array of objects holding the data
+  _ **value** - (required) (Number) Value of the datum
+  _ **name** - (required) (String) Name to represent the datum \* **description** - (optional) (String) A longer description of the datum
+- **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguments
+  `translate` and `dataTotal`. This is used to create titles that reference the data total
 
 ## Usage
 
@@ -32,7 +31,7 @@ const titleFunc = ( translate, dataTotal ) => {
 			dataTotal,
 		},
 	} );
-}
+};
 
 export default class Example extends Component {
 	render() {
@@ -40,35 +39,29 @@ export default class Example extends Component {
 			{
 				value: 189,
 				name: translate( 'Direct' ),
-				description:
-					translate(
-						'Customers who find your listing searching for your business or address'
-					),
+				description: translate(
+					'Customers who find your listing searching for your business or address'
+				),
 			},
 			{
 				value: 362,
 				name: translate( 'Discovery' ),
-				description:
-					translate(
-						'Customers who find your listing searching for a category, product, or service'
-					),
+				description: translate(
+					'Customers who find your listing searching for a category, product, or service'
+				),
 			},
 			{
 				value: 122,
 				name: translate( 'Referral' ),
-				description:
-					translate(
-						'Customers who find your listing by being referred from another type of search'
-					),
-			}
+				description: translate(
+					'Customers who find your listing by being referred from another type of search'
+				),
+			},
 		];
 
 		return (
 			<div>
-				<PieChart
-					data={ data }
-					title={ titleFunc }
-				/>
+				<PieChart data={ data } title={ titleFunc } />
 				<PieChartLegend data={ data } />
 			</div>
 		);

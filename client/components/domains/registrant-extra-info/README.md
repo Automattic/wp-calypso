@@ -1,5 +1,4 @@
-Registrant Extra Info Forms
-===========================
+# Registrant Extra Info Forms
 
 This module provides forms to support TLD-specific requirements.
 

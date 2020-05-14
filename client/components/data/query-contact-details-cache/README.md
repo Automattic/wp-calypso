@@ -1,5 +1,4 @@
-Query ContactDetailsCache
-===========
+# Query ContactDetailsCache
 
 `<QueryContactDetailsCache />` is a React component used to request the user's last entered contact details--if they exist.
 
@@ -9,7 +8,7 @@ Render the component. The component does not accept any children, nor does it re
 
 ```jsx
 function MyComponent() {
-	return <QueryContactDetailsCache />
+	return <QueryContactDetailsCache />;
 }
 ```
 

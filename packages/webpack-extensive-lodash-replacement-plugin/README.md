@@ -23,6 +23,7 @@ replaced.
 ## Usage
 
 _webpack.config.js_
+
 ```js
 const ExtensiveLodashReplacementPlugin =
   require( '@automattic/webpack-extensive-lodash-replacement-plugin' );

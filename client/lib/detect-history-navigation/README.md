@@ -1,5 +1,4 @@
-detect-history-navigation
-=========================
+# detect-history-navigation
 
 This module determines when a page has been rendered via the history event (back or forward buttons, or via the history methods) versus being a newly navigated page (e.g., via clicking a link to a page).
 
@@ -16,4 +15,3 @@ page.start();
 Then controllers and components can call `detectHistoryNavigation.loadedViaHistory()` which returns a boolean determining whether the current route is being loaded from a history event or is a fresh pageload.
 
 Components that are mounted into the initial view of a page that is loaded by history can detect this in `componentWillMount`, `componentDidMount`, and the initial run of their `render` method. After the initial render `loadedViaHistory()` will return false.
-

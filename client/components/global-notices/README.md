@@ -1,12 +1,10 @@
-Global Notices
-==============
+# Global Notices
 
 Render notices from global application state.
 
 This component should be rendered exactly _one_ time, presumably in the global application layout.
 
-Adding a notice
----------------
+## Adding a notice
 
 Notices should be added by dispatching a notice action. See [notice actions](../../state/notices/actions.js).
 
@@ -24,8 +22,7 @@ function MyComponent() {
 export default connect( null, { successNotice } )( MyComponent );
 ```
 
-Usage
------
+## Usage
 
 It's unlikely you'll need to render GlobalNotices, because that will be handled by layout.
 
@@ -35,10 +32,10 @@ Rendering GlobalNotices is straightforward:
 import GlobalNotices from 'components/global-notices';
 
 function Layout() {
-  return (
-    <div>
-      <GlobalNotices />
-    </div>
-  );
+	return (
+		<div>
+			<GlobalNotices />
+		</div>
+	);
 }
 ```

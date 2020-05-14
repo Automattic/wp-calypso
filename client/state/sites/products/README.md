@@ -1,5 +1,4 @@
-Site Products
-=============
+# Site Products
 
 A module for managing site products data.
 
@@ -23,4 +22,5 @@ dispatch( fetchSiteProductsCompleted( 555555555, { jetpack_search: { ... }, jetp
 ```
 
 ## Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `sites.products`.

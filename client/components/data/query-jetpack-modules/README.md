@@ -1,5 +1,4 @@
-Query Jetpack Modules
-================
+# Query Jetpack Modules
 
 `<QueryJetpackModules />` is a React component used in managing network requests for Jetpack site modules.
 

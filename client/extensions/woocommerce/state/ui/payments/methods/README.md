@@ -1,5 +1,4 @@
-Payment Methods
-================
+# Payment Methods
 
 This module is used to manage payment method related UI.
 

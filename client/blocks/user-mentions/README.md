@@ -1,7 +1,6 @@
-User Mentions
-=============
+# User Mentions
 
-This block provides a higher-order component `withUserMentions()`, which can be used in conjunction with a standard textarea to add user mentions support. Typing '@*something*' in the textarea will produce a popover menu to select a username by clicking or pressing Enter or Tab.
+This block provides a higher-order component `withUserMentions()`, which can be used in conjunction with a standard textarea to add user mentions support. Typing '@_something_' in the textarea will produce a popover menu to select a username by clicking or pressing Enter or Tab.
 
 It also provides the components `UserMentionsSuggestionList` and `UserMentionsSuggestion`, which are also used in the
 [Editor Mentions TinyMCE plugin](https://github.com/Automattic/wp-calypso/tree/master/client/components/tinymce/plugins/mentions).
@@ -12,14 +11,10 @@ It also provides the components `UserMentionsSuggestionList` and `UserMentionsSu
 import withUserMentions from 'blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
-	<textarea
-		ref={ ref }
-		onKeyUp={ props.onKeyUp }
-		onKeyDown={ props.onKeyDown } />
+	<textarea ref={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
 ) );
 
 export default withUserMentions( ExampleInput );
-
 ```
 
 Note: you'll need to wrap the child component with `React.forwardRef`, and pass along the `onKeyUp` and `onKeyDown` props.

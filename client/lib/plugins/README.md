@@ -1,5 +1,4 @@
-Plugins
-=======
+# Plugins
 
 Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso.
 
@@ -38,7 +37,7 @@ The Data that is stored in the sites plugin store looks like this:
 }
 ```
 
- The Data is stored in a private variable but can be accessed though the stores public methods.
+The Data is stored in a private variable but can be accessed though the stores public methods.
 
 ####Public Methods
 
@@ -72,9 +71,6 @@ Returns a plugin objects for a particular site.
 
 Returns an array of sites that have a particular plugin.
 
-
-
-
 ####Example Component Code:
 
 ```es6
@@ -101,7 +97,7 @@ export default class extends React.Component {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 	}
 
-	getPlugins = () => { 
+	getPlugins = () => {
 		let sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
@@ -115,11 +111,10 @@ export default class extends React.Component {
 
 	render() {
 
-	} 
+	}
 } );
 
 ```
-
 
 ###Actions
 Actions get triggered by views and stores.
@@ -172,7 +167,6 @@ Toggle AutoUpdates for a plugin on a site.
 
 **PluginsActions.togglePluginAutoUpdate( site, plugin );**
 
-
 ####Example Component Code:
 
 ```jsx
@@ -197,7 +191,7 @@ export default class extends React.Component {
 		return (
 			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 		)
-	} 
+	}
 } );
 
 ```

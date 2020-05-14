@@ -7,9 +7,7 @@ Component/Block to share posts to social-media accounts
 ```es6
 import PostShare from 'blocks/post-share';
 
-<PostShare
-	post={ post }
-	siteId={ siteId } />
+<PostShare post={ post } siteId={ siteId } />;
 ```
 
 ## Props

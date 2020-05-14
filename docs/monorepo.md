@@ -219,10 +219,13 @@ NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish from-package --yes
 What if you want to publish just one updated package? `lerna publish from-package` either publishes all eligible packages, or nothing. It doesn't give you a choice. That's where you need `lerna publish from-git`.
 
 To publish only selected packages, you need to create Git tags in form `name@version`. For example:
+
 ```
 git tag "@automattic/calypso-build@6.1.0"
 ```
+
 or
+
 ```
 git tag "@automattic/components@1.0.0"
 ```

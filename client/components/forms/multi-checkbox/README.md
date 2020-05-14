@@ -1,5 +1,4 @@
-MultiCheckbox
-=============
+# MultiCheckbox
 
 MultiCheckbox is a React component that can be used in forms to simplify the creation of checkbox inputs where multiple values are possible.
 
@@ -10,18 +9,22 @@ Below is an example use for the MultiCheckbox component:
 ```jsx
 var options = [
 	{ value: 1, label: 'One' },
-	{ value: 2, label: 'Two' }
+	{ value: 2, label: 'Two' },
 ];
 
-<MultiCheckbox name="favorite_numbers" options={ options } defaultChecked={ [ 1 ] } />
+<MultiCheckbox name="favorite_numbers" options={ options } defaultChecked={ [ 1 ] } />;
 ```
 
 This code snippet will generate the following output:
 
 ```html
 <div>
-	<label><input type="checkbox" name="favorite_numbers[]" value="1" checked="checked"><span>One</span></label>
-	<label><input type="checkbox" name="favorite_numbers[]" value="2"><span>Two</span></label>
+	<label
+		><input type="checkbox" name="favorite_numbers[]" value="1" checked="checked" /><span
+			>One</span
+		></label
+	>
+	<label><input type="checkbox" name="favorite_numbers[]" value="2" /><span>Two</span></label>
 </div>
 ```
 

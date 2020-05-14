@@ -1,5 +1,4 @@
-Theme
-=====
+# Theme
 
 Theme component: displays a theme screenshot and details.
 

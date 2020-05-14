@@ -1,5 +1,4 @@
-Query Media
-===========
+# Query Media
 
 Query Media is a React component used in managing the fetching of media queries.
 

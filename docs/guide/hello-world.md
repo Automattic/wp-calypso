@@ -84,25 +84,18 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { helloWorld } from './controller';
 
 export default () => {
-	page(
-		'/hello-world/:site?',
-		siteSelection,
-		navigation,
-		helloWorld,
-		makeLayout,
-		clientRender
-	);
+	page( '/hello-world/:site?', siteSelection, navigation, helloWorld, makeLayout, clientRender );
 };
 ```
 
-* `page()` will set up the route `/hello-world` and run some functions when it's matched.
-* The `:site?` is because we want to support site specific pages for our hello-world route.
-* Each function is invoked with `context` and `next` arguments.
-* We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
-* Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
-* `helloWorld` is our newly created controller handler.
-* `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
-* `clientRender` renders `Layout` element into DOM.
+- `page()` will set up the route `/hello-world` and run some functions when it's matched.
+- The `:site?` is because we want to support site specific pages for our hello-world route.
+- Each function is invoked with `context` and `next` arguments.
+- We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
+- Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
+- `helloWorld` is our newly created controller handler.
+- `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
+- `clientRender` renders `Layout` element into DOM.
 
 You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modules: the final syntax_](http://2ality.com/2014/09/es6-modules-final.html)" as well from _MDN web docs_: [_export_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) & [_import_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
 
@@ -115,7 +108,7 @@ if ( config.isEnabled( 'hello-world' ) ) {
 	sections.push( {
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
-		module: 'my-sites/hello-world'
+		module: 'my-sites/hello-world',
 	} );
 }
 ```
@@ -123,9 +116,11 @@ if ( config.isEnabled( 'hello-world' ) ) {
 This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
 
 You also need to `require` the `config` module at the top of the `client/sections.js` file (in case the `require` statement is not already there):
+
 ```js
 const config = require( 'config' );
 ```
+
 The `sections.js` module needs to be a CommonJS module that uses `require` calls, because it's run by Node.js. ESM imports won't work there at this moment.
 
 Through the use of the `config` module, we are conditionally loading our section only in development environment. All existing sections in `client/sections.js` will load in all environments.
@@ -134,11 +129,11 @@ Through the use of the `config` module, we are conditionally loading our section
 
 Restart the server doing:
 
-* `yarn start`
+- `yarn start`
 
 We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world)! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
-----
+---
 
 # The View
 
@@ -169,9 +164,7 @@ import React from 'react';
  */
 import Main from 'components/main';
 
-export default class HelloWorld extends React.Component {
-
-};
+export default class HelloWorld extends React.Component {}
 ```
 
 Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:

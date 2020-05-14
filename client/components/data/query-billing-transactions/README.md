@@ -1,5 +1,4 @@
-Query Billing Transactions
-================
+# Query Billing Transactions
 
 `<QueryBillingTransactions />` is a React component used in managing network requests for billing transactions.
 

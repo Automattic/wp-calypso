@@ -1,5 +1,4 @@
-Sub Masterbar Nav
-=================
+# Sub Masterbar Nav
 
 This component displays a navigation header under the masterbar.
 

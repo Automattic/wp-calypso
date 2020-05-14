@@ -9,6 +9,7 @@ Because it's possible to allow `nock` interceptions and modifiers to persist bey
 `nock` is re-exported as a convenience so you don't have to import both `nock` and this module.
 
 ## Format:
+
 ```js
 useNock();
 ```
@@ -37,10 +38,10 @@ describe('my test suite', () = {
 	            id: 42,
 	            name: 'Leeroy Jenkins'
             } );
-        
+
         expect( nock.isDone() ).to.be.false;
 	} );
-	
+
 	it( 'persists beyond where it was used', () => {
 	    expect( nock.isDone() ).to.be.false;
 	} );

@@ -1,5 +1,4 @@
-viewport
-========
+# viewport
 
 This package contains functions to identify and track changes to the viewport. This can be used for displaying different components depending on a desktop or mobile view.
 
@@ -37,9 +36,8 @@ Registering to listen to changes, using vanilla methods:
 import { subscribeIsDesktop } from '@automattic/viewport';
 
 class MyComponent extends React.Component {
-	sizeChanged = matches => {
-		console.log(
-			`Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
+	sizeChanged = ( matches ) => {
+		console.log( `Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
 		this.forceUpdate();
 	};
 
@@ -54,7 +52,6 @@ class MyComponent extends React.Component {
 ```
 
 Note: the above usage is more easily accomplished using the hooks and higher-order components in `@automattic/viewport-react`.
-
 
 ### Supported methods
 

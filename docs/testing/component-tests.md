@@ -1,6 +1,6 @@
 # Component Tests
 
-Calypso has a lot of React UI components. (Try for example running `find . -name '*.js?'` from the `client` folder).  It can be difficult to test components and UI. This guide will help make it as easy and focused as possible.
+Calypso has a lot of React UI components. (Try for example running `find . -name '*.js?'` from the `client` folder). It can be difficult to test components and UI. This guide will help make it as easy and focused as possible.
 
 ## [Getting started](#getting-started)
 
@@ -53,7 +53,6 @@ Or by accessing the wrapper's `instance()`:
 ```javascript
 expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
 ```
-
 
 #### Is interaction handled correctly
 
@@ -131,37 +130,39 @@ const defaultProps = deepFreeze( {
 	// …
 } );
 
-	test( 'should render a div with a className of "themes-list"', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+test( 'should render a div with a className of "themes-list"', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+	expect( wrapper ).toMatchSnapshot();
+	expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
+	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+} );
 
-	test( 'should render a <Theme /> child for each provided theme', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+test( 'should render a <Theme /> child for each provided theme', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+} );
 
-	test( 'should display the EmptyContent component when no themes are provided', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-		expect( wrapper.type() ).toBe( EmptyContent );
-	} );
+test( 'should display the EmptyContent component when no themes are provided', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
+	expect( wrapper.type() ).toBe( EmptyContent );
+} );
 ```
 
 By using `shallow`, we avoid rendering the `Theme` components when testing `ThemesList`.
 
 ## Troubleshooting
 
-* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children.
+- Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children.
 
 The best practice is to test the unwrapped component, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
 
 ```javascript
 // Bad. Tests cannot access the unwrapped component.
-export default localize( class SomeComponent extends React.Component {
-	// ...
-} );
+export default localize(
+	class SomeComponent extends React.Component {
+		// ...
+	}
+);
 ```
 
 ```javascript

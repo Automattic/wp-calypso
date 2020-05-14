@@ -24,7 +24,6 @@ the asset file's basename as a string:
 }
 ```
 
-
 ## Babel
 
 A babel transform for Jest so it can correctly process JSX, TypeScript, etc.

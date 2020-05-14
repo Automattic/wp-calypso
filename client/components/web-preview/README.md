@@ -1,20 +1,18 @@
-Web Preview
-=============
+# Web Preview
 
 This component facilitates the display of iframed content. See the `propTypes` for configurable options. Basic usage is:
 
 ```jsx
-<WebPreview 
+<WebPreview
 	showPreview={ this.showPreview() }
 	onClose={ this.hidePreview }
 	previewUrl={ this.getUrlToIframe() }
 >
 ```
 
-* * *
+---
 
-WithPreviewProps
-----------------
+## WithPreviewProps
 
 This is a helper [function-as-children] component responsible for computing props to be used to create a _link_ to a given URL. The point, however, is that this will attempt to render that resource inside WebPreview if the right conditions (_cf._ below) are met. If they aren't met, the fallback is to treat the link as external and open it in a new window.
 
@@ -27,15 +25,12 @@ Calypso is meant to be run over HTTPS when in production. Since WebPreview uses 
 With those constraints in mind, usage is the following:
 
 ```jsx
-<WithPreviewProps
-	url={ myFrontEndPreview }
-	isPreviewable={ isMySitePreviewable }
->
-	{ ( props ) =>
+<WithPreviewProps url={ myFrontEndPreview } isPreviewable={ isMySitePreviewable }>
+	{ ( props ) => (
 		<Button { ...props } icon={ isMySitePreviewable ? 'visible' : 'external' }>
 			View Site
 		</Button>
-	}
+	) }
 </WithPreviewProps>
 ```
 

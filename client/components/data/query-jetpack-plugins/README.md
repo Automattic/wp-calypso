@@ -1,5 +1,4 @@
-Query Jetpack Plugins
-=================
+# Query Jetpack Plugins
 
 `<QueryJetpackPlugins />` is a React component used in managing network requests for Jetpack plugins.
 

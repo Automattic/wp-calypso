@@ -1,5 +1,4 @@
-Post Metadata
-=============
+# Post Metadata
 
 Post Metadata is a set of helper functions to assist in extracting metadata from a post object.
 

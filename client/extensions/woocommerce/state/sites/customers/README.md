@@ -1,5 +1,4 @@
-Customers
-=========
+# Customers
 
 This module is used to look up existing customers on a site.
 
@@ -11,7 +10,7 @@ Search for a given email in the customer list.
 
 ## Reducer
 
-This is saved on a per-site basis. 
+This is saved on a per-site basis.
 
 ```js
 {
@@ -34,7 +33,7 @@ This is saved on a per-site basis.
 				"shipping": {},
 				…
 			},
-			3: { … } 
+			3: { … }
 		},
 		// Keyed by search query (a list of customer IDs)
 		"queries": {

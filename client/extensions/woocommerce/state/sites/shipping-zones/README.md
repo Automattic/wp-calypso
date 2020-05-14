@@ -1,5 +1,4 @@
-Shipping Zones
-==============
+# Shipping Zones
 
 This module is used to manage the shipping zones for a site.
 

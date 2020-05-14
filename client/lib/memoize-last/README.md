@@ -1,5 +1,4 @@
-memoize-last
-============
+# memoize-last
 
 A small utility method to memoize the last invocation of a function, and
 return the cached result if a new invocation matches the parameters of the

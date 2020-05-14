@@ -1,5 +1,4 @@
-MediaLibrarySelectedData
-========================
+# MediaLibrarySelectedData
 
 MediaLibrarySelectedData is a React component intended to be used as a controller-view to simplify binding and interacting with the [media library selected store](../../../lib/media/library-selected-store.js).
 

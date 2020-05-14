@@ -1,5 +1,4 @@
-Product Categories
-==================
+# Product Categories
 
 This module is used to manage product categories for a site.
 

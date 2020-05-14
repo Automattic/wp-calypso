@@ -1,5 +1,4 @@
-scroll-to
-=========
+# scroll-to
 
 A utility module to smoothly scroll to a window position.
 
@@ -12,8 +11,8 @@ scrollTo( {
 	x: 400,
 	y: 500,
 	duration: 500,
-	onComplete: function() {
+	onComplete: function () {
 		console.log( 'done!' );
-	}
+	},
 } );
 ```

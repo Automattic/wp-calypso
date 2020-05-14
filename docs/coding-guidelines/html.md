@@ -1,5 +1,4 @@
-HTML/JSX Code Guidelines
-========================
+# HTML/JSX Code Guidelines
 
 ## Craftsmanship
 
@@ -32,7 +31,6 @@ Reflects the proper nature of the title with both a heading element and a clear 
 
 Follow your own patterns. If you are structuring a `<div class="site">` element and for site title child you use `<h1 class="site-title">` then don't change it to `<div class="footer-site">` for another child, keep the `site-` prefix. This provides a rhythm and anticipation to the reader.
 
-
 ## Indentation
 
 As with JavaScript, HTML indentation should always reflect logical structure. Use tabs and not spaces.
@@ -49,9 +47,7 @@ class Post extends React.Component {
 		return (
 			<div id={ 'post-' + post.ID } className="post">
 				<h1 class="post-title">{ post.title }</h1>
-				<div class="post-content">
-					{ post.content }
-				</div>
+				<div class="post-content">{ post.content }</div>
 			</div>
 		);
 	}
@@ -67,13 +63,10 @@ class Post extends React.Component {
 
 		return (
 			<div id={ 'post-' + post.ID } className="post">
-			<h1 class="post-title">{ post.title }</h1>
-			<div class="post-content">
-				{ post.content }
-			</div>
+				<h1 class="post-title">{ post.title }</h1>
+				<div class="post-content">{ post.content }</div>
 			</div>
 		);
 	}
 }
 ```
-

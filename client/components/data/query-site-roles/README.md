@@ -1,5 +1,4 @@
-Query Site Roles
-================
+# Query Site Roles
 
 `<QuerySiteRoles />` is a React component used in managing network requests for site roles.
 

@@ -1,5 +1,4 @@
-Select Dropdown
-===============
+# Select Dropdown
 
 React component used to display a dropdown selector.
 
@@ -23,13 +22,15 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Item selected path="/published">
+					Published
+				</SelectDropdown.Item>
 				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
 				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
 				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
 			</SelectDropdown>
 		);
-	} 
+	}
 }
 ```
 
@@ -210,7 +211,7 @@ var options = [
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```
 
@@ -226,6 +227,6 @@ var options = [
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```

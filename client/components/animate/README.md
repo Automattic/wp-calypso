@@ -1,5 +1,4 @@
-Animate
-=======
+# Animate
 
 Simple interface to introduce animations to components on initial render. Used as a wrapper.
 
@@ -19,4 +18,4 @@ render() {
 
 #### Props
 
-* `type`: (string) a string matching one of the approved transition effects (`appear` or `fade-in`).
+- `type`: (string) a string matching one of the approved transition effects (`appear` or `fade-in`).

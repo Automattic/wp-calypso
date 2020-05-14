@@ -1,5 +1,4 @@
-Query SiteDomains
-===========================
+# Query SiteDomains
 
 `<QuerySiteDomains />` is a React component used in managing network requests for sites/%s/domains.
 
@@ -18,15 +17,12 @@ class MyComponent extends React.Component {
 			<div>
 				<QuerySiteDomains siteId={ site.ID } />
 				<ul>
-				{
-					domains.map( domain => {
-						return ( <li>{ domain.domain }</li> );
-					} )
-				}
+					{ domains.map( ( domain ) => {
+						return <li>{ domain.domain }</li>;
+					} ) }
 				</ul>
 			</div>
 		);
 	}
 }
 ```
-

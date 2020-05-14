@@ -1,5 +1,4 @@
-Installed Plugins
-=================
+# Installed Plugins
 
 A module for managing installed plugins on connected sites.
 
