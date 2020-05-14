@@ -13,6 +13,7 @@ const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];
  * @param  {object}  state   Global state tree
  * @returns {Array} Active tickets
  */
+/*@__INLINE__*/
 export default function getActiveSupportTickets( state ) {
 	return get( state, 'help.supportHistory', [] ).filter(
 		( item ) => item.type === 'Zendesk_History' && ACTIVE_STATUSES.includes( item.status )

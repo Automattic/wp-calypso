@@ -8,5 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/concierge/init';
 
+/*@__INLINE__*/
 export default ( state, appointmentId ) =>
 	get( state, [ 'concierge', 'appointmentDetails', appointmentId ], null );

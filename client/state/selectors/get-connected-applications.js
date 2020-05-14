@@ -9,4 +9,5 @@ import { get } from 'lodash';
  * @param  {object} state Global state tree
  * @returns {?Array}       Connected applications
  */
+/*@__INLINE__*/
 export default ( state ) => get( state, 'connectedApplications', null );

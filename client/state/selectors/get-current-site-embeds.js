@@ -10,4 +10,5 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param   {object} state   Global state tree
  * @returns {object}         Site embeds
  */
+/*@__INLINE__*/
 export default ( state ) => getSiteEmbeds( state, getSelectedSiteId( state ) );

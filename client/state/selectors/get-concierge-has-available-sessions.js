@@ -8,4 +8,5 @@ import { get } from 'lodash';
  */
 import 'state/concierge/init';
 
+/*@__INLINE__*/
 export default ( state ) => get( state, 'concierge.hasAvailableConciergeSessions', null );

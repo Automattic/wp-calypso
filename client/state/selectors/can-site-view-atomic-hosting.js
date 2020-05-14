@@ -11,6 +11,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
  * @param  {object}  state  Global state tree
  * @returns {?boolean}        Whether site can display the atomic hosting section
  */
+/*@__INLINE__*/
 export default function canSiteViewAtomicHosting( state ) {
 	const siteId = getSelectedSiteId( state );
 

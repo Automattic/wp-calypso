@@ -13,6 +13,7 @@ import createSelector from 'lib/create-selector';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
+/*@__INLINE__*/
 function getContactPage( posts ) {
 	return get(
 		find(
@@ -27,6 +28,7 @@ function getContactPage( posts ) {
 	);
 }
 
+/*@__INLINE__*/
 function getPageEditorUrl( state, siteId, pageId ) {
 	if ( ! pageId ) {
 		return null;

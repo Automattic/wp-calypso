@@ -10,6 +10,7 @@ import { get } from 'lodash';
  * @param {string} type - type of list ('domains, 'payments', or 'sms)
  * @returns {Array?} the list of countries
  */
+/*@__INLINE__*/
 export default function getCountries( state, type ) {
 	return get( state, [ 'countries', type ], null );
 }

@@ -12,6 +12,7 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * @param  {string}  transactionType Type of transactions to retrieve
  * @returns {?Array}                  An array of past transactions
  */
+/*@__INLINE__*/
 export default ( state, transactionType ) =>
 	'upcoming' === transactionType
 		? getUpcomingBillingTransactions( state )

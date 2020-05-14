@@ -22,6 +22,7 @@ import { getFiltersKey } from 'state/ui/comments/utils';
  * @param {string} [query.status] Comments status.
  * @returns {Array} List of comment IDs for the requested page and filters.
  */
+/*@__INLINE__*/
 export const getCommentsPage = ( state, siteId, query ) => {
 	const { page = 1, postId } = query;
 	const parent = postId || 'site';

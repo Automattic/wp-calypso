@@ -14,6 +14,7 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {object} current state value
  */
+/*@__INLINE__*/
 export const getCurrentQueryArguments = ( state ) => get( state, 'ui.route.query.current', null );
 
 export default getCurrentQueryArguments;

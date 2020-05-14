@@ -10,6 +10,7 @@ import { get } from 'lodash';
  * @param  {string}  transactionType Transaction type
  * @returns {object}                 Billing transaction filters
  */
+/*@__INLINE__*/
 export default ( state, transactionType ) => {
 	const filters = get( state, [ 'ui', 'billingTransactions', transactionType ], {} );
 	return {
