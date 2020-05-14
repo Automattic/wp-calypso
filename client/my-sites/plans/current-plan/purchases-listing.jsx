@@ -215,7 +215,7 @@ class PurchasesListing extends Component {
 			serviceButton = (
 				<Button
 					href={ addQueryArgs(
-						{ site, source: 'jetpack-backup-dash' },
+						{ site, source: 'calypso-backups' },
 						'https://jetpack.com/redirect/'
 					) }
 					compact
@@ -229,7 +229,7 @@ class PurchasesListing extends Component {
 			serviceButton = (
 				<Button
 					href={ addQueryArgs(
-						{ site, source: 'jetpack-scan-dash' },
+						{ site, source: 'calypso-scanner' },
 						'https://jetpack.com/redirect/'
 					) }
 					compact
