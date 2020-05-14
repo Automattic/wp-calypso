@@ -65,8 +65,8 @@
 }
 
 .form-button.daily-backup-status__restore-button img {
-	width: 1rem;
-	height: 1rem;
+	width: 24px;
+	height: 24px;
 	filter: grayscale( 100% ) contrast( 70% );
 }
 
@@ -167,8 +167,8 @@
 }
 
 .daily-backup-status__credentials-warning-top img {
-	width: 1.1rem;
-	height: 1.1rem;
+	width: 24px;
+	height: 24px;
 	margin-right: 0.5rem;
 }
 
@@ -178,7 +178,12 @@
 	width: 100%;
 	margin: 1rem 0;
 	text-align: center;
-	color: var( --studio-jetpack-green );
+	color: var( --studio-jetpack-green-60 );
+
+	@include breakpoint( '>660px' ) {
+		width: 330px;
+		float: none;
+	}
 }
 
 .daily-backup-status__failed-message-head {
