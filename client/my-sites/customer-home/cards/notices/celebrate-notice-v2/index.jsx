@@ -11,7 +11,6 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import { requestHomeLayout } from 'state/home/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -49,7 +48,7 @@ const CelebrateNotice = ( {
 	const showNextTask = () => {
 		setIsLoading( true );
 		dispatch( savePreference( dismissalPreferenceKey, true ) );
-		dispatch( requestHomeLayout( siteId ) );
+		//see state/preferences/middleware for layout refetch
 	};
 
 	const skip = () => {
