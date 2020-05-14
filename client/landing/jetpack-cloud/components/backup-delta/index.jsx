@@ -24,6 +24,7 @@ class BackupDelta extends Component {
 			realtimeBackups,
 			siteSlug,
 			translate,
+			isToday,
 		} = this.props;
 
 		const cards = realtimeBackups.map( ( activity ) => (
@@ -43,7 +44,9 @@ class BackupDelta extends Component {
 		return (
 			<div className="backup-delta__realtime">
 				<div className="backup-delta__realtime-header">
-					{ translate( 'More backups from today' ) }
+					{ isToday
+						? translate( 'More backups from today' )
+						: translate( 'More backups from this day' ) }
 				</div>
 				<div className="backup-delta__realtime-description">
 					{ translate(
