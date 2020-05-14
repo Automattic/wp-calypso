@@ -30,6 +30,11 @@
 
 		.components-popover__content {
 			height: 100%;
+			border-top: 0;
+		}
+
+		.domain-picker__panel-row-main.components-panel__row {
+			overflow-y: auto;
 		}
 	}
 
