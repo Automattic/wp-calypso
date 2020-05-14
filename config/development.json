@@ -61,6 +61,7 @@
 		"domains/new-status-design/security-option": true,
 		"editor/after-deprecation": true,
 		"editor/before-deprecation": true,
+		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
