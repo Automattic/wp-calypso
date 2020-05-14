@@ -71,9 +71,7 @@ describe( 'wpcom-api', () => {
 									name: 'user',
 									first_name: 'User',
 									last_name: 'One',
-									meta: {
-										state: 'suspended',
-									},
+									state: 'suspended',
 								},
 							],
 						},
