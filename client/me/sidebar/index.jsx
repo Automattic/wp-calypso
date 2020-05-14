@@ -166,14 +166,16 @@ class MeSidebar extends React.Component {
 								preloadSectionName="purchases"
 							/>
 
-							<SidebarItem
-								selected={ selected === 'domains' }
-								link={ domainManagementUserRoot() }
-								label={ translate( 'Domains' ) }
-								materialIcon="language"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="domains"
-							/>
+							{ config.isEnabled( 'manage/all-domains' ) && (
+								<SidebarItem
+									selected={ selected === 'domains' }
+									link={ domainManagementUserRoot() }
+									label={ translate( 'Domains' ) }
+									materialIcon="language"
+									onNavigate={ this.onNavigate }
+									preloadSectionName="domains"
+								/>
+							) }
 
 							<SidebarItem
 								selected={ selected === 'security' }
