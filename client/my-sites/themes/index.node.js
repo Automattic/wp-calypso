@@ -5,6 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 /* eslint-enable import/no-nodejs-modules */
+import { localesToSubdomains } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ import { setLocaleRawData } from 'state/ui/language/actions';
 
 const translationsCache = {};
 
-function setupLocale( context, next ) {
+export function setupLocale( context, next ) {
 	if ( ! context.params.lang ) {
 		const localeDataPlaceholder = { '': {} };
 		context.store.dispatch( setLocaleRawData( localeDataPlaceholder ) ); // Reset to default locale
@@ -32,8 +33,17 @@ function setupLocale( context, next ) {
 		next();
 		return;
 	}
-
-	const language = getLanguage( context.params.lang );
+	const subdomainsToLocales = Object.entries( localesToSubdomains ).reduce(
+		( acc, [ key, value ] ) => {
+			return {
+				...acc,
+				[ value ]: key,
+			};
+		},
+		{}
+	);
+	const langSlug = subdomainsToLocales[ context.params.lang ] || context.params.lang;
+	const language = getLanguage( langSlug );
 
 	if ( language ) {
 		context.lang = language.langSlug;
