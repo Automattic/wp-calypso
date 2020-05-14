@@ -154,12 +154,7 @@ export default function WPCheckout( {
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
 					<WPCheckoutOrderSummary />
-					<SecondaryCartPromotions
-						siteId={ siteId }
-						siteUrl={ siteUrl }
-						responseCart={ responseCart }
-						addItemToCart={ addItemToCart }
-					/>
+					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>

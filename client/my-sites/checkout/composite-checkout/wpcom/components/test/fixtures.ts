@@ -60,7 +60,7 @@ export const storeData = () => ( {
 			{
 				ID: '1',
 				user_id: '123',
-				blog_id: '1',
+				blog_id: '123',
 				product_id: '1009',
 				subscribed_date: '2020-04-29T18:34:10+00:00',
 				renew: '1',
@@ -123,7 +123,7 @@ export const storeData = () => ( {
 			{
 				ID: '2',
 				user_id: '123',
-				blog_id: '1',
+				blog_id: '123',
 				product_id: '74',
 				subscribed_date: '2020-04-29T18:33:33+00:00',
 				renew: '1',
@@ -198,7 +198,7 @@ export const storeData = () => ( {
 			{
 				ID: '3',
 				user_id: '123',
-				blog_id: '1',
+				blog_id: '123',
 				product_id: '74',
 				subscribed_date: '2020-05-08T22:38:40+00:00',
 				renew: '1',
@@ -289,6 +289,8 @@ export const storeData = () => ( {
 		items: {
 			'123': {
 				ID: 123,
+				domain: '',
+				slug: '',
 			},
 		},
 		plans: {

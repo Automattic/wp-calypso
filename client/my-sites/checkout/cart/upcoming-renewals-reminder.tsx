@@ -16,6 +16,7 @@ import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import SectionHeader from 'components/section-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	getRenewableSitePurchases,
@@ -44,23 +45,23 @@ const OtherPurchasesLink = styled.button`
 	}
 `;
 
+interface SelectedSite {
+	ID: number;
+	domain: string;
+	slug: string;
+}
+
 interface Props {
 	cart: MockResponseCart;
 	addItemToCart: ( product: object ) => void;
-	siteId: number;
-	siteUrl: string;
 }
 
-const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
-	cart,
-	addItemToCart,
-	siteId,
-	siteUrl,
-} ) => {
+const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
 	const reduxDispatch = useDispatch< ReduxDispatch >();
 	const translate = useTranslate();
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
 	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
-		getRenewableSitePurchases( state, siteId )
+		getRenewableSitePurchases( state, selectedSite?.ID )
 	);
 
 	const purchasesIdsAlreadyInCart = useMemo(
@@ -130,7 +131,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 	const arePurchasesLoaded = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
-	if ( ! userId ) {
+	if ( ! userId || ! selectedSite ) {
 		return null;
 	}
 
@@ -138,7 +139,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 
 	const translateOptions = {
 		args: {
-			siteName: siteUrl,
+			siteName: selectedSite.domain,
 		},
 		components: {
 			link: (
@@ -163,10 +164,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
 					<UpcomingRenewalsDialog
 						isVisible={ isUpcomingRenewalsDialogVisible }
 						purchases={ purchaseRenewalsNotAlreadyInCart }
-						site={ {
-							domain: siteUrl,
-							slug: siteUrl,
-						} }
+						site={ selectedSite }
 						onConfirm={ onConfirm }
 						onClose={ onClose }
 						showManagePurchaseLinks={ false }

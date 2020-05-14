@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 
 /**
@@ -10,26 +11,21 @@ import styled from '@emotion/styled';
 import config from 'config';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { ResponseCart } from '../types';
 
 type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
 	addItemToCart: () => void;
-	siteId: number;
-	siteUrl: string;
 }
 
 export interface MockResponseCart extends PartialCart {
 	hasLoadedFromServer: boolean;
 }
 
-const SecondaryCartPromotions: FunctionComponent< Props > = ( {
-	responseCart,
-	addItemToCart,
-	siteId,
-	siteUrl,
-} ) => {
+const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
 		() => responseCart?.products.some( ( product ) => product.is_renewal ),
 		[ responseCart ]
@@ -41,15 +37,14 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 		responseCart,
 	] );
 
-	if ( config.isEnabled( 'upgrades/upcoming-renewals-notices' ) && isPurchaseRenewal && siteId ) {
+	if (
+		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
+		isPurchaseRenewal &&
+		selectedSiteId
+	) {
 		return (
 			<UpsellWrapperUI>
-				<UpcomingRenewalsReminder
-					siteId={ siteId }
-					siteUrl={ siteUrl }
-					cart={ mockCart }
-					addItemToCart={ addItemToCart }
-				/>
+				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
 			</UpsellWrapperUI>
 		);
 	}

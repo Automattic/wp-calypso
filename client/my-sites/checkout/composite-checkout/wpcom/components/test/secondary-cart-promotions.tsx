@@ -51,8 +51,6 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
-								siteId={ 1 }
-								siteUrl="site.wordpress.com"
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
@@ -69,8 +67,6 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ mockAddItemToCart }
-								siteId={ 1 }
-								siteUrl="site.wordpress.com"
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
@@ -100,8 +96,6 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
-								siteId={ 1 }
-								siteUrl="site.wordpress.com"
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
@@ -120,8 +114,6 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
-								siteId={ 1 }
-								siteUrl="site.wordpress.com"
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
@@ -138,8 +130,6 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ mockAddItemToCart }
-								siteId={ 1 }
-								siteUrl="site.wordpress.com"
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
