@@ -119,7 +119,7 @@ class JetpackCloudSidebar extends Component {
 								/>
 								<SidebarItem
 									expandSection={ this.expandBackupSection }
-									label={ translate( 'Activity Log', {
+									label={ translate( 'Activity log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
 									link={ backupActivityPath( selectedSiteSlug ) }
