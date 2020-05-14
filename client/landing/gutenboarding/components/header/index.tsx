@@ -170,7 +170,6 @@ const Header: React.FunctionComponent = () => {
 										className="gutenboarding__header-domain-picker-button"
 										currentDomain={ domain }
 										onDomainSelect={ setDomain }
-										hasContent={ hasContent }
 										hasPlaceholder={
 											!! siteTitle &&
 											! recommendedDomainSuggestion &&
