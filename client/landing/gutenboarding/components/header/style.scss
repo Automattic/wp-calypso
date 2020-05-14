@@ -99,9 +99,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 		opacity: 1;
 		@include reduce-motion( 'animation' );
 	}
-}
 
-.gutenboarding__header-domain-picker-button {
 	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		@include reduce-motion( 'animation' );

@@ -136,6 +136,9 @@ const Header: React.FunctionComponent = () => {
 	const hasContent =
 		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
 
+	const hasPlaceholder =
+		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -164,17 +167,13 @@ const Header: React.FunctionComponent = () => {
 								<div
 									className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
 										'has-content': hasContent,
+										'has-placeholder': hasPlaceholder,
 									} ) }
 								>
 									<DomainPickerButton
 										className="gutenboarding__header-domain-picker-button"
 										currentDomain={ domain }
 										onDomainSelect={ setDomain }
-										hasPlaceholder={
-											!! siteTitle &&
-											! recommendedDomainSuggestion &&
-											previousRecommendedDomain !== ''
-										}
 									>
 										{ domainElement }
 									</DomainPickerButton>
