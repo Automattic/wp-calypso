@@ -17,8 +17,12 @@
 		margin: 0;
 	}
 }
-.main {
+.backups__page .main {
 	overflow-y: auto;
+
+	@include breakpoint( '>660px' ) {
+		overflow-y: visible;
+	}
 }
 .backups__main-wrap {
 	display: flex;
