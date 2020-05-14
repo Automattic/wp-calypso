@@ -37,6 +37,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const [ userRequestedDownload, setUserRequestedDownload ] = useState( false );
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
 	const downloadId = useSelector( ( state ) => getBackupDownloadId( state, siteId, rewindId ) );
@@ -122,6 +123,31 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		</>
 	);
 
+	const getReadyCopy = () =>
+		userRequestedDownload
+			? translate(
+					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
+					{
+						args: {
+							backupDisplayDate,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+			  )
+			: translate(
+					'We successfully retrieved a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
+					{
+						args: {
+							backupDisplayDate,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+			  );
+
 	const renderReady = () => (
 		<>
 			<div className="rewind-flow__header">
@@ -133,19 +159,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your backup is now available for download.' ) }
 			</h3>
-			<p className="rewind-flow__info">
-				{ translate(
-					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
+			<p className="rewind-flow__info">{ getReadyCopy() }</p>
 			<Button href={ downloadUrl } primary className="rewind-flow__primary-button">
 				{ translate( 'Download file' ) }
 			</Button>
@@ -184,6 +198,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		if ( downloadProgress === null && downloadUrl === null ) {
 			return renderConfirm();
 		} else if ( downloadProgress !== null && downloadUrl === null ) {
+			if ( ! userRequestedDownload ) {
+				setUserRequestedDownload( true );
+			}
 			return renderInProgress();
 		} else if ( downloadUrl !== null ) {
 			return renderReady();
