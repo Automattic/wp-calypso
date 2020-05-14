@@ -10,15 +10,15 @@ import FormattedBlock from 'components/notes-formatted-block';
 
 // FUTURE WORK: move this to a shared location
 interface Activity {
-	activityName: string;
-	activityMeta: {};
 	activityDescription: [
 		{
-			intent: string;
-			section: string;
-			children: string[];
+			intent?: string;
+			section?: string;
+			type?: string;
+			url?: string;
 		}
 	];
+	activityName: string;
 }
 
 interface Props {
@@ -26,20 +26,26 @@ interface Props {
 }
 
 const ActivityDescription: FunctionComponent< Props > = ( {
-	activity: { activityName, activityMeta, activityDescription },
+	activity: { activityName, activityDescription },
 } ) => {
 	return (
 		<>
-			{ activityDescription.map( ( part, index ) => {
-				const { intent, section, children } = part;
+			{ activityDescription.map( ( description, index ) => {
+				const { intent, section, type, url } = description;
+
+				const content =
+					type === 'link' && url?.startsWith( 'https://wordpress.com/' )
+						? { ...description, type: undefined, url: undefined }
+						: description;
+
 				return (
 					<FormattedBlock
+						content={ content }
 						key={ index }
-						content={ children }
 						meta={ { activity: activityName, intent, section } }
 					/>
 				);
-			} ) }{ ' ' }
+			} ) }
 		</>
 	);
 };
