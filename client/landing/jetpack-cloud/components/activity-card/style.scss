@@ -1,6 +1,7 @@
 .activity-card {
 	.card {
 		border-radius: 3px;
+		padding: 16px;
 	}
 
 	.activity-log-item__actor {
@@ -14,6 +15,28 @@
 	.activity-card__activity-title {
 		font-size: 0.8rem;
 		color: rgb( 100, 105, 112 );
+	}
+
+	.activity-card__activity-title {
+		margin: 8px 0;
+		font-style: italic;
+	}
+
+	.activity-log-item__actor {
+		.activity-log-item__actor-info {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			margin-left: 8px;
+			> *:not( :last-child ) {
+				margin-right: 8px;
+			}
+		}
+		> img.gravatar,
+		> svg {
+			max-height: 24px;
+			max-width: 24px;
+		}
 	}
 }
 
@@ -37,15 +60,6 @@
 	margin-left: 0.2rem;
 }
 
-.activity-log-item__actor-info {
-	margin-left: 1rem;
-}
-
-.activity-card__activity-title {
-	margin: 16px 0;
-	font-style: italic;
-}
-
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
 	font-size: 16px;
@@ -67,6 +81,8 @@
 	display: flex;
 	justify-content: space-between;
 	padding-top: 0.7rem;
+	// balance top and bottom against the 8px overall card padding
+	padding-bottom: calc( 0.7rem - 8px );
 	position: relative;
 	top: 0.5rem;
 
