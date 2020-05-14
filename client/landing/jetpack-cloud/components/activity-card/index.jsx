@@ -22,7 +22,7 @@ import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-c
 import QueryRewindState from 'components/data/query-rewind-state';
 import { Card } from '@automattic/components';
 import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
-import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityDescription from './activity-description';
 import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import Button from 'components/forms/form-button';
 import Gridicon from 'components/gridicon';
