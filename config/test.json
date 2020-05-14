@@ -42,7 +42,7 @@
 		"google-my-business": false,
 		"help": true,
 		"inline-help": true,
-		"ive/use-external-assignment": false,
+		"ive/use-external-assignment": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
