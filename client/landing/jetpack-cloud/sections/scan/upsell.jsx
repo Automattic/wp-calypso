@@ -13,7 +13,6 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import Upsell from 'landing/jetpack-cloud/components/upsell';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -83,10 +82,6 @@ export default function ScanUpsellPage( { reason } ) {
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
 			<div className="scan__content">{ renderUpsell( reason ) }</div>
-			<StatsFooter
-				noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
-				noticeLink="https://jetpack.com/upgrade/backups"
-			/>
 		</Main>
 	);
 }

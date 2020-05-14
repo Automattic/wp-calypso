@@ -14,7 +14,6 @@ import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
-import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan, Site } from 'landing/jetpack-cloud/sections/scan/types';
 import { isEnabled } from 'config';
@@ -266,14 +265,6 @@ class ScanPage extends Component< Props > {
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
-				<StatsFooter
-					header="Scan Summary"
-					noticeText={ translate(
-						'Failing to plan is planning to fail. Regular backups ensure that should ' +
-							'the worst happen, you are prepared. Jetpack Backup has you covered.'
-					).toString() }
-					noticeLink="https://jetpack.com/upgrade/backup"
-				/>
 			</Main>
 		);
 	}
