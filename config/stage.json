@@ -50,7 +50,7 @@
 		"help": true,
 		"help/courses": true,
 		"inline-help": true,
-		"ive/use-external-assignment": false,
+		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
