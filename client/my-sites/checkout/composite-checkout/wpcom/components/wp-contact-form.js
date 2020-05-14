@@ -183,7 +183,7 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
-	const showDomainContactSummary = isDomainFieldsVisible || isGSuiteInCart;
+	const showDomainContactSummary = isDomainFieldsVisible;
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -206,7 +206,9 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
+					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
+						<SummaryLine>{ fullName }</SummaryLine>
+					) }
 
 					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
@@ -216,9 +218,10 @@ function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.alternateEmail.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
-					) }
+					{ ( isGSuiteInCart || showDomainContactSummary ) &&
+						contactInfo.alternateEmail.value?.length > 0 && (
+							<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+						) }
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
