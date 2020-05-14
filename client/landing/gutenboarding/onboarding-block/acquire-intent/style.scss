@@ -94,7 +94,6 @@
 	box-shadow: none;
 	color: var( --contrastColor );
 	@include onboarding-medium-text;
-	// stylelint-disable-next-line scales/font-weight
 	font-weight: 600;
 	letter-spacing: 0;
 	padding: 20px 32px;
