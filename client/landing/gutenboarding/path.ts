@@ -12,8 +12,8 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	paths,
 } from './stores/plans/constants';
-import { getPlanPath } from '../../lib/plans';
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
 // `undefined`, as that's what matching our `path` pattern against a route with no explicit
@@ -38,7 +38,7 @@ export const supportedPlans: string[] = [
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 ];
-export const supportedPlansPaths: string[] = supportedPlans.map( getPlanPath );
+export const supportedPlansPaths: string[] = Object.keys( paths );
 
 const routeFragments = {
 	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.

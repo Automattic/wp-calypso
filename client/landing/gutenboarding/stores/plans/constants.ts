@@ -1,13 +1,17 @@
-/**
- * External dependencies
- */
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '../../../../lib/plans/constants'; // Gutenboarding's last dependency on client/lib/plans
+// plans constants
+export const PLAN_FREE = 'free_plan';
+export const PLAN_BUSINESS = 'business-bundle';
+export const PLAN_PREMIUM = 'value_bundle';
+export const PLAN_PERSONAL = 'personal-bundle';
+export const PLAN_ECOMMERCE = 'ecommerce-bundle';
+
+export const paths = {
+	beginner: PLAN_FREE,
+	personal: PLAN_PERSONAL,
+	premium: PLAN_PREMIUM,
+	business: PLAN_BUSINESS,
+	ecommerce: PLAN_ECOMMERCE,
+};
 
 export const STORE_KEY = 'automattic/onboard/plans';
 

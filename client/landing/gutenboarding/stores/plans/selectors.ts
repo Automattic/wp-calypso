@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { State } from './reducer';
-import { DEFAULT_FREE_PLAN, DEFAULT_PAID_PLAN } from './constants';
+import { DEFAULT_FREE_PLAN, DEFAULT_PAID_PLAN, paths } from './constants';
 
 export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) => {
 	if ( Object.keys( state.supportedPlans ).length ) {
@@ -19,6 +19,7 @@ export const getPlan = ( state: State, slug: string ) => getSupportedPlans( stat
 export const getSelectedPlan = ( state: State ) =>
 	state.selectedPlanSlug && getPlan( state, state.selectedPlanSlug );
 
-export const getPlanByPath = () => {
-	return null;
+export const getPlanByPath = ( state: State, path: string ) => {
+	const slug = paths[ path ];
+	return getPlan( state, slug );
 };
