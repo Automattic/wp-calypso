@@ -15,7 +15,6 @@ import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -30,6 +29,7 @@ class JetpackPlansGrid extends Component {
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
+		hidePersonalOfferReset: PropTypes.bool,
 
 		// Connected
 		translate: PropTypes.func.isRequired,
@@ -54,9 +54,9 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
-		const { interval } = this.props;
+		const { interval, hidePersonalOfferReset } = this.props;
 		const defaultInterval = 'yearly';
-		const hidePersonal = 'withoutPersonal' === abtest( 'jpcPlansOfferResetPersonal' );
+		const hidePersonal = hidePersonalOfferReset;
 
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
