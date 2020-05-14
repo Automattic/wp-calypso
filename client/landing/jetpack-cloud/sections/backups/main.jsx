@@ -160,7 +160,7 @@ class BackupsPage extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Latest Backups' ) } />
+				<DocumentHead title={ translate( 'Latest backups' ) } />
 				<SidebarNavigation />
 				<PageViewTracker path="/backups/:site" title="Backups" />
 
