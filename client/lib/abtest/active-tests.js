@@ -126,4 +126,14 @@ export default {
 		localeTargets: [ 'en' ],
 		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
 	},
+	jpcPlansOfferResetPersonal: {
+		datestamp: '20200513',
+		variations: {
+			withPersonal: 50,
+			withoutPersonal: 50,
+		},
+		defaultVariation: 'withPersonal',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };
