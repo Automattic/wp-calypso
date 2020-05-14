@@ -95,7 +95,8 @@
 		background: var( --studio-gray-0 );
 	}
 
-	a, a:visited {
+	a,
+	a:visited {
 		color: inherit;
 	}
 
@@ -149,7 +150,7 @@
 		.logged-out-form__back-link {
 			border: 0;
 			color: var( --color-text );
-			font-weight: normal;
+			font-weight: 400;
 			line-height: 21px;
 			margin: 30px 0 20px;
 			padding: 10px 16px;
@@ -221,7 +222,7 @@
 
 		.login__form label {
 			color: var( --color-text );
-			font-weight: normal;
+			font-weight: 400;
 		}
 
 		.login__form-header {
@@ -293,7 +294,7 @@
 
 			label {
 				color: var( --color-text );
-				font-weight: normal;
+				font-weight: 400;
 			}
 		}
 
@@ -313,7 +314,7 @@
 
 		.magic-login__footer a {
 			color: var( --color-text );
-			font-weight: normal;
+			font-weight: 400;
 			margin: 20px 0 15px;
 			padding: 10px 16px;
 			text-align: center;
@@ -637,7 +638,7 @@
 	.logged-out-form label,
 	.login__form-userdata label {
 		font-size: 16px;
-		font-weight: normal;
+		font-weight: 400;
 	}
 
 	.login__form-signup-link {
@@ -668,7 +669,7 @@
 		button {
 			border: none;
 			font-size: 16px;
-			font-weight: normal;
+			font-weight: 400;
 			line-height: 3em;
 			text-align: center;
 		}
@@ -705,6 +706,72 @@
 		@include breakpoint-deprecated( '>480px' ) {
 			font-size: 2em;
 			margin: 2em 0 0;
+		}
+	}
+}
+
+.jetpack-cloud {
+	.masterbar.masterbar__oauth-client {
+		border: none;
+	}
+
+	// background: #e6e6e6;
+	// min-height: 100%;
+
+	main.wp-login__main.main {
+		background: var( --studio-white );
+		padding-bottom: 0;
+
+		.card.login__form,
+		.card.login__social {
+			box-shadow: none;
+		}
+		.card.login__form {
+			border-bottom: 1px solid var( --color-border-subtle );
+		}
+	}
+
+	.button.is-primary {
+		color: var( --studio-white );
+		background: var( --studio-jetpack-green-40 );
+		border-color: var( --studio-jetpack-green-40 );
+
+		&:hover,
+		&:focus {
+			background: var( --studio-jetpack-green-30 );
+			border-color: var( --studio-jetpack-green-30 );
+		}
+
+		&:active {
+			background: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-50 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --studio-white );
+			background: var( --studio-gray-10 );
+			border-color: var( --studio-gray-10 );
+		}
+	}
+
+	a,
+	a:visited {
+		color: var( --studio-jetpack-green-40 );
+
+		&:hover,
+		&:focus {
+			color: var( --studio-jetpack-green-60 );
+		}
+	}
+
+	.login__form-header-wrapper {
+		padding: 16px;
+	}
+
+	.login__jetpack-cloud-wrapper {
+		svg.wordpress-logo {
+			fill: var( --studio-wordpress-blue );
 		}
 	}
 }
