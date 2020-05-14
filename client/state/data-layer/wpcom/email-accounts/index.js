@@ -7,11 +7,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { convertToCamelCase } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { EMAIL_ACCOUNTS_REQUEST } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { prepareAccounts } from './utils';
 import {
 	receiveGetEmailAccountsSuccess,
 	receiveGetEmailAccountsFailure,
@@ -21,38 +21,47 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 export const getEmailAccounts = ( action ) => {
 	if ( config.isEnabled( 'email-accounts/enabled' ) ) {
 		return receiveGetEmailAccountsSuccess( action.siteId, {
-			accounts: prepareAccounts( [
+			accounts: [
 				{
-					email: 'one@domain.com',
-					site_id: action.siteId,
-					domain: 'domain.com',
-					first_name: 'One',
-					last_name: 'Last',
-					product_slug: 'titan',
+					domain_name: 'domain.com',
 					product_name: 'Titan Basic',
-					provider_slug: 'titan',
+					product_slug: 'titan_basic',
+					product_type: 'titan',
+					site_id: action.siteId,
+					mailboxes: [
+						{
+							name: 'one',
+							first_name: 'One',
+							last_name: 'Last',
+							state: 'active',
+						},
+						{
+							name: 'two',
+							first_name: 'Two',
+							last_name: 'Last',
+							state: 'active',
+						},
+					],
 				},
 				{
-					email: 'two@domain.com',
+					domain_name: 'other-domain.com',
+					product_name: 'G Suite Business',
+					product_slug: 'gapps_unlimited',
+					product_type: 'gapps',
 					site_id: action.siteId,
-					domain: 'domain.com',
-					first_name: 'Two',
-					last_name: 'Last',
-					product_slug: 'titan',
-					product_name: 'Titan Basic',
-					provider_slug: 'titan',
+					mailboxes: [
+						{
+							name: 'three',
+							first_name: 'Three',
+							last_name: 'Last',
+							state: 'suspended',
+							meta: {
+								has_agreed_to_terms: true,
+							},
+						},
+					],
 				},
-				{
-					email: 'one@other-domain.com',
-					site_id: action.siteId,
-					domain: 'other-domain.com',
-					first_name: 'One',
-					last_name: 'Last',
-					product_slug: 'gapps',
-					product_name: 'G Suite Basic',
-					provider_slug: 'gapps',
-				},
-			] ),
+			],
 		} );
 	}
 
@@ -87,7 +96,7 @@ registerHandlers( 'state/data-layer/wpcom/email-accounts/index.js', {
 			fetch: getEmailAccounts,
 			onSuccess: getEmailAccountsSuccess,
 			onError: getEmailAccountsFailure,
-			fromApi: prepareAccounts,
+			fromApi: convertToCamelCase,
 		} ),
 	],
 } );

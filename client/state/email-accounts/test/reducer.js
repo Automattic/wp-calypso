@@ -12,13 +12,21 @@ import { EMAIL_ACCOUNTS_REQUEST_SUCCESS } from 'state/action-types';
 
 describe( "emailAccountsReducer's", () => {
 	const account = {
-		email: 'a@test.blog',
-		domain: 'test.blog',
-		first_name: 'User',
-		last_name: 'One',
+		domain_name: 'test.blog',
+		product_name: 'G Suite Basic',
+		product_slug: 'gapps',
+		product_type: 'gapps',
 		site_id: 1,
-		is_suspended: false,
-		provider_slug: 'gsuite',
+		mailboxes: [
+			{
+				name: 'user',
+				first_name: 'User',
+				last_name: 'One',
+				meta: {
+					state: 'suspended',
+				},
+			},
+		],
 	};
 
 	describe( 'accounts sub-reducer', () => {
