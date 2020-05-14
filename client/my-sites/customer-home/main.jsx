@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -50,14 +50,6 @@ const Home = ( {
 	trackViewSiteAction,
 } ) => {
 	const translate = useTranslate();
-	// use an effect to fire the exposure event only if the site id changes or first view
-	useEffect( () => {
-		if ( canUserUseCustomerHome ) {
-			recordTracksEvent( 'calypso_saw_a_a_test', {
-				siteId,
-			} );
-		}
-	}, [ siteId, canUserUseCustomerHome ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
