@@ -161,7 +161,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 						onConfirm={ onConfirm }
 						onClose={ onClose }
 						showManagePurchaseLinks={ false }
-						submitButtonText={ translate( 'Add to cart' ) }
+						submitButtonText={ translate( 'Add to Cart' ) }
 					/>
 					<SectionHeader
 						className="cart__header cart__upsell-header"
@@ -223,7 +223,7 @@ function getMessages( {
 	}
 
 	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
-	const buttonLabel = translate( 'Add to cart' );
+	const buttonLabel = translate( 'Add to Cart' );
 	let message: ReturnType< typeof translate > = '';
 	const translateOptions = {
 		args: {
