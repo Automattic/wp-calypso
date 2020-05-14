@@ -76,7 +76,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		if ( typeof recaptchaClientId === 'number' ) {
 			recaptchaToken = await recordGoogleRecaptchaAction(
 				recaptchaClientId,
-				'calypso/gutenboarding/signup/formSubmit'
+				'calypso/signup/formSubmit'
 			);
 
 			if ( ! recaptchaToken ) {
