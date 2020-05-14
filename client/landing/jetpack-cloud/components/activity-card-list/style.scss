@@ -80,7 +80,7 @@
 .activity-card-list__primary-card,
 .activity-card-list__primary-card-with-more {
 	> .card {
-		padding-left: 20px; // reduce standard 24px padding by 4
+		padding-left: 12px; // reduce standard 16px padding by 4
 		border-left: 4px solid var( --color-primary-40 );
 	}
 }
