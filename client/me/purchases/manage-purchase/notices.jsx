@@ -15,6 +15,7 @@ import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	getName,
+	isAutoRenewing,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -28,12 +29,23 @@ import {
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'lib/purchases';
-import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	isPlan,
+	isDomainRegistration,
+} from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+
+/**
+ * Style dependencies
+ */
+import './notices.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 
@@ -41,9 +53,15 @@ class PurchaseNotice extends Component {
 	static propTypes = {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
+		handleRenewMultiplePurchases: PropTypes.func,
 		purchase: PropTypes.object,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+	};
+
+	state = {
+		showUpcomingRenewalsDialog: false,
 	};
 
 	getExpiringText( purchase ) {
@@ -169,6 +187,25 @@ class PurchaseNotice extends Component {
 		}
 	};
 
+	handleExpiringNoticeRenewAll = () => {
+		const { renewableSitePurchases } = this.props;
+		this.trackClick( 'other-purchases-expiring-renew-all' );
+		if ( this.props.handleRenewMultiplePurchases ) {
+			this.props.handleRenewMultiplePurchases( renewableSitePurchases );
+		}
+	};
+
+	handleExpiringNoticeRenewSelection = ( selectedRenewableSitePurchases ) => {
+		const { renewableSitePurchases } = this.props;
+		this.props.recordTracksEvent( 'calypso_subscription_upcoming_renewals_dialog_submit', {
+			selected: selectedRenewableSitePurchases.length,
+			available: renewableSitePurchases.length,
+		} );
+		if ( this.props.handleRenewMultiplePurchases ) {
+			this.props.handleRenewMultiplePurchases( selectedRenewableSitePurchases );
+		}
+	};
+
 	renderPurchaseExpiringNotice() {
 		const { moment, purchase } = this.props;
 		let noticeStatus = 'is-info';
@@ -194,6 +231,143 @@ class PurchaseNotice extends Component {
 				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
+		);
+	}
+
+	renderOtherPurchasesExpiringNotice() {
+		const { translate, purchase, selectedSite, renewableSitePurchases } = this.props;
+
+		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
+			return null;
+		}
+
+		const showOtherPurchasesExpiringNotice =
+			selectedSite &&
+			! isAutoRenewing( purchase ) &&
+			renewableSitePurchases.length > 1 &&
+			renewableSitePurchases.some( ( otherPurchase ) => otherPurchase.id === purchase.id );
+
+		if ( ! showOtherPurchasesExpiringNotice ) {
+			return null;
+		}
+
+		return (
+			<>
+				<UpcomingRenewalsDialog
+					isVisible={ this.state.showUpcomingRenewalsDialog }
+					purchases={ renewableSitePurchases }
+					site={ selectedSite }
+					onConfirm={ this.handleExpiringNoticeRenewSelection }
+					onClose={ this.closeUpcomingRenewalsDialog }
+				/>
+				<Notice
+					className="manage-purchase__other-purchases-expiring-notice"
+					showDismiss={ false }
+					status="is-info"
+					icon="notice"
+					text={ this.getOtherPurchasesExpiringText() }
+				>
+					<NoticeAction onClick={ this.handleExpiringNoticeRenewAll }>
+						{ translate( 'Renew all' ) }
+					</NoticeAction>
+					{ this.trackImpression( 'other-purchases-expiring' ) }
+				</Notice>
+			</>
+		);
+	}
+
+	openUpcomingRenewalsDialog = () => {
+		this.trackClick( 'other-purchases-expiring-upcoming-renewals-dialog' );
+		this.setState( { showUpcomingRenewalsDialog: true } );
+	};
+
+	closeUpcomingRenewalsDialog = () => {
+		this.setState( { showUpcomingRenewalsDialog: false } );
+	};
+
+	getOtherPurchasesExpiringText() {
+		const { translate, purchase, moment, renewableSitePurchases } = this.props;
+		const expiry = moment( purchase.expiryDate );
+		const translateOptions = {
+			args: {
+				purchaseName: getName( purchase ),
+				expiry: expiry.fromNow(),
+			},
+			components: {
+				link: (
+					<button
+						className="manage-purchase__other-upgrades-button"
+						onClick={ this.openUpcomingRenewalsDialog }
+					/>
+				),
+			},
+		};
+
+		if ( isExpired( purchase ) ) {
+			if ( isDomainRegistration( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s domain expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			if ( isPlan( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s plan expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			return translate(
+				'Your %(purchaseName)s subscription expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+				translateOptions
+			);
+		}
+
+		const hasOtherPurchaseExpiringSoon = renewableSitePurchases.some(
+			( otherPurchase ) =>
+				otherPurchase.id !== purchase.id &&
+				moment( otherPurchase.expiryDate ).diff( Date.now(), 'days' ) < 30
+		);
+
+		if ( hasOtherPurchaseExpiringSoon ) {
+			if ( isDomainRegistration( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			if ( isPlan( purchase ) ) {
+				return translate(
+					'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+					translateOptions
+				);
+			}
+
+			return translate(
+				'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+				translateOptions
+			);
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			return translate(
+				'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+				translateOptions
+			);
+		}
+
+		if ( isPlan( purchase ) ) {
+			return translate(
+				'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+				translateOptions
+			);
+		}
+
+		return translate(
+			'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+			translateOptions
 		);
 	}
 
@@ -312,6 +486,11 @@ class PurchaseNotice extends Component {
 		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
 		if ( consumedConciergeSessionNotice ) {
 			return consumedConciergeSessionNotice;
+		}
+
+		const otherPurchasesExpiringNotice = this.renderOtherPurchasesExpiringNotice();
+		if ( otherPurchasesExpiringNotice ) {
+			return otherPurchasesExpiringNotice;
 		}
 
 		const expiredNotice = this.renderExpiredRenewNotice();
