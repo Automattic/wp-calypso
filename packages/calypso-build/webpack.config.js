@@ -99,8 +99,8 @@ function getWebpackConfig(
 				extractComments: false,
 				terserOptions: {
 					ecma: 5,
-					safari10: true,
-					mangle: true,
+					safari10: false,
+					mangle: false,
 				},
 			} ),
 		},
