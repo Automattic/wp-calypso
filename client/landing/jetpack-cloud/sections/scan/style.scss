@@ -79,5 +79,9 @@
 }
 
 .scan__retry-bottom {
-	margin-left: 20px;
+	margin: 0 0 16px;
+
+	@include breakpoint( '>660px' ) {
+		margin: 16px 0 16px 20px;
+	}
 }
