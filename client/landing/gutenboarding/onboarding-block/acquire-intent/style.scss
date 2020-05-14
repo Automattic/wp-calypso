@@ -81,9 +81,17 @@
 
 .madlib__input:empty {
 	border-bottom: 2px solid transparent;
-	position: relative;
+	display: inline-block;
+	position: absolute;
 	z-index: 1;
 	vertical-align: middle;
+	height: 1em;
+	width: 1em;
+
+	@include break-small {
+		display: inline;
+		position: relative;
+	}
 }
 
 // Themed core button component
