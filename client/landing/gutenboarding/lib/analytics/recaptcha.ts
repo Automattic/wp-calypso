@@ -21,7 +21,7 @@ type GrecaptchaAction = {
 	action: string;
 };
 
-// Properties ad ded to the `window` object:
+// Properties added to the `window` object by https://www.google.com/recaptcha/api.js:
 declare global {
 	interface Window {
 		grecaptcha?: {
