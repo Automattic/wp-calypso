@@ -164,10 +164,25 @@ describe( 'WechatPaymentBox', () => {
 	} );
 
 	describe( '#componentDidUpdate', () => {
-		test( 'redirects on mobile', () => {
-			// https://github.com/facebook/jest/issues/890#issuecomment-295939071
-			window.location.assign = jest.fn();
+		let originalLocationProperties;
 
+		beforeEach( () => {
+			// window.location has an empty setter so the only way to mock window.location.asign
+			// is to do a full replacement of window.location using a property descriptor
+			originalLocationProperties = Object.getOwnPropertyDescriptors( window ).location;
+			Object.defineProperty( window, 'location', {
+				writable: true,
+				value: {
+					assign: jest.fn(),
+				},
+			} );
+		} );
+
+		afterEach( () => {
+			Object.defineProperty( global, 'document', originalLocationProperties );
+		} );
+
+		test( 'redirects on mobile', () => {
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
@@ -180,8 +195,6 @@ describe( 'WechatPaymentBox', () => {
 		} );
 
 		test( 'does not redirect on desktop', () => {
-			window.location.assign = jest.fn();
-
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
@@ -194,8 +207,6 @@ describe( 'WechatPaymentBox', () => {
 		} );
 
 		test( 'displays a qr code on desktop', () => {
-			window.location.assign = jest.fn();
-
 			const redirectUrl = 'https://redirect';
 
 			const wrapper = shallow(
