@@ -132,7 +132,8 @@ export function render( element, key = JSON.stringify( element ), req ) {
 						feature: 'calypso_ssr',
 						message: 'Exception thrown on render',
 						extra: {
-							error: ex,
+							message: ex.message,
+							stack: ex.stack,
 						},
 					} )
 				);
