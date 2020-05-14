@@ -16,7 +16,7 @@ Upon Calypso boot any non-English user downloads a language file with all transl
 
 ### Dependencies
 
-Building translation chunks requires 3 main components - Calypso strings POT, JS chunks map and language translations.
+Building translation chunks requires 3 main components - Calypso strings POT, JS chunks map, and language translations.
 
 #### Calypso Strings POT
 
@@ -34,7 +34,7 @@ Build script downloads all language translations from https://widgets.wp.com/lan
 
 Build script can be run with `yarn run build-languages` and it will basically execute `bin/build-languages.js`, but it would only work if both `calypso-strings.pot` or `chunks-map.{BROWSERSLIST_ENV}.json` exist in the root of the project.
 
-To ensure you have the required files, you need to build or run development environment with either `BUILD_TRANSLATION_CHUNKS=true yarn run build` / `ENABLE_FEATURES=use-translation-chunks yarn run build` or `BUILD_TRANSLATION_CHUNKS=true yarn run start` / `ENABLE_FEATURES=use-translation-chunks yarn run start` respectively.
+To ensure you have the required files, you need to build or run a development environment with either `BUILD_TRANSLATION_CHUNKS=true yarn run build` / `ENABLE_FEATURES=use-translation-chunks yarn run build` or `BUILD_TRANSLATION_CHUNKS=true yarn run start` / `ENABLE_FEATURES=use-translation-chunks yarn run start` respectively.
 
 #### Build Script Steps
 
@@ -43,7 +43,7 @@ To ensure you have the required files, you need to build or run development envi
 3. Use source code references from `calypso-strings.pot` together with `chunks-map.{BROWSERSLIST_ENV}.json` to map the original strings that are included in a chunk. Then use original strings map to build translation chunks for each downloaded language.
 4. For each downloaded language, build a language manifest file that includes the locale data and a set of all translated chunks.
 
-Translation chunks and language manifest file are built in JSON, intended to be used when fetching in runtime, and JS, when loaded as script tag on the page.
+Translation chunks and language manifest files are built as JSON, intended to be used when fetching in runtime, and JS, when loaded as script tag on the page.
 
 ## Using translation chunks
 
@@ -51,7 +51,7 @@ Translation chunks and language manifest file are built in JSON, intended to be 
 
 The initial setup for translation chunks requires having the language manifest file and all translation chunk file for each installed JS chunk, if it has one.
 
-When conditions are met, server will load the JS format of the initially required language manifest file and translation chunks to the document as script tags. Otherwise, JSON files will be fetched after Calypso boots.
+When conditions are met, the server will load the JS format of the initially required language manifest file and translation chunks to the document as script tags. Otherwise, JSON files will be fetched after Calypso boots.
 
 #### Language manifest
 
@@ -69,6 +69,6 @@ Since not all JS chunks may have translation chunks, we use the translated chunk
 
 ### Fetching translations on demand
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/master/client/webpack/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us interact with Webpack's dynamic module import API.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/master/client/webpack/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us to interact with Webpack's dynamic module import API.
 
 We hook into JS chunks' dynamic import requests and fetch their translation chunks, when needed. When fetched, the content of a translation chunk is then merged to the existing translations with `i18n.addTranslations`.
