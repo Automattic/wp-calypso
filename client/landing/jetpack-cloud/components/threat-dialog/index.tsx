@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 
@@ -19,6 +21,7 @@ import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-heade
 import ServerCredentialsWizardDialog from 'landing/jetpack-cloud/components/server-credentials-wizard-dialog';
 import { Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
+import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 
 interface Props {
 	threat: Threat;
@@ -39,6 +42,10 @@ const ThreatDialog: React.FC< Props > = ( {
 	showDialog,
 	threat,
 } ) => {
+	const userNeedsCredentials = useSelector( ( state ) =>
+		isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
+	);
+
 	const buttons = React.useMemo(
 		() => [
 			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
@@ -72,6 +79,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			siteId={ siteId }
 			showDialog={ showDialog }
 			onCloseDialog={ onCloseDialog }
+			showServerCredentialStep={ action === 'fix' && userNeedsCredentials }
 			buttons={ buttons }
 			{ ...titleProps }
 			baseDialogClassName={ 'threat-dialog' }

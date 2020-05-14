@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 
@@ -14,6 +16,7 @@ import ThreatItemHeader from 'landing/jetpack-cloud/components/threat-item-heade
 import ServerCredentialsWizardDialog from 'landing/jetpack-cloud/components/server-credentials-wizard-dialog';
 import { FixableThreat } from 'landing/jetpack-cloud/components/threat-item/types';
 import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils';
+import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 
 /**
  * Style dependencies
@@ -35,6 +38,10 @@ const FixAllThreatsDialog = ( {
 	siteId,
 	threats,
 }: Props ) => {
+	const userNeedsCredentials = useSelector( ( state ) =>
+		isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
+	);
+
 	const buttons = React.useMemo(
 		() => [
 			<Button className="fix-all-threats-dialog__btn" onClick={ onCloseDialog }>
@@ -52,6 +59,7 @@ const FixAllThreatsDialog = ( {
 			siteId={ siteId }
 			showDialog={ showDialog }
 			onCloseDialog={ onCloseDialog }
+			showServerCredentialStep={ userNeedsCredentials }
 			title={ translate( 'Fix all threats' ) }
 			buttons={ buttons }
 		>
