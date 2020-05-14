@@ -227,6 +227,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		let activityLink = '/activity-log' + siteSuffix,
 			activityLabel = translate( 'Activity' );
 
