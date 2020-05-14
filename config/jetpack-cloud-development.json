@@ -15,6 +15,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"ive/use-external-assignment": false,
 		"jetpack-cloud": true,
 		"jetpack-cloud/backups": true,
 		"jetpack-cloud/backups-restore": true,
