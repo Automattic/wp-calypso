@@ -144,6 +144,13 @@ export default {
 			}
 		}
 
+		// Record a `calypso_*` tracks event after clicking the launch button.
+		// We record the event here because the launch button itself is managed by the wpcom-block-editor app
+		// wpcom-block-editor app may be treated differently by the ad blocker but this code is guaranteed to be hit.
+		if ( context.pathname === '/start/new-launch' ) {
+			recordTracksEvent( 'calypso_site_launch_start' );
+		}
+
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
