@@ -9,6 +9,7 @@ import { Dialog } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 
@@ -70,8 +71,17 @@ const ServerCredentialsWizardDialog = ( {
 									},
 								}
 							) }
+							<br />
 						</p>
 					</div>
+
+					<ExternalLink
+						className="server-credentials-wizard-dialog__link-external"
+						icon
+						href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+					>
+						{ translate( 'Need help? Find your server credentials' ) }
+					</ExternalLink>
 
 					<ServerCredentialsForm
 						className="server-credentials-wizard-dialog__form"

@@ -38,6 +38,14 @@
 			color: var( --color-text-subtle );
 			font-size: 14px;
 		}
+
+		&__link-external {
+			display: inline-block;
+			font-size: 14px;
+			font-style: italic;
+			margin-left: 30px;
+			padding-top: 8px;
+		}
 	}
 
 	.dialog__content {
