@@ -13,16 +13,21 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class ChecklistPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, By.css( '.customer-home__main .site-setup-list' ), url );
-		this.headerSelector = By.css( '.customer-home__main .site-setup-list .card-heading' );
+		super( driver, By.css( '.customer-home__main' ), url );
+		this.siteSetupListSelector = By.css( '.customer-home__main .site-setup-list' );
 		this.updateHomepageTaskSelector = By.css(
 			'.customer-home__main [data-task="front_page_updated"]'
 		);
 		this.startTaskButtonSelector = By.css( '.customer-home__main .site-setup-list__task-action' );
+		this.celebrateNoticeButtonSelector = By.css( '.celebrate-notice-v2__action' );
 	}
 
-	async headerExists() {
-		return await driverHelper.isElementPresent( this.driver, this.headerSelector );
+	async clickSiteCreatedGetStartedButton() {
+		await driverHelper.clickWhenClickable( this.driver, this.celebrateNoticeButtonSelector );
+	}
+
+	async siteSetupListExists() {
+		return await driverHelper.isElementPresent( this.driver, this.siteSetupListSelector );
 	}
 
 	async isEmailverified() {

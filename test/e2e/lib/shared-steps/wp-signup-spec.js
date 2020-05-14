@@ -51,7 +51,8 @@ export const canSeeTheOnboardingChecklist = () => {
 		} catch ( e ) {}
 
 		const checklistPage = await ChecklistPage.Expect( this.driver );
-		const header = await checklistPage.headerExists();
+		await checklistPage.clickSiteCreatedGetStartedButton();
+		const header = await checklistPage.siteSetupListExists();
 
 		return assert( header, 'The checklist header does not exist.' );
 	} );
