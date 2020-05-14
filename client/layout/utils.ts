@@ -1,7 +1,7 @@
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Returns false if the site is unlaunched or is younger than 1 hour
+ * Returns false if the site is unlaunched or is younger than 1 week
  *
  * @param site the site object
  */
