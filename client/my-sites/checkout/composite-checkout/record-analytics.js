@@ -77,7 +77,8 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
-						error_message: String( action.payload ),
+						error_message: String( action.payload.message ),
+						step_id: String( action.payload.stepId ),
 					} )
 				);
 
