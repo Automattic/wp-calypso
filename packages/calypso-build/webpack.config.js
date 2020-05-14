@@ -12,7 +12,6 @@ const process = require( 'process' );
 const webpack = require( 'webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( './webpack/file-loader' );
-const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
@@ -89,20 +88,7 @@ function getWebpackConfig(
 			libraryTarget: outputLibraryTarget,
 		},
 		optimization: {
-			minimize: ! isDevelopment,
-			minimizer: Minify( {
-				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache`
-					: 'docker' !== process.env.CONTAINER,
-				parallel: workerCount,
-				sourceMap: Boolean( process.env.SOURCEMAP ),
-				extractComments: false,
-				terserOptions: {
-					ecma: 5,
-					safari10: true,
-					mangle: true,
-				},
-			} ),
+			minimize: false,
 		},
 		module: {
 			rules: [
