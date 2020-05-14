@@ -23,7 +23,6 @@ const fetchFilters = ( action ) =>
 			method: 'GET',
 			apiVersion: '1.2',
 			path: '/theme-filters',
-			query: action.params,
 		},
 		action
 	);

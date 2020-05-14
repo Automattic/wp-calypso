@@ -34,6 +34,7 @@ export function fetchThemeDetailsData( context, next ) {
 		.dispatch( requestTheme( themeSlug, 'wpcom' ) )
 		.then( () => {
 			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
+
 			if ( ! themeDetails ) {
 				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
 				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
