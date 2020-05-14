@@ -140,6 +140,10 @@ export default class DesignAssets extends React.Component {
 		page( '/devdocs/design/' );
 	};
 
+	onUpdate = () => {
+		window.scrollTo(0, 0);
+	};
+
 	render() {
 		const { component } = this.props;
 		const { filter } = this.state;
@@ -175,7 +179,7 @@ export default class DesignAssets extends React.Component {
 					</div>
 				) }
 
-				<Collection component={ component } filter={ filter }>
+				<Collection component={ component } filter={ filter } onClick={ this.onUpdate }>
 					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					) }
