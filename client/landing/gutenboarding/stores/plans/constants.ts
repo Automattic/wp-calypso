@@ -7,11 +7,13 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-} from '../../../../lib/plans/constants';
+} from '../../../../lib/plans/constants'; // Gutenboarding's last dependency on client/lib/plans
 
 export const STORE_KEY = 'automattic/onboard/plans';
 
 export { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE };
+
+export const DEFAULT_FREE_PLAN = PLAN_FREE;
 export const DEFAULT_PAID_PLAN = PLAN_PREMIUM;
 
 interface Currency {

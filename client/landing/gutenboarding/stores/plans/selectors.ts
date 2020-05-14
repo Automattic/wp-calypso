@@ -1,29 +1,24 @@
 /**
- * External dependencies
- */
-import { getPlan, getPlanPath } from '../../../../lib/plans';
-
-/**
  * Internal dependencies
  */
-import { State, supportedPlanSlugs } from './reducer';
-import { planFeatures, planDetails } from './plans-data';
-import { DEFAULT_PAID_PLAN, PLAN_FREE } from './constants';
+import { State } from './reducer';
+import { DEFAULT_FREE_PLAN, DEFAULT_PAID_PLAN } from './constants';
 
-function getFortifiedPlan( slug: string | undefined ) {
-	if ( ! slug ) {
-		return undefined;
+export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) => {
+	if ( Object.keys( state.supportedPlans ).length ) {
+		const defaultFreePlan = state.supportedPlans[ DEFAULT_FREE_PLAN ];
+		const defaultPaidPlan = state.supportedPlans[ DEFAULT_PAID_PLAN ];
+		return hasPaidDomain ? defaultPaidPlan : defaultFreePlan;
 	}
-	return { ...planFeatures[ slug ], ...getPlan( slug ) };
-}
+};
 
-export const getSelectedPlan = ( state: State ) => getFortifiedPlan( state.selectedPlanSlug );
-export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) =>
-	hasPaidDomain ? getFortifiedPlan( DEFAULT_PAID_PLAN ) : getFortifiedPlan( PLAN_FREE );
-export const getSupportedPlans = ( state: State ) =>
-	state.supportedPlanSlugs.map( getFortifiedPlan );
-export const getPlanByPath = ( state: State, path: string | undefined ) =>
-	getFortifiedPlan( supportedPlanSlugs.find( ( slug ) => getPlanPath( slug ) === path ) );
-export const getPlansDetails = () => planDetails;
-
+export const getSupportedPlans = ( state: State ) => state.supportedPlans;
+export const getAllFeatures = ( state: State ) => state.features;
 export const getPrices = ( state: State ) => state.prices;
+export const getPlan = ( state: State, slug: string ) => getSupportedPlans( state )[ slug ];
+export const getSelectedPlan = ( state: State ) =>
+	state.selectedPlanSlug && getPlan( state, state.selectedPlanSlug );
+
+export const getPlanByPath = () => {
+	return null;
+};

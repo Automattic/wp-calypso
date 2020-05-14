@@ -73,11 +73,11 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
+			if ( selectedPlan && selectedPlan.slug !== PLAN_FREE ) {
 				const planProduct = {
-					meta: selectedPlan.getTitle(),
-					product_id: selectedPlan.getProductId(),
-					product_slug: selectedPlan.getStoreSlug(),
+					meta: selectedPlan.short_name,
+					product_id: selectedPlan.products[ 0 ].plan_id,
+					product_slug: selectedPlan.slug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -102,7 +102,7 @@ export default function useOnSiteCreation() {
 					setSelectedSite( newSite.blogid );
 
 					const redirectionUrl =
-						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
+						selectedPlan.slug === PLAN_ECOMMERCE
 							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
 							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					window.location.href = redirectionUrl;

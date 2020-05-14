@@ -33,9 +33,11 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	}, [] );
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	const selectedPlanRef = React.useRef();
+	const selectedPlanRef = React.useRef< string >( '' );
 	React.useEffect( () => {
-		selectedPlanRef.current = plan?.getStoreSlug();
+		if ( plan ) {
+			selectedPlanRef.current = plan?.slug;
+		}
 	}, [ plan ] );
 
 	useTrackModal( 'PlansGrid', () => ( {
