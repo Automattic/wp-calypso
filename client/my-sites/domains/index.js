@@ -177,6 +177,8 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page.redirect( paths.domainManagementRoot(), paths.domainManagementUserRoot() );
 	} else {
 		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
 	}
