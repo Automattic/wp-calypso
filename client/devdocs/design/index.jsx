@@ -141,7 +141,7 @@ export default class DesignAssets extends React.Component {
 	};
 
 	onUpdate = () => {
-		window.scrollTo(0, 0);
+		window.scrollTo( 0, 0 );
 	};
 
 	render() {
