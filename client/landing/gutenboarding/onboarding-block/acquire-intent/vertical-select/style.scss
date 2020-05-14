@@ -93,6 +93,7 @@
 	display: inline-block;
 	width: 100%;
 	color: var( --studio-gray-5 );
+	cursor: text;
 
 	@include break-small {
 		height: 80px;
