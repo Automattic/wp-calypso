@@ -20,7 +20,7 @@ import {
 	myMemberships,
 	purchasesRoot,
 } from 'me/purchases/paths';
-import { domainManagementRoot } from 'my-sites/domains/paths';
+import { domainManagementUserRoot } from 'my-sites/domains/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
@@ -100,7 +100,7 @@ class MeSidebar extends React.Component {
 			[ myMemberships ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
-			[ domainManagementRoot() ]: 'domains',
+			[ domainManagementUserRoot() ]: 'domains',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -168,7 +168,7 @@ class MeSidebar extends React.Component {
 
 							<SidebarItem
 								selected={ selected === 'domains' }
-								link={ domainManagementRoot() }
+								link={ domainManagementUserRoot() }
 								label={ translate( 'Domains' ) }
 								materialIcon="language"
 								onNavigate={ this.onNavigate }
