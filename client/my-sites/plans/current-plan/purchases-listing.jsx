@@ -192,7 +192,7 @@ class PurchasesListing extends Component {
 		let label = translate( 'Manage plan' );
 
 		if ( isJetpackProduct( purchase ) ) {
-			label = translate( 'Manage Subscription' );
+			label = translate( 'Manage subscription' );
 		}
 
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
@@ -220,7 +220,7 @@ class PurchasesListing extends Component {
 					) }
 					compact
 				>
-					{ translate( 'View Backups' ) }
+					{ translate( 'View backups' ) }
 					&nbsp;
 					<Gridicon icon="external" />
 				</Button>
@@ -234,7 +234,7 @@ class PurchasesListing extends Component {
 					) }
 					compact
 				>
-					{ translate( 'Run Scan' ) }
+					{ translate( 'Run scan' ) }
 					&nbsp;
 					<Gridicon icon="external" />
 				</Button>
