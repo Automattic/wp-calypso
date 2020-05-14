@@ -153,7 +153,12 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						<div role="presentation" className="style-preview__preview-bar-dot" />
 					</div>
 				) }
-				<iframe ref={ iframe } className="style-preview__iframe" title="preview" />
+				<iframe
+					className="style-preview__iframe"
+					data-hj-allow-iframe
+					ref={ iframe }
+					title="preview"
+				/>
 			</div>
 		</div>
 	);
