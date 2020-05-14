@@ -77,15 +77,7 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const {
-			allowRestore,
-			hasRealtimeBackups,
-			logs,
-			moment,
-			pageSize,
-			showDateSeparators,
-			siteSlug,
-		} = this.props;
+		const { allowRestore, logs, moment, pageSize, showDateSeparators, siteSlug } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -110,10 +102,6 @@ class ActivityCardList extends Component {
 							<ActivityCard
 								{ ...{
 									key: activity.activityId,
-									showContentLink: isActivityBackup( activity )
-										? dateLogs.length > 1 || hasMore
-										: undefined,
-									showActions: hasRealtimeBackups || isActivityBackup( activity ),
 									moment,
 									activity,
 									allowRestore,
@@ -214,12 +202,10 @@ const mapStateToProps = ( state ) => {
 		'active' === rewind.state &&
 		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
 		includes( siteCapabilities, 'restore' );
-	const hasRealtimeBackups = siteCapabilities && includes( siteCapabilities, 'backup-realtime' );
 
 	return {
 		allowRestore,
 		filter,
-		hasRealtimeBackups,
 		rewind,
 		siteId,
 		siteSlug,

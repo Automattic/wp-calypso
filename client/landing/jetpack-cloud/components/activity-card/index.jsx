@@ -4,24 +4,24 @@
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
-import { Card } from '@automattic/components';
-import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
-import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
-import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import { applySiteOffset } from 'lib/site/timezone';
-import PopoverMenu from 'components/popover/menu';
 import {
 	backupDownloadPath,
 	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
-import { isSuccessfulDailyBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import { Card } from '@automattic/components';
+import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
+import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
+import Button from 'components/forms/form-button';
+import Gridicon from 'components/gridicon';
+import PopoverMenu from 'components/popover/menu';
+import StreamsMediaPreview from './activity-card-streams-media-preview';
 
 /**
  * Style dependencies
@@ -31,13 +31,10 @@ import downloadIcon from './download-icon.svg';
 
 class ActivityCard extends Component {
 	static propTypes = {
-		showActions: PropTypes.bool,
-		showContentLink: PropTypes.bool,
 		summarize: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		showActions: true,
 		summarize: false,
 	};
 
@@ -71,20 +68,35 @@ class ActivityCard extends Component {
 	};
 
 	renderStreams( streams = [] ) {
-		return streams.map( ( item ) => {
+		const { allowRestore, moment, siteSlug, translate } = this.props;
+
+		return streams.map( ( item, index ) => {
 			const activityMedia = item.activityMedia;
 
-			return (
-				activityMedia &&
-				activityMedia.available && (
-					<div key={ item.rewindId } className="activity-card__streams-item">
+			if ( activityMedia && activityMedia.available ) {
+				return (
+					<div
+						key={ `activity-card__streams-item-${ index }` }
+						className="activity-card__streams-item"
+					>
 						<div className="activity-card__streams-item-title">{ activityMedia.name }</div>
 						<ActivityMedia
 							name={ activityMedia.name }
 							fullImage={ activityMedia.medium_url || activityMedia.thumbnail_url }
 						/>
 					</div>
-				)
+				);
+			}
+			return (
+				<ActivityCard
+					activity={ item }
+					allowRestore={ allowRestore }
+					compact
+					key={ item.activityId }
+					moment={ moment }
+					siteSlug={ siteSlug }
+					translate={ translate }
+				/>
 			);
 		} );
 	}
@@ -103,42 +115,25 @@ class ActivityCard extends Component {
 		);
 	}
 
-	shouldRenderContentLink() {
-		const { activity, showContentLink } = this.props;
-		return showContentLink !== undefined
-			? showContentLink
-			: !! (
-					activity.streams && activity.streams.some( ( stream ) => stream.activityMedia?.available )
-			  ) || isSuccessfulDailyBackup( activity );
-	}
+	renderExpandContentControl() {
+		const { translate } = this.props;
 
-	renderContentLink() {
-		const { activity, translate } = this.props;
-
-		// todo: handle the rest of cases
-		if (
-			activity.streams &&
-			activity.streams.some( ( stream ) => stream.activityMedia?.available )
-		) {
-			return (
-				<Button
-					compact
-					borderless
-					className="activity-card__see-content-link"
-					onClick={ this.toggleSeeContent }
-					onKeyDown={ this.onSpace( this.toggleSeeContent ) }
-				>
-					{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
-					<Gridicon
-						size={ 18 }
-						icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
-						className="activity-card__see-content-icon"
-					/>
-				</Button>
-			);
-		}
-		// eslint-disable-next-line jsx-a11y/anchor-is-valid
-		return <a className="activity-card__detail-link">{ translate( 'Changes in this backup' ) }</a>;
+		return (
+			<Button
+				compact
+				borderless
+				className="activity-card__see-content-link"
+				onClick={ this.toggleSeeContent }
+				onKeyDown={ this.onSpace( this.toggleSeeContent ) }
+			>
+				{ this.state.showContent ? translate( 'Hide content' ) : translate( 'See content' ) }
+				<Gridicon
+					size={ 18 }
+					icon={ this.state.showContent ? 'chevron-up' : 'chevron-down' }
+					className="activity-card__see-content-icon"
+				/>
+			</Button>
+		);
 	}
 
 	renderActionButton( isTopToolbar = true ) {
@@ -200,25 +195,49 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const { showActions } = this.props;
+		const {
+			activity: { activityIsRewindable, streams },
+		} = this.props;
 
-		const shouldRenderContentLink = this.shouldRenderContentLink();
-
-		return ! ( shouldRenderContentLink || showActions ) ? null : (
-			<>
+		return ! ( streams || activityIsRewindable ) ? null : (
+			<Fragment key={ `activity-card__toolbar-${ isTopToolbar ? 'top' : 'bottom' }` }>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! shouldRenderContentLink && showActions
+						! streams && activityIsRewindable
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
-					{ shouldRenderContentLink && this.renderContentLink() }
-					{ showActions && this.renderActionButton( isTopToolbar ) }
+					{ streams && this.renderExpandContentControl() }
+					{ activityIsRewindable && this.renderActionButton( isTopToolbar ) }
 				</div>
-			</>
+			</Fragment>
 		);
+	}
+
+	renderMediaPreview() {
+		const {
+			activity: { streams, activityMedia },
+		} = this.props;
+
+		if (
+			streams &&
+			streams.filter( ( { activityMedia: streamActivityMedia } ) => streamActivityMedia?.available )
+				.length > 2
+		) {
+			return <StreamsMediaPreview streams={ streams } />;
+		} else if ( activityMedia?.available ) {
+			return (
+				<ActivityMedia
+					className="activity-card__activity-media"
+					name={ activityMedia.name }
+					thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
+					fullImage={ false }
+				/>
+			);
+		}
+		return null;
 	}
 
 	render() {
@@ -230,8 +249,6 @@ class ActivityCard extends Component {
 		} ).format( 'LT' );
 
 		const showActivityContent = this.state.showContent;
-
-		const { activityMedia } = activity;
 
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
@@ -251,14 +268,7 @@ class ActivityCard extends Component {
 						} }
 					/>
 					<div className="activity-card__activity-description">
-						{ activityMedia && activityMedia.available && (
-							<ActivityMedia
-								className="activity-card__activity-media"
-								name={ activityMedia.name }
-								thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
-								fullImage={ false }
-							/>
-						) }
+						{ this.renderMediaPreview() }
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
