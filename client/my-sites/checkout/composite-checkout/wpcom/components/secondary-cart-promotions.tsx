@@ -12,14 +12,15 @@ import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-u
 import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
 import { ResponseCart } from '../types';
 
+type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
-	responseCart: ResponseCart;
+	responseCart: PartialCart;
 	addItemToCart: () => void;
 	siteId: number;
 	siteUrl: string;
 }
 
-export interface MockResponseCart extends ResponseCart {
+export interface MockResponseCart extends PartialCart {
 	hasLoadedFromServer: boolean;
 }
 
@@ -30,7 +31,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	siteUrl,
 } ) => {
 	const isPurchaseRenewal = useMemo(
-		() => responseCart?.products?.some( ( product ) => product.is_renewal ),
+		() => responseCart?.products.some( ( product ) => product.is_renewal ),
 		[ responseCart ]
 	);
 
