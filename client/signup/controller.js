@@ -39,6 +39,7 @@ import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { login } from 'lib/paths';
 import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -226,8 +227,7 @@ export default {
 		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
 			signupStore.dispatch(
 				setSiteVertical( {
-					id: query.vertical,
-					slug: query.vertical,
+					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
 					isUserInput: false,
 				} )
 			);
