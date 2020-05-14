@@ -14,6 +14,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
+import { getName, isExpired } from 'lib/purchases';
+import { isPlan, isDomainRegistration } from 'lib/products-values';
 import SectionHeader from 'components/section-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -26,6 +28,7 @@ import UpcomingRenewalsDialog, {
 	Purchase,
 } from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { MockResponseCart } from 'my-sites/checkout/composite-checkout/wpcom/components/secondary-cart-promotions';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -59,6 +62,7 @@ interface Props {
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
 	const reduxDispatch = useDispatch< ReduxDispatch >();
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
 	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
 		getRenewableSitePurchases( state, selectedSite?.ID )
@@ -74,7 +78,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ cart ]
 	);
 
-	const purchaseRenewalsNotAlreadyInCart = useMemo(
+	const renewablePurchasesNotAlreadyInCart = useMemo(
 		() =>
 			renewableSitePurchases.filter(
 				( purchase ) => ! purchasesIdsAlreadyInCart.includes( purchase.id )
@@ -99,22 +103,22 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
 					selected: purchases.length,
-					available: purchaseRenewalsNotAlreadyInCart.length,
+					available: renewablePurchasesNotAlreadyInCart.length,
 				} )
 			);
 			addPurchasesToCart( purchases );
 		},
-		[ addPurchasesToCart, reduxDispatch, purchaseRenewalsNotAlreadyInCart ]
+		[ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ]
 	);
 
 	const addAllPurchasesToCart = useCallback( () => {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
-				available: purchaseRenewalsNotAlreadyInCart.length,
+				available: renewablePurchasesNotAlreadyInCart.length,
 			} )
 		);
-		addPurchasesToCart( purchaseRenewalsNotAlreadyInCart );
-	}, [ addPurchasesToCart, reduxDispatch, purchaseRenewalsNotAlreadyInCart ] );
+		addPurchasesToCart( renewablePurchasesNotAlreadyInCart );
+	}, [ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ] );
 
 	const onConfirm = useCallback(
 		( selectedPurchases ) => {
@@ -135,26 +139,15 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		return null;
 	}
 
-	const shouldRender = arePurchasesLoaded && purchaseRenewalsNotAlreadyInCart.length > 0;
+	const shouldRender = arePurchasesLoaded && renewablePurchasesNotAlreadyInCart.length > 0;
 
-	const translateOptions = {
-		args: {
-			siteName: selectedSite.domain,
-		},
-		components: {
-			link: (
-				<OtherPurchasesLink
-					className="cart__upsell-other-upgrades-button"
-					onClick={ () => setUpcomingRenewalsDialogVisible( true ) }
-				/>
-			),
-		},
-	};
-
-	const message = translate(
-		'You have {{link}}other upgrades{{/link}} for %(siteName)s that are available for renewal. Would you like to renew them now?',
-		translateOptions
-	);
+	const { message, buttonLabel } = getMessages( {
+		translate,
+		moment,
+		selectedSite,
+		setUpcomingRenewalsDialogVisible,
+		renewablePurchasesNotAlreadyInCart,
+	} );
 
 	return (
 		<>
@@ -163,7 +156,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog
 						isVisible={ isUpcomingRenewalsDialogVisible }
-						purchases={ purchaseRenewalsNotAlreadyInCart }
+						purchases={ renewablePurchasesNotAlreadyInCart }
 						site={ selectedSite }
 						onConfirm={ onConfirm }
 						onClose={ onClose }
@@ -176,7 +169,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 					/>
 					<div className="cart__upsell-body">
 						<p>{ message }</p>
-						<Button onClick={ addAllPurchasesToCart }>{ translate( 'Renew all' ) }</Button>
+						<Button onClick={ addAllPurchasesToCart }>{ buttonLabel }</Button>
 					</div>
 					<TrackComponentView eventName="calypso_checkout_upcoming_renewals_impression" />
 				</div>
@@ -184,5 +177,99 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		</>
 	);
 };
+
+function getMessages( {
+	translate,
+	moment,
+	selectedSite,
+	setUpcomingRenewalsDialogVisible,
+	renewablePurchasesNotAlreadyInCart,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+	moment: ReturnType< typeof useLocalizedMoment >;
+	selectedSite: SelectedSite;
+	setUpcomingRenewalsDialogVisible: ( isVisible: boolean ) => void;
+	renewablePurchasesNotAlreadyInCart: Purchase[];
+} ) {
+	if ( renewablePurchasesNotAlreadyInCart.length === 0 ) {
+		return { message: '', buttonLabel: '' };
+	}
+	if ( renewablePurchasesNotAlreadyInCart.length > 1 ) {
+		const translateOptions = {
+			args: {
+				siteName: selectedSite.domain,
+			},
+			components: {
+				link: (
+					<OtherPurchasesLink
+						className="cart__upsell-other-upgrades-button"
+						onClick={ () => setUpcomingRenewalsDialogVisible( true ) }
+					/>
+				),
+			},
+		};
+
+		const message = translate(
+			'You have {{link}}other upgrades{{/link}} for %(siteName)s that are available for renewal. Would you like to renew them now?',
+			translateOptions
+		);
+
+		const buttonLabel = translate( 'Renew all' );
+
+		return {
+			message,
+			buttonLabel,
+		};
+	}
+
+	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
+	const buttonLabel = translate( 'Add to cart' );
+	let message: ReturnType< typeof translate > = '';
+	const translateOptions = {
+		args: {
+			purchaseName: getName( purchase ),
+			expiry: moment( purchase.expiryDate ).fromNow(),
+		},
+	};
+
+	if ( isExpired( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			message = translate(
+				'Your domain %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',
+				translateOptions
+			);
+		} else if ( isPlan( purchase ) ) {
+			message = translate(
+				'Your %(purchaseName)s plan expired %(expiry)s. Would you like to renew it now?',
+				translateOptions
+			);
+		} else {
+			message = translate(
+				'Your %(purchaseName)s subscription expired %(expiry)s. Would you like to renew it now?',
+				translateOptions
+			);
+		}
+	} else if ( isDomainRegistration( purchase ) ) {
+		message = translate(
+			'Your domain %(purchaseName)s domain is expiring %(expiry)s. Would you like to renew it now?',
+			translateOptions
+		);
+	} else if ( isPlan( purchase ) ) {
+		message = translate(
+			'Your %(purchaseName)s plan is expiring %(expiry)s. Would you like to renew it now?',
+			translateOptions
+		);
+	} else {
+		message = translate(
+			'Your %(purchaseName)s subscription is expiring %(expiry)s. Would you like to renew it now?',
+			translateOptions
+		);
+	}
+
+	return {
+		message,
+		buttonLabel,
+	};
+}
 
 export default UpcomingRenewalsReminder;

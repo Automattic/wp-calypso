@@ -19,7 +19,7 @@ import '@testing-library/jest-dom/extend-expect';
  * Internal dependencies
  */
 import config from 'config';
-import { responseCartWithRenewal, storeData } from './fixtures';
+import { responseCartWithRenewal, storeData } from './lib/fixtures';
 import defaultTheme from '@automattic/composite-checkout/src/theme';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 
