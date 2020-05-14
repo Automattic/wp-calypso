@@ -8,6 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -131,6 +132,13 @@ const Header: React.FunctionComponent = () => {
 			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
 		}
 	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
+
+	const hasContent =
+		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
+
+	const hasPlaceholder =
+		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -156,24 +164,22 @@ const Header: React.FunctionComponent = () => {
 						// show it comes from a site title (but hide it if it comes from a vertical).
 						domainElement &&
 							( siteTitle || previousRecommendedDomain || currentStep !== 'IntentGathering' ) && (
-								<DomainPickerButton
-									className="gutenboarding__header-domain-picker-button"
-									currentDomain={ domain }
-									onDomainSelect={ setDomain }
-									hasContent={
-										!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== ''
-									}
-									hasPlaceholder={
-										!! siteTitle &&
-										! recommendedDomainSuggestion &&
-										previousRecommendedDomain !== ''
-									}
+								<div
+									className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
+										'has-content': hasContent,
+										'has-placeholder': hasPlaceholder,
+									} ) }
 								>
-									{ domainElement }
-								</DomainPickerButton>
+									<DomainPickerButton
+										className="gutenboarding__header-domain-picker-button"
+										currentDomain={ domain }
+										onDomainSelect={ setDomain }
+									>
+										{ domainElement }
+									</DomainPickerButton>
+								</div>
 							)
 					}
-					&nbsp;
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
 					<PlansButton />

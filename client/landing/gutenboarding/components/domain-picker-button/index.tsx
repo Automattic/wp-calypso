@@ -25,8 +25,6 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
-	hasContent?: boolean;
-	hasPlaceholder?: boolean;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
@@ -34,8 +32,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	className,
 	onDomainSelect,
 	currentDomain,
-	hasContent,
-	hasPlaceholder,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
@@ -78,8 +74,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
 					'is-modal-open': isDomainModalVisible,
-					'has-content': hasContent,
-					'has-placeholder': hasPlaceholder,
 				} ) }
 				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
 				ref={ buttonRef }

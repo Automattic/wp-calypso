@@ -10,25 +10,21 @@ $padding--gutenboarding__header: $grid-unit-10;
 	from {
 		max-width: 0;
 		opacity: 0;
-		padding: 5px 0;
 	}
 
 	79% {
 		max-width: 0;
 		opacity: 0;
-		padding: 5px 0;
 	}
 
 	80% {
 		max-width: 0;
 		opacity: 0.5;
-		padding: 5px 12px;
 	}
 
 	to {
 		max-width: 500px;
 		opacity: 1;
-		padding: 5px 12px;
 	}
 }
 
@@ -85,39 +81,30 @@ $padding--gutenboarding__header: $grid-unit-10;
 }
 
 .gutenboarding__header-domain-section {
-	position: relative;
-	width: 100%;
+	// Let this flex item take 100% of available width.
 	flex-grow: 1;
+	// Ensure flex item doesn't exceed 100% of th
+	// available width, allowing content to have ellipsis.
+	min-width: 0;
 }
 
-.gutenboarding__header-domain-picker-button {
-	position: absolute;
-	top: -6px;
-	left: 0;
-	max-width: 100%;
+.gutenboarding__header-domain-picker-button-container {
+	max-width: 0;
+	opacity: 0;
 
-	// Temp fix: Animation only on desktop/tablet devices.
-	@include break-mobile {
-		position: relative;
-		top: 0;
-		max-width: 0;
-		opacity: 0;
+	&.has-content {
+		animation-duration: 5s;
+		animation-name: gutenboarding_domain-slide-in;
+		max-width: 1500px;
+		opacity: 1;
+		@include reduce-motion( 'animation' );
+	}
 
-		&.has-content {
-			animation-duration: 5s;
-			animation-name: gutenboarding_domain-slide-in;
-			max-width: 1500px;
-			opacity: 1;
-			@include reduce-motion( 'animation' );
-		}
-
-		&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			@include reduce-motion( 'animation' );
-		}
+	&.has-placeholder .gutenboarding__header-domain-picker-button-domain {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		@include reduce-motion( 'animation' );
 	}
 }
-
 
 .gutenboarding__header-site-title-section {
 	white-space: nowrap;
