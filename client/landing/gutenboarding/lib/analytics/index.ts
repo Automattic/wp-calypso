@@ -11,6 +11,8 @@ import { FLOW_ID } from '../../constants';
 import type { StepNameType } from '../../path';
 import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
 
+export * from './recaptcha';
+
 /**
  * Make tracks call with embedded flow.
  *
