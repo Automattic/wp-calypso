@@ -128,6 +128,7 @@ class Document extends React.Component {
 						<div
 							id="wpcom"
 							className="wpcom-site"
+							data-calypso-ssr="true"
 							dangerouslySetInnerHTML={ {
 								__html: renderedLayout,
 							} }
