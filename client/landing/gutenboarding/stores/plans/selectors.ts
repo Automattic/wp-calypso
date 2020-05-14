@@ -19,7 +19,9 @@ export const getPlan = ( state: State, slug: string ) => getSupportedPlans( stat
 export const getSelectedPlan = ( state: State ) =>
 	state.selectedPlanSlug && getPlan( state, state.selectedPlanSlug );
 
-export const getPlanByPath = ( state: State, path: string ) => {
-	const slug = paths[ path ];
-	return getPlan( state, slug );
+export const getPlanByPath = ( state: State, path: keyof typeof paths | undefined ) => {
+	if ( path ) {
+		const slug = paths[ path ];
+		return getPlan( state, slug );
+	}
 };

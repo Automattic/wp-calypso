@@ -90,7 +90,7 @@ export function useStepRouteParam() {
 }
 
 export function usePlanRouteParam() {
-	const match = useRouteMatch< { plan?: string } >( path );
+	const match = useRouteMatch< { plan?: keyof typeof paths } >( path );
 	return match?.params.plan;
 }
 
