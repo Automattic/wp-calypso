@@ -219,8 +219,13 @@ export default function CompositeCheckout( {
 				type: 'PAYMENT_COMPLETE',
 				payload: { url, couponItem, paymentMethodId, total, responseCart },
 			} );
+			// Clear the CartStore so it is in sync with the state of the
+			// server. This can be removed if we stop depending the CartStore.
 			removeAllItems();
-			page.redirect( url );
+			// removeAllItems clears the cart, but it does so via a dispatcher
+			// so we must defer the redirect to make sure the CartStore gets
+			// correctly cleared before redirecting.
+			setTimeout( () => page.redirect( url ), 0 );
 		},
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
