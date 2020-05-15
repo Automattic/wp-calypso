@@ -92,7 +92,7 @@
 		"@wordpress/plugins": "*",
 		"@wordpress/rich-text": "*",
 		"@wordpress/url": "*",
-		"classnames": "2.2.6",
+		"classnames": "^2.2.6",
 		"lodash": "*",
 		"moment": "*",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.5.0"
