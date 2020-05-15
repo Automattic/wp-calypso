@@ -88,7 +88,9 @@ export default function WPCheckout( {
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.wpcom_meta.meta : siteUrl;
+	const domainNames = items
+		.filter( isLineItemADomain )
+		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const isDomainFieldsVisible = !! firstDomainItem;
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
@@ -115,7 +117,7 @@ export default function WPCheckout( {
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
 				contactInfo,
-				[ domainName ],
+				domainNames,
 				applyDomainContactValidationResults
 			);
 			return ! hasValidationErrors;
