@@ -16,11 +16,6 @@ import { savePreference } from 'state/preferences/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
- * Style dependencies
- */
-import './style.scss';
-
-/**
  * Image dependencies
  */
 import fireworksIllustration from 'assets/images/customer-home/illustration--fireworks-v2.svg';

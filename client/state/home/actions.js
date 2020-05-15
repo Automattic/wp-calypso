@@ -15,9 +15,10 @@ export const requestHomeLayout = ( siteId ) => ( {
 	siteId,
 } );
 
-export const skipCurrentViewHomeLayout = ( siteId ) => ( {
+export const skipCurrentViewHomeLayout = ( siteId, reminder = null ) => ( {
 	type: HOME_LAYOUT_SKIP_CURRENT_VIEW,
 	siteId,
+	reminder,
 } );
 
 export const setHomeLayout = ( siteId, layout ) => ( {

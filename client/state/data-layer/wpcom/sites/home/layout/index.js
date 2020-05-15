@@ -27,7 +27,9 @@ const skipCurrentView = ( action ) => {
 			path: `/sites/${ action.siteId }/home/layout/skip`,
 			apiNamespace: 'wpcom/v2',
 			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
-			body: {},
+			body: {
+				...( action.reminder && { reminder: action.reminder } ),
+			},
 		},
 		action
 	);
