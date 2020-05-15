@@ -143,7 +143,7 @@ const Header: React.FunctionComponent = () => {
 		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
 
 	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
-		trackEventWithFlow( 'calypso_newsite_select_domain', {
+		trackEventWithFlow( 'calypso_newsite_domain_select', {
 			domain_name: suggestion?.domain_name,
 		} );
 		setDomain( suggestion );
