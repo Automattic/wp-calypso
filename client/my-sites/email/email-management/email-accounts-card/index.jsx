@@ -32,15 +32,6 @@ class EmailAccountsCard extends React.Component {
 		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
 	}
 
-	canAddUsers( domainName ) {
-		return this.getDomainsAsList().some(
-			( domain ) =>
-				domain &&
-				domain.name === domainName &&
-				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
-		);
-	}
-
 	isNewUser( user, subscribedDate ) {
 		return this.props.moment().subtract( 1, 'day' ).isBefore( subscribedDate );
 	}
@@ -63,16 +54,14 @@ class EmailAccountsCard extends React.Component {
 		return (
 			<div key={ `email-account-${ domainName }` } className="email-accounts-card__container">
 				<SectionHeader label={ label }>
-					{ this.canAddUsers( domainName ) && (
-						<Button
-							primary
-							compact
-							href={ emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) }
-							onClick={ this.goToAddGoogleApps }
-						>
-							{ translate( 'Add New User' ) }
-						</Button>
-					) }
+					<Button
+						primary
+						compact
+						href={ emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) }
+						onClick={ this.goToAddGoogleApps }
+					>
+						{ translate( 'Add New User' ) }
+					</Button>
 				</SectionHeader>
 				<CompactCard className="email-accounts-card__user-list">
 					<ul className="email-accounts-card__user-list-inner">

@@ -30,11 +30,11 @@ function EmailAccountItem( props ) {
 
 	const {
 		account: { domainName },
-		mailbox: { name, meta = {} },
+		mailbox: { meta },
 		onClick,
 		siteSlug,
 	} = props;
-	const email = `${ name }@${ domainName }`;
+	const email = meta.email;
 
 	const renderManage = () => {
 		return (
