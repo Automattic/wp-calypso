@@ -25,9 +25,16 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props
 
 	if ( ! isOpen ) return null;
 
+	const handleAfterOpen = () => {
+		// This fixes modal being shown without
+		// header margin when the modal is opened.
+		window.scrollTo( 0, 0 );
+	};
+
 	return (
 		<Modal
 			isOpen
+			onAfterOpen={ handleAfterOpen }
 			className="domain-picker-modal"
 			overlayClassName="domain-picker-modal-overlay"
 			bodyOpenClassName="has-domain-picker-modal"
