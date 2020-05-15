@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
@@ -85,7 +86,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 									onClick={ handleDetailsToggleButtonClick }
 								>
 									<span>{ __( 'Hide details' ) } </span>
-									<Icon icon="arrow-up" size={ 20 }></Icon>
+									<Icon icon={ chevronUp } size={ 20 } />
 								</Button>
 							) : (
 								<Button
@@ -94,7 +95,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 									onClick={ handleDetailsToggleButtonClick }
 								>
 									<span>{ __( 'Show details' ) } </span>
-									<Icon icon="arrow-down" size={ 20 }></Icon>
+									<Icon icon={ chevronDown } size={ 20 } />
 								</Button>
 							) }
 						</div>
