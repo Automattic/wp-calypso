@@ -25,7 +25,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
-import Gridicon from 'components/gridicon';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
 import {
@@ -214,16 +213,12 @@ class PurchasesListing extends Component {
 			serviceButton = (
 				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
 					{ translate( 'View backups' ) }
-					&nbsp;
-					<Gridicon icon="external" />
 				</Button>
 			);
 		} else if ( isJetpackScan( purchase ) ) {
 			serviceButton = (
 				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
 					{ translate( 'View threats' ) }
-					&nbsp;
-					<Gridicon icon="external" />
 				</Button>
 			);
 		}
