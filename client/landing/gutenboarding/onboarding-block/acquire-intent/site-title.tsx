@@ -79,7 +79,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 						onKeyUp={ handleKeyUp }
 						onBlur={ handleBlur }
 					/>
-					<span className="site-title__placeholder"></span>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<span className="madlib__input-placeholder"></span>
 				</span>
 			),
 		}
