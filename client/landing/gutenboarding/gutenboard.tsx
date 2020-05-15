@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useI18n } from '@automattic/react-i18n';
-import { BlockEditorProvider, BlockList as OriginalBlockList } from '@wordpress/block-editor';
+import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
@@ -23,15 +23,6 @@ import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 
 registerBlockType( name, settings );
-
-interface BlockListProps extends OriginalBlockList.Props {
-	__experimentalUIParts: {
-		hasPopover: boolean;
-		hasSelectedUI: boolean;
-	};
-}
-
-const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
 
 export function Gutenboard() {
 	const { __ } = useI18n();
@@ -95,12 +86,7 @@ export function Gutenboard() {
 								aria-label={ __( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
-								<BlockList
-									__experimentalUIParts={ {
-										hasPopover: false,
-										hasSelectedUI: false,
-									} }
-								/>
+								<BlockList />
 							</div>
 						</div>
 					</BlockEditorProvider>
