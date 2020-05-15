@@ -77,15 +77,7 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const {
-			allowRestore,
-			logs,
-			moment,
-			pageSize,
-			showDateSeparators,
-			doesRewindNeedCredentials,
-			siteSlug,
-		} = this.props;
+		const { allowRestore, logs, pageSize, showDateSeparators } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -108,17 +100,14 @@ class ActivityCardList extends Component {
 					<div className="activity-card-list__date-group-content">
 						{ dateLogs.map( ( activity ) => (
 							<ActivityCard
-								{ ...{
-									key: activity.activityId,
-									doesRewindNeedCredentials,
-									moment,
-									activity,
-									allowRestore,
-									siteSlug,
-									className: isActivityBackup( activity )
+								activity={ activity }
+								allowRestore={ allowRestore }
+								className={
+									isActivityBackup( activity )
 										? getPrimaryCardClassName( hasMore, dateLogs.length )
-										: getSecondaryCardClassName( hasMore ),
-								} }
+										: getSecondaryCardClassName( hasMore )
+								}
+								key={ activity.activityId }
 							/>
 						) ) }
 					</div>

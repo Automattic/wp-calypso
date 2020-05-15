@@ -329,29 +329,11 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderBackupDetails( backup ) {
-		const {
-			moment,
-			allowRestore,
-			doesRewindNeedCredentials,
-			timezone,
-			gmtOffset,
-			siteSlug,
-		} = this.props;
+		const { allowRestore } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
 				<div className="daily-backup-status__realtime-details-card">
-					<ActivityCard
-						{ ...{
-							moment,
-							activity: backup,
-							doesRewindNeedCredentials,
-							allowRestore,
-							timezone,
-							gmtOffset,
-							siteSlug,
-							summarize: true,
-						} }
-					/>
+					<ActivityCard activity={ backup } allowRestore={ allowRestore } summarize />
 				</div>
 			</div>
 		);

@@ -16,28 +16,13 @@ import './style.scss';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const {
-			allowRestore,
-			timezone,
-			gmtOffset,
-			moment,
-			realtimeBackups,
-			siteSlug,
-			translate,
-			isToday,
-		} = this.props;
+		const { allowRestore, realtimeBackups, translate, isToday } = this.props;
 
 		const cards = realtimeBackups.map( ( activity ) => (
 			<ActivityCard
+				activity={ activity }
+				allowRestore={ allowRestore }
 				key={ activity.activityId }
-				{ ...{
-					moment,
-					activity,
-					allowRestore,
-					timezone,
-					gmtOffset,
-					siteSlug,
-				} }
 			/>
 		) );
 
