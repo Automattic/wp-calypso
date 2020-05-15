@@ -99,8 +99,23 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 			payload: scan,
 		},
 	].map( dispatch );
+
 	if ( action.pooling && scan.state === 'scanning' ) {
-		setTimeout( () => {
+		return setTimeout( () => {
+			dispatch( {
+				type: JETPACK_SCAN_REQUEST,
+				siteId: action.siteId,
+				pooling: true,
+			} );
+		}, POOL_EVERY_MILLISECONDS );
+	}
+
+	// We want to pool again if the last scan state included threats that are being fixed
+	const threatsFixedInProgress = ( scan.threats || [] ).filter(
+		( threat ) => threat.fixerStatus === 'in_progress'
+	);
+	if ( action.pooling && scan.state === 'idle' && threatsFixedInProgress.length > 0 ) {
+		return setTimeout( () => {
 			dispatch( {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,

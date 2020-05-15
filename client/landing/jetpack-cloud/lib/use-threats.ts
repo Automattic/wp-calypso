@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import { fixThreat, ignoreThreat } from 'state/jetpack-scan/threats/actions';
+import { fixAllThreats, fixThreat, ignoreThreat } from 'state/jetpack-scan/threats/actions';
 import { FixableThreat, Threat } from 'landing/jetpack-cloud/components/threat-item/types';
 import getSiteScanUpdatingThreats from 'state/selectors/get-site-scan-updating-threats';
 
@@ -43,9 +43,12 @@ export const useThreats = ( siteId: number ) => {
 					threats_number: fixableThreats.length,
 				} )
 			);
-			fixableThreats.forEach( ( threat ) => {
-				dispatch( fixThreat( siteId, threat.id ) );
-			} );
+			dispatch(
+				fixAllThreats(
+					siteId,
+					fixableThreats.map( ( threat ) => threat.id )
+				)
+			);
 		},
 		[ dispatch, siteId ]
 	);
