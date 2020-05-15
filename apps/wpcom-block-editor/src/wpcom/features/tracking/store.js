@@ -16,7 +16,10 @@ export const AutomatticTrackingStoreName = 'automattic/tracking';
 /*
  * Tracking reducer.
  */
-const reducer = ( state = {}, { type, value, context = 'unknown', notFound, slug, blocks } ) => {
+const reducer = (
+	state = {},
+	{ type, value, context = 'unknown', notFound, slug, blocks, section, subsection }
+) => {
 	switch ( type ) {
 		case 'SET_BLOCKS_SEARCH_TERM':
 			return {
@@ -45,6 +48,19 @@ const reducer = ( state = {}, { type, value, context = 'unknown', notFound, slug
 				searcher: {
 					...state.searcher,
 					[ context ]: { ...state.searcher[ context ], notFound: true },
+				},
+			};
+
+		case 'SET_TIP_CLICK_ON':
+			return {
+				...state,
+				tip: {
+					...state.tip,
+					[ context ]: {
+						...( state.tip ? state.tip[ context ] : {} ),
+						section,
+						subsection,
+					},
 				},
 			};
 
@@ -88,6 +104,13 @@ const actions = {
 		context,
 	} ),
 
+	clickOnContextualTip: ( { context, section, subsection } ) => ( {
+		type: 'SET_TIP_CLICK_ON',
+		context,
+		section,
+		subsection,
+	} ),
+
 	/**
 	 * Return an function that triggers an action when
 	 * a template has broken blocks.
@@ -111,6 +134,7 @@ const actions = {
  */
 const selectors = {
 	getSearchTerm: ( state, context ) => get( state, [ 'searcher', context, 'value' ] ),
+	getContextualTip: ( state, context ) => get( state, [ 'tip', context ] ),
 };
 
 registerStore( AutomatticTrackingStoreName, {
