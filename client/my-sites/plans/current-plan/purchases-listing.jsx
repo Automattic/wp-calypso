@@ -28,7 +28,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
-import { addQueryArgs } from 'lib/url';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -213,13 +212,7 @@ class PurchasesListing extends Component {
 		let serviceButton = null;
 		if ( isJetpackBackup( purchase ) ) {
 			serviceButton = (
-				<Button
-					href={ addQueryArgs(
-						{ site, source: 'calypso-backups' },
-						'https://jetpack.com/redirect/'
-					) }
-					compact
-				>
+				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
 					{ translate( 'View backups' ) }
 					&nbsp;
 					<Gridicon icon="external" />
@@ -227,14 +220,8 @@ class PurchasesListing extends Component {
 			);
 		} else if ( isJetpackScan( purchase ) ) {
 			serviceButton = (
-				<Button
-					href={ addQueryArgs(
-						{ site, source: 'calypso-scanner' },
-						'https://jetpack.com/redirect/'
-					) }
-					compact
-				>
-					{ translate( 'Run scan' ) }
+				<Button href={ `/activity-log/${ site }` } compact>
+					{ translate( 'View threats' ) }
 					&nbsp;
 					<Gridicon icon="external" />
 				</Button>
