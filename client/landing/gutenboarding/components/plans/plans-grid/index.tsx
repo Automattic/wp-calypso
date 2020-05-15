@@ -84,7 +84,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 									isLarge
 									onClick={ handleDetailsToggleButtonClick }
 								>
-									<span>{ __( 'Less details' ) } </span>
+									<span>{ __( 'Hide details' ) } </span>
 									<Icon icon="arrow-up" size={ 20 }></Icon>
 								</Button>
 							) : (
@@ -93,7 +93,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 									isLarge
 									onClick={ handleDetailsToggleButtonClick }
 								>
-									<span>{ __( 'More details' ) } </span>
+									<span>{ __( 'Show details' ) } </span>
 									<Icon icon="arrow-down" size={ 20 }></Icon>
 								</Button>
 							) }
