@@ -143,7 +143,7 @@
 .site-title__input-wrapper {
 	display: block;
 	position: relative;
-	min-height: 40px; // make sure there is a tappable area on mobile when the input is empty
+	line-height: 1em;
 
 	.madlib__input:focus ~ .madlib__input-placeholder {
 		@include break-small {
