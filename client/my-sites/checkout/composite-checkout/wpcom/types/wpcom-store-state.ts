@@ -477,7 +477,9 @@ function prepareUkDomainContactExtraDetailsErrors(
 
 		return {
 			registrantType: details.tldExtraFields.uk?.registrantType?.errors?.map( toErrorPayload ),
-			registrationNumber: details.tldExtraFields.uk?.registrationNumber?.errors?.map( toErrorPayload ),
+			registrationNumber: details.tldExtraFields.uk?.registrationNumber?.errors?.map(
+				toErrorPayload
+			),
 			tradingName: details.tldExtraFields.uk?.tradingName?.errors?.map( toErrorPayload ),
 		};
 	}
