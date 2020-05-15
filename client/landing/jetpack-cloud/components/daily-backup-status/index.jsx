@@ -34,7 +34,8 @@ import BackupChanges from './backup-changes';
 import './style.scss';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import missingCredentialsIcon from './missing-credentials.svg';
-import backupErrorIcon from './backup-error.svg';
+import cloudErrorIcon from './icons/cloud-error.svg';
+import cloudWarningIcon from './icons/cloud-warning.svg';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -101,9 +102,9 @@ class DailyBackupStatus extends Component {
 			<>
 				<div className="daily-backup-status__icon-section">
 					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
-					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
+					<div className="daily-backup-status__hide-mobile">{ translate( 'Latest backup' ) }</div>
 				</div>
-				<div className="daily-backup-status__date">{ displayDate }</div>
+				<div className="daily-backup-status__title">{ displayDate }</div>
 				<div className="daily-backup-status__meta">{ meta }</div>
 				<ActionButtons
 					rewindId={ backup.rewindId }
@@ -127,9 +128,9 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<div className="daily-backup-status__failed-message-head">
-					<img src={ backupErrorIcon } alt="" role="presentation" />
-					<div>{ translate( 'Backup failed' ) }</div>
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudErrorIcon } alt="" role="presentation" />
+					<div className="daily-backup-status__message-error">{ translate( 'Backup failed' ) }</div>
 				</div>
 				<div className="daily-backup-status__failed-message">
 					{ this.getDisplayDate( backup.activityTs, false ) }
@@ -212,8 +213,15 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
-				<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
+				<div className="daily-backup-status__message-head">
+					<img
+						className="daily-backup-status__warning-color"
+						src={ cloudWarningIcon }
+						alt=""
+						role="presentation"
+					/>
+					<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
+				</div>
 
 				<div className="daily-backup-status__label">
 					<p>

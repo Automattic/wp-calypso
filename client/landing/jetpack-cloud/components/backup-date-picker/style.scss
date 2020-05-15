@@ -106,6 +106,7 @@
 
 .backup-date-picker__display-date {
 	flex: 1;
+	user-select: none;
 }
 
 .backup-date-picker__display-date.disabled {
