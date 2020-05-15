@@ -1,18 +1,6 @@
 const availableDesigns: Readonly< AvailableDesigns > = {
 	featured: [
 		{
-			title: 'Bowen',
-			slug: 'bowen',
-			template: 'bowen',
-			theme: 'coutoire',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/',
-			fonts: {
-				headings: 'Playfair Display',
-				base: 'Fira Sans',
-			},
-			categories: [ 'featured', 'blog' ],
-		},
-		{
 			title: 'Edison',
 			slug: 'edison',
 			template: 'edison',
@@ -119,6 +107,18 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'charity', 'non-profit' ],
+		},
+		{
+			title: 'Bowen',
+			slug: 'bowen',
+			template: 'bowen',
+			theme: 'coutoire',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'blog' ],
 		},
 	],
 };
