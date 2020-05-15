@@ -61,7 +61,6 @@ const startTask = ( dispatch, task, siteId ) => {
 
 const skipTask = ( dispatch, task, siteId ) => {
 	dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
-	dispatch( requestHomeLayout( siteId ) );
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_dismiss', {
 			checklist_name: 'new_blog',
@@ -103,20 +102,22 @@ const SiteSetupList = ( {
 	const isDomainUnverified =
 		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
 
+	// Move to first incomplete task on first load.
 	useEffect( () => {
-		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
 			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
 			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
+	}, [ currentTaskId, tasks, dispatch ] );
 
-		// Reset verification email state on first load.
+	// Reset verification email state on first load.
+	useEffect( () => {
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
+	}, [ isEmailUnverified, dispatch ] );
 
 	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
@@ -126,12 +127,17 @@ const SiteSetupList = ( {
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
-				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
-				setUserSelectedTask( false );
-				setCurrentTaskId( nextTaskId );
+				const nextTask = tasks.find( ( task ) => ! task.isCompleted );
+				if ( nextTask ) {
+					setUserSelectedTask( false );
+					setCurrentTaskId( nextTask.id );
+				} else {
+					// If all tasks are completed, re-fetch layout for moving to next view.
+					dispatch( requestHomeLayout( siteId ) );
+				}
 			}
 		}
-	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
+	}, [ currentTask, currentTaskId, userSelectedTask, siteId, tasks, dispatch ] );
 
 	// Update current task.
 	useEffect( () => {

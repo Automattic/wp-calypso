@@ -4,6 +4,7 @@
 import {
 	HOME_LAYOUT_REQUEST,
 	HOME_LAYOUT_SET,
+	HOME_LAYOUT_SKIP_CURRENT_VIEW,
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
 } from 'state/action-types';
@@ -11,6 +12,11 @@ import 'state/data-layer/wpcom/sites/home/layout';
 
 export const requestHomeLayout = ( siteId ) => ( {
 	type: HOME_LAYOUT_REQUEST,
+	siteId,
+} );
+
+export const skipCurrentViewHomeLayout = ( siteId ) => ( {
+	type: HOME_LAYOUT_SKIP_CURRENT_VIEW,
 	siteId,
 } );
 
