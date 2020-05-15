@@ -74,6 +74,7 @@ const Task = ( {
 
 	const skipTask = ( reminder = null ) => {
 		setIsLoading( true );
+		setSkipOptionsVisible( false );
 
 		dispatch(
 			withAnalytics(
