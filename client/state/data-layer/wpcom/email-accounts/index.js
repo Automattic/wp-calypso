@@ -15,7 +15,7 @@ import {
 	receiveGetEmailAccountsSuccess,
 	receiveGetEmailAccountsFailure,
 } from 'state/email-accounts/actions';
-import { prepareAccounts } from './utils';
+import { prepareAccounts } from './prepare';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const getEmailAccounts = ( action ) => {
