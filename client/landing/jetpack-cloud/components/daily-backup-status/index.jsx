@@ -329,11 +329,10 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderBackupDetails( backup ) {
-		const { allowRestore } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
 				<div className="daily-backup-status__realtime-details-card">
-					<ActivityCard activity={ backup } allowRestore={ allowRestore } summarize />
+					<ActivityCard activity={ backup } summarize />
 				</div>
 			</div>
 		);

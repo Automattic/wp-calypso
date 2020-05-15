@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +17,6 @@ import { withMobileBreakpoint } from '@automattic/viewport-react';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import getRewindState from 'state/selectors/get-rewind-state';
 import Pagination from 'components/pagination';
 import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -77,7 +74,7 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const { allowRestore, logs, pageSize, showDateSeparators } = this.props;
+		const { logs, pageSize, showDateSeparators } = this.props;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -101,7 +98,6 @@ class ActivityCardList extends Component {
 						{ dateLogs.map( ( activity ) => (
 							<ActivityCard
 								activity={ activity }
-								allowRestore={ allowRestore }
 								className={
 									isActivityBackup( activity )
 										? getPrimaryCardClassName( hasMore, dateLogs.length )
@@ -193,18 +189,9 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const filter = getActivityLogFilter( state, siteId );
-	const rewind = getRewindState( state, siteId );
-	const siteCapabilities = getRewindCapabilities( state, siteId );
-	const restoreStatus = rewind.rewind && rewind.rewind.status;
-	const allowRestore =
-		'active' === rewind.state &&
-		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
-		includes( siteCapabilities, 'restore' );
 
 	return {
-		allowRestore,
 		filter,
-		rewind,
 		siteId,
 		siteSlug,
 	};

@@ -24,6 +24,7 @@ import ActivityDescription from './activity-description';
 import ActivityMedia from 'my-sites/activity/activity-log-item/activity-media';
 import Button from 'components/forms/form-button';
 import ExternalLink from 'components/external-link';
+import getAllowRestore from 'state/selectors/get-allow-restore';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
@@ -43,7 +44,7 @@ class ActivityCard extends Component {
 		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func,
 		className: PropTypes.string,
-		doesRewindNeedCredentials: PropTypes.bool,
+		doesRewindNeedCredentials: PropTypes.bool.isRequired,
 		moment: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -322,6 +323,7 @@ const mapStateToProps = ( state ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	return {
+		allowRestore: getAllowRestore( state, siteId ),
 		doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
 		siteId,
 		siteSlug,
