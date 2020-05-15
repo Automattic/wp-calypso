@@ -149,7 +149,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'All of your selected files are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
+					'All of your selected items are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
 							backupDisplayDate,
