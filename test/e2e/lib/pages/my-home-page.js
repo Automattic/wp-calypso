@@ -50,6 +50,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 	}
 
 	async isEmailVerified() {
+		await this.closeCelebrateNotice();
 		await driverHelper.clickWhenClickable( this.driver, this.confirmEmailTaskSelector );
 		const badge = await this.driver.findElement( this.taskBadgeSelector );
 		const badgeText = await badge.getText();
