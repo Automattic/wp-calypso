@@ -21,15 +21,13 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
  * Internal dependencies
  */
 const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
-const config = require( '../../client/server/config' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
  * Internal variables
  */
-const calypsoEnv = config( 'env_id' );
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const isDesktop = process.env.CALYPSO_ENV === 'desktop';
 
 /**
  * Return a webpack config object
