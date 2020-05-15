@@ -1,25 +1,19 @@
 /**
  * Internal dependencies
  */
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 import type { PlanAction } from './actions';
-
-export const supportedPlanSlugs = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-];
+import type { Feature, Plan } from './types';
 
 const DEFAUlT_STATE: {
 	selectedPlanSlug: string | undefined;
-	supportedPlanSlugs: Array< string >;
+	supportedPlans: Record< string, Plan >;
 	prices: Record< string, string >;
+	features: Feature[];
 } = {
-	supportedPlanSlugs,
 	selectedPlanSlug: undefined,
+	supportedPlans: {},
 	prices: {},
+	features: [],
 };
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
@@ -29,10 +23,20 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 				...state,
 				selectedPlanSlug: action.slug,
 			};
+		case 'SET_PLANS':
+			return {
+				...state,
+				supportedPlans: action.plans,
+			};
 		case 'SET_PRICES':
 			return {
 				...state,
 				prices: action.prices,
+			};
+		case 'SET_FEATURES':
+			return {
+				...state,
+				features: action.features,
 			};
 		case 'RESET_PLAN':
 			return DEFAUlT_STATE;

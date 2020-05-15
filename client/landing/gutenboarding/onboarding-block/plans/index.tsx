@@ -33,9 +33,11 @@ export default function PlansStep() {
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
-	const selectedPlanRef = useRef();
+	const selectedPlanRef = useRef< string >( '' );
 	useEffect( () => {
-		selectedPlanRef.current = plan?.getStoreSlug();
+		if ( plan ) {
+			selectedPlanRef.current = plan?.slug;
+		}
 	}, [ plan ] );
 
 	useTrackStep( 'Plans', () => ( {
@@ -43,7 +45,9 @@ export default function PlansStep() {
 	} ) );
 
 	const handleCreateSite = ( username: string, bearerToken?: string ) => {
-		createSite( username, freeDomainSuggestion, bearerToken, plan.getStoreSlug() );
+		if ( plan ) {
+			createSite( username, freeDomainSuggestion, bearerToken, plan.slug );
+		}
 	};
 
 	return (

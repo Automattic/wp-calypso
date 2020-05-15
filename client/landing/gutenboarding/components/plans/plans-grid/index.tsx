@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -13,7 +12,6 @@ import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import { Title, SubTitle } from '../../titles';
 import ActionButtons from '../../action-buttons';
 import PlansTable from '../plans-table';
-import PlansDetails from '../plans-details';
 
 /**
  * Style dependencies
@@ -33,12 +31,6 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 
 	const { setPlan } = useDispatch( PLANS_STORE );
 
-	const [ showDetails, setShowDetails ] = React.useState( false );
-
-	const handleDetailsToggleButtonClick = () => {
-		setShowDetails( ! showDetails );
-	};
-
 	return (
 		<div className="plans-grid">
 			<div className="plans-grid__header">
@@ -55,37 +47,9 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 
 			<div className="plans-grid__table">
 				<PlansTable
-					selectedPlanSlug={ selectedPlan.getStoreSlug() }
+					selectedPlanSlug={ selectedPlan?.slug ?? '' }
 					onPlanSelect={ setPlan }
 				></PlansTable>
-			</div>
-
-			<div className="plans-grid__details">
-				{ showDetails && (
-					<div className="plans-grid__details-container">
-						<div className="plans-grid__details-heading">
-							<Title>{ __( 'Detailed comparison' ) }</Title>
-						</div>
-						<PlansDetails />
-					</div>
-				) }
-				<Button
-					className="plans-grid__details-toggle-button"
-					isLarge
-					onClick={ handleDetailsToggleButtonClick }
-				>
-					{ showDetails ? (
-						<>
-							<span>{ __( 'Less details' ) } </span>
-							<Icon icon="arrow-up" size={ 20 }></Icon>
-						</>
-					) : (
-						<>
-							<span>{ __( 'More details' ) } </span>
-							<Icon icon="arrow-down" size={ 20 }></Icon>
-						</>
-					) }
-				</Button>
 			</div>
 		</div>
 	);

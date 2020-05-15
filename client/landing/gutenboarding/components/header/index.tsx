@@ -37,7 +37,7 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
+	const selectedPlanSlug = useSelectedPlan()?.slug;
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 

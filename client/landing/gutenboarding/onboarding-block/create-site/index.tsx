@@ -29,7 +29,7 @@ const CreateSite: React.FunctionComponent = () => {
 	const steps = React.useRef< string[] >(
 		[
 			__( 'Building your site' ),
-			hasPaidDomain && plan.getStoreSlug() !== PLAN_FREE && __( 'Getting your domain' ),
+			hasPaidDomain && plan && plan.slug !== PLAN_FREE && __( 'Getting your domain' ),
 			__( 'Applying design' ),
 		].filter( Boolean ) as string[]
 	);

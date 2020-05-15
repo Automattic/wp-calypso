@@ -11,9 +11,13 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
 
 export function useSelectedPlan() {
+	// populate the store
+	useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	const planPath = usePlanRouteParam();
+
 	const planFromPath = useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );

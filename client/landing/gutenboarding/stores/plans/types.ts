@@ -1,13 +1,47 @@
+/**
+ * Internal dependencies
+ */
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
+
 export type PlanAction = {
 	type: string;
 	slug?: string;
+};
+
+export interface Product {
+	plan_id: number;
+}
+
+export type Slug =
+	| typeof PLAN_FREE
+	| typeof PLAN_PERSONAL
+	| typeof PLAN_PREMIUM
+	| typeof PLAN_BUSINESS
+	| typeof PLAN_ECOMMERCE;
+
+export interface Plan {
+	slug: Slug;
+	groups: string[];
+	products: Product[];
+	name: string;
+	short_name: 'Free' | 'Personal' | 'Premium' | 'Business' | 'E-commerce';
+	tagline: string;
+	description: string;
+	features: string[];
+	icon: string;
+}
+
+export type Feature = {
+	id: string;
+	name: string;
+	description: string;
 };
 
 /**
  * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
  * can be super useful later
  */
-export interface APIPlan {
+export interface PricesAPIPlan {
 	product_id: number;
 	product_name: string;
 	meta: object;
@@ -49,7 +83,7 @@ export interface APIPlan {
 		6: number;
 	};
 	path_slug: string;
-	product_slug: string;
+	product_slug: Slug;
 	description: string;
 	cost: number;
 	bill_period: number;

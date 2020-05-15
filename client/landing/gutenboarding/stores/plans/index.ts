@@ -21,7 +21,7 @@ registerStore< State >( STORE_KEY, {
 	resolvers,
 	actions,
 	controls,
-	reducer: reducer as any,
+	reducer,
 	selectors,
 	persist: [ 'selectedPlanSlug' ],
 } );
