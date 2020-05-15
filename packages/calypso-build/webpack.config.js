@@ -21,12 +21,15 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
  * Internal dependencies
  */
 const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
+const config = require( '../../client/server/config' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
  * Internal variables
  */
+const calypsoEnv = config( 'env_id' );
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
 /**
  * Return a webpack config object
@@ -99,8 +102,8 @@ function getWebpackConfig(
 				extractComments: false,
 				terserOptions: {
 					ecma: 5,
-					safari10: true,
-					mangle: true,
+					safari10: ! isDesktop,
+					mangle: ! isDesktop,
 				},
 			} ),
 		},
