@@ -129,11 +129,9 @@ const SiteSetupList = ( {
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
-				const nextTask = tasks.find( ( task ) => ! task.isCompleted );
-				if ( nextTask ) {
-					setUserSelectedTask( false );
-					setCurrentTaskId( nextTask.id );
-				}
+				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
+				setUserSelectedTask( false );
+				setCurrentTaskId( nextTaskId );
 			}
 		}
 	}, [
@@ -196,7 +194,7 @@ const SiteSetupList = ( {
 		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
 	}, [] );
 
-	if ( ! currentTask || isSiteSetupComplete ) {
+	if ( ! currentTask ) {
 		return null;
 	}
 
