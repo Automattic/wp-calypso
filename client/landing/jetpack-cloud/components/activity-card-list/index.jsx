@@ -107,9 +107,8 @@ class ActivityCardList extends Component {
 				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
-							{ date && today.isSame( date, 'day' )
-								? translate( 'Today' )
-								: date.format( 'MMM Do' ) }
+							{ date &&
+								( today?.isSame( date, 'day' ) ? translate( 'Today' ) : date.format( 'MMM Do' ) ) }
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
