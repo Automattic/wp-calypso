@@ -29,7 +29,7 @@
 	color: var( --studio-gray-80 );
 	text-align: left;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 32px;
 	}
 }
@@ -89,7 +89,7 @@
 	font-weight: 600;
 	margin-bottom: 18px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 36px;
 		margin: 8px 0 12px;
 	}
@@ -98,14 +98,14 @@
 .daily-backup-status__hide-mobile {
 	display: none;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: block;
 	}
 }
 .daily-backup-status__hide-desktop {
 	display: block;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
 	}
 }
@@ -201,7 +201,7 @@
 	text-align: center;
 	color: var( --studio-jetpack-green-60 );
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 330px;
 		float: none;
 	}
@@ -368,7 +368,7 @@
 	margin-top: 0;
 }
 
-@include breakpoint( '>660px' ) {
+@include breakpoint-deprecated( '>660px' ) {
 	.daily-backup-status__meta {
 		display: block;
 	}
