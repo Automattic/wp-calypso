@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -12,9 +12,14 @@ const isEditorIFramed = inIframe();
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
-	const editorSelector = select( 'core/editor' );
-	const postId = editorSelector.getCurrentPostId();
-	const postType = editorSelector.getCurrentPostType();
+
+	const { getCurrentPostId, getCurrentPostType } = useSelect( ( select ) => ( {
+		getCurrentPostId: select( 'core/editor' ).getCurrentPostId,
+		getCurrentPostType: select( 'core/editor' ).getCurrentPostType,
+	} ) );
+
+	const postId = getCurrentPostId();
+	const postType = getCurrentPostType();
 	const returnLink =
 		isEditorIFramed && ! isSimpleSite
 			? '&' +
