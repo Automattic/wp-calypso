@@ -81,7 +81,7 @@
 .scan__retry-bottom {
 	margin: 0 0 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 16px 0 16px 20px;
 	}
 }

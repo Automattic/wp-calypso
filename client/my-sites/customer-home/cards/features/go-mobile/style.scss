@@ -1,5 +1,5 @@
 .customer-home__layout-col-right {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.go-mobile__subheader.customer-home__card-subheader {
 			margin-bottom: 0;
 		}

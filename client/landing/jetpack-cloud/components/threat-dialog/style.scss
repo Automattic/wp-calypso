@@ -1,7 +1,7 @@
 .dialog.threat-dialog {
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 676px;
 	}
 
