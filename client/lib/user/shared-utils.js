@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'lib/formatting/decode-entities';
 import { getLanguage } from 'lib/i18n-utils/utils';
 import { withoutHttp } from 'lib/url';
 
