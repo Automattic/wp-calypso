@@ -11,7 +11,7 @@ import { get } from 'lodash';
 import { registerStore } from '@wordpress/data';
 
 // Store identifier.
-const storeName = 'automattic/tracking';
+export const AutomatticTrackingStoreName = 'automattic/tracking';
 
 /*
  * Tracking reducer.
@@ -113,7 +113,7 @@ const selectors = {
 	getSearchTerm: ( state, context ) => get( state, [ 'searcher', context, 'value' ] ),
 };
 
-registerStore( storeName, {
+registerStore( AutomatticTrackingStoreName, {
 	reducer,
 	actions,
 	selectors,
