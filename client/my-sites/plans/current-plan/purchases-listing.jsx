@@ -220,7 +220,7 @@ class PurchasesListing extends Component {
 			);
 		} else if ( isJetpackScan( purchase ) ) {
 			serviceButton = (
-				<Button href={ `/activity-log/${ site }` } compact>
+				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
 					{ translate( 'View threats' ) }
 					&nbsp;
 					<Gridicon icon="external" />
