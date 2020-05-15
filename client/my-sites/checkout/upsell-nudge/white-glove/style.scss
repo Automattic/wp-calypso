@@ -1,5 +1,6 @@
 main.white-glove.main {
-	margin:auto;
+	margin: auto;
+	border: 5px solid #117ac9;
 }
 
 .white-glove {
@@ -12,6 +13,9 @@ main.white-glove.main {
 
 	.card {
 		width: 100%;
+		box-shadow: unset;
+		margin: 0;
+		padding: 16px 50px;
 	}
 
 	&__placeholders {
@@ -53,30 +57,32 @@ main.white-glove.main {
 	&__card-body {
 		overflow: auto;
 		flex: 1;
+		box-shadow: unset;
+		margin: 0;
 	}
 
 	&__column-pane {
 		display: flex;
 		flex-flow: row;
+		align-items: center;
+		padding: 20px 0;
 	}
 
 	&__column-content {
-		padding-right: 10px;
+		padding-right: 90px;
+		flex: 1 1 auto;
+
 		@include breakpoint( '<480px' ) {
 			padding-right: 0;
 		}
 	}
 
 	&__column-doodle {
-		width: 120px;
-		flex-shrink: 0;
+		flex: 1 0 280px;
+
 		@include breakpoint( '<480px' ) {
 			display: none;
 		}
-	}
-
-	&__doodle {
-		margin-top: 85px;
 	}
 
 	&__small-header {
@@ -85,12 +91,22 @@ main.white-glove.main {
 	}
 
 	&__header {
-		font-size: 23px;
-		font-weight: 600;
+		font-size: 36px;
+		font-weight: normal;
 		text-align: center;
 		line-height: 1.4;
 		margin-top: 0.5em;
-		margin-bottom: 0.4em;
+		margin-bottom: 0;
+		color: #117ac9;
+		box-shadow: unset;
+
+		.h2 {
+			font-family: 'Recoleta';
+		}
+		
+		.white-glove__header-logo {
+			fill:  #117ac9;
+		}
 
 		@include breakpoint( '<660px' ) {
 			font-size: 21px;
@@ -156,4 +172,31 @@ main.white-glove.main {
 			float: right;
 		}
 	}
+
+	.white-glove__benefits {
+		display: flex;
+		background: #ecf7ff;
+		border-radius: 4px;
+		padding: 20px;
+	}
+
+	.checklist {
+		display: flex;
+		padding-right: 20px;
+		flex: 1 1 0;
+
+		.checklist__icon {
+			width: 18px;
+			fill: var( --studio-jetpack-green-30 );
+			margin-right: 5px;
+		}
+	
+		.checklist__content {
+			flex: 1;
+			font-weight: bold;
+			font-size: 14px;
+		}
+	}
+
+	
 }

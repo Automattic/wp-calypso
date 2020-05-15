@@ -170,8 +170,7 @@ export class UpsellNudge extends React.Component {
 				return (
 					<WhiteGlove
 						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
+						planRawPrice={ planRawPrice }
 						translate={ translate }
 						isLoggedIn={ isLoggedIn }
 						siteSlug={ siteSlug }
