@@ -178,7 +178,7 @@ function CheckoutSummaryHelp() {
 
 	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
 	if ( happyChatAvailable && ( isPresalesChatEligible || isSupportChatUser ) ) {
-		return <PaymentChatButtonUI />;
+		return <PaymentChatButton />;
 	}
 
 	// If chat isn't available, use the inline help button instead.
@@ -223,6 +223,15 @@ const CheckoutSummaryFeatures = styled.div`
 	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
 		padding: 20px;
 	}
+
+	.checkout__payment-chat-button.is-borderless {
+		color: ${( props ) => props.theme.colors.textColor};
+		padding: 0;
+
+		svg {
+			width: 20px;
+		}
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -235,15 +244,6 @@ const CheckoutSummaryFeaturesListUI = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
-`;
-
-const PaymentChatButtonUI = styled( PaymentChatButton )`
-	color: ${( props ) => props.theme.textColor};
-	padding: 0;
-
-	svg {
-		width: 20px;
-	}
 `;
 
 const CheckoutSummaryHelpButton = styled.button`
