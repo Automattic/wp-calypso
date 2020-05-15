@@ -284,9 +284,12 @@ export function CheckoutStep( {
 		( error ) =>
 			onEvent( {
 				type: 'STEP_LOAD_ERROR',
-				payload: error.message,
+				payload: {
+					message: error.message,
+					stepId,
+				},
 			} ),
-		[ onEvent ]
+		[ onEvent, stepId ]
 	);
 
 	return (
