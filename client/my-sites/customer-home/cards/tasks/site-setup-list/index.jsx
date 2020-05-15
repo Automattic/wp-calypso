@@ -142,9 +142,11 @@ const SiteSetupList = ( {
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
-				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
-				setUserSelectedTask( false );
-				setCurrentTaskId( nextTaskId );
+				const nextTask = tasks.find( ( task ) => ! task.isCompleted );
+				if ( nextTask ) {
+					setUserSelectedTask( false );
+					setCurrentTaskId( nextTask.id );
+				}
 			}
 		}
 	}, [
