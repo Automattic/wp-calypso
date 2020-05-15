@@ -59,7 +59,7 @@ function premium_content_block_init() {
 	wp_register_script(
 		'premium-content-frontend',
 		"$url_path/view.js",
-		array( 'jquery' ),
+		array(),
 		$script_asset['version']
 	);
 
