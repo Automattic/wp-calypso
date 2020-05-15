@@ -225,18 +225,20 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				) ) }
 			</div>
 
-			<div className="scan-threats__rerun">
-				{ translate(
-					'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
-					{
-						components: {
-							button: (
-								<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
-							),
-						},
-					}
-				) }
-			</div>
+			{ ! error && (
+				<div className="scan-threats__rerun">
+					{ translate(
+						'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
+						{
+							components: {
+								button: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+							},
+						}
+					) }
+				</div>
+			) }
 
 			{ error && <ScanError site={ site } /> }
 
