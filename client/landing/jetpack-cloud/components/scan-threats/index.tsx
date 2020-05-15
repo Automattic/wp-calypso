@@ -102,6 +102,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
 	);
 	const dispatch = useDispatch();
+	const dispatchScanRun = React.useCallback( () => {
+		triggerScanRun( site.ID )( dispatch );
+	}, [ dispatch, site ] );
 
 	const allFixableThreats = threats.filter(
 		( threat ): threat is FixableThreat =>
@@ -222,6 +225,21 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					/>
 				) ) }
 			</div>
+
+			{ ! error && (
+				<div className="scan-threats__rerun">
+					{ translate(
+						'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
+						{
+							components: {
+								button: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+							},
+						}
+					) }
+				</div>
+			) }
 
 			{ error && <ScanError site={ site } /> }
 

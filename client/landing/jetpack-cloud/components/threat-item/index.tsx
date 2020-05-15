@@ -74,7 +74,7 @@ const ThreatItem: React.FC< Props > = ( {
 
 		if ( ! threat.fixable ) {
 			return translate(
-				'Jetpack Scan cannot automatically fix this threat. Please {{link}}contact us{{/link}} for help.',
+				'Jetpack Scan cannot automatically fix this threat. You can fix it manually and re-run scan afterwards, or {{link}}contact us{{/link}} for help.',
 				{
 					components: {
 						link: <a href={ contactSupportUrl } rel="noopener noreferrer" target="_blank" />,
