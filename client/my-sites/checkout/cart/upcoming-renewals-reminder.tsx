@@ -235,7 +235,7 @@ function getMessages( {
 	if ( isExpired( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			message = translate(
-				'Your domain %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',
+				'Your %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',
 				translateOptions
 			);
 		} else if ( isPlan( purchase ) ) {
@@ -251,7 +251,7 @@ function getMessages( {
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
 		message = translate(
-			'Your domain %(purchaseName)s domain is expiring %(expiry)s. Would you like to renew it now?',
+			'Your %(purchaseName)s domain is expiring %(expiry)s. Would you like to renew it now?',
 			translateOptions
 		);
 	} else if ( isPlan( purchase ) ) {

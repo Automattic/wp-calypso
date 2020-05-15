@@ -9,7 +9,7 @@ import moment from 'moment';
  */
 import createSelector from 'lib/create-selector';
 import { createPurchasesArray } from 'lib/purchases/assembler';
-import { isSubscription, canExplicitRenew } from 'lib/purchases';
+import { isSubscription, isRenewable, isPartnerPurchase, canExplicitRenew } from 'lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
@@ -84,6 +84,8 @@ export const getRenewableSitePurchases = createSelector(
 		getSitePurchases( state, siteId ).filter( ( purchase ) => {
 			const expiryThresholdInDays = isMonthly( purchase.productSlug ) ? 30 : 90;
 			return (
+				! isPartnerPurchase( purchase ) &&
+				isRenewable( purchase ) &&
 				canExplicitRenew( purchase ) &&
 				moment( purchase.expiryDate ).diff( Date.now(), 'days' ) < expiryThresholdInDays
 			);
