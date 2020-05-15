@@ -132,7 +132,7 @@ class DailyBackupStatus extends Component {
 					<img src={ cloudErrorIcon } alt="" role="presentation" />
 					<div className="daily-backup-status__message-error">{ translate( 'Backup failed' ) }</div>
 				</div>
-				<div className="daily-backup-status__failed-message">
+				<div className="daily-backup-status__title">
 					{ this.getDisplayDate( backup.activityTs, false ) }
 				</div>
 				<div className="daily-backup-status__label">
@@ -179,13 +179,11 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
-
-				<div className="daily-backup-status__date">
-					{ translate( 'No backups are available yet.' ) }
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudWarningIcon } alt="" role="presentation" />
+					<div>{ translate( 'No backups are available yet' ) }</div>
 				</div>
-
-				<div className="daily-backup-status__unavailable">
+				<div className="daily-backup-status__label">
 					{ translate(
 						'But don’t worry, one should become available in the next 24 hours. Contact support if you still need help.'
 					) }

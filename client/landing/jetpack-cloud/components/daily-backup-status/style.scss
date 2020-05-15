@@ -24,8 +24,7 @@
 	color: var( --studio-gray-40 );
 }
 
-.daily-backup-status__label,
-.daily-backup-status__unavailable {
+.daily-backup-status__label {
 	margin-top: 24px;
 	color: var( --studio-gray-80 );
 	text-align: left;
@@ -33,10 +32,6 @@
 	@include breakpoint( '>660px' ) {
 		margin-top: 32px;
 	}
-}
-
-.daily-backup-status__unavailable {
-	margin-bottom: 1rem;
 }
 
 .daily-backup-status__date,
@@ -68,6 +63,9 @@
 	text-align: center;
 	margin-left: 0;
 }
+.form-button.daily-backup-status__support-button {
+	margin: 32px 0;
+}
 
 .form-button.daily-backup-status__restore-button img {
 	width: 24px;
@@ -97,6 +95,7 @@
 
 	@include breakpoint( '>660px' ) {
 		font-size: 36px;
+		margin-top: 8px;
 	}
 }
 
@@ -219,13 +218,6 @@
 
 .daily-backup-status__message-error {
 	color: var( --studio-red-50 );
-}
-
-.daily-backup-status__failed-message {
-	color: var( --studio-gray-80 );
-	font-size: 1.3rem;
-	margin-top: 0.3rem;
-	margin-bottom: 1.5rem;
 }
 
 .daily-backup-status__view-all-button {
@@ -445,7 +437,6 @@
 
 	.form-button.daily-backup-status__support-button {
 		width: 50%;
-		margin-bottom: 2rem;
 	}
 
 	.form-button.daily-backup-status__restore-button img {
