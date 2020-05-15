@@ -30,7 +30,9 @@ import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { selectedDesign, hasUsedPlansStep } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
@@ -71,12 +73,10 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	const handleContinue = () => {
-		// Show the plans grid to all users
-		// and all users who have seen the plans step before
-		// except if they have chosen a plan via the plans modal before they have reached the plans step
-		// or a plan is in the path
-
-		if ( isEnabled( 'gutenboarding/plans-grid' ) && ! selectedPlan ) {
+		// Skip the plans step if the user has used the plans modal to select a plan
+		// If a user has already used the plans step and then gone back, show them the plans step again
+		// to avoid confusion
+		if ( isEnabled( 'gutenboarding/plans-grid' ) && ( ! selectedPlan || hasUsedPlansStep ) ) {
 			history.push( makePath( Step.Plans ) );
 			return;
 		}

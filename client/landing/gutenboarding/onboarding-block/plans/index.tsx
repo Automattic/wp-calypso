@@ -27,10 +27,14 @@ export default function PlansStep() {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
-
+	const { setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	const plan = useSelectedPlan();
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	useEffect( () => {
+		setHasUsedPlansStep( true );
+	}, [] );
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
 	const selectedPlanRef = useRef();

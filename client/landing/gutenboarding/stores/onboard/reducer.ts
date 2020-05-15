@@ -137,11 +137,22 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 	return state;
 };
 
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
 	domainCategory,
 	isRedirecting,
+	hasUsedPlansStep,
 	pageLayouts,
 	selectedFonts,
 	selectedDesign,
