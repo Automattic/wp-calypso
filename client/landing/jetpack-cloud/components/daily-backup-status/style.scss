@@ -11,6 +11,7 @@
 	fill: var( --color-primary-30 );
 }
 
+
 .daily-backup-status__gridicon-no-backup {
 	width: 3rem;
 	height: 3rem;
@@ -25,8 +26,13 @@
 
 .daily-backup-status__label,
 .daily-backup-status__unavailable {
+	margin-top: 24px;
 	color: var( --studio-gray-80 );
 	text-align: left;
+
+	@include breakpoint( '>660px' ) {
+		margin-top: 32px;
+	}
 }
 
 .daily-backup-status__unavailable {
@@ -86,7 +92,20 @@
 }
 
 .daily-backup-status__title {
+	font-size: 22px;
+	font-weight: 600;
+
+	@include breakpoint( '>660px' ) {
+		font-size: 36px;
+	}
+}
+
+.daily-backup-status__hide-mobile {
 	display: none;
+
+	@include breakpoint( '>660px' ) {
+		display: block;
+	}
 }
 
 .daily-backup-status__success.card,
@@ -179,22 +198,27 @@
 	text-align: center;
 	color: var( --studio-jetpack-green-60 );
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint( '>660px' ) {
 		width: 330px;
 		float: none;
 	}
 }
 
-.daily-backup-status__failed-message-head {
+.daily-backup-status__message-head {
+	color: var( --studio-gray-80 );
+
 	img {
 		width: 48px;
 	}
 
 	div {
-		color: var( --color-scary-50 );
-		font-size: 1.4rem;
-		font-weight: 400;
+		font-size: 18px;
+		font-weight: 600;
 	}
+}
+
+.daily-backup-status__message-error {
+	color: var( --studio-red-50 );
 }
 
 .daily-backup-status__failed-message {
@@ -218,10 +242,12 @@
 
 .daily-backup-status__section-header {
 	margin: 0.5rem 0;
+
 }
 
 .daily-backup-status__section-posts {
 	margin-bottom: 1rem;
+
 }
 
 .daily-backup-status__media-image {
@@ -313,6 +339,7 @@
 	margin-bottom: -0.5rem;
 }
 
+
 .daily-backup-status__extension-block-text {
 	display: inline-block;
 	position: relative;
@@ -349,9 +376,8 @@
 	margin-top: 0;
 }
 
-@include breakpoint-deprecated( '>660px' ) {
-	.daily-backup-status__meta,
-	.daily-backup-status__title {
+@include breakpoint( '>660px' ) {
+	.daily-backup-status__meta {
 		display: block;
 	}
 
@@ -375,11 +401,6 @@
 
 	.daily-backup-status__date {
 		margin-bottom: 0.5rem;
-	}
-
-	.daily-backup-status__title {
-		font-weight: 400;
-		margin-left: 0.5rem;
 	}
 
 	.daily-backup-status__meta {
@@ -406,20 +427,20 @@
 		margin-bottom: 2rem;
 	}
 
-	.daily-backup-status__failed-message-head {
+	.daily-backup-status__message-head {
 		display: flex;
-		color: var( --color-scary-50 );
 		font-weight: 600;
 		align-items: center;
 	}
 
-	.daily-backup-status__failed-message-head img {
+	.daily-backup-status__message-head img {
 		width: 3rem;
 		height: 3rem;
+
 	}
 
-	.daily-backup-status__failed-message-head div {
-		margin-left: 0.5rem;
+	.daily-backup-status__message-head div {
+		margin-left: 12px;
 	}
 
 	.form-button.daily-backup-status__support-button {
