@@ -21,7 +21,7 @@
 	&__btn {
 		width: 100%;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			width: 200px;
 		}
 	}
@@ -40,7 +40,7 @@
 	}
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint-deprecated( '>960px' ) {
 	.server-credentials-form__server-address,
 	.server-credentials-form__username,
 	.server-credentials-form__password {

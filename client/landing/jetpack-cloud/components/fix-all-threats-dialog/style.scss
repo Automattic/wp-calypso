@@ -1,7 +1,7 @@
 .dialog.fix-all-threats-dialog {
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 676px;
 	}
 
@@ -58,7 +58,7 @@
 					);
 					pointer-events: none;
 
-					@include breakpoint( '>660px' ) {
+					@include breakpoint-deprecated( '>660px' ) {
 						bottom: 70px;
 					}
 				}
@@ -73,7 +73,7 @@
 		&__btn {
 			width: 100%;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				width: 140px;
 			}
 		}

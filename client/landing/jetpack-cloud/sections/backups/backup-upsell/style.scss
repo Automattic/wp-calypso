@@ -5,7 +5,7 @@
 .backup-upsell__icon-header {
 	display: flex;
 	justify-content: center;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: flex-start;
 	}
 

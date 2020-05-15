@@ -353,7 +353,7 @@
 	margin-top: 0;
 }
 
-@include breakpoint( '>660px' ) {
+@include breakpoint-deprecated( '>660px' ) {
 	.daily-backup-status__meta,
 	.daily-backup-status__title {
 		display: block;

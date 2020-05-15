@@ -44,7 +44,7 @@
 	text-align: inherit;
 	line-height: normal;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		font-size: 18px;
 		font-weight: 600;
 		max-width: none;
@@ -60,7 +60,7 @@
 	overflow: hidden;
 	line-height: normal;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		text-transform: uppercase;
 	}
 
@@ -105,7 +105,7 @@
 	display: flex;
 	justify-content: space-between;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		justify-content: flex-start;
 		flex-direction: column;
 	}
@@ -131,7 +131,7 @@ input[type='radio'].domain-management-list-item__radio {
 	overflow: hidden;
 	margin-top: 5px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		float: right;
 		margin-top: -11px;
 		margin-right: 15px;
@@ -143,7 +143,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .domain-management__claim-free-domain {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
 	}
 }

@@ -73,7 +73,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;

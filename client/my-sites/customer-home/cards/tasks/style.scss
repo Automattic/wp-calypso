@@ -8,7 +8,7 @@
 		box-sizing: border-box;
 		padding: 24px;
 
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			padding: 32px;
 		}
 	}
@@ -51,7 +51,7 @@
 		line-height: 36px;
 		margin-bottom: 4px;
 
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			font-size: 32px;
 			line-height: 40px;
 		}
@@ -63,7 +63,7 @@
 		line-height: 24px;
 		color: var( --color-text );
 
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			font-size: 18px;
 			line-height: 28px;
 			margin-bottom: 32px;

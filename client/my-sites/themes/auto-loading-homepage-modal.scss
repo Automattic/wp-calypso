@@ -3,7 +3,7 @@
 	max-width: 400px;
 	margin: 0 auto;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		box-sizing: border-box;
 		max-width: 100%;
 	}
@@ -15,7 +15,7 @@
 			margin-left: 0;
 		}
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			.button {
 				display: block;
 				margin: 0 auto 10px;

@@ -20,7 +20,7 @@
     font-weight: 600;
     margin: 32px 0 0.5rem;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 16px;
 	}
 }

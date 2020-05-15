@@ -1,7 +1,7 @@
 .profile__settings .edit-gravatar {
 	text-align: center;
 
-	@include breakpoint('>960px') {
+	@include breakpoint-deprecated('>960px') {
 		float: left;
 		margin-right: 40px;
 		margin-bottom: 20px;
@@ -16,7 +16,7 @@
 
 .profile__settings .form-fieldset:nth-child( 1 ),
 .profile__settings .form-fieldset:nth-child( 2 ) {
-	@include breakpoint('>960px') {
+	@include breakpoint-deprecated('>960px') {
 		clear: right;
 	}
 }

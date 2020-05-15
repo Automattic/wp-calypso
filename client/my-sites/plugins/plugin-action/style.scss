@@ -22,7 +22,7 @@
 	}
 
 	.plugin-action__label {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			color: var( --color-neutral-70 );
 		}
 	}

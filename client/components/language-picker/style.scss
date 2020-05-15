@@ -13,7 +13,7 @@
 	text-align: left;
 	line-height: inherit;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 

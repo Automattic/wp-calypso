@@ -3,7 +3,7 @@
 		padding: 16px;
 		min-height: auto;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 16px 24px;
 		}
 	}
@@ -56,7 +56,7 @@
 		font-size: 14px;
 		display: none;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			display: block;
 		}
 	}
