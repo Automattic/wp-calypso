@@ -94,7 +94,7 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist'
+				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist&calypsoify=1'
 			);
 		} );
 
