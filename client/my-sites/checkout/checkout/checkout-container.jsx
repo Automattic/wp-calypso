@@ -76,11 +76,8 @@ class CheckoutContainer extends React.Component {
 			shouldShowCart = true,
 			clearTransaction,
 			isComingFromGutenboarding,
-<<<<<<< HEAD
 			isGutenboardingCreate,
-=======
 			isWhiteGloveOffer,
->>>>>>> White glove MVP
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
