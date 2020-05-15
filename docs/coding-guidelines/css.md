@@ -98,7 +98,7 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 
 ## Media Queries
 
-To avoid code bloat and have a more consistent experience we should try to use the same breakpoints in all SCSS files.
+To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible.
 
 The old `breakpoint` mixin should be replaced with the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss)
 
