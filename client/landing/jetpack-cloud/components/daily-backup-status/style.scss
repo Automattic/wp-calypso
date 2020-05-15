@@ -11,6 +11,7 @@
 	fill: var( --color-primary-30 );
 }
 
+
 .daily-backup-status__gridicon-no-backup {
 	width: 3rem;
 	height: 3rem;
@@ -23,14 +24,14 @@
 	color: var( --studio-gray-40 );
 }
 
-.daily-backup-status__label,
-.daily-backup-status__unavailable {
+.daily-backup-status__label {
+	margin-top: 24px;
 	color: var( --studio-gray-80 );
 	text-align: left;
-}
 
-.daily-backup-status__unavailable {
-	margin-bottom: 1rem;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 32px;
+	}
 }
 
 .daily-backup-status__date,
@@ -49,7 +50,7 @@
 }
 
 .daily-backup-status__no-backup-last-backup {
-	margin-bottom: 1rem;
+	margin-bottom: 24px;
 	font-style: italic;
 }
 
@@ -61,6 +62,9 @@
 	width: 100%;
 	text-align: center;
 	margin-left: 0;
+}
+.form-button.daily-backup-status__support-button {
+	margin: 32px 0;
 }
 
 .form-button.daily-backup-status__restore-button img {
@@ -75,18 +79,35 @@
 	align-items: center;
 }
 
-.daily-backup-status__restore-button-icon div {
-	position: relative;
-	margin: auto;
-	left: -0.5rem;
-}
-
-.form-button.daily-backup-status__download-button {
-	margin: 1rem 0;
+.daily-backup-status__download-button {
+	margin: 24px 0 1rem;
+	color: var( --studio-jetpack-green-60 );
 }
 
 .daily-backup-status__title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 18px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: 36px;
+		margin: 8px 0 12px;
+	}
+}
+
+.daily-backup-status__hide-mobile {
 	display: none;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: block;
+	}
+}
+.daily-backup-status__hide-desktop {
+	display: block;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: none;
+	}
 }
 
 .daily-backup-status__success.card,
@@ -144,7 +165,7 @@
 }
 
 .daily-backup-status__meta {
-	margin-bottom: 1.6rem;
+	margin-bottom: 24px;
 	margin-top: -0.3rem;
 	color: var( --studio-gray-40 );
 	font-weight: 400;
@@ -171,6 +192,7 @@
 	margin-right: 0.5rem;
 }
 
+
 .daily-backup-status__activate-restores-button,
 .daily-backup-status__activate-restores-button:visited {
 	display: block;
@@ -185,23 +207,21 @@
 	}
 }
 
-.daily-backup-status__failed-message-head {
+.daily-backup-status__message-head {
+	color: var( --studio-gray-80 );
+
 	img {
 		width: 48px;
 	}
 
 	div {
-		color: var( --color-scary-50 );
-		font-size: 1.4rem;
-		font-weight: 400;
+		font-size: 18px;
+		font-weight: 600;
 	}
 }
 
-.daily-backup-status__failed-message {
-	color: var( --studio-gray-80 );
-	font-size: 1.3rem;
-	margin-top: 0.3rem;
-	margin-bottom: 1.5rem;
+.daily-backup-status__message-error {
+	color: var( --studio-red-50 );
 }
 
 .daily-backup-status__view-all-button {
@@ -218,10 +238,12 @@
 
 .daily-backup-status__section-header {
 	margin: 0.5rem 0;
+
 }
 
 .daily-backup-status__section-posts {
 	margin-bottom: 1rem;
+
 }
 
 .daily-backup-status__media-image {
@@ -313,15 +335,12 @@
 	margin-bottom: -0.5rem;
 }
 
+
 .daily-backup-status__extension-block-text {
 	display: inline-block;
 	position: relative;
 	left: 0.2rem;
 	top: -0.1rem;
-}
-
-.daily-backup-status__metas {
-	margin: 1rem 0;
 }
 
 .daily-backup-status__changes-header:first-child {
@@ -350,8 +369,7 @@
 }
 
 @include breakpoint-deprecated( '>660px' ) {
-	.daily-backup-status__meta,
-	.daily-backup-status__title {
+	.daily-backup-status__meta {
 		display: block;
 	}
 
@@ -377,13 +395,7 @@
 		margin-bottom: 0.5rem;
 	}
 
-	.daily-backup-status__title {
-		font-weight: 400;
-		margin-left: 0.5rem;
-	}
-
 	.daily-backup-status__meta {
-		margin-bottom: 1rem;
 		margin-top: 0;
 		color: var( --studio-gray-40 );
 		font-weight: 400;
@@ -406,25 +418,24 @@
 		margin-bottom: 2rem;
 	}
 
-	.daily-backup-status__failed-message-head {
+	.daily-backup-status__message-head {
 		display: flex;
-		color: var( --color-scary-50 );
 		font-weight: 600;
 		align-items: center;
 	}
 
-	.daily-backup-status__failed-message-head img {
+	.daily-backup-status__message-head img {
 		width: 3rem;
 		height: 3rem;
+
 	}
 
-	.daily-backup-status__failed-message-head div {
-		margin-left: 0.5rem;
+	.daily-backup-status__message-head div {
+		margin-left: 12px;
 	}
 
 	.form-button.daily-backup-status__support-button {
 		width: 50%;
-		margin-bottom: 2rem;
 	}
 
 	.form-button.daily-backup-status__restore-button img {
