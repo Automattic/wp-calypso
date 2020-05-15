@@ -61,6 +61,7 @@ const FixAllThreatsDialog = ( {
 			onCloseDialog={ onCloseDialog }
 			showServerCredentialStep={ userNeedsCredentials }
 			title={ translate( 'Fix all threats' ) }
+			subtitle={ translate( 'You have selected to fix all discovered threats' ) }
 			buttons={ buttons }
 		>
 			<div className="fix-all-threats-dialog">

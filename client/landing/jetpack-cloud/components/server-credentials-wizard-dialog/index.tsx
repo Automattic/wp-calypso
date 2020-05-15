@@ -28,6 +28,7 @@ interface Props {
 	baseDialogClassName?: string;
 	title: i18nCalypso.TranslateResult;
 	titleClassName?: string;
+	subtitle: i18nCalypso.TranslateResult;
 }
 
 const ServerCredentialsWizardDialog = ( {
@@ -38,6 +39,7 @@ const ServerCredentialsWizardDialog = ( {
 	buttons,
 	title,
 	titleClassName,
+	subtitle,
 	baseDialogClassName,
 	children,
 }: Props ) => {
@@ -53,9 +55,7 @@ const ServerCredentialsWizardDialog = ( {
 			</h1>
 			{ showServerCredentialStep && (
 				<>
-					<h3 className="server-credentials-wizard-dialog__subheader">
-						{ translate( 'You have selected to fix all discovered threats' ) }
-					</h3>
+					<h3 className="server-credentials-wizard-dialog__subheader">{ subtitle }</h3>
 					<div className="server-credentials-wizard-dialog__warning">
 						<Gridicon
 							className="server-credentials-wizard-dialog__icon server-credentials-wizard-dialog__icon--warning"

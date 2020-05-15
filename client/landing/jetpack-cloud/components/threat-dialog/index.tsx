@@ -82,6 +82,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			showServerCredentialStep={ action === 'fix' && userNeedsCredentials }
 			buttons={ buttons }
 			{ ...titleProps }
+			subtitle={ translate( 'You have selected to fix a threat' ) }
 			baseDialogClassName={ 'threat-dialog' }
 		>
 			<>
