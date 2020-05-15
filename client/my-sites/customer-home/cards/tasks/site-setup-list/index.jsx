@@ -112,7 +112,7 @@ const SiteSetupList = ( {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
-	}, [ currentTaskId, tasks, dispatch ] );
+	}, [ currentTaskId, dispatch, isSiteSetupComplete, tasks ] );
 
 	// Reset verification email state on first load.
 	useEffect( () => {
