@@ -1,5 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../../mixins.scss';
+@import '../variables.scss';
 
 .plans-grid {
 	// Space to accomodate sticky footer
@@ -30,28 +31,125 @@
 	align-items: center;
 }
 
+.plans-grid__table-container {
+	// This ensure when plans table overflow,
+	// the overflowing content is not clipped by the
+	// onboarding block's margin.
+	@include onboarding-block-edge2edge-container;
+
+	// When plan items overflow, this ensure there is a gap on
+	// the left & right end of the content. Transparent borders
+	// is used instead of margins because browsers do not consider
+	// margins as part of the content itself.
+	.plan-item {
+		@include onboarding-block-edge2edge-columns;
+
+		// This ensure borders are not calculated as part of the
+		// element's width because the first and last plan item
+		// has extended borders.
+		box-sizing: content-box !important;
+
+		// This reverts the content-box box-sizing
+		// for immediate child elements.
+		> * {
+			box-sizing: border-box !important;
+		}
+	}
+}
+
+.plans-grid.is-mobile .plans-grid__table-container {
+	// On a desktop device, when plan items overflow,
+	// let user scroll using the browser's scrollbar,
+	// this is because users are used to scrolling this way.
+
+	// On a mobile device, when plan items overflow,
+	// let user scroll using the element's scrollbar,
+	// this allows user to pan through the plan items
+	// while keep the rest of the content intact.
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+	scroll-padding-left: $plan-item-gutter;
+
+	// This lets the overlay scrollbar appears right
+	// below the plan item when panning horizontally.
+	padding: 20px 0;
+	margin-top: -20px;
+	margin-bottom: -20px;
+
+	// On mobile portrait view, ensure plan item takes up
+	// about 70% of the viewport width, leaving just enough
+	// room for the next plan itme to peak out from the side.
+	.plan-item {
+		min-width: $plan-item-min-width-mobile-portrait;
+		scroll-snap-align: start;
+
+		@include break-mobile {
+			min-width: $plan-item-min-width;
+		}
+	}
+}
+
 .plans-grid__details {
+	margin-top: 70px;
 	margin-bottom: 120px;
 }
 
+// This makes overflowing content scrolls edge-to-edge.
 .plans-grid__details-container {
-	// Edge-to-edge panning
-	.plans-details {
-		width: calc( 100% + 30px + 30px );
-		margin-left: -30px;
-		margin-right: -30px;
-		overflow: hidden;
+	@include onboarding-block-edge2edge-container;
 
-		@include break-medium {
-			width: 100%;
-			margin-left: 0;
-			margin-right: 0;
-			overflow: auto;
-		}
+	.plans-details__table {
+		@include onboarding-block-edge2edge-content;
+	}
+}
+
+// On desktop, make sure plans details meets the
+// min width of the plans table, to prevent too
+// much white space when scrolling horizontally
+// using the browser's horizontal scrollbar.
+.plans-grid:not( .is-mobile ) .plans-details {
+	min-width: $plans-details-min-width-desktop-mobile;
+
+	@include break-small {
+		min-width: $plans-details-min-width-desktop-small;
 	}
 
-	+ .plans-grid__details-toggle-button {
-		margin-top: 60px;
+	@include break-medium {
+		min-width: $plans-details-min-width-desktop-medium;
+	}
+}
+
+.plans-grid.is-mobile .plans-grid__details-container {
+	// On a desktop device, when plan details overflow,
+	// let user scroll using the browser's scrollbar,
+	// this is because users are used to scrolling this way.
+
+	// On a mobile device, when plan details overflow,
+	// let user scroll using the plan details' scrollbar,
+	// this allows user to pan through the plan items
+	// while keep the rest of the content intact.
+	overflow-x: auto;
+
+	// This lets the overlay scrollbar appears right
+	// below the plan details when panning horizontally.
+	padding: 20px 0;
+	margin-top: -20px;
+	margin-bottom: -20px;
+}
+
+// On mobile, reduce the min-width to reduce
+// the need to scroll too much.
+.plans-grid.is-mobile .plans-details {
+	min-width: $plans-details-min-width-mobile;
+
+	@include break-small {
+		min-width: $plans-details-min-width-mobile;
+	}
+
+	@include break-medium {
+		min-width: $plans-details-min-width-mobile;
 	}
 }
 
@@ -64,6 +162,15 @@
 		letter-spacing: 0.2px;
 	}
 }
+// On desktop, this should follow the width of the plans table.
+.plans-grid__details-actions {
+	@include onboarding-block-edge2edge-content;
+
+	// On mobile, this should follow the width of the viewport.
+	.plans-grid.is-mobile & {
+		width: 100vw;
+	}
+}
 
 .plans-grid__details-toggle-button.components-button {
 	display: block;
@@ -72,9 +179,8 @@
 	font-size: 16px;
 	line-height: 19px;
 	letter-spacing: 0.2px;
-	border: 1px solid var( --studio-gray-5 );
-	border-left: 0;
-	border-right: 0;
+	border-top: 1px solid var( --studio-gray-5 );
+	border-bottom: 1px solid var( --studio-gray-5 );
 	border-radius: 0;
 	padding: 0;
 	text-align: center;
@@ -85,5 +191,28 @@
 
 	svg {
 		margin-left: 2px;
+	}
+
+	&.is-collapse-button {
+		margin-top: 70px;
+	}
+}
+
+// Controls toggling of plans grid
+.plans-grid__details-heading {
+	display: none;
+}
+
+.plans-grid .plans-details__table {
+	display: none;
+}
+
+.plans-grid.show-details {
+	.plans-grid__details-heading {
+		display: block;
+	}
+
+	.plans-details__table {
+		display: block;
 	}
 }

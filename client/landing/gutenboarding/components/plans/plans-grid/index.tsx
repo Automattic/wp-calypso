@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,6 +21,9 @@ import PlansDetails from '../plans-details';
  */
 import './style.scss';
 import { useSelectedPlan } from 'landing/gutenboarding/hooks/use-selected-plan';
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
 
 export interface Props {
 	confirmButton: React.ReactElement;
@@ -40,7 +44,12 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 	};
 
 	return (
-		<div className="plans-grid">
+		<div
+			className={ classNames( 'plans-grid', {
+				'is-mobile': isMobile,
+				'show-details': showDetails,
+			} ) }
+		>
 			<div className="plans-grid__header">
 				<div>
 					<Title>{ __( 'Choose a plan' ) }</Title>
@@ -54,38 +63,43 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 			</div>
 
 			<div className="plans-grid__table">
-				<PlansTable
-					selectedPlanSlug={ selectedPlan.getStoreSlug() }
-					onPlanSelect={ setPlan }
-				></PlansTable>
+				<div className="plans-grid__table-container">
+					<PlansTable
+						selectedPlanSlug={ selectedPlan.getStoreSlug() }
+						onPlanSelect={ setPlan }
+					></PlansTable>
+				</div>
 			</div>
 
 			<div className="plans-grid__details">
-				{ showDetails && (
-					<div className="plans-grid__details-container">
-						<div className="plans-grid__details-heading">
-							<Title>{ __( 'Detailed comparison' ) }</Title>
+				<div className="plans-grid__details-heading">
+					<Title>{ __( 'Detailed comparison' ) }</Title>
+				</div>
+				<div className="plans-grid__details-container">
+					<PlansDetails>
+						<div className="plans-grid__details-actions">
+							{ showDetails ? (
+								<Button
+									className="plans-grid__details-toggle-button is-collapse-button"
+									isLarge
+									onClick={ handleDetailsToggleButtonClick }
+								>
+									<span>{ __( 'Less details' ) } </span>
+									<Icon icon="arrow-up" size={ 20 }></Icon>
+								</Button>
+							) : (
+								<Button
+									className="plans-grid__details-toggle-button is-expand-button"
+									isLarge
+									onClick={ handleDetailsToggleButtonClick }
+								>
+									<span>{ __( 'More details' ) } </span>
+									<Icon icon="arrow-down" size={ 20 }></Icon>
+								</Button>
+							) }
 						</div>
-						<PlansDetails />
-					</div>
-				) }
-				<Button
-					className="plans-grid__details-toggle-button"
-					isLarge
-					onClick={ handleDetailsToggleButtonClick }
-				>
-					{ showDetails ? (
-						<>
-							<span>{ __( 'Less details' ) } </span>
-							<Icon icon="arrow-up" size={ 20 }></Icon>
-						</>
-					) : (
-						<>
-							<span>{ __( 'More details' ) } </span>
-							<Icon icon="arrow-down" size={ 20 }></Icon>
-						</>
-					) }
-				</Button>
+					</PlansDetails>
+				</div>
 			</div>
 		</div>
 	);
