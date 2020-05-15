@@ -67,6 +67,10 @@
 	// this allows user to pan through the plan items
 	// while keep the rest of the content intact.
 	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+	scroll-padding-left: $plan-item-gutter;
 
 	// This lets the overlay scrollbar appears right
 	// below the plan item when panning horizontally.
@@ -79,6 +83,7 @@
 	// room for the next plan itme to peak out from the side.
 	.plan-item {
 		min-width: $plan-item-min-width-mobile-portrait;
+		scroll-snap-align: start;
 
 		@include break-mobile {
 			min-width: $plan-item-min-width;
