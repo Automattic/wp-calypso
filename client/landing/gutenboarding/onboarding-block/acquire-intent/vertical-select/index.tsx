@@ -225,8 +225,10 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onFocus={ () => setIsFocused( true ) }
 							onBlur={ selectLastInputValue }
 						/>
-						<span className="vertical-select__placeholder">
-							<span className="vertical-select__placeholder-text">{ animatedPlaceholder }</span>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<span className="madlib__input-placeholder">
+							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+							<span className="madlib__input-placeholder-text">{ animatedPlaceholder }</span>
 						</span>
 						{ showArrow && (
 							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />

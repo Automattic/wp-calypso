@@ -68,6 +68,7 @@
 
 	color: var( --mainColor );
 	border-bottom: 2px solid var( --mainColor );
+	caret-color: var( --mainColor );
 
 	&:focus {
 		outline: none;
@@ -81,9 +82,14 @@
 
 .madlib__input:empty {
 	border-bottom: 2px solid transparent;
-	position: relative;
+	position: absolute;
+	bottom: 0;
 	z-index: 1;
-	vertical-align: middle;
+	width: 1em;
+
+	@include break-small {
+		position: relative;
+	}
 }
 
 // Themed core button component
@@ -137,14 +143,11 @@
 .site-title__input-wrapper {
 	display: block;
 	position: relative;
-	min-height: 40px; // make sure there is a tappable area on mobile when the input is empty
+	line-height: 1em;
 
-	.madlib__input:empty {
+	.madlib__input:focus ~ .madlib__input-placeholder {
 		@include break-small {
-			padding-right: 300px; // there's not enough container width on smaller screens
-		}
-		@include break-medium {
-			padding-right: 400px;
+			display: none;
 		}
 	}
 
@@ -153,17 +156,27 @@
 	}
 }
 
-.site-title__placeholder {
+.madlib__input-placeholder {
 	display: inline-block;
 	width: 100%;
 	color: var( --studio-gray-5 );
 	cursor: text;
 
 	@include break-small {
-		height: 80px;
 		position: absolute;
+		height: 100%;
 		left: 0;
+		bottom: 0;
 		z-index: 2;
+
+		.madlib__input-placeholder-text {
+			position: absolute;
+			white-space: nowrap; // force placeholder on a single line
+			width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			line-height: 1em;
+		}
 	}
 
 	&::after {
@@ -178,12 +191,15 @@
 }
 
 /* hide the placeholder when input is not empty */
-.madlib__input:not( :empty ) ~ .site-title__placeholder {
+.madlib__input:not( :empty ) ~ .madlib__input-placeholder {
 	display: none;
 }
 
-.madlib__input:focus ~ .site-title__placeholder {
+.madlib__input:empty {
 	@include break-small {
-		display: none;
+		padding-right: 300px; // there's not enough container width on smaller screens
+	}
+	@include break-medium {
+		padding-right: 400px;
 	}
 }
