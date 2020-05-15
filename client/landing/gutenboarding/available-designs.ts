@@ -1,54 +1,6 @@
 const availableDesigns: Readonly< AvailableDesigns > = {
 	featured: [
 		{
-			title: 'Vesta',
-			slug: 'vesta',
-			template: 'vesta',
-			theme: 'mayland',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/vesta/',
-			fonts: {
-				headings: 'Cabin',
-				base: 'Raleway',
-			},
-			categories: [ 'featured', 'portfolio' ],
-		},
-		{
-			title: 'Reynolds',
-			slug: 'reynolds',
-			template: 'reynolds',
-			theme: 'rockfield',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/rockfield/reynolds/',
-			fonts: {
-				headings: 'Playfair Display',
-				base: 'Fira Sans',
-			},
-			categories: [ 'featured', 'portfolio' ],
-		},
-		{
-			title: 'Easley',
-			slug: 'easley',
-			template: 'easley',
-			theme: 'maywood',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/easley/',
-			fonts: {
-				headings: 'Space Mono',
-				base: 'Roboto',
-			},
-			categories: [ 'featured', 'portfolio' ],
-		},
-		{
-			title: 'Camdem',
-			slug: 'Camdem',
-			template: 'camdem',
-			theme: 'maywood',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/camdem/',
-			fonts: {
-				headings: 'Space Mono',
-				base: 'Roboto',
-			},
-			categories: [ 'featured', 'portfolio' ],
-		},
-		{
 			title: 'Bowen',
 			slug: 'bowen',
 			template: 'bowen',
@@ -83,6 +35,54 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
+		},
+		{
+			title: 'Vesta',
+			slug: 'vesta',
+			template: 'vesta',
+			theme: 'mayland',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/vesta/',
+			fonts: {
+				headings: 'Cabin',
+				base: 'Raleway',
+			},
+			categories: [ 'featured', 'portfolio' ],
+		},
+		{
+			title: 'Easley',
+			slug: 'easley',
+			template: 'easley',
+			theme: 'maywood',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/easley/',
+			fonts: {
+				headings: 'Space Mono',
+				base: 'Roboto',
+			},
+			categories: [ 'featured', 'portfolio' ],
+		},
+		{
+			title: 'Camdem',
+			slug: 'Camdem',
+			template: 'camdem',
+			theme: 'maywood',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/camdem/',
+			fonts: {
+				headings: 'Space Mono',
+				base: 'Roboto',
+			},
+			categories: [ 'featured', 'portfolio' ],
+		},
+		{
+			title: 'Reynolds',
+			slug: 'reynolds',
+			template: 'reynolds',
+			theme: 'rockfield',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/rockfield/reynolds/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'portfolio' ],
 		},
 		{
 			title: 'Overton',
