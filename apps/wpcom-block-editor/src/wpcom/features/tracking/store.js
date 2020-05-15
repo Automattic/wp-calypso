@@ -22,6 +22,7 @@ const reducer = ( state = {}, { type, value, context = 'unknown', notFound, slug
 			return {
 				...state,
 				searcher: {
+					...state.searcher,
 					[ context ]: {
 						...( state.searcher ? state.searcher[ context ] : {} ),
 						value,
@@ -32,13 +33,19 @@ const reducer = ( state = {}, { type, value, context = 'unknown', notFound, slug
 		case 'SET_BLOCKS_SEARCH_BLOCKS_FOUND':
 			return {
 				...state,
-				searcher: { [ context ]: { ...state.searcher[ context ], notFound } },
+				searcher: {
+					...state.searcher,
+					[ context ]: { ...state.searcher[ context ], notFound },
+				},
 			};
 
 		case 'SET_BLOCKS_SEARCH_BLOCKS_NOT_FOUND':
 			return {
 				...state,
-				searcher: { [ context ]: { ...state.searcher[ context ], notFound: true } },
+				searcher: {
+					...state.searcher,
+					[ context ]: { ...state.searcher[ context ], notFound: true },
+				},
 			};
 
 		case 'SET_TEMPLATES_WITH_MISSING_BLOCKS':
@@ -54,9 +61,10 @@ const reducer = ( state = {}, { type, value, context = 'unknown', notFound, slug
 					},
 				},
 			};
-	}
 
-	return state;
+		default:
+			return state;
+	}
 };
 
 /*
