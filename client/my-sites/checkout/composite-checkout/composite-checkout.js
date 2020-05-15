@@ -67,6 +67,7 @@ import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import createContactValidationCallback from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
+import { removeAllItems } from 'lib/cart/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -218,6 +219,7 @@ export default function CompositeCheckout( {
 				type: 'PAYMENT_COMPLETE',
 				payload: { url, couponItem, paymentMethodId, total, responseCart },
 			} );
+			removeAllItems();
 			page.redirect( url );
 		},
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
