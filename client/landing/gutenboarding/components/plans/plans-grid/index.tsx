@@ -3,6 +3,9 @@
  */
 import * as React from 'react';
 import { Button } from '@wordpress/components';
+// This package will be typed in https://github.com/Automattic/wp-calypso/pull/42031 - remove there.
+/* eslint-disable-next-line @typescript-eslint/ban-ts-ignore */
+// @ts-ignore
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
