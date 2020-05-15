@@ -20,15 +20,18 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { showInlineHelpPopover } from 'state/inline-help/actions';
+import PaymentChatButton from 'my-sites/checkout/checkout/payment-chat-button';
 import getSupportVariation, {
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart } from '../hooks/has-plan';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
 export default function WPCheckoutOrderSummary() {
-	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
@@ -36,23 +39,6 @@ export default function WPCheckoutOrderSummary() {
 	const { formStatus } = useFormStatus();
 
 	const isCartUpdating = 'validating' === formStatus;
-
-	const isSupportChatUser = useSelector( ( state ) => {
-		return (
-			SUPPORT_FORUM !== getSupportVariation( state ) &&
-			SUPPORT_DIRECTLY !== getSupportVariation( state )
-		);
-	} );
-	const onEvent = useEvents();
-	const handleHelpButtonClicked = () => {
-		onEvent( {
-			type: 'calypso_checkout_composite_summary_help_click',
-			payload: {
-				isSupportChatUser,
-			},
-		} );
-		reduxDispatch( showInlineHelpPopover() );
-	};
 
 	return (
 		<CheckoutSummaryCardUI className={ isCartUpdating ? 'is-loading' : '' }>
@@ -65,22 +51,7 @@ export default function WPCheckoutOrderSummary() {
 				) : (
 					<CheckoutSummaryFeaturesList />
 				) }
-				<CheckoutSummaryHelp onClick={ handleHelpButtonClicked }>
-					{ isSupportChatUser
-						? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
-								components: {
-									underline: <span />,
-								},
-						  } )
-						: translate(
-								'Questions? {{underline}}Read more about plans and purchases.{{/underline}}',
-								{
-									components: {
-										underline: <span />,
-									},
-								}
-						  ) }
-				</CheckoutSummaryHelp>
+				<CheckoutSummaryHelp />
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
 				{ coupons.map( ( coupon ) => (
@@ -172,6 +143,62 @@ function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
 	);
 }
 
+function CheckoutSummaryHelp() {
+	const reduxDispatch = useDispatch();
+	const translate = useTranslate();
+	const plans = useLineItemsOfType( 'plan' );
+
+	const happyChatAvailable = useSelector( ( state ) => isHappychatAvailable( state ) );
+
+	const presalesChatAvailable = useSelector( ( state ) => isPresalesChatAvailable( state ) );
+	const hasPresalesPlanInCart = plans.some(
+		( { wpcom_meta } ) =>
+			isWpComBusinessPlan( wpcom_meta.product_slug ) ||
+			isWpComEcommercePlan( wpcom_meta.product_slug )
+	);
+	const isPresalesChatEligible = presalesChatAvailable && hasPresalesPlanInCart;
+
+	const isSupportChatUser = useSelector( ( state ) => {
+		return (
+			SUPPORT_FORUM !== getSupportVariation( state ) &&
+			SUPPORT_DIRECTLY !== getSupportVariation( state )
+		);
+	} );
+
+	const onEvent = useEvents();
+	const handleHelpButtonClicked = () => {
+		onEvent( {
+			type: 'calypso_checkout_composite_summary_help_click',
+			payload: {
+				isSupportChatUser,
+			},
+		} );
+		reduxDispatch( showInlineHelpPopover() );
+	};
+
+	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
+	if ( happyChatAvailable && ( isPresalesChatEligible || isSupportChatUser ) ) {
+		return <PaymentChatButtonUI />;
+	}
+
+	// If chat isn't available, use the inline help button instead.
+	return (
+		<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
+			{ isSupportChatUser
+				? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
+						components: {
+							underline: <span />,
+						},
+				  } )
+				: translate( 'Questions? {{underline}}Read more about plans and purchases.{{/underline}}', {
+						components: {
+							underline: <span />,
+						},
+				  } ) }
+		</CheckoutSummaryHelpButton>
+	);
+}
+
 const pulse = keyframes`
 	0% {
 		opacity: 1;
@@ -210,7 +237,16 @@ const CheckoutSummaryFeaturesListUI = styled.ul`
 	font-size: 14px;
 `;
 
-const CheckoutSummaryHelp = styled.button`
+const PaymentChatButtonUI = styled( PaymentChatButton )`
+	color: ${( props ) => props.theme.textColor};
+	padding: 0;
+
+	svg {
+		width: 20px;
+	}
+`;
+
+const CheckoutSummaryHelpButton = styled.button`
 	margin-top: 16px;
 	text-align: left;
 

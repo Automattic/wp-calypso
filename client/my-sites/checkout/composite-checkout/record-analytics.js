@@ -443,9 +443,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'calypso_checkout_composite_summary_help_click': {
 				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
-						is_support_chat_user: action.payload.isSupportChatUser,
-					} )
+					recordTracksEvent( 'calypso_checkout_composite_summary_help_click' )
 				);
 			}
 
