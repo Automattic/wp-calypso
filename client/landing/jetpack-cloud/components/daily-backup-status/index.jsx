@@ -9,7 +9,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { withLocalizedMoment } from 'components/localized-moment';
-import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import {
 	isSuccessfulDailyBackup,
@@ -36,6 +35,8 @@ import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import missingCredentialsIcon from './missing-credentials.svg';
 import cloudErrorIcon from './icons/cloud-error.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
+import cloudSuccessIcon from './icons/cloud-success.svg';
+import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -92,6 +93,8 @@ class DailyBackupStatus extends Component {
 			translate,
 		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
+		const displayDateNoLatest = this.getDisplayDate( backup.activityTs, false );
+
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
 		// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
@@ -100,11 +103,16 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<div className="daily-backup-status__icon-section">
-					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudSuccessIcon } alt="" role="presentation" />
 					<div className="daily-backup-status__hide-mobile">{ translate( 'Latest backup' ) }</div>
 				</div>
-				<div className="daily-backup-status__title">{ displayDate }</div>
+				<div className="daily-backup-status__hide-desktop">
+					<div className="daily-backup-status__title">{ displayDate }</div>
+				</div>
+				<div className="daily-backup-status__hide-mobile">
+					<div className="daily-backup-status__title">{ displayDateNoLatest }</div>
+				</div>
 				<div className="daily-backup-status__meta">{ meta }</div>
 				<ActionButtons
 					rewindId={ backup.rewindId }
@@ -289,9 +297,16 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon className="daily-backup-status__gridicon-backup-scheduled" icon="cloud-upload" />
-				<div className="daily-backup-status__static-title">
-					{ translate( 'Backup Scheduled:' ) }
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudScheduleIcon } alt="" role="presentation" />
+					<div className="daily-backup-status__hide-mobile">
+						{ translate( 'Backup Scheduled' ) }
+					</div>
+				</div>
+				<div className="daily-backup-status__title">
+					<div className="daily-backup-status__hide-desktop">
+						{ translate( 'Backup Scheduled' ) }:
+					</div>
 					<div>{ nextBackupHoursText }</div>
 				</div>
 				<div className="daily-backup-status__no-backup-last-backup">

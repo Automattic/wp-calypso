@@ -50,7 +50,7 @@
 }
 
 .daily-backup-status__no-backup-last-backup {
-	margin-bottom: 1rem;
+	margin-bottom: 24px;
 	font-style: italic;
 }
 
@@ -79,23 +79,19 @@
 	align-items: center;
 }
 
-.daily-backup-status__restore-button-icon div {
-	position: relative;
-	margin: auto;
-	left: -0.5rem;
-}
-
-.form-button.daily-backup-status__download-button {
-	margin: 1rem 0;
+.daily-backup-status__download-button {
+	margin: 24px 0 1rem;
+	color: var( --studio-jetpack-green-60 );
 }
 
 .daily-backup-status__title {
 	font-size: 22px;
 	font-weight: 600;
+	margin-bottom: 18px;
 
 	@include breakpoint( '>660px' ) {
 		font-size: 36px;
-		margin-top: 8px;
+		margin: 8px 0 12px;
 	}
 }
 
@@ -104,6 +100,13 @@
 
 	@include breakpoint( '>660px' ) {
 		display: block;
+	}
+}
+.daily-backup-status__hide-desktop {
+	display: block;
+
+	@include breakpoint( '>660px' ) {
+		display: none;
 	}
 }
 
@@ -162,7 +165,7 @@
 }
 
 .daily-backup-status__meta {
-	margin-bottom: 1.6rem;
+	margin-bottom: 24px;
 	margin-top: -0.3rem;
 	color: var( --studio-gray-40 );
 	font-weight: 400;
@@ -188,6 +191,7 @@
 	height: 24px;
 	margin-right: 0.5rem;
 }
+
 
 .daily-backup-status__activate-restores-button,
 .daily-backup-status__activate-restores-button:visited {
@@ -339,10 +343,6 @@
 	top: -0.1rem;
 }
 
-.daily-backup-status__metas {
-	margin: 1rem 0;
-}
-
 .daily-backup-status__changes-header:first-child {
 	margin-top: 0;
 }
@@ -396,7 +396,6 @@
 	}
 
 	.daily-backup-status__meta {
-		margin-bottom: 1rem;
 		margin-top: 0;
 		color: var( --studio-gray-40 );
 		font-weight: 400;
