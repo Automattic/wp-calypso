@@ -12,6 +12,7 @@ import {
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
 	CART_ITEM_REMOVE,
+	CART_ITEMS_REMOVE_ALL,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
 	CART_ITEMS_REPLACE_ALL,
@@ -86,6 +87,12 @@ export function removeItem( item, domainsWithPlansOnly ) {
 		type: CART_ITEM_REMOVE,
 		cartItem: item,
 		domainsWithPlansOnly,
+	} );
+}
+
+export function removeAllItems() {
+	Dispatcher.handleViewAction( {
+		type: CART_ITEMS_REMOVE_ALL,
 	} );
 }
 

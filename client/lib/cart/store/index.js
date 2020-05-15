@@ -12,6 +12,7 @@ import {
 	CART_DISABLE,
 	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
+	CART_ITEMS_REMOVE_ALL,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
 	CART_ITEMS_REPLACE_ALL,
@@ -153,6 +154,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case CART_ITEMS_ADD:
 			update( flow( ...action.cartItems.map( ( cartItem ) => addCartItem( cartItem ) ) ) );
+			break;
+
+		case CART_ITEMS_REMOVE_ALL:
+			update( clearCart() );
 			break;
 
 		case CART_ITEMS_REPLACE_ALL:
