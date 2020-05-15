@@ -23,12 +23,15 @@ import {
 	isGSuiteRestricted,
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
+import getEmailAccounts from 'state/selectors/get-email-accounts';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
+import hasLoadedEmailAccounts from 'state/selectors/has-loaded-email-accounts';
 import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
+import EmailAccountsCard from 'my-sites/email/email-management/email-accounts-card';
 import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
 import Placeholder from 'my-sites/email/email-management/gsuite-users-card/placeholder';
 import VerticalNav from 'components/vertical-nav';
@@ -58,7 +61,9 @@ class EmailManagement extends React.Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
+		emailAccounts: PropTypes.array,
 		gsuiteUsers: PropTypes.array,
+		hasEmailAccountsLoaded: PropTypes.bool.isRequired,
 		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -221,7 +226,17 @@ class EmailManagement extends React.Component {
 	}
 
 	googleAppsUsersCard() {
-		const { domains, gsuiteUsers, selectedDomainName } = this.props;
+		const { domains, emailAccounts, gsuiteUsers, selectedDomainName } = this.props;
+
+		if ( config.isEnabled( 'email-accounts/enabled' ) ) {
+			return (
+				<EmailAccountsCard
+					domains={ domains }
+					emailAccounts={ emailAccounts }
+					selectedDomainName={ selectedDomainName }
+				/>
+			);
+		}
 
 		return (
 			<GSuiteUsersCard
@@ -274,7 +289,9 @@ export default connect( ( state ) => {
 	return {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
+		emailAccounts: getEmailAccounts( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+		hasEmailAccountsLoaded: hasLoadedEmailAccounts( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
 		selectedSiteId,
