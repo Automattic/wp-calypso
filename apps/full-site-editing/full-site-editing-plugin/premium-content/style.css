@@ -39,3 +39,6 @@
 .wp-block-premium-content-logged-out-view h3 {
 	margin-bottom: 20px;
 }
+
+/** Notices close button **/
+.wp-block-premium-content-container .components-notice-list .components-notice__content { margin: 0; }
