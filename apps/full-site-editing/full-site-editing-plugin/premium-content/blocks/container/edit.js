@@ -2,7 +2,14 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Placeholder, Button, ExternalLink, withNotices, Spinner } from '@wordpress/components';
+import {
+	Placeholder,
+	Button,
+	ExternalLink,
+	withNotices,
+	Spinner,
+	Notice,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -154,6 +161,7 @@ function Edit( props ) {
 				setProducts( products.concat( [ newProduct ] ) );
 				// After successful adding of product, we want to select it. Presumably that is the product user wants.
 				selectPlan( newProduct );
+				onSuccess( props, __( 'Successfully created plan', 'premium-content' ) );
 				if ( callback ) {
 					callback( true );
 				}
@@ -402,6 +410,17 @@ function onError( props, message ) {
 	const { noticeOperations } = props;
 	noticeOperations.removeAllNotices();
 	noticeOperations.createErrorNotice( message );
+}
+
+/**
+ * @param { Props } props
+ * @param { string } message
+ * @return { void }
+ */
+function onSuccess( props, message ) {
+	const { noticeOperations } = props;
+	noticeOperations.removeAllNotices();
+	noticeOperations.createNotice( { status: 'info', content: message } );
 }
 
 /**
