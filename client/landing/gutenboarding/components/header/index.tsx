@@ -29,6 +29,9 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
+import { trackEventWithFlow } from '../../lib/analytics';
+
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -139,6 +142,13 @@ const Header: React.FunctionComponent = () => {
 	const hasPlaceholder =
 		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
 
+	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
+		trackEventWithFlow( 'calypso_newsite_domain_select', {
+			domain_name: suggestion?.domain_name,
+		} );
+		setDomain( suggestion );
+	};
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -173,7 +183,7 @@ const Header: React.FunctionComponent = () => {
 									<DomainPickerButton
 										className="gutenboarding__header-domain-picker-button"
 										currentDomain={ domain }
-										onDomainSelect={ setDomain }
+										onDomainSelect={ onDomainSelect }
 									>
 										{ domainElement }
 									</DomainPickerButton>
