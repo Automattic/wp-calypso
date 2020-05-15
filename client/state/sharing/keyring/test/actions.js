@@ -32,7 +32,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/keyring-connections' )
+					.get( '/wpcom/v2/me/connections' )
 					.reply( 200, {
 						connections: [ { ID: 4306907 }, { ID: 7589550 } ],
 					} );
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/keyring-connections' )
+					.get( '/wpcom/v2/me/connections' )
 					.reply( 500, {
 						error: 'server_error',
 						message: 'A server error occurred',
@@ -110,12 +110,12 @@ describe( 'actions', () => {
 	describe( 'deleteStoredKeyringConnection()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/keyring-connections/2/delete' )
+				.post( '/wpcom/v2/me/connections/2/delete' )
 				.reply( 200, {
 					ID: 2,
 					deleted: true,
 				} )
-				.post( '/rest/v1.1/me/keyring-connections/34/delete' )
+				.post( '/wpcom/v2/me/connections/34/delete' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'You do not have permission to access this Keyring connection.',

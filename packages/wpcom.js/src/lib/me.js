@@ -104,7 +104,7 @@ Me.prototype.connectedApps = function ( query, fn ) {
  * @returns {Function} request handler
  */
 Me.prototype.keyringConnections = function ( query, fn ) {
-	return this.wpcom.req.get( '/me/keyring-connections', query, fn );
+	return this.wpcom.req.get( '/me/connections', query, fn );
 };
 
 /**

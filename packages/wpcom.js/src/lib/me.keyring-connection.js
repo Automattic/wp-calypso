@@ -1,4 +1,4 @@
-const root = '/me/keyring-connections/';
+const root = '/me/connections/';
 
 export default class KeyringConnection {
 	/**
@@ -24,7 +24,14 @@ export default class KeyringConnection {
 	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
-		return this.wpcom.req.get( root + this._id, query, fn );
+		return this.wpcom.req.get(
+			{
+				path: root + this._id,
+				apiNamespace: 'wpcom/v2',
+			},
+			query,
+			fn
+		);
 	}
 
 	/**
@@ -36,6 +43,14 @@ export default class KeyringConnection {
 	 * @returns {Function} request handler
 	 */
 	delete( query, fn ) {
-		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
+		return this.wpcom.req.get(
+			{
+				path: root + this._id,
+				apiNamespace: 'wpcom/v2',
+				method: 'DELETE',
+			},
+			query,
+			fn
+		);
 	}
 }
