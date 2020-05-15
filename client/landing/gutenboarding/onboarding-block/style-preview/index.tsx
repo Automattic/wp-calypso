@@ -19,6 +19,7 @@ import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
@@ -28,8 +29,10 @@ import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { getSelectedFonts, hasPaidDomain } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { selectedDesign, hasUsedPlansStep } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
@@ -46,6 +49,8 @@ const StylePreview: React.FunctionComponent = () => {
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	useTrackStep( 'Style', () => ( {
 		selected_heading_font: getSelectedFonts()?.headings,
@@ -68,7 +73,10 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	const handleContinue = () => {
-		if ( isEnabled( 'gutenboarding/plans-grid' ) && hasPaidDomain() ) {
+		// Skip the plans step if the user has used the plans modal to select a plan
+		// If a user has already used the plans step and then gone back, show them the plans step again
+		// to avoid confusion
+		if ( isEnabled( 'gutenboarding/plans-grid' ) && ( ! selectedPlan || hasUsedPlansStep ) ) {
 			history.push( makePath( Step.Plans ) );
 			return;
 		}

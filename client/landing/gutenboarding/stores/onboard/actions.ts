@@ -88,6 +88,11 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
+export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
+	type: 'SET_HAS_USED_PLANS_STEP' as const,
+	hasUsedPlansStep,
+} );
+
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
@@ -144,6 +149,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCategory
 	| typeof setFonts
 	| typeof setIsRedirecting
+	| typeof setHasUsedPlansStep
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
 	| typeof setSiteTitle
