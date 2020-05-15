@@ -190,6 +190,19 @@ Then, each bundle contains features for different types of pages. For example, t
 
 ## Build
 
+### Dev workflow 
+
+The wpcom-block-editor needs an active wpcom sandbox to test.
+
+Ensure that your sandbox is set up, aliased to `wpcom-sandbox` and currently active
+
+The following will build wpcom-block-editor, and upload the results to the `widgets.wp.com/wpcom-block-editor` folder on your sandbox.
+
+```bash
+# Watch for file changes and upload build output to your sandbox
+yarn dev --sync
+```
+
 ### Manual
 
 To manually build the package, execute the command below passing the directory where the distributable files will be generated:
