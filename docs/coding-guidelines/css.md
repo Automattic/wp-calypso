@@ -98,9 +98,26 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 
 ## Media Queries
 
-To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible.
+To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
-The old `breakpoint-deprecated` mixin should be replaced with the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss)
+```scss
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.class-name {
+    margin-bottom: 8px;
+    padding: 12px;
+
+    @include break-mobile {
+        margin-bottom: 16px;
+        padding: 24px;
+    }
+}
+```
+
+ Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. You should avoid the use of max width breakpoints.
+
+  The old `breakpoint-deprecated` mixin should be replaced with Gutenberg's `break-*` mixins.
 
 
 ### Adding a new Sass file
