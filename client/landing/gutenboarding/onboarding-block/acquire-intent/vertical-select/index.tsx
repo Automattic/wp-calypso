@@ -20,6 +20,7 @@ import useTyper from '../../../hooks/use-typer';
 import Arrow from '../arrow';
 import { recordVerticalSelection } from '../../../lib/analytics';
 import type { SiteVertical } from '../../../stores/onboard/types';
+import { moveCaretToEnd } from '../index';
 
 /**
  * Style dependencies
@@ -224,6 +225,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onKeyUp={ handleInputKeyUpEvent }
 							onFocus={ () => setIsFocused( true ) }
 							onBlur={ selectLastInputValue }
+							onClick={ ( event ) => event.stopPropagation() }
 						/>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<span className="madlib__input-placeholder">
@@ -257,7 +259,11 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			className={ classnames( 'vertical-select', {
 				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
 			} ) }
-			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or placeholder
+			onClick={ () => {
+				// Focus the input when clicking label or placeholder.
+				inputRef.current.focus();
+				moveCaretToEnd( inputRef.current );
+			} }
 		>
 			{ madlib }
 		</form>

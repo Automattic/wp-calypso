@@ -44,7 +44,8 @@
 	display: inline-block;
 	visibility: hidden;
 	width: 0;
-	height: 0;
+	height: 1em;
+	vertical-align: middle;
 }
 
 .vertical-select__suggestions-wrapper {

@@ -25,6 +25,19 @@ import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
  */
 import './style.scss';
 
+export function moveCaretToEnd( node: Node ) {
+	const numChildNodes = node.childNodes.length;
+	if ( numChildNodes ) {
+		const lastNode = node.childNodes[ numChildNodes - 1 ];
+		const range = document.createRange();
+		const selection = document.getSelection();
+		range.setStart( lastNode, lastNode?.textContent?.length || 0 );
+		range.collapse( true );
+		selection?.removeAllRanges();
+		selection?.addRange( range );
+	}
+}
+
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { getSelectedVertical, getSelectedSiteTitle, wasVerticalSkipped } = useSelect( ( select ) =>

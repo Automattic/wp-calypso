@@ -13,6 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
+import { moveCaretToEnd } from './index';
 
 interface Props {
 	isVisible?: boolean;
@@ -49,11 +50,13 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
+	const siteVerticalLabel = siteVertical?.label;
 	React.useEffect( () => {
-		if ( ( siteVertical?.label && isVisible ) || wasVerticalSkipped ) {
+		if ( ( siteVerticalLabel && isVisible ) || wasVerticalSkipped ) {
 			inputRef.current.focus();
+			moveCaretToEnd( inputRef.current );
 		}
-	}, [ siteVertical, isVisible, inputRef, wasVerticalSkipped ] );
+	}, [ siteVerticalLabel, isVisible, inputRef, wasVerticalSkipped ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
@@ -78,6 +81,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 						onKeyDown={ handleKeyDown }
 						onKeyUp={ handleKeyUp }
 						onBlur={ handleBlur }
+						onClick={ ( event ) => event.stopPropagation() }
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<span className="madlib__input-placeholder"></span>
@@ -93,7 +97,11 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 			className={ classnames( 'site-title', {
 				'site-title--hidden': ! isVisible,
 			} ) }
-			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or next to it
+			onClick={ () => {
+				// Focus the input when clicking label or placeholder.
+				inputRef.current.focus();
+				moveCaretToEnd( inputRef.current );
+			} }
 		>
 			{ madlib }
 		</form>
