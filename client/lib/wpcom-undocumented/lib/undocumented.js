@@ -734,28 +734,23 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
 	debug( '/me/google-apps/validate', contact_information, domainNames );
 
-	const callbackFunction = ( error, successData ) => {
-		if ( error ) {
-			return callback( error );
-		}
+	const stripHeadersFromHttpResponse = ( httpResponse ) =>
+		Object.keys( httpResponse )
+			.filter( ( key ) => key !== '_headers' )
+			.reduce( ( newResponse, key ) => ( { ...newResponse, [ key ]: httpResponse[ key ] } ), {} );
 
-		const newData = mapKeysRecursively( successData, ( key ) => {
-			return key === '_headers' ? key : camelCase( key );
-		} );
+	const camelCaseKeys = ( httpResponse ) =>
+		mapKeysRecursively( stripHeadersFromHttpResponse( httpResponse ), ( key ) => camelCase( key ) );
 
-		callback( null, newData );
-	};
+	const camelCaseCallback = ( error, httpResponse ) =>
+		callback( error, error ? null : camelCaseKeys( httpResponse ) );
 
 	const result = this.wpcom.req.post(
 		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
-		callback ? callbackFunction : null
+		callback ? camelCaseCallback : null
 	);
 
-	return result.then?.( ( successData ) => {
-		return mapKeysRecursively( successData, ( key ) => {
-			return key === '_headers' ? key : camelCase( key );
-		} );
-	} );
+	return result.then?.( camelCaseKeys );
 };
 
 /**
