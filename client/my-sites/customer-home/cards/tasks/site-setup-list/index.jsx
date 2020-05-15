@@ -202,7 +202,7 @@ const SiteSetupList = ( {
 		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
 	}, [] );
 
-	if ( ! currentTask ) {
+	if ( ! currentTask || isSiteSetupComplete ) {
 		return null;
 	}
 
