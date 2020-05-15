@@ -218,6 +218,15 @@ const trackTemplatesWithMissingBlocks = ( { slug, context, blocks } ) => {
 	} );
 };
 
+const trackClickOnContextualTip = ( { context, section, subsection } ) => {
+	tracksRecordEvent( 'wpcom_block_picker_click_on_tip', {
+		search_term: select( 'automattic/tracking' ).getSearchTerm( context ),
+		context,
+		section,
+		subsection,
+	} );
+};
+
 /**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
@@ -254,6 +263,7 @@ const REDUX_TRACKING = {
 		setSearchBlocks: trackSearchBlocks,
 		setSearchBlocksNotFound: trackSearchBlocksNotFound,
 		emitTemplatesWithMissingBlocks: trackTemplatesWithMissingBlocks,
+		clickOnContextualTip: trackClickOnContextualTip,
 	},
 };
 
