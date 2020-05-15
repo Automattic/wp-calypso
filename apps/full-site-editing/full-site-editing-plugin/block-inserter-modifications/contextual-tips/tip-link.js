@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -17,6 +17,9 @@ export default function ( { section, children, subsection } ) {
 		getCurrentPostId: select( 'core/editor' ).getCurrentPostId,
 		getCurrentPostType: select( 'core/editor' ).getCurrentPostType,
 	} ) );
+
+	// Search dispatchers.
+	const { clickOnContextualTip } = useDispatch( 'automattic/tracking' );
 
 	const postId = getCurrentPostId();
 	const postType = getCurrentPostType();
@@ -52,7 +55,12 @@ export default function ( { section, children, subsection } ) {
 	}
 
 	return (
-		<a href={ href } target="_blank" rel="noreferrer noopener">
+		<a
+			href={ href }
+			target="_blank"
+			rel="noreferrer noopener"
+			onClick={ () => clickOnContextualTip( { context: 'inserter_menu', section, subsection } ) }
+		>
 			{ children }
 		</a>
 	);
