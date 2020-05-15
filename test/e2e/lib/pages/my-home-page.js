@@ -33,20 +33,26 @@ export default class MyHomePage extends AsyncBaseContainer {
 		if (
 			await driverHelper.isElementPresent( this.driver, this.celebrateNoticeCloseButtonSelector )
 		) {
-			await this.driver.findElement( this.celebrateNoticeCloseButtonSelector ).click();
+			await driverHelper.clickWhenClickable( this.driver, this.celebrateNoticeCloseButtonSelector );
 		} else if (
 			await driverHelper.isElementPresent(
 				this.driver,
 				this.deprecatedCelebrateNoticeCloseButtonSelector
 			)
 		) {
-			await this.driver.findElement( this.deprecatedCelebrateNoticeCloseButtonSelector ).click();
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				this.deprecatedCelebrateNoticeCloseButtonSelector
+			);
 		}
 	}
 
 	async siteSetupListExists() {
 		await this.closeCelebrateNotice();
-		return await driverHelper.isElementPresent( this.driver, this.siteSetupListSelector );
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			this.siteSetupListSelector
+		);
 	}
 
 	async isEmailVerified() {
