@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, has, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -448,13 +448,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const hasCartItemInDependencyStore = has( this.props, 'signupDependencies.cartItem' );
-		const cartItem = get( this.props, 'signupDependencies.cartItem', false );
-		const hasSelectedFreePlan = hasCartItemInDependencyStore && ! cartItem;
-		const shouldHideFreeDomainExplainer =
-			'onboarding-plan-first' === this.props.flowName && cartItem;
-		const showFreeDomainExplainerForFreePlan =
-			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
+		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
 
 		return (
 			<RegisterDomainStep
@@ -488,7 +482,6 @@ class DomainsStep extends React.Component {
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
 				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
-				showFreeDomainExplainerForFreePlan={ showFreeDomainExplainerForFreePlan }
 			/>
 		);
 	};

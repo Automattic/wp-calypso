@@ -201,8 +201,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( signupDependencies, 'shouldHideFreePlan', false );
+	const shouldHideDomainStep = ! siteUrl && 'onboarding-plan-first' === flowToCheck;
 
-	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
+	if ( shouldSkipDomainStep || shouldHideFreePlan || shouldHideDomainStep ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( signupDependencies, 'username' ) ||
@@ -601,23 +602,43 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep } = nextProps;
+function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	let fulfilledDependencies = [];
+	const domainItem = undefined;
 
-	if ( siteDomains && siteDomains.length > 1 ) {
-		const domainItem = undefined;
-		submitSignupStep( { stepName, domainItem }, { domainItem } );
-		recordExcludeStepEvent(
-			stepName,
-			siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' )
-		);
+	submitSignupStep( { stepName, domainItem }, { domainItem } );
+	recordExcludeStepEvent( stepName, tracksEventValue );
 
-		fulfilledDependencies = [ 'domainItem' ];
-	}
+	fulfilledDependencies = [ 'domainItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
+	}
+}
+
+export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { siteDomains, submitSignupStep } = nextProps;
+
+	if ( siteDomains && siteDomains.length > 1 ) {
+		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
+	}
+}
+
+export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
+	// This is for domainStepPlanStepSwap A/B test.
+	// Remove the domain step if a paid plan is selected, check https://wp.me/pbxNRc-cj#comment-277
+	// Exit if not in the right flow.
+	if ( 'onboarding-plan-first' !== nextProps.flowName ) {
+		return;
+	}
+
+	const { submitSignupStep } = nextProps;
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+
+	if ( ! isEmpty( cartItem ) ) {
+		const tracksEventValue = null;
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
 }
 
