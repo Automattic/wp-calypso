@@ -21,6 +21,7 @@ export function applePayProcessor( submitData ) {
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
+			accountEmail: select( 'wpcom' )?.getContactInfo?.()?.accountEmail?.value,
 			domainDetails: getDomainDetails( select ),
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
@@ -44,6 +45,7 @@ export async function stripeCardProcessor( submitData ) {
 	const pending = submitStripeCardTransaction(
 		{
 			...submitData,
+			accountEmail: select( 'wpcom' )?.getContactInfo?.()?.accountEmail?.value,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,

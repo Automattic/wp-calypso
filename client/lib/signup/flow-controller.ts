@@ -162,7 +162,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._flowSteps() ), ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -194,7 +194,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
 
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._flowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -232,13 +232,13 @@ export default class SignupFlowController {
 	 */
 	_getFlowProvidesDependencies() {
 		return flatMap(
-			this._flow.steps,
+			this._flowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._flowSteps();
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
@@ -270,7 +270,7 @@ export default class SignupFlowController {
 			dependencies
 		);
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._flowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
 			( { stepName } ) => includes( currentSteps, stepName )
@@ -355,7 +355,7 @@ export default class SignupFlowController {
 
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap(
-			this._flow.steps,
+			this._flowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 
@@ -367,6 +367,21 @@ export default class SignupFlowController {
 			} ),
 			{}
 		);
+	}
+
+	_flowSteps() {
+		let steps = this._flow.steps;
+		// Skip the user step during user-optional onboarding if the user was
+		// already logged in.
+		// @todo The isUserFulfilled() method on the user step should ideally
+		// be able to fully exclude this step on its own, but currently site
+		// creation doesn't work without also excluding it here.
+		if ( this._flowName === 'onboarding-user-optional' && wpcom.isTokenLoaded() ) {
+			// @todo If we make this a different step (e.g. "user-optional")
+			// then we don't need to check the flowName above.
+			steps = steps.filter( ( step ) => step !== 'user' );
+		}
+		return steps;
 	}
 
 	reset() {

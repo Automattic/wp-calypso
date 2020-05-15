@@ -743,6 +743,13 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
+export function isUserFulfilled( stepName, defaultDependencies, nextProps ) {
+	// @todo Not sure if this needs to check for other things too.
+	if ( wpcom.isTokenLoaded() ) {
+		flows.excludeStep( stepName );
+	}
+}
+
 export function addOrRemoveFromProgressStore( stepName, defaultDependencies, nextProps ) {
 	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const hasCartItemInDependencyStore = has( nextProps, 'signupDependencies.cartItem' );

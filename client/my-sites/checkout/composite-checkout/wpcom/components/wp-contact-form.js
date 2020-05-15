@@ -113,6 +113,24 @@ function VatIdField() {
 	);
 }
 
+function AccountEmailField() {
+	const translate = useTranslate();
+	const { accountEmail } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const { updateAccountEmail } = useDispatch( 'wpcom' );
+
+	return (
+		<FormField
+			id="contact-account-email"
+			type="text" // @todo: email?
+			label={ translate( 'Email address' ) }
+			value={ accountEmail.value }
+			onChange={ updateAccountEmail }
+			isError={ accountEmail.isTouched && ! isValid( accountEmail ) }
+			errorMessage={ translate( 'This field is required.' ) }
+		/>
+	);
+}
+
 function TaxFields( {
 	section,
 	taxInfo,
@@ -273,6 +291,7 @@ function RenderContactDetails( {
 
 	switch ( format ) {
 		case 'DOMAINS':
+			// @todo only show email field if not logged in
 			return (
 				<React.Fragment>
 					<ContactDetailsFormDescription>
@@ -280,6 +299,7 @@ function RenderContactDetails( {
 							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 						) }
 					</ContactDetailsFormDescription>
+					<AccountEmailField />
 					{ renderDomainContactFields(
 						domainNames,
 						prepareDomainContactDetails( contactInfo ),
@@ -292,11 +312,13 @@ function RenderContactDetails( {
 				</React.Fragment>
 			);
 		default:
+			// @todo only show email field if not logged in
 			return (
 				<React.Fragment>
 					<ContactDetailsFormDescription>
 						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
 					</ContactDetailsFormDescription>
+					<AccountEmailField />
 					<TaxFields
 						section="contact"
 						taxInfo={ contactInfo }

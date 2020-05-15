@@ -10,10 +10,10 @@ import wpcom from 'lib/wp';
  * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
-export function createPasswordlessUser( callback, { email } ) {
+export function createPasswordlessUser( callback, { email, always_attempt_login } ) {
 	wpcom
 		.undocumented()
-		.usersEmailNew( { email }, null )
+		.usersEmailNew( { email, always_attempt_login }, null )
 		.then( ( response ) => callback( null, response ) )
 		.catch( ( err ) => callback( err ) );
 }

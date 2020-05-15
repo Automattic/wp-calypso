@@ -37,6 +37,7 @@ export function generateSteps( {
 	removeDomainStepForPaidPlans = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	isUserFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
 } = {} ) {
 	return {
@@ -148,6 +149,7 @@ export function generateSteps( {
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			fulfilledStepCallback: isUserFulfilled, // @todo It might be better to create a separate "user-optional" step and add this to that
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -166,7 +168,7 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'bearer_token', 'username' ], // @todo It might be better to have a separate "plans-and-create-user" step?  Alternatively, the bearer_token and username should be optional dependencies?
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 

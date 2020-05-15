@@ -34,6 +34,7 @@ export type ManagedContactDetailsShape< T > = {
 	countryCode: T;
 	fax: T;
 	vatId: T;
+	accountEmail: T;
 	tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< T >;
 };
 
@@ -183,6 +184,7 @@ export function updateManagedContactDetailsShape< A, B >(
 		countryCode: combine( update.countryCode, data.countryCode ),
 		fax: combine( update.fax, data.fax ),
 		vatId: combine( update.vatId, data.vatId ),
+		accountEmail: combine( update.accountEmail, data.accountEmail ),
 		tldExtraFields,
 	};
 }
@@ -207,6 +209,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 		f( x.countryCode ),
 		f( x.fax ),
 		f( x.vatId ),
+		f( x.accountEmail ),
 	];
 
 	const caValues =
@@ -561,6 +564,7 @@ export function prepareDomainContactValidationRequest(
 			countryCode: details.countryCode.value,
 			fax: details.fax.value,
 			vatId: details.vatId.value,
+			accountEmail: details.accountEmail.value,
 			extra,
 		},
 	};
@@ -585,6 +589,7 @@ export function formatDomainContactValidationResponse(
 		countryCode: response.messages?.countryCode,
 		fax: response.messages?.fax,
 		vatId: response.messages?.vatId,
+		accountEmail: response.messages?.accountEmail,
 		tldExtraFields: {
 			ca: {
 				lang: response.messages?.extra?.ca?.lang,
@@ -624,6 +629,7 @@ function prepareManagedContactDetailsUpdate(
 		countryCode: rawFields.countryCode,
 		fax: rawFields.fax,
 		vatId: rawFields.vatId,
+		accountEmail: rawFields.accountEmail,
 		tldExtraFields: {
 			ca: {
 				lang: rawFields?.extra?.ca?.lang,
@@ -674,6 +680,7 @@ export type ManagedContactDetailsUpdaters = {
 	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateAccountEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	setErrorMessages: (
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
@@ -745,6 +752,16 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	updateAccountEmail: (
+		oldDetails: ManagedContactDetails,
+		newAccountEmail: string
+	): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			accountEmail: touchIfDifferent( newAccountEmail, oldDetails.accountEmail ),
+		};
+	},
+
 	setErrorMessages: (
 		oldDetails: ManagedContactDetails,
 		errors: ManagedContactDetailsErrors
@@ -797,6 +814,7 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	countryCode: getInitialManagedValue(),
 	fax: getInitialManagedValue(),
 	vatId: getInitialManagedValue(),
+	accountEmail: getInitialManagedValue(),
 	tldExtraFields: {},
 };
 
@@ -830,6 +848,7 @@ export const domainRequiredContactDetails: ManagedContactDetailsRequiredMask = {
 	countryCode: true,
 	fax: false,
 	vatId: false,
+	accountEmail: false,
 	tldExtraFields: {},
 };
 
@@ -849,6 +868,7 @@ export const taxRequiredContactDetails: ManagedContactDetailsRequiredMask = {
 	countryCode: true,
 	fax: false,
 	vatId: false,
+	accountEmail: false,
 	tldExtraFields: {},
 };
 

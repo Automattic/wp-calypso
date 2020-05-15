@@ -23,6 +23,7 @@ import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { createPasswordlessUser } from 'lib/signup/step-actions/passwordless';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -39,12 +40,16 @@ import {
 import './style.scss';
 
 export class PlansStep extends Component {
+	state = {
+		cartItem: null,
+	};
+
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	onSelectPlan = ( cartItem ) => {
-		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName, isLoggedIn } = this.props;
 
 		if ( cartItem ) {
 			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
@@ -52,6 +57,14 @@ export class PlansStep extends Component {
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
+
+			// Create a dummy account so the user can be asked for their email
+			// address on the checkout form.
+			if ( flowName === 'onboarding-user-optional' && ! isLoggedIn ) {
+				this.setState( { cartItem: cartItem } );
+				createPasswordlessUser( this.handleUserCreationRequest, { always_attempt_login: true } );
+				return;
+			}
 
 			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
@@ -79,6 +92,38 @@ export class PlansStep extends Component {
 
 		this.props.submitSignupStep( step, {
 			cartItem,
+			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
+			...( this.isGutenboarding() &&
+				! this.props.isLaunchPage && {
+					isPreLaunch: true,
+					isGutenboardingCreate: true,
+				} ),
+		} );
+		this.props.goToNextStep();
+	};
+
+	handleUserCreationRequest = ( error, response ) => {
+		if ( error ) {
+			// @todo Do something else with this.
+			console.warn( error );
+			return;
+		}
+
+		const { additionalStepData, stepSectionName, stepName } = this.props;
+		const { cartItem } = this.state;
+
+		// @todo The code below mostly repeats the code from onSelectPlan() -- refactor
+		const step = {
+			stepName,
+			stepSectionName,
+			cartItem,
+			...additionalStepData,
+		};
+
+		this.props.submitSignupStep( step, {
+			cartItem,
+			bearer_token: response.token.access_token,
+			username: response.username,
 			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
 			...( this.isGutenboarding() &&
 				! this.props.isLaunchPage && {

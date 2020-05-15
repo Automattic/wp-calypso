@@ -134,6 +134,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	paymentPartnerProcessorId,
 	storedDetailsId,
 	name,
+	accountEmail,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -147,6 +148,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	paymentPartnerProcessorId: string;
 	storedDetailsId: string;
 	name: string;
+	accountEmail?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
@@ -157,6 +159,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			subdivisionCode,
 			items: items.filter( ( item ) => item.type !== 'tax' ),
 		} ),
+		accountEmail,
 		domainDetails,
 		payment: {
 			paymentMethod: paymentMethodType,

@@ -22,6 +22,7 @@ import {
 	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	isUserFulfilled,
 	addOrRemoveFromProgressStore,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
@@ -43,6 +44,7 @@ export default generateSteps( {
 	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	isUserFulfilled,
 	addOrRemoveFromProgressStore,
 } );
 

@@ -1165,6 +1165,7 @@ Undocumented.prototype.updateConnection = function ( siteId, connectionId, data,
  *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
  *		payment: {object} Payment details, including payment_method and payment_key,
  *		cart: {object>shopping_cart} A Shopping cart object
+ *		account_email: {string} Email address for new account
  *		domain_details: {object>contact_information} Optional set of domain contact information
  *		locale: {string} Locale for translating strings in response data,
  * }
@@ -1455,7 +1456,7 @@ Undocumented.prototype.validateNewUser = function ( data, fn ) {
 /**
  * Sign up for a new passwordless user account
  *
- * @param {object} query - an object with the following values: email
+ * @param {object} query - an object with either or both the following values: email, always_attempt_login
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailNew = function ( query, fn ) {

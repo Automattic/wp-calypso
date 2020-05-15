@@ -117,6 +117,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-user-optional': {
+			steps: [ 'domains', 'plans', 'user' ],
+			destination: getSignupDestination,
+			description: 'Testing userless checkout',
+			lastModified: '2020-05-15',
+			showRecaptcha: true, // @todo?
+		},
+
 		'onboarding-plan-first': {
 			steps: [ 'user', 'plans', 'domains' ],
 			destination: getSignupDestination,

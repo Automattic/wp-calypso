@@ -349,6 +349,7 @@ TransactionFlow.prototype._submitWithPayment = function ( payment ) {
 	const transaction = {
 		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 		domain_details: this._initialData.domainDetails,
+		account_email: this._initialData.accountEmail,
 		payment,
 	};
 

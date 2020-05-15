@@ -25,6 +25,7 @@ type WpcomStoreAction =
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
+	| { type: 'UPDATE_ACCOUNT_EMAIL'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
@@ -66,6 +67,8 @@ export function useWpcomStore(
 			}
 			case 'UPDATE_VAT_ID':
 				return updaters.updateVatId( state, action.payload );
+			case 'UPDATE_ACCOUNT_EMAIL':
+				return updaters.updateAccountEmail( state, action.payload );
 			case 'UPDATE_PHONE':
 				return updaters.updatePhone( state, action.payload );
 			case 'UPDATE_PHONE_NUMBER_COUNTRY':
@@ -155,6 +158,10 @@ export function useWpcomStore(
 
 			updateVatId( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_VAT_ID', payload: payload };
+			},
+
+			updateAccountEmail( payload: string ): WpcomStoreAction {
+				return { type: 'UPDATE_ACCOUNT_EMAIL', payload: payload };
 			},
 
 			loadDomainContactDetailsFromCache(

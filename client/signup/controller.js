@@ -65,13 +65,8 @@ export default {
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						recordTracksEvent( 'calypso_newsite_init' );
-						window.location = window.location.origin + '/new';
-					} else {
-						removeWhiteBackground();
-						next();
-					}
+					removeWhiteBackground();
+					next();
 				} )
 				.catch( () => {
 					removeWhiteBackground();
