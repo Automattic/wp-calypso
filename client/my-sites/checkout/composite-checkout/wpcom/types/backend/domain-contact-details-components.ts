@@ -47,7 +47,7 @@ export type FrDomainContactExtraDetails = {
 	registrantType?: string;
 	registrantVatId?: string;
 	trademarkNumber?: string;
-	sirenSirat?: string;
+	sirenSiret?: string;
 };
 
 // This is the data returned by the redux state, where the fields could have a
@@ -105,8 +105,8 @@ export type UkDomainContactExtraDetailsErrors = {
 };
 
 export type FrDomainContactExtraDetailsErrors = {
-	registrantType?: string;
-	registrantVatId?: string;
-	trademarkNumber?: string;
-	sirenSirat?: string;
+	registrantType?: string[];
+	registrantVatId?: string[];
+	trademarkNumber?: string[];
+	sirenSiret?: string[];
 };

@@ -687,6 +687,14 @@ Undocumented.prototype.validateDomainContactInformation = function (
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
 
+	// Due to backend limitations some versions of this endpoint
+	// serialize a nested object in the response, encoding e.g.
+	//   { foo: { bar: { baz: [ "error" ] } } }
+	// as
+	//   { foo.bar.baz: [ "error" ] }
+	// here we decide whether to rehydrate this.
+	const shouldReshapeResponse = query?.apiVersion === '1.2';
+
 	return this.wpcom.req.post(
 		{ path: '/me/domain-contact-information/validate' },
 		query,
@@ -697,7 +705,7 @@ Undocumented.prototype.validateDomainContactInformation = function (
 			}
 
 			// Reshape the error messages to a nested object
-			if ( successData.messages && query?.apiVersion === '1.2' ) {
+			if ( successData.messages && shouldReshapeResponse ) {
 				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
 					set( obj, key, successData.messages[ key ] );
 					return obj;

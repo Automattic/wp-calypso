@@ -48,11 +48,13 @@ import {
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
+import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan, findPlansKeys } from 'lib/plans';
+import { getTld } from 'lib/domains';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -293,6 +295,7 @@ export default function CompositeCheckout( {
 	} );
 
 	const renderDomainContactFields = (
+		domainNames,
 		contactDetails,
 		contactDetailsErrors,
 		updateDomainContactFields,
@@ -300,15 +303,61 @@ export default function CompositeCheckout( {
 		isDisabled
 	) => {
 		const getIsFieldDisabled = () => isDisabled;
+		const tlds = getAllTlds( domainNames );
+
 		return (
-			<ManagedContactDetailsFormFields
-				contactDetails={ contactDetails }
-				contactDetailsErrors={
-					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-				}
-				onContactDetailsChange={ updateDomainContactFields }
-				getIsFieldDisabled={ getIsFieldDisabled }
-			/>
+			<React.Fragment>
+				<ManagedContactDetailsFormFields
+					contactDetails={ contactDetails }
+					contactDetailsErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
+					onContactDetailsChange={ updateDomainContactFields }
+					getIsFieldDisabled={ getIsFieldDisabled }
+				/>
+				{ tlds.includes( 'ca' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.ca ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'ca' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+				{ tlds.includes( 'uk' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.uk ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'uk' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+				{ tlds.includes( 'fr' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.fr ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'fr' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+			</React.Fragment>
 		);
 	};
 
@@ -699,4 +748,8 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 		analyticsPath = '/checkout/no-site';
 	}
 	return { analyticsPath, analyticsProps };
+}
+
+function getAllTlds( domainNames ) {
+	return Array.from( new Set( domainNames.map( getTld ) ) ).sort();
 }
