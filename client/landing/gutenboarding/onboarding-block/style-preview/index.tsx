@@ -19,6 +19,7 @@ import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
@@ -28,7 +29,7 @@ import BottomBarMobile from '../../components/bottom-bar-mobile';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { getSelectedFonts, hasPaidDomain } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
@@ -46,6 +47,8 @@ const StylePreview: React.FunctionComponent = () => {
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
 
 	useTrackStep( 'Style', () => ( {
 		selected_heading_font: getSelectedFonts()?.headings,
@@ -68,7 +71,12 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	const handleContinue = () => {
-		if ( isEnabled( 'gutenboarding/plans-grid' ) && hasPaidDomain() ) {
+		// Show the plans grid to all users
+		// and all users who have seen the plans step before
+		// except if they have chosen a plan via the plans modal before they have reached the plans step
+		// or a plan is in the path
+
+		if ( isEnabled( 'gutenboarding/plans-grid' ) && ! selectedPlan ) {
 			history.push( makePath( Step.Plans ) );
 			return;
 		}
