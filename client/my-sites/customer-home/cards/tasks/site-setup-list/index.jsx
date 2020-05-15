@@ -61,6 +61,7 @@ const startTask = ( dispatch, task, siteId ) => {
 
 const skipTask = ( dispatch, task, siteId ) => {
 	dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+	dispatch( requestHomeLayout( siteId ) );
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_dismiss', {
 			checklist_name: 'new_blog',
@@ -106,10 +107,7 @@ const SiteSetupList = ( {
 		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
 			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
-			if ( ! initialTask ) {
-				// Last task was skipped, refresh home layout
-				dispatch( requestHomeLayout( siteId ) );
-			} else {
+			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
