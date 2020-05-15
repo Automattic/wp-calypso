@@ -2,9 +2,10 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -79,13 +80,17 @@ class ActivityCardList extends Component {
 	renderLogs( actualPage ) {
 		const {
 			allowRestore,
+			applySiteOffset,
 			logs,
 			moment,
 			pageSize,
 			showDateSeparators,
 			doesRewindNeedCredentials,
 			siteSlug,
+			translate,
 		} = this.props;
+
+		const today = applySiteOffset ? applySiteOffset() : null;
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -102,7 +107,9 @@ class ActivityCardList extends Component {
 				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
-							{ date && date.format( 'MMM Do' ) }
+							{ date && today.isSame( date, 'day' )
+								? translate( 'Today' )
+								: date.format( 'MMM Do' ) }
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
@@ -228,4 +235,6 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) ) );
+)(
+	withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( localize( ActivityCardList ) ) ) )
+);
