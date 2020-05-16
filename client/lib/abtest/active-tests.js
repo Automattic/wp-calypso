@@ -116,7 +116,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200515',
+		datestamp: '20200516',
 		variations: {
 			gutenberg: 10,
 			control: 90,
