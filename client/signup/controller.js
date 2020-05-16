@@ -4,7 +4,6 @@
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal Dependencies
@@ -55,7 +54,11 @@ export default {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
-			context.pathname.indexOf( 'plan' ) >= 0
+			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'wpcc' ) >= 0 ||
+			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.params.flowName === 'user' ||
+			context.params.flowName === 'account'
 		) {
 			removeWhiteBackground();
 			next();
@@ -66,7 +69,6 @@ export default {
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						recordTracksEvent( 'calypso_newsite_init' );
 						window.location = window.location.origin + '/new';
 					} else {
 						removeWhiteBackground();
@@ -142,13 +144,6 @@ export default {
 					( context.hashstring ? '#' + context.hashstring : '' );
 				return;
 			}
-		}
-
-		// Record a `calypso_*` tracks event after clicking the launch button.
-		// We record the event here because the launch button itself is managed by the wpcom-block-editor app
-		// wpcom-block-editor app may be treated differently by the ad blocker but this code is guaranteed to be hit.
-		if ( context.pathname === '/start/new-launch' ) {
-			recordTracksEvent( 'calypso_newsite_launch_start' );
 		}
 
 		context.store.dispatch( setCurrentFlowName( flowName ) );
