@@ -50,7 +50,7 @@ exports[`UpworkBanner renders correctly 1`] = `
   <img
     alt="Upwork"
     className="upwork-banner__image"
-    src="/calypso/images/themes-banner/illustration-builder-referral.svg"
+    src="builder-referral.svg"
     width={390}
   />
 </a>
