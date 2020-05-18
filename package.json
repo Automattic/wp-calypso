@@ -130,7 +130,7 @@
 		"tsc": "check-npm-client && NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "check-npm-client && yarn run tsc --project client",
 		"update-deps": "check-npm-client && npx rimraf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
-		"validate-fallback-es5": "check-npm-client && npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./public/fallback/*.js",
+		"validate-fallback-es5": "",
 		"prewhybundled": "check-npm-client && NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run -s build-client-evergreen",
 		"whybundled": "check-npm-client && whybundled client/stats.json",
 		"composite-checkout-demo": "check-npm-client && webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
