@@ -123,7 +123,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch delete action when request completes', () => {
-			deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
+			return deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE,
 					connection: {
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
+			return deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
 					error: sinon.match( {

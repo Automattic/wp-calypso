@@ -5,7 +5,7 @@ export default class KeyringConnection {
 	 * `KeyringConnection` constructor.
 	 *
 	 * @param {string} keyId - the connection ID to take action on.
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param {object} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
 	constructor( keyId, wpcom ) {

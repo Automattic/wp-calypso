@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import MeKeyringConnection from './me.keyring-connection';
 import MeConnectedApp from './me.connected-application';
@@ -10,7 +10,7 @@ import MeTwoStep from './me.two-step';
 /**
  * Create `Me` instance
  *
- * @param {WPCOM} wpcom - wpcom instance
+ * @param {object} wpcom - wpcom instance
  * @returns {null} null
  */
 export default function Me( wpcom ) {
@@ -132,7 +132,7 @@ Me.prototype.settings = function () {
  * Return a `MeConnectedApp` instance.
  *
  * @param {string} id - app id
- * @returns {ConnectedApp} Me ConnectedApp instance
+ * @returns {MeConnectedApp} Me ConnectedApp instance
  */
 Me.prototype.connectedApp = function ( id ) {
 	return new MeConnectedApp( id, this.wpcom );
