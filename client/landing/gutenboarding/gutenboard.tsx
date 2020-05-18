@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useI18n } from '@automattic/react-i18n';
-import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { BlockList, BlockEditorProvider } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
