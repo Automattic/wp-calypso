@@ -7,12 +7,14 @@ import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
+import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -99,6 +101,7 @@ const SiteSetupList = ( {
 	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
 	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
@@ -147,6 +150,7 @@ const SiteSetupList = ( {
 	// Re-fetch layout for moving to next view when site setup is complete.
 	useEffect( () => {
 		if ( isSiteSetupComplete ) {
+			setIsLoading( true );
 			dispatch( requestHomeLayout( siteId ) );
 		}
 	}, [ dispatch, isSiteSetupComplete, siteId ] );
@@ -199,7 +203,8 @@ const SiteSetupList = ( {
 	}
 
 	return (
-		<Card className="site-setup-list">
+		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+			{ isLoading && <Spinner /> }
 			{ useDrillLayout && (
 				<CardHeading>
 					<>
