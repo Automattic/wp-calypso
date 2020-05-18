@@ -1,14 +1,4 @@
 .dialog.threat-dialog {
-	width: 100%;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		max-width: 676px;
-	}
-
-	.dialog__content {
-		overflow-x: hidden;
-	}
-
 	.threat-dialog {
 		&__header {
 			font-size: 18px;
@@ -66,9 +56,5 @@
 				width: 140px;
 			}
 		}
-	}
-
-	.dialog__action-buttons {
-		background: var( --studio-gray-0 );
 	}
 }
