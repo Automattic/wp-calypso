@@ -44,9 +44,9 @@ const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' 
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldMinify =
+/*const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );*/
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
@@ -165,7 +165,7 @@ const webpackConfig = {
 		runtimeChunk: isDesktop ? false : { name: 'manifest' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
-		minimize: shouldMinify,
+		minimize: false, //shouldMinify,
 		minimizer: Minify( {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
