@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CelebrateNotice from '../celebrate-notice-v2';
+import CelebrateNotice from '../celebrate-notice';
 
 /**
  * Image dependencies
