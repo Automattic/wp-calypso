@@ -102,6 +102,18 @@
 	.site-setup-list__task-actions {
 		margin-top: 0;
 	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+
+	&.is-loading > *:not( .spinner ) {
+		visibility: hidden;
+	}
 }
 
 .customer-home__main .site-setup-list .card-heading {

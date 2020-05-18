@@ -23,7 +23,6 @@ import { addReducerEnhancer } from 'state/utils/add-reducer-enhancer';
  */
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
-import preferencesMiddleware from 'state/preferences/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 
 /**
@@ -59,7 +58,6 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		navigationMiddleware,
-		preferencesMiddleware,
 	].filter( Boolean );
 
 	const enhancers = [
