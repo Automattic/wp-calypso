@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -76,7 +75,7 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const { applySiteOffset, logs, pageSize, showDateSeparators } = this.props;
+		const { applySiteOffset, logs, pageSize, showDateSeparators, translate } = this.props;
 
 		const today = applySiteOffset ? applySiteOffset() : null;
 
