@@ -56,16 +56,6 @@ export class WhiteGlove extends PureComponent {
 		);
 	}
 
-	// renderBenefits( content ) {
-	// 	return (
-	// 		<>
-	// 			<div>
-
-	// 			</div>
-	// 		</>
-	// 	)
-	// }
-
 	body() {
 		return (
 			<>
@@ -90,6 +80,13 @@ export class WhiteGlove extends PureComponent {
 					<Checklist content="Two thirty minute sessions with your very own WordPress experts" />
 					<Checklist content="A free upgrade to our most popular Business Plan" />
 					<Checklist content="Access to hundreds of themes and plugins" />
+				</div>
+
+				<div class="white-glove__column-pane">
+					<div class="white-glove__content-right">
+						More support. More customization. Our White Glove Service lets you take control. We’ll
+						show you how.
+					</div>
 				</div>
 			</>
 		);
