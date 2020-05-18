@@ -111,7 +111,7 @@ class HandleEmailedLinkForm extends React.Component {
 
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
-	rebootAfterLogin = () => {
+	rebootAfterLogin = async () => {
 		const { redirectToSanitized, twoFactorEnabled } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
@@ -123,11 +123,13 @@ class HandleEmailedLinkForm extends React.Component {
 		const url = redirectToSanitized || '/';
 
 		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefore we need to reset it before we redirect, otherwise we'll get
-		// mixed data from old and new user
-		user.clear().then( () => {
-			window.location.href = url;
-		} );
+		// Only clear the data if a user is currently set, otherwise keep the
+		// logged out state around so that it can be used in signup.
+		if ( user.get() ) {
+			await user.clear();
+		}
+
+		window.location.href = url;
 	};
 
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
