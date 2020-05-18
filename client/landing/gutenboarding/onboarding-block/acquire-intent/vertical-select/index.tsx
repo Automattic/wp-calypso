@@ -19,6 +19,7 @@ import { Verticals } from '@automattic/data-stores';
 import useTyper from '../../../hooks/use-typer';
 import Arrow from '../arrow';
 import { recordVerticalSelection } from '../../../lib/analytics';
+import EditableSpan from '../../editable-span';
 import type { SiteVertical } from '../../../stores/onboard/types';
 
 /**
@@ -210,8 +211,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							'vertical-select__input-wrapper--with-arrow': showArrow,
 						} ) }
 					>
-						<span
-							contentEditable
+						<EditableSpan
 							data-hj-whitelist
 							tabIndex={ 0 }
 							role="textbox"

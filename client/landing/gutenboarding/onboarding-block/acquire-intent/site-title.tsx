@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import { useI18n } from '@automattic/react-i18n';
+import EditableSpan from '../editable-span';
 
 /**
  * Internal dependencies
@@ -65,8 +66,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 			Input: (
 				<span className="site-title__input-wrapper">
 					{ ! isMobile && ' ' }
-					<span
-						contentEditable
+					<EditableSpan
 						data-hj-whitelist
 						tabIndex={ 0 }
 						role="textbox"
