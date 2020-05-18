@@ -45,7 +45,12 @@ function FullCreditsLabel() {
 function FullCreditsSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const { transactionStatus, transactionError } = useTransactionStatus();
+	const {
+		transactionStatus,
+		transactionError,
+		setTransactionComplete,
+		setTransactionError,
+	} = useTransactionStatus();
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
@@ -78,7 +83,17 @@ function FullCreditsSubmitButton( { disabled } ) {
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		submitTransaction( {
 			items,
-		} );
+		} )
+			.then( () => {
+				setTransactionComplete();
+			} )
+			.catch( ( error ) => {
+				// TODO: do these things automatically
+				setTransactionError( error.message );
+				setFormReady();
+				onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message } );
+				showErrorMessage( error.message );
+			} );
 	};
 
 	return (
