@@ -40,7 +40,7 @@ class SettingsPage extends Component {
 		const content = isConnected
 			? translate( 'One-click restores are enabled.' )
 			: translate(
-					'Enter your server credentials to enable one-click restores for Backups. {{a}}Find your server credentials{{/a}}',
+					'Enter your server credentials to enable one-click restores for Backups. {{a}}Need help? Find your server credentials{{/a}}',
 					{
 						components: {
 							a: (
