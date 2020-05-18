@@ -10,7 +10,7 @@ const CloseButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	const { __ } = useI18n();
 	return (
 		<Button label={ __( 'Close dialog' ) } { ...buttonProps }>
-			<Icon icon={ close } />
+			<Icon icon={ close } size={ 16 } />
 		</Button>
 	);
 };
