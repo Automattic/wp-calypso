@@ -217,8 +217,8 @@ class PurchasesListing extends Component {
 			);
 		} else if ( isJetpackScan( purchase ) ) {
 			serviceButton = (
-				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
-					{ translate( 'View threats' ) }
+				<Button href={ `/activity-log/${ site }` } compact>
+					{ translate( 'View scan results' ) }
 				</Button>
 			);
 		}
