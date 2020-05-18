@@ -120,6 +120,18 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			},
 			categories: [ 'featured', 'blog' ],
 		},
+		{
+			title: 'Barnsbury',
+			slug: 'barnsbury',
+			template: 'barnsbury',
+			theme: 'barnsbury',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/barnsbury/barnsbury/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'business' ],
+		},
 	],
 };
 
