@@ -14,7 +14,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class MyHomePage extends AsyncBaseContainer {
 	constructor( driver, url ) {
 		super( driver, By.css( '.customer-home__main' ), url );
-		this.celebrateNoticeCloseButtonSelector = By.css( '.celebrate-notice-v2__action' );
+		this.celebrateNoticeCloseButtonSelector = By.css( '.celebrate-notice__action' );
 		this.siteSetupListSelector = By.css( '.customer-home__main .site-setup-list' );
 		this.updateHomepageTaskSelector = By.css(
 			'.customer-home__main [data-task="front_page_updated"]'
