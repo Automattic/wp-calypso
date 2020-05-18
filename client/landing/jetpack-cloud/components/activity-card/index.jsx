@@ -28,6 +28,7 @@ import Button from 'components/forms/form-button';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
+import { isSuccessfulRealtimeBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -104,6 +105,7 @@ class ActivityCard extends Component {
 					moment={ moment }
 					siteSlug={ siteSlug }
 					translate={ translate }
+					dontShowActionBar={ true }
 				/>
 			);
 		} );
@@ -219,22 +221,24 @@ class ActivityCard extends Component {
 	renderBottomToolbar = () => this.renderToolbar( false );
 
 	renderToolbar( isTopToolbar = true ) {
-		const {
-			activity: { activityIsRewindable, streams },
-		} = this.props;
+		const { activity } = this.props;
 
-		return ! ( streams || activityIsRewindable ) ? null : (
+		// Check if the activities in the stream are rewindables
+		const isRewindable = isSuccessfulRealtimeBackup( activity );
+		const streams = activity.streams;
+
+		return ! ( streams || isRewindable ) ? null : (
 			<Fragment key={ `activity-card__toolbar-${ isTopToolbar ? 'top' : 'bottom' }` }>
 				<div
 					// force the actions to stay in the left if we aren't showing the content link
 					className={
-						! streams && activityIsRewindable
+						! streams && isRewindable
 							? 'activity-card__activity-actions-reverse'
 							: 'activity-card__activity-actions'
 					}
 				>
 					{ streams && this.renderExpandContentControl() }
-					{ activityIsRewindable && this.renderActionButton( isTopToolbar ) }
+					{ isRewindable && this.renderActionButton( isTopToolbar ) }
 				</div>
 			</Fragment>
 		);
@@ -273,6 +277,7 @@ class ActivityCard extends Component {
 			siteId,
 			summarize,
 			timezone,
+			dontShowActionBar,
 		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
@@ -306,7 +311,7 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
-					{ ! summarize && this.renderTopToolbar() }
+					{ ! summarize && ! dontShowActionBar && this.renderTopToolbar() }
 
 					{ showActivityContent && this.renderActivityContent() }
 				</Card>
