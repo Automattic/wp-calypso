@@ -3,7 +3,6 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,13 +10,10 @@ import { By } from 'selenium-webdriver';
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
-import SidebarComponent from '../lib/components/sidebar-component.js';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
-import * as driverHelper from '../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -62,7 +58,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		step( 'Can track block editor events', async function () {
+		step( 'Tracks "wpcom_block_inserted" event', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 
 			// Insert some Blocks
@@ -76,18 +72,13 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			// Assert that Insertion Events were tracked.
 			assert.strictEqual(
-				eventsStack[ 0 ][ 0 ] === 'wpcom_block_inserted',
+				eventsStack.some(
+					( [ eventName, eventData ] ) =>
+						eventName === 'wpcom_block_inserted' && eventData.block_name === 'core/columns'
+				),
 				true,
-				`"wpcom_block_inserted" failed for ${ eventsStack[ 0 ][ 1 ].block_name }`
+				`"wpcom_block_inserted" event failed to fire for ${ eventsStack[ 0 ][ 1 ].block_name }`
 			);
-
-			assert.strictEqual(
-				eventsStack[ 0 ][ 1 ].block_name === 'core/columns',
-				true,
-				`Failed to track "block_name" property for "wpcom_block_inserted" event`
-			);
-
-			// await driver.sleep( 100000 );
 		} );
 
 		after( async function () {} );
