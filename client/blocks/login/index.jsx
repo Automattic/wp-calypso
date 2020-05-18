@@ -55,6 +55,7 @@ class Login extends Component {
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
+		rebootAfterLogin: PropTypes.func.isRequired,
 		requestNotice: PropTypes.object,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
