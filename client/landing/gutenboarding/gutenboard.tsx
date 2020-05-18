@@ -21,6 +21,7 @@ import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
+import { useNewQueryParam } from './path';
 
 registerBlockType( name, settings );
 
@@ -35,6 +36,7 @@ const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } /
 
 export function Gutenboard() {
 	const { __ } = useI18n();
+	const shouldTriggerCreate = useNewQueryParam();
 
 	useOnSiteCreation();
 
@@ -62,7 +64,12 @@ export function Gutenboard() {
 			document.head.appendChild( linkHeadings );
 		} );
 
-		recordOnboardingStart();
+		// If we're returning to Gutenboarding site creation
+		// e.g., from the login flow
+		// don't record flow start again
+		if ( ! shouldTriggerCreate ) {
+			recordOnboardingStart();
+		}
 	}, [] );
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
