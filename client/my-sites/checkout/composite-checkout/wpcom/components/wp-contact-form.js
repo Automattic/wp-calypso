@@ -9,6 +9,7 @@ import {
 	useDispatch,
 	useFormStatus,
 	useIsStepActive,
+	useLineItems,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -31,14 +32,23 @@ export default function WPContactForm( {
 	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
+	const [ items ] = useLineItems();
 	const isDomainFieldsVisible = useHasDomainsInCart();
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	if ( summary && isComplete ) {
-		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
+		return (
+			<ContactFormSummary
+				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
+			/>
+		);
 	}
 	if ( ! isActive ) {
 		return null;
@@ -49,6 +59,7 @@ export default function WPContactForm( {
 			<RenderContactDetails
 				translate={ translate }
 				isDomainFieldsVisible={ isDomainFieldsVisible }
+				isGSuiteInCart={ isGSuiteInCart }
 				contactInfo={ contactInfo }
 				renderDomainContactFields={ renderDomainContactFields }
 				CountrySelectMenu={ CountrySelectMenu }
@@ -168,7 +179,7 @@ TaxFields.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-function ContactFormSummary( { isDomainFieldsVisible } ) {
+function ContactFormSummary( { isDomainFieldsVisible, isGSuiteInCart } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
@@ -195,7 +206,9 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
+					{ ( isGSuiteInCart || showDomainContactSummary ) && fullName && (
+						<SummaryLine>{ fullName }</SummaryLine>
+					) }
 
 					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
@@ -205,9 +218,10 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
 					) }
 
-					{ showDomainContactSummary && contactInfo.alternateEmail.value?.length > 0 && (
-						<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
-					) }
+					{ ( isGSuiteInCart || showDomainContactSummary ) &&
+						contactInfo.alternateEmail.value?.length > 0 && (
+							<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+						) }
 
 					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
@@ -249,16 +263,10 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function getContactDetailsFormat( isDomainFieldsVisible ) {
-	if ( isDomainFieldsVisible ) {
-		return 'DOMAINS';
-	}
-	return 'DEFAULT';
-}
-
 function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
+	isGSuiteInCart,
 	contactInfo,
 	renderDomainContactFields,
 	CountrySelectMenu,
@@ -266,50 +274,64 @@ function RenderContactDetails( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 } ) {
-	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
-	switch ( format ) {
-		case 'DOMAINS':
-			return (
-				<React.Fragment>
-					<ContactDetailsFormDescription>
-						{ translate(
-							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-						) }
-					</ContactDetailsFormDescription>
-					{ renderDomainContactFields(
-						domainNames,
-						prepareDomainContactDetails( contactInfo ),
-						prepareDomainContactDetailsErrors( contactInfo ),
-						updateDomainContactFields,
-						shouldShowContactDetailsValidationErrors,
-						isDisabled
+	if ( isDomainFieldsVisible ) {
+		return (
+			<React.Fragment>
+				<ContactDetailsFormDescription>
+					{ translate(
+						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 					) }
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-		default:
-			return (
-				<React.Fragment>
-					<ContactDetailsFormDescription>
-						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
-					</ContactDetailsFormDescription>
-					<TaxFields
-						section="contact"
-						taxInfo={ contactInfo }
-						updateCountryCode={ updateCountryCode }
-						updatePostalCode={ updatePostalCode }
-						CountrySelectMenu={ CountrySelectMenu }
-						countriesList={ countriesList }
-						isDisabled={ isDisabled }
-					/>
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
+				</ContactDetailsFormDescription>
+				{ renderDomainContactFields(
+					domainNames,
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
 	}
+
+	if ( isGSuiteInCart ) {
+		return (
+			<React.Fragment>
+				{ renderDomainContactFields(
+					domainNames,
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
+	}
+
+	return (
+		<React.Fragment>
+			<ContactDetailsFormDescription>
+				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
+			</ContactDetailsFormDescription>
+			<TaxFields
+				section="contact"
+				taxInfo={ contactInfo }
+				updateCountryCode={ updateCountryCode }
+				updatePostalCode={ updatePostalCode }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				isDisabled={ isDisabled }
+			/>
+			{ requiresVatId && <VatIdField /> }
+		</React.Fragment>
+	);
 }
 
 const ContactDetailsFormDescription = styled.p`

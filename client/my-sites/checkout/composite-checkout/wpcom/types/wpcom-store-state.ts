@@ -14,6 +14,7 @@ import {
 } from './backend/domain-contact-details-components';
 import {
 	DomainContactValidationRequest,
+	GSuiteContactValidationRequest,
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
@@ -566,6 +567,20 @@ export function prepareDomainContactValidationRequest(
 	};
 }
 
+export function prepareGSuiteContactValidationRequest(
+	details: ManagedContactDetails
+): GSuiteContactValidationRequest {
+	return {
+		contact_information: {
+			firstName: details.firstName.value,
+			lastName: details.lastName.value,
+			alternateEmail: details.alternateEmail.value,
+			postalCode: details.postalCode.value,
+			countryCode: details.countryCode.value,
+		},
+	};
+}
+
 export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
@@ -762,7 +777,10 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			lastName: setValueUnlessTouched( newDetails.lastName, oldDetails.lastName ),
 			organization: setValueUnlessTouched( newDetails.organization, oldDetails.organization ),
 			email: setValueUnlessTouched( newDetails.email, oldDetails.email ),
-			alternateEmail: setValueUnlessTouched( newDetails.alternateEmail, oldDetails.alternateEmail ),
+			alternateEmail: setValueUnlessTouched(
+				newDetails.alternateEmail || newDetails.email,
+				oldDetails.alternateEmail
+			),
 			phone: setValueUnlessTouched( newDetails.phone, oldDetails.phone ),
 			address1: setValueUnlessTouched( newDetails.address1, oldDetails.address1 ),
 			address2: setValueUnlessTouched( newDetails.address2, oldDetails.address2 ),

@@ -20,6 +20,7 @@ import {
 	usePaymentMethod,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -35,16 +36,26 @@ import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 
+const debug = debugFactory( 'calypso:wp-checkout' );
+
 const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ items ] = useLineItems();
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 
 	if ( areDomainsInLineItems( items ) ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
+	}
+	if ( isGSuiteInCart ) {
+		return ! isActive && isComplete
+			? translate( 'G Suite account information' )
+			: translate( 'Enter your G Suite account information' );
 	}
 	return ! isActive && isComplete
 		? translate( 'Billing information' )
@@ -76,6 +87,7 @@ export default function WPCheckout( {
 	variantSelectOverride,
 	getItemVariants,
 	domainContactValidationCallback,
+	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
@@ -88,10 +100,10 @@ export default function WPCheckout( {
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainNames = items
-		.filter( isLineItemADomain )
-		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const isDomainFieldsVisible = !! firstDomainItem;
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
@@ -114,12 +126,29 @@ export default function WPCheckout( {
 		touchContactFields();
 
 		if ( isDomainFieldsVisible ) {
+			const domainNames = items
+				.filter( isLineItemADomain )
+				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
+
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
 				contactInfo,
 				domainNames,
 				applyDomainContactValidationResults
 			);
+			return ! hasValidationErrors;
+		} else if ( isGSuiteInCart ) {
+			const domainNames = items
+				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
+				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
+
+			const hasValidationErrors = await gSuiteContactValidationCallback(
+				activePaymentMethod.id,
+				contactInfo,
+				domainNames,
+				applyDomainContactValidationResults
+			);
+			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
 			return ! hasValidationErrors;
 		}
 
@@ -353,19 +382,34 @@ function InactiveOrderReview() {
 	return (
 		<SummaryContent>
 			<ProductList>
-				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
-					return (
-						<ProductListItem key={ product.id }>
-							{ isLineItemADomain( product ) ? <strong>{ product.label }</strong> : product.label }
-						</ProductListItem>
-					);
+				{ items.filter( shouldLineItemBeShownWhenStepInactive ).map( ( product ) => {
+					return <InactiveOrderReviewLineItem key={ product.id } product={ product } />;
 				} ) }
 			</ProductList>
 		</SummaryContent>
 	);
 }
 
-function shouldItemBeInSummary( item ) {
+function InactiveOrderReviewLineItem( { product } ) {
+	const gSuiteUsersCount = product.wpcom_meta?.extra?.google_apps_users?.length ?? 0;
+	if ( gSuiteUsersCount ) {
+		return (
+			<ProductListItem>
+				{ product.label } ({ gSuiteUsersCount })
+			</ProductListItem>
+		);
+	}
+	if ( isLineItemADomain( product ) ) {
+		return (
+			<ProductListItem>
+				<strong>{ product.label }</strong>
+			</ProductListItem>
+		);
+	}
+	return <ProductListItem>{ product.label }</ProductListItem>;
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
