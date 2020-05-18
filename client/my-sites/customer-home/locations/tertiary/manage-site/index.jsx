@@ -15,13 +15,20 @@ import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
 import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
+import {
+	ACTION_QUICK_LINKS,
+	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
+	FEATURE_GO_MOBILE,
+	FEATURE_QUICK_START,
+	FEATURE_SUPPORT,
+} from '../../../cards/constants';
 
 const cardComponents = {
-	'home-feature-go-mobile': GoMobile,
-	'home-feature-support': Support,
-	'home-action-quick-links': QuickLinks,
-	'home-feature-quick-start': QuickStart,
-	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
+	[ FEATURE_GO_MOBILE ]: GoMobile,
+	[ FEATURE_SUPPORT ]: Support,
+	[ ACTION_QUICK_LINKS ]: QuickLinks,
+	[ FEATURE_QUICK_START ]: QuickStart,
+	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 };
 
 const ManageSite = ( { cards } ) => {
@@ -36,10 +43,12 @@ const ManageSite = ( { cards } ) => {
 			<h2 className="manage-site__heading customer-home__section-heading">
 				{ translate( 'Manage your site' ) }
 			</h2>
-			{ cards.map( ( card, index ) =>
-				React.createElement( cardComponents[ card ], {
-					key: index,
-				} )
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
 			) }
 		</>
 	);

@@ -7,9 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import ManageSite from './manage-site';
+import { SECTION_MANAGE_SITE } from '../../cards/constants';
 
 const cardComponents = {
-	'home-section-manage-site': ManageSite,
+	[ SECTION_MANAGE_SITE ]: ManageSite,
 };
 
 const Tertiary = ( { cards } ) => {
@@ -19,10 +20,12 @@ const Tertiary = ( { cards } ) => {
 
 	return (
 		<>
-			{ cards.map( ( card, index ) =>
-				React.createElement( cardComponents[ card ], {
-					key: index,
-				} )
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
 			) }
 		</>
 	);

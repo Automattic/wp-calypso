@@ -8,10 +8,11 @@ import React from 'react';
  */
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import LearnGrow from './learn-grow';
+import { FEATURE_STATS, SECTION_LEARN_GROW } from '../../cards/constants';
 
 const cardComponents = {
-	'home-feature-stats': Stats,
-	'home-section-learn-grow': LearnGrow,
+	[ FEATURE_STATS ]: Stats,
+	[ SECTION_LEARN_GROW ]: LearnGrow,
 };
 
 const Secondary = ( { cards } ) => {
@@ -21,10 +22,12 @@ const Secondary = ( { cards } ) => {
 
 	return (
 		<>
-			{ cards.map( ( card ) =>
-				React.createElement( cardComponents[ card ], {
-					key: card,
-				} )
+			{ cards.map(
+				( card ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: card,
+					} )
 			) }
 		</>
 	);

@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Task from '../task';
+import { TASK_EDITOR_DEPRECATION } from '../../constants';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -64,7 +65,7 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 			actionOnClick={ actionCallback }
 			illustration={ blockEditorImage }
 			badgeText={ translate( "What's new" ) }
-			taskId="editor-deprecation"
+			taskId={ TASK_EDITOR_DEPRECATION }
 			enableSkipOptions={ false }
 		/>
 	);

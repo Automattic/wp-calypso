@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CelebrateNotice from '../celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from '../../constants';
 
 /**
  * Image dependencies
@@ -22,7 +23,7 @@ const CelebrateSiteSetupComplete = () => {
 			description={ translate(
 				"You finished your site setup. We'll guide you on the next steps to start growing your site."
 			) }
-			noticeId="site-setup-complete"
+			noticeId={ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE }
 			title={ translate( 'Site setup complete!' ) }
 			illustration={ checklistIllustration }
 			showSkip={ true }

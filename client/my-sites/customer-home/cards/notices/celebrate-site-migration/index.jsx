@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CelebrateNotice from '../celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_MIGRATION } from '../../constants';
 
 /**
  * Image dependencies
@@ -22,7 +23,7 @@ const CelebrateSiteMigration = () => {
 			description={ translate(
 				"You finished importing your site. We'll guide you on the next steps to start growing your site."
 			) }
-			noticeId="site-migrated"
+			noticeId={ NOTICE_CELEBRATE_SITE_MIGRATION }
 			title={ translate( 'Your site has been imported!' ) }
 			illustration={ migrationIllustration }
 			showSkip={ true }

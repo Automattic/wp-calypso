@@ -13,6 +13,7 @@ import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
+import { EDUCATION_FREE_PHOTO_LIBRARY, EDUCATION_GUTENBERG } from '../../../cards/constants';
 
 /**
  * Style dependencies
@@ -20,8 +21,8 @@ import { getHomeLayout } from 'state/selectors/get-home-layout';
 import './style.scss';
 
 const cardComponents = {
-	'home-education-free-photo-library': FreePhotoLibrary,
-	'home-education-gutenberg': MasteringGutenberg,
+	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
+	[ EDUCATION_GUTENBERG ]: MasteringGutenberg,
 };
 
 const LearnGrow = ( { cards } ) => {
@@ -37,10 +38,12 @@ const LearnGrow = ( { cards } ) => {
 				{ translate( 'Learn and grow' ) }
 			</h2>
 			<Card className="learn-grow__content">
-				{ cards.map( ( card, index ) =>
-					React.createElement( cardComponents[ card ], {
-						key: index,
-					} )
+				{ cards.map(
+					( card, index ) =>
+						cardComponents[ card ] &&
+						React.createElement( cardComponents[ card ], {
+							key: index,
+						} )
 				) }
 			</Card>
 		</>

@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import Task from '../task';
 import { preventWidows } from 'lib/formatting';
 import AppsBadge from 'blocks/get-apps/apps-badge';
+import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from '../../constants';
 
 /**
  * Image dependencies
@@ -51,7 +52,7 @@ const GoMobile = ( { isIos } ) => {
 			) }
 			actionButton={ actionButton }
 			timing={ 2 }
-			taskId={ isIos ? 'go-mobile-ios' : 'go-mobile-android' }
+			taskId={ isIos ? TASK_GO_MOBILE_IOS : TASK_GO_MOBILE_ANDROID }
 		/>
 	);
 };
