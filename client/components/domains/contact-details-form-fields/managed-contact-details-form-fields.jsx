@@ -283,7 +283,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						}
 					) }
 				</div>
-				{ this.renderAlternateEmailFieldForGSuite() }
+				{ this.props.needsOnlyGoogleAppsDetails && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails ? (
 					<GSuiteFields
