@@ -179,12 +179,6 @@ class SocialLoginForm extends Component {
 
 	getRedirectUrl = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
-
-		if ( host && window.localStorage?.getItem( 'a8c_testing_redirect_url' ) ) {
-			const { redirectTo } = this.props;
-			return `https://${ host + login( { isNative: true, socialService: service, redirectTo } ) }`;
-		}
-
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 
