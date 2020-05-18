@@ -179,24 +179,6 @@ const webpackConfig = {
 	},
 	module: {
 		rules: [
-			{
-				// Override side-effects for `@wordpress/blocks` while the package doesn't declare them.
-				// TODO: remove once we're using a version that declares side-effects.
-				test: /@wordpress\/blocks\/(src|build|build-module)\/api\//,
-				sideEffects: false,
-			},
-			{
-				// Override side-effects for `@wordpress/block-editor` while the package doesn't declare them.
-				// TODO: remove once we're using a version that declares side-effects.
-				test: /@wordpress\/block-editor\/(src|build|build-module)\/(components|utils)\//,
-				sideEffects: false,
-			},
-			{
-				// Override side-effects for `@wordpress/rich-text` while the package doesn't declare them.
-				// TODO: remove once we're using a version that declares side-effects.
-				test: /@wordpress\/rich-text\/(src|build|build-module)\/component\//,
-				sideEffects: false,
-			},
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
