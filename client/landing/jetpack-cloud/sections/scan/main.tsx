@@ -62,14 +62,15 @@ class ScanPage extends Component< Props > {
 	renderProvisioning() {
 		return (
 			<>
-				<SecurityIcon icon="in-progress" />
+				<SecurityIcon />
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
-					Lorem ipsum. We need to change this text. The scan was unable to process the themes
-					directory and did not completed successfully. In order to complete the scan you will need
-					to speak to support who can help determine what went wrong.
+					{ translate(
+						"Welcome to Jetpack Scan! We're scoping out your site, setting up to do a full scan. " +
+							"We'll let you know if we spot any issues that might impact a scan, " +
+							'then start your first full scan will start.'
+					) }
 				</p>
-				{ this.renderContactSupportButton() }
 			</>
 		);
 	}
@@ -100,23 +101,6 @@ class ScanPage extends Component< Props > {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
 			</Button>
-		);
-	}
-	// @todo: missing copy and design for this state
-	renderUnavailable() {
-		return (
-			<>
-				<SecurityIcon icon="scan-error" />
-				{ this.renderHeader( 'Scan is unavailable' ) }
-				<p>
-					{ translate(
-						'The scan was unable to process the themes directory and did not completed ' +
-							'successfully. In order to complete the scan you will need to speak to support ' +
-							'who can help determine what went wrong.'
-					) }
-				</p>
-				{ this.renderContactSupportButton() }
-			</>
 		);
 	}
 
@@ -228,11 +212,6 @@ class ScanPage extends Component< Props > {
 
 		if ( state === 'provisioning' ) {
 			return this.renderProvisioning();
-		}
-
-		// @todo: missing copy and design for these states
-		if ( state === 'unavailable' ) {
-			return this.renderUnavailable();
 		}
 
 		if ( state === 'scanning' ) {
