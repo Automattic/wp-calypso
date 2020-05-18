@@ -302,9 +302,6 @@ function RenderContactDetails( {
 	if ( isGSuiteInCart ) {
 		return (
 			<React.Fragment>
-				<ContactDetailsFormDescription>
-					{ translate( 'G Suite Account Information' ) }
-				</ContactDetailsFormDescription>
 				{ renderDomainContactFields(
 					prepareDomainContactDetails( contactInfo ),
 					prepareDomainContactDetailsErrors( contactInfo ),

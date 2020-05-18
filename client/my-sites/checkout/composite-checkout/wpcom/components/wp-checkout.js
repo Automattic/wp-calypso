@@ -43,11 +43,19 @@ const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ items ] = useLineItems();
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 
 	if ( areDomainsInLineItems( items ) ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
+	}
+	if ( isGSuiteInCart ) {
+		return ! isActive && isComplete
+			? translate( 'G Suite account information' )
+			: translate( 'Enter your G Suite account information' );
 	}
 	return ! isActive && isComplete
 		? translate( 'Billing information' )
