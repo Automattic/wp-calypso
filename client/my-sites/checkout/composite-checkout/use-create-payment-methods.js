@@ -24,7 +24,6 @@ import {
 	wpcomPayPalExpress,
 	getDomainDetails,
 	wpcomTransaction,
-	submitCreditsTransaction,
 	WordPressCreditsLabel,
 	WordPressCreditsSummary,
 	submitFreePurchaseTransaction,
@@ -121,28 +120,7 @@ function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 		if ( ! shouldLoadFullCreditsMethod ) {
 			return null;
 		}
-		return createFullCreditsMethod( {
-			registerStore,
-			submitTransaction: ( submitData ) => {
-				const pending = submitCreditsTransaction(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-						// this data is intentionally empty so we do not charge taxes
-						country: null,
-						postalCode: null,
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( ( result ) => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-		} );
+		return createFullCreditsMethod();
 	}, [ shouldLoadFullCreditsMethod ] );
 	if ( fullCreditsPaymentMethod ) {
 		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;

@@ -62,7 +62,11 @@ import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
 import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
-import { applePayProcessor, stripeCardProcessor } from './payment-method-processors';
+import {
+	applePayProcessor,
+	stripeCardProcessor,
+	fullCreditsProcessor,
+} from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import createContactValidationCallback from './contact-validation';
@@ -384,7 +388,11 @@ export default function CompositeCheckout( {
 	);
 
 	const paymentProcessors = useMemo(
-		() => ( { 'apple-pay': applePayProcessor, card: stripeCardProcessor } ),
+		() => ( {
+			'apple-pay': applePayProcessor,
+			card: stripeCardProcessor,
+			'full-credits': fullCreditsProcessor,
+		} ),
 		[]
 	);
 
