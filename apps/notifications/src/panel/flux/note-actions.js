@@ -40,7 +40,7 @@ export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLik
 			: wpcom().site( siteId ).post( postId );
 
 	reduxStore.dispatch( actions.notes.likeNote( noteId, isLiked ) );
-	bumpStat( `${ isLiked ? 'unlike' : 'like'}-${ type }` );
+	bumpStat( `${ isLiked ? 'unlike' : 'like' }-${ type }` );
 	recordTracksEvent( 'calypso_notification_note_' + ( isLiked ? 'like' : 'unlike' ), {
 		note_type: type,
 	} );

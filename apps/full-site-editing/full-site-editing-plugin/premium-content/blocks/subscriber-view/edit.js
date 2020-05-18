@@ -59,7 +59,8 @@ export default compose( [
 	withSelect( ( select, props ) => {
 		return {
 			// @ts-ignore difficult to type with JSDoc
-			hasInnerBlocks: !! ( select( 'core/block-editor' ).getBlocksByClientId( props.clientId )[ 0 ].innerBlocks.length ),
+			hasInnerBlocks: !! select( 'core/block-editor' ).getBlocksByClientId( props.clientId )[ 0 ]
+				.innerBlocks.length,
 			// @ts-ignore difficult to type with JSDoc
 			containerClientId: select( 'core/block-editor' ).getBlockHierarchyRootClientId(
 				props.clientId
