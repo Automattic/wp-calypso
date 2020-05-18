@@ -129,6 +129,160 @@
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false
+		},
+		{
+			"title": "Barnsbury",
+			"slug": "barnsbury",
+			"template": "barnsbury",
+			"theme": "barnsbury",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/barnsbury/barnsbury/",
+			"fonts": {
+				"headings": "Open Sans",
+				"base": "Chivo"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Alves",
+			"slug": "alves",
+			"template": "alves",
+			"theme": "alves",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/alves/",
+			"fonts": {
+				"headings": "Arvo",
+				"base": "Montserrat"
+			},
+			"categories": [ "featured", "non-profit", "charity" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Mayland",
+			"slug": "mayland",
+			"template": "mayland",
+			"theme": "mayland",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland/",
+			"fonts": {
+				"headings": "Raleway",
+				"base": "Cabin"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Rivington",
+			"slug": "rivington",
+			"template": "rivington",
+			"theme": "rivington",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rivington/rivington/",
+			"fonts": {
+				"headings": "Arvo",
+				"base": "Montserrat"
+			},
+			"categories": [ "featured", "real estate listing" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Maywood",
+			"slug": "maywood",
+			"template": "maywood",
+			"theme": "maywood",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant, small business" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Balasana",
+			"slug": "balasana",
+			"template": "balasana",
+			"theme": "balasana",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/balasana/balasana/",
+			"fonts": {
+				"headings": "Open Sans",
+				"base": "Chivo"
+			},
+			"categories": [ "featured", "restaurant, small business" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Stratford",
+			"slug": "stratford",
+			"template": "stratford",
+			"theme": "stratford",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/stratford/stratford/",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "school" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Rockfield",
+			"slug": "rockfield",
+			"template": "rockfield",
+			"theme": "rockfield",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield/",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant", "small business" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Coutoire",
+			"slug": "coutoire",
+			"template": "coutoire",
+			"theme": "coutoire",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/coutoire/",
+			"fonts": {
+				"headings": "Playfair display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Leven",
+			"slug": "leven",
+			"template": "leven",
+			"theme": "leven",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/leven/leven/",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "portfolio", "small business" ],
+			"is_premium": false,
+			"is_edge": true
+		},
+		{
+			"title": "Gibbs",
+			"slug": "gibbs",
+			"template": "gibbs",
+			"theme": "rockfield",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/gibbs/",
+			"fonts": {
+				"headings": "Fira Sans",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant", "small business" ],
+			"is_premium": false,
+			"is_edge": true
 		}
 	]
 }
