@@ -132,6 +132,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		setIsFocused( false ); // prevent executing handleBlur()
 		// empty suggestions cache once a vertical is selceted
 		setSuggestions( [] );
+		recordVerticalSelection( vertical?.slug, vertical?.label );
 	};
 
 	const selectLastInputValue = () => {
@@ -184,9 +185,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	React.useEffect( () => {
-		const { slug, label } = siteVertical || {};
-		inputRef.current.innerText = label || '';
-		recordVerticalSelection( slug, label );
+		inputRef.current.innerText = siteVertical?.label || '';
 	}, [ siteVertical, inputRef ] );
 
 	React.useEffect( () => {
