@@ -23,7 +23,6 @@ import { resetVerifyEmailState } from 'state/current-user/email-verification/act
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
@@ -98,7 +97,6 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 const SiteSetupList = ( {
 	emailVerificationStatus,
 	isEmailUnverified,
-	isSiteSetupComplete,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -119,13 +117,13 @@ const SiteSetupList = ( {
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
-		if ( ! currentTaskId && tasks.length && ! isSiteSetupComplete ) {
+		if ( ! currentTaskId && tasks.length ) {
 			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
 			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
-	}, [ currentTaskId, dispatch, isSiteSetupComplete, tasks ] );
+	}, [ currentTaskId, dispatch, tasks ] );
 
 	// Reset verification email state on first load.
 	useEffect( () => {
@@ -136,7 +134,7 @@ const SiteSetupList = ( {
 
 	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
-		if ( userSelectedTask || isSiteSetupComplete ) {
+		if ( userSelectedTask ) {
 			return;
 		}
 		if ( currentTaskId && currentTask && tasks.length ) {
@@ -147,22 +145,10 @@ const SiteSetupList = ( {
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [
-		currentTask,
-		currentTaskId,
-		dispatch,
-		isSiteSetupComplete,
-		siteId,
-		tasks,
-		userSelectedTask,
-	] );
+	}, [ currentTask, currentTaskId, dispatch, siteId, tasks, userSelectedTask ] );
 
 	// Update current task.
 	useEffect( () => {
-		if ( isSiteSetupComplete ) {
-			return;
-		}
-
 		if ( currentTaskId && tasks.length ) {
 			const rawTask = tasks.find( ( task ) => task.id === currentTaskId );
 			const newCurrentTask = getTask( rawTask, {
@@ -184,7 +170,6 @@ const SiteSetupList = ( {
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
-		isSiteSetupComplete,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -316,7 +301,6 @@ export default connect( ( state ) => {
 	return {
 		emailVerificationStatus,
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
-		isSiteSetupComplete: isSiteChecklistComplete( state, siteId ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
