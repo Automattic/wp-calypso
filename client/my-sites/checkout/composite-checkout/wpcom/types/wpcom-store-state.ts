@@ -20,39 +20,39 @@ import {
 } from './backend/domain-contact-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
-	firstName: T;
-	lastName: T;
-	organization: T;
-	email: T;
-	alternateEmail: T;
-	phone: T;
-	phoneNumberCountry: T;
-	address1: T;
-	address2: T;
-	city: T;
-	state: T;
-	postalCode: T;
-	countryCode: T;
-	fax: T;
-	vatId: T;
-	tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< T >;
+	firstName?: T;
+	lastName?: T;
+	organization?: T;
+	email?: T;
+	alternateEmail?: T;
+	phone?: T;
+	phoneNumberCountry?: T;
+	address1?: T;
+	address2?: T;
+	city?: T;
+	state?: T;
+	postalCode?: T;
+	countryCode?: T;
+	fax?: T;
+	vatId?: T;
+	tldExtraFields?: ManagedContactDetailsTldExtraFieldsShape< T >;
 };
 
 type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	ca?: {
-		lang: T;
-		legalType: T;
-		ciraAgreementAccepted: T;
+		lang?: T;
+		legalType?: T;
+		ciraAgreementAccepted?: T;
 	};
 	uk?: {
-		registrantType: T;
-		registrationNumber: T;
-		tradingName: T;
+		registrantType?: T;
+		registrationNumber?: T;
+		tradingName?: T;
 	};
 	fr?: {
-		registrantType: T;
-		trademarkNumber: T;
-		sirenSiret: T;
+		registrantType?: T;
+		trademarkNumber?: T;
+		sirenSiret?: T;
 	};
 };
 
@@ -76,13 +76,13 @@ type ManagedContactDetailsTldExtraFieldsShape< T > = {
  */
 export function updateManagedContactDetailsShape< A, B >(
 	merge: ( arg0: A, arg1: B ) => B,
-	construct: ( arg0: A ) => B,
+	construct: ( arg0: A | undefined ) => B | undefined,
 	update: ManagedContactDetailsShape< A >,
 	data: ManagedContactDetailsShape< B >
 ): ManagedContactDetailsShape< B > {
 	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {};
 
-	const combine = ( u, v ) => {
+	const combine = ( u: A | undefined, v: B | undefined ): B | undefined => {
 		if ( typeof u !== 'undefined' && typeof v !== 'undefined' ) {
 			return merge( u, v );
 		} else if ( typeof u !== 'undefined' && typeof v === 'undefined' ) {
@@ -193,48 +193,52 @@ export function flattenManagedContactDetailsShape< A, B >(
 	x: ManagedContactDetailsShape< A >
 ): Array< B > {
 	const values = [
-		f( x.firstName ),
-		f( x.lastName ),
-		f( x.organization ),
-		f( x.email ),
-		f( x.alternateEmail ),
-		f( x.phone ),
-		f( x.phoneNumberCountry ),
-		f( x.address1 ),
-		f( x.address2 ),
-		f( x.city ),
-		f( x.state ),
-		f( x.postalCode ),
-		f( x.countryCode ),
-		f( x.fax ),
-		f( x.vatId ),
-	];
+		x.firstName ? f( x.firstName ) : null,
+		x.lastName ? f( x.lastName ) : null,
+		x.organization ? f( x.organization ) : null,
+		x.email ? f( x.email ) : null,
+		x.alternateEmail ? f( x.alternateEmail ) : null,
+		x.phone ? f( x.phone ) : null,
+		x.phoneNumberCountry ? f( x.phoneNumberCountry ) : null,
+		x.address1 ? f( x.address1 ) : null,
+		x.address2 ? f( x.address2 ) : null,
+		x.city ? f( x.city ) : null,
+		x.state ? f( x.state ) : null,
+		x.postalCode ? f( x.postalCode ) : null,
+		x.countryCode ? f( x.countryCode ) : null,
+		x.fax ? f( x.fax ) : null,
+		x.vatId ? f( x.vatId ) : null,
+	].filter( Boolean ) as B[];
 
 	const caValues =
 		x.tldExtraFields && x.tldExtraFields.ca
-			? [
-					f( x.tldExtraFields.ca.lang ),
-					f( x.tldExtraFields.ca.legalType ),
-					f( x.tldExtraFields.ca.ciraAgreementAccepted ),
-			  ]
+			? ( [
+					x.tldExtraFields.ca.lang ? f( x.tldExtraFields.ca.lang ) : null,
+					x.tldExtraFields.ca.legalType ? f( x.tldExtraFields.ca.legalType ) : null,
+					x.tldExtraFields.ca.ciraAgreementAccepted
+						? f( x.tldExtraFields.ca.ciraAgreementAccepted )
+						: null,
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	const ukValues =
 		x.tldExtraFields && x.tldExtraFields.uk
-			? [
-					f( x.tldExtraFields.uk.registrantType ),
-					f( x.tldExtraFields.uk.registrationNumber ),
-					f( x.tldExtraFields.uk.tradingName ),
-			  ]
+			? ( [
+					x.tldExtraFields.uk.registrantType ? f( x.tldExtraFields.uk.registrantType ) : null,
+					x.tldExtraFields.uk.registrationNumber
+						? f( x.tldExtraFields.uk.registrationNumber )
+						: null,
+					x.tldExtraFields.uk.tradingName ? f( x.tldExtraFields.uk.tradingName ) : null,
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	const frValues =
 		x.tldExtraFields && x.tldExtraFields.fr
-			? [
-					f( x.tldExtraFields.fr.registrantType ),
-					f( x.tldExtraFields.fr.trademarkNumber ),
-					f( x.tldExtraFields.fr.sirenSiret ),
-			  ]
+			? ( [
+					x.tldExtraFields.fr.registrantType ? f( x.tldExtraFields.fr.registrantType ) : null,
+					x.tldExtraFields.fr.trademarkNumber ? f( x.tldExtraFields.fr.trademarkNumber ) : null,
+					x.tldExtraFields.fr.sirenSiret ? f( x.tldExtraFields.fr.sirenSiret ) : null,
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	return values.concat( caValues, ukValues, frValues );
@@ -252,7 +256,7 @@ export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined 
 /*
  * Intermediate type used to represent update payloads
  */
-type ManagedContactDetailsUpdate = ManagedContactDetailsShape< undefined | string >;
+type ManagedContactDetailsUpdate = ManagedContactDetailsShape< string >;
 
 /*
  * Different subsets of the details are mandatory depending on what is
@@ -297,13 +301,17 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 	return { ...oldData, isTouched: true };
 }
 
-function touchIfDifferent( newValue: undefined | string, oldData: ManagedValue ): ManagedValue {
-	if ( newValue === undefined ) {
+function touchIfDifferent(
+	newValue: undefined | string,
+	oldData: ManagedValue | undefined
+): ManagedValue {
+	if ( newValue === undefined && oldData !== undefined ) {
 		return oldData;
 	}
-	return newValue === oldData.value
-		? oldData
-		: { ...oldData, value: newValue, isTouched: true, errors: [] };
+	if ( oldData !== undefined && newValue === oldData.value ) {
+		return oldData;
+	}
+	return { isRequired: false, ...oldData, value: newValue ?? '', isTouched: true, errors: [] };
 }
 
 function setValueUnlessTouched(
@@ -362,19 +370,19 @@ export function prepareDomainContactDetails(
 	details: ManagedContactDetails
 ): DomainContactDetails {
 	return {
-		firstName: details.firstName.value,
-		lastName: details.lastName.value,
-		organization: details.organization.value,
-		email: details.email.value,
-		alternateEmail: details.alternateEmail.value,
-		phone: details.phone.value,
-		address1: details.address1.value,
-		address2: details.address2.value,
-		city: details.city.value,
-		state: details.state.value,
-		postalCode: details.postalCode.value,
-		countryCode: details.countryCode.value,
-		fax: details.fax.value,
+		firstName: details.firstName?.value,
+		lastName: details.lastName?.value,
+		organization: details.organization?.value,
+		email: details.email?.value,
+		alternateEmail: details.alternateEmail?.value,
+		phone: details.phone?.value,
+		address1: details.address1?.value,
+		address2: details.address2?.value,
+		city: details.city?.value,
+		state: details.state?.value,
+		postalCode: details.postalCode?.value,
+		countryCode: details.countryCode?.value,
+		fax: details.fax?.value,
 		extra: prepareTldExtraContactDetails( details ),
 	};
 }
@@ -383,19 +391,19 @@ export function prepareDomainContactDetailsErrors(
 	details: ManagedContactDetails
 ): DomainContactDetailsErrors {
 	return {
-		firstName: details.firstName.errors[ 0 ],
-		lastName: details.lastName.errors[ 0 ],
-		organization: details.organization.errors[ 0 ],
-		email: details.email.errors[ 0 ],
-		alternateEmail: details.alternateEmail.errors[ 0 ],
-		phone: details.phone.errors[ 0 ],
-		address1: details.address1.errors[ 0 ],
-		address2: details.address2.errors[ 0 ],
-		city: details.city.errors[ 0 ],
-		state: details.state.errors[ 0 ],
-		postalCode: details.postalCode.errors[ 0 ],
-		countryCode: details.countryCode.errors[ 0 ],
-		fax: details.fax.errors[ 0 ],
+		firstName: details.firstName?.errors[ 0 ],
+		lastName: details.lastName?.errors[ 0 ],
+		organization: details.organization?.errors[ 0 ],
+		email: details.email?.errors[ 0 ],
+		alternateEmail: details.alternateEmail?.errors[ 0 ],
+		phone: details.phone?.errors[ 0 ],
+		address1: details.address1?.errors[ 0 ],
+		address2: details.address2?.errors[ 0 ],
+		city: details.city?.errors[ 0 ],
+		state: details.state?.errors[ 0 ],
+		postalCode: details.postalCode?.errors[ 0 ],
+		countryCode: details.countryCode?.errors[ 0 ],
+		fax: details.fax?.errors[ 0 ],
 		extra: prepareTldExtraContactDetailsErrors( details ),
 	};
 }
@@ -433,9 +441,9 @@ function prepareCaDomainContactExtraDetails(
 ): CaDomainContactExtraDetails | null {
 	if ( details.tldExtraFields?.ca ) {
 		return {
-			lang: details.tldExtraFields.ca.lang.value,
-			legalType: details.tldExtraFields.ca.legalType.value,
-			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+			lang: details.tldExtraFields.ca.lang?.value,
+			legalType: details.tldExtraFields.ca.legalType?.value,
+			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted?.value === 'true',
 		};
 	}
 	return null;
@@ -459,9 +467,9 @@ function prepareUkDomainContactExtraDetails(
 ): UkDomainContactExtraDetails | null {
 	if ( details.tldExtraFields?.uk ) {
 		return {
-			registrantType: details.tldExtraFields.uk.registrantType.value,
-			registrationNumber: details.tldExtraFields.uk.registrationNumber.value,
-			tradingName: details.tldExtraFields.uk.tradingName.value,
+			registrantType: details.tldExtraFields.uk.registrantType?.value,
+			registrationNumber: details.tldExtraFields.uk.registrationNumber?.value,
+			tradingName: details.tldExtraFields.uk.tradingName?.value,
 		};
 	}
 	return null;
@@ -492,10 +500,10 @@ function prepareFrDomainContactExtraDetails(
 ): FrDomainContactExtraDetails | null {
 	if ( details.tldExtraFields?.fr ) {
 		return {
-			registrantType: details.tldExtraFields.fr.registrantType.value,
-			registrantVatId: details.vatId.value,
-			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.value,
-			sirenSiret: details.tldExtraFields.fr.sirenSiret.value,
+			registrantType: details.tldExtraFields.fr.registrantType?.value,
+			registrantVatId: details.vatId?.value,
+			trademarkNumber: details.tldExtraFields.fr.trademarkNumber?.value,
+			sirenSiret: details.tldExtraFields.fr.sirenSiret?.value,
 		};
 	}
 	return null;
@@ -507,7 +515,7 @@ function prepareFrDomainContactExtraDetailsErrors(
 	if ( details.tldExtraFields?.fr ) {
 		return {
 			registrantType: details.tldExtraFields.fr?.registrantType?.errors,
-			registrantVatId: details.vatId.errors,
+			registrantVatId: details.vatId?.errors,
 			trademarkNumber: details.tldExtraFields.fr?.trademarkNumber?.errors,
 			sirenSiret: details.tldExtraFields.fr?.sirenSiret?.errors,
 		};
@@ -523,45 +531,45 @@ export function prepareDomainContactValidationRequest(
 
 	if ( details.tldExtraFields?.ca ) {
 		extra.ca = {
-			lang: details.tldExtraFields.ca.lang.value,
-			legal_type: details.tldExtraFields.ca.legalType.value,
-			cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+			lang: details.tldExtraFields.ca.lang?.value,
+			legal_type: details.tldExtraFields.ca.legalType?.value,
+			cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted?.value === 'true',
 		};
 	}
 	if ( details.tldExtraFields?.uk ) {
 		extra.uk = {
-			registrant_type: details.tldExtraFields.uk.registrantType.value,
-			registration_number: details.tldExtraFields.uk.registrationNumber.value,
-			trading_name: details.tldExtraFields.uk.tradingName.value,
+			registrant_type: details.tldExtraFields.uk.registrantType?.value,
+			registration_number: details.tldExtraFields.uk.registrationNumber?.value,
+			trading_name: details.tldExtraFields.uk.tradingName?.value,
 		};
 	}
 	if ( details.tldExtraFields?.fr ) {
 		extra.fr = {
-			registrant_type: details.tldExtraFields.fr.registrantType.value,
-			registrant_vat_id: details.vatId.value,
-			trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
-			siren_siret: details.tldExtraFields.fr.sirenSiret.value,
+			registrant_type: details.tldExtraFields.fr.registrantType?.value,
+			registrant_vat_id: details.vatId?.value,
+			trademark_number: details.tldExtraFields.fr.trademarkNumber?.value,
+			siren_siret: details.tldExtraFields.fr.sirenSiret?.value,
 		};
 	}
 
 	return {
 		domain_names: domainNames,
 		contact_information: {
-			firstName: details.firstName.value,
-			lastName: details.lastName.value,
-			organization: details.organization.value,
-			email: details.email.value,
-			alternateEmail: details.alternateEmail.value,
-			phone: details.phone.value,
-			phoneNumberCountry: details.phoneNumberCountry.value,
-			address1: details.address1.value,
-			address2: details.address2.value,
-			city: details.city.value,
-			state: details.state.value,
-			postalCode: details.postalCode.value,
-			countryCode: details.countryCode.value,
-			fax: details.fax.value,
-			vatId: details.vatId.value,
+			firstName: details.firstName?.value,
+			lastName: details.lastName?.value,
+			organization: details.organization?.value,
+			email: details.email?.value,
+			alternateEmail: details.alternateEmail?.value,
+			phone: details.phone?.value,
+			phoneNumberCountry: details.phoneNumberCountry?.value,
+			address1: details.address1?.value,
+			address2: details.address2?.value,
+			city: details.city?.value,
+			state: details.state?.value,
+			postalCode: details.postalCode?.value,
+			countryCode: details.countryCode?.value,
+			fax: details.fax?.value,
+			vatId: details.vatId?.value,
 			extra,
 		},
 	};
@@ -748,6 +756,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 	},
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
+		// TODO: reimplement this to handle new contact details format, or remove this if it is no longer necessary
 		return Object.keys( oldDetails ).reduce( ( newDetails, detailKey ) => {
 			return { ...newDetails, [ detailKey ]: touchField( oldDetails[ detailKey ] ) };
 		}, oldDetails );
