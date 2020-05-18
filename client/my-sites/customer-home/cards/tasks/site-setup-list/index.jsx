@@ -145,7 +145,7 @@ const SiteSetupList = ( {
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTask, currentTaskId, dispatch, siteId, tasks, userSelectedTask ] );
+	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
