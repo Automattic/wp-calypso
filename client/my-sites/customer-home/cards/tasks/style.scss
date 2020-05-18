@@ -2,6 +2,7 @@
 	display: flex;
 	background: var( --color-surface );
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	position: relative;
 
 	.task__text,
 	.task__illustration {
@@ -79,6 +80,18 @@
 
 	.task__skip {
 		margin: auto 16px;
+	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+
+	&.is-loading > *:not( .spinner ) {
+		visibility: hidden;
 	}
 }
 

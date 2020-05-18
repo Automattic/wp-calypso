@@ -68,7 +68,7 @@ class GuidedToursComponent extends Component {
 			} );
 		}
 
-		recordTracksEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit'}`, {
+		recordTracksEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
 			step,
 			tour,
 			tour_version,

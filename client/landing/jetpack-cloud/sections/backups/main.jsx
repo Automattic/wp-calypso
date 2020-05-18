@@ -225,7 +225,7 @@ class BackupsPage extends Component {
 	}
 
 	renderBackupSearch() {
-		const { doesRewindNeedCredentials, logs, siteSlug, translate } = this.props;
+		const { logs, siteSlug, translate } = this.props;
 
 		// Filter out anything that is not restorable
 		const restorablePoints = logs.filter( ( event ) => !! event.activityIsRewindable );
@@ -240,12 +240,7 @@ class BackupsPage extends Component {
 						'This is the complete event history for your site. Filter by date range and/ or activity type.'
 					) }
 				</div>
-				<ActivityCardList
-					logs={ restorablePoints }
-					pageSize={ 10 }
-					siteSlug={ siteSlug }
-					doesRewindNeedCredentials={ doesRewindNeedCredentials }
-				/>
+				<ActivityCardList logs={ restorablePoints } pageSize={ 10 } siteSlug={ siteSlug } />
 			</div>
 		);
 	}

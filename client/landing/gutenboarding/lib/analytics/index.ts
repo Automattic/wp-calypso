@@ -36,7 +36,10 @@ export function recordOnboardingStart( ref = '' ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
+
 	trackEventWithFlow( 'calypso_newsite_start', { ref } );
+	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
+	trackEventWithFlow( 'calypso_signup_start', { ref } );
 }
 
 /**
@@ -45,11 +48,15 @@ export function recordOnboardingStart( ref = '' ): void {
  * @param {object} params A set of params to pass to analytics for signup completion
  */
 export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
-	trackEventWithFlow( 'calypso_newsite_complete', {
+	const trackingParams = {
 		is_new_user: params.isNewUser,
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
-	} );
+		has_cart_items: params.hasCartItems,
+	};
+	trackEventWithFlow( 'calypso_newsite_complete', trackingParams );
+	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
+	trackEventWithFlow( 'calypso_signup_complete', trackingParams );
 }
 
 /**
