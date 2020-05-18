@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
-import { Button, Dashicon } from '@wordpress/components';
-
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 
 /**
@@ -79,7 +79,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				ref={ buttonRef }
 			>
 				<span className="domain-picker-button__label">{ children }</span>
-				<Dashicon icon="arrow-down-alt2" size={ 16 } />
+				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
 			<DomainPickerPopover
 				isOpen={ isDomainPopoverVisible }
