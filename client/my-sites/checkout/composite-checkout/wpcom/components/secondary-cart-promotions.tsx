@@ -27,7 +27,7 @@ export interface MockResponseCart extends PartialCart {
 const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
-		() => responseCart?.products.some( ( product ) => product.is_renewal ),
+		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
 		[ responseCart ]
 	);
 

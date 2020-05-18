@@ -59,6 +59,17 @@ describe( 'SecondaryCartPromotions', () => {
 				expect( queryByText( 'Renew all' ) ).toBeTruthy();
 			} );
 
+			test( 'does not crash when there is missing data', () => {
+				const { container } = render(
+					<ReduxProvider store={ store }>
+						<ThemeProvider theme={ defaultTheme }>
+							<SecondaryCartPromotions responseCart={ null } addItemToCart={ jest.fn() } />
+						</ThemeProvider>
+					</ReduxProvider>
+				);
+				expect( container ).toHaveTextContent( '' );
+			} );
+
 			test( 'adds the items to the cart when "Renew all" is clicked', () => {
 				const mockAddItemToCart = jest.fn();
 				const { queryByText } = render(
