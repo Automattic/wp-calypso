@@ -7,12 +7,14 @@ import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
+import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -26,7 +28,7 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestHomeLayout } from 'state/home/actions';
+import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
 import { getTask } from './get-task';
 
@@ -59,9 +61,18 @@ const startTask = ( dispatch, task, siteId ) => {
 	}
 };
 
-const skipTask = ( dispatch, task, siteId ) => {
-	dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
-	dispatch( requestHomeLayout( siteId ) );
+const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
+
+	if ( isLastTask ) {
+		// When skipping the last task, we request skipping the current layout view so it's refreshed afterwards.
+		// Task will be dismissed server-side to avoid race conditions.
+		setIsLoading( true );
+		dispatch( skipCurrentViewHomeLayout( siteId ) );
+	} else {
+		// Otherwise we simply skip the given task.
+		dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+	}
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_dismiss', {
 			checklist_name: 'new_blog',
@@ -98,25 +109,28 @@ const SiteSetupList = ( {
 	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
 	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
 		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
 
+	// Move to first incomplete task on first load.
 	useEffect( () => {
-		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
 			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
 			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
+	}, [ currentTaskId, dispatch, tasks ] );
 
-		// Reset verification email state on first load.
+	// Reset verification email state on first load.
+	useEffect( () => {
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
+	}, [ isEmailUnverified, dispatch ] );
 
 	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
@@ -176,7 +190,8 @@ const SiteSetupList = ( {
 	}
 
 	return (
-		<Card className="site-setup-list">
+		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+			{ isLoading && <Spinner /> }
 			{ useDrillLayout && (
 				<CardHeading>
 					<>
@@ -249,7 +264,7 @@ const SiteSetupList = ( {
 									className="site-setup-list__task-skip task__skip is-link"
 									onClick={ () => {
 										setUserSelectedTask( false );
-										skipTask( dispatch, currentTask, siteId );
+										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
 									} }
 								>
 									{ translate( 'Skip for now' ) }

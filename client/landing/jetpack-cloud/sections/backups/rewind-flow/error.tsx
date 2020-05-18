@@ -40,7 +40,7 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 				rel="noopener noreferrer"
 				target="_blank"
 			>
-				{ translate( 'Contact Support {{externalIcon/}}', {
+				{ translate( 'Contact support {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
 			</Button>

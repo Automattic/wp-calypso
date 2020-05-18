@@ -14,12 +14,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class MyHomePage extends AsyncBaseContainer {
 	constructor( driver, url ) {
 		super( driver, By.css( '.customer-home__main' ), url );
-
-		this.deprecatedCelebrateNoticeCloseButtonSelector = By.css(
-			'.celebrate-notice .dismissible-card__close-icon'
-		);
 		this.celebrateNoticeCloseButtonSelector = By.css( '.celebrate-notice-v2__action' );
-
 		this.siteSetupListSelector = By.css( '.customer-home__main .site-setup-list' );
 		this.updateHomepageTaskSelector = By.css(
 			'.customer-home__main [data-task="front_page_updated"]'
@@ -34,13 +29,6 @@ export default class MyHomePage extends AsyncBaseContainer {
 			await driverHelper.isElementPresent( this.driver, this.celebrateNoticeCloseButtonSelector )
 		) {
 			await this.driver.findElement( this.celebrateNoticeCloseButtonSelector ).click();
-		} else if (
-			await driverHelper.isElementPresent(
-				this.driver,
-				this.deprecatedCelebrateNoticeCloseButtonSelector
-			)
-		) {
-			await this.driver.findElement( this.deprecatedCelebrateNoticeCloseButtonSelector ).click();
 		}
 	}
 

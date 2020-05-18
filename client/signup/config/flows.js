@@ -63,7 +63,7 @@ function getLaunchDestination( dependencies ) {
 	if ( dependencies.source === 'editor' ) {
 		return `/block-editor/page/${ dependencies.siteSlug }/home`;
 	}
-	return `/home/${ dependencies.siteSlug }?d=launched`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -71,7 +71,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
