@@ -53,14 +53,14 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<div className={ classnames( 'celebrate-notice-v2', 'task', { 'is-loading': isLoading } ) }>
+		<div className={ classnames( 'celebrate-notice', 'task', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			<div className="celebrate-notice-v2__text task__text">
-				<h2 className="celebrate-notice-v2__title task__title">{ title }</h2>
-				<p className="celebrate-notice-v2__description task__description">{ description }</p>
-				<div className="celebrate-notice-v2__actions task__actions">
+			<div className="celebrate-notice__text task__text">
+				<h2 className="celebrate-notice__title task__title">{ title }</h2>
+				<p className="celebrate-notice__description task__description">{ description }</p>
+				<div className="celebrate-notice__actions task__actions">
 					<Button
-						className="celebrate-notice-v2__action task__action"
+						className="celebrate-notice__action task__action"
 						primary
 						onClick={ showNextTask }
 					>
@@ -68,14 +68,14 @@ const CelebrateNotice = ( {
 					</Button>
 
 					{ showSkip && (
-						<Button className="celebrate-notice-v2__skip task__skip is-link" onClick={ skip }>
+						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
 							{ skipText }
 						</Button>
 					) }
 				</div>
 			</div>
 			{ isDesktop() && (
-				<div className="celebrate-notice-v2__illustration task__illustration">
+				<div className="celebrate-notice__illustration task__illustration">
 					<img src={ illustration } alt="" />
 				</div>
 			) }
