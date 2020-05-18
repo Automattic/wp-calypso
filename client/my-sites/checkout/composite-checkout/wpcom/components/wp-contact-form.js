@@ -303,6 +303,7 @@ function RenderContactDetails( {
 		return (
 			<React.Fragment>
 				{ renderDomainContactFields(
+					domainNames,
 					prepareDomainContactDetails( contactInfo ),
 					prepareDomainContactDetailsErrors( contactInfo ),
 					updateDomainContactFields,
