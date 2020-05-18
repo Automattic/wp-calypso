@@ -109,13 +109,13 @@ describe( 'actions', () => {
 
 	describe( 'deleteStoredKeyringConnection()', () => {
 		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/wpcom/v2/me/connections/2/delete' )
+			nock( 'https://public-api.wordpress.com' )
+				.intercept( '/wpcom/v2/me/connections/2', 'DELETE' )
 				.reply( 200, {
 					ID: 2,
 					deleted: true,
 				} )
-				.post( '/wpcom/v2/me/connections/34/delete' )
+				.intercept( '/wpcom/v2/me/connections/34', 'DELETE' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'You do not have permission to access this Keyring connection.',
