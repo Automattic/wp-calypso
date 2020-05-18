@@ -67,8 +67,9 @@ class ScanPage extends Component< Props > {
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
 					{ translate(
-						'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
-							'and the results will be with you soon.'
+						"Welcome to Jetpack Scan! We're scoping out your site, setting up to do a full scan. " +
+							"We'll let you know if we spot any issues that might impact a scan, " +
+							'then start your first full scan will start.'
 					) }
 				</p>
 			</>
