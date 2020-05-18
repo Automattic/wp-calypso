@@ -5,7 +5,7 @@ import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
-import { Icon } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
@@ -159,7 +159,7 @@ const Header: React.FunctionComponent = () => {
 			<section className="gutenboarding__header-section">
 				<div className="gutenboarding__header-section-item">
 					<div className="gutenboarding__header-wp-logo">
-						<Icon icon="wordpress-alt" size={ 24 } />
+						<Icon icon={ wordpress } size={ 28 } />
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">

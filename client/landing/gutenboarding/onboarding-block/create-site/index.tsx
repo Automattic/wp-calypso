@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { Icon } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { useInterval } from '../../../../lib/interval/use-interval';
 
@@ -63,7 +63,7 @@ const CreateSite: React.FunctionComponent = () => {
 			<div className="create-site__layout">
 				<div className="create-site__header">
 					<div className="gutenboarding__header-wp-logo">
-						<Icon icon="wordpress-alt" size={ 24 } />
+						<Icon icon={ wordpress } size={ 28 } />
 					</div>
 				</div>
 				<div className="create-site__content">
