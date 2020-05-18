@@ -55,11 +55,6 @@
 			"title": "coutoire",
 			"defaults": "coutoire",
 			"vertical-whitelist": []
-		},
-		{
-			"title": "barnsbury",
-			"defaults": "barnsbury",
-			"vertical-whitelist": []
 		}
 	],
 	"themes": [
@@ -94,10 +89,6 @@
 		{
 			"title": "maywood",
 			"demo": "https://maywooddemo.wordpress.com/"
-		},
-		{
-			"title": "barnsbury",
-			"demo": "https://barnsburydemo.wordpress.com/"
 		}
 	]
 }
