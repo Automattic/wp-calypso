@@ -64,7 +64,7 @@
 	line-height: 1em;
 	word-break: break-word;
 	height: 1.01em;
-	padding: 0;
+	padding: 0 1px; // 1px padding added to fix Firefox caret bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1252108
 
 	color: var( --mainColor );
 	border-bottom: 2px solid var( --mainColor );
@@ -167,7 +167,6 @@
 		height: 100%;
 		left: 0;
 		bottom: 0;
-		z-index: 2;
 
 		.madlib__input-placeholder-text {
 			position: absolute;

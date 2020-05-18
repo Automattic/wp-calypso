@@ -153,6 +153,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		onNext();
 	};
 
+	const handleBlurEvent = () => {
+		if ( inputText.trim() !== siteVertical?.label ) {
+			selectLastInputValue();
+		}
+	};
+
 	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
 		const input = e.currentTarget.innerText.trim();
 		if ( ! input.length ) {
@@ -196,6 +202,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		}
 	}, [ suggestions, isMobile ] );
 
+	React.useEffect( () => {
+		if ( isFocused && document.activeElement === inputRef.current ) {
+			moveCaretToEnd( inputRef.current );
+		}
+	}, [ isFocused ] );
+
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'My site is about <Input />' );
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
@@ -224,7 +236,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onKeyDown={ handleInputKeyDownEvent }
 							onKeyUp={ handleInputKeyUpEvent }
 							onFocus={ () => setIsFocused( true ) }
-							onBlur={ selectLastInputValue }
+							onBlur={ handleBlurEvent }
 							onClick={ ( event ) => event.stopPropagation() }
 						/>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }

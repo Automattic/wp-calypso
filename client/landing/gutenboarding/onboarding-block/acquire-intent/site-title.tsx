@@ -37,8 +37,13 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 		}
 	};
 
-	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) =>
+	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
 		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
+	};
+
+	const handleFocus = () => {
+		moveCaretToEnd( inputRef.current );
+	};
 
 	const handleBlur = () => {
 		recordSiteTitleSelection( !! siteTitle );
@@ -50,13 +55,12 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const siteVerticalLabel = siteVertical?.label;
 	React.useEffect( () => {
-		if ( ( siteVerticalLabel && isVisible ) || wasVerticalSkipped ) {
+		if ( ( siteVertical && isVisible ) || wasVerticalSkipped ) {
 			inputRef.current.focus();
 			moveCaretToEnd( inputRef.current );
 		}
-	}, [ siteVerticalLabel, isVisible, inputRef, wasVerticalSkipped ] );
+	}, [ siteVertical, isVisible, inputRef, wasVerticalSkipped ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
@@ -81,6 +85,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onS
 						onKeyDown={ handleKeyDown }
 						onKeyUp={ handleKeyUp }
 						onBlur={ handleBlur }
+						onFocus={ handleFocus }
 						onClick={ ( event ) => event.stopPropagation() }
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
