@@ -263,16 +263,6 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
-function getContactDetailsFormat( isDomainFieldsVisible, isGSuiteInCart ) {
-	if ( isDomainFieldsVisible ) {
-		return 'DOMAINS';
-	}
-	if ( isGSuiteInCart ) {
-		return 'GSUITE';
-	}
-	return 'DEFAULT';
-}
-
 function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
@@ -284,66 +274,66 @@ function RenderContactDetails( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 } ) {
-	const format = getContactDetailsFormat( isDomainFieldsVisible, isGSuiteInCart );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
 	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
-	switch ( format ) {
-		case 'GSUITE':
-			return (
-				<React.Fragment>
-					<ContactDetailsFormDescription>
-						{ translate( 'G Suite Account Information' ) }
-					</ContactDetailsFormDescription>
-					{ renderDomainContactFields(
-						prepareDomainContactDetails( contactInfo ),
-						prepareDomainContactDetailsErrors( contactInfo ),
-						updateDomainContactFields,
-						shouldShowContactDetailsValidationErrors,
-						isDisabled
+	if ( isDomainFieldsVisible ) {
+		return (
+			<React.Fragment>
+				<ContactDetailsFormDescription>
+					{ translate(
+						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
 					) }
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-		case 'DOMAINS':
-			return (
-				<React.Fragment>
-					<ContactDetailsFormDescription>
-						{ translate(
-							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-						) }
-					</ContactDetailsFormDescription>
-					{ renderDomainContactFields(
-						domainNames,
-						prepareDomainContactDetails( contactInfo ),
-						prepareDomainContactDetailsErrors( contactInfo ),
-						updateDomainContactFields,
-						shouldShowContactDetailsValidationErrors,
-						isDisabled
-					) }
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
-		default:
-			return (
-				<React.Fragment>
-					<ContactDetailsFormDescription>
-						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
-					</ContactDetailsFormDescription>
-					<TaxFields
-						section="contact"
-						taxInfo={ contactInfo }
-						updateCountryCode={ updateCountryCode }
-						updatePostalCode={ updatePostalCode }
-						CountrySelectMenu={ CountrySelectMenu }
-						countriesList={ countriesList }
-						isDisabled={ isDisabled }
-					/>
-					{ requiresVatId && <VatIdField /> }
-				</React.Fragment>
-			);
+				</ContactDetailsFormDescription>
+				{ renderDomainContactFields(
+					domainNames,
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
 	}
+
+	if ( isGSuiteInCart ) {
+		return (
+			<React.Fragment>
+				<ContactDetailsFormDescription>
+					{ translate( 'G Suite Account Information' ) }
+				</ContactDetailsFormDescription>
+				{ renderDomainContactFields(
+					prepareDomainContactDetails( contactInfo ),
+					prepareDomainContactDetailsErrors( contactInfo ),
+					updateDomainContactFields,
+					shouldShowContactDetailsValidationErrors,
+					isDisabled
+				) }
+				{ requiresVatId && <VatIdField /> }
+			</React.Fragment>
+		);
+	}
+
+	return (
+		<React.Fragment>
+			<ContactDetailsFormDescription>
+				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
+			</ContactDetailsFormDescription>
+			<TaxFields
+				section="contact"
+				taxInfo={ contactInfo }
+				updateCountryCode={ updateCountryCode }
+				updatePostalCode={ updatePostalCode }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				isDisabled={ isDisabled }
+			/>
+			{ requiresVatId && <VatIdField /> }
+		</React.Fragment>
+	);
 }
 
 const ContactDetailsFormDescription = styled.p`
