@@ -177,7 +177,6 @@
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,
-		"2fa/keys-support": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,

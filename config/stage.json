@@ -136,7 +136,6 @@
 		"site-indicator": true,
 		"support-user": true,
 		"tools/migrate": true,
-		"2fa/keys-support": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
