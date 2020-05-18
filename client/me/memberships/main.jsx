@@ -31,29 +31,48 @@ import './main.scss';
  */
 import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
 
+const MembershipListDate = ( { translate, subscription, moment } ) => {
+	let endDate = translate( 'Never Expires' );
+	let endDateFromNow = '-';
+	if ( subscription.end_date ) {
+		endDate = moment( subscription.end_date ).format( 'll' );
+		endDateFromNow = translate( 'Renews %s', { args: moment( subscription.end_date ).fromNow() } );
+	}
+
+	return (
+		<div className="memberships__list-date">
+			<div>{ endDate }</div>
+			<div className="memberships__list-sub">{ endDateFromNow }</div>
+		</div>
+	);
+};
+
+const MembershipRenewalPrice = ( { translate, subscription } ) => {
+	const renewalPrice = formatCurrency( subscription.renewal_price, subscription.currency );
+	let renewalInterval = '-';
+	if ( subscription.renew_interval ) {
+		renewalInterval = translate( 'Every %s', { args: subscription.renew_interval } );
+	}
+
+	return (
+		<div className="memberships__list-renewal-price">
+			<div className="memberships__list-amount">{ renewalPrice }</div>
+			<div className="memberships__list-sub">{ renewalInterval }</div>
+		</div>
+	);
+};
+
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
-			<div className="memberships__list-date">
-				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
-				<div className="memberships__list-sub">
-					{ translate( 'Renews %s', { args: moment( subscription.end_date ).fromNow() } ) }
-				</div>
-			</div>
+			<MembershipListDate translate={ translate } subscription={ subscription } moment={ moment } />
 			<div className="memberships__service-description">
 				<div className="memberships__service-name">{ subscription.title }</div>
 				<div className="memberships__list-sub">
 					{ translate( 'On %s', { args: subscription.site_title } ) }
 				</div>
 			</div>
-			<div className="memberships__list-renewal-price">
-				<div className="memberships__list-amount">
-					{ formatCurrency( subscription.renewal_price, subscription.currency ) }
-				</div>
-				<div className="memberships__list-sub">
-					{ translate( 'Every %s', { args: subscription.renew_interval } ) }
-				</div>
-			</div>
+			<MembershipRenewalPrice translate={ translate } subscription={ subscription } />
 		</div>
 	</CompactCard>
 );
