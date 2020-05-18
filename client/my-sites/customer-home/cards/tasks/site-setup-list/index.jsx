@@ -29,7 +29,7 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestHomeLayout } from 'state/home/actions';
+import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
 import { getTask } from './get-task';
 
@@ -62,8 +62,18 @@ const startTask = ( dispatch, task, siteId ) => {
 	}
 };
 
-const skipTask = ( dispatch, task, siteId ) => {
-	dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
+
+	if ( isLastTask ) {
+		// When skipping the last task, we request skipping the current layout view so it's refreshed afterwards.
+		// Task will be dismissed server-side to avoid race conditions.
+		setIsLoading( true );
+		dispatch( skipCurrentViewHomeLayout( siteId ) );
+	} else {
+		// Otherwise we simply skip the given task.
+		dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+	}
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_dismiss', {
 			checklist_name: 'new_blog',
@@ -146,14 +156,6 @@ const SiteSetupList = ( {
 		tasks,
 		userSelectedTask,
 	] );
-
-	// Re-fetch layout for moving to next view when site setup is complete.
-	useEffect( () => {
-		if ( isSiteSetupComplete ) {
-			setIsLoading( true );
-			dispatch( requestHomeLayout( siteId ) );
-		}
-	}, [ dispatch, isSiteSetupComplete, siteId ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -277,7 +279,7 @@ const SiteSetupList = ( {
 									className="site-setup-list__task-skip task__skip is-link"
 									onClick={ () => {
 										setUserSelectedTask( false );
-										skipTask( dispatch, currentTask, siteId );
+										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
 									} }
 								>
 									{ translate( 'Skip for now' ) }
