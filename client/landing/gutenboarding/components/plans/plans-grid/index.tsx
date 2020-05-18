@@ -3,10 +3,7 @@
  */
 import * as React from 'react';
 import { Button } from '@wordpress/components';
-// This package will be typed in https://github.com/Automattic/wp-calypso/pull/42031 - remove there.
-/* eslint-disable-next-line @typescript-eslint/ban-ts-ignore */
-// @ts-ignore
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
@@ -44,7 +41,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 	const [ showDetails, setShowDetails ] = React.useState( false );
 
 	const handleDetailsToggleButtonClick = () => {
-		setShowDetails( ! showDetails );
+		setShowDetails( ( show ) => ! show );
 	};
 
 	return (
@@ -82,25 +79,16 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 				<div className="plans-grid__details-container">
 					<PlansDetails>
 						<div className="plans-grid__details-actions">
-							{ showDetails ? (
-								<Button
-									className="plans-grid__details-toggle-button is-collapse-button"
-									isLarge
-									onClick={ handleDetailsToggleButtonClick }
-								>
-									<span>{ __( 'Hide details' ) } </span>
-									<Icon icon={ chevronUp } size={ 20 } />
-								</Button>
-							) : (
-								<Button
-									className="plans-grid__details-toggle-button is-expand-button"
-									isLarge
-									onClick={ handleDetailsToggleButtonClick }
-								>
-									<span>{ __( 'Show details' ) } </span>
-									<Icon icon={ chevronDown } size={ 20 } />
-								</Button>
-							) }
+							<Button
+								className={ classNames( 'plans-grid__details-toggle-button', {
+									'is-collapsed': ! showDetails,
+								} ) }
+								isLarge
+								onClick={ handleDetailsToggleButtonClick }
+							>
+								<span>{ showDetails ? __( 'Hide details' ) : __( 'Show details' ) }</span>
+								<Icon icon={ chevronDown } size={ 20 } />
+							</Button>
 						</div>
 					</PlansDetails>
 				</div>
