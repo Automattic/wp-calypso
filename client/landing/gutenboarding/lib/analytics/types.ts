@@ -31,6 +31,11 @@ export interface OnboardingCompleteParameters {
 	 * The blog id of the newly created site
 	 */
 	blogId: number | string | undefined;
+
+	/**
+	 * Whether the user has a paid plan or other checkout item
+	 */
+	hasCartItems?: boolean;
 }
 
 export type TracksAcquireIntentEventProperties = {
