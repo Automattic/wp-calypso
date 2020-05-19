@@ -4,6 +4,20 @@
 	padding-top: 5px;
 }
 
+.reader-feed-header__seen-button {
+	cursor: pointer;
+	color: var( --color-text-subtle );
+
+	svg {
+		display: inline-block;
+		top: 4px;
+		margin-right: 5px;
+		width: 18px;
+		position: relative;
+		color: var( --color-text-subtle );
+	}
+}
+
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 20px;

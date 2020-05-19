@@ -13,7 +13,7 @@ export function fetch( action ) {
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: '/seen-posts/status/unseen/all',
-			show_subsections: action.showSubsections,
+			query: { show_subsections: action.showSubsections },
 		},
 		action
 	);

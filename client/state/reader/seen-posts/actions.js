@@ -30,7 +30,7 @@ import 'state/data-layer/wpcom/seen-posts/status/unseen/all/index';
  * @param payload.showSubsections flag
  * @returns {{showSubsections, type: string}} redux action
  */
-export const requestUnseenStatusAll = ( { showSubsections = false } = {} ) => ( {
+export const requestUnseenStatusAll = ( { showSubsections = true } = {} ) => ( {
 	type: READER_SEEN_UNSEEN_STATUS_ALL_REQUEST,
 	showSubsections,
 } );

@@ -263,7 +263,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/team/main"
+				require="reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"

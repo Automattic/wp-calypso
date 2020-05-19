@@ -243,6 +243,13 @@
 	}
 }
 
+.is-togglable {
+	.sidebar__bubble {
+		margin-top: -5px;
+		margin-left: 45px;
+	}
+}
+
 .sidebar__bubble {
 	border: solid 2px var( --color-sidebar-menu-hover-background );
 	border-radius: 50%;
