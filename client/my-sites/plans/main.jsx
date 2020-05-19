@@ -132,6 +132,8 @@ class Plans extends React.Component {
 			marketingPriceGroup,
 		} = this.props;
 
+		let { customerType } = this.props;
+
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
 		}
@@ -145,6 +147,7 @@ class Plans extends React.Component {
 
 		if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_2 ) {
 			hidePersonalPlan = true;
+			customerType = 'business';
 		} else if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_3 ) {
 			hidePersonalPlan = true;
 			hidePremiumPlan = true;
@@ -177,7 +180,7 @@ class Plans extends React.Component {
 									hideFreePlan={ true }
 									hidePersonalPlan={ hidePersonalPlan }
 									hidePremiumPlan={ hidePremiumPlan }
-									customerType={ this.props.customerType }
+									customerType={ customerType }
 									intervalType={ this.props.intervalType }
 									selectedFeature={ this.props.selectedFeature }
 									selectedPlan={ this.props.selectedPlan }
