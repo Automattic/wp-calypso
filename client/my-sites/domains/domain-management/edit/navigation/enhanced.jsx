@@ -538,12 +538,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	renderSiteRedirectNavigation() {
-		return (
-			<React.Fragment>
-				{ this.getRedirectSettings() }
-				{ this.getSimilarDomains() }
-			</React.Fragment>
-		);
+		return <React.Fragment>{ this.getRedirectSettings() }</React.Fragment>;
 	}
 
 	renderMappedDomainNavigation() {
