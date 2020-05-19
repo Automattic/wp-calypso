@@ -188,6 +188,26 @@ export function updateManagedContactDetailsShape< A, B >(
 	};
 }
 
+/*
+ * Map a function over the (not undefined) fields of a ManagedContactDetailsShape.
+ * Satisfies the following property for all accessors A:
+ *
+ *  _.get( mapManagedContactDetailsShape( f, data ), A )
+ *     === f( _.get( data, A ) ) if data.A is defined;
+ *     === undefined             if data.A is undefined.
+ */
+export function mapManagedContactDetailsShape< A >(
+	f: ( arg0: A ) => A,
+	x: ManagedContactDetailsShape< A >
+): ManagedContactDetailsShape< A > {
+	return updateManagedContactDetailsShape(
+		( u: A, unused: A ) => f( u ), // eslint-disable-line @typescript-eslint/no-unused-vars
+		( unused ) => unused,
+		x,
+		x
+	);
+}
+
 export function flattenManagedContactDetailsShape< A, B >(
 	f: ( arg0: A ) => B,
 	x: ManagedContactDetailsShape< A >
@@ -756,10 +776,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 	},
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
-		// TODO: reimplement this to handle new contact details format, or remove this if it is no longer necessary
-		return Object.keys( oldDetails ).reduce( ( newDetails, detailKey ) => {
-			return { ...newDetails, [ detailKey ]: touchField( oldDetails[ detailKey ] ) };
-		}, oldDetails );
+		return mapManagedContactDetailsShape( touchField, oldDetails );
 	},
 
 	updateVatId: ( oldDetails: ManagedContactDetails, newVatId: string ): ManagedContactDetails => {
