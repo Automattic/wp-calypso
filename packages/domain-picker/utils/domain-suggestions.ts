@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
+
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 export function getFreeDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
@@ -27,4 +32,13 @@ export function getRecommendedDomainSuggestion( allSuggestions: DomainSuggestion
 	} );
 
 	return recommendedSuggestion;
+}
+
+/**
+ * Returns an ID for the domain suggestions vendor. Passing `true` to getSuggestionsVendor returns the signup variant.
+ *
+ * @returns {string} an ID for the domain suggestions vendor
+ */
+export function getSignupDomainsSuggestionsVendor() {
+	return getSuggestionsVendor( true );
 }

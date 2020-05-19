@@ -4,7 +4,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
-import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 
@@ -13,12 +12,9 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from '../../stores/onboard';
-import { FLOW_ID } from '../../constants';
-import { RecordTrainTracksEventProps } from '../../lib/analytics';
-import { getSignupDomainsSuggestionsVendor } from '../../utils/domain-suggestions';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
-const DOMAIN_SUGGESTION_VENDOR = getSignupDomainsSuggestionsVendor();
+const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -26,8 +22,10 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
+	recordAnalytics?: ( event ) => void;
 	uiPosition: number;
+	domainSearch: string;
+	analyticsFlowId: string;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
@@ -38,6 +36,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	railcarId,
 	recordAnalytics,
 	uiPosition,
+	domainSearch,
+	analyticsFlowId,
 } ) => {
 	const { __ } = useI18n();
 
@@ -46,8 +46,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const { domainSearch } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const fetchAlgo = `/domains/search/${ DOMAIN_SUGGESTION_VENDOR }/${ FLOW_ID }`;
+	const fetchAlgo = `/domains/search/${ DOMAIN_SUGGESTION_VENDOR }/${ analyticsFlowId }`;
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
