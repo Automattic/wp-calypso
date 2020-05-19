@@ -96,8 +96,6 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
-		masterbar = null;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
