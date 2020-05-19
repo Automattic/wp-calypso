@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
 
@@ -12,6 +12,7 @@ import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 import { Button, Card } from '@automattic/components';
+import FoldableCard from 'components/foldable-card';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Main from 'components/main';
@@ -54,14 +55,8 @@ const disconnectedProps = ( translate ) => ( {
 	),
 } );
 
-const ConnectionStatus = ( { rewindState } ) => {
+const ConnectionStatus = ( { isConnected } ) => {
 	const translate = useTranslate();
-
-	if ( rewindState === 'uninitialized' ) {
-		return <div className="settings__is-uninitialized" />;
-	}
-
-	const isConnected = 'active' === rewindState;
 	const cardProps = isConnected ? connectedProps( translate ) : disconnectedProps( translate );
 
 	return (
@@ -78,7 +73,15 @@ const ConnectionStatus = ( { rewindState } ) => {
 const SettingsPage = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+
 	const rewind = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const isInitialized = rewind.state !== 'uninitialized';
+	const isConnected = rewind.state === 'active';
+
+	const [ formOpen, setFormOpen ] = useState( false );
+	useEffect( () => {
+		setFormOpen( ! isConnected );
+	}, [ isConnected ] );
 
 	// Clears everything user related on the client site by
 	// calling user.clear() which calls store.clearAll();
@@ -100,16 +103,31 @@ const SettingsPage = () => {
 				<h2>{ translate( 'Server connection details' ) }</h2>
 			</div>
 
-			<ConnectionStatus rewindState={ rewind.state } />
+			{ ! isInitialized && <div className="settings__status-uninitialized" /> }
+			{ isInitialized && <ConnectionStatus isConnected={ isConnected } /> }
 
-			<ServerCredentialsForm
-				role="main"
-				siteId={ siteId }
-				labels={ {
-					save: translate( 'Save credentials' ),
-				} }
-				showCancelButton={ false }
-			/>
+			{ ! isInitialized && <div className="settings__form-uninitialized" /> }
+			{ isInitialized && (
+				<FoldableCard
+					header={
+						formOpen
+							? translate( 'Hide connection details' )
+							: translate( 'Show connection details' )
+					}
+					expanded={ formOpen }
+					onClick={ () => setFormOpen( ! formOpen ) }
+					className="settings__form-card"
+				>
+					<ServerCredentialsForm
+						role="main"
+						siteId={ siteId }
+						labels={ {
+							save: translate( 'Save credentials' ),
+						} }
+						showCancelButton={ false }
+					/>
+				</FoldableCard>
+			) }
 		</Main>
 	);
 };
