@@ -13,7 +13,10 @@ import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
-import { EDUCATION_FREE_PHOTO_LIBRARY, EDUCATION_GUTENBERG } from '../../../cards/constants';
+import {
+	EDUCATION_FREE_PHOTO_LIBRARY,
+	EDUCATION_GUTENBERG,
+} from 'my-sites/customer-home/cards/constants';
 
 /**
  * Style dependencies

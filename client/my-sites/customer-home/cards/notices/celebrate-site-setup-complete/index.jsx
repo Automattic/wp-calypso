@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CelebrateNotice from '../celebrate-notice';
-import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from '../../constants';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies

@@ -13,8 +13,8 @@ import { savePreference } from 'state/preferences/actions';
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import CelebrateNotice from '../celebrate-notice';
-import { NOTICE_CELEBRATE_SITE_LAUNCH } from '../../constants';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_LAUNCH } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies

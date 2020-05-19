@@ -28,7 +28,7 @@ import {
 	TASK_GO_MOBILE_IOS,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
-} from '../../cards/constants';
+} from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,

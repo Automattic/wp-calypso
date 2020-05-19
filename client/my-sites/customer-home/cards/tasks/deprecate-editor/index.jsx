@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  */
 import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Task from '../task';
-import { TASK_EDITOR_DEPRECATION } from '../../constants';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_EDITOR_DEPRECATION } from 'my-sites/customer-home/cards/constants';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {

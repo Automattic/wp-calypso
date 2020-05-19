@@ -7,8 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Task from '../task';
-import { TASK_WEBINARS } from '../../constants';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_WEBINARS } from 'my-sites/customer-home/cards/constants';
 import webinarsIllustration from 'assets/images/customer-home/illustration-webinars.svg';
 
 const Webinars = () => {

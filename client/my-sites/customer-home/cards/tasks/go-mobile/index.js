@@ -8,10 +8,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Task from '../task';
+import Task from 'my-sites/customer-home/cards/tasks/task';
 import { preventWidows } from 'lib/formatting';
 import AppsBadge from 'blocks/get-apps/apps-badge';
-import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from '../../constants';
+import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies

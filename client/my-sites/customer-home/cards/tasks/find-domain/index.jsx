@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  */
 import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from '../task';
-import { TASK_FIND_DOMAIN } from '../../constants';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_FIND_DOMAIN } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies

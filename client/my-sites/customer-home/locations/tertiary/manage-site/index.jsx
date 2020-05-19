@@ -21,7 +21,7 @@ import {
 	FEATURE_GO_MOBILE,
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
-} from '../../../cards/constants';
+} from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,

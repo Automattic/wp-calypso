@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import LearnGrow from './learn-grow';
-import { FEATURE_STATS, SECTION_LEARN_GROW } from '../../cards/constants';
+import { FEATURE_STATS, SECTION_LEARN_GROW } from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
 	[ FEATURE_STATS ]: Stats,

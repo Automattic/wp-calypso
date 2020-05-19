@@ -11,8 +11,8 @@ import { isMobile } from '@automattic/viewport';
  */
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from '../task';
-import { TASK_CONNECT_ACCOUNTS } from '../../constants';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_CONNECT_ACCOUNTS } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
