@@ -979,7 +979,7 @@ Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
  * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefetch, fn ) {
-	debug( '/me/keyring-connections query' );
+	debug( '/me/connections query' );
 
 	// set defaults, first argument is actually a callback
 	if ( typeof forceExternalUsersRefetch === 'function' ) {
@@ -988,7 +988,7 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
 	}
 
 	return this.wpcom.req.get(
-		'/me/keyring-connections',
+		{ path: '/me/connections', apiNamespace: 'wpcom/v2' },
 		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
 		fn
 	);
@@ -1001,11 +1001,12 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
  * @param {Function} fn Method to invoke when request is complete
  */
 Undocumented.prototype.deletekeyringConnection = function ( keyringConnectionId, fn ) {
-	debug( '/me/keyring-connections/:keyring_connection_id:/delete query' );
-	return this.wpcom.req.post(
+	debug( '/me/connections/:keyring_connection_id:/ delete' );
+	return this.wpcom.req.get(
 		{
-			path: '/me/keyring-connections/' + keyringConnectionId + '/delete',
-			apiVersion: '1.1',
+			path: '/me/connections/' + keyringConnectionId,
+			apiNamespace: 'wpcom/v2',
+			method: 'DELETE',
 		},
 		fn
 	);
