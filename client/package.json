@@ -51,6 +51,7 @@
 		"@wordpress/i18n": "^3.10.0",
 		"@wordpress/icons": "^2.0.0",
 		"@wordpress/is-shallow-equal": "^2.0.0",
+		"@wordpress/icons": "^2.0.0",
 		"@wordpress/keycodes": "^2.10.0",
 		"@wordpress/notices": "^2.1.0",
 		"@wordpress/nux": "^3.13.0",

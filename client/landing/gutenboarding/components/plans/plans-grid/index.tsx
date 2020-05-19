@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
@@ -40,7 +41,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 	const [ showDetails, setShowDetails ] = React.useState( false );
 
 	const handleDetailsToggleButtonClick = () => {
-		setShowDetails( ! showDetails );
+		setShowDetails( ( show ) => ! show );
 	};
 
 	return (
@@ -78,25 +79,16 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 				<div className="plans-grid__details-container">
 					<PlansDetails>
 						<div className="plans-grid__details-actions">
-							{ showDetails ? (
-								<Button
-									className="plans-grid__details-toggle-button is-collapse-button"
-									isLarge
-									onClick={ handleDetailsToggleButtonClick }
-								>
-									<span>{ __( 'Less details' ) } </span>
-									<Icon icon="arrow-up" size={ 20 }></Icon>
-								</Button>
-							) : (
-								<Button
-									className="plans-grid__details-toggle-button is-expand-button"
-									isLarge
-									onClick={ handleDetailsToggleButtonClick }
-								>
-									<span>{ __( 'More details' ) } </span>
-									<Icon icon="arrow-down" size={ 20 }></Icon>
-								</Button>
-							) }
+							<Button
+								className={ classNames( 'plans-grid__details-toggle-button', {
+									'is-collapsed': ! showDetails,
+								} ) }
+								isLarge
+								onClick={ handleDetailsToggleButtonClick }
+							>
+								<span>{ showDetails ? __( 'Hide details' ) : __( 'Show details' ) }</span>
+								<Icon icon={ chevronDown } size={ 20 } />
+							</Button>
 						</div>
 					</PlansDetails>
 				</div>
