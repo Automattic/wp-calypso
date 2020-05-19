@@ -34,4 +34,5 @@ export interface Design {
 	template: string;
 	fonts: FontPair;
 	categories: Array< string >;
+	premium: bool;
 }

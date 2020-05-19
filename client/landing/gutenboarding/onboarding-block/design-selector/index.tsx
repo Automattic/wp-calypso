@@ -14,6 +14,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import designs from '../../available-designs';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
+import Badge from '../../components/badge';
 import Link from '../../components/link';
 import { SubTitle, Title } from '../../components/titles';
 import { useTrackStep } from '../../hooks/use-track-step';
@@ -94,6 +95,9 @@ const DesignSelector: React.FunctionComponent = () => {
 							<span className="design-selector__option-overlay">
 								<span id={ makeOptionId( design ) } className="design-selector__option-name">
 									{ design.title }
+									{ design.premium && (
+										<Badge className="design-selector__premium">{ __( 'Premium' ) }</Badge>
+									) }
 								</span>
 							</span>
 						</button>

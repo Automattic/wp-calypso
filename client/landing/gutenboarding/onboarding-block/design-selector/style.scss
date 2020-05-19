@@ -135,4 +135,8 @@
 		width: 100%;
 		@include onboarding-medium-text;
 	}
+
+	.design-selector__premium {
+		margin: 0 6px;
+	}
 }

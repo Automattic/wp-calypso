@@ -7,6 +7,11 @@ import { Button, Icon } from '@wordpress/components';
 import classNames from 'classnames';
 import { PLAN_FREE } from '../../../stores/plans/constants';
 
+/**
+ * Internal dependencies
+ */
+import Badge from '../../badge';
+
 const TickIcon = (
 	<Icon
 		icon={ () => (
@@ -63,7 +68,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			<div className="plan-item__viewport">
 				<div className="plan-item__heading">
 					<div className="plan-item__name">{ name }</div>
-					{ isPopular && <div className="plan-item__badge">{ __( 'Popular' ) }</div> }
+					{ isPopular && <Badge className="plan-item__badge">{ __( 'Popular' ) }</Badge> }
 				</div>
 				<div className="plan-item__price">
 					<div className="plan-item__price-amount" data-is-loading={ ! price }>

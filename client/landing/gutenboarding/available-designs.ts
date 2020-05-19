@@ -119,6 +119,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
+			premium: true,
 		},
 	],
 };

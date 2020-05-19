@@ -18,8 +18,10 @@ function getFortifiedPlan( slug: string | undefined ) {
 }
 
 export const getSelectedPlan = ( state: State ) => getFortifiedPlan( state.selectedPlanSlug );
-export const getDefaultPlan = ( state: State, hasPaidDomain: boolean ) =>
-	hasPaidDomain ? getFortifiedPlan( DEFAULT_PAID_PLAN ) : getFortifiedPlan( PLAN_FREE );
+export const getDefaultPlan = ( state: State, hasPaidDomain: boolean, hasPaidDesign: boolean ) =>
+	hasPaidDomain || hasPaidDesign
+		? getFortifiedPlan( DEFAULT_PAID_PLAN )
+		: getFortifiedPlan( PLAN_FREE );
 export const getSupportedPlans = ( state: State ) =>
 	state.supportedPlanSlugs.map( getFortifiedPlan );
 export const getPlanByPath = ( state: State, path: string | undefined ) =>
