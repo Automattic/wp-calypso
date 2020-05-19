@@ -14,6 +14,10 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
+export function domainManagementUserRoot() {
+	return '/me/domains';
+}
+
 export function domainManagementRoot() {
 	return '/domains/manage';
 }
