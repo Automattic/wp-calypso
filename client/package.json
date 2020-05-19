@@ -12,6 +12,7 @@
 	},
 	"main": "server/index.js",
 	"dependencies": {
+		"@automattic/browser-data-collector": "^0.0.1",
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@automattic/color-studio": "^2.3.0",

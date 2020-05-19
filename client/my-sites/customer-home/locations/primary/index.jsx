@@ -29,6 +29,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
 } from 'my-sites/customer-home/cards/constants';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -59,6 +60,7 @@ const Primary = ( { cards } ) => {
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 					} )
 			) }
+			<PerformanceTrackerStop id={ 'home' } />
 		</>
 	);
 };

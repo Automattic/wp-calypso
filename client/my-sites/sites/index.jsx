@@ -13,6 +13,7 @@ import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import VisitSite from 'blocks/visit-site';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 /**
  * Style dependencies
  */
@@ -131,6 +132,7 @@ class Sites extends Component {
 						groups
 					/>
 				</Card>
+				<PerformanceTrackerStop id={ 'sites' } />
 			</Main>
 		);
 	}

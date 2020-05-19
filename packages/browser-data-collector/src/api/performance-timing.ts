@@ -1,3 +1,7 @@
+/**
+ * All these methods use https://www.w3.org/TR/navigation-timing/ which is deprecated (https://w3c.github.io/navigation-timing/#obsolete)
+ * but the new spec is not supported by all browsers just yet (https://caniuse.com/#search=PerformanceNavigationTiming)
+ */
 export const getNavigationStart = (): number => window?.performance?.timing?.navigationStart;
 export const getUnloadEventStart = (): number => window?.performance?.timing?.unloadEventStart;
 export const getUunloadEventEnd = (): number => window?.performance?.timing?.unloadEventEnd;

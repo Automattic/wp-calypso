@@ -12,6 +12,8 @@ type ReportData = Map< string, number | string | boolean >;
 
 interface Report {
 	data: ReportData;
+	start: number;
+	end?: number;
 	toJSON: () => object;
 }
 

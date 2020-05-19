@@ -70,6 +70,7 @@ import {
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -182,6 +183,7 @@ export class PlanFeatures extends Component {
 								</tbody>
 							</table>
 						</PlanFeaturesScroller>
+						<PerformanceTrackerStop id={ 'plans' } />
 					</div>
 				</div>
 			</div>

@@ -10,9 +10,10 @@ import { features, plans, redirectToCheckout, redirectToPlans } from './controll
 import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { trackNavigationStart } from 'lib/performance-tracking';
 
 const trackedPage = ( url, ...rest ) => {
-	page( url, ...rest, makeLayout, clientRender );
+	page( url, trackNavigationStart( 'plans' ), ...rest, makeLayout, clientRender );
 };
 
 export default function () {

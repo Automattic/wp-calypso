@@ -24,6 +24,6 @@
 	},
 	"dependencies": {
 		"web-vitals": "^0.2.2",
-		"wpcom-xhr-request": "^1.1.3"
+		"wpcom-proxy-request": "^6.0.0"
 	}
 }

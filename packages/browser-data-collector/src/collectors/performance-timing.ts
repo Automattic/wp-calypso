@@ -24,26 +24,40 @@ import {
 	getloadEventEnd,
 } from '../api/performance-timing';
 
+const normalize = ( value: number, start: number ): number => {
+	// Some properties should return 0 if the value is not present (eg: redirectStart if there are no redirect)
+	// We need this check to avoid sending negative numbers.
+	if ( value === 0 ) return 0;
+	return value - start;
+};
+
 export const collector: Collector = ( report ) => {
-	report.data.set( 'navigationStart', getNavigationStart() );
-	report.data.set( 'unloadEventStart', getUnloadEventStart() );
-	report.data.set( 'unloadEventEnd', getUunloadEventEnd() );
-	report.data.set( 'redirectStart', getRedirectStart() );
-	report.data.set( 'redirectEnd', getRedirectEnd() );
-	report.data.set( 'fetchStart', getFetchStart() );
-	report.data.set( 'domainLookupStart', getDomainLookupStart() );
-	report.data.set( 'domainLookupEnd', getDomainLookupEnd() );
-	report.data.set( 'connectStart', getConnectStart() );
-	report.data.set( 'connectEnd', getConnectEnd() );
-	report.data.set( 'secureConnectionStart', getSecureConnectionStart() );
-	report.data.set( 'requestStart', getRequestStart() );
-	report.data.set( 'responseEnd', getResponseEnd() );
-	report.data.set( 'domLoading', getDomLoading() );
-	report.data.set( 'domInteractive', getDomInteractive() );
-	report.data.set( 'domContentLoadedEventStart', getDomContentLoadedEventStart() );
-	report.data.set( 'domContentLoadedEventEnd', getDomContentLoadedEventEnd() );
-	report.data.set( 'domComplete', getDomComplete() );
-	report.data.set( 'loadEventStart', getLoadEventStart() );
-	report.data.set( 'loadEventEnd', getloadEventEnd() );
+	// Ensure these values are relative to the beginning of the report
+	report.data.set( 'navigationStart', normalize( getNavigationStart(), report.start ) );
+	report.data.set( 'unloadEventStart', normalize( getUnloadEventStart(), report.start ) );
+	report.data.set( 'unloadEventEnd', normalize( getUunloadEventEnd(), report.start ) );
+	report.data.set( 'redirectStart', normalize( getRedirectStart(), report.start ) );
+	report.data.set( 'redirectEnd', normalize( getRedirectEnd(), report.start ) );
+	report.data.set( 'fetchStart', normalize( getFetchStart(), report.start ) );
+	report.data.set( 'domainLookupStart', normalize( getDomainLookupStart(), report.start ) );
+	report.data.set( 'domainLookupEnd', normalize( getDomainLookupEnd(), report.start ) );
+	report.data.set( 'connectStart', normalize( getConnectStart(), report.start ) );
+	report.data.set( 'connectEnd', normalize( getConnectEnd(), report.start ) );
+	report.data.set( 'secureConnectionStart', normalize( getSecureConnectionStart(), report.start ) );
+	report.data.set( 'requestStart', normalize( getRequestStart(), report.start ) );
+	report.data.set( 'responseEnd', normalize( getResponseEnd(), report.start ) );
+	report.data.set( 'domLoading', normalize( getDomLoading(), report.start ) );
+	report.data.set( 'domInteractive', normalize( getDomInteractive(), report.start ) );
+	report.data.set(
+		'domContentLoadedEventStart',
+		normalize( getDomContentLoadedEventStart(), report.start )
+	);
+	report.data.set(
+		'domContentLoadedEventEnd',
+		normalize( getDomContentLoadedEventEnd(), report.start )
+	);
+	report.data.set( 'domComplete', normalize( getDomComplete(), report.start ) );
+	report.data.set( 'loadEventStart', normalize( getLoadEventStart(), report.start ) );
+	report.data.set( 'loadEventEnd', normalize( getloadEventEnd(), report.start ) );
 	return report;
 };
