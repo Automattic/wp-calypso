@@ -42,6 +42,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
+* Remove default link colors from the editor (fixed in Gutenberg v8.1.0).
 
 = 1.4 =
 * Update Premium Block Style and Behaviour
