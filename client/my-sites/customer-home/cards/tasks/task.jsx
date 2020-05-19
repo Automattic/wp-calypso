@@ -90,6 +90,14 @@ const Task = ( {
 		);
 	};
 
+	const ActionButtonWithStats = ( { children } ) => {
+		return (
+			<div onClick={ startTask } role="presentation">
+				{ children }
+			</div>
+		);
+	};
+
 	return (
 		<div className={ classnames( 'task', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
@@ -108,7 +116,9 @@ const Task = ( {
 				<h2 className="task__title">{ title }</h2>
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
-					{ actionButton || (
+					{ actionButton ? (
+						<ActionButtonWithStats>{ actionButton }</ActionButtonWithStats>
+					) : (
 						<Button
 							className="task__action"
 							primary
