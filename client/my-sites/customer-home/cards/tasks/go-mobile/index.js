@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -11,6 +12,7 @@ import PropTypes from 'prop-types';
 import Task from 'my-sites/customer-home/cards/tasks/task';
 import { preventWidows } from 'lib/formatting';
 import AppsBadge from 'blocks/get-apps/apps-badge';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from 'my-sites/customer-home/cards/constants';
 
 /**
@@ -20,7 +22,23 @@ import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
 import googlePlayLogo from 'assets/images/customer-home/google-play.png';
 
 const GoMobile = ( { isIos } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const recordStats = ( platform ) => {
+		const eventName =
+			platform === 'ios'
+				? 'calypso_customer_home_mobile_ios_download_click'
+				: 'calypso_customer_home_mobile_android_download_click';
+		const bumpName =
+			platform === 'ios' ? 'mobile_ios_download_click' : 'mobile_android_download_click';
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( eventName, {} ),
+				bumpStat( 'calypso_customer_home', bumpName )
+			)
+		);
+	};
 
 	const actionButton = isIos ? (
 		<AppsBadge
@@ -28,6 +46,7 @@ const GoMobile = ( { isIos } ) => {
 			storeName={ 'ios' }
 			titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
 			altText={ translate( 'Apple App Store download badge' ) }
+			onClick={ recordStats( 'ios' ) }
 		>
 			<img src={ appleStoreLogo } alt="" />
 		</AppsBadge>
@@ -37,6 +56,7 @@ const GoMobile = ( { isIos } ) => {
 			storeName={ 'android' }
 			titleText={ translate( 'Download the WordPress Android mobile app.' ) }
 			altText={ translate( 'Google Play Store download badge' ) }
+			onClick={ recordStats( 'android' ) }
 		>
 			<img src={ googlePlayLogo } alt="" />
 		</AppsBadge>
