@@ -57,10 +57,6 @@ const shouldBuildChunksMap =
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-const isJetpackCloud =
-	calypsoEnv === 'jetpack-cloud-stage' ||
-	calypsoEnv === 'jetpack-cloud-development' ||
-	calypsoEnv === 'jetpack-cloud-production';
 
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -315,15 +311,6 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 // Replace `lodash` with `lodash-es`.
 if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
-}
-
-// Don't bundle `wpcom-xhr-request` for the browser.
-// Even though it's requested, we don't need it on the browser, because we're using
-// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
-if ( isCalypsoClient && ! isDesktop && ! isJetpackCloud ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
-	);
 }
 
 if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {

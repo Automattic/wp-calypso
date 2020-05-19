@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-
-import xhr from 'wpcom-xhr-request';
 import debugModule from 'debug';
 
 /**
@@ -11,12 +9,14 @@ import debugModule from 'debug';
 const debug = debugModule( 'calypso:wpcom-xhr-wrapper' );
 
 export default function ( params, callback ) {
-	return xhr( params, function ( error, response, headers ) {
-		if ( error && error.name === 'InvalidTokenError' ) {
-			debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
-			require( 'lib/user/utils' ).logout();
-		}
+	return import( /* webpackChunkName: "wpcom-xhr-request" */ 'wpcom-xhr-request' ).then( ( xhr ) =>
+		xhr.default( params, function ( error, response, headers ) {
+			if ( error && error.name === 'InvalidTokenError' ) {
+				debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
+				require( 'lib/user/utils' ).logout();
+			}
 
-		callback( error, response, headers );
-	} );
+			callback( error, response, headers );
+		} )
+	);
 }
