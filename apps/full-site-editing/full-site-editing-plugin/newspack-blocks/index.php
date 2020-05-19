@@ -94,13 +94,13 @@ require_once __DIR__ . '/synced-newspack-blocks/class-newspack-blocks-api.php';
 require_once __DIR__ . '/synced-newspack-blocks/blocks/homepage-articles/view.php';
 
 /**
- * Can be used to disable the Posts Carousel Block.
+ * Can be used to disable the Post Carousel Block.
  *
  * @since 1.2
  *
- * @param bool true if Posts Carousel Block should be disabled, false otherwise.
+ * @param bool true if Post Carousel Block should be disabled, false otherwise.
  */
-if ( ! apply_filters( 'a8c_disable_posts_carousel_block', false ) ) {
+if ( ! apply_filters( 'a8c_disable_posts_carousel_block', false ) || ! apply_filters( 'a8c_disable_post_carousel_block', false ) ) {
 	require_once __DIR__ . '/synced-newspack-blocks/blocks/carousel/view.php';
 }
 
