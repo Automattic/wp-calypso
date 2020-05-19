@@ -15,7 +15,15 @@ type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 
 
 const createSelectors = ( vendor: string ) => {
 	function getCategories( state: State ) {
-		return state.categories;
+		// Sort domain categories by tier, then by title.
+		return [
+			...state.categories
+				.filter( ( { tier } ) => tier !== null )
+				.sort( ( a, b ) => ( a > b ? 1 : -1)  ),
+			...state.categories
+				.filter( ( { tier } ) => tier === null )
+				.sort( ( a, b ) => a.title.localeCompare( b.title ) ),
+		];
 	}
 
 	function getDomainSuggestions(

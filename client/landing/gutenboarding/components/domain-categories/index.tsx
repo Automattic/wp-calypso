@@ -29,16 +29,6 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
 	);
 
-	// Sort domain categories by tier, then by title.
-	const sortedDomainCategories = [
-		...domainCategories
-			.filter( ( { tier } ) => tier !== null )
-			.sort( ( a, b ) => ( a > b ? 1 : -1)  ),
-		...domainCategories
-			.filter( ( { tier } ) => tier === null )
-			.sort( ( a, b ) => a.title.localeCompare( b.title ) ),
-	];
-
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleSelect = ( slug?: string ) => {
@@ -68,7 +58,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 						}
 					</Button>
 				</li>
-				{ sortedDomainCategories.map( ( { slug, title } ) => (
+				{ domainCategories.map( ( { slug, title } ) => (
 					<li
 						key={ slug }
 						className={ classNames( 'domain-categories__item', {
