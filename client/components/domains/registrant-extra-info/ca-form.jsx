@@ -178,7 +178,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	getCiraAgreementAcceptedErrorMessage() {
 		if ( this.props.isManaged ) {
-			return this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
+			return (
+				this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ??
+				this.props.translate( 'Required' )
+			);
 		}
 
 		return this.props.translate( 'Required' );
