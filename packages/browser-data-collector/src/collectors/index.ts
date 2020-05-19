@@ -3,9 +3,9 @@
  */
 import { collector as deviceMemory } from './device-memory';
 import { collector as performanceTiming } from './performance-timing';
-import { collector as calypsoVersion } from './calypso-version';
+import { collector as environment } from './environment';
 
-const globalCollectors = [ deviceMemory, performanceTiming, calypsoVersion ];
+const globalCollectors = [ deviceMemory, performanceTiming, environment ];
 
 export const applyGlobalCollectors = async ( report: Report ) => {
 	for ( const collector of globalCollectors ) {
