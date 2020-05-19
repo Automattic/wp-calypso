@@ -47,7 +47,7 @@ const cardComponents = {
 
 const Primary = ( { cards } ) => {
 	if ( ! cards || ! cards.length ) {
-		return null;
+		return <PerformanceTrackerStop id={ 'home' } />;
 	}
 
 	return (
