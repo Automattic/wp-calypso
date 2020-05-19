@@ -39,7 +39,7 @@ const CelebrateNotice = ( {
 		return null;
 	}
 
-	const dismissalPreferenceKey = `dismissible-card-home-notice-${ noticeId }-${ siteId }`;
+	const dismissalPreferenceKey = `dismissible-card-${ noticeId }-${ siteId }`;
 
 	const showNextTask = () => {
 		setIsLoading( true );

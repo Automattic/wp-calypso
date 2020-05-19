@@ -13,7 +13,8 @@ import { savePreference } from 'state/preferences/actions';
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import CelebrateNotice from '../celebrate-notice';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_LAUNCH } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
@@ -49,7 +50,7 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 							"Don't forget to share your hard work with everyone. Then keep working through your site setup list."
 					  )
 			}
-			noticeId="site-launched"
+			noticeId={ NOTICE_CELEBRATE_SITE_LAUNCH }
 			title={ translate( 'You launched your site!' ) }
 			illustration={ launchedIllustration }
 			showSkip={ true }

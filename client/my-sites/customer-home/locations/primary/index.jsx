@@ -16,19 +16,32 @@ import CelebrateSiteCreation from 'my-sites/customer-home/cards/notices/celebrat
 import CelebrateSiteLaunch from 'my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
+import {
+	NOTICE_CELEBRATE_SITE_CREATION,
+	NOTICE_CELEBRATE_SITE_LAUNCH,
+	NOTICE_CELEBRATE_SITE_MIGRATION,
+	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
+	TASK_CONNECT_ACCOUNTS,
+	TASK_EDITOR_DEPRECATION,
+	TASK_FIND_DOMAIN,
+	TASK_GO_MOBILE_ANDROID,
+	TASK_GO_MOBILE_IOS,
+	TASK_SITE_SETUP_CHECKLIST,
+	TASK_WEBINARS,
+} from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
-	'home-task-site-setup-checklist': SiteSetupList,
-	'home-task-connect-accounts': ConnectAccounts,
-	'home-task-find-domain': FindDomain,
-	'home-task-webinars': Webinars,
-	'home-task-editor-deprecation': DeprecateEditor,
-	'home-task-go-mobile-android': GoMobile,
-	'home-task-go-mobile-ios': GoMobile,
-	'home-notice-celebrate-site-creation': CelebrateSiteCreation,
-	'home-notice-celebrate-site-launch': CelebrateSiteLaunch,
-	'home-notice-celebrate-site-migration': CelebrateSiteMigration,
-	'home-notice-celebrate-site-setup-complete': CelebrateSiteSetupComplete,
+	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
+	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
+	[ TASK_FIND_DOMAIN ]: FindDomain,
+	[ TASK_WEBINARS ]: Webinars,
+	[ TASK_EDITOR_DEPRECATION ]: DeprecateEditor,
+	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
+	[ TASK_GO_MOBILE_IOS ]: GoMobile,
+	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
+	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
+	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
+	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 };
 
 const Primary = ( { cards } ) => {

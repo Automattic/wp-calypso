@@ -7,7 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CelebrateNotice from '../celebrate-notice';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_CREATION } from 'my-sites/customer-home/cards/constants';
 
 const CelebrateSiteCreation = () => {
 	const translate = useTranslate();
@@ -18,7 +19,7 @@ const CelebrateSiteCreation = () => {
 			description={ translate(
 				"Next, we'll guide you through setting up and launching your site."
 			) }
-			noticeId="site-created"
+			noticeId={ NOTICE_CELEBRATE_SITE_CREATION }
 			title={ translate( 'Your site has been created!' ) }
 		/>
 	);
