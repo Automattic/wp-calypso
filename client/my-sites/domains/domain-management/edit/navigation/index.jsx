@@ -21,6 +21,7 @@ import {
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
 	domainManagementChangeSiteAddress,
+	domainManagementRedirectSettings,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
@@ -301,6 +302,19 @@ class DomainManagementNavigation extends React.Component {
 		);
 	}
 
+	getRedirectSettings() {
+		const { domain, selectedSite, translate } = this.props;
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name ) }
+				materialIcon="language"
+				text={ translate( 'Redirect settings' ) }
+				description={ translate( 'Update your site redirect' ) }
+			/>
+		);
+	}
+
 	renderRegisteredDomainNavigation() {
 		return (
 			<React.Fragment>
@@ -311,6 +325,10 @@ class DomainManagementNavigation extends React.Component {
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
+	}
+
+	renderSiteRedirectNavigation() {
+		return <React.Fragment>{ this.getRedirectSettings() }</React.Fragment>;
 	}
 
 	renderMappedDomainNavigation() {
@@ -346,6 +364,7 @@ class DomainManagementNavigation extends React.Component {
 				{ domainType === domainTypes.WPCOM && this.renderWpcomDomainNavigation() }
 				{ domainType === domainTypes.MAPPED && this.renderMappedDomainNavigation() }
 				{ domainType === domainTypes.REGISTERED && this.renderRegisteredDomainNavigation() }
+				{ domainType === domainTypes.SITE_REDIRECT && this.renderSiteRedirectNavigation() }
 				{ domainType === domainTypes.TRANSFER && this.renderTransferInDomainNavigation() }
 			</VerticalNav>
 		);
