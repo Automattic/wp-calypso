@@ -34,6 +34,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
+import searchSites from 'components/search-sites';
 
 import {
 	JPC_PATH_PLANS,
@@ -70,12 +71,28 @@ export class SearchPurchase extends Component {
 				currentUrl: cleanUrl( this.props.url ),
 				shownUrl: this.props.url,
 				waitingForSites: false,
+				candidateSites: this.props.searchSites( this.props.url ),
 		  }
 		: {
 				currentUrl: '',
 				shownUrl: '',
 				waitingForSites: false,
+				candidateSites: [],
 		  };
+
+	getCandidateSites( url ) {
+		this.props.searchSites( url );
+		let candidateSites = [];
+
+		if ( this.props.sitesFound ) {
+			candidateSites = this.props.sitesFound.map( ( site ) => ( {
+				label: site.URL,
+				category: this.props.translate( 'Choose site' ),
+			} ) );
+		}
+
+		this.setState( { candidateSites } );
+	}
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
@@ -239,21 +256,13 @@ export class SearchPurchase extends Component {
 		);
 	}
 
-	handleUrlChange = ( event ) => {
-		const url = event.target.value;
-
+	handleUrlChange = ( url ) => {
 		this.setState( {
 			currentUrl: cleanUrl( url ),
 			shownUrl: url,
 		} );
-	};
 
-	handleUrlSelect = ( siteId ) => {
-		const url = this.props.sites.filter( ( x ) => x.ID === siteId ).map( ( x ) => x.URL )[ 0 ];
-		this.setState( {
-			currentUrl: url,
-			shownUrl: url,
-		} );
+		this.getCandidateSites( url );
 	};
 
 	checkUrl( url ) {
@@ -371,12 +380,15 @@ export class SearchPurchase extends Component {
 	}
 
 	renderSiteInput( status ) {
+		const product = window.location.href.split( '/' )[ 5 ];
+
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ ! this.isCurrentUrlFetching() &&
 				this.isCurrentUrlFetched() &&
 				! this.props.jetpackConnectSite.isDismissed &&
-				status ? (
+				status &&
+				product !== 'jetpack_search' ? (
 					<JetpackConnectNotices
 						noticeType={ status }
 						onDismissClick={ IS_DOT_COM === status ? this.goBack : this.dismissUrl }
@@ -389,7 +401,6 @@ export class SearchPurchase extends Component {
 					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.handleUrlChange }
-					onSelect={ this.handleUrlSelect }
 					onSubmit={ this.handleUrlSubmit }
 					isError={ this.getStatus() }
 					isFetching={
@@ -397,6 +408,7 @@ export class SearchPurchase extends Component {
 					}
 					isInstall={ this.isInstall() }
 					product={ 'jetpack_search' }
+					candidateSites={ this.state.candidateSites }
 				/>
 			</Card>
 		);
@@ -460,4 +472,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( SearchPurchase );
+export default flowRight( connectComponent, searchSites, localize )( SearchPurchase );

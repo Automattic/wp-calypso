@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -14,10 +13,8 @@ import { noop } from 'lodash';
 import { Card, Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
-import SitesDropdown from 'components/sites-dropdown';
 import Spinner from 'components/spinner';
-import { getCurrentUser } from 'state/current-user/selectors';
+import SuggestionSearch from 'components/suggestion-search';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class JetpackConnectSiteUrlInput extends PureComponent {
@@ -35,6 +32,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	};
 
 	static defaultProps = {
+		candidateSites: [],
 		onChange: noop,
 		url: '',
 		autoFocus: true,
@@ -123,12 +121,11 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 
 	render() {
 		const {
+			candidateSites,
 			isFetching,
 			onChange,
-			onSelect,
 			onSubmit,
 			product,
-			requestingMissingSites,
 			translate,
 			url,
 			autoFocus,
@@ -139,19 +136,27 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					<FormTextInput
-						ref={ this.refInput }
-						id="siteUrl"
-						autoCapitalize="off"
-						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						onChange={ onChange }
-						disabled={ isFetching }
-						placeholder={ 'https://yourjetpack.blog' }
-						onKeyUp={ this.handleKeyPress }
-						value={ url }
-					/>
+					{ product !== 'jetpack_search' && (
+						<FormTextInput
+							ref={ this.refInput }
+							id="siteUrl"
+							autoCapitalize="off"
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							onChange={ onChange }
+							disabled={ isFetching }
+							placeholder={ 'https://yourjetpack.blog' }
+							onKeyUp={ this.handleKeyPress }
+							value={ url }
+						/>
+					) }
 					{ product === 'jetpack_search' && (
-						<SitesDropdown isPlaceholder={ requestingMissingSites } onSiteSelect={ onSelect } />
+						<SuggestionSearch
+							id="siteSelection"
+							placeholder={ 'Type your site' }
+							onChange={ onChange }
+							suggestions={ candidateSites }
+							value={ url }
+						/>
 					) }
 					{ isFetching ? <Spinner /> : null }
 				</div>
@@ -171,10 +176,4 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state ),
-		requestingMissingSites: isRequestingMissingSites( state ),
-	} ),
-	{}
-)( localize( JetpackConnectSiteUrlInput ) );
+export default localize( JetpackConnectSiteUrlInput );
