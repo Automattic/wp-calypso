@@ -11,13 +11,14 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ExternalLink from 'components/external-link';
+import userUtilities from 'lib/user/utils';
 
 /**
  * Style dependencies
@@ -65,6 +66,13 @@ class SettingsPage extends Component {
 		);
 	}
 
+	logOut() {
+		// Clears everything user related on the client site by
+		// calling user.clear() which calls store.clearAll();
+		userUtilities.logout( 'https://jetpack.com/' );
+		// @todo: track event (what type?)
+	}
+
 	render() {
 		const { rewind, siteId, translate } = this.props;
 
@@ -76,6 +84,11 @@ class SettingsPage extends Component {
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<PageViewTracker path="/settings/:site" title="Settings" />
+
+				<Button primary scary onClick={ this.logOut }>
+					Log out
+				</Button>
+
 				<div className="settings__title">
 					<h2>{ translate( 'Server connection details' ) }</h2>
 				</div>
