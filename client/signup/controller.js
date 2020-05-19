@@ -69,7 +69,7 @@ export default {
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						window.location = window.location.origin + '/new';
+						window.location = window.location.origin + '/new' + window.location.search;
 					} else {
 						removeWhiteBackground();
 						next();
