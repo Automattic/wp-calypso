@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { DomainSuggestion, DomainSuggestionQuery } from './types';
+import { DomainSuggestion, DomainSuggestionQuery, DomainCategory } from './types';
 
-export const receiveCategories = ( categories: Record< string, string[] > ) =>
+export const receiveCategories = ( categories: DomainCategory[] ) =>
 	( {
 		type: 'RECEIVE_CATEGORIES',
 		categories,

@@ -112,3 +112,20 @@ export interface DomainSuggestion {
 	 */
 	is_free?: true;
 }
+
+export interface DomainCategory {
+	/**
+	 * The domain category title
+	 */
+	title: string;
+
+	/**
+	 * The domain category slug
+	 */
+	slug: string;
+
+	/**
+	 * The domain category tier
+	 */
+	tier: number | null;
+}

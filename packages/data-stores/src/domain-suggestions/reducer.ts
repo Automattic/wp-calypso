@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { DomainSuggestion } from './types';
+import { DomainSuggestion, DomainCategory } from './types';
 import { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
 
@@ -24,10 +24,7 @@ const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined
 	return state;
 };
 
-const categories: Reducer< Record< string, string[] > | undefined, Action > = (
-	state = undefined,
-	action
-) => {
+const categories: Reducer< DomainCategory[], Action > = ( state = [], action ) => {
 	if ( action.type === 'RECEIVE_CATEGORIES' ) {
 		return action.categories;
 	}
