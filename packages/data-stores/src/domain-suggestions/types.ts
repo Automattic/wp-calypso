@@ -54,6 +54,11 @@ export interface DomainSuggestionQuery {
 	 * An array of tlds
 	 */
 	tlds?: readonly string[];
+
+	/**
+	 * Domain category slug
+	 */
+	category_slug?: string;
 }
 
 export type DomainName = string;
