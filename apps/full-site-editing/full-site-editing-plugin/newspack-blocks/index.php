@@ -100,7 +100,7 @@ require_once __DIR__ . '/synced-newspack-blocks/blocks/homepage-articles/view.ph
  *
  * @param bool true if Post Carousel Block should be disabled, false otherwise.
  */
-if ( ! apply_filters( 'a8c_disable_posts_carousel_block', false ) || ! apply_filters( 'a8c_disable_post_carousel_block', false ) ) {
+if ( ! apply_filters( 'a8c_disable_posts_carousel_block', false ) && ! apply_filters( 'a8c_disable_post_carousel_block', false ) ) {
 	require_once __DIR__ . '/synced-newspack-blocks/blocks/carousel/view.php';
 }
 
