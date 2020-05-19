@@ -148,7 +148,8 @@ function getFixedDomainSearch( domainName ) {
 		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
 		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
-		.replace( /_/g, '-' );
+		.replace( /_/g, '-' )
+		.replace( /^\.+|\.+$/, '' );
 }
 
 function isSubdomain( domainName ) {
