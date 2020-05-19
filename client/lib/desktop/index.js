@@ -20,6 +20,8 @@ import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
+import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
 
 /**
  * Module variables
@@ -44,7 +46,10 @@ const Desktop = {
 		this.store = await getReduxStore();
 
 		this.editorLoadedStatus();
+		// TODO: can probably combine a few of these subscribers
 		this.subscribeCannotOpenEditor();
+		this.subscribeEnableSiteOptionSSO();
+		this.subscribeJetpackModuleActivateStatus();
 
 		// Send some events immediately - this sets the app state
 		this.notificationStatus();
@@ -174,9 +179,33 @@ const Desktop = {
 	subscribeCannotOpenEditor: function () {
 		window.addEventListener( 'desktop-notify-cannot-open-editor', ( event ) => {
 			const { site, editorUrl, reason } = event.detail;
-			debug( 'Cannot load editor for site: ', site.URL );
+			debug(
+				'Dispatching desktop notifification via window event: cannot load editor for site: ',
+				site.URL
+			);
 
-			ipc.send( 'cannot-open-editor', { origin: site.URL, editorUrl, reason } );
+			const state = this.store.getState();
+			const siteId = site.ID;
+
+			const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
+
+			ipc.send( 'cannot-open-editor', { siteId, origin: site.URL, editorUrl, reason, isAdmin } );
+		} );
+	},
+
+	subscribeJetpackModuleActivateStatus: function () {
+		window.addEventListener( 'desktop-notify-jetpack-module-activate-status', ( event ) => {
+			const { status, message } = event.detail;
+			ipc.send( 'enable-site-option-sso-status', { status, message } );
+		} );
+	},
+
+	subscribeEnableSiteOptionSSO: function () {
+		ipc.on( 'enable-site-option-sso', ( event, info ) => {
+			const { siteId } = info;
+			debug( "User enabling option 'SSO' for siteId: ", siteId );
+
+			this.store.dispatch( activateModule( siteId, 'sso' ) );
 		} );
 	},
 

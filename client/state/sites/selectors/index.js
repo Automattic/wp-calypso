@@ -1,4 +1,5 @@
 export { default as buildSeoTitle } from './build-seo-title';
+export { default as canCurrentUserManageSiteOptions } from './can-current-user-manage-site-options';
 export { default as canCurrentUserUpgradeSite } from './can-current-user-upgrade-site';
 export { default as canCurrentUserUseAds } from './can-current-user-use-ads';
 export { default as canCurrentUserUseCustomerHome } from './can-current-user-use-customer-home';

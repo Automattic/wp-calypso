@@ -17,7 +17,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, getSiteOption, getSite } from 'state/sites/selectors';
+import { getSiteUrl, getSiteOption, getSite, isJetpackSite } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
@@ -75,12 +75,6 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-// TODO: Make these state selectors
-function isSiteJetpack( state, siteId ) {
-	const site = getSite( state, siteId );
-	return site.jetpack ? site.jetpack : false;
-}
-
 function ssoEnabled( state, siteId ) {
 	const site = getSite( state, siteId );
 	const siteActiveModules = site.options.active_modules;
@@ -115,7 +109,7 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isSiteJetpack( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
