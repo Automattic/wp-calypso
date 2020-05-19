@@ -22,7 +22,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
-export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
+export const fetchEmailSettings = ( siteId ) => ( dispatch, getState ) => {
 	if (
 		areEmailSettingsLoaded( getState(), siteId ) ||
 		areEmailSettingsLoading( getState(), siteId )
@@ -39,19 +39,19 @@ export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'settings_email_groups' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
 
-export const emailSettingChange = ( siteId, setting ) => dispatch => {
+export const emailSettingChange = ( siteId, setting ) => ( dispatch ) => {
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 		siteId,
@@ -67,7 +67,7 @@ export const emailSettingChange = ( siteId, setting ) => dispatch => {
  * @param  {number|string} siteId      Jetpack site ID
  * @returns {Function}                  Action thunk
  */
-export const emailSettingsSaveSettings = siteId => dispatch => {
+export const emailSettingsSaveSettings = ( siteId ) => ( dispatch ) => {
 	if ( null == siteId ) {
 		return;
 	}
@@ -78,7 +78,7 @@ export const emailSettingsSaveSettings = siteId => dispatch => {
 	} );
 };
 
-const settingsSubmit = siteId => ( {
+const settingsSubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 	siteId,
 } );
@@ -95,7 +95,7 @@ const settingsSubmitFailure = ( siteId, { error } ) => ( {
 	error,
 } );
 
-export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
+export const emailSettingsSubmitSettings = ( siteId, settings ) => ( dispatch ) => {
 	if ( null == siteId ) {
 		return;
 	}
@@ -103,7 +103,7 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 	dispatch( settingsSubmit( siteId ) );
 
 	// disable if user has emptied the input field
-	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], option => {
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], ( option ) => {
 		if ( get( settings, [ option, 'recipient', 'value' ], '' ).trim() === '' ) {
 			if ( has( settings, [ option, 'enabled' ] ) ) {
 				settings[ option ].enabled.value = 'no';
@@ -128,15 +128,15 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 
 	return request( siteId )
 		.post( 'settings/batch', { update } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( settingsSubmitSuccess( siteId, data ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( settingsSubmitFailure( siteId, error ) );
 		} );
 };
 
-export const emailSettingsInvalidValue = ( siteId, reason ) => dispatch => {
+export const emailSettingsInvalidValue = ( siteId, reason ) => ( dispatch ) => {
 	return dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 		siteId,

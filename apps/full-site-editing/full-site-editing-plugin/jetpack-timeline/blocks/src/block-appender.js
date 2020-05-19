@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  * WordPress dependencies
  */
 
-export const BlockAppender = props => {
+export const BlockAppender = ( props ) => {
 	const { onClick } = props;
 	return (
 		<button

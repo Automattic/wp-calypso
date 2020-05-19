@@ -46,7 +46,7 @@ class FollowingManageSubscriptions extends Component {
 
 		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
 
-		return follows.filter( follow => {
+		return follows.filter( ( follow ) => {
 			const feed = follow.feed;
 			const site = follow.site;
 			const siteName = getSiteName( { feed, site } );
@@ -64,7 +64,7 @@ class FollowingManageSubscriptions extends Component {
 
 	sortFollows( follows, sortOrder ) {
 		if ( sortOrder === 'alpha' ) {
-			return sortBy( follows, follow => {
+			return sortBy( follows, ( follow ) => {
 				const feed = follow.feed;
 				const site = follow.site;
 				const displayUrl = formatUrlForDisplay( follow.URL );
@@ -75,7 +75,7 @@ class FollowingManageSubscriptions extends Component {
 		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
 	}
 
-	handleSortChange = sort => {
+	handleSortChange = ( sort ) => {
 		page.replace( addQueryArgs( { sort }, window.location.pathname + window.location.search ) );
 	};
 
@@ -93,7 +93,7 @@ class FollowingManageSubscriptions extends Component {
 				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
-						{ translate( '%(num)s Followed Sites', {
+						{ translate( '%(num)s Followed sites', {
 							args: { num: followsCount },
 						} ) }
 					</h1>
@@ -156,7 +156,7 @@ class FollowingManageSubscriptions extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const follows = getReaderFollows( state );
 	const followsCount = getReaderFollowsCount( state );
 	return { follows, followsCount };

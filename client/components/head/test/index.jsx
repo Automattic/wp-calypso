@@ -12,7 +12,7 @@ import { merge } from 'lodash';
 describe( 'Head', () => {
 	let Head;
 
-	const createProps = additionalProps =>
+	const createProps = ( additionalProps ) =>
 		merge(
 			{
 				cdn: '//arbitrary-cdn',
@@ -60,10 +60,10 @@ describe( 'Head', () => {
 		const props = createProps( { cdn: '//s1.wp.com' } );
 		const wrapper = shallow( <Head { ...props } /> );
 
-		wrapper.find( { rel: 'icon', type: 'image/png' } ).map( link => {
+		wrapper.find( { rel: 'icon', type: 'image/png' } ).map( ( link ) => {
 			expect( link.prop( 'href' ) ).toMatch( /^\/\/s1.wp.com/ );
 		} );
-		wrapper.find( { rel: 'apple-touch-icon' } ).map( link => {
+		wrapper.find( { rel: 'apple-touch-icon' } ).map( ( link ) => {
 			expect( link.prop( 'href' ) ).toMatch( /^\/\/s1.wp.com/ );
 		} );
 	} );

@@ -10,7 +10,6 @@ import { some, partial, map, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
@@ -69,7 +68,7 @@ class EditorMediaModal extends Component {
 		this.props.onClose();
 	}
 
-	onClose = value => {
+	onClose = ( value ) => {
 		if ( value ) {
 			// `isGutenberg` means that the Media Modal has been opened by a Gutenberg media block,
 			// as opposed to the Classic editor or the Classic block in Gutenberg.
@@ -81,18 +80,12 @@ class EditorMediaModal extends Component {
 	};
 
 	render() {
-		const { site } = this.props;
-
-		return (
-			<MediaLibrarySelectedData siteId={ get( site, 'ID' ) }>
-				<MediaModal { ...this.props } onClose={ this.onClose } />
-			</MediaLibrarySelectedData>
-		);
+		return <MediaModal { ...this.props } onClose={ this.onClose } />;
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSite( state ),
 	} ),
 	{

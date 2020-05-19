@@ -84,7 +84,7 @@ class Desktop extends React.Component {
 						/>
 					) }
 
-					{ entrypoint.js.map( asset => (
+					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
 					<script src="/desktop/desktop-app.js" />

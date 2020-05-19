@@ -68,7 +68,7 @@ CurrentSiteDomainWarnings.propTypes = {
 	selectedSite: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

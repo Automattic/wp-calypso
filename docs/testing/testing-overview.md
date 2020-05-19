@@ -20,11 +20,11 @@ It supports automatic test discovery. We only need to put a test file into a `te
 Tests can be run in 3 different modes:
 ```bash
 > # run the entire server suite
-> npm run test-server
+> yarn run test-server
 > # run a configuration customized to work with continuous integration 
-> npm run test-server:ci
+> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
-> npm run test-client:watch
+> yarn run test-client:watch
 ```
 
 Those tests are executed on every push on continuous integration (we use CircleCi). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
@@ -40,11 +40,11 @@ It supports automatic test discovery. We only need to put a test file into a `te
 Tests can be run in 3 different modes:
 ```bash
 > # run the entire client suite
-> npm run test-client
+> yarn run test-client
 > # run a configuration customized to work with continuous integration
-> npm run test-server:ci
+> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
-> npm run test-client:watch
+> yarn run test-client:watch
 ```
 
 They are executed on every push on continuous integration (CircleCI). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
@@ -63,9 +63,9 @@ It supports automatic test discovery. We only need to put a test file into a `in
 Tests can be run in 2 different modes:
 ```bash
 > # run the entire integration suite
-> npm run test-integration
+> yarn run test-integration
 > # run a configuration customized to work with continuous integration
-> npm run test-integration:ci
+> yarn run test-integration:ci
 ```
 
 They run daily on continuous integration (CircleCI), because they can use network connection or memory intensive processing and therefore can have longer runtime.
@@ -86,23 +86,23 @@ End-to-end tests are still using Mocha to run tests.
 
 ##### How to run all tests?
 
-Executing `npm test` from the root folder will run all test suites.
+Executing `yarn test` from the root folder will run all test suites.
 Behind the scenes we maintain 3 test configuration. This is because each of them (`client`, `server`, and `integration`) has their own requirements.
 
 ##### How to run a smaller subset of test files?
 
-We have a npm run script for each tests type: `npm run test-client`, `npm run test-server`, `npm run test-integration`.
+We have a yarn run script for each tests type: `yarn run test-client`, `yarn run test-server`, `yarn run test-integration`.
 You can pass a filename, folder name or matching pattern to these scripts to narrow down number of executed tests.
 
 Example for client:
 
 ```bash
 > # run test suite for a specific test file
-> npm run test-client client/state/selectors/test/get-media.js
+> yarn run test-client client/state/selectors/test/get-media.js
 > # run test suites for all files in a specific folder
-> npm run test-server server/config
+> yarn run test-server server/config
 > # run test suites for all files matching pattern
-> npm run test-client client/*/domains
+> yarn run test-client client/*/domains
 ```
 
 ##### How to run specified suite or test-case

@@ -22,7 +22,7 @@ export default function rtlFactory( i18n ) {
 	}
 
 	const withRtl = createHigherOrderComponent(
-		WrappedComponent =>
+		( WrappedComponent ) =>
 			forwardRef( ( props, ref ) => {
 				const isRtl = useRtl();
 				return <WrappedComponent { ...props } isRtl={ isRtl } ref={ ref } />;

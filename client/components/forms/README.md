@@ -105,3 +105,8 @@ And this would render:
 ```
 
 Any valid jsx attributes that are passed to `<SelectOptGroup>` will also get passed to the rendered `<select>` element, so you can also pass in attributes like `className`, `onChange`, etc.
+
+### General guidelines
+
+- Use clear and accurate labels.
+- Use sentence-style capitalization except when referring to an official/branded feature or service name (e.g. Simple Payments).

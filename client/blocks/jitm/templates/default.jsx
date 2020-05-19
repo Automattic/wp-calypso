@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 
 export default function DefaultTemplate( {
 	id,
@@ -15,18 +15,15 @@ export default function DefaultTemplate( {
 	message,
 	description,
 	featureClass,
-	icon,
 	tracks,
 	trackImpression,
 	onClick,
 	onDismiss,
 } ) {
-	const isJetpack = icon && icon.indexOf( 'jetpack' ) !== -1;
-
 	return (
 		<>
 			{ trackImpression && trackImpression() }
-			<Banner
+			<UpsellNudge
 				callToAction={ CTA.message }
 				title={ message }
 				description={ description }
@@ -37,9 +34,10 @@ export default function DefaultTemplate( {
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
-				jetpack={ isJetpack }
-				horizontal={ isJetpack }
+				horizontal
 				target={ '_blank' }
+				showIcon={ true }
+				forceDisplay
 			/>
 		</>
 	);

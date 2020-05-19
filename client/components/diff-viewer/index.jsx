@@ -2,14 +2,14 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { parsePatch } from 'diff';
+import { parsePatch } from 'diff/lib/patch/parse';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const decompose = path => {
+const decompose = ( path ) => {
 	const lastSlash = path.lastIndexOf( '/' );
 
 	return lastSlash > -1 ? [ path.slice( 0, lastSlash ), path.slice( lastSlash ) ] : [ '', path ];
@@ -31,9 +31,10 @@ const decompose = path => {
  * from the right when looking at the contents of a single
  * file over time.
  *
- * @param {string} oldFileName filename of left contents
- * @param {string} newFileName filename of right contents
- * @returns {Element} description of the file or files in the diff
+ * @param {object} options deconstructed argument
+ * @param {string} options.oldFileName filename of left contents
+ * @param {string} options.newFileName filename of right contents
+ * @returns {window.Element} description of the file or files in the diff
  */
 const filename = ( { oldFileName, newFileName } ) => {
 	// if we think the diff utility added a bogus

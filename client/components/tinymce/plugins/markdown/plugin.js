@@ -12,7 +12,7 @@ import tinymce from 'tinymce/tinymce';
 function markdown( editor ) {
 	function allowMarkdownAttribute( event ) {
 		const ed = event.target;
-		Object.keys( ed.schema.elements ).forEach( function( key ) {
+		Object.keys( ed.schema.elements ).forEach( function ( key ) {
 			ed.schema.elements[ key ].attributes.markdown = {};
 			ed.schema.elements[ key ].attributesOrder.push( 'markdown' );
 		} );
@@ -21,6 +21,6 @@ function markdown( editor ) {
 	editor.on( 'preinit', allowMarkdownAttribute );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/markdown', markdown );
 }

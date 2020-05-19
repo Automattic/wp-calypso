@@ -35,6 +35,8 @@ const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-iden
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -50,8 +52,15 @@ const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'fal
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
+const shouldBuildChunksMap =
+	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
+	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const isJetpackCloud =
+	calypsoEnv === 'jetpack-cloud-stage' ||
+	calypsoEnv === 'jetpack-cloud-development' ||
+	calypsoEnv === 'jetpack-cloud-production';
 
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -67,12 +76,12 @@ function filterEntrypoints( entrypoints ) {
 
 	console.warn( '[entrylimit] Limiting build to %s', allowedEntrypoints.join( ', ' ) );
 
-	const validEntrypoints = allowedEntrypoints.filter( ep => {
+	const validEntrypoints = allowedEntrypoints.filter( ( ep ) => {
 		if ( entrypoints.hasOwnProperty( ep ) ) {
 			return true;
 		}
 		console.warn( '[entrylimit] Invalid entrypoint: %s. Valid entries are:', ep );
-		Object.keys( entrypoints ).forEach( e => console.warn( '\t' + e ) );
+		Object.keys( entrypoints ).forEach( ( e ) => console.warn( '\t' + e ) );
 		return false;
 	} );
 
@@ -112,12 +121,12 @@ const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 const fileLoader = FileConfig.loader(
-	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
-	// This is required so that running calypso via `npm start` doesn't break.
+	// The server bundler express middleware serves assets from a hard-coded publicPath.
+	// This is required so that running calypso via `yarn start` doesn't break.
 	isDevelopment
 		? {
 				outputPath: 'images',
-				publicPath: '/calypso/evergreen/images/',
+				publicPath: `/calypso/${ extraPath }/images/`,
 				esModules: true,
 		  }
 		: {
@@ -136,7 +145,6 @@ const webpackConfig = {
 	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
-		'entry-jetpack-cloud': [ path.join( __dirname, 'landing', 'jetpack-cloud' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	} ),
@@ -288,6 +296,11 @@ const webpackConfig = {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		shouldBuildChunksMap &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+			} ),
+		isCalypsoClient && new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
@@ -307,7 +320,7 @@ if ( isCalypsoClient ) {
 // Don't bundle `wpcom-xhr-request` for the browser.
 // Even though it's requested, we don't need it on the browser, because we're using
 // `wpcom-proxy-request` instead. Keep it for desktop and server, though.
-if ( isCalypsoClient && ! isDesktop ) {
+if ( isCalypsoClient && ! isDesktop && ! isJetpackCloud ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
 	);

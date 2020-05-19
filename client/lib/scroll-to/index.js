@@ -88,7 +88,7 @@ class Stepper {
 	 *
 	 * @param {number} ts - timestamp
 	 */
-	step = ts => {
+	step = ( ts ) => {
 		// reset the nextFrame raf handle so we can schedule another step
 		this.nextFrame = null;
 

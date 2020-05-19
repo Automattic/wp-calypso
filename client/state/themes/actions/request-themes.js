@@ -8,7 +8,7 @@ import { map, property } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'lib/wporg';
-import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'state/action-types';
+import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'state/themes/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { receiveThemes } from 'state/themes/actions/receive-themes';
 import { prependThemeFilterKeys } from 'state/themes/selectors';
@@ -85,7 +85,7 @@ export function requestThemes( siteId, query = {} ) {
 
 				dispatch( receiveThemes( themes, siteId, query, found ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEMES_REQUEST_FAILURE,
 					siteId,

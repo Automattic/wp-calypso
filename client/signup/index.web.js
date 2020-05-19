@@ -10,7 +10,7 @@ import controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
 
-export default function() {
+export default function () {
 	const lang = getLanguageRouteParam();
 
 	page(
@@ -20,6 +20,7 @@ export default function() {
 			`/start/:flowName/:stepName/${ lang }`,
 			`/start/:flowName/:stepName/:stepSectionName/${ lang }`,
 		],
+		controller.redirectTests,
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,

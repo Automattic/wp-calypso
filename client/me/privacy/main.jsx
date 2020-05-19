@@ -102,7 +102,7 @@ const Privacy = createReactClass( {
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<SectionHeader label={ translate( 'Usage Information' ) } />
+				<SectionHeader label={ translate( 'Usage information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
@@ -158,12 +158,12 @@ const Privacy = createReactClass( {
 						>
 							{ this.state.submittingForm
 								? translate( 'Saving…' )
-								: translate( 'Save Privacy Settings' ) }
+								: translate( 'Save privacy settings' ) }
 						</FormButton>
 					</form>
 				</Card>
 				<SectionHeader
-					label={ translate( 'Data Processing Addendum', {
+					label={ translate( 'Data processing addendum', {
 						comment:
 							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 					} ) }
@@ -222,7 +222,7 @@ function requestDpa() {
 		}
 	);
 }
-const dpaRequestState = request => {
+const dpaRequestState = ( request ) => {
 	switch ( request.state ) {
 		case 'pending':
 			return { status: 'pending' };
@@ -242,10 +242,10 @@ export default compose(
 		() => ( {
 			dpaRequest: dpaRequestState( getHttpData( dpaRequestId ) ),
 		} ),
-		dispatch => ( {
+		( dispatch ) => ( {
 			requestDpa,
-			successNotice: message => dispatch( successNotice( message ) ),
-			errorNotice: message => dispatch( errorNotice( message ) ),
+			successNotice: ( message ) => dispatch( successNotice( message ) ),
+			errorNotice: ( message ) => dispatch( errorNotice( message ) ),
 		} )
 	)
 )( Privacy );

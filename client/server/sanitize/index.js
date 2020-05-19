@@ -44,7 +44,7 @@ function jsSlashEncoder( charStr ) {
  * @param {mixed} value The variable to be serialized
  * @returns {string} JSON serialized string
  **/
-exports.jsonStringifyForHtml = function( value ) {
+exports.jsonStringifyForHtml = function ( value ) {
 	const jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
 	const cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
 	return (

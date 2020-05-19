@@ -34,7 +34,7 @@ import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 
 /**
  * Selectors, actions, and query components
@@ -42,6 +42,7 @@ import UpgradeNudge from 'blocks/upgrade-nudge';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -88,7 +89,7 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderSaveButton() {
+	renderSaveButton( largeButton ) {
 		const {
 			handleSubmitForm,
 			isRequestingSettings,
@@ -111,12 +112,13 @@ class PodcastingDetails extends Component {
 
 		return (
 			<Button
-				compact={ true }
+				compact={ ! largeButton }
 				onClick={ handleSubmitForm }
-				primary={ true }
+				primary
 				type="submit"
 				disabled={ saveButtonDisabled }
 				busy={ isSavingSettings }
+				className="podcasting-details__save-button"
 			>
 				{ saveButtonText }
 			</Button>
@@ -160,7 +162,7 @@ class PodcastingDetails extends Component {
 						<option key={ topicKey } value={ topicKey }>
 							{ topic }
 						</option>,
-						...map( subtopics, subtopic => {
+						...map( subtopics, ( subtopic ) => {
 							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
 							return (
 								<option key={ subtopicKey } value={ subtopicKey }>
@@ -233,12 +235,17 @@ class PodcastingDetails extends Component {
 						</h1>
 					</HeaderCake>
 					{ ! error && plansDataLoaded && (
-						<UpgradeNudge
+						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-							message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+							description={ translate(
+								'Embed podcast episodes directly from your media library.'
+							) }
 							feature={ FEATURE_AUDIO_UPLOADS }
 							event="podcasting_details_upload_audio"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 					{ ! error && (
@@ -370,6 +377,7 @@ class PodcastingDetails extends Component {
 					key: 'podcasting_keywords',
 					label: translate( 'Keywords' ),
 				} ) }
+				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>
 		);
 	}
@@ -377,10 +385,10 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
+		const { isPrivate, isComingSoon, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
-			return <PodcastingPrivateSiteMessage />;
+			return <PodcastingPrivateSiteMessage isComingSoon={ isComingSoon } />;
 		}
 
 		if ( ! userCanManagePodcasting ) {
@@ -394,7 +402,7 @@ class PodcastingDetails extends Component {
 		return null;
 	}
 
-	onCategorySelected = category => {
+	onCategorySelected = ( category ) => {
 		const { settings, fields, isPodcastingEnabled } = this.props;
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
@@ -438,14 +446,14 @@ class PodcastingDetails extends Component {
 		} );
 	};
 
-	onCoverImageUploadStateChanged = isUploading => {
+	onCoverImageUploadStateChanged = ( isUploading ) => {
 		this.setState( {
 			isCoverImageUploading: isUploading,
 		} );
 	};
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
 		'podcasting_title',
@@ -493,6 +501,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,
 		podcastingCategoryId,
 		isCategoryChanging,

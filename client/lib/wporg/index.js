@@ -81,7 +81,7 @@ export function fetchPluginInformation( pluginSlug ) {
 	const baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
 
 	return new Promise( ( resolve, reject ) => {
-		jsonp( baseUrl, query, function( error, data ) {
+		jsonp( baseUrl, query, function ( error, data ) {
 			if ( error ) {
 				debug( 'error downloading plugin details from .org: %s', error );
 				reject( error );

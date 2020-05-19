@@ -18,7 +18,7 @@ export default function isFetchingSiteBlocks( state ) {
 		return false;
 	}
 
-	const fetchingPages = filter( inflightPages, inflightPage => inflightPage === true );
+	const fetchingPages = filter( inflightPages, ( inflightPage ) => inflightPage === true );
 
 	return fetchingPages.length > 0;
 }

@@ -66,7 +66,7 @@ export const getSitePlan = createSelector(
 		if ( ! plansBySiteId || ! plansBySiteId.data ) {
 			return null;
 		}
-		return plansBySiteId.data.filter( plan => plan.productSlug === productSlug ).shift();
+		return plansBySiteId.data.filter( ( plan ) => plan.productSlug === productSlug ).shift();
 	},
 	( state, siteId ) => getPlansBySiteId( state, siteId )
 );

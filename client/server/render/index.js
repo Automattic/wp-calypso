@@ -7,13 +7,19 @@ import superagent from 'superagent';
 import Lru from 'lru';
 import { get, pick } from 'lodash';
 import debugFactory from 'debug';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { isDefaultLocale, isLocaleRtl } from 'lib/i18n-utils';
-import { getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
+import {
+	getLanguageFileUrl,
+	getLanguageManifestFileUrl,
+	getTranslationChunkFileUrl,
+} from 'lib/i18n-utils/switch-locale';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
@@ -124,11 +130,60 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	//todo: render an error?
 }
 
+const cachedLanguageManifest = {};
+const getLanguageManifest = ( langSlug, target ) => {
+	const key = `${ target }/${ langSlug }`;
+
+	if ( ! cachedLanguageManifest[ key ] ) {
+		const languageManifestFilepath = path.join(
+			__dirname,
+			'..',
+			'..',
+			'..',
+			'public',
+			target,
+			'languages',
+			`${ langSlug }-language-manifest.json`
+		);
+		cachedLanguageManifest[ key ] = JSON.parse(
+			fs.readFileSync( languageManifestFilepath, 'utf8' )
+		);
+	}
+	return cachedLanguageManifest[ key ];
+};
+
 export function attachI18n( context ) {
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 
 		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
+	}
+
+	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
+		context.entrypoint.language = {};
+
+		context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
+			localeSlug: context.lang,
+			fileType: 'js',
+			targetBuild: context.target,
+			hash: context?.languageRevisions?.hashes?.[ context.lang ],
+		} );
+
+		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
+
+		context.entrypoint.language.translations = context.entrypoint.js
+			.concat( context.chunkFiles.js )
+			.map( ( chunk ) => path.parse( chunk ).name )
+			.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
+			.map( ( chunkId ) =>
+				getTranslationChunkFileUrl( {
+					chunkId,
+					localeSlug: context.lang,
+					fileType: 'js',
+					targetBuild: context.target,
+					hash: context?.languageRevisions?.[ context.lang ],
+				} )
+			);
 	}
 
 	if ( context.store ) {

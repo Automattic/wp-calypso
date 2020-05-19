@@ -103,7 +103,7 @@ export function extractScreenshots( screenshotsHtml ) {
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = map( list, function( li ) {
+	let screenshots = map( list, function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -115,14 +115,14 @@ export function extractScreenshots( screenshotsHtml ) {
 		}
 	} );
 
-	screenshots = screenshots.filter( screenshot => screenshot );
+	screenshots = screenshots.filter( ( screenshot ) => screenshot );
 
 	return screenshots.length ? screenshots : null;
 }
 
 export function normalizeCompatibilityList( compatibilityList ) {
 	function splitInNumbers( version ) {
-		const splittedVersion = version.split( '.' ).map( function( versionComponent ) {
+		const splittedVersion = version.split( '.' ).map( function ( versionComponent ) {
 			return Number.parseInt( versionComponent, 10 );
 		} );
 		while ( splittedVersion.length < 3 ) {
@@ -135,7 +135,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		1,
 		2,
 	] );
-	return sortedCompatibility.map( function( version ) {
+	return sortedCompatibility.map( function ( version ) {
 		if ( version.length && version[ version.length - 1 ] === 0 ) {
 			version.pop();
 		}
@@ -146,7 +146,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = whiteListPluginData( assign( plugin, pluginData ) );
 
-	return transform( plugin, function( returnData, item, key ) {
+	return transform( plugin, function ( returnData, item, key ) {
 		switch ( key ) {
 			case 'short_description':
 			case 'description':
@@ -205,7 +205,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, pluginData => normalizePluginData( pluginData ) );
+	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**

@@ -13,7 +13,7 @@ import { find, isUndefined } from 'lodash';
 import { languages } from 'languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
 import User from 'lib/user';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
@@ -190,7 +190,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
@@ -246,7 +246,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
+			loadjQueryDependentScriptDesktopWrapper( injectUrl, function ( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;
@@ -323,7 +323,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		analytics.tracks.recordEvent( tracksEvent, { locale: user.data.localeSlug } );
+		recordTracksEvent( tracksEvent, { locale: user.data.localeSlug } );
 	}
 
 	_isTranslatorEnabled = newSetting;

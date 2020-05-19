@@ -76,6 +76,6 @@ class DomainRegistrationHsts extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	productsList: getProductsList( state ),
 } ) )( localize( DomainRegistrationHsts ) );

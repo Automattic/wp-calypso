@@ -59,7 +59,7 @@ class KeyedSuggestions extends React.Component {
 		showAll: '',
 	};
 
-	setInitialState = input => {
+	setInitialState = ( input ) => {
 		const suggestions = this.narrowDownAndSort( input, this.state.showAll );
 		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
@@ -84,11 +84,11 @@ class KeyedSuggestions extends React.Component {
 		return this.state.taxonomySuggestionsArray.length;
 	};
 
-	getSuggestionForPosition = position => {
+	getSuggestionForPosition = ( position ) => {
 		return this.state.taxonomySuggestionsArray[ position ];
 	};
 
-	getPositionForSuggestion = suggestion => {
+	getPositionForSuggestion = ( suggestion ) => {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
 	};
 
@@ -115,7 +115,7 @@ class KeyedSuggestions extends React.Component {
 	 * @param  {object} event  Keybord event
 	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
 		switch ( event.key ) {
 			case 'ArrowDown':
 				this.incPosition();
@@ -135,14 +135,14 @@ class KeyedSuggestions extends React.Component {
 		return false;
 	};
 
-	onMouseDown = event => {
+	onMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.props.suggest( suggestion );
 	};
 
-	onMouseOver = event => {
+	onMouseOver = ( event ) => {
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( suggestion ),
@@ -150,7 +150,7 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	removeEmptySuggestions = suggestions => {
+	removeEmptySuggestions = ( suggestions ) => {
 		return pickBy( suggestions, negate( isEmpty ) );
 	};
 
@@ -232,13 +232,13 @@ class KeyedSuggestions extends React.Component {
 				const ourTerms = terms[ key ];
 				const keys = Object.keys( ourTerms );
 				// Split to terms matching an non matching to the input.
-				const [ matching, notMatching ] = partition( keys, term => {
+				const [ matching, notMatching ] = partition( keys, ( term ) => {
 					return (
 						ourTerms[ term ].name.match( regex ) || ourTerms[ term ].description.match( regex )
 					);
 				} );
 				// Sort matching so that the best hit is first.
-				const sortedMatching = sortBy( matching, match => {
+				const sortedMatching = sortBy( matching, ( match ) => {
 					const term = ourTerms[ match ];
 					const termString = term.name + ' ' + term.description;
 					const hitIndex = termString.toLowerCase().indexOf( filterTerm.toLowerCase() );
@@ -260,14 +260,14 @@ class KeyedSuggestions extends React.Component {
 		return this.removeEmptySuggestions( filtered );
 	};
 
-	createTaxonomySuggestionsArray = suggestions => {
+	createTaxonomySuggestionsArray = ( suggestions ) => {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
 			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
-			taxonomySuggestionsArray.push( ...suggestions[ key ].map( value => key + ':' + value ) );
+			taxonomySuggestionsArray.push( ...suggestions[ key ].map( ( value ) => key + ':' + value ) );
 		}
 
 		return taxonomySuggestionsArray;
@@ -296,7 +296,7 @@ class KeyedSuggestions extends React.Component {
 		return token;
 	};
 
-	onShowAllClick = category => {
+	onShowAllClick = ( category ) => {
 		const suggestions = this.narrowDownAndSort( this.props.input, category );
 		this.setState( {
 			showAll: category,
@@ -305,7 +305,7 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	createSuggestions = suggestions => {
+	createSuggestions = ( suggestions ) => {
 		let noOfSuggestions = 0;
 		const rendered = [];
 

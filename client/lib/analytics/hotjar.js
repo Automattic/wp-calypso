@@ -28,11 +28,11 @@ export function addHotJarScript() {
 		return;
 	}
 
-	( function( h, o, t, j, a, r ) {
+	( function ( h, o, t, j, a, r ) {
 		hotjarDebug( 'Loading HotJar script' );
 		h.hj =
 			h.hj ||
-			function() {
+			function () {
 				( h.hj.q = h.hj.q || [] ).push( arguments );
 			};
 		h._hjSettings = { hjid: 227769, hjsv: 5 };

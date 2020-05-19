@@ -3,10 +3,13 @@
  */
 import { CheckoutProvider, useEvents, useMessages } from './components/checkout-provider';
 import {
-	CheckoutSteps,
 	Checkout,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
+	CheckoutSummaryCard,
 	useIsStepActive,
 	useIsStepComplete,
 } from './components/checkout-steps';
@@ -19,9 +22,11 @@ import {
 import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal } from './lib/line-items';
+import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
 	createRegistry,
+	defaultRegistry,
+	registerStore,
 	useDispatch,
 	useRegisterStore,
 	useRegistry,
@@ -29,31 +34,44 @@ import {
 } from './lib/registry';
 import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
-import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
+import {
+	createStripeMethod,
+	createStripePaymentMethodStore,
+} from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import CheckoutOrderSummary, {
-	CheckoutOrderSummaryTitle,
+import CheckoutOrderSummaryStep, {
+	CheckoutOrderSummary,
+	CheckoutOrderSummaryStepTitle,
 } from './components/checkout-order-summary';
 import {
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
 import { useFormStatus } from './lib/form-status';
+import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
+import { useTransactionStatus } from './lib/transaction-status';
+import { usePaymentProcessor } from './lib/payment-processors';
 
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutCheckIcon,
 	CheckoutModal,
 	CheckoutOrderSummary,
-	CheckoutOrderSummaryTitle,
+	CheckoutOrderSummaryStep,
+	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSummaryArea,
+	CheckoutSummaryCard,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
@@ -64,9 +82,13 @@ export {
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
+	createStripePaymentMethodStore,
+	defaultRegistry,
 	getDefaultOrderReviewStep,
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	registerStore,
 	renderDisplayValueMarkdown,
 	useAllPaymentMethods,
 	useDispatch,
@@ -75,11 +97,14 @@ export {
 	useIsStepActive,
 	useIsStepComplete,
 	useLineItems,
+	useLineItemsOfType,
 	useMessages,
 	usePaymentMethod,
 	usePaymentMethodId,
+	usePaymentProcessor,
 	useRegisterStore,
 	useRegistry,
 	useSelect,
 	useTotal,
+	useTransactionStatus,
 };

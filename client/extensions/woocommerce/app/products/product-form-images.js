@@ -13,7 +13,7 @@ import { isNumber, noop } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ImagePreloader from 'components/image-preloader';
+import MediaImage from 'my-sites/media-library/media-image';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 
@@ -52,12 +52,12 @@ class ProductFormImages extends Component {
 		}
 	}
 
-	onUpload = file => {
+	onUpload = ( file ) => {
 		const { onUpload } = this.props;
 		onUpload( file );
 
 		// Update a placeholder entry with the final source image.
-		const images = [ ...this.state.images ].map( i => {
+		const images = [ ...this.state.images ].map( ( i ) => {
 			if ( i.transientId === file.transientId ) {
 				return {
 					...i,
@@ -73,9 +73,9 @@ class ProductFormImages extends Component {
 		} );
 	};
 
-	onSelect = files => {
+	onSelect = ( files ) => {
 		const { images } = this.state;
-		const newImages = files.map( file => {
+		const newImages = files.map( ( file ) => {
 			return {
 				placeholder: file.preview,
 				transientId: file.ID,
@@ -89,20 +89,20 @@ class ProductFormImages extends Component {
 		} );
 	};
 
-	onError = file => {
-		const images = [ ...this.state.images ].filter( i => i.transientId !== file.transientId );
+	onError = ( file ) => {
+		const images = [ ...this.state.images ].filter( ( i ) => i.transientId !== file.transientId );
 		this.setState( {
 			images,
 		} );
 	};
 
-	removeImage = id => {
+	removeImage = ( id ) => {
 		let images = [ ...this.state.images ];
 		if ( isNumber( id ) ) {
-			images = images.filter( i => i.id !== id ) || [];
+			images = images.filter( ( i ) => i.id !== id ) || [];
 			this.props.onRemove( id );
 		} else {
-			images = images.filter( i => i.transientId !== id ) || [];
+			images = images.filter( ( i ) => i.transientId !== id ) || [];
 		}
 
 		this.setState( {
@@ -110,7 +110,7 @@ class ProductFormImages extends Component {
 		} );
 	};
 
-	renderPlaceholder = image => {
+	renderPlaceholder = ( image ) => {
 		const { placeholder } = image;
 		return (
 			<figure>
@@ -125,7 +125,7 @@ class ProductFormImages extends Component {
 
 		return (
 			<figure>
-				<ImagePreloader
+				<MediaImage
 					src={ src }
 					alt={ thumb ? translate( 'Product thumbnail' ) : translate( 'Featured product image' ) }
 					placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
@@ -180,7 +180,7 @@ class ProductFormImages extends Component {
 					</div>
 
 					<div className="products__product-form-images-thumbs">
-						{ images.map( image => this.renderImage( image ) ) }
+						{ images.map( ( image ) => this.renderImage( image ) ) }
 
 						<ProductImageUploader
 							onSelect={ this.onSelect }

@@ -59,7 +59,7 @@ EditorDocumentHead.propTypes = {
 	newPost: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );

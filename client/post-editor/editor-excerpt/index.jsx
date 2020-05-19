@@ -22,7 +22,7 @@ class EditorExcerpt extends React.Component {
 		this.props.recordEditorEvent( 'Changed Excerpt' );
 	};
 
-	onExcerptChange = event => {
+	onExcerptChange = ( event ) => {
 		const excerpt = event.target.value;
 		this.props.editPost( this.props.siteId, this.props.postId, { excerpt } );
 	};
@@ -47,7 +47,7 @@ class EditorExcerpt extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const excerpt = getEditedPostValue( state, siteId, postId, 'excerpt' );

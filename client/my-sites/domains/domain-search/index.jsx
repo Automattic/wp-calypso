@@ -37,6 +37,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 
 /**
  * Style dependencies
@@ -67,7 +68,7 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = suggestion => {
+	handleAddRemoveDomain = ( suggestion ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion );
 		} else {
@@ -75,12 +76,12 @@ class DomainSearch extends Component {
 		}
 	};
 
-	handleAddMapping = domain => {
+	handleAddMapping = ( domain ) => {
 		addItem( domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	handleAddTransfer = domain => {
+	handleAddTransfer = ( domain ) => {
 		addItem( domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
@@ -170,6 +171,8 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const suggestion =
+				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -179,17 +182,17 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
+							<NewDomainsRedirectionNoticeUpsell />
 							<RegisterDomainStep
-								path={ this.props.context.path }
-								suggestion={ this.props.context.query.suggestion }
+								suggestion={ suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
 								cart={ this.props.cart }
-								selectedSite={ selectedSite }
 								offerUnavailableOption
+								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 								vendor={ getSuggestionsVendor() }
@@ -212,7 +215,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

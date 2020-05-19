@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_FILTERS_REQUEST } from 'state/action-types';
+import { THEME_FILTERS_REQUEST } from 'state/themes/action-types';
 
 import 'state/data-layer/wpcom/theme-filters';
 import 'state/themes/init';

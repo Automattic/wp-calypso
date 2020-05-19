@@ -115,9 +115,23 @@ export function countrySpecificFieldRules( country ) {
 					description: i18n.translate( 'Your Name' ),
 					rules: [ 'required' ],
 				},
+				nik: {
+					description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
+					} ),
+					rules: [ 'validIndonesiaNik' ],
+				},
+
 				pan: {
 					description: i18n.translate( 'PAN - Permanent account number' ),
 					rules: [ 'validIndiaPan' ],
+				},
+				gstin: {
+					description: i18n.translate( 'GSTIN - GST identification number', {
+						comment: 'GSTIN: India specific tax id number',
+					} ),
+					rules: [ 'validIndiaGstin' ],
 				},
 				'postal-code': {
 					description: i18n.translate( 'Postal Code' ),

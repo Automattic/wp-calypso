@@ -35,11 +35,12 @@ const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colo
 	}
 	// Since illustrations are a part of WordPress.com’s and Jetpack’s visual
 	// identity, we prefer them over generic Blue, Green, and Celadon. We don’t
-	// use WooCommerce Purple either
+	// use Simplenote Blue or WooCommerce Purple either
 	return ! (
 		_.startsWith( colorName, 'Blue' ) ||
 		_.startsWith( colorName, 'Green' ) ||
 		_.startsWith( colorName, 'Celadon' ) ||
+		_.startsWith( colorName, 'Simplenote Blue' ) ||
 		_.startsWith( colorName, 'WooCommerce Purple' )
 	);
 } );
@@ -51,8 +52,12 @@ const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) =
 	if ( colorValue === '#000' ) {
 		return;
 	}
-	// Don’t use WooCommerce Purple for any WordPress.com images
-	return ! _.startsWith( colorName, 'WooCommerce Purple' );
+	// Don’t use brand colors for any WordPress.com app images
+	return ! (
+		_.startsWith( colorName, 'Simplenote Blue' ) ||
+		_.startsWith( colorName, 'WooCommerce Purple' ) ||
+		_.startsWith( colorName, 'WordPress Blue' )
+	);
 } );
 
 // Making sure both sets contain only unique color values
@@ -74,15 +79,19 @@ const SVG_IGNORE_PATHS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
+	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|ovo|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
 
 	// Old WooCommerce mascotte
 	/ninja-joy\.svg$/,
 
 	// Specific directories
+	/^apps\/full-site-editing\/full-site-editing-plugin/,
 	/^docs/,
 	/^static\/images\/marketing/,
 	/^static\/images\/me/,
+
+	// Images that seem to be based on a completely different set of colors
+	/customer-home\/illustration-+(?:task|webinars)/,
 ];
 
 // The image paths that match the following patterns will use `PALETTE_APP_COLORS`,
@@ -91,7 +100,8 @@ const SVG_APP_PATHS = [
 	// Color scheme thumbnails
 	/color-scheme-thumbnail-[a-z-]+\.svg$/,
 
-	// Gutenberg images
+	// Screenshots and Gutenberg images
+	/^client\/assets\/images\/customer-home\/illustration/,
 	/^static\/images\/illustrations\/gutenberg/,
 
 	// Plan icons
@@ -124,7 +134,7 @@ const REPLACEMENT_RULES = [];
  * Perform the audit
  */
 
-SVG_FILES_TO_PROCESS.forEach( imagePath => {
+SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 	const targetValues = isAppImagePath( imagePath )
 		? PALETTE_APP_COLOR_VALUES
 		: PALETTE_ILLUSTRATION_COLOR_VALUES;
@@ -133,7 +143,7 @@ SVG_FILES_TO_PROCESS.forEach( imagePath => {
 	const matchedColorValues = matchColorValues( imageContent );
 	const colorValuesToReplace = [];
 
-	_.uniq( matchedColorValues ).forEach( value => {
+	_.uniq( matchedColorValues ).forEach( ( value ) => {
 		if ( SVG_IGNORE_VALUES.includes( value ) ) {
 			return;
 		}
@@ -155,7 +165,7 @@ SVG_FILES_TO_PROCESS.forEach( imagePath => {
 
 	REPLACEMENT_RULES.push( {
 		file: imagePath,
-		rules: colorValuesToReplace.map( value => {
+		rules: colorValuesToReplace.map( ( value ) => {
 			const replacementValue = findClosestColor( value, targetValues );
 			const replacementName = findPaletteColorName( replacementValue );
 
@@ -184,21 +194,19 @@ printReplacementRules( REPLACEMENT_RULES );
 
 function excludeSelectedPaths( imagePath ) {
 	// Make sure none of the ignored paths match
-	return SVG_IGNORE_PATHS.every( ignoredPath => {
+	return SVG_IGNORE_PATHS.every( ( ignoredPath ) => {
 		return ! ignoredPath.test( imagePath );
 	} );
 }
 
 function isAppImagePath( imagePath ) {
-	return SVG_APP_PATHS.some( appPath => {
+	return SVG_APP_PATHS.some( ( appPath ) => {
 		return appPath.test( imagePath );
 	} );
 }
 
 function getFileContents( filePath ) {
-	return readFileSync( path.join( ROOT_PATH, filePath ) )
-		.toString()
-		.trim();
+	return readFileSync( path.join( ROOT_PATH, filePath ) ).toString().trim();
 }
 
 function matchColorValues( content ) {
@@ -268,7 +276,7 @@ function printReplacementRules( replacementObjects ) {
 			`Found ${ count } SVG images in this repository that use non-standard color values:`
 		);
 
-		replacementObjects.forEach( replacementObject => {
+		replacementObjects.forEach( ( replacementObject ) => {
 			const replacementRules = formatReplacementRules( replacementObject.rules );
 			console.log( `\n${ replacementObject.file }\n${ replacementRules.join( '\n' ) }` );
 		} );
@@ -276,7 +284,7 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	return _.sortBy( rules, 'to.name' ).map( rule => {
+	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
 		const valueFrom = _.padEnd( rule.from.value, 7 );
 		const valueTo = _.padEnd( rule.to.value, 7 );
 

@@ -18,7 +18,7 @@ import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
@@ -113,7 +113,7 @@ class TranslatorLauncher extends React.Component {
 			}
 
 			if ( this.state.firstActivation ) {
-				analytics.mc.bumpStat( 'calypso_translator_toggle', 'intial_activation' );
+				bumpStat( 'calypso_translator_toggle', 'intial_activation' );
 				this.setState( { firstActivation: false } );
 			}
 		} else if ( this.state.isActive && ! translator.isActivated() ) {
@@ -122,7 +122,7 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		const { isActive, selectedDeliverableTarget } = this.state;
 
 		if ( ! isActive || ! event.getModifierState( 'Control' ) || event.key.toLowerCase() !== 'd' ) {
@@ -140,7 +140,7 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { scrollTop: window.scrollY } );
 	};
 
-	handleHighlightMouseMove = event => {
+	handleHighlightMouseMove = ( event ) => {
 		const { deliverableTarget } = this.state;
 
 		if ( deliverableTarget !== event.target ) {
@@ -148,7 +148,7 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
-	handleHighlightMouseDown = event => {
+	handleHighlightMouseDown = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -157,7 +157,7 @@ class TranslatorLauncher extends React.Component {
 		}
 	};
 
-	handleHighlightClick = event => {
+	handleHighlightClick = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -169,7 +169,7 @@ class TranslatorLauncher extends React.Component {
 		this.toggleDeliverableHighlight();
 	};
 
-	handleDeliverableTitleChange = event => {
+	handleDeliverableTitleChange = ( event ) => {
 		this.setState( { deliverableTitle: event.target.value } );
 	};
 
@@ -181,14 +181,14 @@ class TranslatorLauncher extends React.Component {
 		this.toggleSelectedDeliverableTarget();
 	};
 
-	handleDeliverableSubmit = event => {
+	handleDeliverableSubmit = ( event ) => {
 		event.preventDefault();
 
 		window.open( this.getCreateDeliverableUrl(), '_blank' );
 		this.toggleSelectedDeliverableTarget();
 	};
 
-	toggleInfoCheckbox = event => {
+	toggleInfoCheckbox = ( event ) => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
 	};
 
@@ -196,10 +196,10 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { infoDialogVisible: false } );
 	};
 
-	toggle = event => {
+	toggle = ( event ) => {
 		event.preventDefault();
 		const nextIsActive = translator.toggle();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
+		bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
 		this.setState( { isActive: nextIsActive } );
 	};
 
@@ -381,7 +381,7 @@ class TranslatorLauncher extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isUserSettingsReady: !! getUserSettings( state ),
 		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),

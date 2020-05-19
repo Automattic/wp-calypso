@@ -14,7 +14,7 @@ import ActivityQueryManager from '..';
 const DEFAULT_ACTIVITY_DATE = '2014-09-14T00:30:00+02:00';
 const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_DATE );
 
-const makeComparator = query => ( a, b ) => ActivityQueryManager.compare( query, a, b );
+const makeComparator = ( query ) => ( a, b ) => ActivityQueryManager.compare( query, a, b );
 
 const DEFAULT_ACTIVITY = deepFreeze( {
 	activityDate: DEFAULT_ACTIVITY_DATE,

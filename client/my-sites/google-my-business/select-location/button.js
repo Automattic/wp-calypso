@@ -71,7 +71,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{

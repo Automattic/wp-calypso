@@ -49,10 +49,10 @@ Button.propTypes = {
 
 const CallToAction = styled.button`
 	display: block;
-	width: ${props => ( props.fullWidth ? '100%' : 'auto' )};
+	width: ${( props ) => ( props.fullWidth ? '100%' : 'auto') };
 	font-size: 16px;
-	border-radius: ${props => ( props.buttonType === 'paypal' ? '50px' : '3px' )};
-	padding: ${props => ( props.buttonState === 'text-button' ? '0' : '10px 15px' )};
+	border-radius: ${( props ) => ( props.buttonType === 'paypal' ? '50px' : '3px') };
+	padding: ${( props ) => ( props.buttonState === 'text-button' ? '0' : '10px 15px') };
 	background: ${getBackgroundColor};
 	border-width: ${getBorderWeight};
 	border-style: solid;
@@ -70,7 +70,7 @@ const CallToAction = styled.button`
 		border-bottom-width: ${getBorderElevationWeight};
 		text-decoration: none;
 		color: ${getTextColor};
-		cursor: ${props => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer' )};
+		cursor: ${( props ) => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer') };
 	}
 
 	:active {

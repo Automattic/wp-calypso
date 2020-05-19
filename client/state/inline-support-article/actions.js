@@ -6,26 +6,32 @@ import { SUPPORT_ARTICLE_DIALOG_OPEN, SUPPORT_ARTICLE_DIALOG_CLOSE } from 'state
 /**
  * Shows the given support article (by postId) in a dialog.
  *
- * @param  {number} postId 	The id of the support article
- * @param  {string} postUrl	The URL of the support article
+ * @param {object} options - action options
+ * 	{number} postId 	The id of the support article
+ *  {string} postUrl	The URL of the support article
  *
- * @returns {Function}		Action thunk
+ * @returns {object}		Action
  */
-export function openSupportArticleDialog( { postId, postUrl = null } ) {
-	return dispatch => {
-		dispatch( {
-			type: SUPPORT_ARTICLE_DIALOG_OPEN,
-			postId,
-			postUrl,
-		} );
+export function openSupportArticleDialog( {
+	postId,
+	postUrl = null,
+	actionLabel = null,
+	actionUrl = null,
+} ) {
+	return {
+		type: SUPPORT_ARTICLE_DIALOG_OPEN,
+		postId,
+		postUrl,
+		actionLabel,
+		actionUrl,
 	};
 }
 
 /**
  * Closes/hides the support article dialog
  *
- * @returns {Function}		Action thunk
+ * @returns {object}		Action
  */
 export function closeSupportArticleDialog() {
-	return dispatch => dispatch( { type: SUPPORT_ARTICLE_DIALOG_CLOSE } );
+	return { type: SUPPORT_ARTICLE_DIALOG_CLOSE };
 }

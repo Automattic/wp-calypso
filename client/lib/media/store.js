@@ -9,7 +9,6 @@ import { values } from 'lodash';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import MediaValidationStore from './validation-store';
 
 /**
  * @typedef {import('events').EventEmitter} Emitter
@@ -71,7 +70,7 @@ function removeSingle( siteId, item ) {
 }
 
 function receivePage( siteId, items ) {
-	items.forEach( function( item ) {
+	items.forEach( function ( item ) {
 		receiveSingle( siteId, item );
 	} );
 }
@@ -81,7 +80,7 @@ function clearPointers( siteId ) {
 	MediaStore._media[ siteId ] = {};
 }
 
-MediaStore.get = function( siteId, postId ) {
+MediaStore.get = function ( siteId, postId ) {
 	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
 	}
@@ -93,7 +92,7 @@ MediaStore.get = function( siteId, postId ) {
 	return MediaStore._media[ siteId ][ postId ];
 };
 
-MediaStore.getAll = function( siteId ) {
+MediaStore.getAll = function ( siteId ) {
 	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
 	}
@@ -101,10 +100,8 @@ MediaStore.getAll = function( siteId ) {
 	return values( MediaStore._media[ siteId ] );
 };
 
-MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
+MediaStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
-
-	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 
 	switch ( action.type ) {
 		case 'CHANGE_MEDIA_SOURCE':

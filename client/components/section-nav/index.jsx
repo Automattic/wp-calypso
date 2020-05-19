@@ -95,7 +95,7 @@ class SectionNav extends Component {
 	}
 
 	getChildren() {
-		return React.Children.map( this.props.children, child => {
+		return React.Children.map( this.props.children, ( child ) => {
 			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,
 				closeSectionNavMobilePanel: this.closeMobilePanel,

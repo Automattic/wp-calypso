@@ -8,7 +8,7 @@ export function imageSizeFromAttachments( post, imageUrl ) {
 		return;
 	}
 
-	const found = find( post.attachments, attachment => attachment.URL === imageUrl );
+	const found = find( post.attachments, ( attachment ) => attachment.URL === imageUrl );
 
 	if ( found ) {
 		return {

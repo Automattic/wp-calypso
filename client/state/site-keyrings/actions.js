@@ -26,7 +26,7 @@ import {
  * @returns {Function}      Action thunk
  */
 export function requestSiteKeyrings( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_KEYRINGS_REQUEST,
 			siteId,
@@ -35,7 +35,7 @@ export function requestSiteKeyrings( siteId ) {
 		return wpcom
 			.undocumented()
 			.getSiteKeyrings( siteId )
-			.then( keyrings => {
+			.then( ( keyrings ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_REQUEST_SUCCESS,
 					siteId,
@@ -44,7 +44,7 @@ export function requestSiteKeyrings( siteId ) {
 
 				return keyrings;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_REQUEST_FAILURE,
 					siteId,
@@ -57,7 +57,7 @@ export function requestSiteKeyrings( siteId ) {
 }
 
 export function createSiteKeyring( siteId, keyring ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_KEYRINGS_SAVE,
 			siteId,
@@ -66,7 +66,7 @@ export function createSiteKeyring( siteId, keyring ) {
 		return wpcom
 			.undocumented()
 			.createSiteKeyring( siteId, keyring )
-			.then( body => {
+			.then( ( body ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_SUCCESS,
 					siteId,
@@ -75,7 +75,7 @@ export function createSiteKeyring( siteId, keyring ) {
 
 				return body;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_FAILURE,
 					siteId,
@@ -88,7 +88,7 @@ export function createSiteKeyring( siteId, keyring ) {
 }
 
 export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_KEYRINGS_UPDATE,
 			siteId,
@@ -99,7 +99,7 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 		return wpcom
 			.undocumented()
 			.updateSiteKeyring( siteId, keyringId, externalUserId )
-			.then( body => {
+			.then( ( body ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_UPDATE_SUCCESS,
 					siteId,
@@ -109,7 +109,7 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 
 				return body;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_UPDATE_FAILURE,
 					siteId,
@@ -124,7 +124,7 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 }
 
 export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_KEYRINGS_DELETE,
 			siteId,
@@ -135,7 +135,7 @@ export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 		return wpcom
 			.undocumented()
 			.deleteSiteKeyring( siteId, keyringId, externalUserId )
-			.then( body => {
+			.then( ( body ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_DELETE_SUCCESS,
 					siteId,
@@ -145,7 +145,7 @@ export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 
 				return body;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_DELETE_FAILURE,
 					error,

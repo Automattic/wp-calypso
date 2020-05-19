@@ -24,13 +24,13 @@ export const MIN_LENGTH_TO_FORMAT = 3;
  * @param {string} inputNumber - Text to remove non-digits from
  * @returns {string} - Text with non-digits removed
  */
-export const stripNonDigits = inputNumber => inputNumber.replace( /\D/g, '' );
+export const stripNonDigits = ( inputNumber ) => inputNumber.replace( /\D/g, '' );
 
 function prefixSearch( prefixQuery ) {
 	return flatten(
 		Object.keys( dialCodeMap )
-			.filter( dialCode => startsWith( prefixQuery, dialCode ) )
-			.map( dialCode => dialCodeMap[ dialCode ] )
+			.filter( ( dialCode ) => startsWith( prefixQuery, dialCode ) )
+			.map( ( dialCode ) => dialCodeMap[ dialCode ] )
 	);
 }
 
@@ -38,9 +38,7 @@ export function findCountryFromNumber( inputNumber ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
-		const query = stripNonDigits( inputNumber )
-			.replace( /^0+/, '' )
-			.substr( 0, i );
+		const query = stripNonDigits( inputNumber ).replace( /^0+/, '' ).substr( 0, i );
 		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {
@@ -55,7 +53,7 @@ export function findCountryFromNumber( inputNumber ) {
 
 		if ( ! prefixMatch.length && lastExactMatch ) {
 			// the one with high priority
-			return map( lastExactMatch, key => countries[ key ] )[ 0 ];
+			return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
 		}
 
 		if ( prefixMatch.length === 1 ) {
@@ -65,7 +63,7 @@ export function findCountryFromNumber( inputNumber ) {
 	}
 
 	if ( lastExactMatch ) {
-		return map( lastExactMatch, key => countries[ key ] )[ 0 ];
+		return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
 	}
 
 	return null;
@@ -89,7 +87,7 @@ export const findPattern = ( inputNumber, patterns ) =>
  * @returns {string} The template string
  */
 export function makeTemplate( phoneNumber, patterns ) {
-	const selectedPattern = find( patterns, pattern => {
+	const selectedPattern = find( patterns, ( pattern ) => {
 		if ( includes( pattern.format, '|' ) ) {
 			return false;
 		}
@@ -262,4 +260,186 @@ export function toIcannFormat( inputNumber, country ) {
 		dialCode = country.countryDialCode && country.regionCode ? country.regionCode : '';
 
 	return '+' + countryCode + '.' + dialCode + nationalNumber;
+}
+
+/**
+ * Given two masked strings, old and new, approximates the
+ * expected cursor position in new after the (unknown) edit
+ * operation(s) changing old into new.
+ *
+ * Assumptions:
+ *   - masking and unmasking (as defined here) are mutual inverses
+ *   - edits are made from left to right
+ *       (maybe relevant for rtl languages)
+ *   - w is a strict subsequence of mask(w)
+ *       (as defined in indexOfStrictSubsequenceEnd)
+ *   - the cursor position should be at the right edge of
+ *       the rightmost "changed" digit
+ *
+ * Known weird behaviors:
+ *   - If newValue is obtained from oldValue by e.g. replacing
+ *     'oba' in 'foobar' by 'iba', via pasting, then the cursor
+ *     position may be placed after 'i', rather than after 'a',
+ *     depending on where the cursor position is before the edit.
+ *
+ * @param {string} oldValue Masked original string
+ * @param {string} newValue Masked updated string
+ * @param {number} oldCursorPosition Index of the cursor in oldValue
+ * @returns {number} The new cursor position
+ */
+export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition ) {
+	const toList = ( str ) => str.split( '' );
+	const unmask = ( list ) => list.filter( ( char ) => /\d/.test( char ) );
+
+	if ( newValue.match( /^\+$/ ) ) {
+		return 1;
+	}
+
+	// Find the leftmost index point from the right end where
+	// the old and new (unmasked!) values agree (from right to
+	// left). We start by assuming this point is where the edits
+	// stopped. (This may be wrong; see below)
+	const [ idxOld, idxNew ] = indexOfLongestCommonSuffix(
+		unmask( toList( oldValue ) ),
+		unmask( toList( newValue ) )
+	);
+
+	// Find the cursor position in the unmasked old string.
+	const oldUnmaskedCursorPosition = numDigitsBeforeIndex( toList( oldValue ), oldCursorPosition );
+
+	// Our assumption about the portion of the string actually
+	// updated is definitely wrong if the old cursor point is
+	// to the right of the index of the longest common suffix.
+	// We can correct for this by adding this offset to that index.
+	const idxOffset = Math.max( 0, oldUnmaskedCursorPosition - idxOld );
+
+	// NB: indexOfLongestCommonSuffix mutates its arguments;
+	// this expression is also passed to that function above
+	// but we can't factor it out.
+	const newDigits = unmask( toList( newValue ) );
+
+	// Now the unmasked new value appears in the masked new
+	// value as a subsequence, and the new cursor position
+	// is the corresponding index.
+	const [ offset ] = indexOfStrictSubsequenceEnd(
+		newDigits.slice( 0, idxNew + idxOffset ),
+		toList( newValue )
+	);
+
+	return offset;
+}
+
+/**
+ * Given two arrays w1 and w2, a /common suffix/ is an array v such that
+ * there exist arrays w1' and w2' where
+ *
+ *   w1 === w1'.concat(v)   and   w2 === w2'.concat(v)
+ *
+ * If, in addition, w1' and w2' have no common suffix except for [],
+ * then v is the /longest common suffix/ of w1 and w2. (This is analogous
+ * to the definition of greatest common divisor for integers.)
+ *
+ * For two arrays array1 and array2, this function finds the /index/
+ * of the first item in their longest common suffix /in array2/ --
+ * that is, it computes w2'.length.
+ *
+ * @param array1 An array
+ * @param array2 An array
+ * @returns [number, number] Index of the longest common suffix
+ *   in each argument
+ */
+export function indexOfLongestCommonSuffix( array1, array2 ) {
+	if ( array1.length === 0 || array2.length === 0 ) {
+		return [ array1.length, array2.length ];
+	}
+	const c1 = array1.pop(); // mutate!
+	const c2 = array2.pop(); // mutate!
+	if ( c1 !== c2 ) {
+		return [ 1 + array1.length, 1 + array2.length ]; // add 1 since we popped
+	}
+	return indexOfLongestCommonSuffix( array1, array2 );
+}
+
+/**
+ * Given two integer indexed arrays w1 and w2, we say that w1
+ * is a /subsequence/ of w2 if there is a monotone function f
+ * such that
+ *
+ *   w1[k] === w2[f(k)]
+ *
+ * for all integers k such that w1[k] exists. We say the
+ * subsequence is /strict/ if, in addition, for all k in
+ * the support of w1, f(k) is minimal among [k+1,...] such that
+ * w1[k] === w2[f(k)]. If w1 is a strict subsequence of w2
+ * then the function f that witnesses this is unique.
+ *
+ * That is a mouthful, but it captures this intuition:
+ *
+ *   w1 is a strict subsequence of w2 if the items of w1
+ *   appear in w2, in order, and such that corresponding
+ *   w1 items in w2 are pushed "as far to the left" as
+ *   possible.
+ *
+ * Suppose we have two arrays, array1 and array2, such that
+ * array1 is a strict subsequence of a2. This function
+ * computes the index after the last array1 item in array2.
+ * That is, it finds the (unique) index 1 + f( array1.length ),
+ * where f is the subsequence witness.
+ *
+ * @param array1 An array
+ * @param array2 An array, which includes array1 as a strict subsequence
+ * @returns [number, array] Index after the last array1 item in
+ *   array2, as well as the remainder of array2
+ */
+export function indexOfStrictSubsequenceEnd( array1, array2 ) {
+	const accumulate = ( a1, a2, offset ) => {
+		if ( a1.length === 0 ) {
+			return [ offset, a2 ];
+		}
+		// if array1 is actually a subsequence this case shouldn't happen.
+		if ( a2.length === 0 ) {
+			return [ offset, a2 ];
+		}
+		const c1 = a1.shift(); // mutate!
+		const c2 = a2.shift(); // mutate!
+		if ( c1 !== c2 ) {
+			a1.unshift( c1 );
+		}
+		return accumulate( a1, a2, 1 + offset );
+	};
+
+	return accumulate( array1, array2, 0 );
+}
+
+/**
+ * Counts the number of non-digit characters appearing
+ * at the front of an array of characters.
+ *
+ * @param array An array of characters
+ * @returns number Number of non-digit characters appearing at the start
+ */
+export function nonDigitsAtStart( array ) {
+	const accumulate = ( a, offset ) => {
+		if ( a.length === 0 ) {
+			return offset;
+		}
+		const c = a.shift(); // mutate!
+		if ( /\d/.test( c ) ) {
+			return offset;
+		}
+		return accumulate( a, 1 + offset );
+	};
+
+	return accumulate( array, 0 );
+}
+
+/**
+ * Count the number of digits appearing left of a given
+ * index in an array of strings.
+ *
+ * @param array An array
+ * @param index Index at which to cut off the count
+ */
+export function numDigitsBeforeIndex( array, index ) {
+	return array.slice( 0, index ).filter( ( x ) => /\d/.test( x ) ).length;
 }

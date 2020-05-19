@@ -58,7 +58,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 			const newState = {};
 
-			forEach( action.posts, post => {
+			forEach( action.posts, ( post ) => {
 				if ( post.is_following_conversation ) {
 					newState[ key( post.site_ID, post.ID ) ] = CONVERSATION_FOLLOW_STATUS.following;
 				}

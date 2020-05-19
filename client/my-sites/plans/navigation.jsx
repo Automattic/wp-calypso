@@ -136,7 +136,7 @@ class PlansNavigation extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );

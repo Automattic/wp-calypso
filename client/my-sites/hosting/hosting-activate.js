@@ -38,7 +38,7 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 

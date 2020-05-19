@@ -43,7 +43,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		} );
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = ( closeDialog ) => {
 		this.onClose();
 		this.props.onConfirm( this.props.targetSite, closeDialog );
 	};
@@ -72,7 +72,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Change Site Address' ),
+				label: translate( 'Change site address' ),
 				onClick: this.onConfirm,
 				disabled: ! this.state.isConfirmationChecked,
 				isPrimary: true,

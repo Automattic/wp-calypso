@@ -38,7 +38,7 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * @param {number} siteId The id of the site to query.
  * @returns {object} An action object
  */
-export const fetchAutomatedTransferStatus = siteId => ( {
+export const fetchAutomatedTransferStatus = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
 } );
@@ -71,7 +71,7 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * @param {number} siteId The site id to which the status belongs
  * @returns {object} An action object
  */
-export const automatedTransferStatusFetchingFailure = siteId => ( {
+export const automatedTransferStatusFetchingFailure = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
 } );
@@ -82,7 +82,7 @@ export const automatedTransferStatusFetchingFailure = siteId => ( {
  * @param {number} siteId site for requested information
  * @returns {object} Redux action
  */
-export const requestEligibility = siteId => ( {
+export const requestEligibility = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	siteId,
 } );

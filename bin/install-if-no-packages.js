@@ -3,7 +3,7 @@ const fs = require( 'fs' );
 
 if ( ! fs.existsSync( 'node_modules' ) ) {
 	console.log( 'No "node_modules" present, installing dependencies…' );
-	const installResult = spawnSync( 'npm', [ 'ci' ], {
+	const installResult = spawnSync( 'yarn', [ 'install', '--frozen-lockfile' ], {
 		shell: true,
 		stdio: 'inherit',
 		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },

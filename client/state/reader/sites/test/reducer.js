@@ -284,9 +284,7 @@ describe( 'reducer', () => {
 				type: READER_SITE_REQUEST_SUCCESS,
 				payload: { ID: 1 },
 			};
-			chaiExpect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 
 		test( 'should update the last fetched time on site update', () => {
@@ -295,9 +293,7 @@ describe( 'reducer', () => {
 				type: READER_SITE_UPDATE,
 				payload: [ { ID: 1 } ],
 			};
-			chaiExpect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );

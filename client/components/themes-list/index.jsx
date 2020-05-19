@@ -56,7 +56,7 @@ export class ThemesList extends React.Component {
 		isInstalling: () => false,
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		this.props.fetchNextPage( options );
 	};
 
@@ -101,7 +101,7 @@ export class ThemesList extends React.Component {
 	}
 
 	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function( i ) {
+		return times( this.props.placeholderCount, function ( i ) {
 			return (
 				<Theme
 					key={ 'placeholder-' + i }
@@ -115,7 +115,7 @@ export class ThemesList extends React.Component {
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
+		return times( NUM_SPACERS, function ( i ) {
 			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
 	}
@@ -148,7 +148,7 @@ export class ThemesList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 

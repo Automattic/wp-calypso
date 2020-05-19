@@ -17,7 +17,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @returns {object}       Site object
  */
 export default createSelector(
-	state => {
+	( state ) => {
 		const newestSite = sortBy( Object.values( getSitesItems( state ) ), 'ID' ).pop();
 
 		if ( ! newestSite ) {
@@ -26,5 +26,5 @@ export default createSelector(
 
 		return getSite( state, newestSite.ID );
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

@@ -93,7 +93,7 @@ const fromApi = ( data, options = {} ) => ( {
  * @param {object} data eligibility data from the api
  * @returns {object} An analytics event object
  */
-const trackEligibility = data => {
+const trackEligibility = ( data ) => {
 	const isEligible = get( data, 'is_eligible', false );
 	const pluginWarnings = get( data, 'warnings.plugins', [] );
 	const widgetWarnings = get( data, 'warnings.widgets', [] );
@@ -121,7 +121,7 @@ const trackEligibility = data => {
  *
  * @returns {object} action
  */
-export const requestAutomatedTransferEligibility = action =>
+export const requestAutomatedTransferEligibility = ( action ) =>
 	http(
 		{
 			method: 'GET',

@@ -46,8 +46,8 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	getNoticeSeverity() {
 		const { moment } = this.props;
 
-		const subscribedDaysAgo = days => {
-			return domain =>
+		const subscribedDaysAgo = ( days ) => {
+			return ( domain ) =>
 				moment( domain.googleAppsSubscription.subscribedDate ).isBefore(
 					moment().subtract( days, 'days' )
 				);
@@ -216,7 +216,7 @@ const recordShowPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains
 		} )
 	);
 
-const finishSetupNoticeClick = siteSlug =>
+const finishSetupNoticeClick = ( siteSlug ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

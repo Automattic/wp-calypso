@@ -52,7 +52,7 @@ class ReaderInfiniteStream extends Component {
 		recordTracksRailcarRender( eventName, railcar, { ui_position: index } );
 	};
 
-	rowRenderer = rowRendererProps => {
+	rowRenderer = ( rowRendererProps ) => {
 		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar', undefined );
 		if ( railcar && ! this.recordedRender.has( rowRendererProps.index ) ) {
 			this.recordedRender.add( rowRendererProps.index );
@@ -88,7 +88,7 @@ class ReaderInfiniteStream extends Component {
 		</CellMeasurer>
 	);
 
-	handleListMounted = registerChild => list => {
+	handleListMounted = ( registerChild ) => ( list ) => {
 		this.listRef = list;
 		registerChild( list ); // InfiniteLoader also wants a ref
 	};

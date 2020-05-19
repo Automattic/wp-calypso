@@ -184,7 +184,7 @@ exports[`GSuitePurchaseCta renders correctly 1`] = `
          
         <a
           className="gsuite-learn-more__link"
-          href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
+          href="https://wordpress.com/support/adding-g-suite-to-your-site"
           onClick={[Function]}
           rel="noopener noreferrer"
           target="_blank"

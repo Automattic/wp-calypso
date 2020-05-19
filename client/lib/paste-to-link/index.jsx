@@ -18,10 +18,11 @@ import { resemblesUrl } from 'lib/url';
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} Enhanced component
  */
-export default WrappedComponent => {
+export default ( WrappedComponent ) => {
 	class WithPasteToLink extends React.Component {
-		static displayName = `withPasteToLink( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withPasteToLink( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		constructor( props ) {
@@ -33,7 +34,7 @@ export default WrappedComponent => {
 			}
 		}
 
-		handlePaste = event => {
+		handlePaste = ( event ) => {
 			const clipboardText = event.clipboardData && event.clipboardData.getData( 'text/plain' );
 			const node = this.textareaRef.current;
 

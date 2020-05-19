@@ -30,7 +30,7 @@ import 'components/environment-badge/style.scss';
 const store = createStore();
 setStore( store );
 
-const boot = currentUser => {
+const boot = ( currentUser ) => {
 	debug( "Starting Calypso. Let's do this." );
 
 	configureReduxStore( currentUser, store );

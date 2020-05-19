@@ -32,22 +32,18 @@ import {
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
-const sortAndStringify = items =>
-	items
-		.slice( 0 )
-		.sort()
-		.join( ', ' );
+const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );
 
 export const startSiteImporterImport = () => ( {
 	type: SITE_IMPORTER_IMPORT_START,
 } );
 
-export const siteImporterImportSuccessful = importData => ( {
+export const siteImporterImportSuccessful = ( importData ) => ( {
 	type: SITE_IMPORTER_IMPORT_SUCCESS,
 	importData,
 } );
 
-export const siteImporterImportFailed = error => ( {
+export const siteImporterImportFailed = ( error ) => ( {
 	type: SITE_IMPORTER_IMPORT_FAILURE,
 	message: error.message,
 } );
@@ -56,26 +52,24 @@ export const startSiteImporterIsSiteImportable = () => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 } );
 
-export const siteImporterIsSiteImportableSuccessful = response => ( {
+export const siteImporterIsSiteImportableSuccessful = ( response ) => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	response,
 } );
 
-export const siteImporterIsSiteImportableFailed = error => ( {
+export const siteImporterIsSiteImportableFailed = ( error ) => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
 	message: error.message,
 } );
 
-export const setValidationError = message => ( {
+export const setValidationError = ( message ) => ( {
 	type: SITE_IMPORTER_VALIDATION_ERROR_SET,
 	message,
 } );
 
-export const startMappingSiteImporterAuthors = ( {
-	importerStatus,
-	site,
-	targetSiteUrl,
-} ) => dispatch => {
+export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetSiteUrl } ) => (
+	dispatch
+) => {
 	const singleAuthorSite = get( site, 'single_user_site', true );
 	const siteId = site.ID;
 	const { importerId } = importerStatus;
@@ -91,7 +85,7 @@ export const startMappingSiteImporterAuthors = ( {
 
 		// map all the authors to the current user
 		// TODO: when converting to redux, allow for multiple mappings in a single action
-		sourceAuthors.forEach( author => mapAuthor( importerId, author, currentUser ) );
+		sourceAuthors.forEach( ( author ) => mapAuthor( importerId, author, currentUser ) );
 
 		// Check if all authors are mapped before starting the import.
 		defer( () => {
@@ -132,7 +126,7 @@ export const importSite = ( {
 	supportedContent,
 	targetSiteUrl,
 	unsupportedContent,
-} ) => dispatch => {
+} ) => ( dispatch ) => {
 	const siteId = site.ID;
 	const trackingParams = {
 		blog_id: siteId,
@@ -148,7 +142,7 @@ export const importSite = ( {
 	wpcom
 		.undocumented()
 		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
-		.then( response => {
+		.then( ( response ) => {
 			// At this point we're assuming that an import is going to happen
 			// so we set the user's editor to Gutenberg in order to make sure
 			// that the posts aren't mangled by the classic editor.
@@ -174,13 +168,13 @@ export const importSite = ( {
 				} )
 			);
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
 			dispatch( siteImporterImportFailed( error ) );
 		} );
 };
 
-export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => dispatch => {
+export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => ( dispatch ) => {
 	const siteId = site.ID;
 
 	prefetchmShotsPreview( targetSiteUrl );
@@ -198,7 +192,7 @@ export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => d
 			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
 			apiNamespace: 'wpcom/v2',
 		} )
-		.then( response => {
+		.then( ( response ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_site_importer_validate_site_success', {
 					blog_id: siteId,
@@ -210,7 +204,7 @@ export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => d
 			);
 			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
 					blog_id: siteId,

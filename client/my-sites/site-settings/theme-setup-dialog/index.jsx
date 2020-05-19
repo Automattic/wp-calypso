@@ -114,7 +114,7 @@ class ThemeSetupDialog extends React.Component {
 
 ThemeSetupDialog = localize( ThemeSetupDialog );
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
 	const result = state.ui.themeSetup.result;

@@ -44,7 +44,7 @@ const NavigationMenuEdit = ( {
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
-					onChange={ nextAlign => {
+					onChange={ ( nextAlign ) => {
 						setAttributes( { textAlign: nextAlign } );
 					} }
 				/>
@@ -90,7 +90,7 @@ const NavigationMenuEdit = ( {
 export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
-	withSelect( select => {
+	withSelect( ( select ) => {
 		return {
 			isPublished: select( 'core/editor' ).isCurrentPostPublished(),
 		};

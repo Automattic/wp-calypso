@@ -7,7 +7,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleTeamsRequest = action =>
+export const handleTeamsRequest = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -22,7 +22,7 @@ export const teamRequestReceived = ( action, apiResponse ) => ( {
 	payload: apiResponse,
 } );
 
-export const teamRequestFailure = error => ( {
+export const teamRequestFailure = ( error ) => ( {
 	type: READER_TEAMS_RECEIVE,
 	payload: error,
 	error: true,

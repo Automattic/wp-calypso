@@ -73,7 +73,7 @@ class ReadingWidget extends Component {
 				<QueryPosts query={ query } siteId={ siteId } />
 				<ul className="reading-widget__article-list">
 					{ posts &&
-						posts.map( post => {
+						posts.map( ( post ) => {
 							const { date, ID, title, URL } = post;
 							return (
 								<li key={ ID }>
@@ -94,7 +94,7 @@ class ReadingWidget extends Component {
 		);
 	};
 
-	renderSubscriptionFormExplanation = expanded => {
+	renderSubscriptionFormExplanation = ( expanded ) => {
 		const { translate } = this.props;
 
 		return (
@@ -122,13 +122,13 @@ class ReadingWidget extends Component {
 		} );
 	};
 
-	onEmailChange = e => {
+	onEmailChange = ( e ) => {
 		this.setState( {
 			emailAddress: e.target.value,
 		} );
 	};
 
-	onRolesChange = e => {
+	onRolesChange = ( e ) => {
 		this.setState( {
 			roles: e.value,
 		} );
@@ -148,7 +148,7 @@ class ReadingWidget extends Component {
 		} );
 	};
 
-	renderSubscriptionFormFields = expanded => {
+	renderSubscriptionFormFields = ( expanded ) => {
 		const { translate } = this.props;
 		return (
 			<div className="reading-widget__subscription-form-fields">

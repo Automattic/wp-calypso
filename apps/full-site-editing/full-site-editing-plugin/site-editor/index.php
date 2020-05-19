@@ -27,13 +27,23 @@ function initialize_site_editor() {
 	}
 
 	// Force enable required Gutenberg experiments if they are not already active.
-	add_filter( 'option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
+	add_filter( 'pre_option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
+	// Add top level Site Editor menu item.
+	add_action( 'admin_menu', __NAMESPACE__ . '\add_site_editor_menu_item' );
+}
 
-	// TODO: Currently this action is removed on Dotcom. Circle back and find a cleaner way to deal with this.
-	add_action( 'admin_menu', 'gutenberg_menu' );
-
-	// Dotcom-specific overrides for API requests and similar.
-	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_override_scripts' );
+/**
+ * Add top level Site Editor menu item.
+ */
+function add_site_editor_menu_item() {
+	add_menu_page(
+		__( 'Site Editor (beta)', 'full-site-editing' ),
+		__( 'Site Editor (beta)', 'full-site-editing' ),
+		'edit_theme_options',
+		'gutenberg-edit-site',
+		'gutenberg_edit_site_page',
+		'dashicons-edit'
+	);
 }
 
 /**
@@ -65,19 +75,6 @@ function enable_site_editor_experiment( $experiments_option ) {
 	}
 
 	return $experiments_option;
-}
-
-/**
- * We need to load Dotcom scripts to override default behavior.
- *
- * One example is routing API requests to public-api.
- */
-function enqueue_override_scripts() {
-	/*
-	 * TODO: clean up this workaround later if possible.
-	 * Currently this works because the required Dotcom overrides are hooked to this action.
-	 */
-	do_action( 'enqueue_block_editor_assets' );
 }
 
 /**

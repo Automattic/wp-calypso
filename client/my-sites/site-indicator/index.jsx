@@ -27,7 +27,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  */
 import './style.scss';
 
-const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
+const WPAdminLink = ( props ) => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
 class SiteIndicator extends Component {
 	static propTypes = {

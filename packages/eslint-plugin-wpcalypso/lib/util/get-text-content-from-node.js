@@ -41,7 +41,7 @@ function getTextContentFromNode( node ) {
 	// template literals are specced at https://github.com/babel/babylon/blob/master/ast/spec.md
 	if ( node.type === 'TemplateLiteral' ) {
 		return node.quasis
-			.map( function( quasis ) {
+			.map( function ( quasis ) {
 				return quasis.value.raw;
 			} )
 			.join( '' );

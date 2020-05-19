@@ -94,7 +94,7 @@ class SiteImporterInputPane extends React.Component {
 				path: `/sites/${ this.props.site.ID }/site-importer/list-endpoints`,
 				apiNamespace: 'wpcom/v2',
 			} )
-			.then( resp => {
+			.then( ( resp ) => {
 				const twoWeeksAgo = moment().subtract( 2, 'weeks' );
 				const endpoints = resp.reduce( ( validEndpoints, endpoint ) => {
 					const lastModified = moment( new Date( endpoint.lastModified ) );
@@ -119,20 +119,20 @@ class SiteImporterInputPane extends React.Component {
 					),
 				} );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				return err;
 			} );
 	};
 
-	setEndpoint = e => {
+	setEndpoint = ( e ) => {
 		this.setState( { selectedEndpoint: e.target.value } );
 	};
 
-	setUrl = event => {
+	setUrl = ( event ) => {
 		this.setState( { siteURLInput: event.target.value } );
 	};
 
-	validateOnEnter = event => {
+	validateOnEnter = ( event ) => {
 		event.key === 'Enter' && this.validateSite();
 	};
 
@@ -233,7 +233,7 @@ class SiteImporterInputPane extends React.Component {
 								value={ this.state.selectedEndpoint }
 							>
 								<option value="">Production Endpoint</option>
-								{ this.state.availableEndpoints.map( endpoint => (
+								{ this.state.availableEndpoints.map( ( endpoint ) => (
 									<option key={ endpoint.name } value={ endpoint.name }>
 										{ endpoint.title } ({ endpoint.lastModifiedTitle })
 									</option>
@@ -285,7 +285,7 @@ class SiteImporterInputPane extends React.Component {
 
 export default flowRight(
 	connect(
-		state => {
+		( state ) => {
 			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
 				state,
 				'imports.siteImporter',

@@ -18,7 +18,7 @@ const fetchTestState = partial( fetchState, testSiteId );
 const hydratedState = () => get( store.get(), [ 'api', 'isHydrated' ] );
 const resetStore = () => Dispatcher.handleViewAction( { type: IMPORTS_STORE_RESET } );
 
-const queuePayload = payload =>
+const queuePayload = ( payload ) =>
 	nock( 'https://public-api.wordpress.com:443' )
 		.get( `/rest/v1.1/sites/${ testSiteId }/imports/` )
 		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
@@ -29,7 +29,7 @@ describe( 'Importer store', () => {
 	beforeEach( resetStore );
 
 	describe( 'API integration', () => {
-		test( 'should hydrate if the API returns a blank body', done => {
+		test( 'should hydrate if the API returns a blank body', ( done ) => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
 			queuePayload( 'no-imports' );
@@ -41,7 +41,7 @@ describe( 'Importer store', () => {
 				.catch( done );
 		} );
 
-		test( 'should hydrate if the API returns a defunct importer', done => {
+		test( 'should hydrate if the API returns a defunct importer', ( done ) => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
 			queuePayload( 'defunct-importer' );

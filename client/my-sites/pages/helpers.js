@@ -4,8 +4,8 @@
 import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
 
 // Helpers used by sortPagesHierarchically but not exposed externally
-const sortByMenuOrder = list => sortBy( list, 'menu_order' );
-const getParentId = page => page.parent && page.parent.ID;
+const sortByMenuOrder = ( list ) => sortBy( list, 'menu_order' );
+const getParentId = ( page ) => page.parent && page.parent.ID;
 
 export const statsLinkForPage = ( { ID: pageId } = {}, { ID: siteId, slug } ) =>
 	pageId && siteId ? `/stats/post/${ pageId }/${ slug }` : null;
@@ -14,7 +14,7 @@ export const statsLinkForPage = ( { ID: pageId } = {}, { ID: siteId, slug } ) =>
 export const isFrontPage = ( { ID: pageId } = {}, { options } = {} ) =>
 	pageId && options && options.page_on_front === pageId;
 
-export const sortPagesHierarchically = pages => {
+export const sortPagesHierarchically = ( pages ) => {
 	const pageIds = map( pages, 'ID' );
 
 	const pagesByParent = reduce(
@@ -37,13 +37,13 @@ export const sortPagesHierarchically = pages => {
 	const insertChildren = ( pageId, indentLevel ) => {
 		const children = pagesByParent[ pageId ] || [];
 
-		forEach( children, child => {
+		forEach( children, ( child ) => {
 			sortedPages.push( assign( {}, child, { indentLevel } ) );
 			insertChildren( child.ID, indentLevel + 1 );
 		} );
 	};
 
-	forEach( pagesByParent.false, topLevelPage => {
+	forEach( pagesByParent.false, ( topLevelPage ) => {
 		sortedPages.push( topLevelPage );
 		insertChildren( topLevelPage.ID, 1 );
 	} );

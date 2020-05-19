@@ -8,7 +8,7 @@ import { LEGAL_REQUEST, TOS_ACCEPT } from 'state/action-types';
 import { setLegalData } from 'state/legal/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const requestLegalData = action => {
+const requestLegalData = ( action ) => {
 	return http(
 		{
 			method: 'GET',
@@ -34,7 +34,7 @@ const formatLegalData = ( { tos: { accepted, active_date, display_prompt } } ) =
 	};
 };
 
-const acceptTos = action => {
+const acceptTos = ( action ) => {
 	return http(
 		{
 			method: 'POST',

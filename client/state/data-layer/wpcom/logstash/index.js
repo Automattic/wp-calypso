@@ -12,7 +12,7 @@ import { LOGSTASH } from 'state/action-types';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const logToLogstash = action =>
+const logToLogstash = ( action ) =>
 	http( {
 		method: 'POST',
 		apiVersion: '1.1',

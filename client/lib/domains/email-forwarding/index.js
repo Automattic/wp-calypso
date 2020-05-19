@@ -21,7 +21,7 @@ function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
 	const eligibleDomains = getEmailForwardingSupportedDomains( domains );
 	let selectedDomain;
 	if ( selectedDomainName ) {
-		selectedDomain = eligibleDomains.reduce( function( selected, domain ) {
+		selectedDomain = eligibleDomains.reduce( function ( selected, domain ) {
 			return domain.name === selectedDomainName ? domain.name : selected;
 		}, '' );
 	}
@@ -35,7 +35,7 @@ function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
  * @returns {Array} - Array of Email Forwarding supported domans
  */
 function getEmailForwardingSupportedDomains( domains ) {
-	return domains.filter( function( domain ) {
+	return domains.filter( function ( domain ) {
 		const domainHasGSuiteWithUs = hasGSuiteWithUs( domain );
 		const wpcomHosted =
 			includes( [ domainTypes.REGISTERED ], domain.type ) && domain.hasWpcomNameservers;

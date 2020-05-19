@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -11,8 +11,11 @@ import { localize } from 'i18n-calypso';
  */
 import FoldableCard from 'components/foldable-card';
 import { Button } from '@automattic/components';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
+import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ExportMediaCard extends Component {
@@ -24,7 +27,13 @@ class ExportMediaCard extends Component {
 	};
 
 	render() {
-		const { mediaExportUrl, siteId, translate, recordMediaExportClick } = this.props;
+		const {
+			mediaExportUrl,
+			hasNoMediaFiles,
+			siteId,
+			translate,
+			recordMediaExportClick,
+		} = this.props;
 
 		const exportMediaButton = (
 			<Button
@@ -38,29 +47,37 @@ class ExportMediaCard extends Component {
 		);
 
 		return (
-			<div className="export-media-card">
-				<QueryMediaExport siteId={ siteId } />
-				<FoldableCard
-					header={
-						<div>
-							<h1 className="export-media-card__title">{ translate( 'Export media library' ) }</h1>
-							<h2 className="export-media-card__subtitle">
-								{ translate(
-									'Download all the media library files (images, videos, audio and documents) from your site.'
-								) }
-							</h2>
-						</div>
-					}
-					summary={ exportMediaButton }
-				/>
-			</div>
+			<Fragment>
+				<QueryMediaStorage siteId={ siteId } />
+				{ ! hasNoMediaFiles && (
+					<div className="export-media-card">
+						<QueryMediaExport siteId={ siteId } />
+						<FoldableCard
+							header={
+								<div>
+									<h1 className="export-media-card__title">
+										{ translate( 'Export media library' ) }
+									</h1>
+									<h2 className="export-media-card__subtitle">
+										{ translate(
+											'Download all the media library files (images, videos, audio and documents) from your site.'
+										) }
+									</h2>
+								</div>
+							}
+							summary={ exportMediaButton }
+						/>
+					</div>
+				) }
+			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		mediaExportUrl: getMediaExportUrl( state ),
+		hasNoMediaFiles: getMediaStorageUsed( state, getSelectedSiteId( state ) ) === 0,
 	} ),
 	{
 		recordMediaExportClick: () => recordTracksEvent( 'calypso_export_media_download_button_click' ),

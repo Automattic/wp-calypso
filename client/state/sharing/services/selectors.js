@@ -66,7 +66,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		return services;
 	}
 
-	return services.filter( service => {
+	return services.filter( ( service ) => {
 		// Omit if the site is Jetpack and service doesn't support Jetpack
 		if ( isJetpackSite( state, siteId ) && ! service.jetpack_support ) {
 			return false;

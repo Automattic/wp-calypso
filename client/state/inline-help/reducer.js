@@ -13,13 +13,6 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-	SERIALIZE,
 } from 'state/action-types';
 
 export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
@@ -32,61 +25,6 @@ export const popover = withoutPersistence( ( state = { isVisible: false }, actio
 
 	return state;
 } );
-
-export const checklistPrompt = (
-	state = {
-		isVisible: false,
-		taskId: null,
-		step: 0,
-	},
-	action
-) => {
-	switch ( action.type ) {
-		case INLINE_HELP_CHECKLIST_PROMPT_SHOW:
-			return { ...state, isVisible: true };
-		case INLINE_HELP_CHECKLIST_PROMPT_HIDE:
-			return {
-				...state,
-				isVisible: false,
-				taskId: null,
-				step: 0,
-			};
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID: {
-			const { taskId } = action;
-			return { ...state, taskId };
-		}
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_STEP: {
-			const { step } = action;
-			return { ...state, step };
-		}
-		case SERIALIZE:
-			return state;
-	}
-
-	return state;
-};
-
-checklistPrompt.hasCustomPersistence = true;
-
-export const onboardingWelcomePrompt = withoutPersistence(
-	(
-		state = {
-			isVisible: false,
-		},
-		action
-	) => {
-		switch ( action.type ) {
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW:
-				return { ...state, isVisible: true };
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE:
-				return { ...state, isVisible: false };
-			case INLINE_HELP_POPOVER_HIDE:
-				return { ...state, isVisible: false };
-		}
-
-		return state;
-	}
-);
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -197,8 +135,6 @@ export const contactForm = withoutPersistence(
 
 export default combineReducers( {
 	popover,
-	checklistPrompt,
-	onboardingWelcomePrompt,
 	contactForm,
 	searchResults,
 } );

@@ -10,10 +10,10 @@ import PropTypes from 'prop-types';
 import SettingsItem from './settings-item';
 import SettingsGroupCard from 'woocommerce/woocommerce-services/components/settings-group-card';
 
-const SettingsGroup = props => {
+const SettingsGroup = ( props ) => {
 	const { group, errors } = props;
 
-	const renderSettingsItem = item => {
+	const renderSettingsItem = ( item ) => {
 		const itemKey = item.key ? item.key : item;
 
 		return (

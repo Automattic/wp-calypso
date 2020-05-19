@@ -212,7 +212,7 @@ class DomainSearchResults extends React.Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function( n ) {
+		return times( this.props.placeholderQuantity, function ( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	}
@@ -234,11 +234,11 @@ class DomainSearchResults extends React.Component {
 			);
 
 			const regularSuggestions = suggestions.filter(
-				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 			);
-			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestMatchSuggestions = suggestions.filter( ( suggestion ) => suggestion.isRecommended );
 			const bestAlternativeSuggestions = suggestions.filter(
-				suggestion => suggestion.isBestAlternative
+				( suggestion ) => suggestion.isBestAlternative
 			);
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
@@ -256,9 +256,8 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					showTestCopy={ this.props.showTestCopy }
-					showDesignUpdate={ this.props.showDesignUpdate }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 				/>
 			);
 
@@ -276,16 +275,15 @@ class DomainSearchResults extends React.Component {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						shouldHideFreeDomainExplainer={ this.props.shouldHideFreeDomainExplainer }
 					/>
 				);
 			} );
@@ -295,7 +293,6 @@ class DomainSearchResults extends React.Component {
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
 						tracksButtonClickSource="search-suggestions-bottom"
-						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}

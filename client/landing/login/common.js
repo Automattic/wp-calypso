@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import analytics from 'lib/analytics';
+import { initializeAnalytics } from 'lib/analytics/init';
 import getSuperProps from 'lib/analytics/super-props';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import { getUrlParts } from 'lib/url';
@@ -63,7 +63,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/test-helper' ) ) {
 		const testHelperEl = document.querySelector( '.environment.is-tests' );
 		if ( testHelperEl ) {
-			asyncRequire( 'lib/abtest/test-helper', testHelper => {
+			asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
 				testHelper( testHelperEl );
 			} );
 		}
@@ -72,7 +72,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
 		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
 		if ( prefHelperEl ) {
-			asyncRequire( 'lib/preferences-helper', prefHelper => {
+			asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
 				prefHelper( prefHelperEl, reduxStore );
 			} );
 		}
@@ -93,13 +93,13 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection =>
+		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
 };
 
-const setRouteMiddleware = reduxStore => {
+const setRouteMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
 
@@ -108,7 +108,7 @@ const setRouteMiddleware = reduxStore => {
 };
 
 const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 };
 
 export function setupMiddlewares( currentUser, reduxStore ) {

@@ -4,18 +4,19 @@
 		// Disallow features that require cross-file information for emit.
 		// Must be used with babel typescript
 		"isolatedModules": true,
+		"resolveJsonModule": true,
 
 		"baseUrl": ".",
 		"rootDir": ".",
 		"tsBuildInfoFile": "../.tsc-cache/client",
-		"noEmit": true,
+		"noEmit": false,
+		"emitDeclarationOnly": true,
 		"composite": true,
 		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
 	},
 	"references": [
 		{ "path": "../packages/calypso-analytics" },
 		{ "path": "../packages/components" },
-		{ "path": "../packages/composite-checkout-wpcom" },
 		{ "path": "../packages/data-stores" },
 		{ "path": "../packages/media-library" },
 		{ "path": "../packages/react-i18n" }

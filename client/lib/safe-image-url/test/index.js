@@ -14,7 +14,7 @@ describe( 'safeImageUrl()', () => {
 
 		test( 'should make a non-whitelisted protocol safe', () => {
 			[ 'javascript:alert("foo")', 'data:application/json;base64,', 'about:config' ].forEach(
-				url => {
+				( url ) => {
 					expect( safeImageUrl( url ) ).toMatch( /^https:\/\/i[0-2]\.wp.com\// );
 				}
 			);

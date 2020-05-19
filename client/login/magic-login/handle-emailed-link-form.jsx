@@ -15,7 +15,6 @@ import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
-import userFactory from 'lib/user';
 import { login } from 'lib/paths';
 import { localize } from 'i18n-calypso';
 import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
@@ -23,6 +22,7 @@ import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
+import { rebootAfterLogin } from 'state/login/actions';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'state/selectors/get-magic-login-requested-auth-successfully';
@@ -39,8 +39,6 @@ import {
 } from 'state/immediate-login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-
-const user = userFactory();
 
 class HandleEmailedLinkForm extends React.Component {
 	static propTypes = {
@@ -64,6 +62,7 @@ class HandleEmailedLinkForm extends React.Component {
 
 		// Connected action creators
 		fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
+		rebootAfterLogin: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		showMagicLoginLinkExpiredPage: PropTypes.func.isRequired,
 	};
@@ -80,7 +79,7 @@ class HandleEmailedLinkForm extends React.Component {
 		}
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {
@@ -96,7 +95,7 @@ class HandleEmailedLinkForm extends React.Component {
 		const { redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent } = this.props;
 
 		if ( ! twoFactorEnabled ) {
-			this.rebootAfterLogin();
+			this.props.rebootAfterLogin( { magic_login: 1 } );
 		} else {
 			page(
 				login( {
@@ -107,27 +106,6 @@ class HandleEmailedLinkForm extends React.Component {
 				} )
 			);
 		}
-	};
-
-	// Lifted from `blocks/login`
-	// @TODO move to `state/login/actions` & use both places
-	rebootAfterLogin = () => {
-		const { redirectToSanitized, twoFactorEnabled } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_login_success', {
-			two_factor_enabled: twoFactorEnabled,
-			magic_login: 1,
-		} );
-
-		// Redirects to / if no redirect url is available
-		const url = redirectToSanitized || '/';
-
-		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefore we need to reset it before we redirect, otherwise we'll get
-		// mixed data from old and new user
-		user.clear().then( () => {
-			window.location.href = url;
-		} );
 	};
 
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
@@ -211,7 +189,7 @@ class HandleEmailedLinkForm extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	return {
 		redirectToOriginal: getRedirectToOriginal( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),
@@ -229,6 +207,7 @@ const mapState = state => {
 
 const mapDispatch = {
 	fetchMagicLoginAuthenticate,
+	rebootAfterLogin,
 	recordTracksEvent,
 	showMagicLoginLinkExpiredPage,
 };

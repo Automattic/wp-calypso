@@ -101,7 +101,7 @@ class ManageConsent extends React.Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
+		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				this.setState( { error: error.message, success: false, submitting: false } );
 			} else {

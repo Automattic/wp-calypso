@@ -13,7 +13,7 @@ import 'state/posts/init';
 const getPostRevision = createSelector(
 	( state, siteId, postId, revisionId ) =>
 		get( state.posts.revisions.diffs, [ siteId, postId, 'revisions', revisionId ], null ),
-	state => [ state.posts.revisions.diffs ]
+	( state ) => [ state.posts.revisions.diffs ]
 );
 
 export default getPostRevision;

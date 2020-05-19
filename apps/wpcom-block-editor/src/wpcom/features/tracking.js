@@ -21,12 +21,26 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
 /**
  * Looks up the block name based on its id.
  *
- * @param {string} blockId Blog identifier.
- * @returns {string|null} Blg name if it exists. Otherwise, `null`.
+ * @param {string} blockId Block identifier.
+ * @returns {string|null} Block name if it exists. Otherwise, `null`.
  */
-const getTypeForBlockId = blockId => {
+const getTypeForBlockId = ( blockId ) => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
 	return block ? block.name : null;
+};
+
+/**
+ * Ensure you are working with block object. This either returns the object
+ * or tries to lookup the block by id.
+ *
+ * @param {string|object} block Block object or string identifier.
+ * @returns {object} block object or an empty object if not found.
+ */
+const ensureBlockObject = ( block ) => {
+	if ( typeof block === 'object' ) {
+		return block;
+	}
+	return select( 'core/block-editor' ).getBlock( block ) || {};
 };
 
 /**
@@ -54,7 +68,10 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		return;
 	}
 
-	castBlocks.forEach( block => {
+	castBlocks.forEach( ( block ) => {
+		// Make this compatible with actions that pass only block id, not objects.
+		block = ensureBlockObject( block );
+
 		const eventProperties = {
 			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
@@ -78,12 +95,17 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * This is a convenience method that processes the first argument of the action (blocks)
  * and calls your tracking for each of the blocks involved in the action.
  *
+ * This method tracks only blocks explicitly listed as a target of the action.
+ * If you also want to track an event for all child blocks, use `trackBlocksHandler`.
+ *
+ * @see {@link trackBlocksHandler} for a recursive version.
+ *
  * @param {string} eventName event name
  * @returns {Function} track handler
  */
-const getBlocksTracker = eventName => blockIds => {
+const getBlocksTracker = ( eventName ) => ( blockIds ) => {
 	// track separately for each block
-	castArray( blockIds ).forEach( blockId => {
+	castArray( blockIds ).forEach( ( blockId ) => {
 		tracksRecordEvent( eventName, { block_name: getTypeForBlockId( blockId ) } );
 	} );
 };
@@ -94,10 +116,22 @@ const getBlocksTracker = eventName => blockIds => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockInsertion = blocks => {
+const trackBlockInsertion = ( blocks ) => {
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
+	} ) );
+};
+
+/**
+ * Track block removal.
+ *
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
+ */
+const trackBlockRemoval = ( blocks ) => {
+	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
+		block_name: name,
 	} ) );
 };
 
@@ -138,11 +172,24 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
  * @param {string} eventName Name of the track event.
  * @returns {Function} tracker
  */
-const trackGlobalStyles = eventName => options => {
+const trackGlobalStyles = ( eventName ) => ( options ) => {
 	tracksRecordEvent( eventName, {
 		...options,
 	} );
 };
+
+/**
+ * Logs any error notice which is shown to the user so we can determine how often
+ * folks see different errors and what types of sites they occur on.
+ *
+ * @param {string} content The error message. Like "Update failed."
+ * @param {object} options Optional. Extra data logged with the error in Gutenberg.
+ */
+const trackErrorNotices = ( content, options ) =>
+	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
+		notice_text: content,
+		notice_options: JSON.stringify( options ), // Returns undefined if options is undefined.
+	} );
 
 /**
  * Tracker can be
@@ -164,15 +211,17 @@ const REDUX_TRACKING = {
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
 		moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
-		removeBlocks: getBlocksTracker( 'wpcom_block_deleted' ),
-		removeBlock: getBlocksTracker( 'wpcom_block_deleted' ),
+		removeBlocks: trackBlockRemoval,
+		removeBlock: trackBlockRemoval,
 		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
-		deleteBlock: getBlocksTracker( 'wpcom_block_deleted' ),
 		insertBlock: trackBlockInsertion,
 		insertBlocks: trackBlockInsertion,
 		replaceBlock: trackBlockReplacement,
 		replaceBlocks: trackBlockReplacement,
 		replaceInnerBlocks: trackInnerBlocksReplacement,
+	},
+	'core/notices': {
+		createErrorNotice: trackErrorNotices,
 	},
 };
 
@@ -194,13 +243,13 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
-	use( registry => ( {
-		dispatch: namespace => {
+	use( ( registry ) => ( {
+		dispatch: ( namespace ) => {
 			const actions = { ...registry.dispatch( namespace ) };
 			const trackers = REDUX_TRACKING[ namespace ];
 
 			if ( trackers ) {
-				Object.keys( trackers ).forEach( actionName => {
+				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
 					actions[ actionName ] = ( ...args ) => {
@@ -223,7 +272,7 @@ if (
 	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( eventType =>
+			EVENT_TYPES.forEach( ( eventType ) =>
 				document.addEventListener( eventType, delegateEventTracking )
 			);
 			return null;

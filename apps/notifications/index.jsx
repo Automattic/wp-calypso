@@ -23,9 +23,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
@@ -100,7 +100,7 @@ export class Notifications extends Component {
 		}
 	}
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
 			return;
 		}
@@ -124,11 +124,11 @@ export class Notifications extends Component {
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
-	receiveServiceWorkerMessage = event => {
+	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
 		// Firefox does not support document.origin; we can use location.origin instead
-		if ( event.origin && event.origin !== location.origin ) {
+		if ( event.origin && event.origin !== window.location.origin ) {
 			return;
 		}
 
@@ -145,7 +145,7 @@ export class Notifications extends Component {
 				return refreshNotes();
 
 			case 'trackClick':
-				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
+				recordTracksEvent( 'calypso_web_push_notification_clicked', {
 					push_notification_note_id: event.data.notification.note_id,
 					push_notification_type: event.data.notification.type,
 				} );
@@ -154,13 +154,13 @@ export class Notifications extends Component {
 		}
 	};
 
-	postServiceWorkerMessage = message => {
+	postServiceWorkerMessage = ( message ) => {
 		if ( ! ( 'serviceWorker' in window.navigator ) ) {
 			return;
 		}
 
 		window.navigator.serviceWorker.ready.then(
-			registration => 'active' in registration && registration.active.postMessage( message )
+			( registration ) => 'active' in registration && registration.active.postMessage( message )
 		);
 	};
 
@@ -177,7 +177,7 @@ export class Notifications extends Component {
 			OPEN_LINK: [
 				( store, { href, tracksEvent } ) => {
 					if ( tracksEvent ) {
-						this.props.recordTracksEvent( 'calypso_notifications_' + tracksEvent, {
+						this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
 							link: href,
 						} );
 					}
@@ -187,7 +187,7 @@ export class Notifications extends Component {
 			OPEN_POST: [
 				( store, { siteId, postId } ) => {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+					this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
 						site_id: siteId,
 						post_id: postId,
 					} );
@@ -197,7 +197,7 @@ export class Notifications extends Component {
 			OPEN_COMMENT: [
 				( store, { siteId, postId, commentId } ) => {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+					this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
 						site_id: siteId,
 						post_id: postId,
 						comment_id: commentId,
@@ -208,7 +208,7 @@ export class Notifications extends Component {
 			OPEN_SITE: [
 				( store, { siteId } ) => {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+					this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
 						site_id: siteId,
 					} );
 					page( `/read/blogs/${ siteId }` );
@@ -223,7 +223,7 @@ export class Notifications extends Component {
 			EDIT_COMMENT: [
 				( store, { siteId, postId, commentId } ) => {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_edit_comment', {
+					this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
 						site_id: siteId,
 						post_id: postId,
 						comment_id: commentId,
@@ -254,11 +254,11 @@ export class Notifications extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 	} ),
 	{
-		recordTracksEvent,
+		recordTracksEventAction,
 		setUnseenCount,
 	}
 )( Notifications );

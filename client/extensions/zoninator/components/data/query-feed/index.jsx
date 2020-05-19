@@ -29,7 +29,7 @@ class QueryFeed extends PureComponent {
 		this.requestFeed( nextProps );
 	}
 
-	requestFeed = props => props.requestFeed( props.siteId, props.zoneId );
+	requestFeed = ( props ) => props.requestFeed( props.siteId, props.zoneId );
 
 	render() {
 		return null;

@@ -34,7 +34,7 @@ jest.mock( 'state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 1 ),
 } ) );
 
-const DatePlusTime = time => {
+const DatePlusTime = ( time ) => {
 	const now = new Date();
 	now.setTime( now.getTime() + time );
 	return now;

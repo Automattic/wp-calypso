@@ -64,7 +64,7 @@ class AdvancedSettings extends React.Component {
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ false }
 					onClick={ this.props.onClickExport }
-					text={ this.props.translate( 'Export Selected Content' ) }
+					text={ this.props.translate( 'Export selected content' ) }
 					loadingText={ this.props.translate( 'Exporting…' ) }
 				/>
 			</div>

@@ -14,6 +14,7 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
+import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -31,6 +32,10 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isPartnerPurchase, getPartnerName } from 'lib/purchases';
 import CartData from 'components/data/cart';
+import {
+	MARKETING_PRICE_GROUP_2020_Q2_TEST_2,
+	MARKETING_PRICE_GROUP_2020_Q2_TEST_3,
+} from 'state/current-user/constants';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -82,14 +87,8 @@ class Plans extends React.Component {
 
 		const partnerName = getPartnerName( purchase );
 
-		const eventProps = {
-			partner_managed: true,
-			partner_slug: purchase.partnerSlug ?? '',
-		};
-
 		return (
 			<div>
-				<TrackComponentView eventName="calypso_plans_view" eventProperties={ eventProps } />
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
@@ -124,7 +123,14 @@ class Plans extends React.Component {
 	};
 
 	render() {
-		const { selectedSite, translate, displayJetpackPlans, canAccessPlans, purchase } = this.props;
+		const {
+			selectedSite,
+			translate,
+			displayJetpackPlans,
+			canAccessPlans,
+			purchase,
+			marketingPriceGroup,
+		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
@@ -134,14 +140,23 @@ class Plans extends React.Component {
 			return this.renderPlanWithPartner();
 		}
 
+		let hidePersonalPlan = false,
+			hidePremiumPlan = false;
+
+		if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_2 ) {
+			hidePersonalPlan = true;
+		} else if ( marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_3 ) {
+			hidePersonalPlan = true;
+			hidePremiumPlan = true;
+		}
+
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
-				{ /* We intentionally delay the track event below so that we know whether this is a partner purchase. */ }
-				{ purchase && <TrackComponentView eventName="calypso_plans_view" /> }
+				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 					{ ! canAccessPlans && (
@@ -151,29 +166,29 @@ class Plans extends React.Component {
 						/>
 					) }
 					{ canAccessPlans && (
-						<div id="plans" className="plans plans__has-sidebar">
-							<FormattedHeader
-								className="plans__page-heading"
-								headerText={ translate( 'Plans' ) }
-								align="left"
-							/>
-							<CartData>
-								<PlansNavigation path={ this.props.context.path } />
-							</CartData>
-							<PlansFeaturesMain
-								displayJetpackPlans={ displayJetpackPlans }
-								hideFreePlan={ true }
-								customerType={ this.props.customerType }
-								intervalType={ this.props.intervalType }
-								selectedFeature={ this.props.selectedFeature }
-								selectedPlan={ this.props.selectedPlan }
-								redirectTo={ this.props.redirectTo }
-								withDiscount={ this.props.withDiscount }
-								discountEndDate={ this.props.discountEndDate }
-								site={ selectedSite }
-								plansWithScroll={ false }
-							/>
-						</div>
+						<>
+							<FormattedHeader headerText={ translate( 'Plans' ) } align="left" />
+							<div id="plans" className="plans plans__has-sidebar">
+								<CartData>
+									<PlansNavigation path={ this.props.context.path } />
+								</CartData>
+								<PlansFeaturesMain
+									displayJetpackPlans={ displayJetpackPlans }
+									hideFreePlan={ true }
+									hidePersonalPlan={ hidePersonalPlan }
+									hidePremiumPlan={ hidePremiumPlan }
+									customerType={ this.props.customerType }
+									intervalType={ this.props.intervalType }
+									selectedFeature={ this.props.selectedFeature }
+									selectedPlan={ this.props.selectedPlan }
+									redirectTo={ this.props.redirectTo }
+									withDiscount={ this.props.withDiscount }
+									discountEndDate={ this.props.discountEndDate }
+									site={ selectedSite }
+									plansWithScroll={ false }
+								/>
+							</div>
+						</>
 					) }
 				</Main>
 			</div>
@@ -181,7 +196,7 @@ class Plans extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
@@ -193,5 +208,6 @@ export default connect( state => {
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		marketingPriceGroup: getCurrentUserMarketingPriceGroup( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

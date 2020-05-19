@@ -16,7 +16,7 @@ class SiteDomain {
 			return new SiteDomain( id, wpcom );
 		}
 		this._sid = id;
-		this.path = `${root}/${this._sid}/domains`;
+		this.path = `${ root }/${ this._sid }/domains`;
 		this.wpcom = wpcom;
 	}
 
@@ -28,7 +28,7 @@ class SiteDomain {
 	 * @returns {Function} request handler
 	 */
 	getPrimary( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/primary`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/primary`, query, fn );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class SiteDomain {
 	 * @returns {Function} request handler
 	 */
 	setPrimary( domain, fn ) {
-		return this.wpcom.req.put( `${this.path}/primary`, {}, { domain }, fn );
+		return this.wpcom.req.put( `${ this.path }/primary`, {}, { domain }, fn );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SiteDomain {
 	 * @returns {Function} request handler
 	 */
 	getRedirect( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/redirect`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/redirect`, query, fn );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class SiteDomain {
 			location = { location };
 		}
 
-		return this.wpcom.req.put( `${this.path}/redirect`, {}, location, fn );
+		return this.wpcom.req.put( `${ this.path }/redirect`, {}, location, fn );
 	}
 }
 

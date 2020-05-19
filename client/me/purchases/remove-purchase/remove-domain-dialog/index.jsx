@@ -81,12 +81,12 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	onDomainChange = event => {
+	onDomainChange = ( event ) => {
 		const productName = getName( this.props.purchase );
 		this.setState( { domainValidated: event.currentTarget.value === productName } );
 	};
 
-	onAgreeChange = event => {
+	onAgreeChange = ( event ) => {
 		this.setState( { userAgreed: event.target.checked } );
 	};
 
@@ -146,7 +146,7 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	nextStep = closeDialog => {
+	nextStep = ( closeDialog ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}

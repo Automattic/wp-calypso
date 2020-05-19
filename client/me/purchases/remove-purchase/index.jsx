@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
+import VerticalNavItem from 'components/vertical-nav/item';
 
 /**
  * Style dependencies
@@ -53,13 +55,14 @@ class RemovePurchase extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
-		isPrimaryDomainRegistered: PropTypes.bool,
+		hasCustomPrimaryDomain: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
 		site: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
+		useVerticalNavItem: PropTypes.bool,
 	};
 
 	state = {
@@ -83,7 +86,7 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	openDialog = event => {
+	openDialog = ( event ) => {
 		event.preventDefault();
 
 		if (
@@ -106,13 +109,13 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	onSurveyChange = update => {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
 	};
 
-	removePurchase = closeDialog => {
+	removePurchase = ( closeDialog ) => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
@@ -171,14 +174,9 @@ class RemovePurchase extends Component {
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
-		const {
-			hasNonPrimaryDomainsFlag,
-			isAtomicSite,
-			isPrimaryDomainRegistered,
-			purchase,
-		} = this.props;
+		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase } = this.props;
 		return (
-			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && isPrimaryDomainRegistered
+			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && hasCustomPrimaryDomain
 		);
 	}
 
@@ -252,13 +250,17 @@ class RemovePurchase extends Component {
 		return (
 			<div>
 				<p>
-					{ translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
-						args: { productName },
-						components: { domain: <em>{ purchase.domain }</em> },
-						// ^ is the internal WPcom domain i.e. example.wordpress.com
-						// if we want to use the purchased domain we can swap with the below line
-						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					} ) }{ ' ' }
+					{
+						/* translators: productName is a product name, like Jetpack.
+					 domain is something like example.wordpress.com */
+						translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
+							args: { productName },
+							components: { domain: <em>{ purchase.domain }</em> },
+							// ^ is the internal WPcom domain i.e. example.wordpress.com
+							// if we want to use the purchased domain we can swap with the below line
+							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
+						} )
+					}{ ' ' }
 					{ isGoogleApps( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +
@@ -352,19 +354,31 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const { purchase, translate } = this.props;
+		const { purchase, className, useVerticalNavItem, translate } = this.props;
 		const productName = getName( purchase );
 
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
+		const defaultContent = (
+			<>
+				<Gridicon icon="trash" />
+				{
+					// translators: productName is a product name, like Jetpack
+					translate( 'Remove %(productName)s', { args: { productName } } )
+				}
+			</>
+		);
+
+		const wrapperClassName = classNames( 'remove-purchase__card', className );
+		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+
 		return (
 			<>
-				<CompactCard tagName="button" className="remove-purchase__card" onClick={ this.openDialog }>
-					<Gridicon icon="trash" />
-					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
-				</CompactCard>
+				<Wrapper tagName="button" className={ wrapperClassName } onClick={ this.openDialog }>
+					{ this.props.children ? this.props.children : defaultContent }
+				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
 			</>

@@ -19,7 +19,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#receiveCountryStates()', () => {
 		test( 'should return an action object', () => {
@@ -43,7 +43,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestCountryStates()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/domains/supported-states/us' )

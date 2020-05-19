@@ -12,7 +12,7 @@ import toApi from './to-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const rescheduleConciergeAppointment = action => {
+export const rescheduleConciergeAppointment = ( action ) => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
 		http(

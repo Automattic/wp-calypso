@@ -30,11 +30,11 @@ class TransactionsTable extends React.Component {
 		header: false,
 	};
 
-	onPageClick = page => {
+	onPageClick = ( page ) => {
 		this.props.setPage( this.props.transactionType, page );
 	};
 
-	onSearch = terms => {
+	onSearch = ( terms ) => {
 		this.props.setQuery( this.props.transactionType, terms );
 	};
 
@@ -60,7 +60,7 @@ class TransactionsTable extends React.Component {
 		);
 	}
 
-	serviceName = transaction => {
+	serviceName = ( transaction ) => {
 		if ( ! transaction.items ) {
 			return this.serviceNameDescription( transaction );
 		}
@@ -84,7 +84,7 @@ class TransactionsTable extends React.Component {
 		} );
 	};
 
-	serviceNameDescription = transaction => {
+	serviceNameDescription = ( transaction ) => {
 		let description;
 		if ( transaction.domain ) {
 			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
@@ -161,7 +161,7 @@ class TransactionsTable extends React.Component {
 			);
 		}
 
-		return transactions.map( transaction => {
+		return transactions.map( ( transaction ) => {
 			const transactionDate = this.props.moment( transaction.date ).format( 'll' );
 
 			return (

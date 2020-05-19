@@ -29,20 +29,20 @@ const screenSize = driverManager.currentScreenSize();
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `Can see WooCommerce Store option in Calypso '${ screenSize }' @parallel`, function() {
+describe( `Can see WooCommerce Store option in Calypso '${ screenSize }' @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
 	// Login as WooCommerce store user and open the sidebar
-	step( 'Log In', async function() {
+	step( 'Log In', async function () {
 		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
 		await loginFlow.login();
 		const navBarComponent = await NavBarComponent.Expect( driver );
@@ -51,7 +51,7 @@ describe( `Can see WooCommerce Store option in Calypso '${ screenSize }' @parall
 
 	step(
 		"Can see 'Store' option in main Calypso menu for an AT WooCommerce site set to the US",
-		async function() {
+		async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			assert(
 				await sidebarComponent.storeOptionDisplayed(),
@@ -60,7 +60,7 @@ describe( `Can see WooCommerce Store option in Calypso '${ screenSize }' @parall
 		}
 	);
 
-	step( "The 'Store' option opens the store dashboard with its own sidebar", async function() {
+	step( "The 'Store' option opens the store dashboard with its own sidebar", async function () {
 		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectStoreOption();
 		await StoreDashboardPage.Expect( driver );
@@ -68,20 +68,20 @@ describe( `Can see WooCommerce Store option in Calypso '${ screenSize }' @parall
 	} );
 } );
 
-describe( `Can see WooCommerce products in Calypso '${ screenSize }' @parallel`, function() {
+describe( `Can see WooCommerce products in Calypso '${ screenSize }' @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
 	// Login as WooCommerce store user and open the woo store
-	step( 'Log In', async function() {
+	step( 'Log In', async function () {
 		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
 		return await loginFlow.loginAndOpenWooStore();
 	} );
 
-	step( "Can see 'Products' option in the Woo store sidebar", async function() {
+	step( "Can see 'Products' option in the Woo store sidebar", async function () {
 		const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 		assert(
 			await storeSidebarComponent.productsLinkDisplayed(),
@@ -91,7 +91,7 @@ describe( `Can see WooCommerce products in Calypso '${ screenSize }' @parallel`,
 
 	step(
 		'Can see the products page with at least one product when selecting the products option in the Woo store sidebar',
-		async function() {
+		async function () {
 			const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 			await storeSidebarComponent.selectProducts();
 			const storeProductsPage = await StoreProductsPage.Expect( driver );
@@ -103,20 +103,20 @@ describe( `Can see WooCommerce products in Calypso '${ screenSize }' @parallel`,
 	);
 } );
 
-describe( `Can add a new WooCommerce product in Calypso '${ screenSize }' @parallel`, function() {
+describe( `Can add a new WooCommerce product in Calypso '${ screenSize }' @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
 	// Login as WooCommerce store user and open the woo store
-	step( 'Log In', async function() {
+	step( 'Log In', async function () {
 		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
 		return await loginFlow.loginAndOpenWooStore();
 	} );
 
-	step( 'Can add a new product via the Products Menu in the Woo store sidebar', async function() {
+	step( 'Can add a new product via the Products Menu in the Woo store sidebar', async function () {
 		const productTitle = dataHelper.randomPhrase();
 		const productDescription = 'Another test e2e product';
 		const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
@@ -150,20 +150,20 @@ describe( `Can add a new WooCommerce product in Calypso '${ screenSize }' @paral
 	} );
 } );
 
-describe( `Can see WooCommerce orders in Calypso '${ screenSize }' @parallel`, function() {
+describe( `Can see WooCommerce orders in Calypso '${ screenSize }' @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
 	// Login as WooCommerce store user and open the woo store
-	step( 'Log In', async function() {
+	step( 'Log In', async function () {
 		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
 		return await loginFlow.loginAndOpenWooStore();
 	} );
 
-	step( "Can see 'Orders' option in the Woo store sidebar", async function() {
+	step( "Can see 'Orders' option in the Woo store sidebar", async function () {
 		const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 		assert(
 			await storeSidebarComponent.productsLinkDisplayed(),
@@ -173,7 +173,7 @@ describe( `Can see WooCommerce orders in Calypso '${ screenSize }' @parallel`, f
 
 	step(
 		'Can see the orders page with at least one order when selecting the orders option in the Woo store sidebar',
-		async function() {
+		async function () {
 			const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 			await storeSidebarComponent.selectOrders();
 			const storeOrdersPage = await StoreOrdersPage.Expect( driver );
@@ -186,7 +186,7 @@ describe( `Can see WooCommerce orders in Calypso '${ screenSize }' @parallel`, f
 
 	step(
 		'Can see the order details page when opening an order, product details page when clicking a product in an order',
-		async function() {
+		async function () {
 			const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 			await storeSidebarComponent.selectOrders();
 			const storeOrdersPage = await StoreOrdersPage.Expect( driver );
@@ -198,20 +198,20 @@ describe( `Can see WooCommerce orders in Calypso '${ screenSize }' @parallel`, f
 	);
 } );
 
-describe( `Can see WooCommerce settings in Calypso '${ screenSize }' @parallel`, function() {
+describe( `Can see WooCommerce settings in Calypso '${ screenSize }' @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
 	// Login as WooCommerce store user and open the woo store
-	step( 'Log In', async function() {
+	step( 'Log In', async function () {
 		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
 		return await loginFlow.loginAndOpenWooStore();
 	} );
 
-	step( "Can see 'Settings' option in the Woo store sidebar", async function() {
+	step( "Can see 'Settings' option in the Woo store sidebar", async function () {
 		const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 		assert(
 			await storeSidebarComponent.settingsLinkDisplayed(),
@@ -221,13 +221,13 @@ describe( `Can see WooCommerce settings in Calypso '${ screenSize }' @parallel`,
 
 	step(
 		'Can see the settings page when selecting the settings option in the Woo store sidebar',
-		async function() {
+		async function () {
 			const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 			return await storeSidebarComponent.selectSettings();
 		}
 	);
 
-	step( 'Can select payments, shipping, and taxes tabs on the settings page', async function() {
+	step( 'Can select payments, shipping, and taxes tabs on the settings page', async function () {
 		const storeSidebarComponent = await StoreSidebarComponent.Expect( driver );
 		await storeSidebarComponent.selectSettings();
 		const storeSettingsPage = await StoreSettingsPage.Expect( driver );

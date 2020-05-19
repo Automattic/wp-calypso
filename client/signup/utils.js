@@ -11,15 +11,39 @@ import { translate } from 'i18n-calypso';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import userFactory from 'lib/user';
+import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
 const { defaultFlowName } = flows;
 
+function isEligibleForSwapStepsTest() {
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+	const isUserFromUS = 'US' === countryCodeFromCookie;
+
+	if ( user && user.get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
+		return true;
+	}
+
+	return false;
+}
+
+function getDefaultFlowName() {
+	if (
+		isEligibleForSwapStepsTest() &&
+		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+	) {
+		return 'onboarding-plan-first';
+	}
+
+	return defaultFlowName;
+}
+
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: defaultFlowName;
+		: getDefaultFlowName();
 }
 
 function isFlowName( pathFragment ) {
@@ -94,7 +118,7 @@ export function getFlowPageTitle( flowName ) {
 }
 
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
-	const siteStepProgress = find( signupProgress, step => step.stepName === stepName );
+	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
@@ -171,7 +195,7 @@ export function getFilteredSteps( flowName, progress ) {
 
 	return sortBy(
 		// filter steps...
-		filter( progress, step => includes( flow.steps, step.stepName ) ),
+		filter( progress, ( step ) => includes( flow.steps, step.stepName ) ),
 		// then order according to the flow definition...
 		( { stepName } ) => flow.steps.indexOf( stepName )
 	);
@@ -188,10 +212,13 @@ export function getCompletedSteps( flowName, progress, options = {} ) {
 	if ( options.shouldMatchFlowName ) {
 		return filter(
 			getFilteredSteps( flowName, progress ),
-			step => 'in-progress' !== step.status && step.lastKnownFlow === flowName
+			( step ) => 'in-progress' !== step.status && step.lastKnownFlow === flowName
 		);
 	}
-	return filter( getFilteredSteps( flowName, progress ), step => 'in-progress' !== step.status );
+	return filter(
+		getFilteredSteps( flowName, progress ),
+		( step ) => 'in-progress' !== step.status
+	);
 }
 
 export function canResumeFlow( flowName, progress ) {
@@ -202,7 +229,7 @@ export function canResumeFlow( flowName, progress ) {
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
 
-export const persistSignupDestination = url => {
+export const persistSignupDestination = ( url ) => {
 	const WEEK_IN_SECONDS = 3600 * 24 * 7;
 	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
 	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
@@ -222,7 +249,7 @@ export const clearSignupDestinationCookie = () => {
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
 
-export const shouldForceLogin = flowName => {
+export const shouldForceLogin = ( flowName ) => {
 	const flow = flows.getFlow( flowName );
 	return !! flow && flow.forceLogin;
 };

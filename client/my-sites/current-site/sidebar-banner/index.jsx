@@ -36,7 +36,7 @@ export class SidebarBanner extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onClick = e => {
+	onClick = ( e ) => {
 		const { ctaName, track, onClick } = this.props;
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
 		if ( onClick ) {

@@ -21,7 +21,7 @@ import {
 
 export default {
 	fetchFollowers( query, silentUpdate = false ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			// TODO: Componentes should not fetch if already fetching
 			debug( 'fetching followers', query );
 			if ( ! silentUpdate ) {
@@ -33,12 +33,12 @@ export default {
 			wpcom
 				.site( query.siteId )
 				.statsFollowers( query )
-				.then( data => dispatch( { type: FOLLOWERS_RECEIVE, query, data } ) )
-				.catch( error => dispatch( { type: FOLLOWERS_REQUEST_ERROR, query, error } ) );
+				.then( ( data ) => dispatch( { type: FOLLOWERS_RECEIVE, query, data } ) )
+				.catch( ( error ) => dispatch( { type: FOLLOWERS_REQUEST_ERROR, query, error } ) );
 		};
 	},
 	removeFollower( siteId, follower ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			debug( 'removing follower', follower, siteId );
 			dispatch( {
 				type: FOLLOWER_REMOVE_REQUEST,
@@ -49,8 +49,8 @@ export default {
 				.undocumented()
 				.site( siteId )
 				.removeFollower( follower.ID )
-				.then( data => dispatch( { type: FOLLOWER_REMOVE_SUCCESS, siteId, follower, data } ) )
-				.catch( error => dispatch( { type: FOLLOWER_REMOVE_ERROR, siteId, follower, error } ) );
+				.then( ( data ) => dispatch( { type: FOLLOWER_REMOVE_SUCCESS, siteId, follower, data } ) )
+				.catch( ( error ) => dispatch( { type: FOLLOWER_REMOVE_ERROR, siteId, follower, error } ) );
 		};
 	},
 };

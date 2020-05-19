@@ -46,7 +46,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import {
+	recordTracksEvent as recordTracksEventAction,
+	withAnalytics,
+} from 'state/analytics/actions';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -69,7 +72,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applySiteOffset } from 'lib/site/timezone';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getPreference } from 'state/preferences/selectors';
@@ -144,7 +147,7 @@ class ActivityLog extends Component {
 	 *
 	 * @param {string} type Type of dialog to close.
 	 */
-	handleCloseDialog = type => {
+	handleCloseDialog = ( type ) => {
 		const { siteId } = this.props;
 		switch ( type ) {
 			case 'restore':
@@ -163,13 +166,13 @@ class ActivityLog extends Component {
 	 * @param   {object} date Moment to adjust.
 	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
 	 */
-	applySiteOffset = date => {
+	applySiteOffset = ( date ) => {
 		const { timezone, gmtOffset } = this.props;
 		return applySiteOffset( date, { timezone, gmtOffset } );
 	};
 
-	changePage = pageNumber => {
-		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
+	changePage = ( pageNumber ) => {
+		recordTracksEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -345,7 +348,7 @@ class ActivityLog extends Component {
 				<div className="activity-log__time-period is-loading">
 					<span />
 				</div>
-				{ [ 1, 2, 3 ].map( i => (
+				{ [ 1, 2, 3 ].map( ( i ) => (
 					<div key={ i } className="activity-log-item is-loading">
 						<div className="activity-log-item__type">
 							<div className="activity-log-item__activity-icon" />
@@ -418,7 +421,7 @@ class ActivityLog extends Component {
 			  );
 
 		return (
-			<div>
+			<>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
@@ -432,6 +435,10 @@ class ActivityLog extends Component {
 				<FormattedHeader
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
+					subHeaderText={ translate(
+						"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
+							'setting modifications, and more.'
+					) }
 					align="left"
 				/>
 
@@ -470,7 +477,7 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteHasNoLog && <div className="activity-log__fader" /> }
-							{ theseLogs.map( log =>
+							{ theseLogs.map( ( log ) =>
 								log.isAggregate ? (
 									<Fragment key={ log.activityId }>
 										{ timePeriod( log ) }
@@ -511,7 +518,7 @@ class ActivityLog extends Component {
 						/>
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 
@@ -575,7 +582,7 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
@@ -620,29 +627,29 @@ export default connect(
 	},
 	{
 		changePeriod: ( { date, direction } ) =>
-			recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+			recordTracksEventAction( 'calypso_activitylog_monthpicker_change', {
 				date: date.utc().toISOString(),
 				direction,
 			} ),
 		createBackup: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
 				rewindBackup( siteId, actionId )
 			),
-		dismissBackup: siteId =>
+		dismissBackup: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_backup_cancel' ),
 				rewindBackupDismiss( siteId )
 			),
 		getRewindRestoreProgress,
-		rewindRequestDismiss: siteId =>
+		rewindRequestDismiss: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_restore_cancel' ),
 				rewindRequestDismiss( siteId )
 			),
 		rewindRestore: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
 				rewindRestore( siteId, actionId )
 			),
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),

@@ -28,7 +28,7 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	new: function( text, options, status ) {
+	new: function ( text, options, status ) {
 		// Set container
 		const container = options.overlay ? 'overlay-notices' : 'notices';
 
@@ -46,13 +46,13 @@ const notices = {
 			container: container,
 			button: options.button,
 			href: options.href,
-			onClick: event => {
+			onClick: ( event ) => {
 				if ( typeof options.onClick === 'function' ) {
 					const closeFn = notices.removeNotice.bind( notices, noticeObject );
 					return options.onClick( event, closeFn );
 				}
 			},
-			onRemoveCallback: options.onRemoveCallback || function() {},
+			onRemoveCallback: options.onRemoveCallback || function () {},
 			arrow: options.arrow,
 			isCompact: options.isCompact,
 			showDismiss: options.showDismiss,
@@ -81,7 +81,7 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	success: function( text, options ) {
+	success: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-success' );
 	},
@@ -96,7 +96,7 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	error: function( text, options ) {
+	error: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-error' );
 	},
@@ -111,7 +111,7 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	info: function( text, options ) {
+	info: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-info' );
 	},
@@ -126,7 +126,7 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	warning: function( text, options ) {
+	warning: function ( text, options ) {
 		options = options || {};
 		return this.new( text, options, 'is-warning' );
 	},
@@ -141,7 +141,7 @@ const notices = {
 	 *
 	 * @param  {object} notice The data that was originally used to create the notice
 	 */
-	removeNotice: function( notice ) {
+	removeNotice: function ( notice ) {
 		if ( ! notice.container ) {
 			return;
 		}
@@ -162,10 +162,10 @@ const notices = {
 	 * @param {object} context The page context
 	 * @param {Function} next The continuation
 	 */
-	clearNoticesOnNavigation: function( context, next ) {
+	clearNoticesOnNavigation: function ( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
 		let changed = false;
-		const isNoticePersistent = function( notice ) {
+		const isNoticePersistent = function ( notice ) {
 			return notice.persistent;
 		};
 
@@ -179,7 +179,7 @@ const notices = {
 
 		// Rotate in any delayed notices
 		if ( delayedNotices.length ) {
-			delayedNotices.forEach( function( noticeObject ) {
+			delayedNotices.forEach( function ( noticeObject ) {
 				list[ noticeObject.container ] = [];
 				list[ noticeObject.container ].push( noticeObject );
 			} );
@@ -200,12 +200,12 @@ const notices = {
 	 *
 	 * @param  {string} container DOM ID of notices container to clear
 	 */
-	clearNotices: function( container ) {
+	clearNotices: function ( container ) {
 		list[ container ] = [];
 		list.emit( 'change' );
 	},
 
-	getStatusHelper: function( noticeObject ) {
+	getStatusHelper: function ( noticeObject ) {
 		if ( noticeObject.error ) {
 			return 'is-error';
 		}

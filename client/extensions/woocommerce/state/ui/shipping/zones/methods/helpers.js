@@ -46,7 +46,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		remove( mergedState[ bucket ], { id } );
 	} );
 
-	currentCreates.forEach( create => {
+	currentCreates.forEach( ( create ) => {
 		const index = findIndex( creates, { id: create.id } );
 		if ( -1 === index ) {
 			mergedState.creates.push( create );
@@ -55,7 +55,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		}
 	} );
 
-	currentUpdates.forEach( update => {
+	currentUpdates.forEach( ( update ) => {
 		const index = findIndex( updates, { id: update.id } );
 		if ( -1 === index ) {
 			mergedState.updates.push( update );

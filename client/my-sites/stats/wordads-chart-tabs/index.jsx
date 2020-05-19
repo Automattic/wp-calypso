@@ -101,7 +101,7 @@ class WordAdsChartTabs extends Component {
 			'label' +
 			this.props.period.period.charAt( 0 ).toUpperCase() +
 			this.props.period.period.slice( 1 );
-		return data.map( record => {
+		return data.map( ( record ) => {
 			let recordClassName;
 			if ( record.classNames && record.classNames.length ) {
 				recordClassName = record.classNames.join( ' ' );

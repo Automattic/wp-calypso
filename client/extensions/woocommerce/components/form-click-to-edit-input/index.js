@@ -58,7 +58,7 @@ class FormClickToEditInput extends Component {
 		} );
 	};
 
-	onInputChange = e => {
+	onInputChange = ( e ) => {
 		this.setState( {
 			value: e.target.value,
 		} );

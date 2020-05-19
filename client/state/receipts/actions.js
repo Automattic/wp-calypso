@@ -12,7 +12,7 @@ import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'st
 import wpcom from 'lib/wp';
 
 export function fetchReceipt( receiptId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: RECEIPT_FETCH,
 			receiptId,

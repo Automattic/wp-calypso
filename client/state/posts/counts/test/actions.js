@@ -41,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostCounts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/wpcom/v2/sites/2916284/post-counts/post' )

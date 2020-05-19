@@ -6,7 +6,7 @@ let mostRecentUrlPath: string | null = null;
 let pathCounter = 0;
 
 if ( typeof window !== 'undefined' ) {
-	window.addEventListener( 'popstate', function() {
+	window.addEventListener( 'popstate', function () {
 		// throw away our URL value if the user used the back/forward buttons
 		mostRecentUrlPath = null;
 	} );

@@ -12,7 +12,7 @@ const i18n = require( '..' );
 const sourceFiles = [
 	'examples/i18n-test-examples.jsx',
 	'examples/i18n-test-example-second-file.jsx',
-].map( file => path.join( __dirname, file ) );
+].map( ( file ) => path.join( __dirname, file ) );
 
 /**
  * In these tests we are taking the translate requests from

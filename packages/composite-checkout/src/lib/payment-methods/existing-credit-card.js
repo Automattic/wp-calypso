@@ -62,8 +62,8 @@ export function createExistingCardMethod( {
 				};
 				debug( 'existing card transaction complete', response );
 			} catch ( error ) {
-				debug( 'existing card transaction had an error', error );
-				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error };
+				debug( 'existing card transaction had an error', error.message );
+				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error.message };
 			}
 			if ( response?.message?.payment_intent_client_secret ) {
 				debug( 'existing card transaction requires auth' );
@@ -209,16 +209,16 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
-	const transactionStatus = useSelect( select =>
+	const transactionStatus = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionStatus()
 	);
-	const transactionError = useSelect( select =>
+	const transactionError = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionError()
 	);
-	const transactionAuthData = useSelect( select =>
+	const transactionAuthData = useSelect( ( select ) =>
 		select( `existing-card-${ id }` ).getTransactionAuthData()
 	);
-	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
+	const redirectUrl = useSelect( ( select ) => select( `existing-card-${ id }` ).getRedirectUrl() );
 	const { beginCardTransaction, setTransactionComplete, resetTransaction } = useDispatch(
 		`existing-card-${ id }`
 	);
@@ -264,12 +264,12 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} )
-				.then( authenticationResponse => {
+				.then( ( authenticationResponse ) => {
 					debug( 'auth is complete', authenticationResponse );
 					isSubscribed && setTransactionComplete( authenticationResponse );
 				} )
-				.catch( error => {
-					debug( 'showing error for auth', error );
+				.catch( ( error ) => {
+					debug( 'showing error for auth', error.message );
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
@@ -293,10 +293,6 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 		localize,
 	] );
 
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
@@ -316,9 +312,20 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
+}
+
+function ButtonContents( { formStatus, total } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
+	}
+	return localize( 'Please wait…' );
 }
 
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
@@ -362,8 +369,8 @@ async function submitExistingCardPayment( {
 	} catch ( error ) {
 		resetTransaction();
 		setFormReady();
-		onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: String( error ) } );
-		showErrorMessage( error );
+		onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: String( error.message ) } );
+		showErrorMessage( error.message );
 		return;
 	}
 }

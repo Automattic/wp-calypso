@@ -57,7 +57,7 @@ class ConnectedApplications extends PureComponent {
 	renderPlaceholders() {
 		const { translate } = this.props;
 
-		return times( 5, index => (
+		return times( 5, ( index ) => (
 			<ConnectedAppItem
 				connection={ {
 					ID: index,
@@ -80,7 +80,7 @@ class ConnectedApplications extends PureComponent {
 			return this.renderEmptyContent();
 		}
 
-		return apps.map( connection => (
+		return apps.map( ( connection ) => (
 			<ConnectedAppItem connection={ connection } key={ connection.ID } />
 		) );
 	}
@@ -119,6 +119,6 @@ class ConnectedApplications extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	apps: getConnectedApplications( state ),
 } ) )( localize( ConnectedApplications ) );

@@ -30,7 +30,7 @@ function couponDeleted( state, action ) {
 	const { couponId } = action;
 	const { coupons } = state;
 
-	const newCoupons = coupons.filter( coupon => couponId !== coupon.id );
+	const newCoupons = coupons.filter( ( coupon ) => couponId !== coupon.id );
 
 	if ( newCoupons.length !== coupons.length ) {
 		return { ...state, coupons: newCoupons };

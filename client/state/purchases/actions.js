@@ -25,12 +25,12 @@ const wpcom = wp.undocumented();
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
 
-export const clearPurchases = () => dispatch => {
+export const clearPurchases = () => ( dispatch ) => {
 	dispatch( { type: PURCHASES_REMOVE } );
 	dispatch( requestHappychatEligibility() );
 };
 
-export const fetchSitePurchases = siteId => dispatch => {
+export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: PURCHASES_SITE_FETCH,
 		siteId,
@@ -41,7 +41,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
@@ -56,7 +56,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 		} );
 };
 
-export const fetchUserPurchases = userId => dispatch => {
+export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 	dispatch( {
 		type: PURCHASES_USER_FETCH,
 	} );
@@ -66,7 +66,7 @@ export const fetchUserPurchases = userId => dispatch => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
 				purchases: data,
@@ -81,13 +81,13 @@ export const fetchUserPurchases = userId => dispatch => {
 		} );
 };
 
-export const removePurchase = ( purchaseId, userId ) => dispatch => {
+export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 	return new Promise( ( resolve, reject ) => {
 		wpcom.me().deletePurchase( purchaseId, ( error, data ) => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASE_REMOVE_COMPLETED,
 				purchases: data.purchases,
@@ -96,7 +96,7 @@ export const removePurchase = ( purchaseId, userId ) => dispatch => {
 
 			dispatch( requestHappychatEligibility() );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: PURCHASE_REMOVE_FAILED,
 				error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,

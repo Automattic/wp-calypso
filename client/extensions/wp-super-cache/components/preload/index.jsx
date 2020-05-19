@@ -232,7 +232,7 @@ class PreloadTab extends Component {
 									onChange={ handleSelect }
 									value={ preload_posts || 'all' }
 								>
-									{ this.getPreloadPostsOptions( post_count ).map( option => (
+									{ this.getPreloadPostsOptions( post_count ).map( ( option ) => (
 										<option key={ option } value={ option }>
 											{ option }
 										</option>
@@ -295,7 +295,7 @@ class PreloadTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -309,7 +309,7 @@ const connectComponent = connect(
 	}
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'is_preloading',
 		'minimum_preload_interval',

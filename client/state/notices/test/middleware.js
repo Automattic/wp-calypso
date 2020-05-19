@@ -30,17 +30,17 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {
 		let store, dispatchSpy;
-		useSandbox( sandbox => {
-			const spyMiddleware = () => next => {
+		useSandbox( ( sandbox ) => {
+			const spyMiddleware = () => ( next ) => {
 				dispatchSpy = sandbox.spy( next );
-				return action => dispatchSpy( action );
+				return ( action ) => dispatchSpy( action );
 			};
 
 			store = applyMiddleware( thunk, spyMiddleware )( createStore )( () => 'Hello' );
 		} );
 
 		beforeAll( () => {
-			handlers.DUMMY_TYPE = action => ( dispatch, getState ) =>
+			handlers.DUMMY_TYPE = ( action ) => ( dispatch, getState ) =>
 				dispatch( successNotice( `${ getState() } ${ action.target }` ) );
 		} );
 
@@ -48,7 +48,7 @@ describe( 'middleware', () => {
 			delete handlers.DUMMY_TYPE;
 		} );
 
-		const dummyCreator = target => ( { type: 'DUMMY_TYPE', target } );
+		const dummyCreator = ( target ) => ( { type: 'DUMMY_TYPE', target } );
 
 		test( 'should trigger the observer corresponding to the dispatched action type', () => {
 			noticesMiddleware( store )( noop )( dummyCreator( 'World' ) );
@@ -68,7 +68,7 @@ describe( 'middleware', () => {
 
 	describe( 'handlers', () => {
 		let dispatch;
-		useSandbox( sandbox => {
+		useSandbox( ( sandbox ) => {
 			dispatch = sandbox.spy();
 		} );
 

@@ -36,11 +36,12 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && npm run clean",
+		"prepare": "check-npm-client && transpile"
 	},
 	"dependencies": {
+		"@babel/runtime": "^7.8.4",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uuid": "^7.0.1",

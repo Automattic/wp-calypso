@@ -53,7 +53,7 @@ class ReviewsFilterNav extends Component {
 		}
 	}
 
-	doSearch = search => {
+	doSearch = ( search ) => {
 		const { productId } = this.props;
 		const updatedStateQuery = { search, status: 'any' };
 		if ( productId ) {
@@ -165,5 +165,5 @@ export default connect(
 		search: getReviewsCurrentSearch( state ),
 		product: ownProps.productId && getProduct( state, ownProps.productId ),
 	} ),
-	dispatch => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
+	( dispatch ) => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
 )( localize( ReviewsFilterNav ) );

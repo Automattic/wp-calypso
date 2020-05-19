@@ -26,5 +26,5 @@ export default function getTimezonesLabelsByContinent( state, continent ) {
 		return null;
 	}
 
-	return fromPairs( map( timezones, value => [ value, getTimezonesLabel( state, value ) ] ) );
+	return fromPairs( map( timezones, ( value ) => [ value, getTimezonesLabel( state, value ) ] ) );
 }

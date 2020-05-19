@@ -3,11 +3,12 @@
  */
 import Dispatcher from 'dispatcher';
 import { actions, errors as errorTypes } from './constants';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { bumpStat } from 'lib/analytics/mc';
 
 async function makeRequest( username, password, authCode = '' ) {
 	try {
-		const response = await fetch( '/oauth', {
+		const response = await globalThis.fetch( '/oauth', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify( {
@@ -57,19 +58,19 @@ function bumpStats( error, data ) {
 	}
 
 	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ) {
-		analytics.tracks.recordEvent( 'calypso_oauth_login_needs2fa' );
-		analytics.mc.bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
+		recordTracksEvent( 'calypso_oauth_login_needs2fa' );
+		bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
 	} else if ( errorType ) {
-		analytics.tracks.recordEvent( 'calypso_oauth_login_fail', {
+		recordTracksEvent( 'calypso_oauth_login_fail', {
 			error: error.error,
 		} );
 
-		analytics.mc.bumpStat( {
+		bumpStat( {
 			calypso_oauth_login_error: errorType,
 			calypso_oauth_login: 'error',
 		} );
 	} else {
-		analytics.tracks.recordEvent( 'calypso_oauth_login_success' );
-		analytics.mc.bumpStat( 'calypso_oauth_login', 'success' );
+		recordTracksEvent( 'calypso_oauth_login_success' );
+		bumpStat( 'calypso_oauth_login', 'success' );
 	}
 }

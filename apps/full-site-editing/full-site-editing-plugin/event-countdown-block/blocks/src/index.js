@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { EventCountdownIcon } from './icon';
 import edit from './edit';
 import view from './view';
+import './editor.scss';
+import './style.scss';
 
 registerBlockType( 'jetpack/event-countdown', {
 	title: __( 'Event Countdown', 'full-site-editing' ),
@@ -39,7 +41,7 @@ registerBlockType( 'jetpack/event-countdown', {
 		},
 	},
 
-	edit: props => {
+	edit: ( props ) => {
 		if ( props.isSelected ) {
 			return edit( props );
 		}

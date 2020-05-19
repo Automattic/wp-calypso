@@ -44,7 +44,7 @@ export function formatAmexCreditCard( cardNumber ) {
 const fieldMasks = {};
 
 fieldMasks[ 'expiration-date' ] = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		// If the user is deleting from the value then don't modify it
 		if ( previousValue && previousValue.length > nextValue.length ) {
 			return nextValue;
@@ -74,17 +74,17 @@ fieldMasks[ 'expiration-date' ] = {
 };
 
 fieldMasks.number = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		return formatCreditCard( nextValue );
 	},
 
-	unmask: function( value ) {
+	unmask: function ( value ) {
 		return value.replace( / /g, '' );
 	},
 };
 
 fieldMasks.cvv = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
 	},
 
@@ -94,7 +94,7 @@ fieldMasks.cvv = {
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
 // See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		let string = nextValue;
 
 		const digits = nextValue.replace( /[^0-9]/g, '' );

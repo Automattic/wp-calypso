@@ -15,7 +15,7 @@ import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
-const Issue = props => (
+const Issue = ( props ) => (
 	<li className="guided-transfer__issue">
 		<div className="guided-transfer__issue-title">
 			<Gridicon icon="cross" size={ 18 } className="guided-transfer__issue-icon" />

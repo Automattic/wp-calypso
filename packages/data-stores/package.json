@@ -26,20 +26,20 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "npm run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "check-npm-client && yarn run clean",
+		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@wordpress/data-controls": "^1.4.0",
 		"@wordpress/url": "^2.8.2",
-		"debug": "^4.1.1",
 		"fast-json-stable-stringify": "^2.1.0",
 		"qs": "^6.9.1",
 		"redux": "^4.0.4",
 		"tslib": "^1.10.0",
-		"wpcom-proxy-request": "file:../wpcom-proxy-request"
+		"utility-types": "^3.10.0",
+		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4"

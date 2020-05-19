@@ -14,6 +14,6 @@ import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-c
  * @param {object} state - global redux state
  * @returns {boolean} Whether new chats can be taken
  */
-export default function( state ) {
+export default function ( state ) {
 	return isHappychatClientConnected( state ) && get( state, 'happychat.connection.isAvailable' );
 }

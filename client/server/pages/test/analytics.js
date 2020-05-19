@@ -31,7 +31,7 @@ describe( 'index', () => {
 		describe( 'when rendering a section', () => {
 			let clock;
 
-			useFakeTimers( newClock => ( clock = newClock ) );
+			useFakeTimers( ( newClock ) => ( clock = newClock ) );
 
 			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );

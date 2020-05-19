@@ -129,7 +129,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
 	if ( mediaQueryList && ! isServer ) {
-		const wrappedListener = evt => listener( evt.matches );
+		const wrappedListener = ( evt ) => listener( evt.matches );
 		mediaQueryList.addListener( wrappedListener );
 		// Return unsubscribe function.
 		return () => mediaQueryList.removeListener( wrappedListener );

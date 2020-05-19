@@ -78,11 +78,11 @@ export default function PaymentLogo( { brand, isSummary } ) {
 }
 
 const BrandLogo = styled.span`
-	display: ${props => ( props.isSummary ? 'inline-block' : 'block' )};
-	position: ${props => ( props.isSummary ? 'relative' : 'absolute' )};
-	top: ${props => ( props.isSummary ? '0' : '15px' )};
-	right: ${props => ( props.isSummary ? '0' : '10px' )};
-	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
+	display: ${( props ) => ( props.isSummary ? 'inline-block' : 'block') };
+	position: ${( props ) => ( props.isSummary ? 'relative' : 'absolute') };
+	top: ${( props ) => ( props.isSummary ? '0' : '15px') };
+	right: ${( props ) => ( props.isSummary ? '0' : '10px') };
+	transform: translateY( ${( props ) => ( props.isSummary ? '4px' : '0') } );
 `;
 
 const LockIconGraphic = styled( LockIcon )`
@@ -95,7 +95,7 @@ const LockIconGraphic = styled( LockIcon )`
 `;
 
 const SmallBrandLogo = styled( BrandLogo )`
-	transform: translate( ${props => ( props.isSummary ? '-10px, 4px' : '10px, 0' )} );
+	transform: translate( ${( props ) => ( props.isSummary ? '-10px, 4px' : '10px, 0') } );
 `;
 
 function LockIcon( { className } ) {

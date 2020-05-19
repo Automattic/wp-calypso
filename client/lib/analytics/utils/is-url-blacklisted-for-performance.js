@@ -13,7 +13,7 @@ const blacklistedRoutes = [ '/log-in' ];
  */
 export default function isUrlBlacklistedForPerformance() {
 	const { href } = document.location;
-	const match = pattern => href.indexOf( pattern ) !== -1;
+	const match = ( pattern ) => href.indexOf( pattern ) !== -1;
 	const result = blacklistedRoutes.some( match );
 
 	debug( `Is URL Blacklisted for Performance: ${ result }` );

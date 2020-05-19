@@ -144,7 +144,7 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	{

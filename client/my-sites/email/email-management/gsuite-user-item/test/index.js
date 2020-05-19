@@ -36,7 +36,7 @@ describe( 'GSuiteUserItem', () => {
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'should call onClick function when manage is clicked', done => {
+	test( 'should call onClick function when manage is clicked', ( done ) => {
 		const callback = jest.fn( () => {
 			done();
 		} );

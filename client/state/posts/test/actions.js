@@ -93,7 +93,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePosts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
@@ -179,7 +179,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestAllSitesPosts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/posts' )
@@ -206,7 +206,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts/413' )
@@ -302,7 +302,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.2/sites/2916284/posts/new', {
@@ -415,7 +415,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving new post fails', done => {
+		test( 'should dispatch failure action when saving new post fails', ( done ) => {
 			savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
@@ -427,7 +427,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving existing post fails', done => {
+		test( 'should dispatch failure action when saving existing post fails', ( done ) => {
 			savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
@@ -456,7 +456,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deletePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
@@ -494,7 +494,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when deleting post fails', done => {
+		test( 'should dispatch failure action when deleting post fails', ( done ) => {
 			deletePost(
 				77203074,
 				102
@@ -511,7 +511,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'restorePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/restore' )
@@ -561,7 +561,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when restoring post fails', done => {
+		test( 'should dispatch failure action when restoring post fails', ( done ) => {
 			restorePost(
 				77203074,
 				102

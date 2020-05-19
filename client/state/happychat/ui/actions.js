@@ -9,8 +9,8 @@ import {
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'state/action-types';
 
-const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
-const setChatMinimizing = isMinimizing => ( { type: HAPPYCHAT_MINIMIZING, isMinimizing } );
+const setChatOpen = ( isOpen ) => ( { type: HAPPYCHAT_OPEN, isOpen } );
+const setChatMinimizing = ( isMinimizing ) => ( { type: HAPPYCHAT_MINIMIZING, isMinimizing } );
 
 /**
  * Set the Happychat sidebar dock to display
@@ -60,4 +60,7 @@ export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
  * @param  {string} message Current message to be set
  * @returns {object} Action object
  */
-export const setCurrentMessage = message => ( { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message } );
+export const setCurrentMessage = ( message ) => ( {
+	type: HAPPYCHAT_SET_CURRENT_MESSAGE,
+	message,
+} );

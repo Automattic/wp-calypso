@@ -24,14 +24,14 @@ const getCallee = require( '../util/get-callee' ),
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg ) {
+			node.arguments.forEach( function ( arg ) {
 				let value = getTextContentFromNode( arg );
 				if ( 'string' !== typeof value ) {
 					return;

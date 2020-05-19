@@ -57,7 +57,7 @@ class ContactFormDialogField extends React.PureComponent {
 				<FormLabel>{ this.props.translate( 'Options' ) }</FormLabel>
 				<TokenField
 					value={ options }
-					onChange={ tokens => this.props.onUpdate( { options: tokens.join() } ) }
+					onChange={ ( tokens ) => this.props.onUpdate( { options: tokens.join() } ) }
 				/>
 				{ optionsValidationError && (
 					<FormTextValidation
@@ -70,7 +70,7 @@ class ContactFormDialogField extends React.PureComponent {
 		);
 	};
 
-	onLabelChange = event => {
+	onLabelChange = ( event ) => {
 		this.props.onUpdate( { label: event.target.value } );
 	};
 
@@ -115,7 +115,7 @@ class ContactFormDialogField extends React.PureComponent {
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Field Type' ) }</FormLabel>
 					<SelectDropdown selectedText={ getLabel( this.props.type ) }>
-						{ fieldTypes.map( fieldType => (
+						{ fieldTypes.map( ( fieldType ) => (
 							<SelectDropdown.Item
 								key={ 'field-type-' + fieldType }
 								selected={ this.props.type === fieldType }

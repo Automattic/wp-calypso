@@ -12,7 +12,6 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
@@ -77,7 +76,7 @@ class EditorFeaturedImage extends Component {
 		} );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		this.hideMediaModal();
 		this.props.onImageSelected();
 
@@ -107,7 +106,7 @@ class EditorFeaturedImage extends Component {
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = imageId => {
+	onImageChange = ( imageId ) => {
 		if ( imageId !== this.props.featuredImageId ) {
 			this.props.editPost( this.props.siteId, this.props.postId, {
 				featured_image: imageId,
@@ -121,16 +120,14 @@ class EditorFeaturedImage extends Component {
 		}
 
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.siteId }>
-				<MediaModal
-					visible={ this.props.selecting || this.state.isSelecting }
-					onClose={ this.setImage }
-					siteId={ this.props.siteId }
-					labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
-					enabledFilters={ [ 'images' ] }
-					single
-				/>
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ this.props.selecting || this.state.isSelecting }
+				onClose={ this.setImage }
+				siteId={ this.props.siteId }
+				labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
+				enabledFilters={ [ 'images' ] }
+				single
+			/>
 		);
 	}
 
@@ -183,7 +180,7 @@ class EditorFeaturedImage extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

@@ -16,14 +16,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"bundle": "calypso-build --env.WP",
-		"build:dev": "npm run bundle --",
-		"build:prod": "NODE_ENV=production npm run bundle --",
-		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
-		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean"
+		"bundle": "check-npm-client && calypso-build --env.WP",
+		"build:dev": "check-npm-client && npm run bundle --",
+		"build:prod": "check-npm-client && NODE_ENV=production yarn run bundle --",
+		"build": "check-npm-client && npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "check-npm-client && npx rimraf dist",
+		"prebuild": "check-npm-client && yarn run clean"
 	},
 	"dependencies": {
-		"debug": "4.1.1"
+		"debug": "^4.1.1"
 	}
 }

@@ -227,7 +227,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 5 );
 			expect( result.transactions ).toHaveLength( 5 );
-			result.transactions.forEach( transaction => {
+			result.transactions.forEach( ( transaction ) => {
 				expect( transaction.service ).toEqual( 'Store Services' );
 			} );
 		} );
@@ -251,7 +251,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 4 );
 			expect( result.transactions ).toHaveLength( 4 );
-			result.transactions.forEach( transaction => {
+			result.transactions.forEach( ( transaction ) => {
 				expect( transaction.cc_type ).toEqual( 'mastercard' );
 			} );
 		} );
@@ -264,7 +264,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toBe( 1 );
 			expect( result.transactions ).toHaveLength( 1 );
-			result.transactions.forEach( transaction => {
+			result.transactions.forEach( ( transaction ) => {
 				expect( transaction.date ).toBe( '2018-05-01T12:00:00' );
 			} );
 		} );

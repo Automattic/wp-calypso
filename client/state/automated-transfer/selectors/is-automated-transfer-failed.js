@@ -17,7 +17,7 @@ import 'state/automated-transfer/init';
  * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently failed? null if unknown
  */
-export const isFailed = status =>
+export const isFailed = ( status ) =>
 	status ? status === transferStates.CONFLICTS || status === transferStates.FAILURE : null;
 
 /**

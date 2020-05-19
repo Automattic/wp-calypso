@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
  */
 import config from 'config';
 import { sectionify } from 'lib/route';
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -30,6 +30,9 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { login } from 'lib/paths';
+import { waitForData } from 'state/data-layer/http-data';
+import { requestGeoLocation } from 'state/data-getters';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -41,7 +44,43 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  */
 let initialContext;
 
+const removeWhiteBackground = function () {
+	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+};
+
 export default {
+	redirectTests( context, next ) {
+		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if (
+			context.pathname.indexOf( 'domain' ) >= 0 ||
+			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'wpcc' ) >= 0 ||
+			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.params.flowName === 'user' ||
+			context.params.flowName === 'account'
+		) {
+			removeWhiteBackground();
+			next();
+		} else {
+			waitForData( {
+				geo: () => requestGeoLocation(),
+			} )
+				.then( ( { geo } ) => {
+					const countryCode = geo.data.body.country_short;
+					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+						window.location = window.location.origin + '/new';
+					} else {
+						removeWhiteBackground();
+						next();
+					}
+				} )
+				.catch( () => {
+					removeWhiteBackground();
+					next();
+				} );
+		}
+	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
@@ -154,11 +193,9 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		analytics.pageView.record(
-			basePath,
-			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName,
-			{ flow: flowName }
-		);
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+			flow: flowName,
+		} );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );

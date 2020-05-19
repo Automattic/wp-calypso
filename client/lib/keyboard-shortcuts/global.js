@@ -15,7 +15,7 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 let singleton;
 
-export default function() {
+export default function () {
 	if ( ! singleton ) {
 		singleton = new GlobalShortcuts();
 	}
@@ -31,7 +31,7 @@ function GlobalShortcuts() {
 	this.bindShortcuts();
 }
 
-GlobalShortcuts.prototype.bindShortcuts = function() {
+GlobalShortcuts.prototype.bindShortcuts = function () {
 	KeyboardShortcuts.on( 'open-help', this.openHelp.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-reader', this.goToReader.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-my-likes', this.goToMyLikes.bind( this ) );
@@ -45,18 +45,18 @@ GlobalShortcuts.prototype.bindShortcuts = function() {
 	}
 };
 
-GlobalShortcuts.prototype.setSelectedSite = function( site ) {
+GlobalShortcuts.prototype.setSelectedSite = function ( site ) {
 	this.selectedSite = site;
 };
 
-GlobalShortcuts.prototype.openHelp = function() {
+GlobalShortcuts.prototype.openHelp = function () {
 	// the inline help component is responsible for injecting this
 	if ( this.showInlineHelp ) {
 		this.showInlineHelp();
 	}
 };
 
-GlobalShortcuts.prototype.openSiteSelector = function() {
+GlobalShortcuts.prototype.openSiteSelector = function () {
 	if ( 'sites' === getSectionGroup( reduxGetState() ) ) {
 		reduxDispatch( setLayoutFocus( 'sites' ) );
 	} else {
@@ -64,15 +64,15 @@ GlobalShortcuts.prototype.openSiteSelector = function() {
 	}
 };
 
-GlobalShortcuts.prototype.goToReader = function() {
+GlobalShortcuts.prototype.goToReader = function () {
 	page.redirect( '/read' );
 };
 
-GlobalShortcuts.prototype.goToMyLikes = function() {
+GlobalShortcuts.prototype.goToMyLikes = function () {
 	page( '/activities/likes' );
 };
 
-GlobalShortcuts.prototype.goToStats = function() {
+GlobalShortcuts.prototype.goToStats = function () {
 	const site = this.selectedSite;
 
 	if ( site && site.capabilities && ! site.capabilities.view_stats ) {
@@ -84,7 +84,7 @@ GlobalShortcuts.prototype.goToStats = function() {
 	}
 };
 
-GlobalShortcuts.prototype.goToBlogPosts = function() {
+GlobalShortcuts.prototype.goToBlogPosts = function () {
 	const site = this.selectedSite;
 
 	if ( site && site.capabilities && ! site.capabilities.edit_posts ) {
@@ -96,7 +96,7 @@ GlobalShortcuts.prototype.goToBlogPosts = function() {
 	}
 };
 
-GlobalShortcuts.prototype.goToPages = function() {
+GlobalShortcuts.prototype.goToPages = function () {
 	const site = this.selectedSite;
 
 	if ( site && site.capabilities && ! site.capabilities.edit_pages ) {
@@ -108,6 +108,6 @@ GlobalShortcuts.prototype.goToPages = function() {
 	}
 };
 
-GlobalShortcuts.prototype.goToDevDocs = function() {
+GlobalShortcuts.prototype.goToDevDocs = function () {
 	page( '/devdocs' );
 };

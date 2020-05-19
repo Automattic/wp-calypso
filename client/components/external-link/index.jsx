@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -55,6 +56,10 @@ class ExternalLink extends Component {
 
 		if ( props.target ) {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
+		}
+
+		if ( props.href ) {
+			props.href = localizeUrl( props.href );
 		}
 
 		const iconComponent = (

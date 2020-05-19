@@ -152,7 +152,7 @@ class EasyTab extends Component {
 										{ translate( 'Results' ) }
 									</span>
 									<ul className="wp-super-cache__cache-test-results">
-										{ Object.keys( attempts ).map( key => (
+										{ Object.keys( attempts ).map( ( key ) => (
 											<li className="wp-super-cache__cache-test-results-item" key={ key }>
 												{ key === 'prime'
 													? translate( 'Fetching %(url)s to prime cache', {
@@ -220,7 +220,7 @@ class EasyTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
@@ -237,7 +237,7 @@ const connectComponent = connect(
 	{ testCache }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 

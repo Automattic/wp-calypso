@@ -11,7 +11,7 @@ import config from 'config';
 import controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'devdocs' ) ) {
 		page( '/devdocs', controller.sidebar, controller.devdocs, makeLayout, clientRender );
 		page(
@@ -42,7 +42,7 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/devdocs/app-components/:component?', context =>
+		page( '/devdocs/app-components/:component?', ( context ) =>
 			page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) )
 		);
 		page( '/devdocs/app-components', '/devdocs/blocks' );

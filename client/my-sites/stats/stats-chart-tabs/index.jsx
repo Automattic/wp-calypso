@@ -73,7 +73,7 @@ class StatModuleChartTabs extends Component {
 		}
 	}
 
-	onLegendClick = chartItem => {
+	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
 		const chartIndex = activeLegend.indexOf( chartItem );
 		let gaEventAction;
@@ -104,8 +104,9 @@ class StatModuleChartTabs extends Component {
 		const { isActiveTabLoading } = this.props;
 		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
 
+		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<Card className={ classNames( ...classes ) }>
+			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
@@ -155,11 +156,11 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
+		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
-		const quantity = 'year' === period ? 10 : 30;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

@@ -54,7 +54,7 @@ class SiteImporterSitePreview extends React.Component {
 			maxRetries: 30,
 			retryTimeout: 1000,
 		} )
-			.then( imageBlob => {
+			.then( ( imageBlob ) => {
 				this.setState( {
 					loadingPreviewImage: false,
 					sitePreviewImage: imageBlob,

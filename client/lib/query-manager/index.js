@@ -157,7 +157,7 @@ export default class QueryManager {
 			return null;
 		}
 
-		return itemKeys.map( itemKey => this.getItem( itemKey ) );
+		return itemKeys.map( ( itemKey ) => this.getItem( itemKey ) );
 	}
 
 	/**
@@ -197,7 +197,7 @@ export default class QueryManager {
 	 */
 	removeItems( itemKeys = [] ) {
 		return this.receive(
-			itemKeys.map( itemKey => {
+			itemKeys.map( ( itemKey ) => {
 				return {
 					[ this.options.itemKey ]: itemKey,
 					[ DELETE_PATCH_KEY ]: true,
@@ -343,7 +343,7 @@ export default class QueryManager {
 
 				const query = this.constructor.QueryKey.parse( queryKey );
 				let needsSort = false;
-				items.forEach( receivedItem => {
+				items.forEach( ( receivedItem ) => {
 					// Find item in known data for query
 					const receivedItemKey = receivedItem[ this.options.itemKey ];
 					const updatedItem = nextItems[ receivedItemKey ];

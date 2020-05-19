@@ -35,7 +35,7 @@ class SiteResults extends React.Component {
 		showLastUpdatedDate: PropTypes.bool,
 	};
 
-	fetchNextPage = offset => {
+	fetchNextPage = ( offset ) => {
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -44,7 +44,7 @@ class SiteResults extends React.Component {
 		} );
 	};
 
-	hasNextPage = offset => offset < this.props.searchResultsCount;
+	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;

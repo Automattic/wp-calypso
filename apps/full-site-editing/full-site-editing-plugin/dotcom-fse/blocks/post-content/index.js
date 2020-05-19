@@ -38,8 +38,8 @@ registerBlockType( 'a8c/post-content', {
 	save,
 } );
 
-const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
+const addContentSlotClassname = createHigherOrderComponent( ( BlockListBlock ) => {
+	return ( props ) => {
 		if ( props.name !== 'a8c/post-content' ) {
 			return <BlockListBlock { ...props } />;
 		}

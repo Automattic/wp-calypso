@@ -2,7 +2,7 @@
 
 ## Building
 This section lists known problems you can encounter while building the project.
-If you have a problem when running `npm start` - this is the proper section to look for a solution.
+If you have a problem when running `yarn start` - this is the proper section to look for a solution.
 
 ### EMFILE - too many open files
 
@@ -63,15 +63,15 @@ $ sudo sysctl -p
 Sometimes, usually during the first build, you can see a message similar to `Please try running again as an administrator`. 
 Just run
 ```
-sudo npm start
+sudo yarn start
 ```
 
 ### Other build problems - try to clean the build
 Sometimes, especially while switching branches, previous build leaves some artifacts in your directory.
-This can cause problems with the next build. Simply re-runnning `npm start` doesn't always clean it up.
+This can cause problems with the next build. Simply re-runnning `yarn start` doesn't always clean it up.
 To clean up directory, just run:
 ```
-npm run distclean
+yarn run distclean
 ```
 
 ## Running

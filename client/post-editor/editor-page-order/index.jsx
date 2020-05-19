@@ -81,7 +81,7 @@ class EditorPageOrder extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const menuOrder = getEditedPostValue( state, siteId, postId, 'menu_order' );

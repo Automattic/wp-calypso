@@ -46,7 +46,9 @@ export const getCountProducts = ( state, siteId = getSelectedSiteId( state ) ) =
  */
 export const getCountNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const items = get( state, `extensions.woocommerce.sites[${ siteId }].data.counts.items`, {} );
-	const statuses = [ ...statusWaitingPayment, ...statusWaitingFulfillment ].map( s => `wc-${ s }` );
+	const statuses = [ ...statusWaitingPayment, ...statusWaitingFulfillment ].map(
+		( s ) => `wc-${ s }`
+	);
 	return reduce( statuses, ( total, s ) => total + get( items, `orders.${ s }`, 0 ), 0 );
 };
 

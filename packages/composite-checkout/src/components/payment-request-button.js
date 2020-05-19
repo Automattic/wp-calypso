@@ -23,7 +23,7 @@ export default function PaymentRequestButton( {
 } ) {
 	const localize = useLocalize();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.persist();
 		event.preventDefault();
 		setFormSubmitting();
@@ -75,7 +75,7 @@ const ApplePayButton = styled.button`
 
 	&::after {
 		content: '';
-		position: ${props => ( props.disabled ? 'absolute' : 'relative' )};
+		position: ${( props ) => ( props.disabled ? 'absolute' : 'relative') };
 		top: 0;
 		left: 0;
 		width: 100%;

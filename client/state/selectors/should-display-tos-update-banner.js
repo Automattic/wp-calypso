@@ -4,6 +4,6 @@
  * @param state {object}
  * @returns {boolean} Whether the ToS update banner should be displayed.
  */
-export const shouldDisplayTosUpdateBanner = state => state?.legal?.tos?.displayPrompt === true;
+export const shouldDisplayTosUpdateBanner = ( state ) => state?.legal?.tos?.displayPrompt === true;
 
 export default shouldDisplayTosUpdateBanner;

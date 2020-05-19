@@ -14,12 +14,12 @@ function MePreferences( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-MePreferences.prototype.get = function( query, fn ) {
+MePreferences.prototype.get = function ( query, fn ) {
 	debug( 'get preferences', query );
 	return this.wpcom.req.get( '/me/preferences', query, fn );
 };
 
-MePreferences.prototype.update = function( query, body, fn ) {
+MePreferences.prototype.update = function ( query, body, fn ) {
 	debug( 'update preferences', query );
 	return this.wpcom.req.put( '/me/preferences', query, body, fn );
 };

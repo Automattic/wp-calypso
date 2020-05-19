@@ -9,6 +9,11 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
 /**
+ * Internal dependencies
+ */
+import { localizeUrl } from 'lib/i18n-utils';
+
+/**
  * Module constants
  */
 /**
@@ -37,11 +42,19 @@ class SharingServiceTip extends Component {
 			{
 				components: {
 					likeBoxLink: (
-						<a href="https://support.wordpress.com/facebook-integration/#facebook-like-box" />
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/facebook-integration/#facebook-like-box'
+							) }
+						/>
 					),
-					shareButtonLink: <a href="https://support.wordpress.com/sharing/" />,
+					shareButtonLink: <a href={ localizeUrl( 'https://wordpress.com/support/sharing/' ) } />,
 					embedLink: (
-						<a href="https://support.wordpress.com/facebook-integration/facebook-embeds/" />
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/facebook-integration/facebook-embeds/'
+							) }
+						/>
 					),
 				},
 				context: 'Sharing: Tip in settings',
@@ -54,7 +67,13 @@ class SharingServiceTip extends Component {
 			'You can also add a {{widgetLink}}Twitter Timeline Widget{{/widgetLink}} to display any public timeline on your site.',
 			{
 				components: {
-					widgetLink: <a href="https://support.wordpress.com/widgets/twitter-timeline-widget/" />,
+					widgetLink: (
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/widgets/twitter-timeline-widget/'
+							) }
+						/>
+					),
 				},
 				context: 'Sharing: Tip in settings',
 			}
@@ -66,7 +85,11 @@ class SharingServiceTip extends Component {
 			'You can also add an {{widgetLink}}Instagram Widget{{/widgetLink}} to display your latest Instagram photos on your site.',
 			{
 				components: {
-					widgetLink: <a href="https://support.wordpress.com/instagram/instagram-widget/" />,
+					widgetLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/support/instagram/instagram-widget/' ) }
+						/>
+					),
 				},
 				context: 'Sharing: Tip in settings',
 			}

@@ -319,7 +319,7 @@ export class ProductPurchaseFeaturesList extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state ),
 			selectedSiteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );

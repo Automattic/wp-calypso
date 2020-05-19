@@ -16,7 +16,7 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const devicesFromApi = devices =>
+const devicesFromApi = ( devices ) =>
 	keyBy(
 		devices.map( ( { device_id, device_name } ) => ( { id: device_id, name: device_name } ) ),
 		'id'
@@ -28,7 +28,7 @@ const devicesFromApi = devices =>
  * @param   {object} action Redux action
  * @returns {object} http request action
  */
-export const requestUserDevices = action =>
+export const requestUserDevices = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

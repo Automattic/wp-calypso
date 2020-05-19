@@ -25,7 +25,7 @@ export function createPayPalMethod( { registerStore } ) {
 		label: <PaypalLabel />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
-		getAriaLabel: localize => localize( 'PayPal' ),
+		getAriaLabel: ( localize ) => localize( 'PayPal' ),
 	};
 
 	registerStore( 'paypal', {
@@ -45,7 +45,7 @@ export function createPayPalMethod( { registerStore } ) {
 					debug( 'received successful paypal endpoint response', paypalResponse );
 					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
 				} catch ( error ) {
-					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error };
+					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error.message };
 				}
 			},
 		},
@@ -90,7 +90,6 @@ export function PaypalLabel() {
 }
 
 export function PaypalSubmitButton( { disabled } ) {
-	const localize = useLocalize();
 	const { submitPaypalPayment } = useDispatch( 'paypal' );
 	useTransactionStatusHandler();
 	const { formStatus } = useFormStatus();
@@ -109,18 +108,29 @@ export function PaypalSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ formStatus === 'submitting' ? localize( 'Processing...' ) : <ButtonPayPalIcon /> }
+			<PayPalButtonContents formStatus={ formStatus } />
 		</Button>
 	);
+}
+
+function PayPalButtonContents( { formStatus } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return <ButtonPayPalIcon />;
+	}
+	return localize( 'Please wait…' );
 }
 
 function useTransactionStatusHandler() {
 	const localize = useLocalize();
 	const { showErrorMessage } = useMessages();
-	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) => select( 'paypal' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'paypal' ).getTransactionError() );
 	const { setFormReady, setFormSubmitting } = useFormStatus();
-	const paypalExpressUrl = useSelect( select => select( 'paypal' ).getRedirectUrl() );
+	const paypalExpressUrl = useSelect( ( select ) => select( 'paypal' ).getRedirectUrl() );
 	const onEvent = useEvents();
 
 	useEffect( () => {

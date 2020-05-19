@@ -30,7 +30,7 @@ class PostLikes extends React.PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
-	renderLike = like => {
+	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
 		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;

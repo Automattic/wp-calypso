@@ -24,22 +24,22 @@ const host = getJetpackHost();
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Can login and select Manage Plugins', async function() {
+	step( 'Can login and select Manage Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
 		await loginFlow.loginAndSelectManagePlugins();
 	} );
 
-	step( 'Can ensure Hello Dolly is deactivated', async function() {
+	step( 'Can ensure Hello Dolly is deactivated', async function () {
 		const pluginsPage = await PluginsPage.Expect( driver );
 		await pluginsPage.viewPlugin( 'hello' );
 		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
@@ -48,7 +48,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		return await pluginDetailsPage.goBack();
 	} );
 
-	step( 'Can view the plugin details to activate Hello Dolly', async function() {
+	step( 'Can view the plugin details to activate Hello Dolly', async function () {
 		const pluginsPage = await PluginsPage.Expect( driver );
 		await pluginsPage.viewPlugin( 'hello' );
 		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
@@ -56,7 +56,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		return await pluginDetailsPage.clickActivateToggleForPlugin();
 	} );
 
-	step( 'Can see a success message contains Hello Dolly', async function() {
+	step( 'Can see a success message contains Hello Dolly', async function () {
 		const expectedPartialText = 'Successfully activated Hello Dolly';
 		const noticesComponent = await NoticesComponent.Expect( driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
@@ -69,10 +69,10 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 	} );
 } );
 
-describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Can login and select Plugins', async function() {
+	step( 'Can login and select Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
@@ -81,7 +81,7 @@ describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @
 
 	step(
 		'Can open the plugins browser and find WP Job Manager by searching for Automattic',
-		async function() {
+		async function () {
 			const pluginVendor = 'WP Job Manager';
 			const pluginTitle = 'WP Job Manager';
 			const pluginsBrowserPage = await PluginsBrowserPage.Expect( driver );

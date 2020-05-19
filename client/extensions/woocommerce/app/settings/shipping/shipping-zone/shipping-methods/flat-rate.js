@@ -20,7 +20,7 @@ import { setShippingCost } from 'woocommerce/state/ui/shipping/zones/methods/fla
 
 const FreeShippingMethod = ( { id, cost, currency, translate, actions } ) => {
 	const isAdvancedSettings = cost && isString( cost ) && isNaN( cost );
-	const onCostChange = event => actions.setShippingCost( id, event.target.value );
+	const onCostChange = ( event ) => actions.setShippingCost( id, event.target.value );
 
 	const renderCostInput = () => {
 		if ( isAdvancedSettings ) {

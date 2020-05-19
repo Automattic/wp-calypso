@@ -17,7 +17,7 @@ function displayName( element ) {
 	}
 
 	// find the component (by value) in the `playground-scope` map
-	const scopeName = findKey( scope, type => element.type === type );
+	const scopeName = findKey( scope, ( type ) => element.type === type );
 	if ( scopeName ) {
 		return scopeName;
 	}
@@ -30,7 +30,7 @@ function displayName( element ) {
 	return 'No Display Name';
 }
 
-export const getExampleCodeFromComponent = ExampleComponent => {
+export const getExampleCodeFromComponent = ( ExampleComponent ) => {
 	if ( ! ExampleComponent.props.exampleCode ) {
 		return null;
 	}

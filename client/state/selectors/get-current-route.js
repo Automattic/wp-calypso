@@ -14,6 +14,6 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {string} current route value
  */
-export const getCurrentRoute = state => get( state, 'ui.route.path.current', null );
+export const getCurrentRoute = ( state ) => get( state, 'ui.route.path.current', null );
 
 export default getCurrentRoute;

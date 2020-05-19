@@ -32,12 +32,12 @@ class PostCard extends Component {
 		dispatch: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	viewPost = event => {
+	viewPost = ( event ) => {
 		const { dispatch, isPreviewable, previewUrl } = this.props;
 
 		event.preventDefault();

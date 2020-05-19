@@ -25,7 +25,7 @@ function replaceSearchUrl( newValue, sort ) {
 }
 
 const exported = {
-	search: function( context, next ) {
+	search: function ( context, next ) {
 		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';

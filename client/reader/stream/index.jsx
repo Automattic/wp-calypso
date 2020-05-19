@@ -345,7 +345,7 @@ class ReaderStream extends React.Component {
 		const { items } = this.props;
 		const count = items.length === 0 ? INITIAL_FETCH : PER_FETCH;
 
-		return times( count, i => {
+		return times( count, ( i ) => {
 			if ( this.props.placeholderFactory ) {
 				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
 			}
@@ -353,7 +353,7 @@ class ReaderStream extends React.Component {
 		} );
 	};
 
-	getPostRef = postKey => {
+	getPostRef = ( postKey ) => {
 		return keyToString( postKey );
 	};
 
@@ -362,7 +362,7 @@ class ReaderStream extends React.Component {
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = args =>
+		const showPost = ( args ) =>
 			showSelectedPost( {
 				...args,
 				postKey: postKey.isCombination ? keyForPost( args ) : postKey,

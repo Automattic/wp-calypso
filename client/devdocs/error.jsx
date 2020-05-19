@@ -14,7 +14,7 @@ export default class extends React.PureComponent {
 				<img alt="WordPress" src="/calypso/images/illustrations/illustration-404.svg" />
 				<p>
 					Are we missing documentation? Could our docs be improved? Let us know by{ ' ' }
-					<a href="/devdocs/.github/CONTRIBUTING.md">filing a GitHub issue</a>!
+					<a href="/devdocs/docs/CONTRIBUTING.md">filing a GitHub issue</a>!
 				</p>
 			</div>
 		);

@@ -91,7 +91,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderTypeSelectOption = option => {
+	renderTypeSelectOption = ( option ) => {
 		return (
 			<option key={ option.type } value={ option.type }>
 				{ option.labelText }
@@ -99,7 +99,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	onTypeChange = e => {
+	onTypeChange = ( e ) => {
 		const appliesToType = e.target.value;
 		this.setState( () => ( { appliesToType } ) );
 		this.initializeValue( appliesToType );
@@ -138,7 +138,7 @@ class PromotionAppliesToField extends React.Component {
 		);
 	};
 
-	renderSearch = appliesToType => {
+	renderSearch = ( appliesToType ) => {
 		const { value, edit, singular } = this.props;
 
 		switch ( appliesToType ) {

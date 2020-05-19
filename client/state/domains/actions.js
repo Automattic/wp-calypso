@@ -60,12 +60,12 @@ export const recordAddDomainButtonClickInUseYourDomain = ( domainName, section )
 		} )
 	);
 
-export const recordStartTransferClickInThankYou = domainName =>
+export const recordStartTransferClickInThankYou = ( domainName ) =>
 	recordTracksEvent( 'calypso_thank_you_start_transfer', {
 		meta: domainName,
 	} );
 
-export const recordRemoveDomainButtonClick = domainName =>
+export const recordRemoveDomainButtonClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -78,7 +78,7 @@ export const recordRemoveDomainButtonClick = domainName =>
 		} )
 	);
 
-export const recordFormSubmitInMapDomain = searchBoxValue =>
+export const recordFormSubmitInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Form in Map Domain Step',
@@ -86,7 +86,7 @@ export const recordFormSubmitInMapDomain = searchBoxValue =>
 		searchBoxValue
 	);
 
-export const recordInputFocusInMapDomain = searchBoxValue =>
+export const recordInputFocusInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Focused On Search Box Input in Map Domain Step',

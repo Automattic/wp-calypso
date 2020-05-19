@@ -30,7 +30,7 @@ class Locked extends React.Component {
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, error => {
+		requestTransferCode( options, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			}
@@ -80,7 +80,7 @@ class Locked extends React.Component {
 						primary
 						disabled={ this.state.submitting }
 					>
-						{ translate( 'Update Settings And Continue' ) }
+						{ translate( 'Update settings and continue' ) }
 					</Button>
 				</Card>
 			</div>

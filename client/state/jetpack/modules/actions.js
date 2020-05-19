@@ -22,7 +22,7 @@ import {
 import wp from 'lib/wp';
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_ACTIVATE,
 			siteId,
@@ -41,7 +41,7 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 					silent,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
@@ -54,7 +54,7 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 };
 
 export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_DEACTIVATE,
 			siteId,
@@ -73,7 +73,7 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 					silent,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
@@ -101,8 +101,8 @@ export function receiveJetpackModules( siteId, modules ) {
 	};
 }
 
-export const fetchModuleList = siteId => {
-	return dispatch => {
+export const fetchModuleList = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULES_REQUEST,
 			siteId,
@@ -112,7 +112,7 @@ export const fetchModuleList = siteId => {
 			.undocumented()
 			.getJetpackModules( siteId )
 			.then( ( { data } ) => {
-				const modules = mapValues( data, module => ( {
+				const modules = mapValues( data, ( module ) => ( {
 					active: module.activated,
 					...omit( module, 'activated' ),
 				} ) );
@@ -123,7 +123,7 @@ export const fetchModuleList = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,

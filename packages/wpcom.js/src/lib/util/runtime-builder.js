@@ -16,11 +16,11 @@ const debug = debugFactory( 'wpcom:runtime' );
  * @returns {string} method path
  */
 const methodBuilder = ( methodParams, buildPath ) => {
-	return function( query, fn ) {
+	return function ( query, fn ) {
 		const path = buildPath( methodParams, this );
 		return this.wpcom.req.get( path, query, fn );
 	};
-}
+};
 
 /**
  * Add methods to the given Class in the
@@ -30,13 +30,11 @@ const methodBuilder = ( methodParams, buildPath ) => {
  * @param {Array} list - methods list
  * @param {Function} buildPath - function to build the method endpoint path
  */
-export default function( Class, list, buildPath ) {
-	list.forEach( methodParams => {
-		methodParams = 'object' === typeof methodParams
-			? methodParams
-			: { name: methodParams }
+export default function ( Class, list, buildPath ) {
+	list.forEach( ( methodParams ) => {
+		methodParams = 'object' === typeof methodParams ? methodParams : { name: methodParams };
 
 		debug( 'Adding %o', methodParams.name );
 		Class.prototype[ methodParams.name ] = methodBuilder( methodParams, buildPath );
 	} );
-};
+}

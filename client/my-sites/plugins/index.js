@@ -22,7 +22,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page(
 			'/plugins/setup',
@@ -44,27 +44,27 @@ export default function() {
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
-		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
 			page.redirect( `/plugins/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
 			page.redirect( `/plugins/browse/${ context.params.site }` );
 		} );
 
-		page( '/plugins/manage/wpcom-masterbar-redirect/:site', context => {
+		page( '/plugins/manage/wpcom-masterbar-redirect/:site', ( context ) => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
 			page.redirect( `/plugins/manage/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/:category/:site', context => {
+		page( '/plugins/browse/:category/:site', ( context ) => {
 			const { category, site } = context.params;
 			page.redirect( `/plugins/${ category }/${ site }` );
 		} );
 
-		page( '/plugins/browse/:siteOrCategory?', context => {
+		page( '/plugins/browse/:siteOrCategory?', ( context ) => {
 			const { siteOrCategory } = context.params;
 			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
 		} );

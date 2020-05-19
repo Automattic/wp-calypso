@@ -39,7 +39,7 @@ export const clearQueue = () => {
  * @param {object} request the HTTP request action
  * @returns {boolean} whether or not the method is GET
  */
-const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 /**
  * Generate a deterministic key for comparing request descriptions
@@ -74,7 +74,7 @@ export const addResponder = ( list, item ) => ( {
  * @param {OutboundData} outboundData request info
  * @returns {OutboundData} filtered request info
  */
-export const removeDuplicateGets = outboundData => {
+export const removeDuplicateGets = ( outboundData ) => {
 	const { nextRequest } = outboundData;
 
 	if ( ! isGetRequest( nextRequest ) ) {
@@ -105,7 +105,7 @@ export const removeDuplicateGets = outboundData => {
  * @param {InboundData} inboundData request info
  * @returns {InboundData} processed request info
  */
-export const applyDuplicatesHandlers = inboundData => {
+export const applyDuplicatesHandlers = ( inboundData ) => {
 	const { originalRequest } = inboundData;
 
 	if ( ! isGetRequest( originalRequest ) ) {

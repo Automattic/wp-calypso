@@ -36,7 +36,7 @@ const ShippingZoneLocationList = ( {
 	locations,
 	actions,
 } ) => {
-	const getLocationFlag = location => {
+	const getLocationFlag = ( location ) => {
 		if ( 'continent' === location.type ) {
 			return null;
 		}
@@ -48,7 +48,7 @@ const ShippingZoneLocationList = ( {
 		return <LocationFlag code={ location.code } />;
 	};
 
-	const getLocationDescription = location => {
+	const getLocationDescription = ( location ) => {
 		switch ( location.type ) {
 			case 'continent':
 				if (

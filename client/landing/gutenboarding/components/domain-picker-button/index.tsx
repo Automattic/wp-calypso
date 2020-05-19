@@ -2,36 +2,44 @@
  * External dependencies
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
-import { Button, Popover, Dashicon } from '@wordpress/components';
+import { Button, Dashicon } from '@wordpress/components';
+
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
+import { Props as DomainPickerProps } from '../domain-picker';
+import DomainPickerPopover from '../domain-picker-popover';
+import DomainPickerModal from '../domain-picker-modal';
+import { FLOW_ID } from '../../constants';
+import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps, Button.BaseProps {
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+
+interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
+	currentDomain?: DomainSuggestion;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
-	defaultQuery,
-	queryParameters,
+	currentDomain,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
 
-	const handleClose = ( e?: React.FocusEvent ) => {
+	const handlePopoverClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
 			return;
@@ -39,9 +47,21 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setDomainPopoverVisibility( false );
 	};
 
-	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
+	const handleModalClose = () => {
+		setDomainModalVisibility( false );
+	};
+
+	const handleModalCancel = () => {
+		setDomainModalVisibility( false );
+	};
+
+	const handleMoreOptions = () => {
 		setDomainPopoverVisibility( false );
-		onDomainSelect( selectedDomain );
+		setDomainModalVisibility( true );
+	};
+
+	const recordAnalytics = ( event: RecordTrainTracksEventProps ) => {
+		recordTrainTracksEvent( `/${ FLOW_ID }/domain-popover`, event );
 	};
 
 	return (
@@ -53,22 +73,34 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				aria-pressed={ isDomainPopoverVisible }
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
+					'is-modal-open': isDomainModalVisible,
 				} ) }
-				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
+				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
 				ref={ buttonRef }
 			>
-				<span>{ children }</span>
-				<Dashicon icon="arrow-down-alt2" />
+				<span className="domain-picker-button__label">{ children }</span>
+				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
-			{ isDomainPopoverVisible && (
-				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
-					<DomainPicker
-						defaultQuery={ defaultQuery }
-						onDomainSelect={ handleDomainSelect }
-						queryParameters={ queryParameters }
-					/>
-				</Popover>
-			) }
+			<DomainPickerPopover
+				isOpen={ isDomainPopoverVisible }
+				showDomainConnectButton={ false }
+				showDomainCategories={ false }
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onMoreOptions={ handleMoreOptions }
+				onClose={ handlePopoverClose }
+				recordAnalytics={ recordAnalytics }
+			/>
+			<DomainPickerModal
+				isOpen={ isDomainModalVisible }
+				showDomainConnectButton
+				showDomainCategories
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onClose={ handleModalClose }
+				onCancel={ handleModalCancel }
+				recordAnalytics={ recordAnalytics }
+			/>
 		</>
 	);
 };

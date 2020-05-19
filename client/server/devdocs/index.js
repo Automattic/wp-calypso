@@ -31,7 +31,7 @@ Prism.languages.es6 = Prism.languages.javascript;
 
 // Configure marked to use Prism for code-block highlighting.
 marked.setOptions( {
-	highlight: function( code, language ) {
+	highlight: function ( code, language ) {
 		const syntax = Prism.languages[ language ];
 		return syntax ? Prism.highlight( code, syntax ) : code;
 	},
@@ -46,7 +46,7 @@ marked.setOptions( {
  * @returns {Array} The results from the query
  */
 function queryDocs( query ) {
-	return docsIndex.search( query ).map( result => {
+	return docsIndex.search( query ).map( ( result ) => {
 		const doc = searchIndex.documents[ result.ref ];
 		const snippet = makeSnippet( doc, query );
 
@@ -65,7 +65,7 @@ function queryDocs( query ) {
  * @returns {Array} The results from the docs
  */
 function listDocs( filePaths ) {
-	return filePaths.map( path => {
+	return filePaths.map( ( path ) => {
 		const doc = find( searchIndex.documents, { path } );
 
 		if ( doc ) {
@@ -95,7 +95,9 @@ function listDocs( filePaths ) {
  */
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
-	const termRegexMatchers = lunr.tokenizer( query ).map( token => token.update( escapeRegExp ) );
+	const termRegexMatchers = lunr
+		.tokenizer( query )
+		.map( ( token ) => token.update( escapeRegExp ) );
 	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
 	const termRegex = new RegExp( termRegexString, 'gi' );
 	const snippets = [];
@@ -133,7 +135,7 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
-module.exports = function() {
+module.exports = function () {
 	const app = express();
 
 	// this middleware enforces access control
@@ -207,7 +209,7 @@ module.exports = function() {
 
 	// In environments where enabled, prime the selectors search cache whenever
 	// a request is made for DevDocs
-	app.use( '/devdocs', function( request, response, next ) {
+	app.use( '/devdocs', function ( request, response, next ) {
 		selectors.prime();
 		next();
 	} );

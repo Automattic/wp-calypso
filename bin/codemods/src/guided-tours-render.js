@@ -18,7 +18,7 @@ export default function transformer( file, api ) {
 		return null;
 	}
 
-	stepEls.forEach( stepEl => {
+	stepEls.forEach( ( stepEl ) => {
 		/* Extract the children */
 		const stepElValue = stepEl.get().value;
 		const { children } = stepElValue;

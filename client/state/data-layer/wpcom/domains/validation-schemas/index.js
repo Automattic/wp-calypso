@@ -22,7 +22,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {Array<string>} action.tlds the tlds to be fetched from the API
  * @returns {object}                    The HTTP action for the data
  */
-export const fetch = action =>
+export const fetch = ( action ) =>
 	http(
 		{
 			apiVersion: '1',
@@ -50,7 +50,7 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
  */
 export const onError = ( { tlds }, error ) =>
 	composeAnalytics(
-		...flatMap( tlds, tld => [
+		...flatMap( tlds, ( tld ) => [
 			bumpStat( 'form_validation_schema_exceptions', `load_${ tld }` ),
 			recordTracksEvent( 'calypso_domain_contact_validation_schema_load_failure', {
 				tld,

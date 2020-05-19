@@ -10,7 +10,7 @@ const MISSING_BLOCK_NAME = 'core/missing';
  * @returns {boolean} whether the collection blocks contains any missing blocks.
  */
 function containsMissingBlock( blocks ) {
-	return !! blocks.find( block => {
+	return !! blocks.find( ( block ) => {
 		// If we found a missing block the bale out immediately
 		if ( block.name === MISSING_BLOCK_NAME ) {
 			return true;

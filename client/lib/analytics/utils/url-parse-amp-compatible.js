@@ -16,7 +16,7 @@ function urlSafeBase64DecodeString( str ) {
 		'.': '=',
 	};
 
-	return window.atob( str.replace( /[-_.]/g, ch => decodeMap[ ch ] ) );
+	return window.atob( str.replace( /[-_.]/g, ( ch ) => decodeMap[ ch ] ) );
 }
 
 /**
@@ -29,7 +29,7 @@ function urlSafeBase64DecodeString( str ) {
 function parseAmpEncodedParams( value ) {
 	value = value
 		.split( '*' )
-		.filter( val => val.length )
+		.filter( ( val ) => val.length )
 		.slice( 2 );
 	// return null if empty or we have an odd number of elements
 	if ( 0 === value.length || 0 !== value.length % 2 ) {

@@ -17,7 +17,7 @@ import {
 	twoStep,
 } from './controller';
 
-export default function() {
+export default function () {
 	page( '/me/security', sidebar, password, makeLayout, clientRender );
 
 	if ( config.isEnabled( 'signup/social-management' ) ) {

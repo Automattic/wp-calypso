@@ -26,15 +26,10 @@ import 'state/reader/init';
  * @param  {string} tag  Tag name to parse into a slug
  * @returns {string}      Tag slug
  */
-export const slugify = tag =>
-	encodeURIComponent(
-		trim( tag )
-			.toLowerCase()
-			.replace( /\s+/g, '-' )
-			.replace( /-{2,}/g, '-' )
-	);
+export const slugify = ( tag ) =>
+	encodeURIComponent( trim( tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
 
-export const requestTags = tag => {
+export const requestTags = ( tag ) => {
 	if ( ! tag ) {
 		return { type: READER_TAGS_REQUEST };
 	}
@@ -52,7 +47,7 @@ export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
 	meta: { resetFollowingData },
 } );
 
-export const requestUnfollowTag = tag => ( {
+export const requestUnfollowTag = ( tag ) => ( {
 	type: READER_UNFOLLOW_TAG_REQUEST,
 	payload: { tag, slug: slugify( tag ) },
 } );
@@ -62,7 +57,7 @@ export const receiveUnfollowTag = ( { payload } ) => ( {
 	payload,
 } );
 
-export const requestFollowTag = tag => ( {
+export const requestFollowTag = ( tag ) => ( {
 	type: READER_FOLLOW_TAG_REQUEST,
 	payload: { tag, slug: slugify( tag ) },
 } );

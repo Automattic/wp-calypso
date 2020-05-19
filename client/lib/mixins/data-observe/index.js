@@ -5,10 +5,10 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:data-observe' );
 
-export default function( ...propNames ) {
+export default function ( ...propNames ) {
 	return {
-		componentDidMount: function() {
-			propNames.forEach( function( propName ) {
+		componentDidMount: function () {
+			propNames.forEach( function ( propName ) {
 				if ( this.props[ propName ] ) {
 					this.props[ propName ].on( 'change', this.update );
 				} else {
@@ -17,16 +17,16 @@ export default function( ...propNames ) {
 			}, this );
 		},
 
-		componentWillUnmount: function() {
-			propNames.forEach( function( propName ) {
+		componentWillUnmount: function () {
+			propNames.forEach( function ( propName ) {
 				if ( this.props[ propName ] ) {
 					this.props[ propName ].off( 'change', this.update );
 				}
 			}, this );
 		},
 
-		UNSAFE_componentWillReceiveProps: function( nextProps ) {
-			propNames.forEach( function( propName ) {
+		UNSAFE_componentWillReceiveProps: function ( nextProps ) {
+			propNames.forEach( function ( propName ) {
 				if ( this.props[ propName ] !== nextProps[ propName ] ) {
 					// unbind the change event from the existing property instance
 					if ( this.props[ propName ] ) {
@@ -41,7 +41,7 @@ export default function( ...propNames ) {
 			}, this );
 		},
 
-		update: function() {
+		update: function () {
 			debug( 'Re-rendering ' + this.constructor.displayName + ' component.' );
 			this.forceUpdate();
 		},

@@ -5,7 +5,7 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 
-export const convertProcessingStatus = responseStatus => {
+export const convertProcessingStatus = ( responseStatus ) => {
 	switch ( responseStatus ) {
 		case 'processing':
 			return ORDER_TRANSACTION_STATUS.PROCESSING;

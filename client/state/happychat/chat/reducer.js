@@ -28,7 +28,7 @@ import { timelineSchema } from './schema';
 //
 // This will all be removed once the server-side is fully converted.
 const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
-export const maybeUpscaleTimePrecision = time =>
+export const maybeUpscaleTimePrecision = ( time ) =>
 	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
 
 const lastActivityTimestampSchema = { type: 'number' };
@@ -95,7 +95,8 @@ const timelineEvent = ( state = {}, action ) => {
 	return state;
 };
 
-const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
+const sortTimeline = ( timeline ) =>
+	sortBy( timeline, ( event ) => parseInt( event.timestamp, 10 ) );
 
 /**
  * Adds timeline events for happychat
@@ -120,7 +121,7 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
 			return state;
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
-			const messages = filter( action.messages, message => {
+			const messages = filter( action.messages, ( message ) => {
 				if ( ! message.id ) {
 					return false;
 				}
@@ -134,7 +135,7 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 			} );
 			return sortTimeline(
 				state.concat(
-					map( messages, message => ( {
+					map( messages, ( message ) => ( {
 						id: message.id,
 						source: message.source,
 						message: message.text,

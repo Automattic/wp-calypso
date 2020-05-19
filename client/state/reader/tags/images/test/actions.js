@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestTagImages', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/tags/banana/images?number=5' )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 						tag: 'banana',
 					} );
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );

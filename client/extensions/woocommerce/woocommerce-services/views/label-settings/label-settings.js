@@ -192,7 +192,7 @@ class ShippingLabels extends Component {
 		} = this.props;
 
 		if ( ! this.state.expanded ) {
-			const expand = event => {
+			const expand = ( event ) => {
 				event.preventDefault();
 				this.setState( { expanded: true } );
 			};
@@ -232,7 +232,7 @@ class ShippingLabels extends Component {
 			);
 		}
 
-		const onPaymentMethodChange = value =>
+		const onPaymentMethodChange = ( value ) =>
 			this.props.setValue( 'selected_payment_method_id', value );
 
 		let description, buttonLabel;
@@ -354,7 +354,7 @@ class ShippingLabels extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = event => this.props.setValue( 'paper_size', event.target.value );
+		const onPaperSizeChange = ( event ) => this.props.setValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -369,7 +369,7 @@ class ShippingLabels extends Component {
 						value={ paperSize }
 						disabled={ ! canEditSettings }
 					>
-						{ Object.keys( paperSizes ).map( size => (
+						{ Object.keys( paperSizes ).map( ( size ) => (
 							<option value={ size } key={ size }>
 								{ paperSizes[ size ] }
 							</option>
@@ -413,7 +413,7 @@ export default connect(
 			...getMasterUserInfo( state, siteId ),
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				openAddCardDialog,

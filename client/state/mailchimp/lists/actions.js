@@ -6,7 +6,7 @@ import { MAILCHIMP_LISTS_LIST, MAILCHIMP_LISTS_RECEIVE } from 'state/action-type
 
 import 'state/data-layer/wpcom/sites/mailchimp';
 
-export const requestList = siteId => ( {
+export const requestList = ( siteId ) => ( {
 	siteId,
 	type: MAILCHIMP_LISTS_LIST,
 } );

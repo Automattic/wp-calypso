@@ -105,7 +105,7 @@ const mapStateToProps = ( state, { postId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	recordReaderArticleOpened: () =>
 		dispatch(
 			composeAnalytics(

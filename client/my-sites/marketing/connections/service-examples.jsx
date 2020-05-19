@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
 import ServiceExample from './service-example';
 import GooglePlusDeprication from './google-plus-deprecation';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Module constants
@@ -31,7 +32,7 @@ const SERVICES_WHITELIST = [
 	'facebook',
 	'google_plus',
 	'google_my_business',
-	'instagram',
+	'instagram-basic-display',
 	'linkedin',
 	'tumblr',
 	'twitter',
@@ -54,7 +55,7 @@ class SharingServiceExamples extends Component {
 	getSharingButtonsLink() {
 		return this.props.site
 			? '/sharing/buttons/' + this.props.site.slug
-			: 'https://support.wordpress.com/sharing/';
+			: localizeUrl( 'https://wordpress.com/support/sharing/' );
 	}
 
 	bandpage() {
@@ -68,7 +69,11 @@ class SharingServiceExamples extends Component {
 					'Add a {{link}}BandPage widget{{/link}} to display your music, photos, videos bio, and event listings.',
 					{
 						components: {
-							link: <a href="https://support.wordpress.com/widgets/bandpage-widget/" />,
+							link: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/widgets/bandpage-widget/' ) }
+								/>
+							),
 						},
 					}
 				),
@@ -153,7 +158,7 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	instagram() {
+	instagram_basic_display() {
 		return [
 			{
 				image: {
@@ -164,7 +169,13 @@ class SharingServiceExamples extends Component {
 					'Add an {{link}}Instagram widget{{/link}} to display your latest photos.',
 					{
 						components: {
-							link: <a href="https://support.wordpress.com/instagram/instagram-widget/" />,
+							link: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/instagram/instagram-widget/'
+									) }
+								/>
+							),
 						},
 					}
 				),
@@ -265,7 +276,13 @@ class SharingServiceExamples extends Component {
 					'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
 					{
 						components: {
-							link: <a href="https://support.wordpress.com/widgets/twitter-timeline-widget/" />,
+							link: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/widgets/twitter-timeline-widget/'
+									) }
+								/>
+							),
 						},
 					}
 				),
@@ -302,7 +319,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		const examples = this[ this.props.service.ID ]();
+		const examples = this[ this.props.service.ID.replace( /-/g, '_' ) ]();
 
 		return (
 			/**
@@ -325,6 +342,6 @@ class SharingServiceExamples extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SharingServiceExamples ) );

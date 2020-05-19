@@ -27,7 +27,7 @@ const PredefinedPackages = ( {
 } ) => {
 	const { dimensionUnit } = form;
 
-	const renderGroupHeader = group => {
+	const renderGroupHeader = ( group ) => {
 		const onToggle = ( state, event ) => {
 			event.stopPropagation();
 			toggleAll( siteId, group.serviceId, group.groupId, event.target.checked );
@@ -40,7 +40,7 @@ const PredefinedPackages = ( {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<div className="packages__group-header">
-				<label htmlFor={ inputId } onClick={ event => event.stopPropagation() }>
+				<label htmlFor={ inputId } onClick={ ( event ) => event.stopPropagation() }>
 					<BulkSelect
 						id={ inputId }
 						totalElements={ group.total }
@@ -67,7 +67,7 @@ const PredefinedPackages = ( {
 		} );
 	};
 
-	const renderServicePackages = group => {
+	const renderServicePackages = ( group ) => {
 		return group.packages.map( ( pckg, index ) => {
 			const onToggle = () => togglePackage( siteId, pckg.serviceId, pckg.id );
 
@@ -123,6 +123,6 @@ PredefinedPackages.propTypes = {
 	} ).isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentlyEditingPredefinedPackages: getCurrentlyEditingPredefinedPackages( state ),
 } ) )( localize( PredefinedPackages ) );

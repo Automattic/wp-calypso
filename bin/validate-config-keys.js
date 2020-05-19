@@ -15,7 +15,7 @@ const configRoot = path.resolve( __dirname, '../config' );
  * @param {string} filename basename of config file to read, e.g. 'development.json'
  * @returns {string} contents of file
  */
-const readConfigFile = filename =>
+const readConfigFile = ( filename ) =>
 	fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
 
 /**
@@ -26,16 +26,16 @@ const readConfigFile = filename =>
  * @param {string} filename basename of config file to read, e.g. 'development.json'
  * @returns {*} parsed data from config file contents
  */
-const parseConfig = filename => JSON.parse( readConfigFile( filename ) );
+const parseConfig = ( filename ) => JSON.parse( readConfigFile( filename ) );
 
 /** @type {Array} list of [ filename, config data keys ] configuration pairs */
 const environmentKeys = fs
 	.readdirSync( configRoot, { encoding: 'utf8' } )
-	.filter( filename => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
-	.filter( filename => '_shared.json' !== filename ) // base config for all environments
-	.filter( filename => 'client.json' !== filename ) // whitelist of keys allowed in client
-	.filter( filename => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
-	.map( filename => [ filename, Object.keys( parseConfig( filename ) ) ] );
+	.filter( ( filename ) => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
+	.filter( ( filename ) => '_shared.json' !== filename ) // base config for all environments
+	.filter( ( filename ) => 'client.json' !== filename ) // whitelist of keys allowed in client
+	.filter( ( filename ) => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
+	.map( ( filename ) => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
 /** @type {object} config data in the shared config file (defaults) */
 const sharedConfig = parseConfig( '_shared.json' );
@@ -49,7 +49,7 @@ const sharedConfig = parseConfig( '_shared.json' );
  * cause runtime errors in Calypso
  */
 environmentKeys.forEach( ( [ filename, keys ] ) => {
-	keys.forEach( key => {
+	keys.forEach( ( key ) => {
 		if ( ! sharedConfig.hasOwnProperty( key ) ) {
 			console.error(
 				`${ chalk.red( 'Configuration Error' ) }\n` +

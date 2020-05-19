@@ -22,7 +22,7 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export function fromApi( apiResponse ) {
-	const feeds = map( apiResponse.feeds, feed => ( {
+	const feeds = map( apiResponse.feeds, ( feed ) => ( {
 		...feed,
 		feed_URL: feed.subscribe_URL,
 	} ) );

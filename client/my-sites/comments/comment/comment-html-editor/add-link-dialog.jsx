@@ -61,11 +61,11 @@ export class AddLinkDialog extends Component {
 		return '';
 	}
 
-	setLinkUrl = event => this.setState( { linkUrl: event.target.value } );
+	setLinkUrl = ( event ) => this.setState( { linkUrl: event.target.value } );
 
-	setLinkText = event => this.setState( { linkText: event.target.value } );
+	setLinkText = ( event ) => this.setState( { linkText: event.target.value } );
 
-	setLinkNewTab = event => this.setState( { linkNewTab: event.target.checked } );
+	setLinkNewTab = ( event ) => this.setState( { linkNewTab: event.target.checked } );
 
 	closeDialog = () =>
 		this.setState(

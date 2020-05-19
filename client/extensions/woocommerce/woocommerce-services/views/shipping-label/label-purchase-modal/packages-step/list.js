@@ -22,7 +22,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const PackageList = props => {
+const PackageList = ( props ) => {
 	const { orderId, siteId, selected, all, errors, packageId, translate } = props;
 
 	const renderCountOrError = ( isError, count ) => {
@@ -69,7 +69,7 @@ const PackageList = props => {
 	const packed = [];
 	const individual = [];
 
-	Object.keys( selected ).forEach( pckgId => {
+	Object.keys( selected ).forEach( ( pckgId ) => {
 		const pckg = selected[ pckgId ];
 
 		if ( 'individual' === pckg.box_id ) {
@@ -115,7 +115,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 

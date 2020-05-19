@@ -28,7 +28,7 @@ export class HelpSearch extends React.PureComponent {
 		searchQuery: '',
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		this.setState( {
 			searchQuery,
 		} );
@@ -94,7 +94,7 @@ export class HelpSearch extends React.PureComponent {
 					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
+					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Community Forum…' ) }
@@ -134,7 +134,7 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		helpLinks: getHelpLinks( state ),
 	} ),
 	{

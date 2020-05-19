@@ -27,7 +27,7 @@ import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 let _transaction = createInitialTransaction();
 
 const TransactionStore = {
-	get: function() {
+	get: function () {
 		return _transaction;
 	},
 };
@@ -97,7 +97,7 @@ function setNewCreditCardDetails( options ) {
 	replaceData( newTransaction );
 }
 
-TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
+TransactionStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {

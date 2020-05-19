@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @returns {boolean} True if selected site is on the Premium or Business plan, false otherwise.
  */
 
-export const hasSelectedSitePremiumOrBusinessPlan = state => {
+export const hasSelectedSitePremiumOrBusinessPlan = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const sitePlan = getSitePlan( state, siteId );
 	if ( ! sitePlan ) {

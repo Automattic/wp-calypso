@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addUserProfileLinks = action =>
+export const addUserProfileLinks = ( action ) =>
 	http(
 		{
 			apiVersion: '1.2',

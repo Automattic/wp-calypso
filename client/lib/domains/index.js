@@ -26,7 +26,7 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( { error: serverError.error, message: serverError.message } );
 			return;
@@ -46,7 +46,7 @@ function checkDomainAvailability( params, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -62,7 +62,7 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
+	wpcom.undocumented().getInboundTransferStatus( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;
@@ -80,7 +80,7 @@ function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+		.startInboundTransfer( siteId, domainName, authCode, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -96,7 +96,7 @@ function resendInboundTransferEmail( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().resendInboundTransferEmail( domainName, function( serverError, result ) {
+	wpcom.undocumented().resendInboundTransferEmail( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError );
 			return;
@@ -116,7 +116,12 @@ function canRedirect( siteId, domainName, onComplete ) {
 		domainName = 'http://' + domainName;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
+	if ( includes( domainName, '@' ) ) {
+		onComplete( new ValidationError( 'invalid_domain' ) );
+		return;
+	}
+
+	wpcom.undocumented().canRedirect( siteId, domainName, function ( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
 		} else if ( ! data.can_redirect ) {
@@ -131,7 +136,7 @@ function getPrimaryDomain( siteId, onComplete ) {
 	wpcom
 		.site( siteId )
 		.domain()
-		.getPrimary( function( serverError, data ) {
+		.getPrimary( function ( serverError, data ) {
 			onComplete( serverError, data );
 		} );
 }
@@ -143,11 +148,15 @@ function getFixedDomainSearch( domainName ) {
 		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
 		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
-		.replace( /_/g, '-' );
+		.replace( /_/g, '-' )
+		.replace( /^\.+|\.+$/, '' );
 }
 
 function isSubdomain( domainName ) {
-	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+	return (
+		domainName &&
+		domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ )
+	);
 }
 
 function isHstsRequired( productSlug, productsList ) {
@@ -171,7 +180,7 @@ function isMappedDomainWithWpcomNameservers( domain ) {
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains, domain => {
+	return find( domains, ( domain ) => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}
@@ -318,7 +327,7 @@ function getDomainTypeText( domain = {} ) {
 			return 'Site Redirect';
 
 		case domainTypes.WPCOM:
-			return 'Wpcom Domain';
+			return 'Default Site Domain';
 
 		case domainTypes.TRANSFER:
 			return 'Transfer';

@@ -44,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSitePurchases', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
 				.reply( 200, purchases );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchUserPurchases', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/purchases' )
 				.reply( 200, purchases );
@@ -95,7 +95,7 @@ describe( 'actions', () => {
 	describe( '#removePurchase success', () => {
 		const response = { purchases };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 200, response );
@@ -117,7 +117,7 @@ describe( 'actions', () => {
 
 	describe( '#removePurchase failure', () => {
 		const errorMessage = 'Unable to delete the purchase because of internal error';
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 400, {

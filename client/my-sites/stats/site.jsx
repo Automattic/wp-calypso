@@ -24,13 +24,11 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -78,7 +76,7 @@ const CHARTS = [
 	},
 ];
 
-const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
 class StatsSite extends Component {
 	static defaultProps = {
@@ -110,15 +108,15 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
-	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	switchChart = tab => {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
@@ -128,7 +126,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isCustomerHomeEnabled, isJetpack } = this.props;
+		const { date, siteId, slug, isJetpack } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -169,9 +167,6 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && (
-						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
-					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -318,7 +313,7 @@ const enableJetpackStatsModule = ( siteId, path ) =>
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const showEnableStatsModule =
@@ -328,7 +323,6 @@ export default connect(
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};

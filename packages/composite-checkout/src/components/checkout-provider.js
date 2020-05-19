@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useContext, useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
@@ -13,8 +13,9 @@ import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider, createRegistry } from '../lib/registry';
+import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -25,7 +26,7 @@ import {
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider = props => {
+export const CheckoutProvider = ( props ) => {
 	const {
 		locale,
 		total,
@@ -36,9 +37,11 @@ export const CheckoutProvider = props => {
 		showSuccessMessage,
 		theme,
 		paymentMethods,
+		paymentProcessors,
 		registry,
 		onEvent,
 		isLoading,
+		isValidating,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -53,7 +56,8 @@ export const CheckoutProvider = props => {
 		}
 	}, [ paymentMethods, prevPaymentMethods ] );
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
@@ -65,7 +69,7 @@ export const CheckoutProvider = props => {
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
-	registryRef.current = registryRef.current || createRegistry();
+	registryRef.current = registryRef.current || defaultRegistry;
 
 	const value = useMemo(
 		() => ( {
@@ -78,6 +82,8 @@ export const CheckoutProvider = props => {
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
+			transactionStatusManager,
+			paymentProcessors,
 		} ),
 		[
 			formStatus,
@@ -88,13 +94,19 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
+			transactionStatusManager,
+			paymentProcessors,
 		]
 	);
 
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
+	const onError = useCallback(
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error.message } ),
+		[ onEvent ]
+	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
@@ -135,6 +147,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showInfoMessage,
 		showSuccessMessage,
 		paymentMethods,
+		paymentProcessors,
 	} = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
@@ -144,6 +157,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
 		validateLineItems( items );
+		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
 		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
@@ -155,6 +169,7 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		locale,
 		onPaymentComplete,
 		paymentMethods,
+		paymentProcessors,
 		propsToValidate,
 		showErrorMessage,
 		showInfoMessage,

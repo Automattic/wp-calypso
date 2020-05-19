@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -38,8 +39,10 @@ import { domainManagementEdit, domainManagementList } from 'my-sites/domains/pat
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'lib/domains';
 import DocumentHead from 'components/data/document-head';
+import QueryEmailAccounts from 'components/data/query-email-accounts';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -80,6 +83,9 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
+				{ config.isEnabled( 'email-accounts/enabled' ) && selectedSiteId && (
+					<QueryEmailAccounts siteId={ selectedSiteId } />
+				) }
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
@@ -148,7 +154,7 @@ class EmailManagement extends React.Component {
 
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
-			action: translate( 'Add a Custom Domain' ),
+			action: translate( 'Add a custom domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		};
 
@@ -172,7 +178,7 @@ class EmailManagement extends React.Component {
 		}
 
 		const emailForwardingAction = {
-			secondaryAction: translate( 'Add Email Forwarding' ),
+			secondaryAction: translate( 'Add email forwarding' ),
 			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
 		};
 
@@ -188,8 +194,9 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL:
-					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL: localizeUrl(
+					'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
+				),
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};
@@ -262,7 +269,7 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),

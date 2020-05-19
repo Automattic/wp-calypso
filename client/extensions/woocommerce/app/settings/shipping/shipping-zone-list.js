@@ -83,7 +83,7 @@ class ShippingZoneList extends Component {
 		);
 	};
 
-	onAddNewClick = event => {
+	onAddNewClick = ( event ) => {
 		if ( ! this.props.loaded ) {
 			event.preventDefault();
 		}
@@ -120,7 +120,7 @@ class ShippingZoneList extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const savingZones = Boolean( getActionList( state ) );
 		const loaded =
 			areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ) && ! savingZones;
@@ -135,7 +135,7 @@ export default connect(
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				createAddDefultShippingZoneActionList,

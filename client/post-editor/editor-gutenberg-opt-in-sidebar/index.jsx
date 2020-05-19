@@ -28,7 +28,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 		optInEnabled: PropTypes.bool,
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			this.props.showDialog();
@@ -58,7 +58,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
 } );
 

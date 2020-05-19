@@ -4,8 +4,18 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
-export function domainAddNew( siteName ) {
-	return '/domains/add/' + siteName;
+export function domainAddNew( siteName, searchTerm ) {
+	const path = `/domains/add/${ siteName }`;
+
+	if ( searchTerm ) {
+		return `${ path }?suggestion=${ searchTerm }`;
+	}
+
+	return path;
+}
+
+export function domainManagementUserRoot() {
+	return '/me/domains';
 }
 
 export function domainManagementRoot() {
@@ -85,6 +95,10 @@ export function domainManagementDns( siteName, domainName ) {
 
 export function domainManagementRedirectSettings( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'redirect-settings' );
+}
+
+export function domainManagementSecurity( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'security' );
 }
 
 export function domainManagementPrimaryDomain( siteName, domainName ) {

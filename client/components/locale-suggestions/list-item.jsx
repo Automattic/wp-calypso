@@ -19,7 +19,7 @@ class LocaleSuggestionsListItem extends Component {
 		path: PropTypes.string.isRequired,
 	};
 
-	handleLocaleSuggestionClick = event => {
+	handleLocaleSuggestionClick = ( event ) => {
 		const { locale, onLocaleSuggestionClick, path } = this.props;
 
 		if ( this.hasLocaleDirectionChanged( locale ) ) {

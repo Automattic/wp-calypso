@@ -30,6 +30,6 @@ export const getPostsForQueryIgnoringPage = createSelector(
 
 		return itemsIgnoringPage.map( normalizePostForDisplay );
 	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
+	( state ) => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );

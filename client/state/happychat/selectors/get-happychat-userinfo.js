@@ -8,7 +8,7 @@ import moment from 'moment';
  */
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 
-export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
+export default ( state ) => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {
 		howCanWeHelp,
 		howYouFeel,

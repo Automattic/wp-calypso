@@ -262,7 +262,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
@@ -302,7 +302,7 @@ describe( 'selectors', () => {
 			};
 
 			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+				( purchase ) => purchase.productSlug === 'value_bundle'
 			);
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();

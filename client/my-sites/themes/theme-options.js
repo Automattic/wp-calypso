@@ -158,7 +158,7 @@ function getAllThemeOptions() {
 		label: signupLabel,
 		extendedLabel: signupLabel,
 		getUrl: getThemeSignupUrl,
-		hideForTheme: state => getCurrentUser( state ),
+		hideForTheme: ( state ) => getCurrentUser( state ),
 	};
 
 	const separator = {
@@ -208,14 +208,14 @@ export const connectOptions = connect(
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {
-			mapGetUrl = getUrl => t => getUrl( state, t, siteId );
-			mapHideForTheme = hideForTheme => t => hideForTheme( state, t, siteId, origin );
+			mapGetUrl = ( getUrl ) => ( t ) => getUrl( state, t, siteId );
+			mapHideForTheme = ( hideForTheme ) => ( t ) => hideForTheme( state, t, siteId, origin );
 		} else {
-			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
-			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s, origin );
+			mapGetUrl = ( getUrl ) => ( t, s ) => getUrl( state, t, s );
+			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
-		return mapValues( getAllThemeOptions(), option =>
+		return mapValues( getAllThemeOptions(), ( option ) =>
 			Object.assign(
 				{},
 				option,
@@ -230,10 +230,10 @@ export const connectOptions = connect(
 		let mapAction;
 
 		if ( siteId ) {
-			mapAction = action => t => action( t, siteId, source );
+			mapAction = ( action ) => ( t ) => action( t, siteId, source );
 		} else {
 			// Bind only source.
-			mapAction = action => ( t, s ) => action( t, s, source );
+			mapAction = ( action ) => ( t, s ) => action( t, s, source );
 		}
 
 		return bindActionCreators(
@@ -255,7 +255,7 @@ export const connectOptions = connect(
 			options,
 			defaultOption: options[ defaultOption ],
 			secondaryOption: secondaryOption ? options[ secondaryOption ] : null,
-			getScreenshotOption: theme => options[ getScreenshotOption( theme ) ],
+			getScreenshotOption: ( theme ) => options[ getScreenshotOption( theme ) ],
 		};
 	}
 );

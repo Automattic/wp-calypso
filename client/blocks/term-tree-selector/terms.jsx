@@ -22,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import NoResults from './no-results';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
@@ -140,7 +140,7 @@ class TermTreeSelectorList extends Component {
 		}
 	};
 
-	getPageForIndex = index => {
+	getPageForIndex = ( index ) => {
 		const { query, lastPage } = this.props;
 		const perPage = query.number || DEFAULT_TERMS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
@@ -199,7 +199,7 @@ class TermTreeSelectorList extends Component {
 		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
 	};
 
-	getItem = index => {
+	getItem = ( index ) => {
 		if ( this.props.terms ) {
 			return this.props.terms[ index ];
 		}
@@ -217,7 +217,7 @@ class TermTreeSelectorList extends Component {
 		return this.props.lastPage || !! this.getItem( index );
 	};
 
-	getTermChildren = termId => {
+	getTermChildren = ( termId ) => {
 		const { terms } = this.props;
 		return filter( terms, ( { parent } ) => parent === termId );
 	};
@@ -274,7 +274,7 @@ class TermTreeSelectorList extends Component {
 		return count;
 	};
 
-	onSearch = event => {
+	onSearch = ( event ) => {
 		const searchTerm = event.target.value;
 		if ( this.state.searchTerm && ! searchTerm ) {
 			this.props.onSearch( '' );
@@ -286,14 +286,14 @@ class TermTreeSelectorList extends Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
 		}
 
 		this.setState( { searchTerm } );
 		this.debouncedSearch();
 	};
 
-	setListRef = ref => {
+	setListRef = ( ref ) => {
 		this.list = ref;
 	};
 
@@ -349,7 +349,7 @@ class TermTreeSelectorList extends Component {
 				</label>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -414,7 +414,7 @@ class TermTreeSelectorList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ this.state.requestedPages.map( page => (
+				{ this.state.requestedPages.map( ( page ) => (
 					<QueryTerms
 						key={ `query-${ page }` }
 						siteId={ siteId }

@@ -40,7 +40,7 @@ RecentRenewalListItem.propTypes = {
 
 function getRecentRenewalProductsMatchingIds( products, ids, moment ) {
 	const oldestMoment = moment().subtract( 30, 'days' );
-	return products.filter( product => {
+	return products.filter( ( product ) => {
 		return (
 			ids.includes( product.productId ) &&
 			product.subscriptionStatus === 'active' &&
@@ -56,9 +56,9 @@ export function RecentRenewals( { purchases, siteId, cart } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const idsInCart = cart.products ? cart.products.map( product => product.product_id ) : [];
+	const idsInCart = cart.products ? cart.products.map( ( product ) => product.product_id ) : [];
 	const recentRenewals = getRecentRenewalProductsMatchingIds( purchases, idsInCart, moment );
-	const productListItems = recentRenewals.map( product => {
+	const productListItems = recentRenewals.map( ( product ) => {
 		const domain = product.isDomainRegistration
 			? product.meta || product.domain
 			: product.includedDomain || product.domain;
@@ -92,7 +92,7 @@ RecentRenewals.propTypes = {
 	siteId: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		purchases: getSitePurchases( state, siteId ),

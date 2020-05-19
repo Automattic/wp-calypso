@@ -26,6 +26,6 @@
 		"svg-sprite"
 	],
 	"scripts": {
-		"build": "svgstore -o svg-sprite/material-icons.svg -p 'icon-' src/**/*.svg"
+		"build": "check-npm-client && svgstore -o svg-sprite/material-icons.svg -p 'icon-' src/**/*.svg"
 	}
 }

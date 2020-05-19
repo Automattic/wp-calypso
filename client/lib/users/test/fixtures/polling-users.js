@@ -11,7 +11,7 @@ import usersData from './users';
 import moreUsersData from './more-users';
 
 const clonedMoreUsers = cloneDeep( moreUsersData.users );
-const updatedUsers = clonedMoreUsers.map( user => {
+const updatedUsers = clonedMoreUsers.map( ( user ) => {
 	return Object.assign( {}, user, { roles: [ 'contributor' ] } );
 } );
 

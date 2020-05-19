@@ -1,1 +1,2 @@
-export const isFetchingAccountRecoverySettings = state => state.accountRecovery.isFetchingSettings;
+export const isFetchingAccountRecoverySettings = ( state ) =>
+	state.accountRecovery.isFetchingSettings;

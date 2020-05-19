@@ -182,7 +182,7 @@ export class NoteList extends React.Component {
 		}
 	};
 
-	storeNote = noteId => ref => {
+	storeNote = ( noteId ) => ( ref ) => {
 		if ( ref ) {
 			this.noteElements[ noteId ] = ref;
 		} else {
@@ -190,23 +190,23 @@ export class NoteList extends React.Component {
 		}
 	};
 
-	storeNoteList = ref => {
+	storeNoteList = ( ref ) => {
 		this.noteList = ref;
 	};
 
-	storeScrollableContainer = ref => {
+	storeScrollableContainer = ( ref ) => {
 		this.scrollableContainer = ref;
 	};
 
-	storeUndoActImmediately = actImmediately => {
+	storeUndoActImmediately = ( actImmediately ) => {
 		this.undoActImmediately = actImmediately;
 	};
 
-	storeUndoBar = ref => {
+	storeUndoBar = ( ref ) => {
 		this.undoBar = ref;
 	};
 
-	storeUndoStartSequence = startSequence => {
+	storeUndoStartSequence = ( startSequence ) => {
 		this.startUndoSequence = startSequence;
 	};
 
@@ -241,7 +241,7 @@ export class NoteList extends React.Component {
 		];
 		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
 
-		const createNoteComponent = note => {
+		const createNoteComponent = ( note ) => {
 			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
 				return (
 					<UndoListItem
@@ -360,9 +360,9 @@ export class NoteList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	isLoading: getIsLoading( state ),
-	isNoteHidden: noteId => getIsNoteHidden( state, noteId ),
+	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	selectedNoteId: getSelectedNoteId( state ),
 	filterName: getFilterName( state ),

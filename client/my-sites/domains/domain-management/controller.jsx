@@ -20,6 +20,7 @@ import {
 	domainManagementNameServers,
 	domainManagementPrimaryDomain,
 	domainManagementRedirectSettings,
+	domainManagementSecurity,
 	domainManagementTransfer,
 	domainManagementTransferIn,
 	domainManagementTransferOut,
@@ -84,7 +85,7 @@ export default {
 		next();
 	},
 
-	domainManagementPrimaryDomain: function( pageContext, next ) {
+	domainManagementPrimaryDomain: function ( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }
@@ -204,6 +205,20 @@ export default {
 		page.redirect(
 			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
 		);
+	},
+
+	domainManagementSecurity( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementSecurity( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Security"
+				component={ DomainManagement.Security }
+				context={ pageContext }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				needsDomains
+			/>
+		);
+		next();
 	},
 
 	domainManagementRedirectSettings( pageContext, next ) {

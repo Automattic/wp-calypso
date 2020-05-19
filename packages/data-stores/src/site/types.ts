@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import { Action } from 'redux';
-
 export interface NewSiteBlogDetails {
 	url: string;
 	blogid: number;
@@ -39,17 +33,36 @@ export interface CreateSiteParams {
 	blog_name: string;
 	blog_title?: string;
 	authToken?: string;
+	public?: number;
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
+		site_vertical_slug?: string;
 		site_information?: {
 			title?: string;
 		};
 		site_creation_flow?: string;
 		theme?: string;
+		template?: string;
+		timezone_string?: string;
+		font_headings?: string;
+		font_base?: string;
 	};
 }
 
-export interface CreateSiteAction extends Action {
-	params: CreateSiteParams;
+export interface SiteDetails {
+	ID: number;
+	name: string;
+	description: string;
+	URL: string;
+	options: {
+		created_at: string;
+	};
 }
+
+export interface SiteError {
+	error: string;
+	message: string;
+}
+
+export type SiteResponse = SiteDetails | SiteError;

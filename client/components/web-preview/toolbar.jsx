@@ -117,7 +117,7 @@ class PreviewToolbar extends Component {
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
 						ref={ this.setDropdown }
 					>
-						{ devicesToShow.map( device => (
+						{ devicesToShow.map( ( device ) => (
 							<SelectDropdown.Item
 								key={ device }
 								selected={ device === currentDevice }

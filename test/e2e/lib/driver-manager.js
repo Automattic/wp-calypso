@@ -120,14 +120,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		} );
 
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder
-			.usingServer( sauceURL )
-			.withCapabilities( caps )
-			.build();
+		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
-		driver.getSession().then( function( sessionid ) {
+		driver.getSession().then( function ( sessionid ) {
 			driver.allPassed = true;
 			driver.sessionID = sessionid.id_;
 		} );
@@ -218,28 +215,16 @@ export async function resizeBrowser( driver, screenSize ) {
 	if ( typeof screenSize === 'string' ) {
 		switch ( screenSize.toLowerCase() ) {
 			case 'mobile':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 400, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 400, height: 1000 } );
 				break;
 			case 'tablet':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
 				break;
 			case 'desktop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
 				break;
 			case 'laptop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1400, height: 790 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1400, height: 790 } );
 				break;
 			default:
 				throw new Error(

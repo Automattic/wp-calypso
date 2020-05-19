@@ -185,7 +185,7 @@ function createCombinedReducer( reducers ) {
 }
 
 function getStorageKeys( reducers ) {
-	return function*() {
+	return function* () {
 		for ( const reducer of Object.values( reducers ) ) {
 			if ( reducer.storageKey ) {
 				yield { storageKey: reducer.storageKey, reducer };

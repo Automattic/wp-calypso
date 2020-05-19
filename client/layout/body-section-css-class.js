@@ -13,7 +13,7 @@ import React from 'react';
  * `div.layout` has the advantage of being maintained by React, where class names can be
  * specified declaratively and the DOM diffing and patching is done by React itself.
  */
-const addBodyClass = toClass => value => () => {
+const addBodyClass = ( toClass ) => ( value ) => () => {
 	// if value is empty-ish, don't add any CSS classes
 	if ( ! value ) {
 		return;
@@ -30,8 +30,8 @@ const addBodyClass = toClass => value => () => {
 };
 
 // two effect creators for groups and sections
-const addGroupClass = addBodyClass( g => `is-group-${ g }` );
-const addSectionClass = addBodyClass( s => `is-section-${ s }` );
+const addGroupClass = addBodyClass( ( g ) => `is-group-${ g }` );
+const addSectionClass = addBodyClass( ( s ) => `is-section-${ s }` );
 
 export default function BodySectionCssClass( { group, section, bodyClass } ) {
 	React.useEffect( addGroupClass( group ), [ group ] );

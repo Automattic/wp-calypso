@@ -33,7 +33,7 @@ const SharingServiceAction = ( {
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.stopPropagation();
 		onAction();
 	};

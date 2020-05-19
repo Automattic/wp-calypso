@@ -69,7 +69,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
 		[]
 	);
 	if ( reviewIdsOnPage.length ) {
-		return reviewIdsOnPage.map( id => reviews[ id ] );
+		return reviewIdsOnPage.map( ( id ) => reviews[ id ] );
 	}
 	return false;
 };

@@ -22,6 +22,8 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -52,7 +54,7 @@ function getPostID( context ) {
 }
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -142,7 +144,11 @@ export const redirect = async ( context, next ) => {
 	if ( shouldRedirectGutenberg( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+
+		const url =
+			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
+				? getGutenbergEditorUrl( state, siteId, postId, postType )
+				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
@@ -189,6 +195,22 @@ export const post = ( context, next ) => {
 			pressThis={ pressThis }
 			fseParentPageId={ fseParentPageId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+		/>
+	);
+
+	return next();
+};
+
+export const siteEditor = ( context, next ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = (
+		<CalypsoifyIframe
+			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
+			// It will force the component to remount completely when the Id changes.
+			key={ siteId }
+			editorType={ 'site' }
 		/>
 	);
 

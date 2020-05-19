@@ -28,7 +28,7 @@ jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-plans.applyTestFiltersToPlansList = jest.fn( x => x );
+plans.applyTestFiltersToPlansList = jest.fn( ( x ) => x );
 plans.getPlan = jest.fn();
 
 const { getPlan } = plans;
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 				return isMonthly ? 20 : 240;
 			} );
 
-			getPlan.mockImplementation( slug => testPlans[ slug ] );
+			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
 		} );
 
 		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {

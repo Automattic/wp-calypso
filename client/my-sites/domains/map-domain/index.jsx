@@ -64,7 +64,7 @@ export class MapDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = suggestion => {
+	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
@@ -77,7 +77,7 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleRegisterDomain = suggestion => {
+	handleRegisterDomain = ( suggestion ) => {
 		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
 		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
 			this.setState( {
@@ -90,7 +90,7 @@ export class MapDomain extends Component {
 		this.addDomainToCart( suggestion );
 	};
 
-	handleMapDomain = domain => {
+	handleMapDomain = ( domain ) => {
 		const { selectedSite, selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -101,7 +101,7 @@ export class MapDomain extends Component {
 		if ( selectedSite.is_vip ) {
 			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then(
 				() => page( domainManagementList( selectedSiteSlug ) ),
-				error => this.setState( { errorMessage: error.message } )
+				( error ) => this.setState( { errorMessage: error.message } )
 			);
 			return;
 		}
@@ -190,7 +190,7 @@ export class MapDomain extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSite: getSelectedSite( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),

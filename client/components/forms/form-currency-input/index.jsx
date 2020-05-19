@@ -32,7 +32,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	// Find the currency code in the `currencyList` and return the label. If not found,
 	// use the code itself as the label.
 	const currencyLabel = get(
-		find( currencyList, currency => currency.code === currencyValue ),
+		find( currencyList, ( currency ) => currency.code === currencyValue ),
 		'label',
 		currencyValue
 	);

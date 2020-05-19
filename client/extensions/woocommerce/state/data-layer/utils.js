@@ -71,7 +71,7 @@ export function verifyResponseHasValidCategories( response ) {
 		throw new Error( 'Invalid categories.', response );
 	}
 
-	const unescapedBody = body.map( cat => {
+	const unescapedBody = body.map( ( cat ) => {
 		return {
 			...cat,
 			name: unescape( cat.name ),

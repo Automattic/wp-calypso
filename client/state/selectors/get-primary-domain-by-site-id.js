@@ -18,5 +18,5 @@ export default function getPrimaryDomainBySiteId( state, siteId ) {
 		return null;
 	}
 
-	return domains.filter( domain => domain.isPrimary )[ 0 ];
+	return domains.filter( ( domain ) => domain.isPrimary )[ 0 ];
 }

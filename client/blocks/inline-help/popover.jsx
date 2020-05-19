@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose, noop, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -12,34 +12,17 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import {
-	VIEW_CONTACT,
-	VIEW_RICH_RESULT,
-	VIEW_CHECKLIST,
-	VIEW_ONBOARDING_WELCOME,
-} from './constants';
-import {
-	selectResult,
-	resetInlineHelpContactForm,
-	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
-} from 'state/inline-help/actions';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import { Button } from '@automattic/components';
 import Popover from 'components/popover';
-import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import {
-	getSearchQuery,
-	getInlineHelpCurrentlySelectedResult,
-	isInlineHelpChecklistPromptVisible,
-	isOnboardingWelcomePromptVisible,
-} from 'state/inline-help/selectors';
+import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -57,6 +40,12 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
+import { isEnabled } from 'config';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { activatePlugin, fetchPlugins } from 'state/plugins/installed/actions';
+import { getPlugins } from 'state/plugins/installed/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -69,40 +58,42 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForChecklist: PropTypes.bool.isRequired,
-		isChecklistPromptVisible: PropTypes.bool,
-		isOnboardingWelcomeVisible: PropTypes.bool,
+		isAtomic: PropTypes.bool,
+		activatePlugin: PropTypes.func,
+		fetchAtomicPlugins: PropTypes.func,
+		classicPlugin: PropTypes.object,
+		showErrorNotice: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onClose: noop,
-		isOnboardingWelcomeVisible: false,
 	};
 
 	state = {
 		showSecondaryView: false,
 		activeSecondaryView: '',
+		activatingClassicOnAtomic: false,
 	};
 
 	componentDidMount() {
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
+		const { siteId, isAtomic, fetchAtomicPlugins } = this.props;
 
-		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForChecklist ) {
-			return this.openChecklistView();
+		if ( isAtomic ) {
+			fetchAtomicPlugins( [ siteId ] );
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.isOnboardingWelcomeVisible !== this.props.isOnboardingWelcomeVisible &&
-			! this.props.isOnboardingWelcomeVisible
-		) {
-			this.closeSecondaryView();
+	componentDidUpdate() {
+		const { classicPlugin } = this.props;
+
+		if ( this.state.activatingClassicOnAtomic ) {
+			if ( classicPlugin?.active ) {
+				this.redirectToClassicEditor();
+			}
 		}
 	}
 
-	openResultView = event => {
+	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
@@ -112,11 +103,11 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	setSecondaryViewKey = secondaryViewKey => {
+	setSecondaryViewKey = ( secondaryViewKey ) => {
 		this.setState( { activeSecondaryView: secondaryViewKey } );
 	};
 
-	openSecondaryView = secondaryViewKey => {
+	openSecondaryView = ( secondaryViewKey ) => {
 		this.setSecondaryViewKey( secondaryViewKey );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
 		this.setState( { showSecondaryView: true } );
@@ -127,12 +118,6 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
-		// If the welcome message is still active, return to that view
-		// otherwise close the secondary view altogether.
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
-		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -140,27 +125,10 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
-	openChecklistView = () => {
-		this.openSecondaryView( VIEW_CHECKLIST );
-	};
-
-	openOnboardingWelcomeView = () => {
-		this.openSecondaryView( VIEW_ONBOARDING_WELCOME );
-	};
-
 	renderPopoverFooter = () => {
 		const { translate } = this.props;
 		return (
 			<div className="inline-help__footer">
-				<Button
-					onClick={ this.props.hideOnboardingWelcomePrompt }
-					className="inline-help__back-to-help-button"
-					borderless
-				>
-					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-					{ translate( 'Help' ) }
-				</Button>
-
 				<Button
 					onClick={ this.moreHelpClicked }
 					className="inline-help__more-button"
@@ -227,8 +195,6 @@ class InlineHelpPopover extends Component {
 								closePopover={ onClose }
 							/>
 						),
-						[ VIEW_CHECKLIST ]: <WpcomChecklist closePopover={ onClose } viewMode="prompt" />,
-						[ VIEW_ONBOARDING_WELCOME ]: <ChecklistOnboardingWelcome onClose={ onClose } />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -236,16 +202,12 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPrimaryView = () => {
-		const {
-			translate,
-			showNotification,
-			siteId,
-			setNotification,
-			setStoredTask,
-			showOptIn,
-			showOptOut,
-			onClose,
-		} = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
+
+		// Don't show additional items inside Checkout.
+		if ( isCheckout ) {
+			return null;
+		}
 
 		return (
 			<>
@@ -267,28 +229,53 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Switch to Block Editor' ) }
 					</Button>
 				) }
-
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
 			</>
 		);
 	};
 
+	checkForClassicEditorOnAtomic() {
+		const { siteId, classicPlugin, showErrorNotice, translate } = this.props;
+
+		if ( ! classicPlugin ) {
+			showErrorNotice(
+				translate(
+					'There was a problem activating the Classic editor on your site. Please go to the plugins page and activate the Classic Editor plugin there.'
+				)
+			);
+			return;
+		}
+
+		if ( ! classicPlugin.active ) {
+			this.setState( { activatingClassicOnAtomic: true } );
+			this.props.activatePlugin( siteId, classicPlugin );
+			return;
+		}
+
+		this.redirectToClassicEditor();
+	}
+
 	switchToClassicEditor = () => {
-		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
+		const { translate, isAtomic } = this.props;
+
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
+
 		if ( proceed ) {
-			optOut( siteId, classicUrl );
-			onClose();
+			if ( isAtomic && isEnabled( 'editor/after-deprecation' ) ) {
+				this.checkForClassicEditorOnAtomic();
+				return;
+			}
+			this.redirectToClassicEditor();
 		}
 	};
+
+	redirectToClassicEditor() {
+		const { siteId, classicUrl, optOut, onClose } = this.props;
+		this.setState( { activatingClassicOnAtomic: false } );
+		optOut( siteId, classicUrl );
+		onClose();
+	}
 
 	switchToBlockEditor = () => {
 		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
@@ -299,7 +286,6 @@ class InlineHelpPopover extends Component {
 	render() {
 		const popoverClasses = {
 			'is-secondary-view-active': this.state.showSecondaryView,
-			'is-onboarding-welcome-active': VIEW_ONBOARDING_WELCOME === this.state.activeSecondaryView,
 		};
 
 		return (
@@ -356,38 +342,44 @@ const optIn = ( siteId, gutenbergUrl ) => {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicRoute = currentRoute.replace( '/block-editor/', '' );
+	const classicUrl = isEnabled( 'editor/after-deprecation' )
+		? getWpAdminClassicEditorRedirectionUrl( state, siteId )
+		: `/${ currentRoute.replace( '/block-editor/', '' ) }`;
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
+	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
+	const isAtomic = isAtomicSite( state, siteId );
+	const sitePlugins = getPlugins( state, [ siteId ] );
 
 	return {
-		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
-		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		classicUrl: `/${ classicRoute }`,
+		classicUrl,
 		siteId,
-		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
-		showOptIn: optInEnabled && isCalypsoClassic,
+		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
+		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
+		isCheckout: section.name && section.name === 'checkout',
+		isAtomic,
+		classicPlugin: find( sitePlugins, { slug: 'classic-editor' } ),
 	};
 }
 
 const mapDispatchToProps = {
-	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
+	activatePlugin,
+	fetchAtomicPlugins: fetchPlugins,
+	showErrorNotice: errorNotice,
 };
 
 export default compose(

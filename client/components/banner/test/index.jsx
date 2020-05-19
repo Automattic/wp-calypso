@@ -13,16 +13,16 @@ jest.mock( 'lib/analytics/track-component-view', () => {
 } );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -137,18 +137,8 @@ describe( 'Banner basic tests', () => {
 		const comp = shallow( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
 		expect( comp.find( '.banner__list' ) ).toHaveLength( 1 );
 		expect( comp.find( '.banner__list li' ) ).toHaveLength( 2 );
-		expect(
-			comp
-				.find( '.banner__list li' )
-				.at( 0 )
-				.text()
-		).toContain( 'test1' );
-		expect(
-			comp
-				.find( '.banner__list li' )
-				.at( 1 )
-				.text()
-		).toContain( 'test2' );
+		expect( comp.find( '.banner__list li' ).at( 0 ).text() ).toContain( 'test1' );
+		expect( comp.find( '.banner__list li' ).at( 1 ).text() ).toContain( 'test2' );
 	} );
 
 	test( 'should not render a .banner__list when description is not specified', () => {
@@ -218,7 +208,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Personal', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
@@ -230,7 +220,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Premium', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
@@ -242,7 +232,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Business', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );

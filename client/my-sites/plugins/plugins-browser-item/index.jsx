@@ -14,7 +14,7 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsStore from 'lib/plugins/store';
 import { Button } from '@automattic/components';
 import Rating from 'components/rating';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -50,7 +50,7 @@ class PluginsBrowserListElement extends Component {
 	}
 
 	trackPluginLinkClick = () => {
-		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
+		recordTracksEvent( 'calypso_plugin_browser_item_click', {
 			site: this.props.site,
 			plugin: this.props.plugin.slug,
 			list_name: this.props.listName,
@@ -142,7 +142,7 @@ class PluginsBrowserListElement extends Component {
 }
 
 export default compose(
-	connect( state => {
+	connect( ( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {

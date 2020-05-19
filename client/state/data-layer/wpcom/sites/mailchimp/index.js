@@ -20,7 +20,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const handleMailchimpListsList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -28,7 +28,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, lists ) => ( {
@@ -40,7 +40,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 } );
 
 export const handleMailchimpSettingsList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -48,7 +48,7 @@ export const handleMailchimpSettingsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, settings ) => ( {

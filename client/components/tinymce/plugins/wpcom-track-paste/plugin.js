@@ -19,11 +19,11 @@ function trackPaste( editor ) {
 
 	const store = editor.getParam( 'redux_store' );
 
-	const isGoogleDocsType = type =>
+	const isGoogleDocsType = ( type ) =>
 		type === 'application/x-vnd.google-docs-image-clip+wrapped' ||
 		type === 'application/x-vnd.google-docs-document-slice-clip+wrapped';
 
-	const getSource = types =>
+	const getSource = ( types ) =>
 		types.some( isGoogleDocsType ) ? SOURCE_GOOGLE_DOCS : SOURCE_UNKNOWN;
 
 	/**
@@ -52,9 +52,9 @@ function trackPaste( editor ) {
 		);
 	};
 
-	const onPasteFromTinyMCEEditor = event =>
+	const onPasteFromTinyMCEEditor = ( event ) =>
 		event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
-	const onPasteFromHTMLEditor = event =>
+	const onPasteFromHTMLEditor = ( event ) =>
 		event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
 
 	editor.on( 'paste', onPasteFromTinyMCEEditor );

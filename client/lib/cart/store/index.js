@@ -110,7 +110,7 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const wrappedFunction = cart =>
+	const wrappedFunction = ( cart ) =>
 		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
@@ -131,7 +131,7 @@ function disable() {
 	_cartKey = null;
 }
 
-CartStore.dispatchToken = Dispatcher.register( payload => {
+CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
@@ -152,14 +152,14 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			break;
 
 		case CART_ITEMS_ADD:
-			update( flow( ...action.cartItems.map( cartItem => addCartItem( cartItem ) ) ) );
+			update( flow( ...action.cartItems.map( ( cartItem ) => addCartItem( cartItem ) ) ) );
 			break;
 
 		case CART_ITEMS_REPLACE_ALL:
 			update(
 				flow(
 					clearCart(),
-					...action.cartItems.map( cartItem => addCartItemWithoutReplace( cartItem ) )
+					...action.cartItems.map( ( cartItem ) => addCartItemWithoutReplace( cartItem ) )
 				)
 			);
 			break;
@@ -248,7 +248,7 @@ function createListener( store, selector, callback ) {
 }
 
 // Subscribe to the Redux store to get updates about the selected site
-getReduxStore().then( store => {
+getReduxStore().then( ( store ) => {
 	const userLoggedIn = isUserLoggedIn( store.getState() );
 	const selectedSiteId = getSelectedSiteId( store.getState() );
 	CartStore.setSelectedSiteId( selectedSiteId, userLoggedIn );

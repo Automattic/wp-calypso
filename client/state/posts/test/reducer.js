@@ -40,7 +40,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -1392,14 +1392,14 @@ describe( 'reducer', () => {
 				},
 			};
 
-			const editsStateWithStatus = status =>
+			const editsStateWithStatus = ( status ) =>
 				deepFreeze( {
 					2916284: {
 						841: [ { status } ],
 					},
 				} );
 
-			const receivePostActionWithStatus = status => ( {
+			const receivePostActionWithStatus = ( status ) => ( {
 				type: POSTS_RECEIVE,
 				posts: [
 					{

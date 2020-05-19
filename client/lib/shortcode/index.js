@@ -21,7 +21,7 @@ const REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:
  * @param  {string} text A shortcode attribute string
  * @returns {object}      An object of attributes, split as named and numeric
  */
-export const parseAttributes = memoize( function( text ) {
+export const parseAttributes = memoize( function ( text ) {
 	const named = {};
 	const numeric = [];
 	let match;
@@ -59,7 +59,7 @@ export const parseAttributes = memoize( function( text ) {
  * @param  {*}      attributes An object to normalize
  * @returns {object}            An object of attributes, split as named and numeric
  */
-export const normalizeAttributes = function( attributes ) {
+export const normalizeAttributes = function ( attributes ) {
 	let named;
 	let numeric;
 
@@ -88,16 +88,16 @@ export const normalizeAttributes = function( attributes ) {
  * @param  {object} shortcode A shortcode object
  * @returns {string}           The string value of the shortcode
  */
-export const stringify = function( shortcode ) {
+export const stringify = function ( shortcode ) {
 	let text = '[' + shortcode.tag;
 	const attributes = normalizeAttributes( shortcode.attrs );
 
-	Object.keys( attributes.named ).forEach( function( name ) {
+	Object.keys( attributes.named ).forEach( function ( name ) {
 		const value = attributes.named[ name ];
 		text += ' ' + name + '="' + value + '"';
 	} );
 
-	attributes.numeric.forEach( function( value ) {
+	attributes.numeric.forEach( function ( value ) {
 		if ( /\s/.test( value ) ) {
 			text += ' "' + value + '"';
 		} else {
@@ -130,7 +130,7 @@ export const stringify = function( shortcode ) {
  * @param  {string} shortcode A shortcode string
  * @returns {object}           The object value of the shortcode
  */
-export const parse = function( shortcode ) {
+export const parse = function ( shortcode ) {
 	const match = shortcode.match( REGEXP_SHORTCODE );
 	let type;
 
@@ -181,7 +181,7 @@ export const parse = function( shortcode ) {
  * @param {string} tag - shortcode name
  * @returns {RegExp} regular expression
  */
-export const regexp = memoize( function( tag ) {
+export const regexp = memoize( function ( tag ) {
 	return new RegExp(
 		'\\[(\\[?)(' +
 			tag +
@@ -205,7 +205,7 @@ export const regexp = memoize( function( tag ) {
  *
  * @returns {object|void} next match
  */
-export const next = function( tag, text, index = 0 ) {
+export const next = function ( tag, text, index = 0 ) {
 	const re = regexp( tag );
 
 	re.lastIndex = index || 0;

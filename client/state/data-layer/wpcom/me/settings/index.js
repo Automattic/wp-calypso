@@ -21,7 +21,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * that the REST API returns already HTML-encoded
  */
 const PROPERTIES_TO_DECODE = new Set( [ 'display_name', 'description', 'user_URL' ] );
-export const fromApi = apiResponse =>
+export const fromApi = ( apiResponse ) =>
 	mapValues( apiResponse, ( value, name ) =>
 		PROPERTIES_TO_DECODE.has( name ) ? decodeEntities( value ) : value
 	);
@@ -29,7 +29,7 @@ export const fromApi = apiResponse =>
 /*
  * Fetch settings from the WordPress.com API at /me/settings endpoint
  */
-export const requestUserSettings = action =>
+export const requestUserSettings = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -70,7 +70,7 @@ export function saveUserSettings( action ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const finishUserSettingsSave = ( { settingsOverride }, data ) => dispatch => {
+export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispatch ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? keys( settingsOverride ) : null ) );
 	// Refetch the user data after saving user settings

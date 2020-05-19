@@ -9,4 +9,4 @@ import { get } from 'lodash';
  * @param {object}  state  Global state tree
  * @returns {?string}        Current user geo location
  */
-export default state => get( state, 'happychat.user.geoLocation', null );
+export default ( state ) => get( state, 'happychat.user.geoLocation', null );

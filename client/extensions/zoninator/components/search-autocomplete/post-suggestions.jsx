@@ -30,13 +30,13 @@ class PostSuggestions extends Component {
 
 	suggestionsRef = React.createRef();
 
-	handleKeyEvent = event => this.suggestionsRef.current.handleKeyEvent( event );
+	handleKeyEvent = ( event ) => this.suggestionsRef.current.handleKeyEvent( event );
 
 	suggest = ( { postId } ) => this.props.suggest( find( this.props.posts, { ID: postId } ) );
 
 	render() {
 		const { exclude, posts, search, siteId } = this.props;
-		const suggestions = map( posts, post => ( { label: post.title, postId: post.ID } ) );
+		const suggestions = map( posts, ( post ) => ( { label: post.title, postId: post.ID } ) );
 
 		return (
 			<Fragment>

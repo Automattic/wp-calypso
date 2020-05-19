@@ -23,7 +23,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 export class LabelItem extends Component {
-	renderRefund = label => {
+	renderRefund = ( label ) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const today = new Date();
@@ -47,7 +47,7 @@ export class LabelItem extends Component {
 		);
 	};
 
-	renderReprint = label => {
+	renderReprint = ( label ) => {
 		const todayTime = new Date().getTime();
 		if (
 			label.anonymized ||
@@ -70,7 +70,7 @@ export class LabelItem extends Component {
 		);
 	};
 
-	renderLabelDetails = label => {
+	renderLabelDetails = ( label ) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const openDialog = () => {
@@ -157,7 +157,7 @@ LabelItem.propTypes = {
 	openDetailsDialog: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 

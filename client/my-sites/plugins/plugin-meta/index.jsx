@@ -6,14 +6,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
@@ -25,6 +26,7 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
+import { isCompatiblePlugin } from 'my-sites/plugins/plugin-compatibility';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
@@ -32,8 +34,8 @@ import WpcomPluginInstallButton from 'my-sites/plugins/plugin-install-button-wpc
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
-import Banner from 'components/banner';
-import { TYPE_BUSINESS } from 'lib/plans/constants';
+import UpsellNudge from 'blocks/upsell-nudge';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
@@ -228,151 +230,16 @@ export class PluginMeta extends Component {
 		} );
 	}
 
-	isUnsupportedPluginForAT() {
-		const { plugin } = this.props;
-
-		// Pressable prevents installation of some plugins, so we need to disable AT for them.
-		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
-		const unsupportedPlugins = [
-			// "reset" - break/interfere with provided functionality
-			'advanced-database-cleaner',
-			'advanced-reset-wp',
-			'advanced-wp-reset',
-			'armember-membership',
-			'autoptimize',
-			'backup',
-			'better-wp-security',
-			'cf7-pipedrive-integration',
-			'database-browser',
-			'duplicator',
-			'extended-wp-reset',
-			'file-manager-advanced',
-			'file-manager',
-			'plugins-garbage-collector',
-			'post-type-switcher',
-			'reset-wp',
-			'secure-file-manager',
-			'ultimate-wp-reset',
-			'username-changer',
-			'username-updater',
-			'wd-youtube',
-			'wordpress-database-reset',
-			'wordpress-reset',
-			'wp-automatic',
-			'wp-clone-by-wp-academy',
-			'wp-config-file-editor',
-			'wp-dbmanager',
-			'wp-file-manager',
-			'wp-prefix-changer',
-			'wp-reset',
-			'wp-uninstaller-by-azed',
-			'wpmu-database-reset',
-			'wps-hide-login',
-			'z-inventory-manager',
-
-			// backup
-			'backup-wd',
-			'backupwordpress',
-			'backwpup',
-			'wp-db-backup',
-
-			// caching
-			'cache-enabler',
-			'comet-cache',
-			'hyper-cache',
-			'powered-cache',
-			'jch-optimize',
-			'quick-cache',
-			'sg-cachepress',
-			'w3-total-cache',
-			'wp-cache',
-			'wp-fastest-cache',
-			'wp-rocket',
-			'wp-speed-of-light',
-			'wp-super-cache',
-
-			// sql heavy
-			'another-wordpress-classifieds-plugin',
-			'broken-link-checker',
-			'leads',
-			'native-ads-adnow',
-			'ol_scrapes',
-			'page-visit-counter',
-			'post-views-counter',
-			'tokenad',
-			'top-10',
-			'userpro',
-			'wordpress-popular-posts',
-			'wp-cerber',
-			'wp-inject',
-			'wp-postviews',
-			'wp-rss-aggregator',
-			'wp-rss-feed-to-post',
-			'wp-rss-wordai',
-			'wp-session-manager',
-			'wp-slimstat',
-			'wp-statistics',
-			'wp-ulike',
-			'WPRobot5',
-
-			// security
-			'wordfence',
-			'wp-simple-firewall',
-
-			// spam
-			'e-mail-broadcasting',
-			'mailit',
-			'send-email-from-admin',
-
-			// cloning/staging
-			'wp-staging',
-
-			// misc
-			'adult-mass-photos-downloader',
-			'adult-mass-videos-embedder',
-			'ari-adminer',
-			'automatic-video-posts',
-			'bwp-minify',
-			'clearfy',
-			'cornerstone',
-			'cryptocurrency-pricing-list',
-			'event-espresso-decaf',
-			'facetwp-manipulator',
-			'fast-velocity-minify',
-			'nginx-helper',
-			'p3',
-			'porn-embed',
-			'propellerads-official',
-			'speed-contact-bar',
-			'unplug-jetpack',
-			'really-simple-ssl',
-			'robo-gallery',
-			'under-construction-page',
-			'video-importer',
-			'woozone',
-			'wp-cleanfix',
-			'wp-file-upload',
-			'wp-monero-miner-pro',
-			'wp-monero-miner-using-coin-hive',
-			'wp-optimize-by-xtraffic',
-			'wpematico',
-			'yuzo-related-post',
-			'zapp-proxy-server',
-		];
-
-		return includes( unsupportedPlugins, plugin.slug );
-	}
-
 	isWpcomInstallDisabled() {
-		const { isTransfering } = this.props;
+		const { isTransfering, plugin } = this.props;
 
-		return ! this.hasBusinessPlan() || this.isUnsupportedPluginForAT() || isTransfering;
+		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransfering;
 	}
 
 	isJetpackInstallDisabled() {
-		const { automatedTransferSite } = this.props;
+		const { automatedTransferSite, plugin } = this.props;
 
-		return automatedTransferSite && this.isUnsupportedPluginForAT();
+		return automatedTransferSite && ! isCompatiblePlugin( plugin.slug );
 	}
 
 	getInstallButton() {
@@ -393,9 +260,9 @@ export class PluginMeta extends Component {
 	}
 
 	maybeDisplayUnsupportedNotice() {
-		const { selectedSite } = this.props;
+		const { plugin, selectedSite } = this.props;
 
-		if ( selectedSite && this.isUnsupportedPluginForAT() ) {
+		if ( selectedSite && ! isCompatiblePlugin( plugin.slug ) ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -404,7 +271,7 @@ export class PluginMeta extends Component {
 					status="is-warning"
 					showDismiss={ false }
 				>
-					<NoticeAction href="https://support.wordpress.com/incompatible-plugins/">
+					<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
 						{ this.props.translate( 'More info' ) }
 					</NoticeAction>
 				</Notice>
@@ -520,7 +387,7 @@ export class PluginMeta extends Component {
 		}
 
 		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return some( this.props.plugin.compatibility, compatibleVersion => {
+		return some( this.props.plugin.compatibility, ( compatibleVersion ) => {
 			return compatibleVersion.indexOf( siteVersion ) === 0;
 		} );
 	}
@@ -537,7 +404,7 @@ export class PluginMeta extends Component {
 
 	getAvailableNewVersions() {
 		return this.props.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( ! site.canUpdateFiles ) {
 					return null;
 				}
@@ -550,29 +417,29 @@ export class PluginMeta extends Component {
 					}
 				}
 			} )
-			.filter( newVersions => newVersions );
+			.filter( ( newVersions ) => newVersions );
 	}
 
-	handlePluginUpdatesSingleSite = event => {
+	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Selected Site Plugin',
 			'Plugin Name',
 			this.props.pluginSlug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
 			plugin: this.props.sites[ 0 ].plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID,
 		} );
 	};
 
-	handlePluginUpdatesMultiSite = event => {
+	handlePluginUpdatesMultiSite = ( event ) => {
 		event.preventDefault();
-		this.props.sites.forEach( site => {
+		this.props.sites.forEach( ( site ) => {
 			const { plugin } = site;
 			if (
 				site.canUpdateFiles &&
@@ -583,14 +450,14 @@ export class PluginMeta extends Component {
 				PluginsActions.updatePlugin( site, plugin );
 				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
-				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
+				recordTracksEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
 					site: site,
 					plugin: plugin.slug,
 				} );
 			}
 		} );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update All Sites Plugin',
 			'Plugin Name',
@@ -613,11 +480,13 @@ export class PluginMeta extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugin-meta__upgrade_nudge">
-				<Banner
+				<UpsellNudge
 					event="calypso_plugin_detail_page_upgrade_nudge"
 					href={ bannerURL }
+					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ plan }
 					title={ title }
+					showIcon={ true }
 				/>
 			</div>
 		);
@@ -707,7 +576,7 @@ export class PluginMeta extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 

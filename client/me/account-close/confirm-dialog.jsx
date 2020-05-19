@@ -38,11 +38,11 @@ class AccountCloseConfirmDialog extends React.Component {
 		this.setState( { inputValue: '' } );
 	};
 
-	handleInputChange = event => {
+	handleInputChange = ( event ) => {
 		this.setState( { inputValue: event.target.value.toLowerCase() } );
 	};
 
-	handleDialogKeydown = event => {
+	handleDialogKeydown = ( event ) => {
 		if ( event.key === 'Escape' ) {
 			this.handleCancel();
 		}
@@ -109,7 +109,7 @@ AccountCloseConfirmDialog.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const user = getCurrentUser( state );
 
 		return {

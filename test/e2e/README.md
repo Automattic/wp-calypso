@@ -46,7 +46,7 @@ Or use [nvm](https://github.com/creationix/nvm) (Recommended)
 ### Install dependencies
 
 ```bash
-npm install
+yarn install
 ```
 
 ### Configuration

@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper } from 'lodash';
+import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,12 +57,14 @@ function renderValidationError( message ) {
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
-		ccTldDetails: PropTypes.object,
+		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		translate: PropTypes.func,
-		updateContactDetailsCache: PropTypes.func,
+		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -83,24 +85,39 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		//    fields so we can keep them together in one place
 		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				fr: { registrantType: defaultRegistrantType },
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+
+		// If the state is managed, only set the default registrant type if it's empty
+		if ( this.props.isManaged && ! this.props.ccTldDetails?.registrantType ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	}
 
 	updateContactDetails( field, value ) {
 		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( set( {}, field, sanitizedValue ) );
+		const payload = set( {}, field, sanitizedValue );
+		this.props.updateContactDetailsCache( payload );
+
+		if ( this.props.isManaged ) {
+			if ( field === 'extra.fr.registrantVatId' ) {
+				field = 'vatId';
+			}
+			this.props.onContactDetailsChange?.( set( {}, field, sanitizedValue ) );
+		}
 	}
 
-	handleChangeContactEvent = event => {
+	handleChangeContactEvent = ( event ) => {
 		this.updateContactDetails( event.target.id, event.target.value );
 	};
 
-	handleChangeContactExtraEvent = event => {
+	handleChangeContactExtraEvent = ( event ) => {
 		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
 	};
 
@@ -154,24 +171,86 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			emptyValues
 		);
 		const validationErrors = get( contactDetailsValidationErrors, 'extra.fr', {} );
-		const registrantVatIdValidationMessage =
-			validationErrors.registrantVatId &&
-			renderValidationError(
-				translate(
-					'The VAT Number field is a pattern ' +
-						'of letters and numbers that depends on the country, ' +
-						'but it always starts with a 2 letter country code'
-				)
-			);
 
-		const sirenSiretValidationMessage =
-			validationErrors.sirenSiret &&
-			renderValidationError(
-				translate(
-					'The SIREN/SIRET field must be either a ' +
-						'9 digit SIREN number, or a 14 digit SIRET number'
+		const registrantVatIdIsNotEmpty = Boolean(
+			ccTldDetails.registrantVatId && ccTldDetails.registrantVatId !== ''
+		);
+
+		const registrantVatIdValidationMessage = () => {
+			if ( this.props.isManaged ) {
+				if ( registrantVatIdIsNotEmpty ) {
+					return validationErrors.registrantVatId === []
+						? null
+						: map( uniq( validationErrors.registrantVatId ), renderValidationError );
+				}
+
+				return null;
+			}
+			return (
+				validationErrors.registrantVatId &&
+				renderValidationError(
+					translate(
+						'The VAT Number field is a pattern ' +
+							'of letters and numbers that depends on the country, ' +
+							'but it always starts with a 2 letter country code'
+					)
 				)
 			);
+		};
+
+		const registrantVatIdIsError = () => {
+			if ( this.props.isManaged ) {
+				if ( registrantVatIdIsNotEmpty ) {
+					return (
+						Array.isArray( validationErrors.registrantVatId ) &&
+						! isEmpty( validationErrors.registrantVatId )
+					);
+				}
+
+				// This field is optional.
+				return false;
+			}
+
+			return Boolean( registrantVatIdValidationMessage() );
+		};
+
+		const sirenSiretIsNotEmpty = Boolean(
+			ccTldDetails.sirenSiret && ccTldDetails.sirenSiret !== ''
+		);
+
+		const sirenSiretValidationMessage = () => {
+			if ( this.props.isManaged ) {
+				return map( uniq( validationErrors.sirenSiret ?? [] ), renderValidationError );
+			}
+
+			if ( validationErrors.sirenSiret ) {
+				if ( validationErrors.sirenSiret.indexOf( 'checksum' ) >= 0 ) {
+					return renderValidationError( translate( 'This is not a valid SIREN/SIRET number' ) );
+				}
+
+				return renderValidationError(
+					translate(
+						'The SIREN/SIRET field must be either a ' +
+							'9 digit SIREN number, or a 14 digit SIRET number'
+					)
+				);
+			}
+		};
+
+		const sirenSiretIsError = () => {
+			if ( this.props.isManaged ) {
+				if ( sirenSiretIsNotEmpty ) {
+					return (
+						Array.isArray( validationErrors.sirenSiret ) && ! isEmpty( validationErrors.sirenSiret )
+					);
+				}
+
+				// This field is optional.
+				return false;
+			}
+
+			return Boolean( sirenSiretValidationMessage() );
+		};
 
 		const trademarkNumberStrings = {
 			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
@@ -179,9 +258,37 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			pattern: this.props.translate( 'An EU Trademark number uses only digits.' ),
 		};
 
-		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, error =>
-			renderValidationError( trademarkNumberStrings[ error ] )
+		const trademarkNumberIsNotEmpty = Boolean(
+			ccTldDetails.trademarkNumber && ccTldDetails.trademarkNumber !== ''
 		);
+
+		const trademarkNumberValidationMessage = () => {
+			if ( this.props.isManaged ) {
+				return map( uniq( validationErrors.trademarkNumber ?? [] ), ( error ) =>
+					renderValidationError( error )
+				);
+			}
+
+			return map( validationErrors.trademarkNumber, ( error ) =>
+				renderValidationError( trademarkNumberStrings[ error ] )
+			);
+		};
+
+		const trademarkNumberIsError = () => {
+			if ( this.props.isManaged ) {
+				if ( trademarkNumberIsNotEmpty ) {
+					return (
+						Array.isArray( validationErrors.trademarkNumber ) &&
+						! isEmpty( validationErrors.trademarkNumber )
+					);
+				}
+
+				// This field is optional.
+				return false;
+			}
+
+			return ! isEmpty( trademarkNumberValidationMessage );
+		};
 
 		// Note organization is the level above the other extra fields
 		const organizationValidationStrings = {
@@ -192,9 +299,40 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			$ref: translate( 'Organization field is required' ),
 		};
 
-		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
-			renderValidationError( organizationValidationStrings[ error ] )
+		const organizationIsNotEmpty = Boolean(
+			contactDetails.organization && contactDetails.organization !== ''
 		);
+
+		const organizationValidationMessage = () => {
+			if ( this.props.isManaged ) {
+				if ( contactDetails.organization === '' ) {
+					return renderValidationError( 'This field is required.' );
+				}
+				return ! contactDetailsValidationErrors.organization
+					? null
+					: renderValidationError( contactDetailsValidationErrors.organization );
+			}
+
+			return map( contactDetailsValidationErrors.organization, ( error ) =>
+				renderValidationError( organizationValidationStrings[ error ] )
+			);
+		};
+
+		const organizationIsError = () => {
+			if ( this.props.isManaged ) {
+				if ( organizationIsNotEmpty ) {
+					return (
+						Array.isArray( contactDetailsValidationErrors.organization ) &&
+						! isEmpty( contactDetailsValidationErrors.organization )
+					);
+				}
+
+				// This field is not optional for registrant type 'organization'.
+				return ccTldDetails.registrantType === 'organization';
+			}
+
+			return Boolean( ! isEmpty( organizationValidationMessage ) );
+		};
 
 		return (
 			<div>
@@ -210,9 +348,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ '' }
 						onChange={ this.handleChangeContactEvent }
-						isError={ Boolean( ! isEmpty( organizationValidationMessage ) ) }
+						isError={ organizationIsError() }
 					/>
-					{ organizationValidationMessage }
+					{ organizationValidationMessage() }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -227,9 +365,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ translate( 'ex. FRXX123456789' ) }
 						onChange={ this.handleChangeContactExtraEvent }
-						isError={ Boolean( registrantVatIdValidationMessage ) }
+						isError={ registrantVatIdIsError() }
 					/>
-					{ registrantVatIdValidationMessage }
+					{ registrantVatIdValidationMessage() }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -248,10 +386,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						isError={ Boolean( sirenSiretValidationMessage ) }
+						isError={ sirenSiretIsError() }
 						onChange={ this.handleChangeContactExtraEvent }
 					/>
-					{ sirenSiretValidationMessage }
+					{ sirenSiretValidationMessage() }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -270,10 +408,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						placeholder={ translate( 'ex. 012345678', {
 							comment: 'ex is short for example. The number is the EU trademark number format.',
 						} ) }
-						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
+						isError={ trademarkNumberIsError() }
 						onChange={ this.handleChangeContactExtraEvent }
 					/>
-					{ trademarkNumberValidationMessage }
+					{ trademarkNumberValidationMessage() }
 				</FormFieldset>
 			</div>
 		);
@@ -285,9 +423,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
+			// Otherwise use data from redux
 			contactDetails,
 			ccTldDetails: get( contactDetails, 'extra.fr', {} ),
 			contactDetailsValidationErrors: validateContactDetails( contactDetails ),

@@ -29,5 +29,5 @@ export default [
 	{ name: 'statsVisits', subpath: 'stats/visits' },
 	{ name: 'tagsList', subpath: 'tags' },
 	{ name: 'usersList', subpath: 'users' },
-	{ name: 'wpcomPluginsList', subpath: 'wpcom-plugins' }
-]
+	{ name: 'wpcomPluginsList', subpath: 'wpcom-plugins' },
+];

@@ -1,5 +1,5 @@
 {
-	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"extends": [ "config:base", "default:pinDigestsDisabled", "default:preserveSemverRanges" ],
 	"packageRules": [
 		{
 			"paths": [ "packages/**" ],
@@ -48,8 +48,15 @@
 		{
 			"extends": "monorepo:storybook",
 			"prPriority": 1
+		},
+		{
+			"paths": [ "apps/full-site-editing/package.json" ],
+			"packageName": "newspack-blocks",
+			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
+			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
+	"postUpdateOptions": [ "yarnDedupeHighest" ],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],

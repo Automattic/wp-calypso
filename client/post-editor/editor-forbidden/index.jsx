@@ -53,7 +53,7 @@ EditorForbidden.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 	const typeObject = getPostType( state, siteId, type );

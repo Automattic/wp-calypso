@@ -47,7 +47,7 @@ class ThemesSiteSelectorModal extends React.Component {
 		selectedOption: null,
 	};
 
-	trackAndCallAction = siteId => {
+	trackAndCallAction = ( siteId ) => {
 		const action = this.state.selectedOption.action;
 		const themeId = this.state.selectedThemeId;
 		const { search } = this.props;
@@ -86,11 +86,11 @@ class ThemesSiteSelectorModal extends React.Component {
 	 * but only if it also has a header, because the latter indicates it really needs
 	 * a site to be selected and doesn't work otherwise.
 	 */
-	wrapOption = option => {
+	wrapOption = ( option ) => {
 		return Object.assign(
 			{},
 			option,
-			option.header ? { action: themeId => this.showSiteSelectorModal( option, themeId ) } : {},
+			option.header ? { action: ( themeId ) => this.showSiteSelectorModal( option, themeId ) } : {},
 			option.getUrl && option.header ? { getUrl: null } : {}
 		);
 	};
@@ -117,7 +117,7 @@ class ThemesSiteSelectorModal extends React.Component {
 					<SiteSelectorModal
 						className="themes__site-selector-modal"
 						isVisible={ true }
-						filter={ function( siteId ) {
+						filter={ function ( siteId ) {
 							return ! (
 								selectedOption.hideForTheme &&
 								selectedOption.hideForTheme( selectedThemeId, siteId )
@@ -128,7 +128,7 @@ class ThemesSiteSelectorModal extends React.Component {
 						mainActionLabel={ selectedOption.label }
 						getMainUrl={
 							selectedOption.getUrl
-								? function( siteId ) {
+								? function ( siteId ) {
 										return selectedOption.getUrl( selectedThemeId, siteId );
 								  }
 								: null
@@ -143,10 +143,10 @@ class ThemesSiteSelectorModal extends React.Component {
 	}
 }
 
-const bindGetSiteSlug = state => siteId => getSiteSlug( state, siteId );
-const bindGetWpcomTheme = state => themeId => getTheme( state, 'wpcom', themeId );
+const bindGetSiteSlug = ( state ) => ( siteId ) => getSiteSlug( state, siteId );
+const bindGetWpcomTheme = ( state ) => ( themeId ) => getTheme( state, 'wpcom', themeId );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	// We don't need a <QueryTheme /> component to fetch data for the theme since the
 	// ThemesSiteSelectorModal will always be called from a context where those data are available.
 	// FIXME: Since the siteId and themeId are part of the component's internal state, we can't use them

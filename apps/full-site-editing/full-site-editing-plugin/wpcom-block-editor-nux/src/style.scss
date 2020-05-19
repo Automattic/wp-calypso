@@ -1,0 +1,102 @@
+// @see client/landing/gutenboarding/mixins.scss
+@font-face {
+	font-display: swap;
+	font-family: 'Recoleta';
+	font-weight: 400;
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
+}
+@mixin onboarding-font-recoleta {
+	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+	font-weight: 400;
+	letter-spacing: 0.2px;
+}
+
+$wpcom-modal-breakpoint: 660px;
+
+$wpcom-modal-padding-v: 40px;
+$wpcom-modal-padding-h: 50px;
+
+// Core modal style overrides
+.wpcom-block-editor-nux {
+	.components-modal__header {
+		display: none;
+	}
+
+	.components-guide__container {
+		margin-top: 0;
+	}
+
+	.components-modal__content {
+		padding: $wpcom-modal-padding-v $wpcom-modal-padding-h;
+	}
+
+	//  .components-guide__footer {
+	//  	padding: 0 24px 24px;
+	//  }
+}
+
+.wpcom-block-editor-nux__page {
+	display: flex;
+}
+
+.wpcom-block-editor-nux__text,
+.wpcom-block-editor-nux__visual {
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		flex: 1 0 50%;
+		min-width: 290px;
+	}
+}
+
+.wpcom-block-editor-nux__text {
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		padding-right: $wpcom-modal-padding-h * 1.1;
+	}
+}
+.wpcom-block-editor-nux__visual {
+	display: none;
+
+	background: #1381d8;
+	// Fill to right, over container's padding
+	margin-right: -$wpcom-modal-padding-h;
+	margin-top: -$wpcom-modal-padding-v;
+	// padding: 0 $wpcom-modal-padding-h;
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		display: flex;
+	}
+}
+
+.wpcom-block-editor-nux__heading {
+	@include onboarding-font-recoleta;
+	/* Gray / Gray 90 */
+	color: #1d2327;
+
+	font-size: 36px;
+	line-height: 1.19;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		font-size: 42px;
+	}
+}
+
+.wpcom-block-editor-nux__description {
+	font-size: 18px;
+	line-height: 26px;
+
+	/* Gray / Gray 60 */
+	color: #50575e;
+}
+
+.wpcom-block-editor-nux__image {
+	max-width: 100%;
+	height: auto;
+	flex: 1;
+	align-self: center;
+
+	&.align-bottom {
+		align-self: flex-end;
+	}
+}

@@ -262,7 +262,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.components-button {
 		height: 33px; // match to Gutenberg toolbar styles
-		line-height: 32px; // match to Gutenberg toolbar styles
 	}
 }
 
@@ -359,10 +358,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.template-selector-item__label {
 		max-width: 300px;
 	}
-}
-
-.sidebar-modal-opener__button {
-	margin-top: 20px;
 }
 
 .sidebar-modal-opener__warning-modal {
@@ -478,5 +473,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// Tweak template title (post-title) component.
 	.block-iframe-preview__template-title {
 		padding-top: 20px;
+	}
+
+	// flex: column; on the parent and flex-basis: 0; on the child in Safari causes a lot of weird overlapping layout
+	// issues in the iframe preview: https://github.com/Automattic/wp-calypso/issues/39874
+	// Using flex-basis: auto; on the child allows the height to be calculated properly
+	.wp-block-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type='core/column'] .block-core-columns {
+		flex-basis: auto;
 	}
 }

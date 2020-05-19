@@ -52,14 +52,14 @@ export const MODAL_VIEW_STATS = {
  * @returns {Action}           Action object
  */
 export function startEditingPost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( editorReset( { isLoading: true } ) );
 		dispatch( { type: EDITOR_START, siteId, postId } );
 	};
 }
 
 export function startEditingNewPost( siteId, post ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const postAttributes = defaults( post, {
 			status: 'draft',
 			type: 'post',
@@ -83,7 +83,7 @@ export function startEditingNewPost( siteId, post ) {
  * @returns {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( editorReset() );
 		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
@@ -137,7 +137,7 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 			dispatch(
 				savePreference(
 					'editorConfirmationDisabledSites',
-					filter( disabledSites, _siteId => siteId !== _siteId )
+					filter( disabledSites, ( _siteId ) => siteId !== _siteId )
 				)
 			);
 		} else {
@@ -165,35 +165,32 @@ export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
 } );
 
-export const editorAutosaveSuccess = autosave => ( {
+export const editorAutosaveSuccess = ( autosave ) => ( {
 	type: EDITOR_AUTOSAVE_SUCCESS,
 	autosave,
 } );
 
-export const editorAutosaveFailure = error => ( {
+export const editorAutosaveFailure = ( error ) => ( {
 	type: EDITOR_AUTOSAVE_FAILURE,
 	error,
 } );
 
-export const editorAutosave = post => dispatch => {
+export const editorAutosave = ( post ) => ( dispatch ) => {
 	if ( ! post.ID ) {
 		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
 	}
 
 	dispatch( { type: EDITOR_AUTOSAVE } );
 
-	const autosaveResult = wpcom
-		.undocumented()
-		.site( post.site_ID )
-		.postAutosave( post.ID, {
-			content: post.content,
-			title: post.title,
-			excerpt: post.excerpt,
-		} );
+	const autosaveResult = wpcom.undocumented().site( post.site_ID ).postAutosave( post.ID, {
+		content: post.content,
+		title: post.title,
+		excerpt: post.excerpt,
+	} );
 
 	autosaveResult
-		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )
-		.catch( error => dispatch( editorAutosaveFailure( error ) ) );
+		.then( ( autosave ) => dispatch( editorAutosaveSuccess( autosave ) ) )
+		.catch( ( error ) => dispatch( editorAutosaveFailure( error ) ) );
 
 	return autosaveResult;
 };

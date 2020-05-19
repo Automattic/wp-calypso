@@ -12,7 +12,7 @@ import { setSection as setSectionMiddlewareFactory } from 'controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
-	return function( route, ...middlewares ) {
+	return function ( route, ...middlewares ) {
 		if ( middlewares.length === 0 && typeof route === 'function' && route.length === 3 ) {
 			// No route def -- the route arg is really an error-handling middleware
 			// `page( someMw )` would be a shorthand for `page( '*', someMw )`, even tho the same isn't true
@@ -52,7 +52,7 @@ function setRouteMiddleware( context, next ) {
 }
 
 function combineMiddlewares( ...middlewares ) {
-	return function( req, res, next ) {
+	return function ( req, res, next ) {
 		req.context = getEnhancedContext( req, res );
 		applyMiddlewares( req.context, next, ...middlewares, () => {
 			next();

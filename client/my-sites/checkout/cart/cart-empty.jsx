@@ -14,11 +14,14 @@ class CartEmpty extends React.Component {
 				<div className="cart-empty">
 					{ this.props.translate( 'There are no items in your cart.' ) }
 				</div>
-				<div className="cart-buttons">
-					<button className="cart-checkout-button button is-primary" onClick={ this.handleClick }>
+				<div className="cart-empty__buttons cart-buttons">
+					<button
+						className="cart-empty__checkout-button cart-checkout-button button is-primary"
+						onClick={ this.handleClick }
+					>
 						{ this.shouldShowPlanButton()
-							? this.props.translate( 'Add a Plan' )
-							: this.props.translate( 'Add a Domain' ) }
+							? this.props.translate( 'Add a plan' )
+							: this.props.translate( 'Add a domain' ) }
 					</button>
 				</div>
 			</div>
@@ -32,7 +35,7 @@ class CartEmpty extends React.Component {
 		return startsWith( this.props.path, '/domains' );
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		page(

@@ -11,7 +11,7 @@ import 'state/data-layer/wpcom/i18n/language-names';
  * @param {object} items - list of localized language names
  * @returns {object} action object
  */
-export const receiveLanguageNames = items => ( {
+export const receiveLanguageNames = ( items ) => ( {
 	type: I18N_LANGUAGE_NAMES_ADD,
 	items,
 } );

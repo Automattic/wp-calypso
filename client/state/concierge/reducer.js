@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import appointmentDetails from './appointment-details/reducer';
 import appointmentTimespan from './appointment-timespan/reducer';
 import availableTimes from './available-times/reducer';
@@ -10,7 +10,7 @@ import signupForm from './signup-form/reducer';
 import scheduleId from './schedule-id/reducer';
 import hasAvailableConciergeSessions from './has-available-concierge-sessions/reducer';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	appointmentDetails,
 	appointmentTimespan,
 	availableTimes,
@@ -19,3 +19,6 @@ export default combineReducers( {
 	scheduleId,
 	hasAvailableConciergeSessions,
 } );
+
+const conciergeReducer = withStorageKey( 'concierge', combinedReducer );
+export default conciergeReducer;

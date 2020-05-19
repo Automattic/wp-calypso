@@ -8,13 +8,13 @@ import i18n from 'i18n-calypso';
 const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
 export default {
-	generatePreviewUrlFromButtons: function( buttons, showMore ) {
+	generatePreviewUrlFromButtons: function ( buttons, showMore ) {
 		let numberOfCustomButtons = 0,
 			query = {};
 
 		// Build the query parameter array of services names to be rendered
 		// by the official sharing buttons preview widget
-		buttons.forEach( function( button ) {
+		buttons.forEach( function ( button ) {
 			let index;
 
 			if ( button.custom ) {

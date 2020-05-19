@@ -26,5 +26,5 @@ export default class Marketing {
 	 */
 	survey( id, siteId ) {
 		return new MarketingSurvey( id, siteId, this.wpcom );
-	};
+	}
 }

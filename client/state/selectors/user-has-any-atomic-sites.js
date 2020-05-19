@@ -17,6 +17,6 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  * @returns {boolean}
  */
 export default createSelector(
-	state => some( getSitesItems( state ), site => isAtomicSite( state, site.ID ) ),
-	state => [ getSitesItems( state ) ]
+	( state ) => some( getSitesItems( state ), ( site ) => isAtomicSite( state, site.ID ) ),
+	( state ) => [ getSitesItems( state ) ]
 );

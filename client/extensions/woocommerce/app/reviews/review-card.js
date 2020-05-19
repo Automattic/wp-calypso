@@ -181,7 +181,7 @@ class ReviewCard extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSiteWithFallback( state );
 	return {
 		site,

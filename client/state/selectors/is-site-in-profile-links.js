@@ -24,7 +24,7 @@ export default createSelector(
 			return null;
 		}
 
-		return some( profileLinks, profileLink => {
+		return some( profileLinks, ( profileLink ) => {
 			// the regex below is used to strip any leading scheme from the profileLink's URL
 			return siteDomain === profileLink.value.replace( /^.*:\/\//, '' );
 		} );

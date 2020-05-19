@@ -141,13 +141,13 @@ export const doInitialSetup = (
 
 	return request( siteId )
 		.post( 'settings/batch', { update } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( doInitialSetupSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, updateAction, err ) );
 			if ( failureAction ) {
 				dispatch( failureAction( err ) );
@@ -218,13 +218,13 @@ export const setAddress = (
 
 	return request( siteId )
 		.post( 'settings/batch', { update } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( setAddressSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, updateAction, err ) );
 			if ( failureAction ) {
 				dispatch( failureAction( err ) );

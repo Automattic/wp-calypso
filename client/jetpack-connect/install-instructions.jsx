@@ -114,7 +114,7 @@ class InstallInstructions extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const remoteSite = getConnectingSite( state );
 		const remoteSiteData = remoteSite.data || {};
 		let notJetpack = ! remoteSiteData.hasJetpack;

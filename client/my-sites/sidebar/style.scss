@@ -3,15 +3,8 @@
 	height: 24px;
 }
 
-.sidebar__menu li.stats.selected .sidebar__sparkline {
-	display: none;
-
-	@include breakpoint( '<660px' ) {
-		display: block;
-	}
-}
-
-/* Because the sparkline is an image, there's an exception here
+/* 
+ * Because the sparkline is an image, there's an exception here
  * where specific color schemes are targeted instead of using 
  * CSS variables. This ensures that the sparkline can still be 
  * seen (as white) on some of the darker color schemes.

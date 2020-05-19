@@ -26,7 +26,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 		transferRestrictionStatus: PropTypes.string,
 	};
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 		page( this.props.mapDomainUrl );
 	};

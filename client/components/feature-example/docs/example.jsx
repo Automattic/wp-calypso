@@ -40,7 +40,7 @@ export default class FeatureExampleExample extends React.Component {
 			name: 'Not a real site',
 		};
 
-		return plugins.map( plugin => {
+		return plugins.map( ( plugin ) => {
 			return (
 				<PluginItem
 					key={ `plugin-item-mock-${ plugin.slug }` }

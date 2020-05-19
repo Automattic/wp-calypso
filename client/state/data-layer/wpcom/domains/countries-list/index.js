@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{string} action The action to dispatch next
  * @returns {object} dispatched http action
  */
-export const fetchCountriesDomains = action =>
+export const fetchCountriesDomains = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

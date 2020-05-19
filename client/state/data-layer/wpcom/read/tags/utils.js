@@ -29,7 +29,7 @@ export function fromApi( apiResponse ) {
 		)
 	);
 
-	return map( tags, tag => ( {
+	return map( tags, ( tag ) => ( {
 		id: tag.ID,
 		displayName: decodeEntities( tag.display_name ),
 		url: `/tag/${ tag.slug }`,

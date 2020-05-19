@@ -55,7 +55,7 @@ export function updateSiteSettings( siteId, settings ) {
  * @returns {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_REQUEST,
 			siteId,
@@ -77,7 +77,7 @@ export function requestSiteSettings( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId,
@@ -88,7 +88,7 @@ export function requestSiteSettings( siteId ) {
 }
 
 export function saveSiteSettings( siteId, settings ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
@@ -97,7 +97,7 @@ export function saveSiteSettings( siteId, settings ) {
 		return wpcom
 			.undocumented()
 			.settings( siteId, 'post', settings )
-			.then( body => {
+			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
@@ -106,7 +106,7 @@ export function saveSiteSettings( siteId, settings ) {
 
 				return body;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId,

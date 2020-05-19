@@ -1,5 +1,12 @@
+/**
+ * External dependecies
+ */
+const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/no-extraneous-dependencies
+
+/**
+ * Internal dependencies
+ */
 const config = require( '../config' );
-const { getOptions } = require( 'loader-utils' );
 
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
@@ -11,7 +18,7 @@ const { getOptions } = require( 'loader-utils' );
  * functions to each section object.
  */
 function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) {
-	sections.forEach( section => {
+	sections.forEach( ( section ) => {
 		if ( onlyIsomorphic && ! section.isomorphic ) {
 			return;
 		}
@@ -48,11 +55,29 @@ function printSectionsAndPaths( sections ) {
 	}
 }
 
-const loader = function() {
+function filterSectionsInDevelopment( sections ) {
+	const bundleEnv = config( 'env' );
+	if ( 'development' !== bundleEnv ) {
+		return sections;
+	}
+
+	const activeSections = config( 'sections' );
+	const byDefaultEnableSection = config( 'enable_all_sections' );
+
+	return sections.filter( ( section ) => {
+		if ( activeSections && typeof activeSections[ section.name ] !== 'undefined' ) {
+			return activeSections[ section.name ];
+		}
+		return byDefaultEnableSection;
+	} );
+}
+
+const loader = function () {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
-	let sections = require( this.resourcePath );
+
+	let sections = filterSectionsInDevelopment( require( this.resourcePath ) );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {
@@ -60,7 +85,7 @@ const loader = function() {
 		}
 		console.log( `[sections-loader] Limiting build to ${ include.join( ', ' ) } sections` );
 		const allSections = sections;
-		sections = allSections.filter( section => include.includes( section.name ) );
+		sections = allSections.filter( ( section ) => include.includes( section.name ) );
 		if ( ! sections.length ) {
 			// nothing matched. warn.
 			console.warn( `[sections-loader] No sections matched ${ include.join( ',' ) }` );

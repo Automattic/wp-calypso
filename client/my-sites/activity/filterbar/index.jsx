@@ -7,6 +7,7 @@ import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
+
 /**
  * Internal dependencies
  */
@@ -90,7 +91,7 @@ export class Filterbar extends Component {
 		}
 	};
 
-	isEmptyFilter = filter => {
+	isEmptyFilter = ( filter ) => {
 		if ( ! filter ) {
 			return true;
 		}
@@ -150,12 +151,12 @@ export class Filterbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	previousRoute: getPreviousRoute( state ),
 } );
 
-const mapDispatchToProps = dispatch => ( {
-	resetFilters: siteId =>
+const mapDispatchToProps = ( dispatch ) => ( {
+	resetFilters: ( siteId ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),

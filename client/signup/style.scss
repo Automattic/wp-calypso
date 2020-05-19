@@ -1,6 +1,22 @@
+@import '../landing/gutenboarding/mixins';
+
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
+
+	&.is-white-signup {
+		background: var( --studio-white );
+
+		.layout:not( .dops ) .wpcom-site__logo {
+			fill: var( --color-neutral-10 );
+			opacity: 1;
+
+			path {
+				fill: var( --color-neutral-10 );
+				opacity: 1;
+			}
+		}
+	}
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -82,7 +98,7 @@ body.is-section-signup .layout.gravatar {
 		@include elevation ( 2dp );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		button {
 			font-size: 16px;
 			padding-top: 12px;
@@ -118,7 +134,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 
 	// On small screens remove the margin from the
 	// bottom of the cards.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.card {
 			margin-bottom: 0;
 		}
@@ -295,12 +311,12 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	}
 }
 
-// Background color override for new flow
-body.is-section-signup.is-frankenflow {
-	background: var( --color-surface-backdrop );
+// Background color and plans grid overrides for new flow
+body.is-section-signup.is-new-launch-flow {
+	background: var( --color-white );
 
-	.signup-header .wordpress-logo {
-		fill: var( --color-wordpress-com );
+	.signup-header {
+		display: none;
 	}
 
 	.signup-processing-screen__content {
@@ -319,25 +335,69 @@ body.is-section-signup.is-frankenflow {
 		}
 	}
 
-	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+	.flow-progress-indicator.flow-progress-indicator__new-launch {
 		color: var( --color-text );
+	}
+
+	.plan-features__header {
+		border-color: transparent;
+	}
+
+	tr:last-child .plan-features__table-item,
+	tr:first-child .plan-features__table-item {
+		border-radius: 0;
+	}
+
+	.plan-features__header,
+	.plan-features__table th,
+	.plan-features__table td {
+		background: rgba( 248, 248, 248, 0.7 );
+	}
+
+	.plans-wrapper,
+	.plan-features__content {
+		padding: 8px 0 0;
+	}
+
+	.plan-price__integer {
+		font-weight: 600;
+	}
+
+	.plan-price__integer {
+		font-weight: 600;
+	}
+
+	.plan-features__header-title {
+		font-weight: 600;
+	}
+
+	.formatted-header__title {
+		@include onboarding-heading-text-mobile;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 16px;
 	}
 }
 
 // Text and heading color override for new flow
-body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
 	&.gravatar .formatted-header, .formatted-header {
 		.formatted-header__title {
 			color: var( --color-text );
 		}
-	
+
 		.formatted-header__subtitle {
 			color: var( --color-text );
 		}
-	
+
 		a {
 			color: var( --color-link );
-	
+
 			&:hover {
 				color: var( --color-link-dark );
 			}

@@ -197,13 +197,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'checklist',
-		paths: [ '/checklist' ],
-		module: 'my-sites/checklist',
-		secondary: true,
-		group: 'checklist',
-	},
-	{
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
@@ -234,7 +227,7 @@ const sections = [
 	},
 	{
 		name: 'domains',
-		paths: [ '/domains' ],
+		paths: [ '/domains', '/me/domains' ],
 		module: 'my-sites/domains',
 		secondary: true,
 		group: 'sites',
@@ -418,7 +411,7 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-editor',
-		paths: [ '/block-editor' ],
+		paths: [ '/block-editor', '/site-editor' ],
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
@@ -471,6 +464,46 @@ const sections = [
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
+	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'backups',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-settings',
+		paths: [ '/settings' ],
+		module: 'landing/jetpack-cloud/sections/settings',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-auth',
+		paths: [ '/connect', '/connect/oauth/token' ],
+		module: 'landing/jetpack-cloud/sections/auth',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
 	},
 ];
 

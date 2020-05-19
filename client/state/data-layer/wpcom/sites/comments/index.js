@@ -36,7 +36,7 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const requestChangeCommentStatus = action => {
+const requestChangeCommentStatus = ( action ) => {
 	const { siteId, commentId, status } = action;
 
 	return http(
@@ -60,7 +60,7 @@ export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentLis
 	return actions;
 };
 
-const announceStatusChangeFailure = action => dispatch => {
+const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const { siteId, postId, commentId, status, refreshCommentListQuery } = action;
 	const previousStatus = get( action, 'meta.comment.previousStatus' );
 
@@ -92,7 +92,7 @@ const announceStatusChangeFailure = action => dispatch => {
 	);
 };
 
-export const requestComment = action => {
+export const requestComment = ( action ) => {
 	const { siteId, commentId, query } = action;
 	return http(
 		Object.assign(
@@ -126,7 +126,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
-export const fetchCommentsList = action => {
+export const fetchCommentsList = ( action ) => {
 	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
@@ -202,7 +202,7 @@ const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
-export const editComment = action => ( dispatch, getState ) => {
+export const editComment = ( action ) => ( dispatch, getState ) => {
 	const { siteId, commentId, comment } = action;
 	const originalComment = getSiteComment( getState(), siteId, commentId );
 
@@ -237,7 +237,7 @@ export const updateComment = ( action, data ) => [
 	bypassDataLayer( editCommentAction( action.siteId, action.postId, action.commentId, data ) ),
 ];
 
-export const announceEditFailure = action => [
+export const announceEditFailure = ( action ) => [
 	bypassDataLayer(
 		editCommentAction( action.siteId, action.postId, action.commentId, action.originalComment )
 	),

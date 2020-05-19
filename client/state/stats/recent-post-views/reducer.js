@@ -22,7 +22,7 @@ export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) 
 	switch ( action.type ) {
 		case STATS_RECENT_POST_VIEWS_RECEIVE: {
 			const viewsForState = {};
-			action.posts.forEach( post => {
+			action.posts.forEach( ( post ) => {
 				viewsForState[ post.ID ] = { views: post.views };
 			} );
 

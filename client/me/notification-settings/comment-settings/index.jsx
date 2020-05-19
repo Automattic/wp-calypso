@@ -79,7 +79,7 @@ class NotificationCommentsSettings extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		settings: getNotificationSettings( state, 'other' ),
 		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'other' ),
 	} ),

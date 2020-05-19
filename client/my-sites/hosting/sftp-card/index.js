@@ -127,7 +127,7 @@ export const SftpCard = ( {
 					busy={ isPasswordLoading }
 					className="sftp-card__password-reset-button"
 				>
-					{ translate( 'Reset Password' ) }
+					{ translate( 'Reset password' ) }
 				</Button>
 			</>
 		);
@@ -138,7 +138,7 @@ export const SftpCard = ( {
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
-			<CardHeading>{ translate( 'SFTP Credentials' ) }</CardHeading>
+			<CardHeading>{ translate( 'SFTP credentials' ) }</CardHeading>
 			<div className="sftp-card__body">
 				<p>
 					{ username
@@ -150,7 +150,7 @@ export const SftpCard = ( {
 											<ExternalLink
 												icon
 												target="_blank"
-												href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
 											/>
 										),
 									},
@@ -174,7 +174,7 @@ export const SftpCard = ( {
 										<ExternalLink
 											icon
 											target="_blank"
-											href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
 										/>
 									),
 								},
@@ -196,7 +196,7 @@ export const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
-						{ translate( 'Create SFTP Credentials' ) }
+						{ translate( 'Create SFTP credentials' ) }
 					</Button>
 				</>
 			) }

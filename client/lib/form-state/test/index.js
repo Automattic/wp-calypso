@@ -12,7 +12,7 @@ import formState from '../';
 function checkNthState( n, callback ) {
 	let count = 0;
 
-	return function( state ) {
+	return function ( state ) {
 		if ( count === n ) {
 			callback( state );
 		}
@@ -27,17 +27,17 @@ function testController( options ) {
 	fieldNames = options.fieldNames;
 
 	defaults = {
-		loadFunction: function( onComplete ) {
+		loadFunction: function ( onComplete ) {
 			const fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
 			onComplete( null, fieldValues );
 		},
 
-		validatorFunction: function( fieldValues, onComplete ) {
+		validatorFunction: function ( fieldValues, onComplete ) {
 			const fieldErrors = mapValues( fieldValues, constant( [] ) );
 			onComplete( null, fieldErrors );
 		},
 
-		onNewState: function() {},
+		onNewState: function () {},
 
 		debounceWait: 0,
 	};
@@ -56,10 +56,10 @@ describe( 'index', () => {
 			} );
 		} );
 
-		test( 'enables the fields on the first event', done => {
+		test( 'enables the fields on the first event', ( done ) => {
 			let onNewState;
 
-			onNewState = checkNthState( 0, function( state ) {
+			onNewState = checkNthState( 0, function ( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
 				done();
 			} );
@@ -71,10 +71,10 @@ describe( 'index', () => {
 		} );
 
 		describe( '#handleFieldChange', () => {
-			test( 'updates the field value', done => {
+			test( 'updates the field value', ( done ) => {
 				let onNewState, controller;
 
-				onNewState = checkNthState( 1, function( state ) {
+				onNewState = checkNthState( 1, function ( state ) {
 					assert.strictEqual( formState.getFieldValue( state, 'firstName' ), 'foo' );
 					done();
 				} );
@@ -90,14 +90,14 @@ describe( 'index', () => {
 				} );
 			} );
 
-			test( 'validates the new value', done => {
+			test( 'validates the new value', ( done ) => {
 				let validatorFunction, onNewState, controller;
 
-				validatorFunction = function( fieldValues, onComplete ) {
+				validatorFunction = function ( fieldValues, onComplete ) {
 					onComplete( null, { firstName: [ 'invalid' ] } );
 				};
 
-				onNewState = checkNthState( 3, function( state ) {
+				onNewState = checkNthState( 3, function ( state ) {
 					assert.deepEqual( formState.getErrorMessages( state ), [ 'invalid' ] );
 					done();
 				} );
@@ -115,16 +115,16 @@ describe( 'index', () => {
 			} );
 
 			describe( 'when there are multiple changes at once', () => {
-				test( 'only shows errors for the latest values', done => {
+				test( 'only shows errors for the latest values', ( done ) => {
 					let validatorFunction, onNewState, controller;
 
-					validatorFunction = function( fieldValues, onComplete ) {
+					validatorFunction = function ( fieldValues, onComplete ) {
 						onComplete( null, {
 							firstName: fieldValues.firstName.length > 0 ? [] : [ 'invalid' ],
 						} );
 					};
 
-					onNewState = checkNthState( 4, function( state ) {
+					onNewState = checkNthState( 4, function ( state ) {
 						assert.deepEqual( formState.getErrorMessages( state ), [ 'invalid' ] );
 						done();
 					} );

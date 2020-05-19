@@ -21,7 +21,7 @@ export default function isExternal( url: URLString ): boolean {
 		return true;
 	}
 
-	// The url passed in might be of form `en.support.wordpress.com`,
+	// The url passed in might be of form `wordpress.com/support`,
 	// so for this function we'll append double-slashes to fake it.
 	// If it is a relative URL the hostname will be the base hostname.
 	if (

@@ -39,7 +39,7 @@ __Advantages:__
 - Data logic (e.g. fetching) is not intertwined with the storage of the data
 - Adopting an accepted pattern grants us access to a community-driven ecosystem of reference implementations
 
-### Third Era: Redux Global State Tree (December 2015 - Present)
+### Third Era: Redux Global State Tree (December 2015 - February 2020)
 
 [Redux](http://redux.js.org/), described as a "predictable state container", is an evolution of the principles advocated in Flux. It is not a far departure from Flux, but is distinct in many ways:
 
@@ -59,6 +59,26 @@ __Advantages:__
 - Better suited for server-side rendering, as the singleton nature of Flux stores exposes the risk of leaking session data between requests
 - Encourages and often forces a developer toward writing functional, testable code
 - Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/reactjs/react-redux)
+
+### Fourth Era: Modularized Redux State Tree (February 2020 - Present)
+
+This era builds upon the previous, using the same selectors, reducers and action creators that were created before. However, instead of creating a single monolithic root reducer on boot, the goal is instead to have individual reducers register themselves when needed. This is done synchronously and automatically through dependency graph resolution.
+
+See [the Modularized State documentation](./modularized-state.md) for more details on how it works and how to implement it in new portions of state.
+
+__Identifying characteristics:__
+
+- Modularized reducers are not imported in the root reducer (`client/state/reducer`)
+- Modularized reducers use `withStorageKey` to store their state separately
+- Modularized portions of state include an `init` module that registers the reducer as a side effect
+- Action creators and selectors for a modularized portion of state import from the `init` module
+
+__Advantages:__
+
+- Preserves most of the advantages of Redux, with the tradeoff that action creators and selectors need to import the `init` file for the portions of state they touch
+- Significantly reduces the amount of code required to boot Calypso, improving loading performance
+- More scalable approach, as Redux state continues to grow
+
 
 ## Current Recommendations
 

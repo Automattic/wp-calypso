@@ -57,7 +57,7 @@ body {
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		cursor: pointer;
 	}
 }

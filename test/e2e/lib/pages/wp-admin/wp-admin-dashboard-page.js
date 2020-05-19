@@ -19,10 +19,7 @@ export default class WPAdminDashboardPage extends AsyncBaseContainer {
 		const accountBarSelector = By.css( '#wp-admin-bar-my-account' );
 		const logoutOptionSelector = By.css( '#wp-admin-bar-logout' );
 		const element = await this.driver.findElement( accountBarSelector );
-		await this.driver
-			.actions( { bridge: true } )
-			.move( { origin: element } )
-			.perform();
+		await this.driver.actions( { bridge: true } ).move( { origin: element } ).perform();
 		return await driverHelper.clickWhenClickable( this.driver, logoutOptionSelector );
 	}
 

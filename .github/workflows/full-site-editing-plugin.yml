@@ -4,7 +4,7 @@ on:
     paths:
     - 'apps/full-site-editing/full-site-editing-plugin/**'
 
-name: Build Full Site Editing plugin
+name: build-fse-plugin
 
 jobs:
   build:
@@ -17,9 +17,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@master
     - name: Install dependencies
-      run: npm ci
+      run: yarn install --frozen-lockfile
     - name: Build FSE
-      run: npx lerna run build --scope='@automattic/full-site-editing' --stream
+      run: cd apps/full-site-editing && yarn build
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
       with:

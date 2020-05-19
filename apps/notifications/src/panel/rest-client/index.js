@@ -55,7 +55,7 @@ function main() {
 			const sub_retry_ms = 120000;
 			debug( 'main: polling until next subscribe attempt', 'sub_retry_ms =', sub_retry_ms );
 			setTimeout(
-				function() {
+				function () {
 					this.subscribeTry = 0;
 				}.bind( this ),
 				sub_retry_ms
@@ -221,7 +221,7 @@ function getNotes() {
 		// Store id/hash pairs for now until properly reduxified
 		// this is used as a network optimization to quickly determine
 		// changes without downloading all the data
-		this.noteList = data.notes.map( note => pick( note, [ 'id', 'note_hash' ] ) );
+		this.noteList = data.notes.map( ( note ) => pick( note, [ 'id', 'note_hash' ] ) );
 
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 		if ( parameters.number === settings.max_limit ) {
@@ -315,9 +315,9 @@ function ready() {
 
 	const timestamps = notes
 		.map( property( 'timestamp' ) )
-		.map( timestamp => Date.parse( timestamp ) / 1000 );
+		.map( ( timestamp ) => Date.parse( timestamp ) / 1000 );
 
-	let newNoteCount = timestamps.filter( time => time > this.lastSeenTime ).length;
+	let newNoteCount = timestamps.filter( ( time ) => time > this.lastSeenTime ).length;
 
 	if ( ! this.firstRender && this.lastSeenTime === 0 ) {
 		newNoteCount = 0;
@@ -333,7 +333,7 @@ function ready() {
 /** @type {RegExp} matches keys which may no longer need to exist */
 const obsoleteKeyPattern = /^(note_read_status|reply)_(\d+)/;
 
-const safelyRemoveKey = key => {
+const safelyRemoveKey = ( key ) => {
 	try {
 		localStorage.removeItem( key );
 	} catch ( e ) {}
@@ -341,7 +341,7 @@ const safelyRemoveKey = key => {
 
 const getLocalKeys = () => {
 	try {
-		return range( localStorage.length ).map( index => localStorage.key( index ) );
+		return range( localStorage.length ).map( ( index ) => localStorage.key( index ) );
 	} catch ( e ) {
 		return [];
 	}
@@ -352,8 +352,8 @@ function cleanupLocalCache() {
 	const currentNoteIds = notes.map( property( 'id' ) );
 
 	getLocalKeys()
-		.map( key => obsoleteKeyPattern.exec( key ) )
-		.filter( match => match && ! currentNoteIds.includes( match[ 1 ] ) )
+		.map( ( key ) => obsoleteKeyPattern.exec( key ) )
+		.filter( ( match ) => match && ! currentNoteIds.includes( match[ 1 ] ) )
 		.forEach( safelyRemoveKey );
 }
 

@@ -59,7 +59,7 @@ class ScrollHelper {
 	}
 
 	storeRowItemHeights( fromDirection, index ) {
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			const itemBounds = this.boundsForRef( itemKey );
 			let height;
@@ -79,7 +79,7 @@ class ScrollHelper {
 	}
 
 	deleteRowItemHeights( index ) {
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			delete this.itemHeights[ itemKey ];
 		} );
@@ -88,7 +88,7 @@ class ScrollHelper {
 	getRowHeight( index ) {
 		let maxHeight = 0;
 
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			const height = this.storedItemHeight( itemKey );
 

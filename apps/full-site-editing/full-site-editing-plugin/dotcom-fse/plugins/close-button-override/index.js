@@ -19,7 +19,7 @@ import './style.scss';
 function BackButtonOverride( { defaultLabel, defaultUrl } ) {
 	const [ label, updateLabel ] = useState( defaultLabel );
 	const [ url, updateUrl ] = useState( defaultUrl );
-	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', data => {
+	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', ( data ) => {
 		updateLabel( data.label );
 		updateUrl( data.closeUrl );
 	} );

@@ -102,7 +102,7 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @returns {object} WPCOM_HTTP_REQUEST Action with `data = { API data }`
 	 */
-	get: path => _request( 'GET', path, siteId, null, action, namespace ),
+	get: ( path ) => _request( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a GET request to the API that will return with headers
@@ -110,7 +110,7 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json-/wc/v#/" prefix
 	 * @returns {object} WPCOM_HTTP_REQUEST Action with `data = { status: <code>, body: { API data }, headers: { API response headers } }`
 	 */
-	getWithHeaders: path => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
+	getWithHeaders: ( path ) => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API
@@ -140,5 +140,5 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	 * @param {string} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @returns {object} WPCOM_HTTP_REQUEST Action
 	 */
-	del: path => _request( 'DELETE', path, siteId, null, action, namespace ),
+	del: ( path ) => _request( 'DELETE', path, siteId, null, action, namespace ),
 } );

@@ -2,7 +2,7 @@ export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,
 		displayPrice: data.display_price,
-		purchases: data.purchases.map( purchase => {
+		purchases: data.purchases.map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: purchase.free_trial,
@@ -18,7 +18,7 @@ export function createReceiptObject( data ) {
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 			};
 		} ),
-		failedPurchases: ( data.failedPurchases || [] ).map( purchase => {
+		failedPurchases: ( data.failedPurchases || [] ).map( ( purchase ) => {
 			return {
 				meta: purchase.product_meta,
 				productId: purchase.product_id,

@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items } from '../reducer';
-import { STORED_CARDS_FROM_API } from './fixture';
+import { STORED_CARDS_FROM_API, SELECTED_STORED_CARDS } from './fixture';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -23,7 +23,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'items', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -75,13 +75,13 @@ describe( 'items', () => {
 	test( 'should add a stored card to the list if the stored card add request succeeded', () => {
 		const state = reducer(
 			deepFreeze( {
-				items: [ STORED_CARDS_FROM_API[ 0 ] ],
+				items: STORED_CARDS_FROM_API.slice( 0, 3 ),
 				isFetching: false,
 				hasLoadedFromServer: true,
 			} ),
 			{
 				type: STORED_CARDS_ADD_COMPLETED,
-				item: STORED_CARDS_FROM_API[ 1 ],
+				item: STORED_CARDS_FROM_API[ 3 ],
 			}
 		);
 
@@ -125,12 +125,12 @@ describe( 'items', () => {
 			} ),
 			{
 				type: STORED_CARDS_DELETE_COMPLETED,
-				card: STORED_CARDS_FROM_API[ 0 ],
+				card: SELECTED_STORED_CARDS[ 0 ],
 			}
 		);
 
 		expect( state ).to.be.eql( {
-			items: [ STORED_CARDS_FROM_API[ 1 ] ],
+			items: STORED_CARDS_FROM_API.slice( 1, 4 ),
 			isFetching: false,
 			isDeleting: {},
 			hasLoadedFromServer: true,

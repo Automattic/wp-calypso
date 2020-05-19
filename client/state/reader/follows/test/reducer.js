@@ -262,7 +262,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+			[ 'instantly', 'daily', 'weekly' ].forEach( ( frequency ) => {
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
 				expect( state ).toEqual( {
 					'example.com': {
@@ -280,7 +280,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not update when passed identical updated post email subscription info', () => {
-			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+			[ 'instantly', 'daily', 'weekly' ].forEach( ( frequency ) => {
 				const original = deepFreeze( {
 					'example.com': {
 						...exampleFollow,
@@ -309,7 +309,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+			[ 'instantly', 'daily', 'weekly' ].forEach( ( frequency ) => {
 				const state = items( original, updateNewPostEmailSubscription( 456, frequency ) );
 				expect( state ).toBe( original );
 			} );

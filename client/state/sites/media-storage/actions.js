@@ -33,7 +33,7 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
  * @returns {Function}        Action thunk
  */
 export function requestMediaStorage( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_MEDIA_STORAGE_REQUEST,
 			siteId,
@@ -42,14 +42,14 @@ export function requestMediaStorage( siteId ) {
 			.undocumented()
 			.site( siteId )
 			.mediaStorage()
-			.then( mediaStorage => {
+			.then( ( mediaStorage ) => {
 				dispatch( receiveMediaStorage( mediaStorage, siteId ) );
 				dispatch( {
 					type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 					siteId,

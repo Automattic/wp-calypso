@@ -30,7 +30,6 @@ import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
-import PlanPill from 'components/plans/plan-pill';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -112,7 +111,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( suggestion );
 	};
 
-	isUnavailableDomain = domain => {
+	isUnavailableDomain = ( domain ) => {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
@@ -168,8 +167,22 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			shouldHideFreeDomainExplainer,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+		} = this.props;
+		const shouldShowFullDomainPrice = isDomainOnly || shouldHideFreeDomainExplainer;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			shouldShowFullDomainPrice
+		);
 	}
 
 	renderDomain() {
@@ -196,9 +209,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.showTestCopy && ! this.props.isFeatured,
-			'domain-registration-suggestion__title-domain-design-updates':
-				this.props.showDesignUpdate && ! this.props.isFeatured,
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -210,7 +221,6 @@ class DomainRegistrationSuggestion extends React.Component {
 						className="domain-registration-suggestion__hsts-tooltip"
 						iconSize={ infoPopoverSize }
 						position={ 'right' }
-						{ ...( this.props.showDesignUpdate ? { icon: 'help-outline' } : {} ) }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
@@ -226,7 +236,7 @@ class DomainRegistrationSuggestion extends React.Component {
 											href={ HTTPS_SSL }
 											target="_blank"
 											rel="noopener noreferrer"
-											onClick={ event => {
+											onClick={ ( event ) => {
 												event.stopPropagation();
 											} }
 										/>
@@ -273,7 +283,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.showTestCopy ) {
+			if ( this.props.isEligibleVariantForDomainTest ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -282,23 +292,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				return (
 					<div className="domain-registration-suggestion__progress-bar">
 						<Badge type={ badgeClassName }>{ title }</Badge>
-					</div>
-				);
-			}
-
-			if ( this.props.showDesignUpdate ) {
-				const pillClassNames = classNames(
-					'domain-registration-suggestion__progress-bar',
-					'domain-registration-suggestion__progress-bar-design-update-test',
-					{
-						'pill-success': isRecommended,
-						'pill-primary': isBestAlternative,
-					}
-				);
-
-				return (
-					<div className={ pillClassNames }>
-						<PlanPill>{ title }</PlanPill>
 					</div>
 				);
 			}
@@ -366,8 +359,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				showTestCopy={ this.props.showTestCopy }
-				showDesignUpdate={ this.props.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
 			>

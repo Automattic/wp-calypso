@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
+import ActivityCard from '../../components/activity-card';
 
 /**
  * Style dependencies
@@ -15,49 +15,39 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class BackupDelta extends Component {
-	render() {
-		const { backupAttempts, deltas } = this.props;
-		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
-		const meta = mainBackup && mainBackup.activityDescription[ 2 ].children[ 0 ];
+	renderRealtime() {
+		const { realtimeBackups, translate, isToday } = this.props;
 
-		const media = deltas.mediaCreated.map( item => (
-			<div key={ item.activityId }>
-				<img alt="" src={ item.activityMedia.thumbnail_url } />
-				<div>{ item.activityMedia.name }</div>
-			</div>
+		const cards = realtimeBackups.map( ( activity ) => (
+			<ActivityCard activity={ activity } key={ activity.activityId } />
 		) );
 
-		const posts = deltas.posts.map( item => {
-			if ( 'post__published' === item.activityName ) {
-				return (
-					<div key={ item.activityId }>
-						<Gridicon icon="pencil" />
-						{ item.activityDescription[ 0 ].children[ 0 ] }
-					</div>
-				);
-			}
-			if ( 'post__trashed' === item.activityName ) {
-				return (
-					<div key={ item.activityId }>
-						<Gridicon icon="cross" />
-						{ item.activityDescription[ 0 ].children[ 0 ].text }
-					</div>
-				);
-			}
-		} );
-
 		return (
-			<div>
-				<div>Backup details</div>
-				<div>Media</div>
-				<div>{ deltas.mediaCreated && media }</div>
-				<div>Posts</div>
-				<div>{ deltas.posts && posts }</div>
-				<div>{ meta }</div>
-				<Button className="backup-delta__view-all-button">View all backup details</Button>
+			<div className="backup-delta__realtime">
+				<div className="backup-delta__realtime-header">
+					{ isToday
+						? translate( 'More backups from today' )
+						: translate( 'More backups from this day' ) }
+				</div>
+				<div className="backup-delta__realtime-description">
+					{ translate(
+						'Your site is backed up in real time (as you make changes) as well as in one daily backup.'
+					) }
+				</div>
+				{ cards.length ? (
+					cards
+				) : (
+					<div className="backup-delta__realtime-emptyday">
+						{ translate( 'There were no changes on this day. Your daily backup is above.' ) }
+					</div>
+				) }
 			</div>
 		);
 	}
+
+	render() {
+		return <div className="backup-delta">{ this.renderRealtime() }</div>;
+	}
 }
 
-export default BackupDelta;
+export default localize( BackupDelta );

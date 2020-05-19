@@ -38,8 +38,8 @@ export const receivePlugins = ( siteId, plugins ) => ( {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests plugins for a given site
  */
-export const requestPlugins = siteId => {
-	return dispatch => {
+export const requestPlugins = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_REQUEST_PLUGINS,
 			siteId,
@@ -57,7 +57,7 @@ export const requestPlugins = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
 					siteId,
@@ -76,7 +76,7 @@ export const requestPlugins = siteId => {
  * @returns {Function} Action thunk that toggles the plugin on a given site
  */
 export const togglePlugin = ( siteId, plugin, activationStatus ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN, siteId, plugin } );
 		dispatch( removeNotice( 'wpsc-toggle-plugin' ) );
 
@@ -97,7 +97,7 @@ export const togglePlugin = ( siteId, plugin, activationStatus ) => {
 				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS, siteId, plugin } );
 				dispatch( successNotice( notice, { id: 'wpsc-toggle-plugin' } ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, siteId, plugin, error } );
 				dispatch(
 					errorNotice(

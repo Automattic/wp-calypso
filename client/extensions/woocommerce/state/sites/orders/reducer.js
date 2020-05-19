@@ -148,7 +148,7 @@ export function items( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const idList = action.orders.map( order => order.id );
+			const idList = action.orders.map( ( order ) => order.id );
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: idList } );
 		default:

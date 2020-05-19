@@ -9,8 +9,8 @@ import { flattenDeep, pickBy, uniq } from 'lodash';
  * @param {Array} products Array of product objects.
  * @returns {Array} Array of the product slugs.
  */
-export const extractProductSlugs = products =>
-	uniq( flattenDeep( products.map( product => Object.values( product.options ) ) ) );
+export const extractProductSlugs = ( products ) =>
+	uniq( flattenDeep( products.map( ( product ) => Object.values( product.options ) ) ) );
 
 /**
  * Filter products to the ones that are within specified slugs.

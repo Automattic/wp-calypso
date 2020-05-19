@@ -18,7 +18,7 @@ import {
  * @returns {Function} Action thunk
  */
 export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: KEYRING_CONNECTIONS_REQUEST,
 		} );
@@ -35,7 +35,7 @@ export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
 					type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
 					error,
@@ -66,12 +66,12 @@ export function deleteKeyringConnection( connection ) {
  * @returns {Function}                  Action thunk
  */
 export function deleteStoredKeyringConnection( connection ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.deletekeyringConnection( connection.ID )
 			.then( () => dispatch( deleteKeyringConnection( connection ) ) )
-			.catch( error => {
+			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.

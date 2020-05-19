@@ -14,6 +14,6 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {string} previous query value
  */
-export const getPreviousQuery = state => get( state, 'ui.route.query.previous', '' );
+export const getPreviousQuery = ( state ) => get( state, 'ui.route.query.previous', '' );
 
 export default getPreviousQuery;

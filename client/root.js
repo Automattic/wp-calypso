@@ -12,7 +12,7 @@ import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-use
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
-export default function() {
+export default function () {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	if ( isLoggedOut ) {
@@ -35,11 +35,17 @@ function setupLoggedOut() {
 		page( '/', () => {
 			page.redirect( '/devdocs/start' );
 		} );
+	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		page( '/', () => {
+			if ( config.isEnabled( 'oauth' ) ) {
+				page.redirect( '/connect' );
+			}
+		} );
 	}
 }
 
 function setupLoggedIn() {
-	page( '/', context => {
+	page( '/', ( context ) => {
 		const state = context.store.getState();
 		const primarySiteId = getPrimarySiteId( state );
 		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );

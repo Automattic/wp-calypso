@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 import ReaderSidebarTeamsListItem from './list-item';
 
 const renderItems = ( teams, path ) =>
-	map( teams, team => (
+	map( teams, ( team ) => (
 		<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
 	) );
 

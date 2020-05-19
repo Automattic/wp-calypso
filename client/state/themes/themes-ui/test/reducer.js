@@ -7,12 +7,8 @@ import reducer, {
 	themesShowcaseOpen,
 	themesBookmark,
 } from '../reducer';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-	THEMES_SHOWCASE_OPEN,
-	THEMES_BOOKMARK_SET,
-} from 'state/action-types';
+import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/themes/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

@@ -15,7 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
 function waitForState( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 

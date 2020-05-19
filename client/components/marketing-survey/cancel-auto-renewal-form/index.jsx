@@ -100,7 +100,7 @@ class CancelAutoRenewalForm extends Component {
 		this.props.onClose();
 	};
 
-	onRadioChange = event => {
+	onRadioChange = ( event ) => {
 		this.setState( {
 			response: event.currentTarget.value,
 		} );
@@ -147,7 +147,7 @@ class CancelAutoRenewalForm extends Component {
 							}
 						) }
 					</p>
-					{ this.radioButtons.map( radioButton =>
+					{ this.radioButtons.map( ( radioButton ) =>
 						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
 					) }
 				</FormFieldset>

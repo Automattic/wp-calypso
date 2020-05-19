@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_ACTIVATE_SUCCESS } from 'state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { requestSitePosts } from 'state/posts/actions';
 import { getActiveTheme, getLastThemeQuery, prependThemeFilterKeys } from 'state/themes/selectors';

@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
@@ -28,7 +28,7 @@ class UpgradeBanner extends Component {
 		return (
 			<div className="activity-log-banner__upgrade">
 				{ isJetpack ? (
-					<Banner
+					<UpsellNudge
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
@@ -39,13 +39,15 @@ class UpgradeBanner extends Component {
 								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
 						) }
+						showIcon={ true }
 						list={ [
 							translate( 'Access full activity for the past 30 days' ),
 							translate( 'Filter events by type and date range' ),
 						] }
 					/>
 				) : (
-					<Banner
+					<UpsellNudge
+						forceDisplay={ true }
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
@@ -56,6 +58,7 @@ class UpgradeBanner extends Component {
 								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
 						) }
+						showIcon={ true }
 						list={ [
 							translate( 'Access full activity for the past 30 days' ),
 							translate( 'Filter events by type and date range' ),

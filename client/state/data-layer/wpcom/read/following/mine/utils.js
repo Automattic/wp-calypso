@@ -8,13 +8,13 @@ import { isArray, isUndefined, map, omitBy } from 'lodash';
  */
 import { toValidId } from 'reader/id-helpers';
 
-export const isValidApiResponse = apiResponse => {
+export const isValidApiResponse = ( apiResponse ) => {
 	const hasSubscriptions =
 		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
 	return hasSubscriptions;
 };
 
-export const subscriptionFromApi = subscription =>
+export const subscriptionFromApi = ( subscription ) =>
 	subscription &&
 	omitBy(
 		{
@@ -30,7 +30,7 @@ export const subscriptionFromApi = subscription =>
 		isUndefined
 	);
 
-export const subscriptionsFromApi = apiResponse => {
+export const subscriptionsFromApi = ( apiResponse ) => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		return [];
 	}

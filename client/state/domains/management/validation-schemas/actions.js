@@ -19,7 +19,7 @@ import 'state/data-layer/wpcom/domains/validation-schemas/index.js';
  * @param  {object} schemas object of { tld: schemaObject } pairs
  * @returns {object} action
  */
-export const addValidationSchemas = schemas => ( {
+export const addValidationSchemas = ( schemas ) => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 	schemas,
 } );
@@ -30,7 +30,7 @@ export const addValidationSchemas = schemas => ( {
  * @param  {string|Array<string>} tlds List of tlds that we're requesting schemas for
  * @returns {object} action
  */
-export const requestValidationSchemas = tlds => ( {
+export const requestValidationSchemas = ( tlds ) => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
 	tlds: castArray( tlds ),
 } );

@@ -56,7 +56,7 @@ describe( 'actions', () => {
 				],
 			};
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )

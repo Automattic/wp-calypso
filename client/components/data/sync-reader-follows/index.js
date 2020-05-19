@@ -32,7 +32,7 @@ class SyncReaderFollows extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		shouldSync: shouldSyncReaderFollows( state ),
 	} ),
 	{ requestFollows }

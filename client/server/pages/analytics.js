@@ -12,7 +12,7 @@ import analytics from '../lib/analytics';
 // Compute the number of milliseconds between each call to recordTiming
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
-const logAnalyticsThrottled = throttle( function( sectionName, duration, target ) {
+const logAnalyticsThrottled = throttle( function ( sectionName, duration, target ) {
 	analytics.statsd.recordTiming( sectionName, 'response-time', duration );
 	if ( target ) {
 		analytics.statsd.recordCounting( sectionName, `target.${ target }` );
@@ -27,7 +27,7 @@ const logAnalyticsThrottled = throttle( function( sectionName, duration, target 
 export function logSectionResponse( req, res, next ) {
 	const startRenderTime = new Date();
 
-	res.on( 'finish', function() {
+	res.on( 'finish', function () {
 		const context = req.context || {};
 		if ( context.sectionName ) {
 			const duration = new Date() - startRenderTime;

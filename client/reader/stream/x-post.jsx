@@ -36,7 +36,7 @@ class CrossPost extends PureComponent {
 		feed: PropTypes.object,
 	};
 
-	handleTitleClick = event => {
+	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
@@ -45,11 +45,11 @@ class CrossPost extends PureComponent {
 		this.props.handleClick( this.props.xMetadata );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
@@ -79,11 +79,11 @@ class CrossPost extends PureComponent {
 		}
 	};
 
-	getSiteNameFromURL = siteURL => {
+	getSiteNameFromURL = ( siteURL ) => {
 		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
-	getDescription = authorFirstName => {
+	getDescription = ( authorFirstName ) => {
 		let label;
 		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
 		const isCrossComment = !! this.props.xMetadata.commentURL;
@@ -133,7 +133,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, xPostUrl => {
+			forEach( postKey.xPostUrls, ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),

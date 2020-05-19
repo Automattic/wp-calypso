@@ -63,7 +63,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -107,7 +107,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 					{ translate( 'Select the listing you would like to connect to:' ) }
 				</CompactCard>
 
-				{ locations.map( location => (
+				{ locations.map( ( location ) => (
 					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
 						<GoogleMyBusinessSelectLocationButton
 							location={ location }
@@ -144,7 +144,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locations = getGoogleMyBusinessLocations( state, siteId );
 

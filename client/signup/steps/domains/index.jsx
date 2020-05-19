@@ -23,7 +23,6 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -31,7 +30,6 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -123,19 +121,19 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
-		this.showDesignUpdate = false;
+
+		const isEligibleFlowForDomainTest = includes(
+			[ 'onboarding', 'onboarding-plan-first' ],
+			props.flowName
+		);
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
 			false !== this.props.shouldShowDomainTestCopy &&
-			! props.isPlanStepFulfilled &&
+			isEligibleFlowForDomainTest &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
-			if ( 'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' ) ) {
-				this.showDesignUpdate = true;
-			} else {
-				this.showTestCopy = true;
-			}
+			this.showTestCopy = true;
 		}
 	}
 
@@ -159,7 +157,7 @@ class DomainsStep extends React.Component {
 	}
 
 	isEligibleVariantForDomainTest() {
-		return this.showTestCopy || this.showDesignUpdate;
+		return this.showTestCopy;
 	}
 
 	getMapDomainUrl = () => {
@@ -179,7 +177,7 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	handleAddDomain = suggestion => {
+	handleAddDomain = ( suggestion ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -209,7 +207,7 @@ class DomainsStep extends React.Component {
 		return { themeSlug, themeSlugWithRepo, themeItem: theme };
 	};
 
-	getThemeSlugWithRepo = themeSlug => {
+	getThemeSlugWithRepo = ( themeSlug ) => {
 		if ( ! themeSlug ) {
 			return undefined;
 		}
@@ -237,7 +235,16 @@ class DomainsStep extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
 
-		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		const stepData = {
+			stepName: this.props.stepName,
+			suggestion: undefined,
+		};
+
+		this.props.saveSignupStep( stepData );
+
+		defer( () => {
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		} );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
@@ -248,33 +255,6 @@ class DomainsStep extends React.Component {
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
-
-		if ( shouldHideFreePlan ) {
-			let domainItem, isPurchasingItem, siteUrl;
-
-			this.props.submitSignupStep(
-				{
-					stepName: this.props.stepName,
-					domainItem,
-					googleAppsCartItem,
-					isPurchasingItem,
-					siteUrl,
-					stepSectionName: this.props.stepSectionName,
-					...this.getThemeArgs(),
-				},
-				{
-					domainItem,
-					...( this.props.isSiteless && { siteId: null } ),
-					...( this.props.isSiteless && { siteSlug: 'no-site' } ),
-					...shouldHideFreePlanItem,
-					...useThemeHeadstartItem,
-				}
-			);
-
-			this.props.goToNextStep();
-
-			return;
-		}
 
 		const suggestion = this.props.step.suggestion;
 
@@ -479,6 +459,8 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
+		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -500,8 +482,6 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				showTestCopy={ this.showTestCopy }
-				showDesignUpdate={ this.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
@@ -512,6 +492,7 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
 			/>
 		);
 	};
@@ -538,7 +519,7 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	onTransferSave = state => {
+	onTransferSave = ( state ) => {
 		this.handleSave( 'transferForm', state );
 	};
 
@@ -749,10 +730,6 @@ export default connect(
 
 		return {
 			designType: getDesignType( state ),
-			// no user = DOMAINS_WITH_PLANS_ONLY
-			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-				: true,
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
@@ -760,7 +737,6 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		};
 	},

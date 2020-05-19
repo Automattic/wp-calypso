@@ -62,6 +62,7 @@ describe( 'CheckoutProvider', () => {
 				showInfoMessage={ noop }
 				showSuccessMessage={ noop }
 				paymentMethods={ [ mockMethod ] }
+				paymentProcessors={ {} }
 			>
 				<CustomForm />
 			</CheckoutProvider>
@@ -155,7 +156,7 @@ function MockPaymentForm( { summary } ) {
 			},
 		},
 	} );
-	const cardholderName = useSelect( select => select( 'mock' ).getCardholderName() );
+	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
 	const { changeCardholderName } = useDispatch( 'mock' );
 	return (
 		<div data-testid="mock-payment-form">

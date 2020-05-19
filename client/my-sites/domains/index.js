@@ -15,7 +15,7 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
 function getCommonHandlers( {
@@ -35,7 +35,7 @@ function getCommonHandlers( {
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a
@@ -69,6 +69,14 @@ export default function() {
 		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementChangeSiteAddress,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementSecurity( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementSecurity,
 		makeLayout,
 		clientRender
 	);
@@ -163,12 +171,14 @@ export default function() {
 
 	if ( config.isEnabled( 'manage/all-domains' ) ) {
 		page(
-			paths.domainManagementRoot(),
+			paths.domainManagementUserRoot(),
 			...getCommonHandlers( { noSitePath: false } ),
 			domainManagementController.domainManagementListAllSites,
 			makeLayout,
 			clientRender
 		);
+
+		page.redirect( paths.domainManagementRoot(), paths.domainManagementUserRoot() );
 	} else {
 		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
 	}

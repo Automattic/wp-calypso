@@ -10,7 +10,7 @@ import reducer, { siteItems, urlItems } from '../reducer';
 import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'state/action-types';
 
 jest.mock( 'state/embeds/utils', () => ( {
-	normalizeEmbeds: embeds => embeds,
+	normalizeEmbeds: ( embeds ) => embeds,
 } ) );
 
 describe( 'reducer', () => {

@@ -49,7 +49,7 @@ const SERVICE_HOSTNAME_PATTERNS = {
  * @param  {number} value Original value
  * @returns {number}       Updated value
  */
-const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
+const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
 
 /**
  * Changes the sizing parameters on a URL. Works for WordPress.com, Photon, and
@@ -82,9 +82,9 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 		return imageUrl;
 	}
 
-	SIZE_PARAMS.forEach( param => resultUrl.searchParams.delete( param ) );
+	SIZE_PARAMS.forEach( ( param ) => resultUrl.searchParams.delete( param ) );
 
-	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( key =>
+	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( ( key ) =>
 		resultUrl.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
 	);
 
@@ -105,10 +105,7 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	// Map sizing parameters, multiplying their values by the scale factor
 	const mapped = mapValues( resize, ( value, key ) => {
 		if ( 'resize' === key || 'fit' === key ) {
-			return value
-				.split( ',' )
-				.map( scaleByFactor )
-				.join( ',' );
+			return value.split( ',' ).map( scaleByFactor ).join( ',' );
 		} else if ( SIZE_PARAMS.includes( key ) ) {
 			return scaleByFactor( value );
 		}

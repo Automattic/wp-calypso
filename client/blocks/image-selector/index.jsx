@@ -14,7 +14,6 @@ import { noop } from 'lodash';
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
@@ -59,7 +58,7 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( imageId => MediaStore.get( siteId, imageId ) );
+			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
 			MediaActions.setLibrarySelectedItems( siteId, images );
 		}
 
@@ -74,24 +73,24 @@ export class ImageSelector extends Component {
 		} );
 	};
 
-	setImage = value => {
+	setImage = ( value ) => {
 		if ( value ) {
 			this.props.onImageSelected( value );
 		}
 		this.hideMediaModal();
 	};
 
-	removeImage = image => {
+	removeImage = ( image ) => {
 		this.props.onRemoveImage( image );
 	};
 
-	addImage = image => {
+	addImage = ( image ) => {
 		this.props.onAddImage( image );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = images => {
+	onImageChange = ( images ) => {
 		this.props.onImageChange( images );
 	};
 
@@ -104,17 +103,15 @@ export class ImageSelector extends Component {
 		const { isSelecting } = this.state;
 
 		return (
-			<MediaLibrarySelectedData siteId={ siteId }>
-				<MediaModal
-					visible={ selecting || isSelecting }
-					onClose={ this.setImage }
-					siteId={ siteId }
-					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
-					enabledFilters={ [ 'images' ] }
-					galleryViewEnabled={ false }
-					{ ...( ! multiple && { single: true } ) }
-				/>
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ selecting || isSelecting }
+				onClose={ this.setImage }
+				siteId={ siteId }
+				labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
+				enabledFilters={ [ 'images' ] }
+				galleryViewEnabled={ false }
+				{ ...( ! multiple && { single: true } ) }
+			/>
 		);
 	}
 

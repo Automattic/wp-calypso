@@ -143,7 +143,7 @@ class StatsPostDetail extends Component {
 						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
 						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
+						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
 						illustration="/calypso/images/stats/illustration-stats.svg"
 						illustrationWidth={ 150 }
@@ -158,7 +158,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="years"
-							title={ translate( 'Months and Years' ) }
+							title={ translate( 'Months and years' ) }
 							total={ translate( 'Total' ) }
 							siteId={ siteId }
 							postId={ postId }
@@ -166,7 +166,7 @@ class StatsPostDetail extends Component {
 
 						<PostMonths
 							dataKey="averages"
-							title={ translate( 'Average per Day' ) }
+							title={ translate( 'Average per day' ) }
 							total={ translate( 'Overall' ) }
 							siteId={ siteId }
 							postId={ postId }

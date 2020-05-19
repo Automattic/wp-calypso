@@ -40,7 +40,7 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
-	onUrlChange = args => {
+	onUrlChange = ( args ) => {
 		this.setState( { error: null } );
 		this.props.onUrlChange( args );
 	};
@@ -60,7 +60,7 @@ class StepSourceSelect extends Component {
 		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
-				.then( result => {
+				.then( ( result ) => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
 
 					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
@@ -75,7 +75,7 @@ class StepSourceSelect extends Component {
 						case 'wordpress':
 							if ( result.site_meta.wpcom_site ) {
 								return this.setState( {
-									error: translate( 'This is site is already hosted on WordPress.com' ),
+									error: translate( 'This site is already hosted on WordPress.com' ),
 									isLoading: false,
 								} );
 							}
@@ -94,7 +94,7 @@ class StepSourceSelect extends Component {
 							return redirectTo( importUrl );
 					}
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setState( {
@@ -112,6 +112,10 @@ class StepSourceSelect extends Component {
 				} );
 		} );
 	};
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_source_select_viewed' );
+	}
 
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
@@ -133,7 +137,8 @@ class StepSourceSelect extends Component {
 					<div className="migrate__explain">
 						{ translate(
 							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
-								'backup file, you can {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
+								'WordPress export file, you can' +
+								' {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
 							{
 								components: {
 									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,

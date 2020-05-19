@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
+import { abtest } from 'lib/abtest';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -155,7 +157,7 @@ export class UserStep extends Component {
 			'g-recaptcha',
 			'calypso/signup/pageLoad',
 			config( 'google_recaptcha_site_key' )
-		).then( result => {
+		).then( ( result ) => {
 			if ( ! result ) {
 				return;
 			}
@@ -169,14 +171,26 @@ export class UserStep extends Component {
 		} );
 	}
 
-	save = form => {
+	isEligibleForSwapStepsTest() {
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const isUserFromUS = 'US' === countryCodeFromCookie;
+
+		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			form,
 		} );
 	};
 
-	submit = data => {
+	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
@@ -193,6 +207,14 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
+
+		if (
+			this.isEligibleForSwapStepsTest() &&
+			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+		) {
+			const switchFlowName = 'onboarding-plan-first';
+			this.props.goToNextStep( switchFlowName );
+		}
 
 		this.props.goToNextStep();
 	};
@@ -412,7 +434,7 @@ export class UserStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

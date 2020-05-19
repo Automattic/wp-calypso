@@ -11,7 +11,7 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { isJetpackSite } from 'state/sites/selectors';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 
@@ -37,7 +37,7 @@ export function requestActiveTheme( siteId ) {
 		return wpcom
 			.undocumented()
 			.activeTheme( siteId )
-			.then( theme => {
+			.then( ( theme ) => {
 				debug( 'Received current theme', theme );
 				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'
 				// for WPCOM sites, or siteId for Jetpack sites.
@@ -49,7 +49,7 @@ export function requestActiveTheme( siteId ) {
 					theme,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId,

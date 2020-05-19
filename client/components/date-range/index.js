@@ -65,9 +65,9 @@ export class DateRange extends Component {
 		isCompact: false,
 		focusedMonth: null,
 		showTriggerClear: true,
-		renderTrigger: props => <DateRangeTrigger { ...props } />,
-		renderHeader: props => <DateRangeHeader { ...props } />,
-		renderInputs: props => <DateRangeInputs { ...props } />,
+		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
+		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
+		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
 	};
 
 	constructor( props ) {
@@ -300,7 +300,7 @@ export class DateRange extends Component {
 	 *
 	 * @param  {MomentJSDate} date the newly selected date object
 	 */
-	onSelectDate = date => {
+	onSelectDate = ( date ) => {
 		if ( ! this.isValidDate( date ) ) {
 			return;
 		}
@@ -316,7 +316,7 @@ export class DateRange extends Component {
 		// Update state to reflect new date range for
 		// calendar and text inputs
 		this.setState(
-			previousState => {
+			( previousState ) => {
 				// Update to date or `null` which means "not date"
 				const newStartDate = isNull( newRange.from )
 					? NO_DATE_SELECTED_VALUE
@@ -362,7 +362,7 @@ export class DateRange extends Component {
 	 */
 	commitDates = () => {
 		this.setState(
-			previousState => ( {
+			( previousState ) => ( {
 				staleStartDate: previousState.startDate, // update cached stale dates
 				staleEndDate: previousState.endDate, // update cached stale dates
 				staleDatesSaved: false,
@@ -380,7 +380,7 @@ export class DateRange extends Component {
 	 * the DateRange without clicking "Apply"
 	 */
 	revertDates = () => {
-		this.setState( previousState => {
+		this.setState( ( previousState ) => {
 			const startDate = previousState.staleStartDate;
 			const endDate = previousState.staleEndDate;
 
@@ -405,7 +405,7 @@ export class DateRange extends Component {
 	 * without selecting any dates
 	 */
 	resetDates = () => {
-		this.setState( previousState => {
+		this.setState( ( previousState ) => {
 			const startDate = previousState.initialStartDate;
 			const endDate = previousState.initialEndDate;
 

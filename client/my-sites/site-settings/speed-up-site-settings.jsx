@@ -14,7 +14,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -32,7 +32,6 @@ class SpeedUpSiteSettings extends Component {
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
-		siteSlug: PropTypes.string,
 	};
 
 	handleCdnChange = () => {
@@ -58,6 +57,7 @@ class SpeedUpSiteSettings extends Component {
 			siteIsJetpack,
 			translate,
 		} = this.props;
+
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
@@ -128,7 +128,7 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -147,6 +147,5 @@ export default connect( state => {
 		selectedSiteId,
 		siteAcceleratorStatus,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( SpeedUpSiteSettings ) );

@@ -45,13 +45,13 @@ class TagEmptyContent extends React.Component {
 					onClick={ this.recordSecondaryAction }
 					href="/discover"
 				>
-					{ this.props.translate( 'Explore Discover' ) }
+					{ this.props.translate( 'Explore' ) }
 				</a>
 			) : null;
 
 		return (
 			<EmptyContent
-				title={ this.props.translate( 'No Likes Yet' ) }
+				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }

@@ -50,7 +50,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 	);
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) );
 

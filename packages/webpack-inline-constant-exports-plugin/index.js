@@ -11,7 +11,7 @@ function addConstantExport( module, name, value ) {
 
 function removeDependency( module, dep ) {
 	module.removeDependency( dep );
-	dep.module.reasons = dep.module.reasons.filter( r => r.dependency !== dep );
+	dep.module.reasons = dep.module.reasons.filter( ( r ) => r.dependency !== dep );
 }
 
 class InlineConstantExportsPlugin {
@@ -28,7 +28,7 @@ class InlineConstantExportsPlugin {
 	}
 
 	isConstantsModule( module ) {
-		return module && this.matchers.some( matcher => matcher.test( module.resource ) );
+		return module && this.matchers.some( ( matcher ) => matcher.test( module.resource ) );
 	}
 
 	apply( compiler ) {
@@ -39,7 +39,7 @@ class InlineConstantExportsPlugin {
 				 * Look at parsed module source code and look for constant exports. If found, put them into
 				 * the `constantExports` map field on the `module` object.
 				 */
-				const handleParser = parser => {
+				const handleParser = ( parser ) => {
 					const handleExport = ( statement, declaration ) => {
 						const { module } = parser.state;
 
@@ -104,7 +104,7 @@ class InlineConstantExportsPlugin {
 				 * Use the information gathered during the parse phase to optimize the constant dependencies
 				 * by inlining them.
 				 */
-				compilation.hooks.optimizeDependencies.tap( 'InlineConstantExportsPlugin', modules => {
+				compilation.hooks.optimizeDependencies.tap( 'InlineConstantExportsPlugin', ( modules ) => {
 					for ( const module of modules ) {
 						/* Track the dependencies we find in this module, so that we can correctly remove them
 						 * at the end. */

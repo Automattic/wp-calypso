@@ -13,7 +13,7 @@ function applyMetadataEdit( metadata, edit ) {
 			// Either update existing key's value or append a new one at the end
 			const { key, value } = edit;
 			if ( find( metadata, { key } ) ) {
-				return map( metadata, m => ( m.key === key ? { key, value } : m ) );
+				return map( metadata, ( m ) => ( m.key === key ? { key, value } : m)  );
 			}
 			return concat( metadata || [], { key, value } );
 		}

@@ -18,7 +18,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestStatus()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )

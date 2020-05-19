@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
@@ -24,7 +23,7 @@ import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import { submit } from 'lib/store-transactions';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
@@ -126,7 +125,7 @@ export class SecurePaymentForm extends Component {
 			// is called.
 			// Note: If this defer() is ever able to be removed, the corresponding
 			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
-			defer( function() {
+			defer( function () {
 				setPayment( newPayment );
 			} );
 		}
@@ -154,8 +153,8 @@ export class SecurePaymentForm extends Component {
 		return null;
 	}
 
-	handlePaymentBoxSubmit = event => {
-		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
+	handlePaymentBoxSubmit = ( event ) => {
+		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		this.submitTransaction( event );
 	};
@@ -164,7 +163,7 @@ export class SecurePaymentForm extends Component {
 		return this.props.cards[ 0 ];
 	}
 
-	selectPaymentBox = paymentBox => {
+	selectPaymentBox = ( paymentBox ) => {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 		} );
@@ -197,12 +196,12 @@ export class SecurePaymentForm extends Component {
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
 			// like the `TransactionStepsMixin` are called with every step.
-			step => defer( () => setTransactionStep( step ) )
+			( step ) => defer( () => setTransactionStep( step ) )
 		);
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+		const { isJetpack, siteIsPrivate } = this.props;
 
 		if ( isJetpack || ! siteIsPrivate ) {
 			return;
@@ -216,18 +215,6 @@ export class SecurePaymentForm extends Component {
 			} )
 		) {
 			return;
-		}
-
-		if ( ! config.isEnabled( 'coming-soon' ) ) {
-			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-			debug( 'Setting site to public because it is an Atomic plan' );
-			const response = await this.props.saveSiteSettings( selectedSiteId, {
-				blog_public: 1,
-			} );
-
-			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-				throw 'Invalid response';
-			}
 		}
 	}
 
@@ -469,7 +456,7 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderPaymentBox = visiblePaymentBox => {
+	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
@@ -508,6 +495,7 @@ export class SecurePaymentForm extends Component {
 			case 'bancontact':
 			case 'eps':
 			case 'giropay':
+			case 'id_wallet':
 			case 'ideal':
 			case 'netbanking':
 			case 'p24':
@@ -566,7 +554,7 @@ export class SecurePaymentForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {

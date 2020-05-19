@@ -34,7 +34,9 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 		}
 		case STORED_CARDS_DELETE_COMPLETED: {
 			const { card } = action;
-			return state.filter( item => item.stored_details_id !== card.stored_details_id );
+			return state.filter(
+				( item ) => ! card.allStoredDetailsIds.includes( item.stored_details_id )
+			);
 		}
 	}
 

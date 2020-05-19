@@ -24,9 +24,18 @@ export default class LoginPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		const userNameSelector = By.css( '#usernameOrEmail' );
 		const passwordSelector = By.css( '#password' );
+		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
+		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
 
+		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed(
+			driver,
+			alreadyLoggedInSelector,
+			2000
+		);
+		if ( isDisplayed ) {
+			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
+		}
 		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
-		// await driverHelper.waitTillFocused( driver, userNameSelector );
 		await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
@@ -70,11 +79,13 @@ export default class LoginPage extends AsyncBaseContainer {
 		}
 
 		if ( actionSelector ) {
-			return driverHelper.isElementPresent( this.driver, actionSelector ).then( actionAvailable => {
-				if ( actionAvailable ) {
-					return driverHelper.clickWhenClickable( this.driver, actionSelector );
-				}
-			} );
+			return driverHelper
+				.isElementPresent( this.driver, actionSelector )
+				.then( ( actionAvailable ) => {
+					if ( actionAvailable ) {
+						return driverHelper.clickWhenClickable( this.driver, actionSelector );
+					}
+				} );
 		}
 	}
 

@@ -13,9 +13,9 @@ import createSelector from 'lib/create-selector';
  * @returns {Array}        Sites objects
  */
 export default createSelector(
-	state =>
+	( state ) =>
 		Object.values( getSitesItems( state ) )
-			.filter( site => site.visible === true )
-			.map( site => getSite( state, site.ID ) ),
-	state => [ getSitesItems( state ) ]
+			.filter( ( site ) => site.visible === true )
+			.map( ( site ) => getSite( state, site.ID ) ),
+	( state ) => [ getSitesItems( state ) ]
 );

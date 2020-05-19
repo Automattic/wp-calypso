@@ -12,7 +12,7 @@ import wrapSettingsForm from './wrap-settings-form';
 import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
 import SupportInfo from 'components/support-info';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import FormLabel from 'components/forms/form-label';
@@ -31,8 +31,9 @@ import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import { localizeUrl } from 'lib/i18n-utils';
 
-const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
+const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasPlanWithAnalytics = overSome(
 	isPremium,
 	isBusiness,
@@ -53,7 +54,7 @@ export class GoogleAnalyticsForm extends Component {
 		updateFields( { wga: updatedWgaFields } );
 	};
 
-	handleCodeChange = event => {
+	handleCodeChange = ( event ) => {
 		const code = event.target.value.trim();
 
 		this.setState( {
@@ -62,7 +63,7 @@ export class GoogleAnalyticsForm extends Component {
 		this.handleFieldChange( 'code', code );
 	};
 
-	handleToggleChange = key => {
+	handleToggleChange = ( key ) => {
 		const { fields, path } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
 
@@ -106,7 +107,7 @@ export class GoogleAnalyticsForm extends Component {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const analyticsSupportUrl = siteIsJetpack
 			? 'https://jetpack.com/support/google-analytics/'
-			: 'https://support.wordpress.com/google-analytics/';
+			: 'https://wordpress.com/support/google-analytics/';
 
 		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
@@ -130,7 +131,7 @@ export class GoogleAnalyticsForm extends Component {
 				/>
 
 				{ showUpgradeNudge && site && site.plan ? (
-					<Banner
+					<UpsellNudge
 						description={ translate(
 							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
 						) }
@@ -140,6 +141,7 @@ export class GoogleAnalyticsForm extends Component {
 							type: TYPE_PREMIUM,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
+						showIcon={ true }
 						title={ nudgeTitle }
 					/>
 				) : (
@@ -253,7 +255,13 @@ export class GoogleAnalyticsForm extends Component {
 								'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
 								{
 									components: {
-										a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />,
+										a: (
+											<a
+												href={ localizeUrl( analyticsSupportUrl ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 								}
 							) }
@@ -275,7 +283,7 @@ export class GoogleAnalyticsForm extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );

@@ -15,5 +15,5 @@ export function isUrlLikelyAnImage( uri ) {
 	}
 
 	const withoutQuery = url.parse( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
+	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ( ext ) => endsWith( withoutQuery, ext ) );
 }

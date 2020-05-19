@@ -141,7 +141,7 @@ class ExtensiveLodashReplacementPlugin {
 				// Normalize module names.
 				// This avoids code duplication due to module name case differences
 				// (e.g. 'camelcase' vs 'camelCase').
-				LODASH_MODULE_NAMES.forEach( casedModule => {
+				LODASH_MODULE_NAMES.forEach( ( casedModule ) => {
 					if ( subModule === casedModule.toLowerCase() ) {
 						subModule = casedModule;
 					}
@@ -191,7 +191,7 @@ class ExtensiveLodashReplacementPlugin {
 				// Normalize module names.
 				// This avoids code duplication due to module name case differences
 				// (e.g. 'camelcase' vs 'camelCase').
-				LODASH_MODULE_NAMES.forEach( casedModule => {
+				LODASH_MODULE_NAMES.forEach( ( casedModule ) => {
 					if ( subModule === casedModule.toLowerCase() ) {
 						subModule = casedModule;
 					}
@@ -207,11 +207,11 @@ class ExtensiveLodashReplacementPlugin {
 	}
 
 	apply( compiler ) {
-		compiler.hooks.thisCompilation.tap( 'LodashReplacementPlugin', compilation => {
+		compiler.hooks.thisCompilation.tap( 'LodashReplacementPlugin', ( compilation ) => {
 			this.compilation = compilation;
 		} );
 
-		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', nmf => {
+		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', ( nmf ) => {
 			this.moduleResolver = this.moduleResolver || nmf.getResolver( 'normal' );
 			this.init = this.init || this.initBaseLodashData();
 

@@ -20,7 +20,7 @@ const invalidState = [ { slug: 1, title: 'foo bar' } ];
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

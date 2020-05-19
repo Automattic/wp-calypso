@@ -57,6 +57,6 @@ class ImporterHeader extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isUploading: get( state, 'imports.uploads.inProgress' ),
 } ) )( localize( ImporterHeader ) );

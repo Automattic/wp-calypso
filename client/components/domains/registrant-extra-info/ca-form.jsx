@@ -35,8 +35,12 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
+		contactDetailsValidationErrors: PropTypes.object,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -107,14 +111,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			defaultValues.lang = 'FR';
 		}
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				ca: pick( defaultValues, neededRequiredDetails ),
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
-	validateContactDetails = contactDetails => {
+	validateContactDetails = ( contactDetails ) => {
 		wpcom.validateDomainContactInformation(
 			contactDetails,
 			this.props.getDomainNames(),
@@ -126,7 +133,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		);
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		const { value, name, checked, type, id } = event.target;
 		const newContactDetails = {};
 
@@ -143,6 +150,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		}
 	};
 
 	needsOrganization() {
@@ -150,17 +161,27 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	organizationFieldIsValid() {
-		return isEmpty( this.getOrganizationErrorMessage() );
+		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
 	}
 
 	getOrganizationErrorMessage() {
-		let message = ( this.state.errorMessages.organization || [] ).join( '\n' );
+		let message =
+			this.props.contactDetailsValidationErrors?.organization ||
+			( this.state.errorMessages.organization || [] ).join( '\n' );
 		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
 			message = this.props.translate(
 				'An organization name is required for Canadian corporations'
 			);
 		}
 		return message;
+	}
+
+	getCiraAgreementAcceptedErrorMessage() {
+		if ( this.props.isManaged ) {
+			return this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ?? '';
+		}
+
+		return this.props.translate( 'Required' );
 	}
 
 	renderOrganizationField() {
@@ -231,7 +252,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 							} ) }
 						</span>
 						{ ciraAgreementAccepted || (
-							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
+							<FormInputValidation
+								text={ this.getCiraAgreementAcceptedErrorMessage() }
+								isError={ true }
+							/>
 						) }
 					</FormLabel>
 				</FormFieldset>
@@ -243,7 +267,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component, except for userWpcomLang.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				userWpcomLang: getCurrentUserLocale( state ),
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

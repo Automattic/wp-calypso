@@ -37,7 +37,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 			);
 			return await webdriver.promise.filter(
 				allElements,
-				async e => ( await e.getText() ) === pluginTitle
+				async ( e ) => ( await e.getText() ) === pluginTitle
 			);
 		};
 		const shown = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );

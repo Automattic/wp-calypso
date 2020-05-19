@@ -19,7 +19,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		item: PropTypes.object,
 	};
 
-	getItemValue = attribute => {
+	getItemValue = ( attribute ) => {
 		let value;
 
 		if ( ! this.props.item ) {

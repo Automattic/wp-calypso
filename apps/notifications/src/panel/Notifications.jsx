@@ -46,7 +46,7 @@ export class Notifications extends PureComponent {
 	};
 
 	static defaultProps = {
-		customEnhancer: a => a,
+		customEnhancer: ( a ) => a,
 		customMiddleware: {},
 		isShowing: false,
 		isVisible: false,

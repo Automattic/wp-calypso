@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { ReactNode } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,10 +14,14 @@ import './style.scss';
 
 export interface Props {
 	children?: ReactNode;
-	header: string;
+	className?: string;
+	header: string | i18nCalypso.TranslateResult;
 	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
+	summary?: string | ReactNode;
+	expandedSummary?: string | ReactNode;
+	clickableHeader?: boolean;
 }
 
 class LogItem extends React.PureComponent< Props > {
@@ -29,15 +34,29 @@ class LogItem extends React.PureComponent< Props > {
 				<CardHeading tagName="h2" size={ 18 }>
 					{ header }
 				</CardHeading>
-				{ subheader && <p className="log-item__subheader">{ subheader }</p> }
+				{ subheader && <div className="log-item__subheader">{ subheader }</div> }
 			</div>
 		);
 	}
 
 	render() {
-		const { highlight, children } = this.props;
+		const {
+			clickableHeader,
+			highlight,
+			children,
+			className,
+			expandedSummary,
+			summary,
+		} = this.props;
 		return (
-			<FoldableCard header={ this.renderHeader() } className="log-item" highlight={ highlight }>
+			<FoldableCard
+				header={ this.renderHeader() }
+				className={ classnames( 'log-item', className ) }
+				highlight={ highlight }
+				expandedSummary={ expandedSummary }
+				summary={ summary }
+				clickableHeader={ clickableHeader }
+			>
 				{ children }
 			</FoldableCard>
 		);

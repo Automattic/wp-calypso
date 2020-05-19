@@ -24,7 +24,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 		onClose: PropTypes.func.isRequired,
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = ( closeDialog ) => {
 		this.props.onConfirmTransfer( this.props.targetSite, closeDialog );
 	};
 

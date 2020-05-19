@@ -53,7 +53,7 @@ class DomainEmail {
 
 		let body = {
 			mailbox: mailbox,
-			destination: destination
+			destination: destination,
 		};
 
 		return this.wpcom.req.post( this._subpath + 'new', query, body, fn );
@@ -69,7 +69,7 @@ class DomainEmail {
 	 */
 	delete( mailbox, query, fn ) {
 		return this.wpcom.req.del( this._subpath + mailbox + '/delete', query, fn );
-	};
+	}
 }
 
 /**

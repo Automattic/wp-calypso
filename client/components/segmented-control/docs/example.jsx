@@ -131,7 +131,7 @@ class SegmentedControlDemo extends React.PureComponent {
 		console.log( 'Segmented Control (selected):', childSelected );
 	};
 
-	selectSegment = option => {
+	selectSegment = ( option ) => {
 		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', option );
 	};

@@ -28,7 +28,7 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				{ map( sites, site => (
+				{ map( sites, ( site ) => (
 					<ConnectedReaderSubscriptionListItem key={ site.feedId || site.siteId } { ...site } />
 				) ) }
 				<ReaderSubscriptionListItemPlaceholder />

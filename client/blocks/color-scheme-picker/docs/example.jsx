@@ -16,7 +16,7 @@ class ColorSchemePickerExample extends PureComponent {
 		selectedColorScheme: null,
 	};
 
-	handleColorSchemeSelection = colorScheme => {
+	handleColorSchemeSelection = ( colorScheme ) => {
 		this.setState( { selectedColorScheme: colorScheme } );
 	};
 

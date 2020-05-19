@@ -18,7 +18,6 @@ import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
 /**
@@ -37,9 +36,6 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
-		}
 		const installInProgress = PluginsLog.isInProgressAction(
 			this.props.site.ID,
 			this.props.plugin.slug,
@@ -85,10 +81,6 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderPluginActions = () => {
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
-		}
-
 		return (
 			<div className="plugin-site-network__actions">
 				<PluginAutoupdateToggle
@@ -102,6 +94,7 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderPluginSite = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FoldableCard
 				compact
@@ -133,9 +126,10 @@ class PluginSiteNetwork extends React.Component {
 				</div>
 			</FoldableCard>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
-	renderSecondarySite = site => {
+	renderSecondarySite = ( site ) => {
 		return (
 			<CompactCard
 				className="plugin-site-network__secondary-site"
@@ -147,29 +141,10 @@ class PluginSiteNetwork extends React.Component {
 		);
 	};
 
-	renderSecondarySiteActions = site => {
-		if ( ! site.canManage ) {
-			return (
-				<div className="plugin-site-network__secondary-site-actions">
-					<PluginSiteDisabledManage site={ site } plugin={ site.plugin } />
-				</div>
-			);
-		}
+	renderSecondarySiteActions = ( site ) => {
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
 				<PluginActivateToggle site={ site } plugin={ site.plugin } />
-			</div>
-		);
-	};
-
-	renderManageWarning = () => {
-		return (
-			<div className="plugin-site-network__network_disabled">
-				<PluginSiteDisabledManage
-					site={ this.props.site }
-					plugin={ this.props.plugin }
-					isNetwork={ true }
-				/>
 			</div>
 		);
 	};

@@ -11,8 +11,8 @@ export default function ErrorMessage( { children } ) {
 const Error = styled.div`
 	display: block;
 	padding: 24px 16px;
-	border-left: 3px solid ${props => props.theme.colors.error};
-	background: ${props => props.theme.colors.warningBackground};
+	border-left: 3px solid ${( props ) => props.theme.colors.error};
+	background: ${( props ) => props.theme.colors.warningBackground};
 	box-sizing: border-box;
 	line-height: 1.2em;
 `;

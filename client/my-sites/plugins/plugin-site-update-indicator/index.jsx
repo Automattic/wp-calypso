@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -9,7 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
 import PluginsActions from 'lib/plugins/actions';
 
@@ -33,18 +33,18 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 	static defaultProps = { expanded: false };
 
-	updatePlugin = ev => {
+	updatePlugin = ( ev ) => {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Single Site Plugin',
 			'Plugin Name',
 			this.props.plugin.slug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug,
 		} );
@@ -52,7 +52,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 	getOngoingUpdates = () => {
 		return this.props.notices.inProgress.filter(
-			log => log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN'
+			( log ) => log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN'
 		);
 	};
 
@@ -61,9 +61,9 @@ class PluginSiteUpdateIndicator extends React.Component {
 	};
 
 	renderUpdate = () => {
-		let message,
-			ongoingUpdates = this.getOngoingUpdates(),
-			isUpdating = ongoingUpdates.length > 0;
+		let message;
+		const ongoingUpdates = this.getOngoingUpdates();
+		const isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
 			message = this.props.translate( 'Updating to version %(version)s', {

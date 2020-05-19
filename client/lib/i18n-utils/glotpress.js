@@ -55,5 +55,7 @@ export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const postFormData =
 		recordIdQueryFragment + `originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
 
-	return post( glotPressUrl, postFormData ).catch( err => debug( 'recordOriginals failed:', err ) );
+	return post( glotPressUrl, postFormData ).catch( ( err ) =>
+		debug( 'recordOriginals failed:', err )
+	);
 }

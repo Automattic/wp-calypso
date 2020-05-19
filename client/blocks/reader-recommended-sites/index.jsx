@@ -49,7 +49,7 @@ export class RecommendedSites extends React.PureComponent {
 		const sites = isEmpty( this.props.sites ) ? placeholders : this.props.sites;
 
 		function recordRecommendationRender( index ) {
-			return function( railcar ) {
+			return function ( railcar ) {
 				recordTracksRailcarRender( 'recommended_site', railcar, {
 					ui_algo: 'following_manage_recommended_site',
 					ui_position: index,
@@ -61,7 +61,7 @@ export class RecommendedSites extends React.PureComponent {
 			<div className="reader-recommended-sites">
 				<h2 className="reader-recommended-sites__header text-subtitle">
 					<Gridicon icon="thumbs-up" size={ 18 } />
-					{ this.props.translate( 'Recommended Sites' ) }
+					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {

@@ -90,7 +90,7 @@ export function isQueryError( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
-		const idList = action.reviews.map( review => review.id );
+		const idList = action.reviews.map( ( review ) => review.id );
 		const query = getSerializedReviewsQuery( action.query );
 		return Object.assign( {}, state, { [ query ]: idList } );
 	}

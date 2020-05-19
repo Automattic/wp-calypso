@@ -58,7 +58,6 @@ class PluginItem extends Component {
 			errors: PropTypes.array,
 			inProgress: PropTypes.array,
 		} ),
-		hasAllNoManageSites: PropTypes.bool,
 		hasUpdate: PropTypes.func,
 	};
 
@@ -85,10 +84,6 @@ class PluginItem extends Component {
 			return true;
 		}
 
-		if ( this.props.hasAllNoManageSites !== nextProps.hasAllNoManageSites ) {
-			return true;
-		}
-
 		if (
 			this.props.notices &&
 			PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices )
@@ -106,7 +101,7 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function( uniqLog ) {
+		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
 			return uniqLog.site.ID;
 		} );
 		const translationArgs = {
@@ -180,7 +175,7 @@ class PluginItem extends Component {
 
 	renderUpdateFlag() {
 		const { sites, translate } = this.props;
-		const recentlyUpdated = sites.some( function( site ) {
+		const recentlyUpdated = sites.some( function ( site ) {
 			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
 		} );
 
@@ -197,13 +192,13 @@ class PluginItem extends Component {
 		}
 
 		const updated_versions = this.props.plugin.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( site.plugin.update && site.plugin.update.new_version ) {
 					return site.plugin.update.new_version;
 				}
 				return false;
 			} )
-			.filter( version => version );
+			.filter( ( version ) => version );
 
 		return (
 			<Notice
@@ -248,15 +243,6 @@ class PluginItem extends Component {
 		}
 
 		return null;
-	}
-
-	showNoManageNotice() {
-		this.props.errorNotice(
-			this.props.translate(
-				'Jetpack Manage is disabled for all the sites where this plugin is installed'
-			),
-			{ id: 'plugin-no-manage-error' } // Display the notice only once on repeated clicks
-		);
 	}
 
 	renderActions() {
@@ -317,11 +303,8 @@ class PluginItem extends Component {
 		);
 	}
 
-	onItemClick = event => {
-		if ( this.props.hasAllNoManageSites ) {
-			event.preventDefault();
-			this.showNoManageNotice();
-		} else if ( this.props.isSelectable ) {
+	onItemClick = ( event ) => {
+		if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );
 		}
@@ -334,24 +317,20 @@ class PluginItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const disabled = this.props.hasAllNoManageSites;
-
 		const pluginTitle = <div className="plugin-item__title">{ plugin.name }</div>;
 
 		let pluginActions = null;
 		if ( ! this.props.selectedSite ) {
 			pluginActions = this.renderSiteCount();
-		} else if ( ! disabled ) {
+		} else {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
-			disabled,
-		} );
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug );
 
 		return (
 			<CompactCard className={ pluginItemClasses }>
-				{ disabled || ! this.props.isSelectable ? null : (
+				{ ! this.props.isSelectable ? null : (
 					<input
 						className="plugin-item__checkbox"
 						id={ plugin.slug }

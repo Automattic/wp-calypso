@@ -41,7 +41,7 @@ class EmailForwardingDetails extends React.Component {
 	};
 }
 
-const trackLearnMoreClick = domainName =>
+const trackLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
 			domain_name: domainName,

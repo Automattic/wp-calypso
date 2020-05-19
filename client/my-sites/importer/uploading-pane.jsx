@@ -96,11 +96,11 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	initiateFromDrop = event => {
+	initiateFromDrop = ( event ) => {
 		this.startUpload( event[ 0 ] );
 	};
 
-	initiateFromForm = event => {
+	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -118,14 +118,14 @@ class UploadingPane extends React.PureComponent {
 		this.fileSelectorRef.current.click();
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		// Open file selector on Enter or Space
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.openFileSelector();
 		}
 	};
 
-	startUpload = file => {
+	startUpload = ( file ) => {
 		startUpload( this.props.importerStatus, file );
 	};
 
@@ -174,7 +174,7 @@ class UploadingPane extends React.PureComponent {
 }
 
 export default flow(
-	connect( state => ( {
+	connect( ( state ) => ( {
 		filename: get( state, 'imports.uploads.filename' ),
 		percentComplete: get( state, 'imports.uploads.percentComplete' ),
 	} ) ),

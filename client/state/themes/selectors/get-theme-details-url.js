@@ -6,7 +6,6 @@ import {
 	getSiteSlug,
 	getSiteOption,
 	isJetpackSite,
-	canJetpackSiteManage,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 } from 'state/sites/selectors';
 import { oldShowcaseUrl } from 'state/themes/utils';
@@ -30,7 +29,6 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
 		isJetpackSite( state, siteId ) &&
 		! (
 			config.isEnabled( 'manage/themes/details/jetpack' ) &&
-			canJetpackSiteManage( state, siteId ) &&
 			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
 		)
 	) {

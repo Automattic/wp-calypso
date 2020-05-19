@@ -78,7 +78,7 @@ class Order extends Component {
 
 	triggerInvoice = ( siteId, orderId ) => {
 		const { translate } = this.props;
-		const onSuccess = dispatch => {
+		const onSuccess = ( dispatch ) => {
 			dispatch(
 				successNotice( translate( 'An invoice has been sent to the customer.' ), {
 					duration: 8000,
@@ -113,7 +113,7 @@ class Order extends Component {
 			}
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
-		const onFailure = dispatch => {
+		const onFailure = ( dispatch ) => {
 			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
@@ -157,7 +157,7 @@ class Order extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const orderId = getCurrentlyEditingOrderId( state );
@@ -184,7 +184,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				clearOrderEdits,

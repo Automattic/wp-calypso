@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.21
+ * Version: 1.4
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.21' );
+define( 'PLUGIN_VERSION', '1.4' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -128,22 +128,26 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 /**
  * Load Event Countdown Block
  */
-add_action(
-	'plugins_loaded',
-	function() {
-		require_once __DIR__ . '/event-countdown-block/index.php';
-	}
-);
+function load_countdown_block() {
+	require_once __DIR__ . '/event-countdown-block/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
 /**
  * Load Timeline Block
  */
-add_action(
-	'plugins_loaded',
-	function() {
-		require_once __DIR__ . '/jetpack-timeline/index.php';
-	}
-);
+function load_timeline_block() {
+	require_once __DIR__ . '/jetpack-timeline/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
+
+/**
+ * Load common module.
+ */
+function load_common_module() {
+	require_once __DIR__ . '/common/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.
@@ -221,7 +225,7 @@ function load_blog_posts_block() {
 		return;
 	}
 
-	require_once __DIR__ . '/blog-posts-block/index.php';
+	require_once __DIR__ . '/newspack-blocks/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
@@ -229,6 +233,43 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 function load_wpcom_block_editor_nux() {
+
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
+
+/**
+ * Load FSE block patterns
+ */
+function load_block_patterns() {
+	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
+
+	Block_Patterns::get_instance();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
+
+/**
+ * Load Premium Content Block
+ */
+function load_premium_content() {
+	/**
+	 * Disabled until we're ready to disable the premium content plugin in mp-plugins/earn
+	 */
+	if ( function_exists( '\A8C\FSE\Earn\PremiumContent\premium_content_block_init' ) ) {
+		return;
+	}
+	require_once __DIR__ . '/premium-content/premium-content.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
+
+/**
+ * Load Block Inserter Modifications module
+ */
+function load_block_inserter_modifications() {
+	require_once __DIR__ . '/block-inserter-modifications/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );

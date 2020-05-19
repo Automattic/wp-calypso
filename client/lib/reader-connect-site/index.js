@@ -25,7 +25,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
  * @param {object} Component the component to wrap
  * @returns {object} wrapped component that hands down feed/site to its child
  */
-const connectSite = Component => {
+const connectSite = ( Component ) => {
 	class connectSiteFetcher extends React.PureComponent {
 		static propTypes = {
 			feed: PropTypes.object,

@@ -56,7 +56,7 @@ class CommunityTranslator extends Component {
 		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
-		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
+		this.currentLocale = find( languages, ( lang ) => lang.langSlug === this.localeCode );
 	}
 
 	refresh = () => {

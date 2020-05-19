@@ -37,7 +37,7 @@ export function uploadGravatar( action ) {
 }
 
 export function announceSuccess( { file } ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const fileReader = new FileReader();
 		fileReader.addEventListener( 'load', () => {
 			dispatch( {

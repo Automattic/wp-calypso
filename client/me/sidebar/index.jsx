@@ -20,6 +20,7 @@ import {
 	myMemberships,
 	purchasesRoot,
 } from 'me/purchases/paths';
+import { domainManagementUserRoot } from 'my-sites/domains/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
@@ -99,6 +100,7 @@ class MeSidebar extends React.Component {
 			[ myMemberships ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
+			[ domainManagementUserRoot() ]: 'domains',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -127,7 +129,7 @@ class MeSidebar extends React.Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log Out' ) }
+							{ translate( 'Log out' ) }
 						</Button>
 					</div>
 
@@ -163,6 +165,17 @@ class MeSidebar extends React.Component {
 								onNavigate={ this.onNavigate }
 								preloadSectionName="purchases"
 							/>
+
+							{ config.isEnabled( 'manage/all-domains' ) && (
+								<SidebarItem
+									selected={ selected === 'domains' }
+									link={ domainManagementUserRoot() }
+									label={ translate( 'Domains' ) }
+									materialIcon="language"
+									onNavigate={ this.onNavigate }
+									preloadSectionName="domains"
+								/>
+							) }
 
 							<SidebarItem
 								selected={ selected === 'security' }
@@ -228,7 +241,7 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			currentUser: getCurrentUser( state ),
 		} ),
 		{

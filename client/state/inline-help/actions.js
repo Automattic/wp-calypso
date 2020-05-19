@@ -13,12 +13,6 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
 } from 'state/action-types';
 
 /**
@@ -28,7 +22,7 @@ import {
  * @returns {Function}        Action thunk
  */
 export function requestInlineHelpSearchResults( searchQuery ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
@@ -44,7 +38,7 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 					searchResults,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
 					searchQuery,
@@ -60,7 +54,7 @@ export function requestInlineHelpSearchResults( searchQuery ) {
  * @returns {Function}        Action thunk
  */
 export function selectResult( resultIndex ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SELECT_RESULT,
 			resultIndex,
@@ -74,7 +68,7 @@ export function selectResult( resultIndex ) {
  * @returns {Function}  Action thunk
  */
 export function resetInlineHelpContactForm() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_CONTACT_FORM_RESET,
 		} );
@@ -87,7 +81,7 @@ export function resetInlineHelpContactForm() {
  * @returns {Function}  Action thunk
  */
 export function showQandAOnInlineHelpContactForm() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 		} );
@@ -100,7 +94,7 @@ export function showQandAOnInlineHelpContactForm() {
  * @returns {Function}        Action thunk
  */
 export function selectNextResult() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SELECT_NEXT_RESULT,
 		} );
@@ -113,7 +107,7 @@ export function selectNextResult() {
  * @returns {Function}        Action thunk
  */
 export function selectPreviousResult() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
 		} );
@@ -121,7 +115,7 @@ export function selectPreviousResult() {
 }
 
 export function setSearchResults( searchQuery, searchResults ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
@@ -131,7 +125,7 @@ export function setSearchResults( searchQuery, searchResults ) {
 }
 
 export function showInlineHelpPopover() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_SHOW,
 		} );
@@ -139,59 +133,9 @@ export function showInlineHelpPopover() {
 }
 
 export function hideInlineHelpPopover() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_HIDE,
-		} );
-	};
-}
-
-export function showChecklistPrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-		} );
-	};
-}
-
-export function hideChecklistPrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-		} );
-	};
-}
-
-export function showOnboardingWelcomePrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-		} );
-	};
-}
-
-export function hideOnboardingWelcomePrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
-		} );
-	};
-}
-
-export function setChecklistPromptTaskId( taskId ) {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-			taskId,
-		} );
-	};
-}
-
-export function setChecklistPromptStep( step ) {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-			step,
 		} );
 	};
 }

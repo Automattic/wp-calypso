@@ -132,7 +132,9 @@ export class List extends React.Component {
 	}
 
 	filterOutWpcomDomains( domains ) {
-		return domains.filter( domain => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+		return domains.filter(
+			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+		);
 	}
 
 	render() {
@@ -220,7 +222,7 @@ export class List extends React.Component {
 			domain.registrationDate &&
 			this.props
 				.moment()
-				.subtract( 1, 'day' )
+				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
@@ -288,7 +290,7 @@ export class List extends React.Component {
 				className="domain-management-list__change-primary-button"
 				onClick={ this.enableChangePrimaryDomainMode }
 			>
-				{ this.props.translate( 'Change Primary', {
+				{ this.props.translate( 'Change primary', {
 					context: 'Button label for changing primary domain',
 				} ) }
 			</Button>
@@ -309,7 +311,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add Domain' ) }
+				{ this.props.translate( 'Add a domain to this site' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -367,13 +369,14 @@ export class List extends React.Component {
 					{ duration: 10000, isPersistent: true }
 				);
 			},
-			() => {
+			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
 				this.props.errorNotice(
-					translate( "Something went wrong and we couldn't change your primary domain." ),
+					error.message ||
+						translate( "Something went wrong and we couldn't change your primary domain." ),
 					{ duration: 10000, isPersistent: true }
 				);
 			}
@@ -386,7 +389,7 @@ export class List extends React.Component {
 		return (
 			hasNonPrimaryDomainsFlag &&
 			isOnFreePlan &&
-			domain.type === type.REGISTERED &&
+			( domain.type === type.REGISTERED || domain.type === type.MAPPED ) &&
 			! isDomainOnly &&
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
@@ -396,7 +399,7 @@ export class List extends React.Component {
 
 	listItems() {
 		if ( this.isLoading() ) {
-			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
 		const domains =
@@ -425,7 +428,7 @@ export class List extends React.Component {
 		} );
 	}
 
-	goToEditDomainRoot = domain => {
+	goToEditDomainRoot = ( domain ) => {
 		if ( domain.type !== type.TRANSFER ) {
 			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 		} else {
@@ -463,7 +466,7 @@ const disablePrimaryDomainMode = () =>
 const upsellUpgradeClick = () =>
 	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
-const changePrimary = domain =>
+const changePrimary = ( domain ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -494,7 +497,7 @@ export default connect(
 			userCanManageOptions,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
@@ -506,7 +509,7 @@ export default connect(
 			addDomainClick: () => dispatch( addDomainClick() ),
 			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
 			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-			changePrimary: domain => dispatch( changePrimary( domain ) ),
+			changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),

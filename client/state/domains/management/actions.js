@@ -40,7 +40,7 @@ export function receiveContactDetailsCache( data ) {
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
@@ -92,7 +92,7 @@ export function receiveWhois( domain, whoisData ) {
  * @returns {Function}          Action thunk
  */
 export function requestWhois( domain ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 			domain,
@@ -101,14 +101,14 @@ export function requestWhois( domain ) {
 		return wpcom
 			.undocumented()
 			.fetchWhois( domain )
-			.then( whoisData => {
+			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
 					domain,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
@@ -128,7 +128,7 @@ export function requestWhois( domain ) {
  * @returns {Function}				Action thunk
  */
 export function saveWhois( domain, whoisData, transferLock ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
 			domain,
@@ -137,7 +137,7 @@ export function saveWhois( domain, whoisData, transferLock ) {
 		return wpcom
 			.undocumented()
 			.updateWhois( domain, whoisData, transferLock )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
@@ -145,7 +145,7 @@ export function saveWhois( domain, whoisData, transferLock ) {
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 					domain,

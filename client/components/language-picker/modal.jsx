@@ -145,9 +145,9 @@ export class LanguagePickerModal extends PureComponent {
 
 		if ( search ) {
 			const searchString = deburr( search ).toLowerCase();
-			return languages.filter( language => {
+			return languages.filter( ( language ) => {
 				const names = this.getLanguageSearchableFields( language );
-				return some( names, name => includes( name, searchString ) );
+				return some( names, ( name ) => includes( name, searchString ) );
 			} );
 		}
 
@@ -155,13 +155,15 @@ export class LanguagePickerModal extends PureComponent {
 			switch ( filter ) {
 				case 'popular':
 					return languages
-						.filter( language => language.popular )
+						.filter( ( language ) => language.popular )
 						.sort( ( a, b ) => a.popular - b.popular );
 				default: {
 					const languageGroup = getLanguageGroupById( filter );
 					const subTerritories = languageGroup ? languageGroup.subTerritories : null;
 					return languages
-						.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
+						.filter( ( language ) =>
+							some( language.territories, ( t ) => includes( subTerritories, t ) )
+						)
 						.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 				}
 			}
@@ -183,10 +185,10 @@ export class LanguagePickerModal extends PureComponent {
 			// Find the language first by its full code (e.g. en-US), and when it fails
 			// try only the base code (en). Don't add duplicates.
 			const lcLangSlug = langSlug.toLowerCase();
-			let language = find( languages, lang => lang.langSlug === lcLangSlug );
+			let language = find( languages, ( lang ) => lang.langSlug === lcLangSlug );
 
 			if ( ! language ) {
-				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
+				language = find( languages, ( lang ) => startsWith( lcLangSlug, lang.langSlug + '-' ) );
 			}
 
 			if (
@@ -293,7 +295,7 @@ export class LanguagePickerModal extends PureComponent {
 		} );
 	}
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		const { isSearchOpen } = this.state;
 
 		// A key press of a printable character should only have a single character
@@ -330,7 +332,7 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	};
 
-	handleSearch = search => {
+	handleSearch = ( search ) => {
 		this.setState( { search }, () => {
 			if ( search ) {
 				this.selectLanguageFromSearch( search );
@@ -370,7 +372,7 @@ export class LanguagePickerModal extends PureComponent {
 	};
 
 	renderTabItems() {
-		return map( LANGUAGE_GROUPS, languageGroup => {
+		return map( LANGUAGE_GROUPS, ( languageGroup ) => {
 			const filter = languageGroup.id;
 			const selected = this.state.filter === filter;
 
@@ -398,7 +400,7 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
-	renderLanguageItem = language => {
+	renderLanguageItem = ( language ) => {
 		const isSelected = language.langSlug === this.state.selectedLanguageSlug;
 		const classes = classNames( 'language-picker__modal-text', {
 			'is-selected': isSelected,
@@ -494,7 +496,7 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	localizedLanguageNames: getLocalizedLanguageNames( state ),
 	currentUserLocale: getCurrentUserLocale( state ),
 } ) )( localize( LanguagePickerModal ) );

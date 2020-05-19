@@ -29,7 +29,7 @@ const recentRequests = new Map();
  *
  * @param {object} action Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = ( action ) => {
 	const { downloadId, siteId } = action;
 	const key = `${ siteId }-${ downloadId }`;
 
@@ -58,7 +58,7 @@ const fetchProgress = action => {
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */
-const fromApi = data => ( {
+const fromApi = ( data ) => ( {
 	backupPoint: data.backupPoint,
 	downloadId: +data.downloadId,
 	progress: +data.progress,
@@ -108,7 +108,7 @@ export const announceError = () =>
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissBackup = action =>
+export const dismissBackup = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -147,7 +147,7 @@ export const backupDismissFailed = () =>
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromBackupDismiss = data => ( {
+const fromBackupDismiss = ( data ) => ( {
 	downloadId: +data.download_id,
 	dismissed: data.is_dismissed,
 } );

@@ -26,7 +26,7 @@ export function dispatchRequest( fetch, onSuccess, onError ) {
 
 export function apiSuccess( onSuccess, onFailure ) {
 	return function apiSuccessHandler( action, response ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			const { data } = response;
 
 			switch ( data.status ) {
@@ -77,7 +77,7 @@ export function apiSuccess( onSuccess, onFailure ) {
 
 export function apiFailure( onFailure ) {
 	return function apiErrorHandler( action, error ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			debug( 'Unrecognized API Error: ' + JSON.stringify( error ) );
 
 			dispatch( {

@@ -27,6 +27,7 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		fields: [
 			'name',
 			'pan',
+			'gstin',
 			'street-number',
 			'address-1',
 			'address-2',
@@ -34,6 +35,9 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 			'city',
 			'postal-code',
 		],
+	},
+	ID: {
+		fields: [ 'name', 'nik' ],
 	},
 };
 

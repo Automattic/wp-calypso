@@ -34,6 +34,7 @@ import sanitize from 'server/sanitize';
 import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
+import isSectionEnabled from 'sections-filter';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
 import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
 import {
@@ -54,8 +55,8 @@ import { logSectionResponse } from './analytics';
 import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTION_DEFINITION } from 'landing/jetpack-cloud/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -105,14 +106,24 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 }
 
 function getBuildTargetFromRequest( request ) {
-	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
-	const isForcedFallback = request.query.forceFallback;
-	// Development is always evergreen, except desktop
 	const isDevelopment = process.env.NODE_ENV === 'development';
-	return ( isDevelopment && ! isDesktop ) || ( isEvergreen && ! isForcedFallback )
+	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+
+	const devTarget = process.env.DEV_TARGET || 'evergreen';
+	const uaTarget = isUAInBrowserslist( request.useragent.source, 'evergreen' )
 		? 'evergreen'
-		: null;
+		: 'fallback';
+
+	// Did the user force fallback, via query parameter?
+	const prodTarget = request.query.forceFallback ? 'fallback' : uaTarget;
+
+	let target = isDevelopment ? devTarget : prodTarget;
+
+	if ( isDesktop ) {
+		target = 'fallback';
+	}
+
+	return target === 'fallback' ? null : target;
 }
 
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
@@ -125,7 +136,7 @@ function getAssetsPath( target ) {
 }
 
 const cachedAssets = {};
-const getAssets = target => {
+const getAssets = ( target ) => {
 	if ( ! cachedAssets[ target ] ) {
 		cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
 	}
@@ -134,7 +145,7 @@ const getAssets = target => {
 
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
-const getAssetType = asset => {
+const getAssetType = ( asset ) => {
 	if ( asset.endsWith( '.rtl.css' ) ) {
 		return 'css.rtl';
 	}
@@ -145,7 +156,7 @@ const getAssetType = asset => {
 	return 'js';
 };
 
-const groupAssetsByType = assets => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
+const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 const getFilesForChunk = ( chunkName, request ) => {
 	const target = getBuildTargetFromRequest( request );
@@ -153,25 +164,25 @@ const getFilesForChunk = ( chunkName, request ) => {
 	const assets = getAssets( target );
 
 	function getChunkByName( _chunkName ) {
-		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
+		return assets.chunks.find( ( chunk ) => chunk.names.some( ( name ) => name === _chunkName ) );
 	}
 
 	function getChunkById( chunkId ) {
-		return assets.chunks.find( chunk => chunk.id === chunkId );
+		return assets.chunks.find( ( chunk ) => chunk.id === chunkId );
 	}
 
 	const chunk = getChunkByName( chunkName );
 	if ( ! chunk ) {
 		console.warn( 'cannot find the chunk ' + chunkName );
 		console.warn( 'available chunks:' );
-		assets.chunks.forEach( c => {
+		assets.chunks.forEach( ( c ) => {
 			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
 		} );
 		return EMPTY_ASSETS;
 	}
 
 	const allTheFiles = chunk.files.concat(
-		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
+		flatten( chunk.siblings.map( ( sibling ) => getChunkById( sibling ).files ) )
 	);
 
 	return groupAssetsByType( allTheFiles );
@@ -179,16 +190,14 @@ const getFilesForChunk = ( chunkName, request ) => {
 
 const getFilesForEntrypoint = ( target, name ) => {
 	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
-		asset => ! asset.startsWith( 'manifest' )
+		( asset ) => ! asset.startsWith( 'manifest' )
 	);
 	return groupAssetsByType( entrypointAssets );
 };
 
 function getCurrentBranchName() {
 	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -196,9 +205,7 @@ function getCurrentBranchName() {
 
 function getCurrentCommitShortChecksum() {
 	try {
-		return execSync( 'git rev-parse --short HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -220,7 +227,7 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 	return header
 		.split( ',' )
-		.map( lang => {
+		.map( ( lang ) => {
 			const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
 			if ( ! match ) {
 				return false;
@@ -228,7 +235,7 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 			return match[ 0 ].toLowerCase();
 		} )
-		.filter( lang => lang );
+		.filter( ( lang ) => lang );
 }
 
 /*
@@ -298,6 +305,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
+	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -319,6 +327,10 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
+		useTranslationChunks:
+			config.isEnabled( 'use-translation-chunks' ) ||
+			flags.includes( 'use-translation-chunks' ) ||
+			request.query.hasOwnProperty( 'useTranslationChunks' ),
 	} );
 
 	context.app = {
@@ -371,17 +383,52 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	return context;
 }
 
-const setupDefaultContext = entrypoint => ( req, res, next ) => {
+const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 	req.context = getDefaultContext( req, entrypoint );
 	next();
 };
+
+function setUpLocalLanguageRevisions( req ) {
+	const targetFromRequest = getBuildTargetFromRequest( req );
+	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
+	const rootPath = path.join( __dirname, '..', '..', '..' );
+	const langRevisionsPath = path.join(
+		rootPath,
+		'public',
+		target,
+		'languages',
+		'lang-revisions.json'
+	);
+	const langPromise = fs.promises
+		.readFile( langRevisionsPath, 'utf8' )
+		.then( ( languageRevisions ) => {
+			req.context.languageRevisions = JSON.parse( languageRevisions );
+
+			return languageRevisions;
+		} )
+		.catch( ( error ) => {
+			console.error( 'Failed to read the language revision files.', error );
+
+			throw error;
+		} );
+
+	return langPromise;
+}
 
 function setUpLoggedOutRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	next();
+	const setupRequests = [];
+
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	}
+
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( ( error ) => next( error ) );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
@@ -391,23 +438,29 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
-	const langPromise = superagent
-		.get( LANG_REVISION_FILE_URL )
-		.then( response => {
-			const languageRevisions = filterLanguageRevisions( response.body );
+	const setupRequests = [];
 
-			req.context.languageRevisions = languageRevisions;
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	} else {
+		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
+		const langPromise = superagent
+			.get( LANG_REVISION_FILE_URL )
+			.then( ( response ) => {
+				const languageRevisions = filterLanguageRevisions( response.body );
 
-			return languageRevisions;
-		} )
-		.catch( error => {
-			console.error( 'Failed to fetch the language revision files.', error );
+				req.context.languageRevisions = languageRevisions;
 
-			throw error;
-		} );
+				return languageRevisions;
+			} )
+			.catch( ( error ) => {
+				console.error( 'Failed to fetch the language revision files.', error );
 
-	const setupRequests = [ langPromise ];
+				throw error;
+			} );
+
+		setupRequests.push( langPromise );
+	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
@@ -430,7 +483,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		debug( 'Issuing API call to fetch user object' );
 
 		const userPromise = user( req )
-			.then( data => {
+			.then( ( data ) => {
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
@@ -473,7 +526,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					}
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', {
@@ -502,7 +555,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => next() )
-		.catch( error => next( error ) );
+		.catch( ( error ) => next( error ) );
 }
 
 /**
@@ -546,7 +599,7 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
-			...inlineScripts.map( hash => `'${ hash }'` ),
+			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
@@ -575,7 +628,7 @@ function setUpCSP( req, res, next ) {
 	};
 
 	const policyString = Object.keys( policy )
-		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
+		.map( ( key ) => `${ key } ${ policy[ key ].join( ' ' ) }` )
 		.join( '; ' );
 
 	// For now we're just logging policy violations and not blocking them
@@ -657,13 +710,7 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-const jetpackCloudEnvs = [
-	'jetpack-cloud-development',
-	'jetpack-cloud-stage',
-	'jetpack-cloud-production',
-];
-
-module.exports = function() {
+module.exports = function () {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -674,30 +721,16 @@ module.exports = function() {
 	app.use( handleLocaleSubdomains );
 
 	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
-	app.use( function( req, res, next ) {
+	app.use( function ( req, res, next ) {
 		if ( 'jetpack-cloud-production' === calypsoEnv ) {
 			res.redirect( 'https://jetpack.com/' );
 		}
 		next();
 	} );
 
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
-			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
-		);
-
-		// catchall to render 404 for all routes not whitelisted in client/sections
-		app.use( render404( 'entry-jetpack-cloud' ) );
-
-		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-		app.use( renderServerError( 'entry-jetpack-cloud' ) );
-
-		return app;
-	}
-
 	// redirect homepage if the Reader is disabled
-	app.get( '/', function( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) ) {
+	app.get( '/', function ( request, response, next ) {
+		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
@@ -705,7 +738,7 @@ module.exports = function() {
 	} );
 
 	// redirects to handle old newdash formats
-	app.use( '/sites/:site/:section', function( req, res, next ) {
+	app.use( '/sites/:site/:section', function ( req, res, next ) {
 		const redirectedSections = [
 			'posts',
 			'pages',
@@ -732,7 +765,7 @@ module.exports = function() {
 	} );
 
 	if ( process.env.NODE_ENV !== 'development' ) {
-		app.get( '/discover', function( req, res, next ) {
+		app.get( '/discover', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
@@ -740,17 +773,8 @@ module.exports = function() {
 			}
 		} );
 
-		// redirect logged-out tag pages to en.wordpress.com
-		app.get( '/tag/:tag_slug', function( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				res.redirect( 'https://en.wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
-			} else {
-				next();
-			}
-		} );
-
 		// redirect logged-out searches to en.search.wordpress.com
-		app.get( '/read/search', function( req, res, next ) {
+		app.get( '/read/search', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 			} else {
@@ -758,7 +782,7 @@ module.exports = function() {
 			}
 		} );
 
-		app.get( '/plans', function( req, res, next ) {
+		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query && req.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
@@ -782,7 +806,7 @@ module.exports = function() {
 		res.redirect( 301, newRoute );
 	} );
 
-	app.get( [ '/domains', '/start/domain-first' ], function( req, res ) {
+	app.get( [ '/domains', '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
 		const domain = get( req, 'query.new', false );
 		if ( domain ) {
@@ -816,7 +840,7 @@ module.exports = function() {
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
+		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
 			req.context.sectionName = section.name;
 
 			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
@@ -842,9 +866,10 @@ module.exports = function() {
 	}
 
 	sections
-		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
-		.forEach( section => {
-			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
+		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter( isSectionEnabled )
+		.forEach( ( section ) => {
+			section.paths.forEach( ( sectionPath ) => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -860,13 +885,21 @@ module.exports = function() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
+	handleSectionPath(
+		GUTENBOARDING_SECTION_DEFINITION,
+		`/${ GUTENBOARDING_BASE_NAME }`,
+		'entry-gutenboarding'
+	);
+
+	// Handle redirection from development basename
+	// TODO: Remove after a few months
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, `/gutenboarding`, 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
 		'/cspreport',
 		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
-		function( req, res ) {
+		function ( req, res ) {
 			const cspReport = req.body[ 'csp-report' ] || {};
 			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
 				report[ snakeCase( key ) ] = cspReport[ key ];
@@ -880,12 +913,12 @@ module.exports = function() {
 			res.status( 200 ).send( 'Got it!' );
 		},
 		// eslint-disable-next-line no-unused-vars
-		function( err, req, res, next ) {
+		function ( err, req, res, next ) {
 			res.status( 500 ).send( 'Bad report!' );
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function( req, res ) {
+	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
@@ -897,7 +930,7 @@ module.exports = function() {
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
-	app.get( '/support-user', function( req, res ) {
+	app.get( '/support-user', function ( req, res ) {
 		// Do not iframe
 		res.set( {
 			'X-Frame-Options': 'DENY',
@@ -924,7 +957,7 @@ module.exports = function() {
 		debug( 'Issuing API call to fetch user object' );
 
 		user( req )
-			.then( data => {
+			.then( ( data ) => {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 				// A8C check

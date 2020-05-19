@@ -33,7 +33,7 @@ class StatModuleFollowers extends Component {
 		activeFilter: 'wpcom-followers',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		let gaEvent;
 		if ( filter !== this.state.activeFilter ) {
@@ -66,11 +66,11 @@ class StatModuleFollowers extends Component {
 		const options = [
 			{
 				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com Followers' ),
+				label: this.props.translate( 'WordPress.com followers' ),
 			},
 			{
 				value: 'email-followers',
-				label: this.props.translate( 'Email Followers' ),
+				label: this.props.translate( 'Email followers' ),
 			},
 		];
 
@@ -138,7 +138,7 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData && !! wpcomData.total_wpcom && (
 										<p>
-											{ translate( 'Total WordPress.com Followers' ) }:{ ' ' }
+											{ translate( 'Total WordPress.com followers' ) }:{ ' ' }
 											{ numberFormat( wpcomData.total_wpcom ) }
 										</p>
 									) }
@@ -177,7 +177,7 @@ class StatModuleFollowers extends Component {
 							( emailData && emailData.subscribers.length !== emailData.total_email ) ) && (
 							<div key="view-all" className="module-expand">
 								<a href={ summaryPageLink }>
-									{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
+									{ translate( 'View all', { context: 'Stats: Button label to expand a panel' } ) }
 									<span className="right" />
 								</a>
 							</div>
@@ -190,7 +190,7 @@ class StatModuleFollowers extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const emailQuery = { type: 'email', max: 10 };

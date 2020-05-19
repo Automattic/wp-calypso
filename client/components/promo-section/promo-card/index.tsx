@@ -51,7 +51,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 				</ActionPanelTitle>
 				{ isPrimary
-					? React.Children.map( children, child => {
+					? React.Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type
 								? React.cloneElement( child, { isPrimary } )
 								: child;

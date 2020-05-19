@@ -24,7 +24,7 @@ function main() {
 		'packages',
 		'test',
 		'.github',
-	].map( dir => dir + '/**/*.md' );
+	].map( ( dir ) => dir + '/**/*.md' );
 	// ... and the current directory
 	dirList.push( '*.md' );
 	// don't descend into node_modules
@@ -33,13 +33,13 @@ function main() {
 	const documents = globby
 		.sync( dirList )
 		.map( documentFromFile )
-		.filter( doc => doc.title && doc.body /* skip empty/invalid files */ );
+		.filter( ( doc ) => doc.title && doc.body /* skip empty/invalid files */ );
 
 	writeSearchIndex( documents, 'client/server/devdocs/search-index.js' );
 }
 
 function writeSearchIndex( documents, searchIndexPath ) {
-	const idx = lunr( function() {
+	const idx = lunr( function () {
 		this.field( 'title', { boost: 10 } );
 		this.field( 'body' );
 

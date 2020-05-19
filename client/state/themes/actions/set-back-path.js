@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_BACK_PATH_SET } from 'state/action-types';
+import { THEME_BACK_PATH_SET } from 'state/themes/action-types';
 
 import 'state/themes/init';
 

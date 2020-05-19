@@ -91,7 +91,7 @@ class CustomNameserversForm extends React.PureComponent {
 		} );
 	}
 
-	handleRemove = index => {
+	handleRemove = ( index ) => {
 		this.props.onChange( remove( this.props.nameservers, index ) );
 	};
 
@@ -120,11 +120,11 @@ class CustomNameserversForm extends React.PureComponent {
 							onClick={ this.handleSubmit }
 							disabled={ this.props.submitDisabled }
 						>
-							{ translate( 'Save Custom Name Servers' ) }
+							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
 						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to Defaults' ) }
+							{ translate( 'Reset to defaults' ) }
 						</FormButton>
 					</FormFooter>
 				</form>
@@ -132,7 +132,7 @@ class CustomNameserversForm extends React.PureComponent {
 		);
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.props.saveCustomNameServersClick( this.props.selectedDomainName );
@@ -140,7 +140,7 @@ class CustomNameserversForm extends React.PureComponent {
 		this.props.onSubmit();
 	};
 
-	handleReset = event => {
+	handleReset = ( event ) => {
 		event.preventDefault();
 
 		this.props.resetToDefaultsClick( this.props.selectedDomainName );
@@ -149,7 +149,7 @@ class CustomNameserversForm extends React.PureComponent {
 	};
 }
 
-const customNameServersLookUpClick = domainName =>
+const customNameServersLookUpClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -162,7 +162,7 @@ const customNameServersLookUpClick = domainName =>
 		} )
 	);
 
-const saveCustomNameServersClick = domainName =>
+const saveCustomNameServersClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -175,7 +175,7 @@ const saveCustomNameServersClick = domainName =>
 		} )
 	);
 
-const resetToDefaultsClick = domainName =>
+const resetToDefaultsClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

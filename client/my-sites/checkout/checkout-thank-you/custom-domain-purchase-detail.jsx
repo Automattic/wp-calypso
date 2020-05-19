@@ -104,7 +104,7 @@ CustomDomainPurchaseDetail.propTypes = {
 	siteDomains: PropTypes.array,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteDomains = getDomainsBySiteId( state, siteId );
 	const registeredDomains = getRegisteredDomains( siteDomains );

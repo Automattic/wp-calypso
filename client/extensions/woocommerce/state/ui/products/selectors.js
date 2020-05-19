@@ -27,7 +27,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
 	const bucket = isObject( productId ) ? 'creates' : 'updates';
 	const array = get( edits, bucket, [] );
 
-	return find( array, p => isEqual( productId, p.id ) );
+	return find( array, ( p ) => isEqual( productId, p.id ) );
 }
 
 /**

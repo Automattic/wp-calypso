@@ -21,7 +21,7 @@ function ProductIcon( { className, slug } ) {
 		return null;
 	}
 
-	const iconSlug = findKey( iconToProductSlugMap, products => products.includes( slug ) );
+	const iconSlug = findKey( iconToProductSlugMap, ( products ) => products.includes( slug ) );
 	const iconPath = paths[ iconSlug ];
 
 	if ( ! iconPath ) {

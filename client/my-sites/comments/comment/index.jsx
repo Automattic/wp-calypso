@@ -87,9 +87,9 @@ export class Comment extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	storeCardRef = card => ( this.commentCard = card );
+	storeCardRef = ( card ) => ( this.commentCard = card );
 
-	keyDownHandler = event => {
+	keyDownHandler = ( event ) => {
 		const { isBulkMode } = this.props;
 		const commentHasFocus =
 			document &&

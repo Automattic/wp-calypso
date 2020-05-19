@@ -68,7 +68,7 @@ class ReaderPostCard extends React.Component {
 		this.props.onClick( postToOpen );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 
@@ -81,7 +81,7 @@ class ReaderPostCard extends React.Component {
 		}
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}

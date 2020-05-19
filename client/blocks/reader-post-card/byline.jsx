@@ -90,7 +90,7 @@ class PostByline extends React.Component {
 		let tagsInOccurrenceOrder = values( post.tags );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
 		tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
-		const tags = map( tagsInOccurrenceOrder, tag => <TagLink tag={ tag } key={ tag.slug } /> );
+		const tags = map( tagsInOccurrenceOrder, ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (

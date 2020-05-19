@@ -4,12 +4,12 @@ Scans your JavaScript sources/build files and generates a POT file or a PHP tran
 
 ## Installation
 
-`npm install i18n-calypso-cli`
+`yarn add i18n-calypso-cli`
 
 
 ## Using the CLI
 
-- `npm install -g i18n-calypso-cli`
+- `yarn global add i18n-calypso-cli`
 - `i18n-calypso -i <input_file> -o <output_file> -f <format:POT|PHP>`
 
 

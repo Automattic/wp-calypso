@@ -27,7 +27,6 @@ jest.mock( 'lib/user', () => {
 } );
 
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
 
@@ -35,11 +34,11 @@ describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
 	// would be easier to write.
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.post( '/rest/v1.1/sites/new' )
-			.reply( 400, function( uri, requestBody ) {
+			.reply( 400, function ( uri, requestBody ) {
 				return {
 					error: 'error',
 					message: 'something goes wrong!',
@@ -68,7 +67,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toBeUndefined();
 			},
 			[],
@@ -98,7 +97,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
 			},
 			[],
@@ -115,7 +114,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBe( true );
 			},
 			[],
@@ -132,7 +131,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBeFalsy();
 			},
 			[],
@@ -150,7 +149,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -169,7 +168,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -188,7 +187,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'mytitle' );
 			},
 			[],
@@ -207,7 +206,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'blog' );
 			},
 			[],
@@ -226,7 +225,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'art' );
 			},
 			[],

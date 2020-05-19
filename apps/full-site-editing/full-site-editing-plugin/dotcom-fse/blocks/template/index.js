@@ -41,8 +41,8 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 	} );
 }
 
-const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
+const addFSETemplateClassname = createHigherOrderComponent( ( BlockListBlock ) => {
+	return ( props ) => {
 		if ( props.name !== 'a8c/template' ) {
 			return <BlockListBlock { ...props } />;
 		}

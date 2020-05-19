@@ -50,7 +50,7 @@ class StatsComments extends Component {
 		activeFilter: 'top-authors',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		if ( filter === this.state.activeFilter ) {
 			return;
@@ -123,8 +123,8 @@ class StatsComments extends Component {
 		const commentsPosts = get( commentsStatsData, 'posts' );
 		const noData = ! commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments By Authors' ) },
-			{ value: 'top-content', label: translate( 'Comments By Posts & Pages' ) },
+			{ value: 'top-authors', label: translate( 'Comments by authors' ) },
+			{ value: 'top-content', label: translate( 'Comments by posts & pages' ) },
 		];
 
 		const classes = classNames( 'stats-module', {
@@ -183,7 +183,7 @@ class StatsComments extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 

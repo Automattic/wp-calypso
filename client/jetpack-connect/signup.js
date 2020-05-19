@@ -149,14 +149,15 @@ export class JetpackSignup extends Component {
 	 *
 	 * @param {?object} error Error result
 	 */
-	handleUserCreationError = error => {
+	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;
 		debug( 'Signup error: %o', error );
 		this.resetState();
 		if ( error && 'user_exists' === error.code ) {
 			const text =
 				error.data && error.data.email
-					? translate(
+					? // translators: email is an email address. eg you@name.com
+					  translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }

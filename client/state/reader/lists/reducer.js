@@ -79,7 +79,7 @@ export const subscribedLists = withSchemaValidation(
 				return [ ...state, newListId ];
 			case READER_LISTS_UNFOLLOW_SUCCESS:
 				// Remove the unfollowed list ID from subscribedLists
-				return filter( state, listId => {
+				return filter( state, ( listId ) => {
 					return listId !== action.data.list.ID;
 				} );
 		}
@@ -104,7 +104,7 @@ export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = 
 			return union( state, [ newListId ] );
 		case READER_LIST_DISMISS_NOTICE:
 			// Remove the dismissed list ID
-			return filter( state, listId => {
+			return filter( state, ( listId ) => {
 				return listId !== action.listId;
 			} );
 	}
@@ -180,12 +180,12 @@ export function missingLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			// Remove any valid lists from missingLists
-			return filter( state, list => {
+			return filter( state, ( list ) => {
 				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
 			} );
 		case READER_LIST_REQUEST_SUCCESS:
 			// Remove any valid lists from missingLists
-			return filter( state, list => {
+			return filter( state, ( list ) => {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:

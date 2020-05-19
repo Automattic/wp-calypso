@@ -47,7 +47,7 @@ export default class Emojify extends PureComponent {
 			base: twemojiUrl,
 			size: '72x72',
 			className: imgClassName,
-			callback: function( icon, options ) {
+			callback: function ( icon, options ) {
 				const ignored = [ 'a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666' ];
 
 				if ( -1 !== ignored.indexOf( icon ) ) {

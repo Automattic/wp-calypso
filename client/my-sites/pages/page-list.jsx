@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -20,7 +19,6 @@ import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
 import Placeholder from './placeholder';
-import { mapPostStatus as mapStatus } from 'lib/route';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
@@ -34,6 +32,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
+import config from 'config';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -44,6 +43,11 @@ export default class PageList extends Component {
 		search: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
+		query: PropTypes.shape( {
+			author: PropTypes.number, // User ID
+			status: PropTypes.string,
+			type: PropTypes.string.isRequired,
+		} ),
 	};
 
 	state = {
@@ -69,20 +73,27 @@ export default class PageList extends Component {
 	};
 
 	render() {
-		const { search, siteId, status } = this.props;
+		const { search, siteId, query } = this.props;
+		const { page } = this.state;
 
-		const query = {
-			page: this.state.page,
-			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
-			search,
-			status: mapStatus( status ),
-			type: 'page',
-		};
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the raw content of the pages to be able to export them
+			query.context = 'edit';
+		}
+
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( search );
 
 		return (
 			<div>
-				<QueryPosts siteId={ siteId } query={ query } />
-				<ConnectedPages incrementPage={ this.incrementPage } query={ query } siteId={ siteId } />
+				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
+				<ConnectedPages
+					incrementPage={ this.incrementPage }
+					query={ { ...query, page } }
+					siteId={ siteId }
+					showPublishedStatus={ showPublishedStatus }
+				/>
 			</div>
 		);
 	}
@@ -101,6 +112,7 @@ class Pages extends Component {
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -109,8 +121,9 @@ class Pages extends Component {
 		lastPage: false,
 		page: 0,
 		pages: [],
-		trackScrollPage: function() {},
+		trackScrollPage: function () {},
 		query: {},
+		showPublishedStatus: false,
 	};
 
 	state = {
@@ -127,7 +140,7 @@ class Pages extends Component {
 		}
 	}
 
-	fetchPages = options => {
+	fetchPages = ( options ) => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
@@ -137,42 +150,8 @@ class Pages extends Component {
 		this.props.incrementPage();
 	};
 
-	_insertTimeMarkers( pages ) {
-		const markedPages = [];
-		const now = this.props.moment();
-		let lastMarker;
-
-		const buildMarker = pageDate => {
-			pageDate = this.props.moment( pageDate );
-			const days = now.diff( pageDate, 'days' );
-			if ( days <= 0 ) {
-				return this.props.translate( 'Today' );
-			}
-			if ( days === 1 ) {
-				return this.props.translate( 'Yesterday' );
-			}
-			return pageDate.from( now );
-		};
-
-		pages.forEach( page => {
-			const date = this.props.moment( page.date );
-			const marker = buildMarker( date );
-			if ( lastMarker !== marker ) {
-				markedPages.push(
-					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<Gridicon icon="time" size={ 12 } /> { marker }
-					</div>
-				);
-			}
-			lastMarker = marker;
-			markedPages.push( page );
-		} );
-
-		return markedPages;
-	}
-
 	updateShadowStatus = ( globalID, shadowStatus ) =>
-		new Promise( resolve =>
+		new Promise( ( resolve ) =>
 			this.setState( ( state, props ) => {
 				if ( shadowStatus ) {
 					// add or update the `globalID` key in the `shadowItems` map
@@ -224,7 +203,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any drafts." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -232,7 +211,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any scheduled pages yet." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -246,7 +225,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You haven't published any pages yet." ),
 					line: translate( 'Would you like to publish your first page?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 		}
@@ -299,14 +278,14 @@ class Pages extends Component {
 		return (
 			<SectionHeader label={ translate( 'Pages' ) }>
 				<Button primary compact className="pages__add-page" href={ newPageLink }>
-					{ translate( 'Add New Page' ) }
+					{ translate( 'Add new page' ) }
 				</Button>
 			</SectionHeader>
 		);
 	}
 
 	renderPagesList( { pages } ) {
-		const { site, lastPage, query } = this.props;
+		const { site, lastPage, query, showPublishedStatus } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
 		// there are 100 or fewer pages and no more pages to load (last page).
@@ -319,13 +298,13 @@ class Pages extends Component {
 			! query.search;
 
 		return showHierarchical
-			? this.renderHierarchical( { pages, site } )
-			: this.renderChronological( { pages, site } );
+			? this.renderHierarchical( { pages, site, showPublishedStatus } )
+			: this.renderChronological( { pages, site, showPublishedStatus } );
 	}
 
-	renderHierarchical( { pages, site } ) {
+	renderHierarchical( { pages, site, showPublishedStatus } ) {
 		pages = sortPagesHierarchically( pages );
-		const rows = pages.map( function( page ) {
+		const rows = pages.map( function ( page ) {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
@@ -335,6 +314,7 @@ class Pages extends Component {
 					multisite={ false }
 					hierarchical={ true }
 					hierarchyLevel={ page.indentLevel || 0 }
+					showPublishedStatus={ showPublishedStatus }
 				/>
 			);
 		}, this );
@@ -349,14 +329,10 @@ class Pages extends Component {
 		);
 	}
 
-	renderChronological( { pages, site } ) {
+	renderChronological( { pages, site, showPublishedStatus } ) {
 		const { search, status } = this.props.query;
 
-		if ( ! search ) {
-			// we're listing in reverse chrono. use the markers.
-			pages = this._insertTimeMarkers( pages );
-		}
-		const rows = pages.map( page => {
+		const rows = pages.map( ( page ) => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
@@ -369,6 +345,7 @@ class Pages extends Component {
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ this.props.siteId === null }
+					showPublishedStatus={ showPublishedStatus }
 				/>
 			);
 		} );

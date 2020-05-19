@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'state/action-types';
+import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'state/themes/action-types';
 import { themeActivated } from 'state/themes/actions/theme-activated';
 
 import 'state/themes/init';
@@ -17,7 +17,7 @@ import 'state/themes/init';
  * @returns {Function}           Action thunk
  */
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_ACTIVATE,
 			themeId,
@@ -27,12 +27,12 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 		return wpcom
 			.undocumented()
 			.activateTheme( themeId, siteId )
-			.then( theme => {
+			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_ACTIVATE_FAILURE,
 					themeId,

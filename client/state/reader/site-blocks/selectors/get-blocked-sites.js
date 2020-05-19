@@ -16,6 +16,6 @@ import 'state/reader/init';
  * @returns {Array}        Blocked site IDs
  */
 export default createSelector(
-	state => map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number ),
-	state => [ state.reader.siteBlocks.items ]
+	( state ) => map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number ),
+	( state ) => [ state.reader.siteBlocks.items ]
 );

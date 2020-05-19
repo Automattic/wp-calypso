@@ -155,7 +155,7 @@ class MobileDownloadCard extends React.Component {
 	}
 
 	numericCountryCodeForCountryCode( code ) {
-		const element = this.props.countriesList.find( item => {
+		const element = this.props.countriesList.find( ( item ) => {
 			return item.code === code;
 		} );
 
@@ -268,7 +268,7 @@ class MobileDownloadCard extends React.Component {
 		);
 	}
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		this.setState( {
 			phoneNumber: {
 				countryCode: phoneNumber.countryData.code,
@@ -280,7 +280,7 @@ class MobileDownloadCard extends React.Component {
 		} );
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSubmit( event );
 		}
@@ -297,14 +297,14 @@ class MobileDownloadCard extends React.Component {
 	};
 }
 
-const sendMagicLink = email =>
+const sendMagicLink = ( email ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
 		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
 	);
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		countriesList: getCountries( state, 'sms' ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),

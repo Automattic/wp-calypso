@@ -182,6 +182,8 @@ The following props can be passed to the Product Card Options component:
   * `options.slug`: ( string ) Option slug
 * `optionsLabel`: ( string ) Label that is displayed above the list of product options
 * `selectedSlug`: ( string ) Currently selected product option slug
+* `forceRadiosEvenIfOnlyOneOption`: (bool) Normally if there is only one option the display is simplified, but
+  setting this to `true` overrides that and uses the full display with radio buttons
 
 <a name="product-card-action"></a>Product Card Action
 =======

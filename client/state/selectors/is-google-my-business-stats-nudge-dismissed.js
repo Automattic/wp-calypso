@@ -22,7 +22,7 @@ const MAX_DISMISS = 2;
 const getLastDismissTime = ( state, siteId ) => {
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+	const lastEvent = last( sitePreference.filter( ( event ) => 'dismiss' === event.type ) );
 
 	return lastEvent ? lastEvent.dismissedAt : 0;
 };

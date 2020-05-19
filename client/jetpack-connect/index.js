@@ -19,13 +19,13 @@ import { getLanguageRouteParam } from 'lib/i18n-utils';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
+		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,

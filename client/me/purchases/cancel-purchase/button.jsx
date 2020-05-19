@@ -68,7 +68,7 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	onSurveyChange = update => {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
@@ -86,7 +86,7 @@ class CancelPurchaseButton extends Component {
 
 		this.setDisabled( true );
 
-		cancelPurchase( purchase.id, success => {
+		cancelPurchase( purchase.id, ( success ) => {
 			const purchaseName = getName( purchase ),
 				subscriptionEndDate = getSubscriptionEndDate( purchase );
 
@@ -130,7 +130,7 @@ class CancelPurchaseButton extends Component {
 		this.setDisabled( false );
 	};
 
-	setDisabled = disabled => {
+	setDisabled = ( disabled ) => {
 		this.setState( { disabled } );
 	};
 

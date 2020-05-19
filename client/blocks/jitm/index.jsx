@@ -19,6 +19,11 @@ import AsyncLoad from 'components/async-load';
 import QueryJITM from 'components/data/query-jitm';
 import 'state/data-layer/wpcom/marketing';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:jitm' );
 
 function renderTemplate( template, props ) {

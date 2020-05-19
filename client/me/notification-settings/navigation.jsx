@@ -42,7 +42,7 @@ class NotificationSettingsNavigation extends React.Component {
 		};
 	};
 
-	navItem = path => {
+	navItem = ( path ) => {
 		return (
 			<NavItem path={ path } key={ path } selected={ this.props.path === path }>
 				{ this.itemLabels()[ path ] }

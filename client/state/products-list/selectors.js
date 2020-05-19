@@ -23,7 +23,7 @@ export function getProductsList( state ) {
 }
 
 export function getAvailableProductsList( state ) {
-	return pickBy( state.productsList.items, product => product.available );
+	return pickBy( state.productsList.items, ( product ) => product.available );
 }
 
 /**
@@ -149,9 +149,9 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, co
 	const products = getProductsList( state );
 
 	return planSlugs
-		.map( plan => planSlugToPlanProduct( products, plan ) )
-		.filter( planProduct => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
-		.map( availablePlanProduct => ( {
+		.map( ( plan ) => planSlugToPlanProduct( products, plan ) )
+		.filter( ( planProduct ) => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
+		.map( ( availablePlanProduct ) => ( {
 			...availablePlanProduct,
 			...computeFullAndMonthlyPricesForPlan(
 				state,
@@ -161,6 +161,6 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, co
 				couponDiscounts
 			),
 		} ) )
-		.filter( availablePlanProduct => availablePlanProduct.priceFull )
+		.filter( ( availablePlanProduct ) => availablePlanProduct.priceFull )
 		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );
 };

@@ -12,10 +12,10 @@ const matchesMock = jest.fn( () => 'foo' );
 const addListenerMock = jest.fn();
 const removeListenerMock = jest.fn();
 
-const matchMediaMock = jest.fn( query => {
+const matchMediaMock = jest.fn( ( query ) => {
 	const mediaListObjectMock = {
-		addListener: listener => addListenerMock( query, listener ),
-		removeListener: listener => removeListenerMock( query, listener ),
+		addListener: ( listener ) => addListenerMock( query, listener ),
+		removeListener: ( listener ) => removeListenerMock( query, listener ),
 	};
 	// Add matches read-only property.
 	Object.defineProperty( mediaListObjectMock, 'matches', {

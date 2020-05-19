@@ -12,14 +12,13 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
-import Button from '@automattic/components/src/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 class ListItem extends React.PureComponent {
@@ -32,8 +31,12 @@ class ListItem extends React.PureComponent {
 		onSelect: PropTypes.func.isRequired,
 		selectionIndex: PropTypes.number,
 		isSelected: PropTypes.bool,
-		shouldUpgradeToMakePrimary: PropTypes.bool.isRequired,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		onUpgradeClick: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		shouldUpgradeToMakePrimary: false,
 	};
 
 	renderContent() {

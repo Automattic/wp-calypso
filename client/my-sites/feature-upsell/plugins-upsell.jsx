@@ -90,8 +90,8 @@ class PluginsUpsellComponent extends Component {
 						WordPress Plugins are now available on the Business plan
 					</h1>
 					<h2 className="feature-upsell__card-header is-sub">
-						Upgrading to the Business plan unlocks access to more than 50,000 WordPress Plugins and
-						197 premium Themes, making it our most powerful plan ever.
+						Upgrading to the Business plan unlocks access to more thousands of WordPress plugins and
+						themes, making it our most powerful plan ever.
 					</h2>
 
 					<div className="feature-upsell__cta">
@@ -115,7 +115,7 @@ class PluginsUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="plugins" size={ 48 } /> }
 							title="Install as Many WordPress Plugins as You Want"
-							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and Mailchimp integration, Google Analytics, and much, much more."
+							description="Plugins are like smartphone apps for WordPress. They improve your site with features like: SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and Mailchimp integration, Google Analytics, and much, much more."
 						/>
 					</div>
 
@@ -123,7 +123,7 @@ class PluginsUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="types" size={ 48 } /> }
 							title="Access our Entire Library of Premium Themes"
-							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
+							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of premium themes for no additional fee."
 						/>
 					</div>
 
@@ -273,7 +273,7 @@ class PluginsUpsellComponent extends Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
 
@@ -284,7 +284,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 

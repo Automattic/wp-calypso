@@ -35,7 +35,7 @@ const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

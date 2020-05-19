@@ -35,15 +35,15 @@ class StatsSummaryChart extends Component {
 		onClick: () => {},
 	};
 
-	barClick = bar => {
-		const selectedBar = find( this.props.data, data => isEqual( data, bar.data ) );
+	barClick = ( bar ) => {
+		const selectedBar = find( this.props.data, ( data ) => isEqual( data, bar.data ) );
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Summary Chart Bar' );
 		this.props.onClick( selectedBar );
 	};
 
 	buildChartData() {
 		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
-		return data.map( record => {
+		return data.map( ( record ) => {
 			const className = classNames( {
 				'is-selected': isEqual( selected, record ),
 			} );

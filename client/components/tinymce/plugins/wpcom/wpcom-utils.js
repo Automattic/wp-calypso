@@ -10,7 +10,7 @@
  */
 
 export function removeEmptySpacesInParagraphs( content ) {
-	return content.replace( /<p>([^<>]+)<\/p>/gi, function( tag, text ) {
+	return content.replace( /<p>([^<>]+)<\/p>/gi, function ( tag, text ) {
 		if ( text === '&nbsp;' || ! /\S/.test( text ) ) {
 			return '<p><br /></p>';
 		}

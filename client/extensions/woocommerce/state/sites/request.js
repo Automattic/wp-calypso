@@ -11,11 +11,11 @@ import wp from 'lib/wp';
 
 const omitDeep = ( input, props ) => {
 	if ( isArray( input ) ) {
-		return input.map( elem => omitDeep( elem, props ) );
+		return input.map( ( elem ) => omitDeep( elem, props ) );
 	}
 
 	if ( isObject( input ) ) {
-		return mapValues( omit( input, props ), value => omitDeep( value, props ) );
+		return mapValues( omit( input, props ), ( value ) => omitDeep( value, props ) );
 	}
 
 	return input;
@@ -38,19 +38,21 @@ const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
 };
 
 const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3' ) => {
-	return _request( method, path + '&_envelope', siteId, sendBody, namespace ).then( response => {
-		const { headers, body, status } = response;
+	return _request( method, path + '&_envelope', siteId, sendBody, namespace ).then(
+		( response ) => {
+			const { headers, body, status } = response;
 
-		if ( status !== 200 ) {
-			throw {
-				status: body.data.status,
-				message: body.message,
-				error: body.code,
-			};
+			if ( status !== 200 ) {
+				throw {
+					status: body.data.status,
+					message: body.message,
+					error: body.code,
+				};
+			}
+
+			return { data: body, headers };
 		}
-
-		return { data: body, headers };
-	} );
+	);
 };
 
 /**
@@ -61,7 +63,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
  * @returns {object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
-export default siteId => ( {
+export default ( siteId ) => ( {
 	/**
 	 * Sends a GET request to the API
 	 *

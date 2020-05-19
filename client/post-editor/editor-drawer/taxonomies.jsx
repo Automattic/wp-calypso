@@ -57,7 +57,7 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, taxonomies, term
 						} );
 					} else {
 						// Terms can be an array of strings or objects with `name`
-						subtitle = map( taxonomyTerms, term => {
+						subtitle = map( taxonomyTerms, ( term ) => {
 							return decodeEntities( term.name || term );
 						} ).join( ', ' );
 					}
@@ -86,7 +86,7 @@ EditorDrawerTaxonomies.propTypes = {
 	taxonomies: PropTypes.array,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );

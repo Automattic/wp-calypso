@@ -34,7 +34,7 @@ import 'state/data-layer/wpcom/sites/plan-transfer';
  * @returns {Function} a promise that will resolve once updating is completed
  */
 export function cancelSitePlanTrial( siteId, planId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_PLANS_TRIAL_CANCEL,
 			siteId,
@@ -92,13 +92,13 @@ export function clearSitePlans( siteId ) {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSitePlans( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_PLANS_FETCH,
 			siteId,
 		} );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
@@ -147,7 +147,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  * @returns {Function} the corresponding action thunk
  */
 export function refreshSitePlans( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
 	};

@@ -29,7 +29,7 @@ export default class LinkQuit extends Component {
 		super( props, context );
 	}
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
 		quit( { tour, tourVersion, step, isLastStep } );

@@ -11,6 +11,7 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
+import config from 'config';
 
 const normalizeDisplayFlow = flow( [
 	decodeEntities,
@@ -41,6 +42,10 @@ export function normalizePostForDisplay( post ) {
 	if ( ! normalizedPost ) {
 		// `normalizeDisplayFlow` mutates its argument properties -- hence deep clone is needed
 		normalizedPost = normalizeDisplayFlow( cloneDeep( post ) );
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the original content from the API to be able to export a page
+			normalizedPost.rawContent = post.content;
+		}
 		normalizePostCache.set( post, normalizedPost );
 	}
 	return normalizedPost;

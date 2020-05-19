@@ -67,7 +67,7 @@ const MINIMUM_CURRENCY_AMOUNT = {
 /**
  * @type Array<{ code: string }>
  */
-const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( code => ( { code } ) );
+const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
 class MembershipsProductsSection extends Component {
 	constructor() {
@@ -100,7 +100,7 @@ class MembershipsProductsSection extends Component {
 		);
 	}
 
-	onCloseDialog = reason => {
+	onCloseDialog = ( reason ) => {
 		if ( reason === 'submit' && ! this.state.editedProductId ) {
 			this.props.requestAddProduct(
 				this.props.siteId,
@@ -132,9 +132,9 @@ class MembershipsProductsSection extends Component {
 		this.setState( { showDialog: false, editedProductId: null } );
 	};
 
-	openProductDialog = editedProductId => {
+	openProductDialog = ( editedProductId ) => {
 		if ( editedProductId ) {
-			const product = this.props.products.filter( prod => prod.ID === editedProductId ).pop();
+			const product = this.props.products.filter( ( prod ) => prod.ID === editedProductId ).pop();
 			this.setState( {
 				showDialog: true,
 				editedProductId,
@@ -164,9 +164,11 @@ class MembershipsProductsSection extends Component {
 			} );
 		}
 	};
-	onCloseDeleteProduct = reason => {
+	onCloseDeleteProduct = ( reason ) => {
 		if ( reason === 'delete' ) {
-			const product = this.props.products.filter( p => p.ID === this.state.deletedProductId ).pop();
+			const product = this.props.products
+				.filter( ( p ) => p.ID === this.state.deletedProductId )
+				.pop();
 			this.props.requestDeleteProduct(
 				this.props.siteId,
 				product,
@@ -175,26 +177,26 @@ class MembershipsProductsSection extends Component {
 		}
 		this.setState( { deletedProductId: null } );
 	};
-	handleCurrencyChange = event => {
+	handleCurrencyChange = ( event ) => {
 		const { value: currency } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			editedPrice: { ...state.editedPrice, currency },
 		} ) );
 	};
-	handlePriceChange = event => {
+	handlePriceChange = ( event ) => {
 		const value = parseFloat( event.currentTarget.value );
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			editedPrice: { ...state.editedPrice, value },
 		} ) );
 	};
-	handlePayWhatYouWant = newValue => this.setState( { editedPayWhatYouWant: newValue } );
-	handleMultiplePerUser = newValue => this.setState( { editedMultiplePerUser: newValue } );
+	handlePayWhatYouWant = ( newValue ) => this.setState( { editedPayWhatYouWant: newValue } );
+	handleMultiplePerUser = ( newValue ) => this.setState( { editedMultiplePerUser: newValue } );
 
-	onNameChange = event => this.setState( { editedProductName: event.target.value } );
-	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
-	isFormValid = field => {
+	onNameChange = ( event ) => this.setState( { editedProductName: event.target.value } );
+	onSelectSchedule = ( event ) => this.setState( { editedSchedule: event.target.value } );
+	isFormValid = ( field ) => {
 		if (
 			( field === 'price' || ! field ) &&
 			! isValidCurrencyAmount( this.state.editedPrice.currency, this.state.editedPrice.value )
@@ -338,7 +340,7 @@ class MembershipsProductsSection extends Component {
 						{ this.props.translate( 'Add new plan' ) }
 					</Button>
 				</SectionHeader>
-				{ this.props.products.map( product => (
+				{ this.props.products.map( ( product ) => (
 					<CompactCard className="memberships__products-product-card" key={ product.ID }>
 						<div className="memberships__products-product-details">
 							<div className="memberships__products-product-price">
@@ -369,7 +371,7 @@ class MembershipsProductsSection extends Component {
 					<p>
 						{ this.props.translate( 'Do you want to delete "%s"?', {
 							args: get(
-								this.props.products.filter( p => p.ID === this.state.deletedProductId ),
+								this.props.products.filter( ( p ) => p.ID === this.state.deletedProductId ),
 								[ 0, 'title' ],
 								''
 							),
@@ -411,7 +413,7 @@ function isValidCurrencyAmount( currency, price ) {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		return {

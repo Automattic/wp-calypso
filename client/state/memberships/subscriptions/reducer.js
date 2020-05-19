@@ -26,7 +26,7 @@ export const items = withoutPersistence( ( state = [], action ) => {
 		}
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
 			const { subscriptionId } = action;
-			return state.filter( sub => sub.ID !== subscriptionId );
+			return state.filter( ( sub ) => sub.ID !== subscriptionId );
 		}
 	}
 

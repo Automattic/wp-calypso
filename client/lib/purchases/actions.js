@@ -32,13 +32,13 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 	debug( 'Survey responses', survey );
 	return survey
 		.submit()
-		.then( res => {
+		.then( ( res ) => {
 			debug( 'Survey submit response', res );
 			if ( ! res.success ) {
 				notices.error( res.err );
 			}
 		} )
-		.catch( err => debug( err ) ); // shouldn't get here
+		.catch( ( err ) => debug( err ) ); // shouldn't get here
 }
 
 export function disableAutoRenew( purchaseId, onComplete ) {

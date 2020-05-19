@@ -66,7 +66,7 @@ SettingsNavigation.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		site: getSelectedSiteWithFallback( state ),
 	};

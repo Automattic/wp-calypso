@@ -2,7 +2,8 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { JETPACK_CONNECT_AUTHORIZE, SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
+import { JETPACK_CONNECT_AUTHORIZE } from 'state/jetpack-connect/action-types';
+import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return default  state', () => {} );

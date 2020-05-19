@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/active-promotions';
  * @param {Array} activePromotions - WordPress.com activePromotions list
  * @returns {object} action object
  */
-export const activePromotionsReceiveAction = activePromotions => {
+export const activePromotionsReceiveAction = ( activePromotions ) => {
 	return {
 		type: ACTIVE_PROMOTIONS_RECEIVE,
 		activePromotions,
@@ -39,7 +39,7 @@ export const activePromotionsRequestSuccessAction = () => {
  * @param {string} error - error message
  * @returns {object} action object
  */
-export const activePromotionsRequestFailureAction = error => {
+export const activePromotionsRequestFailureAction = ( error ) => {
 	return {
 		type: ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 		error: error,

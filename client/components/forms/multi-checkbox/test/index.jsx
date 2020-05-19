@@ -85,8 +85,8 @@ describe( 'index', () => {
 			expect( labels[ 1 ].querySelector( 'input' ).checked ).toBe( false );
 		} );
 
-		test( 'should accept an onChange event handler', done => {
-			const finishTest = event => {
+		test( 'should accept an onChange event handler', ( done ) => {
+			const finishTest = ( event ) => {
 				expect( event.value ).toEqual( [ options[ 0 ].value ] );
 				done();
 			};

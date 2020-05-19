@@ -5,7 +5,7 @@ import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
 
 const exported = {
-	formatUrlForDisplay: function( url ) {
+	formatUrlForDisplay: function ( url ) {
 		if ( ! url ) {
 			return;
 		}
@@ -14,7 +14,7 @@ const exported = {
 	},
 
 	// Use either the site name, feed name or display URL for the feed name
-	getFeedTitle: function( siteData, feedData, displayUrl ) {
+	getFeedTitle: function ( siteData, feedData, displayUrl ) {
 		let feedTitle;
 
 		if ( siteData && siteData.name ) {
@@ -28,7 +28,7 @@ const exported = {
 		return feedTitle;
 	},
 
-	getFeedStreamUrl: function( siteData, feedData ) {
+	getFeedStreamUrl: function ( siteData, feedData ) {
 		if ( ! siteData && ! feedData ) {
 			return null;
 		}
@@ -40,7 +40,7 @@ const exported = {
 		return getSiteUrlFromRoute( siteData.get( 'ID' ) );
 	},
 
-	getSiteUrl: function( siteData, feedData, subscription ) {
+	getSiteUrl: function ( siteData, feedData, subscription ) {
 		let siteUrl;
 
 		if ( siteData && siteData.URL ) {

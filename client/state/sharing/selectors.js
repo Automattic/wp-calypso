@@ -56,7 +56,7 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 		}
 
 		return memo.concat(
-			keyringConnection.additional_external_users.map( externalUser => ( {
+			keyringConnection.additional_external_users.map( ( externalUser ) => ( {
 				ID: externalUser.external_ID,
 				name: externalUser.external_name,
 				description: externalUser.external_description,
@@ -68,4 +68,14 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 			} ) )
 		);
 	}, [] );
+}
+
+/**
+ * Given a service determine if this service should be displayed expanded on /marketing/connections
+ *
+ * @param {object} state Global state tree
+ * @param {object} service The service object to check
+ */
+export function isServiceExpanded( state, service ) {
+	return service.ID === state.sharing.expandedService;
 }

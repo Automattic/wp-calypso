@@ -29,7 +29,7 @@ export default class AddNewSitePage extends AsyncBaseContainer {
 		}
 
 		// Set when settable doesn't work because of https://github.com/Automattic/wp-calypso/issues/24193
-		this.driver.findElement( urlInputSelector ).then( webElement => {
+		this.driver.findElement( urlInputSelector ).then( ( webElement ) => {
 			this.driver.executeScript( `return arguments[0].value='${ url }';`, webElement );
 		} );
 		await this.driver.findElement( urlInputSelector ).sendKeys( Key.SPACE );

@@ -15,7 +15,7 @@ const argsToCommands = {
 	'--sync': 'wpcom-sync',
 };
 
-const commands = args.map( arg => argsToCommands[ arg ] ).filter( val => !! val );
+const commands = args.map( ( arg ) => argsToCommands[ arg ] ).filter( ( val ) => !! val );
 
 console.log( `Running the following commands: ${ commands.toString() }` );
 

@@ -10,7 +10,6 @@ import { get, compact } from 'lodash';
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import { abtest } from 'lib/abtest';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -91,17 +90,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 */
 	const getSimplePaymentsCard = () => {
 		const supportLink =
-			'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/';
+			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Collect One-time Payments' ),
+					text: translate( 'Collect one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to a Premium Plan' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
-						trackUpgrade( 'premium', 'simple-payments' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
+						trackUpgrade( 'plans', 'simple-payments' );
+						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  };
 		const learnMoreLink = hasSimplePayments
@@ -109,14 +108,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
-			body: translate(
-				'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. {{em}}Available to any site with a Premium plan{{/em}}.',
-				{
-					components: {
-						em: <em />,
-					},
-				}
-			),
+			body: hasSimplePayments
+				? translate(
+						'Accept PayPal payments for physical products, digital goods, services, or donations.'
+				  )
+				: translate(
+						'Accept PayPal payments for physical products, digital goods, services, or donations. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+				  ),
 			image: {
 				path: simplePaymentsImage,
 			},
@@ -135,14 +138,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getRecurringPaymentsCard = () => {
 		const cta = isFreePlan
 			? {
-					text: translate( 'Upgrade to a Paid Plan' ),
+					text: translate( 'Unlock this feature' ),
 					action: () => {
 						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
 			: {
-					text: translate( 'Collect Recurring Payments' ),
+					text: translate( 'Collect recurring payments' ),
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
@@ -156,16 +159,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
 			  )
 			: translate(
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
+					'Charge for and automate recurring service payments, membership dues, or donations. {{em}}Available with a subscription to any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
 		const learnMoreLink = isFreePlan
 			? {
-					url: 'https://en.support.wordpress.com/recurring-payments/',
+					url: 'https://wordpress.com/support/recurring-payments/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
 			: null;
@@ -184,52 +188,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
-	 * Return the content to display in the Referrals card based on the current plan.
-	 *
-	 * @returns {object} Object with props to render a PromoCard.
-	 */
-	const getReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
-		const cta = {
-			text: translate( 'Earn Cash from Referrals' ),
-			action: isJetpackNotAtomic
-				? {
-						url: 'https://jetpack.com/for/affiliates/',
-						onClick: () => trackCtaButton( 'referral-jetpack' ),
-				  }
-				: {
-						url:
-							'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
-						onClick: () => trackCtaButton( 'referral-wpcom' ),
-				  },
-		};
-		const components = {
-			components: {
-				em: <em />,
-			},
-		};
-
-		return {
-			title: translate( 'Earn cash from referrals' ),
-			body: isJetpackNotAtomic
-				? translate(
-						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
-				  )
-				: translate(
-						"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
-				  ),
-			image: {
-				path: referralImage,
-			},
-			actions: {
-				cta,
-			},
-		};
-	};
-
-	/**
 	 * Return the content to display in the Peer Referrals card.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
@@ -242,7 +200,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		}
 
 		const cta: CtaButton = {
-			text: translate( 'Earn Free Credits' ) as string,
+			text: translate( 'Earn free credits' ) as string,
 			action: () => {
 				trackCtaButton( 'peer-referral-wpcom' );
 				onPeerReferralCtaClick();
@@ -297,7 +255,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta =
 			hasWordAds || hasSetupAds
 				? {
-						text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
+						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
 							page(
@@ -306,10 +264,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 				  }
 				: {
-						text: translate( 'Upgrade to a Premium Plan' ),
+						text: translate( 'Unlock this feature' ),
 						action: () => {
-							trackUpgrade( 'premium', 'ads' );
-							page( `/checkout/${ selectedSiteSlug }/premium/` );
+							trackUpgrade( 'plans', 'ads' );
+							page( `/plans/${ selectedSiteSlug }` );
 						},
 				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
@@ -318,13 +276,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
 			  )
 			: translate(
-					'Publish as you normally would, display advertisements on all your posts and pages, and make money each time someone visits your site. {{em}}Available to sites with a Premium plan{{/em}}.',
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
 						},
 					}
 			  );
+
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
@@ -347,14 +306,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: earnSectionImage,
 			},
-			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
+			body: translate( 'Turn your website into a reliable source of income.' ),
 		},
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
-			abtest( 'peerReferralEarnCard' ) === 'show' ? getPeerReferralsCard() : false,
-			getReferralsCard(),
+			getPeerReferralsCard(),
 		] ),
 	};
 
@@ -368,7 +326,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 };
 
 export default connect< ConnectedProps, {}, {} >(
-	state => {
+	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		return {
@@ -387,7 +345,7 @@ export default connect< ConnectedProps, {}, {} >(
 			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		trackUpgrade: ( plan: string, feature: string ) =>
 			dispatch(
 				composeAnalytics(

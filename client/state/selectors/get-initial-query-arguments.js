@@ -14,6 +14,6 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {object} initial query arguments
  */
-export const getInitialQueryArguments = state => get( state, 'ui.route.query.initial', null );
+export const getInitialQueryArguments = ( state ) => get( state, 'ui.route.query.initial', null );
 
 export default getInitialQueryArguments;

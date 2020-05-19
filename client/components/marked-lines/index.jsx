@@ -19,9 +19,9 @@ import './style.scss';
  *   <mark key="be kind" className="marked-lines__mark">be kind</mark>
  *
  * @param {string} text the string to mark
- * @returns {Element} React <mark> Element
+ * @returns {React.Element} React <mark> Element
  */
-const mark = text => (
+const mark = ( text ) => (
 	<mark key={ text } className="marked-lines__mark">
 		{ text }
 	</mark>
@@ -72,7 +72,7 @@ const MarkedLines = ( { context } ) => {
 
 					return (
 						<div
-							key={ content }
+							key={ lineNumber }
 							className={ classNames( 'marked-lines__line-number', {
 								'marked-lines__marked-line': hasMarks,
 							} ) }
@@ -88,7 +88,7 @@ const MarkedLines = ( { context } ) => {
 
 					return (
 						<div
-							key={ content }
+							key={ lineNumber }
 							className={ classNames( 'marked-lines__line', {
 								'marked-lines__marked-line': hasMarks,
 							} ) }

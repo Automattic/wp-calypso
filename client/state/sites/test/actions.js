@@ -36,7 +36,7 @@ describe( 'actions', () => {
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -107,7 +107,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -132,7 +132,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSite()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/sites/2916284' )
@@ -215,7 +215,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSite()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/delete' )

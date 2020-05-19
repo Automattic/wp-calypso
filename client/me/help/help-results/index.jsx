@@ -27,7 +27,7 @@ export default class extends React.PureComponent {
 		return (
 			<div className="help-results">
 				<SectionHeader label={ this.props.header } />
-				{ this.props.helpLinks.map( helpLink => (
+				{ this.props.helpLinks.map( ( helpLink ) => (
 					<HelpResult
 						key={ helpLink.link }
 						helpLink={ helpLink }

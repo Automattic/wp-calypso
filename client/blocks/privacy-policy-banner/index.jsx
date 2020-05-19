@@ -35,7 +35,7 @@ const privacyPolicyQuery = {
 				onSuccess: noop,
 			} ),
 			{
-				fromApi: () => data => [
+				fromApi: () => ( data ) => [
 					// extract the "automattic" policy from the list of entities and ignore the other ones
 					[ PRIVACY_POLICY_REQUEST_ID, get( data, [ 'entities', AUTOMATTIC_ENTITY ], null ) ],
 				],
@@ -165,7 +165,7 @@ class PrivacyPolicyBanner extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		fetchingPreferences: isFetchingPreferences( state ),
 		privacyPolicyPreferenceValue: getPreference( state, PRIVACY_POLICY_PREFERENCE ),

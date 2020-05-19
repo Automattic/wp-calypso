@@ -17,7 +17,7 @@ import 'state/themes/init';
  * @returns {Function}              Action thunk
  */
 export function installAndTryAndCustomizeTheme( themeId, siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) ).then( () => {
 			dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 		} );

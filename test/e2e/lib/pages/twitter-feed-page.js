@@ -25,14 +25,14 @@ export default class TwitterFeedPage extends AsyncBaseContainer {
 	async checkLatestTweetsContain( expectedTweetText ) {
 		const driver = this.driver;
 		return await driver
-			.wait( async function() {
+			.wait( async function () {
 				await driver.navigate().refresh();
 				return await isEventuallyPresentAndDisplayed(
 					driver,
 					by.css( '.stream-item, div[data-testid*=tweet]' )
-				).then( tweetsShown => {
+				).then( ( tweetsShown ) => {
 					if ( tweetsShown ) {
-						return driver.getPageSource().then( function( source ) {
+						return driver.getPageSource().then( function ( source ) {
 							return source.indexOf( expectedTweetText ) > -1;
 						} );
 					}

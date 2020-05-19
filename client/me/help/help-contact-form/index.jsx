@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
@@ -12,7 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { preventWidows } from 'lib/formatting';
 import config from 'config';
 import FormLabel from 'components/forms/form-label';
@@ -27,7 +26,11 @@ import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
-import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
+import {
+	bumpStat,
+	recordTracksEvent as recordTracksEventAction,
+	composeAnalytics,
+} from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
@@ -47,13 +50,13 @@ const wpcom = wpcomLib.undocumented();
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
-		recordTracksEvent( 'calypso_sibyl_question_click', {
+		recordTracksEventAction( 'calypso_sibyl_question_click', {
 			question_id: helpLink.id,
 		} )
 	);
 
 const trackSupportAfterSibylClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_sibyl_support_after_question_click' ) );
+	composeAnalytics( recordTracksEventAction( 'calypso_sibyl_support_after_question_click' ) );
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
@@ -96,7 +99,8 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
-	 * Setup our initial state
+	 * Set up our initial state
+	 *
 	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
@@ -145,7 +149,7 @@ export class HelpContactForm extends React.PureComponent {
 		}[ selectionName ];
 
 		if ( tracksEvent ) {
-			analytics.tracks.recordEvent( tracksEvent, { selected_option: selectedOption } );
+			recordTracksEvent( tracksEvent, { selected_option: selectedOption } );
 		}
 	};
 
@@ -158,9 +162,9 @@ export class HelpContactForm extends React.PureComponent {
 		}
 
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
-			const existingIDs = existingQuestions.map( question => question.id );
+			const existingIDs = existingQuestions.map( ( question ) => question.id );
 			existingIDs.sort();
-			const newIDs = newQuestions.map( question => question.id );
+			const newIDs = newQuestions.map( ( question ) => question.id );
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
@@ -170,7 +174,7 @@ export class HelpContactForm extends React.PureComponent {
 
 		wpcom
 			.getQandA( query, site )
-			.then( qanda =>
+			.then( ( qanda ) =>
 				this.setState( {
 					qanda: isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
@@ -201,7 +205,7 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
-		const options = selectionOptions.map( option => ( {
+		const options = selectionOptions.map( ( option ) => ( {
 			label: option.label,
 			subtext: option.subtext ? (
 				<span className="help-contact-form__selection-subtext">{ option.subtext }</span>
@@ -222,7 +226,7 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<div className="help-contact-form__selection">
 				<SegmentedControl primary>
-					{ options.map( option => (
+					{ options.map( ( option ) => (
 						<SegmentedControl.Item { ...option.props }>
 							{ option.label }
 							{ option.subtext }
@@ -232,7 +236,7 @@ export class HelpContactForm extends React.PureComponent {
 				<SelectDropdown
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
 				>
-					{ options.map( option => (
+					{ options.map( ( option ) => (
 						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
 					) ) }
 				</SelectDropdown>
@@ -242,7 +246,8 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Determine if this form is ready to submit
-	 * @returns {bool}	Return true if this form can be submitted
+	 *
+	 * @returns {boolean}	Return true if this form can be submitted
 	 */
 	canSubmitForm = () => {
 		const { disabled, showSubjectField } = this.props;
@@ -261,7 +266,6 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Start a chat using the info set in state
-	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
 		const { howCanWeHelp, howYouFeel, message } = this.state;
@@ -269,7 +273,7 @@ export class HelpContactForm extends React.PureComponent {
 		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
 
 		if ( additionalSupportOption && additionalSupportOption.enabled ) {
-			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
+			this.props.recordTracksEventAction( 'calypso_happychat_a_b_english_chat_selected', {
 				locale: currentUserLocale,
 			} );
 		}
@@ -291,14 +295,13 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Submit additional support option
-	 * @param  {object} event Event object
 	 */
 	submitAdditionalForm = () => {
 		const { howCanWeHelp, howYouFeel, message } = this.state;
 		const { currentUserLocale } = this.props;
 		const subject = generateSubjectFromMessage( message );
 
-		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected', {
+		this.props.recordTracksEventAction( 'calypso_happychat_a_b_native_ticket_selected', {
 			locale: currentUserLocale,
 		} );
 
@@ -313,6 +316,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Render the contact form
+	 *
 	 * @returns {object} ReactJS JSX object
 	 */
 	render() {
@@ -464,13 +468,13 @@ export class HelpContactForm extends React.PureComponent {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
@@ -480,7 +484,7 @@ const mapStateToProps = state => ( {
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
-	recordTracksEvent,
+	recordTracksEventAction,
 	trackSibylClick,
 	trackSupportAfterSibylClick,
 	showQandAOnInlineHelpContactForm,

@@ -1,0 +1,11 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+.plans-button {
+	white-space: nowrap;
+}
+
+.plans-button__jetpack-logo {
+	@include break-mobile {
+		margin-left: 8px;
+	}
+}

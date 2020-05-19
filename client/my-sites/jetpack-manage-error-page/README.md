@@ -27,17 +27,6 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 />
 ```
 
-### optInManage
-
-To display a page that will prompt the user to opt-in to Jetpack manage:
-
-```jsx
-<JetpackManageErrorPage
-    template="optInManage"
-    siteId={ this.props.siteId }
-/>
-```
-
 ### default
 
 As stated above, this component renders an `emptyContent` component by default. For example:

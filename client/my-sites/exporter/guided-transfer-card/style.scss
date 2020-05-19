@@ -13,7 +13,6 @@
 
 .guided-transfer-card__title {
 	font-size: 21px;
-	font-weight: 300;
 	color: var( --color-neutral-70 );
 	clear: left;
 }
@@ -76,7 +75,7 @@
 	font-size: 16px;
 	text-align: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 128px;
 		text-align: left;
 	}
@@ -91,7 +90,7 @@
 	background-color: var( --color-neutral-50 );
 	color: var( --color-neutral-0 );
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		position: absolute;
 		margin-left: -96px;
 		margin-top: 16px;
@@ -100,7 +99,6 @@
 
 .guided-transfer-card__in-progress-title {
 	font-size: 24px;
-	font-weight: 300;
 	color: var( --color-neutral-70 );
 }
 

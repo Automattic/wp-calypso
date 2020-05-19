@@ -12,7 +12,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @param {object} state  Global state tree
  * @returns {boolean} Whether Jetpack sites exist or not
  */
-export default createSelector( state => {
+export default createSelector( ( state ) => {
 	const siteIds = Object.keys( getSitesItems( state ) );
-	return siteIds.some( siteId => isJetpackSite( state, siteId ) );
+	return siteIds.some( ( siteId ) => isJetpackSite( state, siteId ) );
 }, getSitesItems );

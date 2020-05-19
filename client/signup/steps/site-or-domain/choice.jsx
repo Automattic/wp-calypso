@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import { Button, Card } from '@automattic/components';
 
 export default class SiteOrDomainChoice extends Component {
-	handleClickChoice = event => {
+	handleClickChoice = ( event ) => {
 		event.preventDefault();
 
 		this.props.handleClickChoice( this.props.choice.type );

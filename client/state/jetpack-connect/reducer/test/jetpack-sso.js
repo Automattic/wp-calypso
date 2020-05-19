@@ -14,7 +14,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
 
 const successfulSSOValidation = {
 	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
@@ -78,7 +78,7 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const state = jetpackSSO( undefined, action );
 			expect( state ).toHaveProperty( 'isValidating', false );
 		} );
@@ -87,7 +87,7 @@ describe( '#jetpackSSO()', () => {
 	test( 'should store boolean nonceValid after validation', () => {
 		const actions = [ successfulSSOValidation, falseSSOValidation ];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const originalAction = deepFreeze( action );
 			const state = jetpackSSO( undefined, originalAction );
 			expect( state ).toHaveProperty( 'nonceValid', originalAction.success );
@@ -121,7 +121,7 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
+		actions.forEach( ( action ) => {
 			const state = jetpackSSO( undefined, action );
 			expect( state ).toHaveProperty( 'isAuthorizing', false );
 		} );

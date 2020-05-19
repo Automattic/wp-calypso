@@ -16,6 +16,11 @@ export interface DomainSuggestionQuery {
 	include_wordpressdotcom: boolean;
 
 	/**
+	 * Localizes domain results, e.g., price format
+	 */
+	locale?: string;
+
+	/**
 	 * True to only provide a wordpress.com subdomain
 	 *
 	 * @example
@@ -44,6 +49,11 @@ export interface DomainSuggestionQuery {
 	 * The vertical id or slug
 	 */
 	vertical?: string;
+
+	/**
+	 * An array of tlds
+	 */
+	tlds?: readonly string[];
 }
 
 export type DomainName = string;
@@ -78,7 +88,7 @@ export interface DomainSuggestion {
 	 *
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: readonly string[];
 
 	/**
 	 * Rendered cost with currency

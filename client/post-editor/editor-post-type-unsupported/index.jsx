@@ -102,7 +102,7 @@ function EditorPostTypeUnsupported( {
 					'For more information, visit our {{supportLink}}support page on custom content types{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <a href="https://support.wordpress.com/custom-post-types/" />,
+							supportLink: <a href="https://wordpress.com/support/custom-post-types/" />,
 						},
 					}
 				) }

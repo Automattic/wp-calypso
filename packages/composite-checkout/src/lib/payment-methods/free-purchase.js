@@ -32,8 +32,8 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 				};
 				debug( 'free transaction complete', response );
 			} catch ( error ) {
-				debug( 'free transaction had an error', error );
-				return { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: error };
+				debug( 'free transaction had an error', error.message );
+				return { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: error.message };
 			}
 			debug( 'free transaction requires is successful' );
 			return { type: 'FREE_PURCHASE_TRANSACTION_END', payload: response };
@@ -86,7 +86,7 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 		label: <FreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <FreePurchaseSummary />,
-		getAriaLabel: localize => localize( 'Free' ),
+		getAriaLabel: ( localize ) => localize( 'Free' ),
 	};
 }
 
@@ -104,8 +104,12 @@ function FreePurchaseSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { beginFreeTransaction } = useDispatch( 'free-purchase' );
 	const [ items, total ] = useLineItems();
-	const transactionStatus = useSelect( select => select( 'free-purchase' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'free-purchase' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) =>
+		select( 'free-purchase' ).getTransactionStatus()
+	);
+	const transactionError = useSelect( ( select ) =>
+		select( 'free-purchase' ).getTransactionError()
+	);
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
@@ -139,13 +143,7 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			items,
 		} );
 	};
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf(
-					localize( 'Complete Checkout' ),
-					renderDisplayValueMarkdown( total.amount.displayValue )
-			  );
+
 	return (
 		<Button
 			disabled={ disabled }
@@ -154,9 +152,23 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents formStatus={ formStatus } total={ total } />
 		</Button>
 	);
+}
+
+function ButtonContents( { formStatus, total } ) {
+	const localize = useLocalize();
+	if ( formStatus === 'submitting' ) {
+		return localize( 'Processing…' );
+	}
+	if ( formStatus === 'ready' ) {
+		return sprintf(
+			localize( 'Complete Checkout' ),
+			renderDisplayValueMarkdown( total.amount.displayValue )
+		);
+	}
+	return localize( 'Please wait…' );
 }
 
 function FreePurchaseSummary() {

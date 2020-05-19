@@ -27,14 +27,14 @@ const DUMMY_SITE_ID = 1,
 describe( 'MediaListStore', () => {
 	let Dispatcher, sandbox, MediaListStore, handler, MediaStore;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		MediaStore = require( '../store' );
 		Dispatcher = require( 'dispatcher' );
 
 		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
-		sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
+		sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, postId ) {
 			if ( DUMMY_MEDIA_OBJECT.ID === postId ) {
 				return DUMMY_MEDIA_OBJECT;
 			}
@@ -49,7 +49,7 @@ describe( 'MediaListStore', () => {
 		MediaListStore._activeQueries = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		sandbox.restore();
 	} );
 
@@ -145,7 +145,7 @@ describe( 'MediaListStore', () => {
 			];
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -161,7 +161,7 @@ describe( 'MediaListStore', () => {
 			];
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -180,7 +180,7 @@ describe( 'MediaListStore', () => {
 			MediaStore.get.restore();
 			dispatchSetQuery( { query } );
 
-			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -296,7 +296,7 @@ describe( 'MediaListStore', () => {
 	describe( '#isItemMatchingQuery', () => {
 		let isItemMatchingQuery;
 
-		beforeAll( function() {
+		beforeAll( function () {
 			isItemMatchingQuery = MediaListStore.isItemMatchingQuery;
 		} );
 
@@ -382,7 +382,7 @@ describe( 'MediaListStore', () => {
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.not.be.undefined;
 		} );
 
-		test( 'should emit a change event when receiving updates', done => {
+		test( 'should emit a change event when receiving updates', ( done ) => {
 			MediaListStore.once( 'change', done );
 
 			dispatchReceiveMediaItems();
@@ -414,7 +414,7 @@ describe( 'MediaListStore', () => {
 			const newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } );
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, postId ) {
 				if ( siteId !== DUMMY_SITE_ID ) {
 					return;
 				}

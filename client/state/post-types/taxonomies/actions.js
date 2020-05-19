@@ -37,7 +37,7 @@ export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
  * @returns {Function}          Action thunk
  */
 export function requestPostTypeTaxonomies( siteId, postType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_TYPES_TAXONOMIES_REQUEST,
 			siteId,
@@ -56,7 +56,7 @@ export function requestPostTypeTaxonomies( siteId, postType ) {
 					postType,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId,

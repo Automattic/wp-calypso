@@ -53,7 +53,7 @@ export class CommentReply extends Component {
 		}
 	}
 
-	storeTextareaRef = textarea => ( this.textarea = textarea );
+	storeTextareaRef = ( textarea ) => ( this.textarea = textarea );
 
 	blurReply = () => this.setState( { hasReplyFocus: false } );
 
@@ -74,7 +74,7 @@ export class CommentReply extends Component {
 			: translate( 'Reply to comment…' );
 	};
 
-	keyDownHandler = event => {
+	keyDownHandler = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -82,7 +82,7 @@ export class CommentReply extends Component {
 		}
 	};
 
-	submit = event => {
+	submit = ( event ) => {
 		event.preventDefault();
 		this.submitReply();
 	};
@@ -122,7 +122,7 @@ export class CommentReply extends Component {
 		}
 	};
 
-	updateTextarea = event => {
+	updateTextarea = ( event ) => {
 		const { value: replyContent } = event.target;
 		const textareaHeight = this.calculateTextareaHeight();
 		this.setState( { replyContent, textareaHeight } );
@@ -211,7 +211,7 @@ const mapDispatchToProps = ( dispatch, { commentId, commentsListQuery } ) => ( {
 				changeCommentStatus( siteId, postId, commentId, 'approved' )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	replyToComment: ( replyContent, siteId, postId, analytics = { alsoApprove: false } ) =>
 		dispatch(
 			withAnalytics(

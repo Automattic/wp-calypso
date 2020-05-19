@@ -35,7 +35,7 @@ const debug = debugFactory( 'calypso:bootstrap' ),
  *
  * @returns {Promise<object>} A promise for a user object.
  */
-module.exports = async function( request ) {
+module.exports = async function ( request ) {
 	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
 	const geoCountry = request.get( 'x-geoip-country-code' ) || '';
 	const supportSessionHeader = request.get( 'x-support-session' );

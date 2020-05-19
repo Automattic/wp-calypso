@@ -43,6 +43,6 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	devices: getUserDevices( state ),
 } ) )( NotificationSettingsFormDeviceSelector );

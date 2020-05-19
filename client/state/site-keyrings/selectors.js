@@ -71,7 +71,7 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @returns {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
-	return find( getSiteKeyrings( state, siteId ), siteKeyring => {
+	return find( getSiteKeyrings( state, siteId ), ( siteKeyring ) => {
 		return externalUserId === null
 			? siteKeyring.keyring_id === keyringId
 			: siteKeyring.keyring_id === keyringId && siteKeyring.external_user_id === externalUserId;

@@ -10,87 +10,31 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { Card } from '@automattic/components';
-import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { emailManagement } from 'my-sites/email/paths';
-import {
-	domainManagementDns,
-	domainManagementDomainConnectMapping,
-	domainTransferIn,
-} from 'my-sites/domains/paths';
 import { isExpiringSoon } from 'lib/domains/utils';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import { isSubdomain } from 'lib/domains';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
+import {
+	getByPurchaseId,
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'state/purchases/selectors';
+import ExpiringCreditCard from '../card/notices/expiring-credit-card';
+import ExpiringSoon from '../card/notices/expiring-soon';
+import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { WrapDomainStatusButtons } from './helpers';
 
 class MappedDomainType extends React.Component {
-	getVerticalNavigation() {
-		return (
-			<VerticalNav>
-				{ this.emailNavItem() }
-				{ this.dnsRecordsNavItem() }
-				{ this.domainConnectMappingNavItem() }
-				{ this.transferMappedDomainNavItem() }
-			</VerticalNav>
-		);
-	}
-
-	emailNavItem() {
-		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
-
-		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	}
-
-	dnsRecordsNavItem() {
-		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
-
-		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
-		);
-	}
-
-	domainConnectMappingNavItem() {
-		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
-		if ( ! supportsDomainConnect || hasWpcomNameservers || pointsToWpcom ) {
-			return;
-		}
-
-		const path = domainManagementDomainConnectMapping(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Connect Your Domain' ) }
-			</VerticalNavItem>
-		);
-	}
-
-	transferMappedDomainNavItem() {
-		const { domain, selectedSite, translate } = this.props;
-
-		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
-			return null;
-		}
-
-		const path = domainTransferIn( selectedSite.slug, domain.name, true );
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ translate( 'Transfer Domain to WordPress.com' ) }
-			</VerticalNavItem>
-		);
-	}
-
 	resolveStatus() {
 		const { domain, translate, moment } = this.props;
 		const { expiry } = domain;
@@ -115,7 +59,11 @@ class MappedDomainType extends React.Component {
 			};
 		}
 
-		if ( ! domain.pointsToWpcom ) {
+		if (
+			! this.props.isJetpackSite &&
+			! this.props.isAutomatedTransferSite &&
+			! domain.pointsToWpcom
+		) {
 			return {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
@@ -130,65 +78,6 @@ class MappedDomainType extends React.Component {
 		};
 	}
 
-	renderExpiringSoon() {
-		const { domain, translate, moment } = this.props;
-		const { expiry } = domain;
-
-		if ( ! isExpiringSoon( domain, 30 ) ) {
-			return null;
-		}
-
-		let noticeText;
-		let subscriptionId;
-		let customLabel;
-		let tracksProps;
-
-		if ( domain.bundledPlanSubscriptionId ) {
-			noticeText = translate(
-				'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						days: moment.utc( expiry ).fromNow( true ),
-					},
-				}
-			);
-			subscriptionId = domain.bundledPlanSubscriptionId;
-			customLabel = translate( 'Renew your plan' );
-			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' };
-		} else {
-			noticeText = translate(
-				'Your domain mapping will expire in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						days: moment.utc( expiry ).fromNow( true ),
-					},
-				}
-			);
-			subscriptionId = domain.subscriptionId;
-			customLabel = null;
-			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon' };
-		}
-
-		return (
-			<div>
-				<p>{ noticeText }</p>
-				<RenewButton
-					primary={ true }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( subscriptionId, 10 ) }
-					customLabel={ customLabel }
-					tracksProps={ tracksProps }
-				/>
-			</div>
-		);
-	}
-
 	renderSettingUpNameservers() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite || this.props.isAutomatedTransferSite ) {
@@ -199,7 +88,7 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		const learnMoreLink = linksTo => (
+		const learnMoreLink = ( linksTo ) => (
 			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
 		);
 		let primaryMessage;
@@ -244,8 +133,8 @@ class MappedDomainType extends React.Component {
 				<div>
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
-						<ul>
-							{ WPCOM_DEFAULTS.map( nameServer => {
+						<ul className="mapped-domain-type__name-server-list">
+							{ WPCOM_DEFAULTS.map( ( nameServer ) => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
 						</ul>
@@ -257,7 +146,7 @@ class MappedDomainType extends React.Component {
 	}
 
 	renderDefaultRenewButton() {
-		const { domain, translate } = this.props;
+		const { domain, purchase, translate } = this.props;
 
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
@@ -281,6 +170,7 @@ class MappedDomainType extends React.Component {
 			<div>
 				<RenewButton
 					compact={ true }
+					purchase={ purchase }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( subscriptionId, 10 ) }
 					customLabel={ customLabel }
@@ -290,12 +180,43 @@ class MappedDomainType extends React.Component {
 		);
 	}
 
-	renderAutoRenew() {
-		return (
-			<Card compact={ true }>
-				Auto Renew (on) <CompactFormToggle checked={ true } />
-			</Card>
+	renderAutoRenewToggle() {
+		const { selectedSite, purchase } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		const content = (
+			<AutoRenewToggle
+				planName={ selectedSite.plan.product_name_short }
+				siteDomain={ selectedSite.domain }
+				purchase={ purchase }
+				compact={ true }
+				withTextStatus={ true }
+				toggleSource="mapped-domain-status"
+			/>
 		);
+
+		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
+	}
+
+	renderAutoRenew() {
+		const { isLoadingPurchase, domain } = this.props;
+
+		if ( domain && domain.bundledPlanSubscriptionId ) {
+			return null;
+		}
+
+		if ( isLoadingPurchase ) {
+			return (
+				<WrapDomainStatusButtons className="domain-types__auto-renew-placeholder">
+					<p />
+				</WrapDomainStatusButtons>
+			);
+		}
+
+		return this.renderAutoRenewToggle();
 	}
 
 	handlePaymentSettingsClick = () => {
@@ -303,12 +224,24 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, moment, translate } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			moment,
+			translate,
+		} = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+		const newDomainManagementNavigation = config.isEnabled(
+			'domains/new-status-design/new-options'
+		);
+
 		let expiresText;
 
 		if ( ! domain.expiry ) {
@@ -329,20 +262,26 @@ class MappedDomainType extends React.Component {
 
 		return (
 			<div className="domain-types__container">
+				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
 				>
+					<ExpiringCreditCard
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						domain={ domain }
+					/>
 					{ this.renderSettingUpNameservers() }
-					{ this.renderExpiringSoon() }
+					<ExpiringSoon selectedSite={ selectedSite } purchase={ purchase } domain={ domain } />
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
-						<div>
+						<WrapDomainStatusButtons>
 							<SubscriptionSettings
 								type={ domain.type }
 								compact={ true }
@@ -350,11 +289,25 @@ class MappedDomainType extends React.Component {
 								siteSlug={ this.props.selectedSite.slug }
 								onClick={ this.handlePaymentSettingsClick }
 							/>
-						</div>
+						</WrapDomainStatusButtons>
 					) }
+					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
-				{ this.getVerticalNavigation() }
+				{ newDomainManagementNavigation ? (
+					<DomainManagementNavigationEnhanced
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ mappingPurchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) : (
+					<DomainManagementNavigation
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ mappingPurchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -362,7 +315,19 @@ class MappedDomainType extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const { subscriptionId, bundledPlanSubscriptionId } = ownProps.domain;
+		const purchaseSubscriptionId = bundledPlanSubscriptionId
+			? bundledPlanSubscriptionId
+			: subscriptionId;
 		return {
+			purchase: purchaseSubscriptionId
+				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+				: null,
+			mappingPurchase: subscriptionId
+				? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+				: null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
 		};

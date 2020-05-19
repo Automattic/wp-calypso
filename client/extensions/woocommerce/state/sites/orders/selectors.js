@@ -157,7 +157,7 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
 		[]
 	);
 	if ( orderIdsOnPage.length ) {
-		return orderIdsOnPage.map( id => orders[ id ] );
+		return orderIdsOnPage.map( ( id ) => orders[ id ] );
 	}
 	return false;
 };
@@ -208,7 +208,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items' ],
 		{}
 	);
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status } = order;
 		return 'pending' === status || 'processing' === status || 'on-hold' === status;
 	} );
@@ -222,7 +222,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
 
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status, payment_method } = order;
 		return ! ( 'pending' === status && 'paypal' === payment_method );
 	} );
@@ -235,7 +235,7 @@ export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSit
  */
 export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
-	return sumBy( orders, order => parseFloat( order.total ) );
+	return sumBy( orders, ( order ) => parseFloat( order.total ) );
 };
 
 /**
@@ -248,5 +248,5 @@ export const getNewOrdersWithoutPayPalPendingRevenue = (
 	siteId = getSelectedSiteId( state )
 ) => {
 	const orders = getNewOrdersWithoutPayPalPending( state, siteId );
-	return sumBy( orders, order => parseFloat( order.total ) );
+	return sumBy( orders, ( order ) => parseFloat( order.total ) );
 };

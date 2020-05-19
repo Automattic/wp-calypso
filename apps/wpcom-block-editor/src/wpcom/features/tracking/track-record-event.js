@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -16,9 +17,15 @@ if ( typeof window !== 'undefined' ) {
 // This means we don't have any extra props like user
 
 export default ( eventName, eventProperties ) => {
-	// Required by Tracks when added manually
-	const blog_id = window._currentSiteId;
-	const site_type = window._currentSiteType;
+	/*
+	 * Custom Properties.
+	 * Required by Tracks when added manually.
+	 */
+	const customProperties = {
+		blog_id: window._currentSiteId,
+		site_type: window._currentSiteType,
+		user_locale: window._currentUserLocale,
+	};
 
 	eventProperties = eventProperties || {};
 
@@ -49,9 +56,9 @@ export default ( eventName, eventProperties ) => {
 	eventProperties = omit( eventProperties, isUndefined );
 
 	// Populate custom properties.
-	eventProperties = { ...eventProperties, blog_id, site_type };
+	eventProperties = { ...eventProperties, ...customProperties };
 
-	tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+	tracksDebug( 'Recording event %o with actual props %o', eventName, eventProperties );
 
 	window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 };

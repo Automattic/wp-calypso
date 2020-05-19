@@ -72,7 +72,7 @@ class WPSuperCache extends Component {
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
 
-		const currentTab = find( Tabs, t => t.slug === tab );
+		const currentTab = find( Tabs, ( t ) => t.slug === tab );
 		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
 		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
 
@@ -112,7 +112,7 @@ class WPSuperCache extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 

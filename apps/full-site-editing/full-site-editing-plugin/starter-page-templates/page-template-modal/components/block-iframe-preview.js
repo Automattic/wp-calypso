@@ -43,17 +43,17 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 
 	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
 	const targetDOMFragment = {
-		head: new DocumentFragment(), // eslint-disable-line no-undef
-		body: new DocumentFragment(), // eslint-disable-line no-undef
+		head: document.createDocumentFragment(), // eslint-disable-line no-undef
+		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
-	each( Object.keys( targetDOMFragment ), domReference => {
+	each( Object.keys( targetDOMFragment ), ( domReference ) => {
 		return each(
 			filter( srcDocument[ domReference ].children, ( { localName } ) =>
 				// Only return specific style-related Nodes
 				styleNodes.includes( localName )
 			),
-			targetNode => {
+			( targetNode ) => {
 				// Clone the original node and append to the appropriate Fragement
 				const deep = true;
 				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
@@ -97,7 +97,10 @@ const BlockFramePreview = ( {
 
 	// Rendering blocks list.
 	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer(
+		( state ) => state + 1,
+		0
+	);
 	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
 
 	/**
@@ -153,8 +156,11 @@ const BlockFramePreview = ( {
 	useEffect( () => {
 		setTimeout( () => {
 			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
-			iframeRef.current.contentDocument.body.classList.add( bodyClassName );
-			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
+			iframeRef.current.contentDocument.body.classList.add(
+				bodyClassName,
+				'editor-styles-wrapper',
+				'block-editor__container'
+			);
 			rescale();
 		}, 0 );
 	}, [ setTimeout, bodyClassName, rescale ] );
@@ -232,7 +238,7 @@ const BlockFramePreview = ( {
 
 export default compose(
 	withSafeTimeout,
-	withSelect( select => {
+	withSelect( ( select ) => {
 		const blockEditorStore = select( 'core/block-editor' );
 		return {
 			settings: blockEditorStore ? blockEditorStore.getSettings() : {},

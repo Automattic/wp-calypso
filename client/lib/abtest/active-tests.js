@@ -27,7 +27,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200221',
+		datestamp: '20200508',
 		variations: {
 			composite: 50,
 			regular: 50,
@@ -72,10 +72,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -100,46 +100,40 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 90,
-			control: 10,
+			variantShowUpdates: 100,
+			control: 0,
 		},
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	sidebarUpsellNudgeUnification: {
-		datestamp: '20200221',
+	domainStepPlanStepSwap: {
+		datestamp: '20200513',
 		variations: {
-			variantShowUnifiedUpsells: 50,
+			variantShowSwapped: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	domainStepDesignUpdates: {
-		datestamp: '20201220',
+	newSiteGutenbergOnboarding: {
+		datestamp: '20200516',
 		variations: {
-			variantDesignUpdates: 0,
-			control: 100,
+			gutenberg: 10,
+			control: 90,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
 	},
-	planStepCopyUpdates: {
-		datestamp: '20200221',
+	jpcPlansOfferResetPersonal: {
+		datestamp: '20200513',
 		variations: {
-			variantCopyUpdates: 50,
-			control: 50,
+			withPersonal: 50,
+			withoutPersonal: 50,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'withPersonal',
 		allowExistingUsers: true,
-	},
-	peerReferralEarnCard: {
-		datestamp: '20200305',
-		variations: {
-			show: 50,
-			holdout: 50,
-		},
-		defaultVariation: 'holdout',
-		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

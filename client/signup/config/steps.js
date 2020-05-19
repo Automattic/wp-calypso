@@ -12,6 +12,7 @@ import {
 	addSitelessPlanToCart,
 	createAccount,
 	createSite,
+	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
@@ -19,8 +20,10 @@ import {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	addOrRemoveFromProgressStore,
 } from 'lib/signup/step-actions';
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
@@ -30,6 +33,7 @@ export default generateSteps( {
 	addSitelessPlanToCart,
 	createAccount,
 	createSite,
+	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
@@ -38,8 +42,10 @@ export default generateSteps( {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	removeDomainStepForPaidPlans,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	addOrRemoveFromProgressStore,
 } );
 
 export function isDomainStepSkippable( flowName ) {

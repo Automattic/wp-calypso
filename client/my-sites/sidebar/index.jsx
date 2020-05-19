@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
+import { ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
 import ToolsMenu from './tools-menu';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -35,16 +37,20 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import {
 	getCustomizerUrl,
 	getSite,
 	isJetpackSite,
-	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
@@ -54,9 +60,10 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -64,6 +71,8 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+
 /**
  * Style dependencies
  */
@@ -88,7 +97,7 @@ export class MySitesSidebar extends Component {
 
 	expandManageSection = () => this.props.expandSection( SIDEBAR_SECTION_MANAGE );
 
-	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
 
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
@@ -132,7 +141,6 @@ export class MySitesSidebar extends Component {
 		if ( siteId && ! canUserViewStats ) {
 			return null;
 		}
-
 		const statsLink = getStatsPathForTab( 'day', site ? site.slug : siteId );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -160,21 +168,46 @@ export class MySitesSidebar extends Component {
 	};
 
 	customerHome() {
-		const { canUserUseCustomerHome, path, siteSuffix, siteId, translate } = this.props;
+		const {
+			canUserUseCustomerHome,
+			hideChecklistProgress,
+			path,
+			siteSuffix,
+			siteId,
+			siteTasklist,
+			translate,
+		} = this.props;
 
 		if ( ! siteId || ! canUserUseCustomerHome ) {
 			return null;
 		}
+
+		let label = translate( 'My Home' );
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			label = translate( 'Home' );
+		}
+
+		const { completed, total } = siteTasklist.getCompletionStatus();
 
 		return (
 			<SidebarItem
 				materialIcon="home"
 				tipTarget="myhome"
 				onNavigate={ this.trackCustomerHomeClick }
-				label={ translate( 'My Home' ) }
+				label={ label }
 				selected={ itemLinkMatches( [ '/home' ], path ) }
 				link={ '/home' + siteSuffix }
-			/>
+			>
+				{ ! hideChecklistProgress && (
+					<div className="sidebar__checklist-progress">
+						<p className="sidebar__checklist-progress-text">
+							{ translate( 'Setup', { context: 'verb' } ) }
+						</p>
+						<ProgressBar value={ completed } total={ total } />
+					</div>
+				) }
+			</SidebarItem>
 		);
 	}
 
@@ -194,11 +227,22 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity-log' + siteSuffix;
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		let activityLink = '/activity-log' + siteSuffix,
+			activityLabel = translate( 'Activity' );
+
+		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLink += '?group=rewind';
+			activityLabel = translate( 'Activity & Backups' );
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="activity"
-				label={ translate( 'Activity' ) }
+				label={ activityLabel }
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
@@ -214,6 +258,14 @@ export class MySitesSidebar extends Component {
 
 	earn() {
 		const { site, canUserUseEarn } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		if ( ! site ) {
+			return null;
+		}
 
 		if ( site && ! canUserUseEarn ) {
 			return null;
@@ -264,8 +316,34 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	customize() {
+		const { showCustomizerLink, translate, path } = this.props;
+
+		if ( ! showCustomizerLink ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Customize' ) }
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				preloadSectionName="customize"
+				materialIcon="gesture"
+			/>
+		);
+	}
+
 	design() {
-		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
+		const {
+				path,
+				site,
+				translate,
+				canUserEditThemeOptions,
+				showCustomizerLink,
+				showSiteEditor,
+			} = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -294,6 +372,14 @@ export class MySitesSidebar extends Component {
 						expandSection={ this.expandDesignSection }
 					/>
 				) }
+				{ showSiteEditor && (
+					<SidebarItem
+						label={ translate( 'Site Editor (beta)' ) }
+						link={ this.props.siteEditorUrl }
+						preloadSectionName="site editor"
+						forceInternalLink
+					/>
+				) }
 				<SidebarItem
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
@@ -314,6 +400,10 @@ export class MySitesSidebar extends Component {
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		let domainsLink = '/domains/manage';
 
@@ -354,6 +444,10 @@ export class MySitesSidebar extends Component {
 		} = this.props;
 
 		if ( ! site ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -444,7 +538,7 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackMenuItemClick = menuItemName => {
+	trackMenuItemClick = ( menuItemName ) => {
 		this.props.recordTracksEvent(
 			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
 		);
@@ -466,6 +560,10 @@ export class MySitesSidebar extends Component {
 	marketing() {
 		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		if ( site && ! this.props.canUserPublishPosts ) {
 			return null;
@@ -495,6 +593,10 @@ export class MySitesSidebar extends Component {
 
 	hosting() {
 		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		if ( ! canViewAtomicHosting ) {
 			return null;
@@ -569,6 +671,10 @@ export class MySitesSidebar extends Component {
 
 	wpAdmin() {
 		const { site } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		if ( ! site || ! site.options ) {
 			return null;
@@ -671,6 +777,8 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
+				<QuerySiteChecklist siteId={ this.props.siteId } />
+
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
 					expanded={ this.props.isSiteSectionOpen }
@@ -680,7 +788,7 @@ export class MySitesSidebar extends Component {
 					{ this.site() }
 				</ExpandableSidebarMenu>
 
-				{ this.design() ? (
+				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) && this.design() ? (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
@@ -690,6 +798,8 @@ export class MySitesSidebar extends Component {
 						{ this.design() }
 					</ExpandableSidebarMenu>
 				) : null }
+
+				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
 
 				{ tools && (
 					<ExpandableSidebarMenu
@@ -753,6 +863,9 @@ function mapStateToProps( state ) {
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
 
+	const isMigrationInProgress =
+		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
+
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
@@ -764,8 +877,6 @@ function mapStateToProps( state ) {
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		canUserUseAds: canCurrentUserUseAds( state, siteId ),
-		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
@@ -776,13 +887,24 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
+		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+		showCustomizerLink: ! (
+			isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
+			isSiteUsingCoreSiteEditor( state, selectedSiteId )
+		),
+		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		siteTasklist: getSiteTaskList( state, siteId ),
+		hideChecklistProgress:
+			isSiteChecklistComplete( state, siteId ) ||
+			! getSiteChecklist( state, siteId ) ||
+			! isEligibleForDotcomChecklist( state, siteId ),
 	};
 }
 

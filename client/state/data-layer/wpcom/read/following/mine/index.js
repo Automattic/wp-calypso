@@ -61,7 +61,7 @@ export function requestPage( action ) {
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
-export const receivePage = ( action, apiResponse ) => dispatch => {
+export const receivePage = ( action, apiResponse ) => ( dispatch ) => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		dispatch( receiveError() );
 		return;
@@ -79,7 +79,7 @@ export const receivePage = ( action, apiResponse ) => dispatch => {
 
 	dispatch( receiveFollows( { follows, totalCount } ) );
 
-	forEach( follows, follow => seenSubscriptions.add( follow.feed_URL ) );
+	forEach( follows, ( follow ) => seenSubscriptions.add( follow.feed_URL ) );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {

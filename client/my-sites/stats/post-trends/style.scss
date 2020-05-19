@@ -1,9 +1,10 @@
+client/my-sites/stats/post-trends/style.scss
 .post-trends {
 	display: inline-block;
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
@@ -20,7 +21,6 @@
 .post-trends__value {
 	text-align: center;
 	font-size: 16px;
-	font-weight: 300;
 	color: var( --color-neutral-50 );
 	margin: 20px 0 30px;
 }
@@ -52,7 +52,7 @@
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -174,7 +174,7 @@
 	}
 }
 
-@include breakpoint( '>1040px' ) {
+@include breakpoint-deprecated( '>1040px' ) {
 
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
@@ -187,7 +187,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;

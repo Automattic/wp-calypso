@@ -10,7 +10,12 @@
  * Internal dependencies
  */
 import { errors, loginFlowState, usernameOrEmail } from '../reducer';
-import { reset, receiveAuthOptions, clearErrors } from '../actions';
+import { createActions } from '../actions';
+
+const { reset, receiveAuthOptions, clearErrors } = createActions( {
+	client_id: '',
+	client_secret: '',
+} );
 
 describe( 'login flow state', () => {
 	it( 'returns the correct default state', () => {

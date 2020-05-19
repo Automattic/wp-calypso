@@ -1,25 +1,19 @@
 /**
  * External dependencies
  */
-import config from '../../config';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import initJetpackCloudRoutes from './routes';
-import { bootApp } from 'boot/common';
+import { makeLayout, render as clientRender } from 'controller';
+import Home from './sections/home';
 
-/**
- * Style dependencies
- */
-import 'components/environment-badge/style.scss';
-import 'layout/style.scss';
-import 'assets/stylesheets/jetpack-cloud.scss';
-
-window.AppBoot = () => {
-	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-		window.location.href = '/';
-	} else {
-		bootApp( 'Jetpack Cloud', initJetpackCloudRoutes );
-	}
-};
+export default function () {
+	const homeController = ( context, next ) => {
+		context.primary = <Home />;
+		next();
+	};
+	page( '/', homeController, makeLayout, clientRender );
+}

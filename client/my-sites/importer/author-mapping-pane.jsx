@@ -142,7 +142,7 @@ class AuthorMappingPane extends React.PureComponent {
 			importerStatus,
 			site,
 		} = this.props;
-		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const canStartImport = hasSingleAuthor || sourceAuthors.some( ( author ) => author.mappedTo );
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
@@ -159,12 +159,12 @@ class AuthorMappingPane extends React.PureComponent {
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
 				</div>
-				{ sourceAuthors.map( author => {
+				{ sourceAuthors.map( ( author ) => {
 					return (
 						<AuthorMapping
 							hasSingleAuthor={ hasSingleAuthor }
 							key={ 'author-mapping-' + author.id }
-							onSelect={ e => onMap( author, e ) }
+							onSelect={ ( e ) => onMap( author, e ) }
 							siteId={ siteId }
 							sourceAuthor={ author }
 						/>

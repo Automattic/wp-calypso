@@ -11,10 +11,7 @@ const child_process = require( 'child_process' );
 
 const eslintBin = path.join( '.', 'node_modules', '.bin', 'eslint' );
 
-const branchName = child_process
-	.execSync( 'git rev-parse --abbrev-ref HEAD' )
-	.toString()
-	.trim();
+const branchName = child_process.execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 const rev = child_process
 	.execSync( 'git merge-base ' + branchName + ' master' )
 	.toString()
@@ -23,8 +20,8 @@ const files = child_process
 	.execSync( 'git diff --name-only ' + rev + '..HEAD' )
 	.toString()
 	.split( '\n' )
-	.map( name => name.trim() )
-	.filter( name => /\.[jt]sx?$/.test( name ) );
+	.map( ( name ) => name.trim() )
+	.filter( ( name ) => /\.[jt]sx?$/.test( name ) );
 
 const lintResult = child_process.spawnSync( eslintBin, [ '--cache', ...files ], {
 	shell: true,

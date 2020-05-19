@@ -6,9 +6,9 @@
 import { use } from '@wordpress/data';
 
 // The purpose of this override is to prevent trash action from deleting template CPTs.
-use( registry => {
+use( ( registry ) => {
 	return {
-		dispatch: namespace => {
+		dispatch: ( namespace ) => {
 			const actions = { ...registry.dispatch( namespace ) };
 			const { editorPostType } = fullSiteEditing;
 

@@ -11,7 +11,7 @@ import { getLanguageRouteParam } from 'lib/i18n-utils';
  */
 export { LOGIN_SECTION_DEFINITION } from './index.web';
 
-export default router => {
+export default ( router ) => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		const lang = getLanguageRouteParam();
 

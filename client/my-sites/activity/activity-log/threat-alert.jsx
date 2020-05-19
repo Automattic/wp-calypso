@@ -81,7 +81,7 @@ export class ThreatAlert extends Component {
 			translate,
 		} = this.props;
 
-		const basename = s => s.replace( /.*\//, '' );
+		const basename = ( s ) => s.replace( /.*\//, '' );
 
 		switch ( this.getDetailType( threat ) ) {
 			case 'core':
@@ -201,7 +201,7 @@ export class ThreatAlert extends Component {
 			return -1;
 		}
 
-		Object.keys( rows ).map( idx => {
+		Object.keys( rows ).map( ( idx ) => {
 			const row = rows[ idx ];
 			const postIndex = findObjectIndexInArray( infectedPosts, 'postTitle', row.description );
 
@@ -389,7 +389,7 @@ export class ThreatAlert extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } );
 
@@ -404,7 +404,7 @@ export default connect( mapStateToProps, {
 			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
 			ignoreThreatAlert( siteId, threatId )
 		),
-	trackGetHelp: threatId =>
+	trackGetHelp: ( threatId ) =>
 		recordTracksEvent( 'calypso_activitylog_threat_gethelp', { threat_id: threatId } ),
 	requestRewindState,
 } )( localize( ThreatAlert ) );

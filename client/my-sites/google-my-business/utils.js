@@ -58,7 +58,7 @@ export const enhanceWithLocationCounts = ( action, getState ) => {
 	if ( siteId !== null ) {
 		const locations = getGoogleMyBusinessLocations( getState(), siteId );
 
-		const verifiedLocationCount = locations.filter( location =>
+		const verifiedLocationCount = locations.filter( ( location ) =>
 			get( location, 'meta.state.isVerified', false )
 		).length;
 

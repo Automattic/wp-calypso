@@ -47,7 +47,7 @@ jest.mock( 'config', () => {
 	return fn;
 } );
 jest.mock( '@automattic/format-currency', () => ( {
-	getCurrencyObject: price => ( { integer: price } ),
+	getCurrencyObject: ( price ) => ( { integer: price } ),
 } ) );
 jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),

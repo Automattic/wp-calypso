@@ -26,9 +26,10 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
+const devTarget = process.env.DEV_TARGET || 'evergreen';
 
 const fileLoader = FileConfig.loader( {
-	publicPath: isDevelopment ? '/calypso/evergreen/images/' : '/calypso/images/',
+	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
 	emitFile: false, // On the server side, don't actually copy files
 } );
 

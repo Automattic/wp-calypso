@@ -5,10 +5,9 @@
 	.content-card__title {
 		color: var( --color-neutral-70 );
 		font-size: 34px;
-		font-weight: 300;
 		margin-bottom: 1em;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 24px;
 		}
 	}
@@ -16,7 +15,7 @@
 	.content-card__message {
 		color: var( --color-neutral-50 );
 		font-size: 22px;
-		font-weight: 300;
+		font-weight: 400;
 		margin-bottom: 40px;
 		text-align: left;
 
@@ -24,7 +23,7 @@
 			text-align: center;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 16px;
 		}
 	}
@@ -32,10 +31,10 @@
 	.content-card__footer {
 		color: var( --color-neutral-50 );
 		font-size: 18px;
-		font-weight: 300;
+		font-weight: 400;
 		margin-bottom: 16px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 16px;
 		}
 	}
@@ -57,7 +56,7 @@
 			margin-left: auto;
 			margin-right: auto;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				display: none;
 			}
 		}

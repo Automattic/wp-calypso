@@ -19,6 +19,7 @@ function getCheckoutUrl( dependencies ) {
 		{
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
 		`/checkout/${ dependencies.siteSlug }`
 	);
@@ -55,11 +56,14 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=launched`;
+	if ( dependencies.source === 'editor' ) {
+		return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	}
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -67,7 +71,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -90,7 +94,7 @@ function removeUserStepFromFlow( flow ) {
 	}
 
 	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
+		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
 	} );
 }
 
@@ -157,7 +161,7 @@ const Flows = {
 	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -166,12 +170,20 @@ const Flows = {
 		}
 
 		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
 		} );
 	},
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
+	},
+
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
 	},
 
 	getFlows() {

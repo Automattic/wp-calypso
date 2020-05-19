@@ -30,7 +30,7 @@ const getPostRevisionsComparisons = createSelector(
 		}
 		return comparisons;
 	},
-	state => [ state.posts.revisions.diffs ]
+	( state ) => [ state.posts.revisions.diffs ]
 );
 
 export default getPostRevisionsComparisons;

@@ -22,7 +22,7 @@ import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/s
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -34,6 +34,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -108,7 +109,7 @@ class MembershipsSection extends Component {
 									br: <br />,
 									a: (
 										<ExternalLink
-											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											href="https://wordpress.com/support/recurring-payments-button/#related-fees"
 											icon={ true }
 										/>
 									),
@@ -128,7 +129,7 @@ class MembershipsSection extends Component {
 		}
 	}
 
-	onCloseDisconnectStripeAccount = reason => {
+	onCloseDisconnectStripeAccount = ( reason ) => {
 		if ( reason === 'disconnect' ) {
 			this.props.requestDisconnectStripeAccount(
 				this.props.siteId,
@@ -140,7 +141,7 @@ class MembershipsSection extends Component {
 		this.setState( { disconnectedConnectedAccountId: null } );
 	};
 
-	onCloseCancelSubscription = reason => {
+	onCloseCancelSubscription = ( reason ) => {
 		if ( reason === 'cancel' ) {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
@@ -174,11 +175,11 @@ class MembershipsSection extends Component {
 				'renew_interval',
 				'All time total',
 			]
-				.map( field => '"' + field + '"' )
+				.map( ( field ) => '"' + field + '"' )
 				.join( ',' ),
 		]
 			.concat(
-				Object.values( this.props.subscribers ).map( row =>
+				Object.values( this.props.subscribers ).map( ( row ) =>
 					[
 						row.id,
 						row.status,
@@ -193,7 +194,7 @@ class MembershipsSection extends Component {
 						row.renew_interval,
 						row.all_time_total,
 					]
-						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.map( ( field ) => ( field ? '"' + field + '"' : '""')  )
 						.join( ',' )
 				)
 			)
@@ -216,7 +217,9 @@ class MembershipsSection extends Component {
 								components: {
 									a: (
 										<a
-											href="https://en.support.wordpress.com/recurring-payments-button/"
+											href={ localizeUrl(
+												'https://wordpress.com/support/recurring-payments-button/'
+											) }
 											target="_blank"
 											rel="noreferrer noopener"
 										/>
@@ -234,10 +237,10 @@ class MembershipsSection extends Component {
 									Object.values( this.props.subscribers ),
 									[ 'id' ],
 									[ 'desc' ]
-								).map( sub => this.renderSubscriber( sub ) ) }
+								).map( ( sub ) => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
-								nextPageMethod={ triggeredByInteraction =>
+								nextPageMethod={ ( triggeredByInteraction ) =>
 									this.fetchNextSubscriberPage( triggeredByInteraction, false )
 								}
 							/>
@@ -296,7 +299,7 @@ class MembershipsSection extends Component {
 					<div className="memberships__module-products-list">
 						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
 						{ this.props.products
-							.map( product => formatCurrency( product.price, product.currency ) )
+							.map( ( product ) => formatCurrency( product.price, product.currency ) )
 							.join( ', ' ) }
 					</div>
 				</CompactCard>
@@ -450,7 +453,9 @@ class MembershipsSection extends Component {
 						) }
 					>
 						<NoticeAction
-							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							href={ localizeUrl(
+								'https://wordpress.com/support/recurring-payments-button/#stripe-account-connected'
+							) }
 							icon="external"
 						>
 							{ this.props.translate( 'Learn how' ) }
@@ -476,7 +481,7 @@ class MembershipsSection extends Component {
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
 						) }{ ' ' }
 						<ExternalLink
-							href="https://support.wordpress.com/recurring-payments-button/"
+							href="https://wordpress.com/support/recurring-payments-button/"
 							icon={ true }
 						>
 							{ this.props.translate( 'Learn more.' ) }
@@ -533,12 +538,16 @@ class MembershipsSection extends Component {
 	render() {
 		if ( ! this.props.paidPlan ) {
 			return this.renderOnboarding(
-				<UpgradeNudge
+				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
 					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					description={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					showIcon={ true }
+					event="calypso_memberships_upsell_nudge"
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksClickName="calypso_upgrade_nudge_cta_click"
 				/>
 			);
 		}
@@ -565,7 +574,7 @@ class MembershipsSection extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 

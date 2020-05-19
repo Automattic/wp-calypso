@@ -15,7 +15,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
+	React.Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -34,7 +34,7 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
+export const ExpandableSidebarMenu = ( props ) => {
 	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
 
 	let { expanded } = props;

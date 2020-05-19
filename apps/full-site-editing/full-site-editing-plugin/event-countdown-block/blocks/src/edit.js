@@ -38,7 +38,7 @@ const edit = ( { attributes, setAttributes, className } ) => {
 				<input
 					type="text"
 					value={ attributes.eventTitle }
-					onChange={ evt => setAttributes( { eventTitle: evt.target.value } ) }
+					onChange={ ( evt ) => setAttributes( { eventTitle: evt.target.value } ) }
 					placeholder={ __( 'Event Title', 'full-site-editing' ) }
 					className="event-countdown__event-title"
 					aria-label={ __( 'Event Title', 'full-site-editing' ) }
@@ -62,7 +62,7 @@ const edit = ( { attributes, setAttributes, className } ) => {
 					renderContent={ () => (
 						<DateTimePicker
 							key="event-countdown-picker"
-							onChange={ eventDate => setAttributes( { eventDate } ) }
+							onChange={ ( eventDate ) => setAttributes( { eventDate } ) }
 							currentDate={ attributes.eventDate }
 						/>
 					) }

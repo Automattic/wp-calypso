@@ -36,11 +36,11 @@ class StepImportOrMigrate extends Component {
 		chosenImportType: null,
 	};
 
-	chooseImportType = type => {
+	chooseImportType = ( type ) => {
 		this.setState( { chosenImportType: type } );
 	};
 
-	onJetpackSelect = event => {
+	onJetpackSelect = ( event ) => {
 		const { isTargetSiteAtomic } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
@@ -83,7 +83,10 @@ class StepImportOrMigrate extends Component {
 			return (
 				<p>
 					{ translate(
-						'You need to have {{jetpackInstallLink}}Jetpack{{/jetpackInstallLink}} installed on your site to be able to import everything.',
+						'You need to have Jetpack installed on your site to' +
+							' be able to import everything.' +
+							' {{jetpackInstallLink}}Install' +
+							' Jetpack{{/jetpackInstallLink}}.',
 						{
 							components: {
 								jetpackInstallLink: (
@@ -100,6 +103,10 @@ class StepImportOrMigrate extends Component {
 			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
 		}
 	};
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_type_viewed' );
+	}
 
 	render() {
 		const {

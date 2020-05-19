@@ -1,17 +1,10 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
-import {
-	Button,
-	HorizontalRule,
-	Panel,
-	PanelBody,
-	PanelRow,
-	TextControl,
-} from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { useDebounce } from 'use-debounce';
+import React, { FunctionComponent, useState, useEffect } from 'react';
+import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { Icon, search } from '@wordpress/icons';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -19,124 +12,246 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { DomainSuggestions } from '@automattic/data-stores';
-import { selectorDebounce } from '../../constants';
+import { STORE_KEY } from '../../stores/onboard';
+import SuggestionItem from './suggestion-item';
+import SuggestionNone from './suggestion-none';
+import SuggestionItemPlaceholder from './suggestion-item-placeholder';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { getNewRailcarId, RecordTrainTracksEventProps } from '../../lib/analytics';
+import { useTrackModal } from '../../hooks/use-track-modal';
+import DomainCategories from '../domain-categories';
+import CloseButton from '../close-button';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 export interface Props {
-	/**
-	 * Term to search when no user input is provided.
-	 */
-	defaultQuery?: string;
+	showDomainConnectButton?: boolean;
+
+	showDomainCategories?: boolean;
 
 	/**
 	 * Callback that will be invoked when a domain is selected.
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestions.DomainSuggestion ) => void;
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+
+	/**
+	 * Callback that will be invoked when close button is clicked
+	 */
+	onClose: () => void;
+
+	onCancel?: () => void;
+
+	onMoreOptions?: () => void;
+
+	recordAnalytics?: ( event: RecordTrainTracksEventProps ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+
+	currentDomain?: DomainSuggestion;
+
+	quantity?: number;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
-	defaultQuery,
+	showDomainConnectButton,
+	showDomainCategories,
 	onDomainSelect,
-	queryParameters,
+	onClose,
+	onCancel,
+	onMoreOptions,
+	quantity = PAID_DOMAINS_TO_SHOW,
+	currentDomain,
+	recordAnalytics,
 } ) => {
-	const { __: NO__ } = useI18n();
-	const label = NO__( 'Search for a domain' );
+	const { __, i18nLocale } = useI18n();
+	const label = __( 'Search for a domain' );
+	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
 
-	const [ domainSearch, setDomainSearch ] = useState( '' );
-
-	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
-	const searchOptions = {
-		include_wordpressdotcom: true,
-		include_dotblogsubdomain: true,
-		quantity: 4,
-		...queryParameters,
-	};
-
-	const suggestions = useSelect(
-		select => {
-			if ( search ) {
-				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, searchOptions );
-			}
-		},
-		[ search, queryParameters ]
+	const { domainSearch, domainCategory } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
 	);
+	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
+	const [ currentSelection, setCurrentSelection ] = useState( currentDomain );
 
-	const handleHasDomain = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'Already has a domain.' );
+	const allSuggestions = useDomainSuggestions( { locale: i18nLocale, quantity } );
+	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, quantity );
+	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const hasSuggestions = freeSuggestions?.length || paidSuggestions?.length;
+
+	const ConfirmButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
+		return (
+			<Button
+				className="domain-picker__confirm-button"
+				isPrimary
+				disabled={ ! hasSuggestions }
+				onClick={ () => {
+					currentSelection && onDomainSelect( currentSelection );
+					onClose();
+				} }
+				{ ...props }
+			>
+				{ __( 'Confirm' ) }
+			</Button>
+		);
 	};
+
+	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
+		return (
+			<Button
+				isLink
+				className="domain-picker__cancel-button"
+				onClick={ () => {
+					onCancel && onCancel();
+				} }
+				{ ...props }
+			>
+				{ __( 'Cancel' ) }
+			</Button>
+		);
+	};
+
+	const [ railcarId, setRailcarId ] = useState< string | undefined >();
+
+	useEffect( () => {
+		// Only generate a railcarId when the domain suggestions change and are not empty.
+		if ( allSuggestions ) {
+			setRailcarId( getNewRailcarId() );
+		}
+	}, [ allSuggestions ] );
+
+	useEffect( () => {
+		// Auto-select one of the domains when the search results change. If the currently
+		// confirmed domain is in the search results then select it. The user probably
+		// re-ran their previous query. Otherwise select the free domain suggestion.
+
+		if (
+			allSuggestions?.find(
+				( suggestion ) => currentDomain?.domain_name === suggestion.domain_name
+			)
+		) {
+			setCurrentSelection( currentDomain );
+			return;
+		}
+
+		// Recalculate free-domain suggestions inside the closure. `getFreeDomainSuggestions()`
+		// always returns a new object so it shouldn't be used in `useEffects()` dependencies list.
+		const latestFreeSuggestion = getFreeDomainSuggestions( allSuggestions );
+
+		if ( latestFreeSuggestion ) {
+			setCurrentSelection( latestFreeSuggestion[ 0 ] );
+		}
+	}, [ allSuggestions, currentDomain ] );
+
+	useTrackModal( 'DomainPicker', () => ( {
+		selected_domain: getSelectedDomain()?.domain_name,
+	} ) );
 
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
-				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__choose-domain-header">
-						{ NO__( 'Choose a new domain' ) }
+				<PanelRow className="domain-picker__panel-row-main">
+					<div className="domain-picker__header">
+						<div className="domain-picker__header-group">
+							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
+							{ showDomainConnectButton ? (
+								<p>{ __( 'Free for the first year with any paid plan.' ) }</p>
+							) : (
+								<p>{ __( 'Free for the first year with any paid plan.' ) }</p>
+							) }
+						</div>
+						<div className="domain-picker__header-buttons">
+							<CancelButton />
+							<ConfirmButton />
+							<CloseButton
+								className="domain-picker__close-button"
+								onClick={ onClose }
+								tabIndex={ -1 }
+							/>
+						</div>
 					</div>
-					<TextControl
-						hideLabelFromVision
-						label={ label }
-						placeholder={ label }
-						onChange={ setDomainSearch }
-						value={ domainSearch }
-					/>
+					<div className="domain-picker__search">
+						<div className="domain-picker__search-icon">
+							<Icon icon={ search } />
+						</div>
+						<TextControl
+							data-hj-whitelist
+							hideLabelFromVision
+							label={ label }
+							placeholder={ label }
+							onChange={ setDomainSearch }
+							value={ domainSearch }
+						/>
+					</div>
+					<div className="domain-picker__body">
+						{ showDomainCategories && (
+							<div className="domain-picker__aside">
+								<DomainCategories selected={ domainCategory } onSelect={ setDomainCategory } />
+							</div>
+						) }
+						<div className="domain-picker__suggestion-item-group">
+							{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+							{ freeSuggestions &&
+								( freeSuggestions.length ? (
+									<SuggestionItem
+										suggestion={ freeSuggestions[ 0 ] }
+										isSelected={
+											currentSelection?.domain_name === freeSuggestions[ 0 ].domain_name
+										}
+										onSelect={ setCurrentSelection }
+										railcarId={ railcarId ? `${ railcarId }0` : undefined }
+										recordAnalytics={ recordAnalytics || undefined }
+										uiPosition={ 0 }
+									/>
+								) : (
+									<SuggestionNone />
+								) ) }
+							{ ! paidSuggestions &&
+								times( quantity - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
+							{ paidSuggestions &&
+								( paidSuggestions?.length ? (
+									paidSuggestions.map( ( suggestion, i ) => (
+										<SuggestionItem
+											suggestion={ suggestion }
+											isRecommended={ suggestion === recommendedSuggestion }
+											isSelected={ currentSelection?.domain_name === suggestion.domain_name }
+											onSelect={ setCurrentSelection }
+											key={ suggestion.domain_name }
+											railcarId={ railcarId ? `${ railcarId }${ i + 1 }` : undefined }
+											recordAnalytics={ recordAnalytics || undefined }
+											uiPosition={ i + 1 }
+										/>
+									) )
+								) : (
+									<SuggestionNone />
+								) ) }
+						</div>
+					</div>
 				</PanelRow>
-
-				<HorizontalRule className="domain-picker__divider" />
-
-				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
-					{ suggestions?.length
-						? suggestions.map( suggestion => (
-								<Button
-									onClick={ () => onDomainSelect( suggestion ) }
-									className="domain-picker__suggestion-item"
-									key={ suggestion.domain_name }
-								>
-									<span className="domain-picker__suggestion-item-name">
-										{ suggestion.domain_name }
-									</span>
-									{ suggestion.is_free ? (
-										<span className="domain-picker__suggestion-action">{ NO__( 'Select' ) }</span>
-									) : (
-										<a
-											className="domain-picker__suggestion-action"
-											href={ `http://wordpress.com/start/domain?new=${ suggestion.domain_name }` }
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{ NO__( 'Upgrade' ) }
-										</a>
-									) }
-								</Button>
-						  ) )
-						: times( searchOptions.quantity, i => (
-								<Button className="domain-picker__suggestion-item" key={ i }>
-									<span className="domain-picker__suggestion-item-name placeholder">
-										example.wordpress.com
-									</span>
-									<span className="domain-picker__suggestion-action placeholder">
-										{ NO__( 'Select' ) }
-									</span>
-								</Button>
-						  ) ) }
-				</PanelRow>
-
-				<PanelRow className="domain-picker__has-domain domain-picker__panel-row">
-					<Button onClick={ handleHasDomain }>{ NO__( 'I already have a domain' ) }</Button>
+				<PanelRow className="domain-picker__panel-row-footer">
+					<div className="domain-picker__footer">
+						<Button className="domain-picker__more-button" isTertiary onClick={ onMoreOptions }>
+							{ __( 'More Options' ) }
+						</Button>
+						<CancelButton />
+						<ConfirmButton />
+					</div>
 				</PanelRow>
 			</PanelBody>
 		</Panel>

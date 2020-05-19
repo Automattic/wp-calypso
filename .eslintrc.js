@@ -7,7 +7,7 @@ module.exports = {
 		'wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
-		'prettier',
+		'plugin:prettier/recommended',
 		'prettier/react',
 	],
 	overrides: [

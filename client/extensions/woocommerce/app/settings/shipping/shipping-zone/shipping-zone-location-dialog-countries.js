@@ -32,7 +32,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 		const uiSelected =
 			selected || ( ! isCountry && location.countryCount === location.selectedCountryCount );
 
-		const onToggle = event => {
+		const onToggle = ( event ) => {
 			event.stopPropagation && event.stopPropagation();
 			if ( disabled ) {
 				return;
@@ -109,7 +109,7 @@ ShippingZoneLocationDialogCountries.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		continentCountries: getCurrentlyEditingShippingZoneCountries( state ),
 	} ),
 	( dispatch, ownProps ) => ( {

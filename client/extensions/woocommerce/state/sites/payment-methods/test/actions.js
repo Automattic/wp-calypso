@@ -16,7 +16,7 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )

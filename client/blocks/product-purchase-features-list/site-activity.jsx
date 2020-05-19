@@ -22,7 +22,7 @@ const SiteActivity = ( { siteSlug, translate } ) => (
 			icon={ <img alt="" src={ siteActivity } /> }
 			title={ translate( 'Activity' ) }
 			description={ translate(
-				'View a chronological list of all the changes and updates to your site in an organized, readable way.'
+				'The at-a-glance and activity list makes it easy to track changes and updates to your site.'
 			) }
 			buttonText={ translate( 'View your site activity' ) }
 			href={ `/activity-log/${ siteSlug }` }
@@ -30,6 +30,6 @@ const SiteActivity = ( { siteSlug, translate } ) => (
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( SiteActivity ) );

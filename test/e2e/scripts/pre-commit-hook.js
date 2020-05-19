@@ -16,9 +16,9 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command )
 		.toString()
 		.split( '\n' )
-		.map( name => name.trim() )
+		.map( ( name ) => name.trim() )
 		.filter(
-			name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) || name.endsWith( '.scss' )
+			( name ) => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) || name.endsWith( '.scss' )
 		);
 }
 
@@ -27,7 +27,7 @@ const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --dif
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
 // run prettier for any files in the commit
-files.forEach( file => {
+files.forEach( ( file ) => {
 	const text = fs.readFileSync( file, 'utf8' );
 	// File has unstaged changes. It's a bad idea to modify and add it before commit.
 	if ( dirtyFiles.has( file ) ) {

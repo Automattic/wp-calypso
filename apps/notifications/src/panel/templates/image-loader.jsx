@@ -40,7 +40,7 @@ export class ImageLoader extends Component {
 		this.destroyLoader();
 	}
 
-	createLoader = nextProps => {
+	createLoader = ( nextProps ) => {
 		const src = ( nextProps || this.props ).src;
 
 		this.destroyLoader();
@@ -65,7 +65,7 @@ export class ImageLoader extends Component {
 		delete this.image;
 	};
 
-	onLoadComplete = event => {
+	onLoadComplete = ( event ) => {
 		this.destroyLoader();
 
 		this.setState( {

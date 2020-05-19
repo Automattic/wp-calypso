@@ -10,7 +10,7 @@ import { shouldReportOmitBlogId } from 'lib/analytics/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 
-const getSuperProps = reduxStore => eventProperties => {
+const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	const state = reduxStore.getState();
 
 	const superProps = {

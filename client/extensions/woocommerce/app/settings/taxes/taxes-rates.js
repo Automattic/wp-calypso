@@ -42,7 +42,7 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRatesAndLocations = props => {
+	maybeFetchRatesAndLocations = ( props ) => {
 		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
 
 		if ( ! loadedLocations ) {
@@ -204,7 +204,7 @@ class TaxesRates extends Component {
 				) }
 				<ExternalLink
 					icon
-					href="https://en.support.wordpress.com/taxjar/"
+					href="https://wordpress.com/support/taxjar/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>

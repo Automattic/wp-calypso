@@ -23,7 +23,7 @@ import { pickBy, get } from 'lodash';
  * @param {string} text input list of blocks as HTML string
  * @returns {string} marked-up text
  */
-const toBlocks = text =>
+const toBlocks = ( text ) =>
 	text.split( '\n' ).reduce(
 		( { out, inFence, inList }, raw ) => {
 			// detect code fences
@@ -168,14 +168,14 @@ export function p( html, className ) {
 	} );
 }
 
-export const pSoup = items => items.map( toHtml ).map( internalP );
+export const pSoup = ( items ) => items.map( toHtml ).map( internalP );
 
 export function getSignature( blocks, note ) {
 	if ( ! blocks || ! blocks.length ) {
 		return [];
 	}
 
-	return blocks.map( function( block ) {
+	return blocks.map( function ( block ) {
 		var type = 'text';
 		var id = null;
 
@@ -221,7 +221,7 @@ export function formatString() {
 	var args = [].slice.apply( arguments );
 	var str = args.shift();
 
-	return str.replace( /{(\d+)}/g, function( match, number ) {
+	return str.replace( /{(\d+)}/g, function ( match, number ) {
 		return typeof args[ number ] != 'undefined' ? args[ number ] : match;
 	} );
 }
@@ -229,7 +229,7 @@ export function formatString() {
 export function zipWithSignature( blocks, note ) {
 	var signature = getSignature( blocks, note );
 
-	return blocks.map( function( block, i ) {
+	return blocks.map( function ( block, i ) {
 		return {
 			block: block,
 			signature: signature[ i ],

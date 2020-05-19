@@ -37,6 +37,6 @@ export const fetchShippingMethodSchema = ( siteId, methodId ) => ( dispatch, get
 
 	return api
 		.get( siteId, api.url.serviceSettings( methodId ) )
-		.then( data => dispatch( fetchShippingMethodSchemaSuccess( siteId, methodId, data ) ) )
-		.catch( err => dispatch( setError( siteId, getAction, err ) ) );
+		.then( ( data ) => dispatch( fetchShippingMethodSchemaSuccess( siteId, methodId, data ) ) )
+		.catch( ( err ) => dispatch( setError( siteId, getAction, err ) ) );
 };

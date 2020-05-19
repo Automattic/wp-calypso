@@ -38,20 +38,12 @@ export default class MarketingSurvey {
 	}
 
 	addResponse( key, value ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			{ [ key ]: value }
-		);
+		this._responses = Object.assign( {}, this._responses, { [ key ]: value } );
 		return this;
 	}
 
 	addResponses( responses ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			responses
-		);
+		this._responses = Object.assign( {}, this._responses, responses );
 		return this;
 	}
 

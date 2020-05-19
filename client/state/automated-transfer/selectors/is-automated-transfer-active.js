@@ -17,7 +17,7 @@ import 'state/automated-transfer/init';
  * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently active? null if unknown
  */
-export const isActive = status => ( status ? status === transferStates.START : null );
+export const isActive = ( status ) => ( status ? status === transferStates.START : null) ;
 
 /**
  * Indicates whether or not an automated transfer is active for a given site

@@ -27,7 +27,7 @@ class SimpleLikeButtonContainer extends React.PureComponent {
 		);
 	}
 
-	handleLikeToggle = newState => {
+	handleLikeToggle = ( newState ) => {
 		this.setState( {
 			liked: newState,
 			count: ( this.state.count += newState ? 1 : -1 ),

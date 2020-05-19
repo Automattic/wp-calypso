@@ -41,10 +41,8 @@ jest.unmock( 'lib/products-values' );
 const productValues = require( 'lib/products-values' );
 productValues.isDotComPlan = jest.fn( () => false );
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => null,
-	},
+jest.mock( 'lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => null,
 } ) );
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
@@ -63,7 +61,7 @@ jest.mock( 'lib/user', () => () => {} );
 
 import RebrandCities from 'lib/rebrand-cities';
 
-const translate = x => x;
+const translate = ( x ) => x;
 
 const defaultProps = {
 	translate,
@@ -112,7 +110,7 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ { productSlug: PLAN_BUSINESS }, [] ],
 				},
 			},
-			refreshSitePlans: selectedSite => selectedSite,
+			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_BUSINESS,
 		};
 		test( 'Should display a full version when isSimplified is missing', () => {
@@ -148,7 +146,7 @@ describe( 'CheckoutThankYou', () => {
 			RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
 		} );
 
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should be there for a business plan', () => {
 				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
@@ -164,7 +162,7 @@ describe( 'CheckoutThankYou', () => {
 			} );
 		} );
 
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should not be there for a business plan if isRebrandCitiesSiteUrl is false', () => {
 				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
 				const props = {
@@ -193,7 +191,7 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
-		].forEach( product_slug => {
+		].forEach( ( product_slug ) => {
 			test( 'Should not be there for any no-business plan', () => {
 				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
@@ -226,7 +224,7 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ { productSlug: PLAN_ECOMMERCE }, [] ],
 				},
 			},
-			refreshSitePlans: selectedSite => selectedSite,
+			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_ECOMMERCE,
 		};
 
@@ -252,7 +250,7 @@ describe( 'CheckoutThankYou', () => {
 	} );
 
 	describe( 'isEligibleForLiveChat', () => {
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ].forEach( planSlug => {
+		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ].forEach( ( planSlug ) => {
 			test( `Should return true for Jetpack business plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );
 				expect( instance.isEligibleForLiveChat() ).toBe( true );
@@ -275,7 +273,7 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
-		].forEach( planSlug => {
+		].forEach( ( planSlug ) => {
 			test( `Should return false for all other plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );
 				expect( instance.isEligibleForLiveChat() ).toBe( false );

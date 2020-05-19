@@ -50,7 +50,7 @@ export class TransferToOtherSite extends React.Component {
 		return ! this.props.isRequestingSiteDomains;
 	}
 
-	isSiteEligible = site => {
+	isSiteEligible = ( site ) => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = get( site, 'options.is_automated_transfer', false );
 
@@ -65,7 +65,7 @@ export class TransferToOtherSite extends React.Component {
 		);
 	};
 
-	handleSiteSelect = targetSiteId => {
+	handleSiteSelect = ( targetSiteId ) => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
@@ -100,7 +100,7 @@ export class TransferToOtherSite extends React.Component {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
 				},
-				error => {
+				( error ) => {
 					this.setState( { disableDialogButtons: false } );
 					closeDialog();
 					this.props.errorNotice( error.message || defaultErrorMessage );

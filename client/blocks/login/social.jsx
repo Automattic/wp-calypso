@@ -89,11 +89,11 @@ class SocialLoginForm extends Component {
 
 				onSuccess();
 			},
-			error => {
+			( error ) => {
 				if ( error.code === 'unknown_user' ) {
 					return this.props.createSocialUser( socialInfo, 'login' ).then(
 						() => this.recordEvent( 'calypso_login_social_signup_success', 'google' ),
-						createAccountError =>
+						( createAccountError ) =>
 							this.recordEvent( 'calypso_login_social_signup_failure', 'google', {
 								error_code: createAccountError.code,
 								error_message: createAccountError.message,
@@ -111,7 +111,7 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	handleAppleResponse = response => {
+	handleAppleResponse = ( response ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
@@ -141,11 +141,11 @@ class SocialLoginForm extends Component {
 
 				onSuccess();
 			},
-			error => {
+			( error ) => {
 				if ( error.code === 'unknown_user' ) {
 					return this.props.createSocialUser( socialInfo, 'login' ).then(
 						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
-						createAccountError =>
+						( createAccountError ) =>
 							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
 								error_code: createAccountError.code,
 								error_message: createAccountError.message,
@@ -169,15 +169,15 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLoginAndRememberRedirect = service => {
+	trackLoginAndRememberRedirect = ( service ) => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		if ( this.props.redirectTo ) {
+		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
 		}
 	};
 
-	getRedirectUrl = service => {
+	getRedirectUrl = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
@@ -248,7 +248,7 @@ class SocialLoginForm extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		redirectTo: getRedirectToOriginal( state ),
 		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),

@@ -30,6 +30,7 @@ export {
 	areAllMetadataEditsApplied,
 	getUnappliedMetadataEdits,
 } from 'state/posts/utils/metadata-edits';
+export { normalizePostForActions } from 'state/posts/utils/normalize-post-for-actions';
 export { normalizePostForApi } from 'state/posts/utils/normalize-post-for-api';
 export { normalizePostForDisplay } from 'state/posts/utils/normalize-post-for-display';
 export { normalizePostForEditing } from 'state/posts/utils/normalize-post-for-editing';

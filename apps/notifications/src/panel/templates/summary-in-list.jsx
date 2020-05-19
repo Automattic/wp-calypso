@@ -15,7 +15,7 @@ var debug = require( 'debug' )( 'notifications:summary-in-list' );
 var { recordTracksEvent } = require( '../helpers/stats' );
 
 export class SummaryInList extends React.Component {
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -65,7 +65,7 @@ export class SummaryInList extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectNote: compose( dispatch, actions.ui.selectNote ),
 	unselectNote: compose( dispatch, actions.ui.unselectNote ),
 } );

@@ -12,7 +12,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -134,7 +134,7 @@ function getMomentSiteZone( state, siteId ) {
 }
 
 export default {
-	redirectToDefaultSitePage: function( context ) {
+	redirectToDefaultSitePage: function ( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
 		// if we are redirecting we need to retain our intended layout-focus
@@ -144,7 +144,7 @@ export default {
 		page.redirect( getStatsDefaultSitePage( siteFragment ) );
 	},
 
-	redirectToDefaultWordAdsPeriod: function( context ) {
+	redirectToDefaultWordAdsPeriod: function ( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
 		// if we are redirecting we need to retain our intended layout-focus
@@ -158,17 +158,17 @@ export default {
 		}
 	},
 
-	redirectToDefaultModulePage: function( context ) {
+	redirectToDefaultModulePage: function ( context ) {
 		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site }` );
 	},
 
-	insights: function( context, next ) {
+	insights: function ( context, next ) {
 		context.primary = <StatsInsights followList={ new FollowList() } />;
 		next();
 	},
 
-	overview: function( context, next ) {
-		const filters = function() {
+	overview: function ( context, next ) {
+		const filters = function () {
 			return [
 				{
 					title: i18n.translate( 'Days' ),
@@ -190,7 +190,7 @@ export default {
 
 		window.scrollTo( 0, 0 );
 
-		const activeFilter = find( filters(), filter => {
+		const activeFilter = find( filters(), ( filter ) => {
 			return (
 				context.params.period === filter.period ||
 				context.pathname === filter.path ||
@@ -203,13 +203,13 @@ export default {
 			return next();
 		}
 
-		analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
+		bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
 		context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
 		next();
 	},
 
-	site: function( context, next ) {
+	site: function ( context, next ) {
 		const {
 			params: { site: givenSiteId },
 			query: queryOptions,
@@ -221,7 +221,7 @@ export default {
 				context.store.dispatch(
 					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
 				);
-				window.location.href = 'https://support.wordpress.com/simple-payments/';
+				window.location.href = 'https://wordpress.com/support/simple-payments/';
 				return;
 			}
 			context.store.dispatch(
@@ -236,7 +236,7 @@ export default {
 
 		const activeFilter = find(
 			filters,
-			filter =>
+			( filter ) =>
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 		);
@@ -258,7 +258,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
+		bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 		recordPlaceholdersTiming();
 
 		const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
@@ -277,7 +277,7 @@ export default {
 		next();
 	},
 
-	summary: function( context, next ) {
+	summary: function ( context, next ) {
 		let siteId = context.params.site;
 		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
@@ -311,7 +311,7 @@ export default {
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
-		const activeFilter = find( filters, filter => {
+		const activeFilter = find( filters, ( filter ) => {
 			return (
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
@@ -362,7 +362,7 @@ export default {
 		next();
 	},
 
-	post: function( context, next ) {
+	post: function ( context, next ) {
 		let siteId = context.params.site;
 		const postId = parseInt( context.params.post_id, 10 );
 		const site = getSite( context.store.getState(), siteId );
@@ -380,7 +380,7 @@ export default {
 		next();
 	},
 
-	follows: function( context, next ) {
+	follows: function ( context, next ) {
 		let siteId = context.params.site;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
@@ -417,14 +417,14 @@ export default {
 		next();
 	},
 
-	wordAds: function( context, next ) {
+	wordAds: function ( context, next ) {
 		const { query: queryOptions, store } = context;
 
 		const state = store.getState();
 		const siteId = getSelectedSiteId( state );
 		const filters = getSiteFilters( siteId, context );
 
-		const activeFilter = find( filters, filter => context.params.period === filter.period );
+		const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
 		if ( ! activeFilter ) {
 			return next();
@@ -444,10 +444,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat(
-			'calypso_wordads_stats_site_period',
-			activeFilter.period + numPeriodAgo
-		);
+		bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 		context.primary = (
 			<WordAds

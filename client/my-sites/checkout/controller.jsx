@@ -15,7 +15,7 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import CheckoutSystemDecider from './checkout/checkout-system-decider';
+import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
@@ -63,6 +63,7 @@ export function checkout( context, next ) {
 				couponCode={ couponCode }
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
+				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }

@@ -34,7 +34,7 @@ class StatsDownloadCsv extends Component {
 		borderless: PropTypes.bool,
 	};
 
-	downloadCsv = event => {
+	downloadCsv = ( event ) => {
 		event.preventDefault();
 		const { siteSlug, path, period, data } = this.props;
 
@@ -50,7 +50,7 @@ class StatsDownloadCsv extends Component {
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
 		const csvData = data
-			.map( row => {
+			.map( ( row ) => {
 				return row.join( ',' );
 			} )
 			.join( '\n' );

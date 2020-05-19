@@ -40,19 +40,19 @@ function AtDCore() {
  * Setters
  */
 
-AtDCore.prototype.setIgnoreStrings = function( strings ) {
+AtDCore.prototype.setIgnoreStrings = function ( strings ) {
 	const parent = this;
 
 	if ( 'string' === typeof strings ) {
 		strings = strings.split( /,\s*/g );
 	}
 
-	this.map( strings, function( string ) {
+	this.map( strings, function ( string ) {
 		parent.ignore_strings[ string ] = 1;
 	} );
 };
 
-AtDCore.prototype.showTypes = function( strings ) {
+AtDCore.prototype.showTypes = function ( strings ) {
 	let show_types = strings.split( /,\s*/g ),
 		types = {},
 		ignore_types = [];
@@ -73,11 +73,11 @@ AtDCore.prototype.showTypes = function( strings ) {
 	types[ 'Phrases to Avoid' ] = 1;
 	types[ 'Redundant Expression' ] = 1;
 
-	this.map( show_types, function( type ) {
+	this.map( show_types, function ( type ) {
 		types[ type ] = undefined;
 	} );
 
-	this.map( this.ignore_types, function( type ) {
+	this.map( this.ignore_types, function ( type ) {
 		if ( types[ type ] !== undefined ) {
 			ignore_types.push( type );
 		}
@@ -90,7 +90,7 @@ AtDCore.prototype.showTypes = function( strings ) {
  * Error Parsing Code
  */
 
-AtDCore.prototype.makeError = function( error_s, tokens, type, seps ) {
+AtDCore.prototype.makeError = function ( error_s, tokens, type, seps ) {
 	const struct = {};
 	struct.type = type;
 	struct.string = error_s;
@@ -113,10 +113,10 @@ AtDCore.prototype.makeError = function( error_s, tokens, type, seps ) {
 	return struct;
 };
 
-AtDCore.prototype.addToErrorStructure = function( errors, list, type, seps ) {
+AtDCore.prototype.addToErrorStructure = function ( errors, list, type, seps ) {
 	const parent = this;
 
-	this.map( list, function( error ) {
+	this.map( list, function ( error ) {
 		const tokens = error.word.split( /\s+/ );
 		const pre = error.pre;
 		const first = tokens[ 0 ];
@@ -143,7 +143,7 @@ AtDCore.prototype.addToErrorStructure = function( errors, list, type, seps ) {
 	} );
 };
 
-AtDCore.prototype.buildErrorStructure = function( spellingList, enrichmentList, grammarList ) {
+AtDCore.prototype.buildErrorStructure = function ( spellingList, enrichmentList, grammarList ) {
 	const seps = this._getSeparators();
 	const errors = {};
 
@@ -153,7 +153,7 @@ AtDCore.prototype.buildErrorStructure = function( spellingList, enrichmentList, 
 	return errors;
 };
 
-AtDCore.prototype._getSeparators = function() {
+AtDCore.prototype._getSeparators = function () {
 	let re = '',
 		i;
 	const str = '"s!#$%&()*+,./:;<=>?@[\\]^_{|}';
@@ -166,7 +166,7 @@ AtDCore.prototype._getSeparators = function() {
 	return '(?:(?:[\xa0' + re + '])|(?:\\-\\-))+';
 };
 
-AtDCore.prototype.processXML = function( responseXML ) {
+AtDCore.prototype.processXML = function ( responseXML ) {
 	let types,
 		errors,
 		grammarErrors,
@@ -187,7 +187,7 @@ AtDCore.prototype.processXML = function( responseXML ) {
 	/* types of errors to ignore */
 	types = {};
 
-	this.map( this.ignore_types, function( type ) {
+	this.map( this.ignore_types, function ( type ) {
 		types[ type ] = 1;
 	} );
 
@@ -302,7 +302,7 @@ AtDCore.prototype.processXML = function( responseXML ) {
 	return { errors: errorStruct, count: ecount, suggestions: this.suggestions };
 };
 
-AtDCore.prototype.findSuggestion = function( element ) {
+AtDCore.prototype.findSuggestion = function ( element ) {
 	let text = element.innerHTML,
 		context = ( this.getAttrib( element, 'pre' ) + '' ).replace( /[\\,!\\?\\."\s]/g, '' ),
 		len = this.suggestions.length,
@@ -332,7 +332,7 @@ function TokenIterator( tokens ) {
 	this.last = 0;
 }
 
-TokenIterator.prototype.next = function() {
+TokenIterator.prototype.next = function () {
 	let current = this.tokens[ this.index ];
 	this.count = this.last;
 	this.last += current.length + 1;
@@ -352,15 +352,15 @@ TokenIterator.prototype.next = function() {
 	return current;
 };
 
-TokenIterator.prototype.hasNext = function() {
+TokenIterator.prototype.hasNext = function () {
 	return this.index < this.tokens.length;
 };
 
-TokenIterator.prototype.hasNextN = function( n ) {
+TokenIterator.prototype.hasNextN = function ( n ) {
 	return this.index + n < this.tokens.length;
 };
 
-TokenIterator.prototype.skip = function( m, n ) {
+TokenIterator.prototype.skip = function ( m, n ) {
 	this.index += m;
 	this.last += n;
 
@@ -369,11 +369,11 @@ TokenIterator.prototype.skip = function( m, n ) {
 	}
 };
 
-TokenIterator.prototype.getCount = function() {
+TokenIterator.prototype.getCount = function () {
 	return this.count;
 };
 
-TokenIterator.prototype.peek = function( n ) {
+TokenIterator.prototype.peek = function ( n ) {
 	let peepers = [],
 		end = this.index + n,
 		x;
@@ -387,7 +387,7 @@ TokenIterator.prototype.peek = function( n ) {
 /*
  *  code to manage highlighting of errors
  */
-AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
+AtDCore.prototype.markMyWords = function ( container_nodes, errors ) {
 	let seps = new RegExp( this._getSeparators() ),
 		nl = [],
 		ecount = 0 /* track number of highlighted errors */,
@@ -441,7 +441,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 	/* Collect all text nodes */
 	/* Our goal--ignore nodes that are already wrapped */
 
-	this._walk( container_nodes, function( n ) {
+	this._walk( container_nodes, function ( n ) {
 		if ( n.nodeType === 3 && ! parent.isMarkedNode( n ) ) {
 			nl.push( n );
 		}
@@ -449,7 +449,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 
 	/* walk through the relevant nodes */
 
-	this.map( nl, function( n ) {
+	this.map( nl, function ( n ) {
 		let foundStrings = {},
 			v,
 			tokens,
@@ -623,7 +623,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 	return ecount;
 };
 
-AtDCore.prototype._walk = function( elements, f ) {
+AtDCore.prototype._walk = function ( elements, f ) {
 	let i;
 	for ( i = 0; i < elements.length; i++ ) {
 		f.call( f, elements[ i ] );
@@ -631,11 +631,11 @@ AtDCore.prototype._walk = function( elements, f ) {
 	}
 };
 
-AtDCore.prototype.removeWords = function( node, w ) {
+AtDCore.prototype.removeWords = function ( node, w ) {
 	let count = 0;
 	const parent = this;
 
-	this.map( this.findSpans( node ).reverse(), function( n ) {
+	this.map( this.findSpans( node ).reverse(), function ( n ) {
 		let nnode;
 		if (
 			n &&
@@ -656,7 +656,7 @@ AtDCore.prototype.removeWords = function( node, w ) {
 	return count;
 };
 
-AtDCore.prototype.isEmptySpan = function( node ) {
+AtDCore.prototype.isEmptySpan = function ( node ) {
 	return (
 		this.getAttrib( node, 'class' ) === '' &&
 		this.getAttrib( node, 'style' ) === '' &&
@@ -666,7 +666,7 @@ AtDCore.prototype.isEmptySpan = function( node ) {
 	);
 };
 
-AtDCore.prototype.isMarkedNode = function( node ) {
+AtDCore.prototype.isMarkedNode = function ( node ) {
 	return (
 		this.hasClass( node, 'hiddenGrammarError' ) ||
 		this.hasClass( node, 'hiddenSpellError' ) ||
@@ -677,7 +677,7 @@ AtDCore.prototype.isMarkedNode = function( node ) {
 /*
  * Context Menu Helpers
  */
-AtDCore.prototype.applySuggestion = function( element, suggestion ) {
+AtDCore.prototype.applySuggestion = function ( element, suggestion ) {
 	let node;
 	if ( suggestion === '(omit)' ) {
 		this.remove( element );
@@ -691,16 +691,16 @@ AtDCore.prototype.applySuggestion = function( element, suggestion ) {
 /*
  * Check for an error
  */
-AtDCore.prototype.hasErrorMessage = function( xmlr ) {
+AtDCore.prototype.hasErrorMessage = function ( xmlr ) {
 	return xmlr !== undefined && xmlr.getElementsByTagName( 'message' ).item( 0 ) !== null;
 };
 
-AtDCore.prototype.getErrorMessage = function( xmlr ) {
+AtDCore.prototype.getErrorMessage = function ( xmlr ) {
 	return xmlr.getElementsByTagName( 'message' ).item( 0 );
 };
 
 /* this should always be an error, alas... not practical */
-AtDCore.prototype.isIE = function() {
+AtDCore.prototype.isIE = function () {
 	return navigator.appName === 'Microsoft Internet Explorer';
 };
 

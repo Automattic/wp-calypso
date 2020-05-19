@@ -37,7 +37,7 @@ Emitter( FollowListSite.prototype );
  *	if is_following is false, calls the follow endpoint
  */
 
-FollowListSite.prototype.follow = function() {
+FollowListSite.prototype.follow = function () {
 	if ( ! this.is_following ) {
 		debug( 'following site', this.site_id );
 		this.is_following = true;
@@ -45,7 +45,7 @@ FollowListSite.prototype.follow = function() {
 		wpcom
 			.site( this.site_id )
 			.follow()
-			.add( { source: config( 'readerFollowingSource' ) }, function( resp ) {
+			.add( { source: config( 'readerFollowingSource' ) }, function ( resp ) {
 				debug( 'follow success', resp );
 			} );
 	}
@@ -55,14 +55,14 @@ FollowListSite.prototype.follow = function() {
  *	if is_following is true, calls the delete action on follow
  */
 
-FollowListSite.prototype.unfollow = function() {
+FollowListSite.prototype.unfollow = function () {
 	if ( this.is_following ) {
 		this.is_following = false;
 		this.emit( 'change' );
 		wpcom
 			.site( this.site_id )
 			.follow()
-			.del( { source: config( 'readerFollowingSource' ) }, function( resp ) {
+			.del( { source: config( 'readerFollowingSource' ) }, function ( resp ) {
 				debug( 'unfollow success', resp );
 			} );
 	}

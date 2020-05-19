@@ -33,7 +33,10 @@ function fromApi( response ) {
 
 	const addedTag = find( response.tags, { ID: response.added_tag } );
 
-	return transformTagFromApi( { tag: addedTag } ).map( tag => ( { ...tag, isFollowing: true } ) );
+	return transformTagFromApi( { tag: addedTag } ).map( ( tag ) => ( {
+		...tag,
+		isFollowing: true,
+	} ) );
 }
 
 export function receiveFollowTag( action, addedTag ) {

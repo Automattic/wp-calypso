@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { FunctionKeys } from 'utility-types';
+
+/**
  * Mapped types
  *
  * This module should only contain mapped types, operations useful in the type system
@@ -17,8 +22,8 @@
  *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
-export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any > > = {
-	[ selector in keyof S ]: (
+export type SelectFromMap< S extends object > = {
+	[ selector in FunctionKeys< S > ]: (
 		...args: TailParameters< S[ selector ] >
 	) => ReturnType< S[ selector ] >;
 };
@@ -42,11 +47,8 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
  * This is useful for typing some @wordpres/data functions that make a leading
  * `state` argument implicit.
  */
-export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F extends (
-	head: any,
-	...tail: infer PS
-) => any
-	? PS
+export type TailParameters< F extends Function > = F extends ( head: any, ...tail: infer T ) => any
+	? T
 	: never;
 
 /**

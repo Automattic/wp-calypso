@@ -9,7 +9,7 @@ import {
 
 import 'state/data-layer/wpcom/gsuite-users';
 
-export const getGSuiteUsers = siteId => {
+export const getGSuiteUsers = ( siteId ) => {
 	return {
 		type: GSUITE_USERS_REQUEST,
 		siteId,

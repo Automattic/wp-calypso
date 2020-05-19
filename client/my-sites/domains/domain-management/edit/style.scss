@@ -11,7 +11,7 @@
 
 	.edit__transfer-text-fail {
 		font-size: 18px;
-		font-weight: 500;
+		font-weight: 600;
 		margin-bottom: 1em;
 	}
 
@@ -26,13 +26,13 @@
 			color: var( --color-neutral-50 );
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			display: inline-block;
 			width: auto;
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.edit__transfer-button-fail-margin {
 			margin-left: 15px;
 		}
@@ -69,7 +69,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				&.mobile-m {
 					font-size: 28px;
 				}
@@ -84,7 +84,7 @@
 				}
 			}
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				&.desktop-m {
 					font-size: 28px;
 				}
@@ -111,6 +111,10 @@
 			}
 		}
 
+		.mapped-domain-type__name-server-list {
+			margin-bottom: 0.5em;
+		}
+
 		.mapped-domain-type__small-message {
 			font-size: 14px;
 		}
@@ -134,16 +138,43 @@
 
 	.domain-types__expiration-row {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		.renew-button {
-			margin-left: 10px;
+		padding: 0;
+		> div {
+			margin: 16px 0 16px 24px;
 		}
 		> div:nth-last-child( 2 ) {
 			margin-right: auto;
+		}
+		> div:last-child {
+			margin-right: 24px;
+		}
+
+		@include breakpoint-deprecated( '<800px' ) {
+			.domain-types__break {
+				flex-basis: 100%;
+				height: 0;
+				margin: 0;
+			}
+			> div.domain-types__wrap-me {
+				border-top: 1px solid var( --color-neutral-5 );
+				flex-basis: 100%;
+				margin: 0;
+				padding: 16px 24px;
+			}
 		}
 	}
 
 	.subscription-settings {
 		margin-top: 0;
+	}
+
+	.domain-types__auto-renew-placeholder {
+		width: 20%;
+		p {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+		}
 	}
 }

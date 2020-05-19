@@ -24,9 +24,9 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"dependencies": {
-		"core-js": "3.6.3",
-		"isomorphic-fetch": "2.2.1",
-		"regenerator-runtime": "0.13.3",
-		"svg4everybody": "2.1.9"
+		"core-js": "^3.6.3",
+		"isomorphic-fetch": "^2.2.1",
+		"regenerator-runtime": "^0.13.3",
+		"svg4everybody": "^2.1.9"
 	}
 }

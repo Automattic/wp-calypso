@@ -47,7 +47,7 @@ export function acceptInvite( context, next ) {
 			user.set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = error => {
+		const acceptInviteCallback = ( error ) => {
 			if ( error ) {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );
 				page( window.location.href );
@@ -56,6 +56,7 @@ export function acceptInvite( context, next ) {
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
+
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { THEME_CLEAR_ACTIVATED } from 'state/action-types';
+import { THEME_CLEAR_ACTIVATED } from 'state/themes/action-types';
 
 import 'state/themes/init';
 

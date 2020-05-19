@@ -15,7 +15,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is upgradeable
  */
-export default function( state, siteId ) {
+export default function ( state, siteId ) {
 	// Cannot determine site upgradeability if there is no current user
 	if ( ! getCurrentUserId( state ) || ! getRawSite( state, siteId ) ) {
 		return null;

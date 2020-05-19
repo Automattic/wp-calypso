@@ -66,6 +66,15 @@
 	}
 }
 
+.email-verification__actions {
+	display: flex;
+	align-items: center;
+
+	a {
+		margin-left: 16px;
+	}
+}
+
 .sent .email-verification__status {
 	position: relative;
 	animation: fadeIn 0.3s ease-out;

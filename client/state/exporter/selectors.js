@@ -58,7 +58,7 @@ export function isDateRangeValid( state, siteId, postType ) {
 }
 
 export const getAdvancedSettings = ( state, siteId ) => state.exporter.advancedSettings[ siteId ];
-export const getSelectedPostType = state => state.exporter.selectedPostType;
+export const getSelectedPostType = ( state ) => state.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
 	// Choose which set of options to return for the given field name
 	const optionSet = get(

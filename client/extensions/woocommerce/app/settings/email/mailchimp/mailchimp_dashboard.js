@@ -43,11 +43,11 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 		onChange( { mailchimp_checkbox_defaults: nextValue } );
 	};
 
-	const onNewsletterLabelChange = e => {
+	const onNewsletterLabelChange = ( e ) => {
 		onChange( { newsletter_label: e.target.value } );
 	};
 
-	const onToggleSubscribeMessage = e => {
+	const onToggleSubscribeMessage = ( e ) => {
 		// check if we had previously selected something in checked/unchecked area
 		// this way we can use old value on toggling visibility,
 		// this is just to improve UX
@@ -141,7 +141,7 @@ class MailChimpDashboard extends React.Component {
 		}
 	}
 
-	onSettingsChange = change => {
+	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
 		if ( this.props.onChange ) {
 			this.props.onChange();

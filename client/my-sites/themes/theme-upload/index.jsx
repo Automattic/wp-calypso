@@ -287,12 +287,12 @@ class Upload extends React.Component {
 
 const ConnectedUpload = connectOptions( Upload );
 
-const UploadWithOptions = props => {
+const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );

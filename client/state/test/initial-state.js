@@ -18,6 +18,7 @@ import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
+import signupReducer from 'state/signup/reducer';
 import {
 	getInitialState,
 	persistOnChange,
@@ -33,7 +34,7 @@ jest.mock( 'config', () => {
 
 	const config = () => 'development';
 
-	config.isEnabled = jest.fn( key => key === 'persist-redux' && persistReduxEnabled );
+	config.isEnabled = jest.fn( ( key ) => key === 'persist-redux' && persistReduxEnabled );
 	config.isEnabled.enablePersistRedux = () => ( persistReduxEnabled = true );
 	config.isEnabled.disablePersistRedux = () => ( persistReduxEnabled = false );
 
@@ -429,7 +430,7 @@ describe( 'initial-state', () => {
 						.mockResolvedValue( storedState );
 
 					await loadAllState();
-					state = getInitialState( initialReducer );
+					state = getInitialState( combineReducers( { signup: signupReducer } ) );
 				} );
 
 				afterAll( () => {
@@ -500,7 +501,7 @@ describe( 'initial-state', () => {
 						.mockResolvedValue( storedState );
 
 					await loadAllState();
-					state = getInitialState( initialReducer );
+					state = getInitialState( combineReducers( { signup: signupReducer } ) );
 				} );
 
 				afterAll( () => {
@@ -562,7 +563,7 @@ describe( 'initial-state', () => {
 			clock = useFakeTimers();
 			setStoredItemSpy = jest
 				.spyOn( browserStorage, 'setStoredItem' )
-				.mockImplementation( value => Promise.resolve( value ) );
+				.mockImplementation( ( value ) => Promise.resolve( value ) );
 
 			store = createReduxStore( initialState, reducer );
 			persistOnChange( store, false );
@@ -681,7 +682,7 @@ describe( 'initial-state', () => {
 describe( 'loading stored state with dynamic reducers', () => {
 	// Creates a reducer that serializes objects by prefixing all keys with a given prefix.
 	// For example, `withKeyPrefix( 'A' )` serializes `{ x: 1, y: 2 }` into `{ 'A:x': 1, 'A:y': 2 }`
-	const withKeyPrefix = keyPrefix => {
+	const withKeyPrefix = ( keyPrefix ) => {
 		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
 		const reducer = ( state = {}, action ) => {
 			switch ( action.type ) {

@@ -26,7 +26,7 @@ const Markup = {
 	 * @param  {object} options Appearance options
 	 * @returns {string}         A markup string
 	 */
-	get: function( site, media, options ) {
+	get: function ( site, media, options ) {
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
@@ -49,7 +49,7 @@ const Markup = {
 	 * @param  {object} media A media object
 	 * @returns {string}       A link markup string
 	 */
-	link: function( media ) {
+	link: function ( media ) {
 		const element = React.createElement(
 			'a',
 			{
@@ -76,7 +76,7 @@ const Markup = {
 	 * @returns {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( site, media ) {
+	caption: function ( site, media ) {
 		let img, caption, width;
 
 		if ( 'string' !== typeof media ) {
@@ -126,7 +126,7 @@ const Markup = {
 		 * @param  {object} options Appearance options
 		 * @returns {string}         An image markup string
 		 */
-		image: function( site, media, options ) {
+		image: function ( site, media, options ) {
 			options = assign(
 				{
 					size: 'full',
@@ -196,7 +196,7 @@ const Markup = {
 		 * @param  {object} media An audio media object
 		 * @returns {string}       An audio markup string
 		 */
-		audio: function( site, media ) {
+		audio: function ( site, media ) {
 			return stringify( {
 				tag: 'audio',
 				attrs: {
@@ -213,7 +213,7 @@ const Markup = {
 		 * @param  {string} media A video media object
 		 * @returns {string}       A video markup string
 		 */
-		video: function( site, media ) {
+		video: function ( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
 				return stringify( {
 					tag: 'wpvideo',

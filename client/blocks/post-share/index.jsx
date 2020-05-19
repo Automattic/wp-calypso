@@ -58,7 +58,7 @@ import NoConnectionsNotice from './no-connections-notice';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { sectionify } from 'lib/route';
 
@@ -111,7 +111,7 @@ class PostShare extends Component {
 		return !! get( this.props, 'connections.length' );
 	}
 
-	toggleConnection = id => {
+	toggleConnection = ( id ) => {
 		const skipped = this.state.skipped.slice();
 		const index = skipped.indexOf( id );
 		if ( index !== -1 ) {
@@ -123,7 +123,7 @@ class PostShare extends Component {
 		this.setState( { skipped } );
 	};
 
-	scheduleDate = date => {
+	scheduleDate = ( date ) => {
 		if ( date.isBefore( Date.now() ) ) {
 			date = null;
 		}
@@ -134,7 +134,7 @@ class PostShare extends Component {
 		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
 	}
 
-	isConnectionActive = connection =>
+	isConnectionActive = ( connection ) =>
 		connection.status !== 'broken' &&
 		connection.status !== 'invalid' &&
 		this.skipConnection( connection );
@@ -152,22 +152,22 @@ class PostShare extends Component {
 			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', {
+		recordTracksEvent( 'calypso_publicize_share_preview_toggle', {
 			show: showSharingPreview,
 		} );
 		this.setState( { showSharingPreview } );
 	};
 
-	setMessage = message => this.setState( { message } );
+	setMessage = ( message ) => this.setState( { message } );
 
 	dismiss = () => {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.postId );
 	};
 
 	sharePost = () => {
-		const { postId, siteId, connections } = this.props;
+		const { postId, siteId, connections, isJetpack } = this.props;
 		const servicesToPublish = connections.filter(
-			connection => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
+			( connection ) => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
 		);
 		//Let's prepare array of service stats for tracks.
 		const numberOfAccountsPerService = servicesToPublish.reduce(
@@ -181,21 +181,25 @@ class PostShare extends Component {
 			},
 			{ service_all: 0 }
 		);
-		const additionalProperties = { context_path: sectionify( currentPage ) };
+		const additionalProperties = {
+			context_path: sectionify( currentPage ),
+			is_jetpack: isJetpack,
+			blog_id: siteId,
+		};
 		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', eventProperties );
+			recordTracksEvent( 'calypso_publicize_share_schedule', eventProperties );
 
 			this.props.schedulePostShareAction(
 				siteId,
 				postId,
 				this.state.message,
 				this.state.scheduledDate.format( 'X' ),
-				servicesToPublish.map( connection => connection.ID )
+				servicesToPublish.map( ( connection ) => connection.ID )
 			);
 		} else {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', eventProperties );
+			recordTracksEvent( 'calypso_publicize_share_instantly', eventProperties );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};
@@ -352,8 +356,12 @@ class PostShare extends Component {
 			return null;
 		}
 
-		const brokenConnections = connections.filter( connection => connection.status === 'broken' );
-		const invalidConnections = connections.filter( connection => connection.status === 'invalid' );
+		const brokenConnections = connections.filter(
+			( connection ) => connection.status === 'broken'
+		);
+		const invalidConnections = connections.filter(
+			( connection ) => connection.status === 'invalid'
+		);
 
 		if ( ! ( brokenConnections.length || invalidConnections.length ) ) {
 			return null;
@@ -361,7 +369,7 @@ class PostShare extends Component {
 
 		return (
 			<div>
-				{ brokenConnections.map( connection => (
+				{ brokenConnections.map( ( connection ) => (
 					<Notice
 						key={ connection.keyring_connection_ID }
 						status="is-warning"
@@ -373,7 +381,7 @@ class PostShare extends Component {
 						</NoticeAction>
 					</Notice>
 				) ) }
-				{ invalidConnections.map( connection => (
+				{ invalidConnections.map( ( connection ) => (
 					<Notice
 						key={ connection.keyring_connection_ID }
 						status="is-error"
@@ -388,7 +396,7 @@ class PostShare extends Component {
 					>
 						{ connection.service === 'facebook' && (
 							<NoticeAction
-								href={ 'https://en.support.wordpress.com/publicize/#facebook-pages' }
+								href={ 'https://wordpress.com/support/publicize/#facebook-pages' }
 								external
 							>
 								{ translate( 'Learn More' ) }
@@ -460,7 +468,7 @@ class PostShare extends Component {
 		const { hasFetchedConnections, siteId, siteSlug, translate } = this.props;
 
 		// enrich connections
-		const connections = map( this.props.connections, connection => ( {
+		const connections = map( this.props.connections, ( connection ) => ( {
 			...connection,
 			isActive: this.isConnectionActive( connection ),
 		} ) );

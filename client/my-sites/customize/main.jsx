@@ -92,7 +92,7 @@ class Customize extends React.Component {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
-	redirectIfNeeded = pathname => {
+	redirectIfNeeded = ( pathname ) => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
@@ -137,7 +137,7 @@ class Customize extends React.Component {
 		page.back( path );
 	};
 
-	navigateTo = destination => {
+	navigateTo = ( destination ) => {
 		if ( ! startsWith( destination, '/checkout' ) ) {
 			return;
 		}
@@ -216,7 +216,7 @@ class Customize extends React.Component {
 		window.addEventListener( 'message', this.onMessage, false );
 	};
 
-	onMessage = event => {
+	onMessage = ( event ) => {
 		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
@@ -296,7 +296,7 @@ class Customize extends React.Component {
 		}
 	};
 
-	renderErrorPage = error => {
+	renderErrorPage = ( error ) => {
 		return (
 			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
@@ -318,7 +318,7 @@ class Customize extends React.Component {
 			return this.renderErrorPage( {
 				title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 				action: this.props.translate( 'Try again' ),
-				actionCallback: function() {
+				actionCallback: function () {
 					window.location.reload();
 				},
 			} );
@@ -373,7 +373,7 @@ class Customize extends React.Component {
 		return this.renderErrorPage( {
 			title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 			action: this.props.translate( 'Try again' ),
-			actionCallback: function() {
+			actionCallback: function () {
 				window.location.reload();
 			},
 		} );
@@ -381,7 +381,7 @@ class Customize extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
 		return {

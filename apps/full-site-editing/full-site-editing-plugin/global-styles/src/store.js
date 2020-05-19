@@ -77,13 +77,13 @@ export default ( storeName, optionsPath ) => {
 				return state ? state[ key ] : undefined;
 			},
 			hasLocalChanges( state ) {
-				return !! state && Object.keys( cache ).some( key => cache[ key ] !== state[ key ] );
+				return !! state && Object.keys( cache ).some( ( key ) => cache[ key ] !== state[ key ] );
 			},
 		},
 
 		resolvers: {
+			// eslint-disable-next-line no-unused-vars
 			*getOption( key ) {
-				// eslint-disable-line no-unused-vars
 				if ( alreadyFetchedOptions ) {
 					return; // do nothing
 				}

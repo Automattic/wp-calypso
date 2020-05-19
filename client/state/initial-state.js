@@ -61,8 +61,8 @@ function shouldPersist() {
  * browser state and loading without it
  *
  * Can be overridden on the command-line with two flags:
- *   - ENABLE_FEATURES=force-sympathy npm start (always sympathize)
- *   - ENABLE_FEATURES=no-force-sympathy npm start (always prevent sympathy)
+ *   - ENABLE_FEATURES=force-sympathy yarn start (always sympathize)
+ *   - ENABLE_FEATURES=no-force-sympathy yarn start (always prevent sympathy)
  *
  * If both of these flags are set, then `force-sympathy` takes precedence.
  *
@@ -202,7 +202,7 @@ export function persistOnChange( reduxStore ) {
 	let prevState = null;
 
 	const throttledSaveState = throttle(
-		function() {
+		function () {
 			const state = reduxStore.getState();
 			if ( state === prevState ) {
 				return;
@@ -222,7 +222,7 @@ export function persistOnChange( reduxStore ) {
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
 			);
 
-			Promise.all( storeTasks ).catch( setError =>
+			Promise.all( storeTasks ).catch( ( setError ) =>
 				debug( 'failed to set redux-store state', setError )
 			);
 		},

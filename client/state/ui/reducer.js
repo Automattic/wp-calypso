@@ -16,6 +16,7 @@ import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import guidedTour from './guided-tours/reducer';
+import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
@@ -90,7 +91,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isNotificationsOpen = function( state = false, { type } ) {
+export const isNotificationsOpen = function ( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
 		return ! state;
 	}
@@ -104,6 +105,7 @@ const reducer = combineReducers( {
 	comments,
 	dropZone,
 	editor,
+	editorDeprecationDialog,
 	googleMyBusiness,
 	guidedTour,
 	gutenbergOptInDialog,

@@ -9,4 +9,4 @@ import React from 'react';
  */
 import './style.scss';
 
-export default props => <div className="plan-pill">{ props.children }</div>;
+export default ( props ) => <div className="plan-pill">{ props.children }</div>;

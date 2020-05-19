@@ -36,11 +36,11 @@ export const getSiteUserConnections = createSelector(
 	( state, siteId, userId ) =>
 		filter(
 			state.sharing.publicize.connections,
-			connection =>
+			( connection ) =>
 				connection.site_ID === siteId &&
 				( connection.shared || connection.keyring_connection_user_ID === userId )
 		),
-	state => [ state.sharing.publicize.connections ]
+	( state ) => [ state.sharing.publicize.connections ]
 );
 
 /**

@@ -68,7 +68,7 @@ export default connect(
 			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestSitePosts,

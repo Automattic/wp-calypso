@@ -8,10 +8,10 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 import {
@@ -533,50 +533,3 @@ export function isConciergeSession( product ) {
 
 	return 'concierge-session' === product.product_slug;
 }
-
-export default {
-	formatProduct,
-	getDomainProductRanking,
-	getIncludedDomainPurchaseAmount,
-	includesProduct,
-	isBusiness,
-	isChargeback,
-	isCredits,
-	isCustomDesign,
-	isDependentProduct,
-	isDelayedDomainTransfer,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainTransferProduct,
-	isBundled,
-	isDotComPlan,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isFreePlan,
-	isPersonal,
-	isFreeTrial,
-	isFreeWordPressComDomain,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackBusiness,
-	isJetpackPlan,
-	isJetpackPremium,
-	isJetpackMonthlyPlan,
-	isVipPlan,
-	isMonthly,
-	isJpphpBundle,
-	isNoAds,
-	isPlan,
-	isPremium,
-	isSiteRedirect,
-	isSpaceUpgrade,
-	isTheme,
-	isUnlimitedSpace,
-	isUnlimitedThemes,
-	isVideoPress,
-	whitelistAttributes,
-	isConciergeSession,
-};

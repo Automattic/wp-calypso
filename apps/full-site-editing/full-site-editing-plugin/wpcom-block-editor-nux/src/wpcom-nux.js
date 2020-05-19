@@ -1,28 +1,35 @@
+/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
+import './public-path';
+
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { ExternalLink, Guide, GuidePage } from '@wordpress/components';
+import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
  */
-import {
-	CanvasImage,
-	EditorImage,
-	BlockLibraryImage,
-	DocumentationImage,
-	InserterIconImage,
-} from './images';
+import './style.scss';
+import blockPickerImage from './images/block-picker.svg';
+import editorImage from './images/editor.svg';
+import previewImage from './images/preview.svg';
+import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const isWpcomNuxEnabled = useSelect( select => select( 'automattic/nux' ).isWpcomNuxEnabled() );
+	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
+		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
+		isSPTOpen:
+			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
+			select( 'automattic/starter-page-layouts' ).isOpen(),
+	} ) );
+
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
@@ -37,80 +44,104 @@ function WpcomNux() {
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
-	if ( ! isWpcomNuxEnabled ) {
+	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
-	/**
-	 * Currently, the Guide content is mostly copied from Gutenberg. This can be
-	 * updated if/as we have new designs for the NUX on wpcom.
-	 */
+	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
+	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
+
 	return (
 		<Guide
-			className="edit-post-welcome-guide"
-			contentLabel={ __( 'Welcome to the WordPress editor' ) }
-			finishButtonText={ __( 'Get started' ) }
+			className="wpcom-block-editor-nux"
+			contentLabel={ __( 'Welcome to your website', 'full-site-editing' ) }
+			finishButtonText={ __( 'Get started', 'full-site-editing' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Welcome to the WordPress editor' ) }
-				</h1>
-				<CanvasImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __(
-						'In the WordPress editor, each paragraph, image, or video is presented as a distinct “block” of content.'
-					) }
-				</p>
-			</GuidePage>
-
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">{ __( 'Make each block your own' ) }</h1>
-				<EditorImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __(
-						'Each block comes with its own set of controls for changing things like color, width, and alignment. These will show and hide automatically when you have a block selected.'
-					) }
-				</p>
-			</GuidePage>
-
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Get to know the block library' ) }
-				</h1>
-				<BlockLibraryImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __experimentalCreateInterpolateElement(
-						__(
-							'All of the blocks available to you live in the block library. You’ll find it wherever you see the <InserterIconImage /> icon.'
-						),
-						{
-							InserterIconImage: (
-								<InserterIconImage className="edit-post-welcome-guide__inserter-icon" />
-							),
-						}
-					) }
-				</p>
-			</GuidePage>
-
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Learn how to use the WordPress editor' ) }
-				</h1>
-				<DocumentationImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __( 'New to the WordPress editor? Want to learn more about using it? ' ) }
-					<ExternalLink href={ __( 'https://support.wordpress.com/wordpress-editor/' ) }>
-						{ __( "Here's a detailed guide." ) }
-					</ExternalLink>
-				</p>
-			</GuidePage>
+			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
+				<NuxPage key={ nuxPage.heading } { ...nuxPage } />
+			) ) }
 		</Guide>
 	);
 }
 
-registerPlugin( 'wpcom-block-editor-nux', {
-	render: () => <WpcomNux />,
-} );
+/**
+ * This function returns a filtered collection of NUX slide data
+ * Function arguments can be extended to customize the slides for specific environments, e.g., Gutenboarding
+ *
+ * @param   { boolean } isGutenboarding Whether the flow is Gutenboarding or not
+ * @returns { Array }                   a collection of <NuxPage /> props filtered by whether the flow is Gutenboarding or not
+ */
+function getWpcomNuxPages( isGutenboarding ) {
+	return [
+		{
+			heading: __( 'Welcome to your website', 'full-site-editing' ),
+			description: __(
+				'Edit your homepage, add the pages you need, and change your site’s look and feel.',
+				'full-site-editing'
+			),
+			imgSrc: editorImage,
+			alignBottom: true,
+		},
+		{
+			heading: __( 'Add or edit your content', 'full-site-editing' ),
+			description: __(
+				'Edit the placeholder content we’ve started you off with, or click the plus sign to add more content.',
+				'full-site-editing'
+			),
+			imgSrc: blockPickerImage,
+		},
+		{
+			heading: __( 'Preview your site as you go', 'full-site-editing' ),
+			description: __(
+				'As you edit your site content, click “Preview” to see your site the way your visitors will.',
+				'full-site-editing'
+			),
+			imgSrc: previewImage,
+			alignBottom: true,
+		},
+		{
+			heading: __( 'Private until you’re ready', 'full-site-editing' ),
+			description: __(
+				'Your site will remain private as you make changes until you’re ready to launch and share with the world.',
+				'full-site-editing'
+			),
+			imgSrc: privateImage,
+			// @TODO: hide for sites that are already public
+			shouldHide: ! isGutenboarding,
+			alignBottom: true,
+		},
+	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
+}
+
+function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
+	return (
+		<GuidePage className="wpcom-block-editor-nux__page">
+			<div className="wpcom-block-editor-nux__text">
+				<h1 className="wpcom-block-editor-nux__heading">{ heading }</h1>
+				<div className="wpcom-block-editor-nux__description">{ description }</div>
+			</div>
+			<div className="wpcom-block-editor-nux__visual">
+				<img
+					// Force remount so the stale image doesn't remain while new image is fetched
+					key={ imgSrc }
+					src={ imgSrc }
+					alt=""
+					aria-hidden="true"
+					className={ 'wpcom-block-editor-nux__image' + ( alignBottom ? ' align-bottom' : '' ) }
+				/>
+			</div>
+		</GuidePage>
+	);
+}
+
+// Only register plugin if these features are available.
+// If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
+// These seem to be the only dependencies here that are not supported there.
+if ( Guide && GuidePage ) {
+	registerPlugin( 'wpcom-block-editor-nux', {
+		render: () => <WpcomNux />,
+	} );
+}

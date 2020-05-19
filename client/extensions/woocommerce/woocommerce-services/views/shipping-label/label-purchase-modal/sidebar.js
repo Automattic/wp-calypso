@@ -28,12 +28,12 @@ import {
 	shouldEmailDetails,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const Sidebar = props => {
+const Sidebar = ( props ) => {
 	const { orderId, siteId, form, errors, paperSize, translate, fulfillOrder, emailDetails } = props;
 
 	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
 	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
-	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
@@ -79,7 +79,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators(
 		{
 			setEmailDetailsOption,

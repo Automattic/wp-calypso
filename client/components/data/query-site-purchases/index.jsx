@@ -43,7 +43,7 @@ QuerySitePurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			requesting: isFetchingSitePurchases( state ),
 		};

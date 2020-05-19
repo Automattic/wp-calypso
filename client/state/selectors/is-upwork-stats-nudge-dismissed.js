@@ -20,7 +20,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 const getLastDismissTime = ( state, siteId ) => {
 	const preference = getPreference( state, 'upwork-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+	const lastEvent = last( sitePreference.filter( ( event ) => 'dismiss' === event.type ) );
 
 	return lastEvent ? lastEvent.dismissedAt : 0;
 };

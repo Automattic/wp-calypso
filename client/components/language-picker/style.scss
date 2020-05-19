@@ -1,7 +1,7 @@
 .language-picker {
 	border: 1px solid var( --color-neutral-10 );
-	border-width: 1px 1px 2px;
-	border-radius: 4px;
+	border-width: 1px;
+	border-radius: 2px;
 	width: 300px;
 	display: flex;
 	flex: 1 0 auto;
@@ -13,7 +13,7 @@
 	text-align: left;
 	line-height: inherit;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 
@@ -81,7 +81,7 @@
 
 .language-picker__icon-inner {
 	text-transform: uppercase;
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 1;
 }
 

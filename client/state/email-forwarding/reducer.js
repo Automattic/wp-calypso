@@ -60,7 +60,7 @@ const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) =
 };
 
 const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
-	return ( forwards || [] ).map( forward => {
+	return ( forwards || [] ).map( ( forward ) => {
 		if ( forward.mailbox === mailbox ) {
 			return {
 				...forward,
@@ -74,16 +74,16 @@ const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
 
 const handleCreateRequestFailure = ( forwards, { mailbox } ) => {
 	return ( forwards || [] ).filter(
-		forward => forward.mailbox !== mailbox || forward.temporary !== true
+		( forward ) => forward.mailbox !== mailbox || forward.temporary !== true
 	);
 };
 
 const handleRemoveRequestSuccess = ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).filter( forward => mailbox !== forward.mailbox );
+	return ( forwards || [] ).filter( ( forward ) => mailbox !== forward.mailbox );
 };
 
-const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).map( forward => {
+const changeMailBoxTemporary = ( temporary ) => ( forwards, { mailbox } ) => {
+	return ( forwards || [] ).map( ( forward ) => {
 		if ( mailbox === forward.mailbox ) {
 			return {
 				...forward,

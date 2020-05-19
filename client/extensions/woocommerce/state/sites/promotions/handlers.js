@@ -72,7 +72,7 @@ export function productsReceived( { dispatch }, action ) {
 
 	// For each variable product, fetch its variations, too.
 	if ( isUndefined( params.offset ) && products ) {
-		products.forEach( product => {
+		products.forEach( ( product ) => {
 			if ( product.variations && product.variations.length > 0 ) {
 				dispatch( fetchProductVariations( siteId, product.id ) );
 			}
@@ -85,8 +85,9 @@ export function couponsUpdated( { dispatch }, action ) {
 
 	if ( undefined !== params.offset ) {
 		debug(
-			`Coupons ${ params.offset + 1 }-${ params.offset +
-				coupons.length } out of ${ totalCoupons } received.`
+			`Coupons ${ params.offset + 1 }-${
+				params.offset + coupons.length
+			} out of ${ totalCoupons } received.`
 		);
 
 		const remainder = totalCoupons - params.offset - coupons.length;

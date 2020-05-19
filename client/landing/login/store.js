@@ -10,10 +10,9 @@ import thunkMiddleware from 'redux-thunk';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 import analyticsMiddleware from 'state/analytics/middleware';
 import { reducer as httpData, enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
-import { combineReducers } from 'state/utils';
+import { combineReducers, addReducerEnhancer } from 'state/utils';
 import application from 'state/application/reducer';
 import documentHead from 'state/document-head/reducer';
-import login from 'state/login/reducer';
 import language from 'state/ui/language/reducer';
 import route from 'state/ui/route/reducer';
 import masterbarVisibility from 'state/ui/masterbar-visibility/reducer';
@@ -28,11 +27,10 @@ import oauth2Clients from 'state/oauth2-clients/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
-const reducer = combineReducers( {
+const rootReducer = combineReducers( {
 	application,
 	documentHead,
 	httpData,
-	login,
 	notices,
 	i18n,
 	users,
@@ -52,8 +50,9 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default () =>
 	createStore(
-		reducer,
+		rootReducer,
 		composeEnhancers(
+			addReducerEnhancer,
 			httpDataEnhancer,
 			applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )
 		)

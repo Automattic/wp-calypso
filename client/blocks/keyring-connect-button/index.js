@@ -17,7 +17,7 @@ import {
 } from 'state/sharing/keyring/actions';
 import { getKeyringServiceByName } from 'state/sharing/services/selectors';
 import QueryKeyringServices from 'components/data/query-keyring-services';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
@@ -154,7 +154,7 @@ class KeyringConnectButton extends Component {
 	didKeyringConnectionSucceed( keyringConnections ) {
 		const hasAnyConnectionOptions = some(
 			keyringConnections,
-			keyringConnection =>
+			( keyringConnection ) =>
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);
 

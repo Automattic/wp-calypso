@@ -201,7 +201,7 @@ export function getMimeType( media ) {
  * @returns {Array}             Filtered array of matching media objects
  */
 export function filterItemsByMimePrefix( items, mimePrefix ) {
-	return items.filter( function( item ) {
+	return items.filter( function ( item ) {
 		return getMimePrefix( item ) === mimePrefix;
 	} );
 }
@@ -213,7 +213,7 @@ export function filterItemsByMimePrefix( items, mimePrefix ) {
  * @returns {Array}       Sorted array of media objects
  */
 export function sortItemsByDate( items ) {
-	return items.slice( 0 ).sort( function( a, b ) {
+	return items.slice( 0 ).sort( function ( a, b ) {
 		if ( a.date && b.date ) {
 			const dateCompare = Date.parse( b.date ) - Date.parse( a.date );
 
@@ -274,7 +274,7 @@ export function isSupportedFileTypeInPremium( item, site ) {
 		return true;
 	}
 
-	return VideoPressFileTypes.some( function( allowed ) {
+	return VideoPressFileTypes.some( function ( allowed ) {
 		return allowed.toLowerCase() === item.extension.toLowerCase();
 	} );
 }
@@ -297,7 +297,7 @@ export function isSupportedFileTypeForSite( item, site ) {
 		return true;
 	}
 
-	return getAllowedFileTypesForSite( site ).some( function( allowed ) {
+	return getAllowedFileTypesForSite( site ).some( function ( allowed ) {
 		return allowed.toLowerCase() === item.extension.toLowerCase();
 	} );
 }
@@ -369,7 +369,7 @@ export function playtime( duration ) {
 		seconds = Math.floor( duration ) % 60;
 
 	let runtime = [ minutes, seconds ]
-		.map( function( value ) {
+		.map( function ( value ) {
 			return ( '0' + value ).slice( -2 );
 		} )
 		.join( ':' );
@@ -430,7 +430,7 @@ export function generateGalleryShortcode( settings ) {
 	// in settings.items but we just need the IDs set to attrs.ids
 	attrs = Object.assign(
 		{
-			ids: settings.items.map( item => item.ID ).join(),
+			ids: settings.items.map( ( item ) => item.ID ).join(),
 		},
 		settings
 	);
@@ -445,7 +445,7 @@ export function generateGalleryShortcode( settings ) {
 		delete attrs.size;
 	}
 
-	attrs = omitBy( attrs, function( value, key ) {
+	attrs = omitBy( attrs, function ( value, key ) {
 		return GalleryDefaultAttrs[ key ] === value;
 	} );
 
@@ -493,7 +493,7 @@ export function canvasToBlob( canvas, callback, type, quality ) {
 
 	if ( ! HTMLCanvasElement.prototype.toBlob ) {
 		Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
-			value: function( polyfillCallback, polyfillType, polyfillQuality ) {
+			value: function ( polyfillCallback, polyfillType, polyfillQuality ) {
 				const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[ 1 ] ),
 					len = binStr.length,
 					arr = new Uint8Array( len );
@@ -617,4 +617,43 @@ export function validateMediaItem( site, item ) {
 	}
 
 	return itemErrors;
+}
+
+/**
+ * Given a media file URL (possibly served through photon) and site slug, returns information
+ * required to correctly proxy the asset through the media proxy. Specifically, it returns
+ * an object with the following keys:
+ * - query: query string extracted from url
+ * - filePath: path of the file on remote site, even if url is photon url
+ * - isRelativeToSiteRoot: true if the file come from remote site identified by siteSlug, false otherwise
+ *
+ * @param {string} mediaUrl Media file URL.
+ * @param {string} siteSlug Slug of the site this file belongs to.
+ * @returns {object}	Dictionary
+ */
+export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
+	const { pathname, search: query, protocol, hostname } = getUrlParts( mediaUrl );
+	let filePath = pathname;
+	let isRelativeToSiteRoot = true;
+
+	if ( [ 'http:', 'https:' ].indexOf( protocol ) === -1 ) {
+		isRelativeToSiteRoot = false;
+	} else if ( hostname !== siteSlug ) {
+		isRelativeToSiteRoot = false;
+		// CDN URLs like i0.wp.com/mysite.com/media.jpg should also be considered relative to mysite.com
+		if ( /^i[0-2]\.wp\.com$/.test( hostname ) ) {
+			const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
+			filePath = '/' + rest.join( '/' );
+
+			if ( first === siteSlug ) {
+				isRelativeToSiteRoot = true;
+			}
+		}
+	}
+
+	return {
+		query,
+		filePath,
+		isRelativeToSiteRoot,
+	};
 }

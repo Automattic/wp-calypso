@@ -52,7 +52,7 @@ class NotificationSettingsForm extends PureComponent {
 			<div className="notification-settings-form">
 				<StreamSelector
 					selectedStream={ this.state.selectedStream }
-					onChange={ selectedStream => this.setState( { selectedStream } ) }
+					onChange={ ( selectedStream ) => this.setState( { selectedStream } ) }
 					settings={ selectedStreamSettings }
 				/>
 				<div className="notification-settings-form__streams">
@@ -98,6 +98,6 @@ class NotificationSettingsForm extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	devices: getUserDevices( state ),
 } ) )( NotificationSettingsForm );

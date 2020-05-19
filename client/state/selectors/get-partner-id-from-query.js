@@ -14,7 +14,7 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
  * @param {object}   state Global state tree
  * @returns {?number}       The partner ID as an integer or null
  */
-export const getPartnerIdFromQuery = function( state ) {
+export const getPartnerIdFromQuery = function ( state ) {
 	const partnerId = toNumber( get( getCurrentQueryArguments( state ), 'partner_id' ) );
 	return isInteger( partnerId ) ? partnerId : null;
 };

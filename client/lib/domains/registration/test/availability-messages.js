@@ -64,7 +64,7 @@ describe( 'getAvailabilityNotice()', () => {
 			domainAvailability.AVAILABLE,
 			domainAvailability.TLD_NOT_SUPPORTED,
 			domainAvailability.UNKNOWN,
-		].forEach( error => {
+		].forEach( ( error ) => {
 			expect( getAvailabilityNotice( null, error, null ) ).toEqual( {
 				message: undefined,
 				severity: 'error',

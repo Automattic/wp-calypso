@@ -68,7 +68,7 @@ class ProductSearch extends Component {
 
 		return (
 			products &&
-			products.filter( product => {
+			products.filter( ( product ) => {
 				return (
 					productContainsString( product, searchFilter ) ||
 					isProductSelected( value, product.id ) ||
@@ -78,11 +78,11 @@ class ProductSearch extends Component {
 		);
 	}
 
-	onSearch = searchFilter => {
+	onSearch = ( searchFilter ) => {
 		this.setState( { searchFilter } );
 	};
 
-	onProductCheckbox = productId => {
+	onProductCheckbox = ( productId ) => {
 		const { value } = this.props;
 		const selected = isProductSelected( value, productId );
 		const newValue = selected
@@ -141,7 +141,7 @@ class ProductSearch extends Component {
 		}
 
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = product => {
+		const renderFunc = ( product ) => {
 			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
 			return (
 				<ProductSearchRow
@@ -169,7 +169,7 @@ class ProductSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : null;
 		const query = { per_page: 50, offset: 0 };
@@ -184,5 +184,5 @@ export default connect(
 			products,
 		};
 	},
-	dispatch => bindActionCreators( { fetchProducts }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchProducts }, dispatch )
 )( localize( ProductSearch ) );

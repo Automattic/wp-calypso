@@ -16,7 +16,7 @@
 	overflow: auto;
 
 	// Not sure this is needed.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
 
@@ -65,6 +65,42 @@
 .sidebar__menu-icon {
 	fill: var( --color-sidebar-gridicon-fill );
 	margin-right: 11px;
+}
+
+// Checklist progress
+.sidebar__menu .myhome .sidebar__menu-link-text {
+	max-width: calc( 100% - 80px );
+	white-space: normal;
+	padding-right: 8px;
+}
+
+.sidebar__checklist-progress {
+	width: 80px;
+
+	.sidebar__checklist-progress-text {
+		font-size: 12px;
+		margin: 0;
+		white-space: normal;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	.progress-bar {
+		background-color: rgba( var( --color-sidebar-text-rgb ), 0.4 );
+		height: 6px;
+
+		.selected & {
+			background-color: rgba( var( --color-sidebar-menu-selected-text-rgb ), 0.4 );
+		}
+
+		.progress-bar__progress {
+			background-color: var( --color-sidebar-text );
+
+			.selected & {
+				background-color: var( --color-sidebar-menu-selected-text );
+			}
+		}
+	}
 }
 
 // Menu links: The actual anchor tags that contain links to

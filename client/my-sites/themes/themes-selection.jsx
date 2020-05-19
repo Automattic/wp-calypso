@@ -13,7 +13,6 @@ import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
-import ThemesSelectionHeader from './themes-selection-header';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -111,7 +110,7 @@ class ThemesSelection extends Component {
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
 		}
@@ -126,12 +125,12 @@ class ThemesSelection extends Component {
 	};
 
 	//intercept preview and add primary and secondary
-	getOptions = themeId => {
+	getOptions = ( themeId ) => {
 		const options = this.props.getOptions( themeId );
-		const wrappedPreviewAction = action => {
+		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-			return t => {
+			return ( t ) => {
 				if ( ! this.props.isLoggedIn ) {
 					defaultOption = options.signup;
 					secondaryOption = null;
@@ -158,16 +157,11 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, listLabel, themesCount, upsellUrl } = this.props;
+		const { source, query, upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
-				{ ! this.props.recommendedThemes && (
-					<>
-						<QueryThemes query={ query } siteId={ source } />
-						<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
-					</>
-				) }
+				<QueryThemes query={ query } siteId={ source } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.recommendedThemes || this.props.themes }
@@ -191,15 +185,15 @@ class ThemesSelection extends Component {
 }
 
 function bindIsThemeActive( state, siteId ) {
-	return themeId => isThemeActive( state, themeId, siteId );
+	return ( themeId ) => isThemeActive( state, themeId, siteId );
 }
 
 function bindIsInstallingTheme( state, siteId ) {
-	return themeId => isInstallingTheme( state, themeId, siteId );
+	return ( themeId ) => isInstallingTheme( state, themeId, siteId );
 }
 
 function bindGetPremiumThemePrice( state, siteId ) {
-	themeId => getPremiumThemePrice( state, themeId, siteId );
+	( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
 // Exporting this for use in recommended-themes.jsx

@@ -12,7 +12,7 @@ const SuggestionSearchExample = () => {
 	const [ state, setState ] = useState();
 
 	const sortDisplayResults = ( suggestionsArray, queryString ) =>
-		suggestionsArray.sort().map( item => ( item === queryString ? `→ ${ item }` : item ) );
+		suggestionsArray.sort().map( ( item ) => ( item === queryString ? `→ ${ item }` : item)  );
 
 	return (
 		<SuggestionSearch

@@ -15,8 +15,8 @@ beforeAll( () => {
 	};
 	jest
 		.spyOn( document, 'getElementById' )
-		.mockImplementation( id => ( id === 'header' ? header : null ) );
-	jest.spyOn( ReactDom, 'findDOMNode' ).mockImplementation( node => node );
+		.mockImplementation( ( id ) => ( id === 'header' ? header : null)  );
+	jest.spyOn( ReactDom, 'findDOMNode' ).mockImplementation( ( node ) => node );
 } );
 
 describe( 'calculateOffset', () => {

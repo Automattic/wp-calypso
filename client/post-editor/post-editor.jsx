@@ -30,7 +30,7 @@ import VerifyEmailDialog from 'components/email-verification/email-verification-
 import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
 	saveConfirmationSidebarPreference,
@@ -66,6 +66,8 @@ import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported'
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
+import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
+import EditorDeprecationDialog from 'post-editor/editor-deprecation-dialog';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -83,12 +85,12 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
-import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { isEnabled } from 'config';
 
 /*
  * Throttle and debounce and callback. Used for autosave.
@@ -99,7 +101,7 @@ function throttleAndDebounce( fn, throttleMs, debounceMs ) {
 	const throttled = throttle( fn, throttleMs );
 	const debounced = debounce( throttled, debounceMs );
 
-	const throttledAndDebounced = function() {
+	const throttledAndDebounced = function () {
 		return debounced.apply( this, arguments );
 	};
 
@@ -159,7 +161,7 @@ export class PostEditor extends React.Component {
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.useDefaultSidebarFocus();
-		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false,
@@ -182,7 +184,7 @@ export class PostEditor extends React.Component {
 
 		// record the initial value of the editor mode preference
 		if ( this.props.editorModePreference ) {
-			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
+			bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
@@ -205,7 +207,7 @@ export class PostEditor extends React.Component {
 		this.onEditedPostChange( nextProps );
 	}
 
-	storeEditor = ref => {
+	storeEditor = ( ref ) => {
 		this.editor = ref;
 	};
 
@@ -249,7 +251,7 @@ export class PostEditor extends React.Component {
 		}
 	};
 
-	handleConfirmationSidebarPreferenceChange = event => {
+	handleConfirmationSidebarPreferenceChange = ( event ) => {
 		this.setState( { confirmationSidebarPreference: event.target.checked } );
 	};
 
@@ -259,7 +261,7 @@ export class PostEditor extends React.Component {
 			: this.props.openEditorSidebar();
 	};
 
-	loadRevision = revision => {
+	loadRevision = ( revision ) => {
 		this.restoreRevision( {
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
@@ -299,7 +301,8 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				<EditorGutenbergBlocksWarningDialog />
+				{ isEnabled( 'editor/before-deprecation' ) && <EditorDeprecationDialog /> }
+				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
@@ -435,7 +438,7 @@ export class PostEditor extends React.Component {
 		this.restoreRevision( get( this.props.post, 'meta.data.autosave' ) );
 	};
 
-	restoreRevision = revision => {
+	restoreRevision = ( revision ) => {
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			excerpt: revision.excerpt,
 			title: revision.title,
@@ -454,7 +457,7 @@ export class PostEditor extends React.Component {
 		this.setState( { showVerifyEmailDialog: false } );
 	};
 
-	onEditedPostChange = nextProps => {
+	onEditedPostChange = ( nextProps ) => {
 		if ( nextProps.loadingError ) {
 			return;
 		}
@@ -578,7 +581,7 @@ export class PostEditor extends React.Component {
 		page.back( this.getAllPostsUrl() );
 	};
 
-	getAllPostsUrl = context => {
+	getAllPostsUrl = ( context ) => {
 		const { type, selectedSite } = this.props;
 		const site = selectedSite;
 
@@ -627,7 +630,7 @@ export class PostEditor extends React.Component {
 		page( this.getAllPostsUrl( 'trashed' ) );
 	};
 
-	onSave = status => {
+	onSave = ( status ) => {
 		// Refuse to save if the current edits would mean that an unpublished post gets published.
 		// That's an exclusive resposibility of the `onPublish` method.
 		if (
@@ -678,7 +681,7 @@ export class PostEditor extends React.Component {
 		);
 	}
 
-	onPreview = async event => {
+	onPreview = async ( event ) => {
 		this.recordPreviewButtonClick();
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
@@ -741,11 +744,11 @@ export class PostEditor extends React.Component {
 		return false;
 	};
 
-	onSaveDraftFailure = error => {
+	onSaveDraftFailure = ( error ) => {
 		this.onSaveFailure( error, 'saveFailure' );
 	};
 
-	onSaveDraftSuccess = saveResult => {
+	onSaveDraftSuccess = ( saveResult ) => {
 		this.onSaveSuccess( saveResult, 'save' );
 	};
 
@@ -790,7 +793,7 @@ export class PostEditor extends React.Component {
 		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
-	onPublishFailure = error => {
+	onPublishFailure = ( error ) => {
 		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
@@ -798,7 +801,7 @@ export class PostEditor extends React.Component {
 		this.onSaveFailure( error, 'publishFailure' );
 	};
 
-	onPublishSuccess = saveResult => {
+	onPublishSuccess = ( saveResult ) => {
 		if ( ! this.state.confirmationSidebarPreference ) {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
@@ -822,7 +825,7 @@ export class PostEditor extends React.Component {
 		} );
 	};
 
-	setPostDate = date => {
+	setPostDate = ( date ) => {
 		const { siteId, postId } = this.props;
 		const dateValue = date ? date.format() : false;
 
@@ -918,7 +921,7 @@ export class PostEditor extends React.Component {
 		return null;
 	};
 
-	getCursorMarkerSpan = type => {
+	getCursorMarkerSpan = ( type ) => {
 		const tagType = type ? type : 'start';
 
 		return `<span
@@ -972,7 +975,7 @@ export class PostEditor extends React.Component {
 		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
 	};
 
-	focusHTMLBookmarkInVisualEditor = ed => {
+	focusHTMLBookmarkInVisualEditor = ( ed ) => {
 		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
 		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
 
@@ -1006,7 +1009,7 @@ export class PostEditor extends React.Component {
 	 * @param {object} editor The editor where we must find the selection
 	 * @returns {null | object} The selection range position in the editor
 	 */
-	findBookmarkedPosition = editor => {
+	findBookmarkedPosition = ( editor ) => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
 		const TinyMCEWIndow = editor.getWin();
 
@@ -1122,7 +1125,7 @@ export class PostEditor extends React.Component {
 		};
 	};
 
-	switchEditorMode = mode => {
+	switchEditorMode = ( mode ) => {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
@@ -1158,7 +1161,7 @@ const enhance = flow(
 	localize,
 	protectForm,
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const postId = getEditorPostId( state );
 			const userId = getCurrentUserId( state );

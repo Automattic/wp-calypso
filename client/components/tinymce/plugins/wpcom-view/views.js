@@ -25,7 +25,7 @@ const views = {
 	simplePayments: SimplePaymentsView,
 };
 
-const components = mapValues( views, view => {
+const components = mapValues( views, ( view ) => {
 	if ( 'function' === typeof view.getComponent ) {
 		return view.getComponent();
 	}
@@ -33,7 +33,7 @@ const components = mapValues( views, view => {
 	return view;
 } );
 
-const emitters = values( views ).filter( view => view instanceof EventEmitter );
+const emitters = values( views ).filter( ( view ) => view instanceof EventEmitter );
 
 export default {
 	/**
@@ -48,11 +48,11 @@ export default {
 		let pieces = [ { content: content } ],
 			current;
 
-		forEach( views, function( view, type ) {
+		forEach( views, function ( view, type ) {
 			current = pieces.slice();
 			pieces = [];
 
-			forEach( current, function( piece ) {
+			forEach( current, function ( piece ) {
 				let remaining = piece.content,
 					result;
 

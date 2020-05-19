@@ -22,8 +22,14 @@ function chooseTerserEcmaVersion( browsers ) {
 	if ( ! caniuse.isSupported( 'es6-class', browsers ) ) {
 		return 5;
 	}
+	if ( ! caniuse.isSupported( 'array-includes', browsers ) ) {
+		return 2015;
+	}
+	if ( ! caniuse.isSupported( 'object-entries', browsers ) ) {
+		return 2016;
+	}
 
-	return 6;
+	return 2017;
 }
 
 /**
@@ -34,13 +40,13 @@ function chooseTerserEcmaVersion( browsers ) {
  * @param {object} options Options passed to the terser plugin
  * @returns {object[]}     Terser plugin object to be used in Webpack minification.
  */
-module.exports = options => {
+module.exports = ( options ) => {
 	let terserOptions = options.terserOptions || {};
 	terserOptions = {
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
 		ie8: false,
 		safari10: supportedBrowsers.some(
-			browser => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
+			( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
 		),
 		...terserOptions,
 	};

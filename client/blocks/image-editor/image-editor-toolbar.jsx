@@ -149,7 +149,7 @@ export class ImageEditorToolbar extends Component {
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item =>
+				{ items.map( ( item ) =>
 					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
 						<PopoverMenuItem
 							key={ 'image-editor-toolbar-aspect-' + item.action }
@@ -192,7 +192,7 @@ export class ImageEditorToolbar extends Component {
 			},
 		];
 
-		return buttons.map( button => {
+		return buttons.map( ( button ) => {
 			const buttonClasses = classNames( 'image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
 			} );
@@ -221,7 +221,7 @@ export class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 

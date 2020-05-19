@@ -60,9 +60,7 @@ export class CommentAuthor extends Component {
 
 		const formattedDate = moment( commentDate ).format( 'll LT' );
 
-		const relativeDate = moment()
-			.subtract( 1, 'month' )
-			.isBefore( commentDate )
+		const relativeDate = moment().subtract( 1, 'month' ).isBefore( commentDate )
 			? moment( commentDate ).fromNow()
 			: moment( commentDate ).format( 'll' );
 

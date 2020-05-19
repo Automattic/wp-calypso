@@ -54,7 +54,7 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
  * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
  * @returns {Function} Function, as expected by the "createSelector" library
  */
-const _getSelectorDependants = numArgs => ( state, ...args ) => {
+const _getSelectorDependants = ( numArgs ) => ( state, ...args ) => {
 	// First argument is always "state", last argument is always "siteId"
 	const siteId = args[ numArgs ];
 	const loaded = areLocationsLoaded( state, siteId );
@@ -70,7 +70,7 @@ export const getContinents = createSelector( ( state, siteId = getSelectedSiteId
 	if ( ! areLocationsLoaded( state, siteId ) ) {
 		return [];
 	}
-	const continents = getRawLocations( state, siteId ).map( continent =>
+	const continents = getRawLocations( state, siteId ).map( ( continent ) =>
 		omit( continent, 'countries' )
 	);
 	return sortBy( continents, 'name' );
@@ -105,7 +105,7 @@ export const getCountriesByContinent = createSelector(
 		if ( ! continent ) {
 			return [];
 		}
-		const countries = continent.countries.map( country => omit( country, 'states' ) );
+		const countries = continent.countries.map( ( country ) => omit( country, 'states' ) );
 		return sortBy( countries, 'name' );
 	},
 	_getSelectorDependants( 1 )
@@ -144,11 +144,11 @@ export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state
 	}
 
 	const allCountries = getAllCountries( state, siteId );
-	const countriesWithStates = filter( allCountries, country => {
+	const countriesWithStates = filter( allCountries, ( country ) => {
 		return ! isEmpty( country.states );
 	} );
 
-	return countriesWithStates.map( country => country.code ).sort();
+	return countriesWithStates.map( ( country ) => country.code ).sort();
 };
 
 /**

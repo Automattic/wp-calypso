@@ -91,7 +91,7 @@ function mediaButton( editor ) {
 				/* eslint-disable react/jsx-no-bind */
 				onClose={ renderModal.bind( null, { visible: false } ) }
 				/* eslint-disable react/jsx-no-bind */
-				onInsertMedia={ markup => {
+				onInsertMedia={ ( markup ) => {
 					insertMedia( markup );
 					renderModal( { visible: false } );
 				} }
@@ -141,7 +141,7 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
-	updateMedia = debounce( function() {
+	updateMedia = debounce( function () {
 		const originalSelectedNode = editor.selection.getNode();
 		let isTransientDetected = false,
 			transients = 0,
@@ -168,7 +168,7 @@ function mediaButton( editor ) {
 		}
 
 		// Let's loop through all the images in a post/page editor.
-		images.forEach( function( img ) {
+		images.forEach( function ( img ) {
 			const current = deserialize( img );
 
 			// Ignore images which weren't inserted via media modal
@@ -346,7 +346,7 @@ function mediaButton( editor ) {
 			// instance in the undo stack.
 			//
 			// See: https://github.com/tinymce/tinymce/blob/4.2.4/js/tinymce/classes/EditorUpload.js#L49-L53
-			editor.undoManager.data = editor.undoManager.data.map( function( level ) {
+			editor.undoManager.data = editor.undoManager.data.map( function ( level ) {
 				level.content = level.content.replace( mediaString, event.content );
 				return level;
 			} );
@@ -447,7 +447,7 @@ function mediaButton( editor ) {
 		classes: 'btn wpcom-icon-button media',
 		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
-		onPostRender: function() {
+		onPostRender: function () {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
@@ -465,7 +465,7 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
 		classes: 'toolbar-segment-start',
 		icon: 'dashicon dashicons-edit',
-		onclick: function() {
+		onclick: function () {
 			const selectedSite = getSelectedSiteFromState();
 			if ( ! selectedSite ) {
 				return;
@@ -501,7 +501,7 @@ function mediaButton( editor ) {
 		icon: 'dashicon dashicons-admin-comments',
 		classes: 'toolbar-segment-start toolbar-segment-end',
 		stateSelector: '.wp-caption',
-		onclick: function() {
+		onclick: function () {
 			const node = editor.selection.getStart(),
 				parsed = deserialize( node ),
 				selectedSite = getSelectedSiteFromState();
@@ -537,7 +537,7 @@ function mediaButton( editor ) {
 
 			// Assign missing DOM dimensions to image node. The `wpeditimage`
 			// plugin strips any caption where dimension attributes are missing
-			[ 'width', 'height' ].forEach( function( dimension ) {
+			[ 'width', 'height' ].forEach( function ( dimension ) {
 				if ( null === node.getAttribute( dimension ) && parsed.media[ dimension ] ) {
 					node.setAttribute( dimension, parsed.media[ dimension ] );
 				}
@@ -604,7 +604,7 @@ function mediaButton( editor ) {
 		// In order to get the next usable size, we compute the ratio of all the default sizes and compare them to the current ratio
 		// If we are increasing the size, we select the default size that has the closest greater ratio
 		// While decreasing we take the closest lower ratio
-		const sizeRatios = SIZE_ORDER.map( size =>
+		const sizeRatios = SIZE_ORDER.map( ( size ) =>
 			computeRatio( getThumbnailSizeDimensions( size, selectedSite ), media )
 		);
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
@@ -675,10 +675,10 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Decrease size' ),
 		classes: 'toolbar-segment-start img-size-decrease',
 		icon: 'dashicon dashicons-minus',
-		onPostRender: function() {
+		onPostRender: function () {
 			editor.on( 'wptoolbar', toggleSizingControls.bind( this, false ) );
 		},
-		onclick: function() {
+		onclick: function () {
 			resize( -1 );
 		},
 	} );
@@ -687,10 +687,10 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Increase size' ),
 		classes: 'toolbar-segment-end img-size-increase',
 		icon: 'dashicon dashicons-plus',
-		onPostRender: function() {
+		onPostRender: function () {
 			editor.on( 'wptoolbar', toggleSizingControls.bind( this, true ) );
 		},
-		onclick: function() {
+		onclick: function () {
 			resize( 1 );
 		},
 	} );
@@ -699,7 +699,7 @@ function mediaButton( editor ) {
 		renderModal( { visible: true } );
 	} );
 
-	editor.addCommand( 'wpcomEditGallery', function( content ) {
+	editor.addCommand( 'wpcomEditGallery', function ( content ) {
 		const selectedSite = getSelectedSiteFromState();
 		if ( ! selectedSite ) {
 			return;
@@ -712,7 +712,7 @@ function mediaButton( editor ) {
 
 		gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
 
-		gallery.items = gallery.ids.split( ',' ).map( id => {
+		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
 			const media = MediaStore.get( selectedSite.ID, id );
@@ -752,7 +752,7 @@ function mediaButton( editor ) {
 	} );
 
 	const resizeEditor = debounce(
-		function() {
+		function () {
 			// eslint-disable-line
 			editor.execCommand( 'wpcomAutoResize', null, null, { skip_focus: true } );
 		},
@@ -772,14 +772,14 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		( event.content.match( REGEXP_IMG ) || [] ).forEach( function( img ) {
+		( event.content.match( REGEXP_IMG ) || [] ).forEach( function ( img ) {
 			const parsed = deserialize( img );
 
 			if ( ! parsed.media.ID || MediaStore.get( selectedSite.ID, parsed.media.ID ) ) {
 				return;
 			}
 
-			setTimeout( function() {
+			setTimeout( function () {
 				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
 			}, 0 );
 		} );
@@ -827,7 +827,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		editor.dom.select( '.wp-caption-dd' ).forEach( function( caption ) {
+		editor.dom.select( '.wp-caption-dd' ).forEach( function ( caption ) {
 			if ( caption.textContent.trim().length ) {
 				return;
 			}
@@ -841,7 +841,7 @@ function mediaButton( editor ) {
 	function selectImageOnTap() {
 		let isTouchDragging = false;
 
-		return function( event ) {
+		return function ( event ) {
 			switch ( event.type ) {
 				case 'touchstart':
 					isTouchDragging = false;
@@ -868,28 +868,28 @@ function mediaButton( editor ) {
 	// send contextmenu event up to desktop app
 	if ( config.isEnabled( 'desktop' ) ) {
 		const ipc = require( 'electron' ).ipcRenderer; // From Electron
-		editor.on( 'contextmenu', function() {
+		editor.on( 'contextmenu', function () {
 			ipc.send( 'mce-contextmenu', { sender: true } );
 		} );
 	}
 
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		MediaStore.on( 'change', updateMedia );
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
 	} );
 
-	editor.on( 'init show hide', function() {
+	editor.on( 'init show hide', function () {
 		renderDropZone( { visible: ! editor.isHidden() } );
 	} );
 
 	editor.on( 'SetContent', fetchUnknownImages );
 
-	editor.on( 'remove', function() {
-		values( nodes ).forEach( function( node ) {
+	editor.on( 'remove', function () {
+		values( nodes ).forEach( function ( node ) {
 			ReactDom.unmountComponentAtNode( node );
 			node.parentNode.removeChild( node );
 		} );
@@ -902,6 +902,6 @@ function mediaButton( editor ) {
 	restrictSize( editor );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/media', mediaButton );
 }

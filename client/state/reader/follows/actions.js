@@ -106,7 +106,7 @@ export function recordFollowError( feedUrl, error ) {
  * @returns {Function} Action thunk
  */
 export function recordFollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_RECORD_FOLLOW,
@@ -122,7 +122,7 @@ export function recordFollow( url ) {
  * @returns {Function} Action thunk
  */
 export function recordUnfollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_RECORD_UNFOLLOW,

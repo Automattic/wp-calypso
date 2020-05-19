@@ -34,6 +34,7 @@ class Subscription extends React.Component {
 
 	render() {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
+
 		return (
 			<Main className="memberships__subscription">
 				<DocumentHead title={ translate( 'Other Sites' ) } />
@@ -83,7 +84,7 @@ class Subscription extends React.Component {
 											{ translate( 'Renew interval' ) }
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ subscription.renew_interval }
+											{ subscription.renew_interval || '-' }
 										</span>
 									</li>
 									<li>
@@ -99,7 +100,9 @@ class Subscription extends React.Component {
 											{ translate( 'Renews on' ) }
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ moment( subscription.end_date ).format( 'll' ) }
+											{ subscription.end_date
+												? moment( subscription.end_date ).format( 'll' )
+												: translate( 'Never Expires' ) }
 										</span>
 									</li>
 								</ul>
@@ -122,7 +125,7 @@ class Subscription extends React.Component {
 
 const getSubscription = ( state, subscriptionId ) =>
 	get( state, 'memberships.subscriptions.items', [] )
-		.filter( sub => sub.ID === subscriptionId )
+		.filter( ( sub ) => sub.ID === subscriptionId )
 		.pop();
 
 export default connect(

@@ -40,7 +40,7 @@ export default createSelector(
 
 		const simplePaymentProduct = find(
 			simplePaymentProducts,
-			product => product.ID === simplePaymentId
+			( product ) => product.ID === simplePaymentId
 		);
 
 		if ( ! simplePaymentProduct ) {
@@ -49,5 +49,5 @@ export default createSelector(
 
 		return simplePaymentProduct;
 	},
-	state => state.simplePayments.productList.items
+	( state ) => state.simplePayments.productList.items
 );

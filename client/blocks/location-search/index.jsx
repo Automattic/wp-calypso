@@ -59,7 +59,7 @@ class LocationSearch extends Component {
 				`//maps.googleapis.com/maps/api/js?key=${ config(
 					'google_maps_and_places_api_key'
 				) }&libraries=places`,
-				function() {
+				function () {
 					// eslint-disable-next-line no-undef
 					autocompleteService = new google.maps.places.AutocompleteService();
 				}
@@ -67,7 +67,7 @@ class LocationSearch extends Component {
 		}
 	}
 
-	updatePredictions = predictions => {
+	updatePredictions = ( predictions ) => {
 		const { predictionsTransformation } = this.props;
 		const { query } = this.state;
 
@@ -77,7 +77,7 @@ class LocationSearch extends Component {
 		} );
 	};
 
-	handleSearch = query => {
+	handleSearch = ( query ) => {
 		query = query.trim();
 		this.props.onSearch( query );
 
@@ -103,7 +103,7 @@ class LocationSearch extends Component {
 	};
 
 	handleInputChange( onInputChange ) {
-		return event => {
+		return ( event ) => {
 			onInputChange( event );
 
 			const { value } = event.target;
@@ -111,7 +111,7 @@ class LocationSearch extends Component {
 		};
 	}
 
-	handlePredictionClick = prediction => {
+	handlePredictionClick = ( prediction ) => {
 		if ( this.props.hidePredictionsOnClick ) {
 			this.setState( { predictions: [] } );
 		}
@@ -120,7 +120,7 @@ class LocationSearch extends Component {
 		sessionToken = null;
 	};
 
-	renderPrediction = prediction => {
+	renderPrediction = ( prediction ) => {
 		return (
 			<Prediction
 				key={ prediction.place_id }

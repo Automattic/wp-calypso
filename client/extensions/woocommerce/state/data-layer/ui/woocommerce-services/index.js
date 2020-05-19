@@ -78,7 +78,7 @@ const getSavePackagesActionListSteps = ( state, siteId ) => {
 	];
 };
 
-const getSaveSettingsActionListSteps = state => {
+const getSaveSettingsActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return [
@@ -109,7 +109,7 @@ export default {
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
@@ -118,7 +118,7 @@ export default {
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
@@ -136,7 +136,7 @@ export default {
 			const methodSchema = getShippingMethodSchema( getState(), methodType, siteId ).formSchema;
 			const methodValues = coerceFormValues( methodSchema, method );
 
-			const updatedAction = data => {
+			const updatedAction = ( data ) => {
 				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
 
 				const props = {
@@ -149,7 +149,7 @@ export default {
 			api
 				.post( siteId, api.url.serviceSettings( methodType, methodId ), methodValues )
 				.then( updatedAction )
-				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
+				.catch( ( error ) => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
 		},
 	],
 };

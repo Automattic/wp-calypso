@@ -17,12 +17,12 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean",
-		"build": "calypso-build --config='./webpack.config.js'"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prebuild": "check-npm-client && yarn run clean",
+		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "file:../../packages/calypso-color-schemes",
-		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills"
+		"@automattic/calypso-color-schemes": "^2.1.0",
+		"@automattic/calypso-polyfills": "^1.0.0"
 	}
 }

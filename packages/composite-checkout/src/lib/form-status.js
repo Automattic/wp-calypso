@@ -26,19 +26,21 @@ export function useFormStatus() {
 	);
 }
 
-export function useFormStatusManager( isLoading ) {
+export function useFormStatusManager( isLoading, isValidating ) {
 	const [ formStatus, dispatchFormStatus ] = useReducer(
 		formStatusReducer,
 		isLoading ? 'loading' : 'ready'
 	);
-	const setFormStatus = useCallback( payload => {
+	const setFormStatus = useCallback( ( payload ) => {
 		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
 	}, [] );
+
 	useEffect( () => {
-		const newStatus = isLoading ? 'loading' : 'ready';
-		debug( `isLoading has changed to ${ isLoading }; setting form status to ${ newStatus }` );
+		const newStatus = getNewStatusFromProps( { isLoading, isValidating } );
+		debug( `props have changed; setting form status to ${ newStatus }` );
 		setFormStatus( newStatus );
-	}, [ isLoading, setFormStatus ] );
+	}, [ isLoading, isValidating, setFormStatus ] );
+
 	debug( `form status is ${ formStatus }` );
 	return [ formStatus, setFormStatus ];
 }
@@ -59,4 +61,14 @@ function validateStatus( status ) {
 	if ( ! validStatuses.includes( status ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
+}
+
+function getNewStatusFromProps( { isLoading, isValidating } ) {
+	if ( isLoading ) {
+		return 'loading';
+	}
+	if ( isValidating ) {
+		return 'validating';
+	}
+	return 'ready';
 }

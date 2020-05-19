@@ -1,21 +1,19 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, jeryj, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nrqsnchz, nosolosw, obenland, okenobi, owolski, themeshaper, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 0.21
+Tested up to: 5.4
+Stable tag: 1.4
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
 
-
 == Description ==
 
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
-to give you a head start on creating new pages for your site.
-
+to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
 
 == Installation ==
 
@@ -41,6 +39,64 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.4 =
+* Update Premium Block Style and Behaviour
+* Support for Premium Content in email subscription and reader.
+* Add plugin to notify users of Block Patterns new location.
+* Add default link colors to the editor.
+
+= 1.3 =
+* Update Premium Content Block icon.
+* Add Showcase New Blocks module.
+* Add new patterns, and update pattern order.
+* Bump newspack-blocks version to 1.5.0.
+* Remove page layout preview from document settings.
+* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
+
+= 1.2 =
+* New Posts Carousel block.
+* New Premium Content block.
+* Update header button styling and full width block margins for Gutenberg v8.0.0.
+* Only load common module assets if they are required.
+* Remove loading of blank.css for Global Styles.
+
+= 1.1 =
+* New block patterns.
+* Performance and style improvements.
+
+= 1.0 =
+* Fix for site editor option override.
+* Hide post title in Gutenberg depending on theme mod.
+* Fix post list block sync script compatibility.
+* Remove hook for enqueueing site editor assets.
+* Move site editor item to top level menu in wp-admin.
+
+= 0.26 =
+* SPT IE bug fix.
+
+= 0.25 =
+* G2 and Gutenberg 7.7.1 compatibility fixes.
+* Update to blog posts block v1.2.
+* Add custom WordPress.com block patterns.
+* SPT and NUX compatibility improvements.
+
+= 0.24 =
+
+* Starter Page Templates: fix overflow issue with feature image in blog posts.
+* Global Styles: add new font (Raleway).
+
+= 0.23 =
+* Dotcom Block Editor NUX: disable by default
+
+= 0.22 =
+* Starter Page Templates: Improved previews with many visual glitches fixed
+* Starter Page Templates: Make page title visibility depend on theme setting
+* Starter Page Templates: Hide templates using unavailable blocks
+* Starter Page Templates: Track template insertion on Dotcom sites
+* Site Editor: initialize core FSE on Dotcom sites
+* Enable Gutenberg NUX with Gutenberg copy
+* Improved unit testing commands
 
 = 0.21 =
 * Linting fixes and page layout selector improvements.

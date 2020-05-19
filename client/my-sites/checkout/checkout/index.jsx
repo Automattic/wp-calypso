@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
 import {
 	conciergeSessionItem,
@@ -38,7 +38,7 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { isJetpackProductSlug } from 'lib/products-values';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -76,7 +76,7 @@ import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
+import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -94,6 +94,7 @@ import {
 } from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -105,6 +106,7 @@ export class Checkout extends React.Component {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
 		isJetpackNotAtomic: PropTypes.bool,
+		returnToBlockEditor: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 		loadTrackingTool: PropTypes.func.isRequired,
 	};
@@ -112,6 +114,7 @@ export class Checkout extends React.Component {
 	state = {
 		previousCart: null,
 		cartSettled: false,
+		isRedirecting: false,
 	};
 
 	// TODO: update this component to not use deprecated life cycle methods
@@ -194,7 +197,7 @@ export class Checkout extends React.Component {
 	trackPageView( props ) {
 		props = props || this.props;
 
-		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
+		recordTracksEvent( 'calypso_checkout_page_view', {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
 			apple_pay_available: isApplePayAvailable(),
@@ -249,7 +252,7 @@ export class Checkout extends React.Component {
 					selectedSiteSlug
 				);
 			} )
-			.filter( item => item );
+			.filter( ( item ) => item );
 		replaceCartWithItems( itemsToAdd );
 	}
 
@@ -296,7 +299,12 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if ( startsWith( this.props.product, 'jetpack_backup' ) && isJetpackNotAtomic ) {
+		if (
+			( startsWith( this.props.product, 'jetpack_backup' ) ||
+				startsWith( this.props.product, 'jetpack_search' ) ||
+				startsWith( this.props.product, 'jetpack_scan' ) ) &&
+			isJetpackNotAtomic
+		) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
 
@@ -306,7 +314,11 @@ export class Checkout extends React.Component {
 	}
 
 	redirectIfEmptyCart() {
-		const { selectedSiteSlug, transaction } = this.props;
+		if ( this.state.isRedirecting ) {
+			return true;
+		}
+
+		const { selectedSiteSlug, transaction, returnToBlockEditor } = this.props;
 
 		if ( ! transaction ) {
 			return true;
@@ -342,10 +354,13 @@ export class Checkout extends React.Component {
 				this.state.previousCart,
 				selectedSiteSlug,
 				this.props.upgradeIntent,
-				this.props.redirectTo
+				this.props.redirectTo,
+				returnToBlockEditor,
+				this.props.previousRoute
 			);
 		}
 
+		this.setState( { isRedirecting: true } );
 		page.redirect( redirectTo );
 
 		return true;
@@ -382,12 +397,11 @@ export class Checkout extends React.Component {
 
 		const isCartEmpty = isEmpty( getAllCartItems( cart ) );
 		const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
-
 		// We will show the Thank You page if there's a site slug and either one of the following is true:
 		// - has a receipt number
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
+			const isJetpackProduct = product && isJetpackProductSlug( product );
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
@@ -445,7 +459,6 @@ export class Checkout extends React.Component {
 
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
-		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
 		// then skip this section so that we do not show further upsells.
 		if (
@@ -455,19 +468,15 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			if ( hasPersonalPlan( cart ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-			}
-
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
 			// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 			// being offered and so sold, to be inline with HE availability.
 			// To dial back, uncomment the condition below and modify the test config.
-			// if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			// }
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
+			}
 		}
 	}
 
@@ -477,9 +486,11 @@ export class Checkout extends React.Component {
 		// Especially around the Concierge / Checklist logic.
 
 		let renewalItem,
+			signupDestination,
 			displayModeParam = {};
 		const {
 			cart,
+			product,
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
@@ -530,8 +541,19 @@ export class Checkout extends React.Component {
 
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
-		const signupDestination =
-			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
+		// if it is one of the Jetpack products, use product info as a parameter.
+		// We want to be product-specific, as the same path will likely be used for
+		// WP.com sites purchasing Search.
+		if (
+			startsWith( product, 'jetpack_backup' ) ||
+			startsWith( product, 'jetpack_search' ) ||
+			startsWith( product, 'jetpack_scan' )
+		) {
+			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
+		} else {
+			signupDestination =
+				retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -612,13 +634,13 @@ export class Checkout extends React.Component {
 			// group all purchases into an array
 			purchasedProducts = reduce(
 				( receipt && receipt.purchases ) || {},
-				function( result, value ) {
+				function ( result, value ) {
 					return result.concat( value );
 				},
 				[]
 			);
 			// and take the first product which matches the product id of the renewalItem
-			product = find( purchasedProducts, function( item ) {
+			product = find( purchasedProducts, function ( item ) {
 				return item.product_id === renewalItem.product_id;
 			} );
 
@@ -771,7 +793,7 @@ export class Checkout extends React.Component {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
 		} ).filter(
-			planSlug => ! currentPlanSlug || getPlan( planSlug ).availableFor( currentPlanSlug )
+			( planSlug ) => ! currentPlanSlug || getPlan( planSlug ).availableFor( currentPlanSlug )
 		);
 
 		if ( availableTerms.length < 2 ) {
@@ -797,7 +819,7 @@ export class Checkout extends React.Component {
 		const cartItem = getCartItemForPlan( planSlug, {
 			domainToBundle: get( product, 'extra.domain_to_bundle', '' ),
 		} );
-		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+		recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
 			from_section: 'checkout',
@@ -840,6 +862,7 @@ export class Checkout extends React.Component {
 
 	render() {
 		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
+
 		let analyticsPath = '';
 		let analyticsProps = {};
 		if ( purchaseId && product ) {
@@ -863,7 +886,7 @@ export class Checkout extends React.Component {
 
 		if ( this.props.children ) {
 			this.props.setHeaderText( '' );
-			return React.Children.map( this.props.children, child => {
+			return React.Children.map( this.props.children, ( child ) => {
 				return React.cloneElement( child, {
 					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 				} );

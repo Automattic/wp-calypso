@@ -25,15 +25,15 @@ const host = dataHelper.getJetpackHost();
 let driver;
 let url;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Publish a simple post with Markdown block', function() {
+	describe( 'Publish a simple post with Markdown block', function () {
 		const expectedHTML = `<h3>Header</h3>
 <p>Some <strong>list</strong>:</p>
 <ul>
@@ -43,14 +43,14 @@ describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, fu
 </ul>
 `;
 
-		step( 'Can create wporg site and connect Jetpack', async function() {
+		step( 'Can create wporg site and connect Jetpack', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const jnFlow = new JetpackConnectFlow( driver, 'jetpackConnectUser' );
 			await jnFlow.connectFromWPAdmin();
 			url = jnFlow.url;
 		} );
 
-		step( 'Can activate Markdown module', async function() {
+		step( 'Can activate Markdown module', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			const jetpackModulesPage = await WPAdminJetpackModulesPage.Visit(
 				driver,
@@ -60,32 +60,32 @@ describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, fu
 			await WPAdminJetpackPage.Expect( driver );
 		} );
 
-		step( 'Can start new post', async function() {
+		step( 'Can start new post', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectNewPost();
 		} );
 
-		step( 'Can insert a markdown block', async function() {
+		step( 'Can insert a markdown block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			this.markdownBlockID = await gEditorComponent.addBlock( 'Markdown' );
 		} );
 
-		step( 'Can fill markdown block with content', async function() {
+		step( 'Can fill markdown block with content', async function () {
 			this.markdownBlock = await MarkdownBlockComponent.Expect( driver, this.markdownBlockID );
 			return await this.markdownBlock.setContent(
 				'### Header\nSome **list**:\n\n- item a\n- item b\n- item c\n'
 			);
 		} );
 
-		step( 'Can see rendered content in preview', async function() {
+		step( 'Can see rendered content in preview', async function () {
 			await this.markdownBlock.switchPreview();
 			const html = await this.markdownBlock.getPreviewHTML();
 			assert.equal( html, expectedHTML );
 			await this.markdownBlock.switchMarkdown();
 		} );
 
-		step( 'Can publish the post and see its content', async function() {
+		step( 'Can publish the post and see its content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			await gEditorComponent.publish( { visit: true } );
 			const postFrontend = await PostAreaComponent.Expect( driver );

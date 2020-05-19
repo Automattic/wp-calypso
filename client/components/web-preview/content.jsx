@@ -22,6 +22,11 @@ import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import { parse as parseUrl } from 'url';
+import { getSelectedSite } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -36,7 +41,7 @@ export class WebPreviewContent extends Component {
 		isLoadingSubpage: false,
 	};
 
-	setIframeInstance = ref => {
+	setIframeInstance = ( ref ) => {
 		this.iframe = ref;
 	};
 
@@ -81,7 +86,7 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleMessage = e => {
+	handleMessage = ( e ) => {
 		let data;
 		try {
 			data = JSON.parse( e.data );
@@ -95,6 +100,9 @@ export class WebPreviewContent extends Component {
 		debug( 'message from iframe', data );
 
 		switch ( data.type ) {
+			case 'needs-auth':
+				this.redirectToAuth();
+				return;
 			case 'link':
 				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
 				this.props.onClose();
@@ -119,12 +127,20 @@ export class WebPreviewContent extends Component {
 		}
 	};
 
-	handleLocationChange = payload => {
+	redirectToAuth() {
+		const { isPrivateAtomic, url } = this.props;
+		if ( isPrivateAtomic ) {
+			window.location.href =
+				`${ url }/wp-login.php?redirect_to=` + encodeURIComponent( window.location.href );
+		}
+	}
+
+	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
 	};
 
-	setWrapperElement = el => {
+	setWrapperElement = ( el ) => {
 		this.wrapperElementRef = el;
 	};
 
@@ -164,7 +180,7 @@ export class WebPreviewContent extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl = iframeUrl => {
+	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
 			return;
 		}
@@ -206,7 +222,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = caller => {
+	setLoaded = ( caller ) => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -234,6 +250,17 @@ export class WebPreviewContent extends Component {
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
+			// If the preview is loaded and the site is private atomic, there's a chance we ended up on
+			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
+			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
+			// iframe OR redirected to using <a href="" target="_top">.
+			if ( this.props.isPrivateAtomic ) {
+				const { protocol, host } = parseUrl( this.props.externalUrl );
+				this.iframe.contentWindow.postMessage(
+					{ connected: 'calypso' },
+					`${ protocol }//${ host }`
+				);
+			}
 		}
 	};
 
@@ -390,8 +417,13 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 };
 
-const mapState = state => ( {
-	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
-} );
+const mapState = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
+		url: getSelectedSite( state )?.URL,
+	};
+};
 
 export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

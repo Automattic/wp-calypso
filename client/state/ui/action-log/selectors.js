@@ -34,8 +34,8 @@ export function getActionLog( state ) {
  *                               ROUTE_SET, each with timestamp
  */
 export const getRouteHistory = createSelector(
-	state => getActionLog( state ).filter( action => action.type === ROUTE_SET ),
-	state => [ state.ui.actionLog ]
+	( state ) => getActionLog( state ).filter( ( action ) => action.type === ROUTE_SET ),
+	( state ) => [ state.ui.actionLog ]
 );
 
 /**
@@ -45,8 +45,8 @@ export const getRouteHistory = createSelector(
  * @returns {object}              The last Redux action of type ROUTE_SET, with timestamp
  */
 export const getLastRouteAction = createSelector(
-	state => findLast( getActionLog( state ), action => action.type === ROUTE_SET ),
-	state => [ state.ui.actionLog ]
+	( state ) => findLast( getActionLog( state ), ( action ) => action.type === ROUTE_SET ),
+	( state ) => [ state.ui.actionLog ]
 );
 
 /**
@@ -56,6 +56,6 @@ export const getLastRouteAction = createSelector(
  * @returns {object}              The matching dispatched action
  */
 export const getLastAction = createSelector(
-	state => last( state.ui.actionLog ) || false,
-	state => [ state.ui.actionLog ]
+	( state ) => last( state.ui.actionLog ) || false,
+	( state ) => [ state.ui.actionLog ]
 );

@@ -36,13 +36,13 @@ function sortProducts( products ) {
 	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
 	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
-	domainItems = sortBy( domainItems, function( pair ) {
+	domainItems = sortBy( domainItems, function ( pair ) {
 		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
 			return -1;
 		}
 		return pair[ 0 ];
 	} );
-	domainItems = domainItems.map( function( pair ) {
+	domainItems = domainItems.map( function ( pair ) {
 		return sortBy( pair[ 1 ], getDomainProductRanking );
 	} );
 	domainItems = flatten( domainItems );

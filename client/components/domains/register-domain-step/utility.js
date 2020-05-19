@@ -58,7 +58,7 @@ export function markFeaturedSuggestions(
 }
 
 export function filterOutDomainsWithTlds( suggestions, blacklistTlds ) {
-	return suggestions.filter( suggestion => {
+	return suggestions.filter( ( suggestion ) => {
 		const tld = suggestion.domain_name.split( '.' ).pop();
 		return blacklistTlds.indexOf( tld ) === -1;
 	} );

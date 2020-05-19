@@ -88,8 +88,8 @@ class BlogPostsPage extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	recordCalloutClick: siteId => {
+const mapDispatchToProps = ( dispatch ) => ( {
+	recordCalloutClick: ( siteId ) => {
 		dispatch( recordTracksEvent( 'calypso_pages_blog_posts_callout_click', { blog_id: siteId } ) );
 	},
 } );

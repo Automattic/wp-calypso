@@ -19,7 +19,7 @@ import { REWIND_RESTORE_DISMISS_PROGRESS } from 'state/action-types';
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissRestore = action =>
+export const dismissRestore = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -58,7 +58,7 @@ export const restoreDismissFailed = () => null;
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromRestoreDismiss = data => ( {
+const fromRestoreDismiss = ( data ) => ( {
 	restoreId: parseInt( data.restore_id ),
 	dismissed: data.is_dismissed,
 } );

@@ -43,7 +43,7 @@ class PieChartExample extends Component {
 		} );
 	};
 
-	changeShow = event => {
+	changeShow = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: {
 				name: this.state[ event.target.name ].name,
@@ -54,7 +54,7 @@ class PieChartExample extends Component {
 		} );
 	};
 
-	changeValue = event => {
+	changeValue = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: {
 				name: this.state[ event.target.name ].name,
@@ -97,7 +97,7 @@ class PieChartExample extends Component {
 
 				{ this.state.showDataControls && (
 					<Card>
-						{ [ 'direct', 'discovery', 'referral' ].map( seriesName => {
+						{ [ 'direct', 'discovery', 'referral' ].map( ( seriesName ) => {
 							return (
 								<div key={ seriesName }>
 									<h2>{ this.state[ seriesName ].name }</h2>

@@ -36,7 +36,7 @@ function PostItemExample( { primarySiteId, globalId } ) {
 	);
 }
 
-const ConnectedPostItemExample = connect( state => {
+const ConnectedPostItemExample = connect( ( state ) => {
 	const primarySiteId = get( getCurrentUser( state ), 'primary_blog' );
 
 	return {

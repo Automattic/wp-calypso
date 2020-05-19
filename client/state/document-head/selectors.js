@@ -10,6 +10,7 @@ import createSelector from 'lib/create-selector';
 import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import getSiteTitle from 'state/sites/selectors/get-site-title';
+import config from 'config';
 
 const UNREAD_COUNT_CAP = 40;
 
@@ -59,7 +60,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
-	state => {
+	( state ) => {
 		let title = '';
 
 		const unreadCount = getDocumentHeadCappedUnreadCount( state );
@@ -76,9 +77,9 @@ export const getDocumentHeadFormattedTitle = createSelector(
 			title = decodeEntities( title ) + ' — ';
 		}
 
-		return title + 'WordPress.com';
+		return title + config( 'site_name' );
 	},
-	state => [ state.documentHead, state.ui.section, state.ui.selectedSiteId ]
+	( state ) => [ state.documentHead, state.ui.section, state.ui.selectedSiteId ]
 );
 
 /**

@@ -20,7 +20,6 @@ import {
 	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
-	isRechargeable,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,
@@ -29,6 +28,7 @@ import {
 import {
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleApps,
 	isConciergeSession,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -328,8 +328,7 @@ class PurchaseMeta extends Component {
 		}
 
 		if (
-			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
-			isRechargeable( purchase ) &&
+			( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
@@ -365,6 +364,7 @@ class PurchaseMeta extends Component {
 								planName={ site.plan.product_name_short }
 								siteDomain={ site.domain }
 								purchase={ purchase }
+								toggleSource="manage-purchase"
 							/>
 						</span>
 					) }
@@ -383,7 +383,7 @@ class PurchaseMeta extends Component {
 	renderPlaceholder() {
 		return (
 			<ul className="manage-purchase__meta">
-				{ times( 4, i => (
+				{ times( 4, ( i ) => (
 					<li key={ i }>
 						<em className="manage-purchase__detail-label" />
 						<span className="manage-purchase__detail" />

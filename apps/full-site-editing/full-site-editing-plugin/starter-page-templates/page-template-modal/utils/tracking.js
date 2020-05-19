@@ -13,7 +13,7 @@ let tracksIdentity = null;
  * @param {number} identity.blogid Blog ID.
  * @returns {void}
  */
-export const initializeWithIdentity = identity => {
+export const initializeWithIdentity = ( identity ) => {
 	tracksIdentity = identity;
 	window._tkq.push( [ 'identifyUser', identity.userid, identity.username ] );
 };

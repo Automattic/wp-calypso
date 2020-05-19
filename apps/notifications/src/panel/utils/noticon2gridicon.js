@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-export const noticon2gridicon = c =>
+export const noticon2gridicon = ( c ) =>
 	get(
 		{
 			'\uf814': 'mention',

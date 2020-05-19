@@ -3,15 +3,15 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { canRemoveFromCart } from 'lib/cart-values';
 import { getIncludedDomain } from 'lib/cart-values/cart-items';
 import {
@@ -34,9 +34,9 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export class CartItem extends React.Component {
-	removeFromCart = event => {
+	removeFromCart = ( event ) => {
 		event.preventDefault();
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Upgrades',
 			'Clicked Remove From Cart Icon',
 			'Product ID',
@@ -68,9 +68,10 @@ export class CartItem extends React.Component {
 
 		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
 			const {
-				cost_before_coupon: costBeforeCoupon,
+				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
 			} = cartItem;
+			const costBeforeCoupon = costPerProductBeforeCoupon * cartItem.volume;
 
 			if ( isSaleCouponApplied ) {
 				const { is_coupon_applied: isCouponApplied } = cart;
@@ -185,7 +186,7 @@ export class CartItem extends React.Component {
 		let info = null;
 
 		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => (
+			info = cartItem.extra.google_apps_users.map( ( user ) => (
 				<div key={ `user-${ user.email }` }>{ user.email }</div>
 			) );
 		} else if ( isCredits( cartItem ) ) {
@@ -354,6 +355,6 @@ export class CartItem extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 } ) )( localize( withLocalizedMoment( CartItem ) ) );

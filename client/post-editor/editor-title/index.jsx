@@ -63,7 +63,7 @@ class EditorTitle extends Component {
 		}
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { siteId, editedPostId } = this.props;
 		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
 		this.props.editPost( siteId, editedPostId, {
@@ -72,7 +72,7 @@ class EditorTitle extends Component {
 		this.props.onChange( newTitle );
 	};
 
-	resizeAfterNewlineInput = event => {
+	resizeAfterNewlineInput = ( event ) => {
 		const title = event.target.value;
 		if ( REGEXP_NEWLINES.test( title ) ) {
 			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
@@ -122,7 +122,7 @@ class EditorTitle extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
 		const editedPostId = getEditorPostId( state );

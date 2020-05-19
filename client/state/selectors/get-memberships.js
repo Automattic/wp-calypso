@@ -33,7 +33,10 @@ export default createSelector(
 			return orderBy( membershipsProducts, 'ID', 'desc' );
 		}
 
-		const membershipProduct = find( membershipsProducts, product => product.ID === membershipsId );
+		const membershipProduct = find(
+			membershipsProducts,
+			( product ) => product.ID === membershipsId
+		);
 
 		if ( ! membershipProduct ) {
 			return null;
@@ -41,5 +44,5 @@ export default createSelector(
 
 		return membershipProduct;
 	},
-	state => state.memberships.productList.items
+	( state ) => state.memberships.productList.items
 );

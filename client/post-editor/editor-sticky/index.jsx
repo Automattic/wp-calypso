@@ -110,7 +110,7 @@ class EditorSticky extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
 		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );

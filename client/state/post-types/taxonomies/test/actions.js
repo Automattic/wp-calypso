@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostTypeTaxonomies()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/post-types/post/taxonomies' )

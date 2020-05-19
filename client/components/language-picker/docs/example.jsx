@@ -20,7 +20,7 @@ class LanguagePickerExample extends PureComponent {
 		language: 'en',
 	};
 
-	selectLanguage = event => {
+	selectLanguage = ( event ) => {
 		this.setState( { language: event.target.value } );
 	};
 

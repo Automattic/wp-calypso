@@ -20,7 +20,7 @@ import { parse } from 'lib/shortcode';
 registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
 registerActionForward( 'RECEIVE_MEDIA_ITEM' );
 
-const createRequestingReducer = requesting => {
+const createRequestingReducer = ( requesting ) => {
 	return ( state, { siteId, shortcode } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -61,11 +61,11 @@ function mediaItemsReducer( state, { siteId, data } ) {
 		return state;
 	}
 	const media = Array.isArray( data.media ) ? data.media : [ data ];
-	const updatedIds = media.map( item => String( item.ID ) );
+	const updatedIds = media.map( ( item ) => String( item.ID ) );
 
 	return {
 		...state,
-		[ siteId ]: pickBy( state[ siteId ], shortcode => {
+		[ siteId ]: pickBy( state[ siteId ], ( shortcode ) => {
 			const parsed = parse( shortcode.shortcode );
 			if (
 				parsed.tag !== 'gallery' ||

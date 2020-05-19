@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:12.15.0-browsers
+    - image: circleci/node:12.16.2-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -18,7 +18,6 @@ references:
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
-        "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -99,9 +98,9 @@ references:
     paths:
       - '.git'
 
-  # npm cache
+  # yarn cache
   #
-  # npm caches the modules it installs in ~/.npm.
+  # yarn caches the modules it installs in ~/.cache/yarn.
   # We cache that cache to save time pulling modules from the network.
   #
   #
@@ -110,29 +109,24 @@ references:
   #   - https://github.com/Automattic/wp-calypso/pull/25487
   #   - https://github.com/Automattic/wp-calypso/pull/27180
   #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-npm-cache: &restore-npm-cache
-    name: 'Restore npm cache'
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching and https://circleci.com/docs/2.0/yarn/
+  restore-yarn-cache: &restore-yarn-cache
+    name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
-  npm-install: &npm-install
+  yarn-install: &yarn-install
     environment:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
-    name: Install npm dependencies
-    command: npm ci
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+    name: Install dependencies
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
-  save-npm-cache: &save-npm-cache
-    name: 'Save node_modules cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
+  save-yarn-cache: &save-yarn-cache
+    name: 'Save yarn cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
-      - ~/.npm
-  npm-e2e-install: &npm-e2e-install
-    name: Install e2e npm dependencies
-    command: |
-      cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
+      - ~/.cache/yarn
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -196,11 +190,10 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
-      - run: *npm-install
-      - run: *npm-e2e-install
-      - save_cache: *save-npm-cache
-      - run: npm run build-packages
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
+      - save_cache: *save-yarn-cache
+      - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
@@ -214,7 +207,7 @@ jobs:
       - run:
           name: TypeScript typecheck
           # Report but don't fail the build (`|| exit 0`)
-          command: npm run typecheck || exit 0
+          command: yarn run typecheck || exit 0
 
   typecheck-strict:
     <<: *defaults
@@ -223,7 +216,7 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run tsc -- --project client/landing/gutenboarding
+          command: yarn run tsc --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
@@ -233,7 +226,18 @@ jobs:
       - run:
           name: Lint Config Keys
           when: always
-          command: npm run lint:config-defaults
+          command: yarn run lint:config-defaults
+      - run:
+          name: Lint yarn.lock
+          when: always
+          command: |
+            DIRTY_FILES=$(git status --porcelain 2>/dev/null)
+            if [[ ! -z "$DIRTY_FILES" ]]; then
+              echo "Repository contains uncommitted changes: "
+              echo "$DIRTY_FILES"
+              echo "You need to checkout the branch, run 'yarn' and commit those files."
+              exit 1
+            fi
       - run:
           name: Lint Client and Server
           when: always
@@ -256,7 +260,7 @@ jobs:
           name: Build calypso-strings.pot
           when: always
           command: |
-            npm run translate
+            yarn run translate
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
@@ -320,18 +324,6 @@ jobs:
           name: Build the block editor in WordPress.com integration utils package
           command: |
             npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
-      - store-artifacts-and-test-results
-
-  build-full-site-editing:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build the Full Site Editing plugin and theme
-          command: |
-            npx lerna run build --scope='@automattic/full-site-editing'
-            tar -czvf $CIRCLE_ARTIFACTS/full-site-editing/build-archive.tar.gz -C apps/full-site-editing/full-site-editing-plugin .
       - store-artifacts-and-test-results
   test-full-site-editing:
     <<: *defaults
@@ -497,7 +489,7 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
-      - run: npm run decryptconfig
+      - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
@@ -561,7 +553,7 @@ jobs:
                   }" << parameters.slack-webhook >>
               circleci-agent step halt
             fi
-      - run: npm run decryptconfig
+      - run: yarn run decryptconfig
       - run:
           name: Run Canary Tests
           command: |
@@ -580,9 +572,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      - build-full-site-editing:
-          requires:
-            - setup
       - test-full-site-editing:
           requires:
             - setup

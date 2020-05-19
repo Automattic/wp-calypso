@@ -40,7 +40,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
-	onClickBackLink = event => {
+	onClickBackLink = ( event ) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
@@ -75,11 +75,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img
-						alt=""
-						src={ checkEmailImage }
-						className="magic-login__check-email-image"
-					/>
+					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
 					<p>{ line }</p>
 				</Card>
 
@@ -88,6 +84,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 						href={ login( {
 							isNative: true,
 							isJetpack: this.props.isJetpackLogin,
+							isGutenboarding: this.props.isGutenboardingLogin,
 							locale: this.props.locale,
 						} ) }
 						onClick={ this.onClickBackLink }
@@ -101,9 +98,10 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
 } );
 
 const mapDispatch = {

@@ -40,10 +40,10 @@ import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
-const updateQueryArg = params =>
+const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE) ;
 
 const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
@@ -66,7 +66,7 @@ class SearchStream extends React.Component {
 		selected: SEARCH_TYPES.POSTS,
 	};
 
-	updateQuery = newValue => {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
@@ -101,9 +101,9 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
-	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
+	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
-	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
+	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
@@ -138,7 +138,7 @@ class SearchStream extends React.Component {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 		const suggestionList = initial(
-			flatMap( suggestions, suggestion => [
+			flatMap( suggestions, ( suggestion ) => [
 				<Suggestion
 					suggestion={ suggestion.text }
 					source="search"
@@ -252,7 +252,7 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props => (
+const wrapWithMain = ( Component ) => ( props ) => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
 	</ReaderMain>

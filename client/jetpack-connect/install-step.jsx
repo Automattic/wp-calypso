@@ -31,12 +31,12 @@ class JetpackInstallStep extends Component {
 		onClick: noop,
 	};
 
-	confirmJetpackInstalled = event => {
+	confirmJetpackInstalled = ( event ) => {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( true );
 	};
 
-	confirmJetpackNotInstalled = event => {
+	confirmJetpackNotInstalled = ( event ) => {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( false );
 	};

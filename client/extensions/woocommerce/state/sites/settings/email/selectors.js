@@ -38,7 +38,7 @@ export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( stat
 	return LOADING === getEmailSettings( state, siteId );
 };
 
-const getField = field => {
+const getField = ( field ) => {
 	return ( state, siteId = getSelectedSiteId( state ) ) => {
 		return get(
 			state,

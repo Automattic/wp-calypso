@@ -367,33 +367,25 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return "schedule" if the post is dated in the future and not scheduled', () => {
-			const date = moment()
-				.add( 1, 'month' )
-				.format();
+			const date = moment().add( 1, 'month' ).format();
 			const state = editorState( { status: 'draft' }, [ { date } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
 		} );
 
 		test( 'should return "schedule" if the post is dated in the future and published', () => {
-			const date = moment()
-				.add( 1, 'month' )
-				.format();
+			const date = moment().add( 1, 'month' ).format();
 			const state = editorState( { status: 'publish' }, [ { date } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
 		} );
 
 		test( 'should return "update" if the post is scheduled and dated in the future', () => {
-			const date = moment()
-				.add( 1, 'month' )
-				.format();
+			const date = moment().add( 1, 'month' ).format();
 			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
 		} );
 
 		test( 'should return "update" if the post is scheduled, dated in the future, and next status is draft', () => {
-			const date = moment()
-				.add( 1, 'month' )
-				.format();
+			const date = moment().add( 1, 'month' ).format();
 			const state = editorState( { status: 'future', date }, [
 				{ title: 'change', status: 'draft' },
 			] );
@@ -401,9 +393,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return "publish" if the post is scheduled and dated in the past', () => {
-			const date = moment()
-				.subtract( 1, 'month' )
-				.format();
+			const date = moment().subtract( 1, 'month' ).format();
 			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'publish' );
 		} );

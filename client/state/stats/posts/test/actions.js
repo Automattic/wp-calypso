@@ -37,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostStat()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views%2Cyears' )

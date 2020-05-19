@@ -1,3 +1,10 @@
+// The eslint configuration below helps prevent new legacy reducers from being added.
+// See `docs/modularized-state.md` to learn more about modularized state.
+
+/*eslint no-restricted-imports: ["error", {
+    "patterns": ["./*\/reducer*", "state/*\/reducer*"]
+}]*/
+
 /**
  * External dependencies
  */
@@ -40,6 +47,7 @@ import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import help from './help/reducer';
+import home from './home/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
@@ -48,13 +56,11 @@ import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import legal from './legal/reducer';
-import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
@@ -79,7 +85,6 @@ import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
-import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
@@ -99,6 +104,7 @@ import wordads from './wordads/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
+// Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
 	account,
 	accountRecovery,
@@ -128,6 +134,7 @@ const reducers = {
 	happinessEngineers,
 	happychat,
 	help,
+	home,
 	httpData,
 	i18n,
 	immediateLogin,
@@ -137,13 +144,11 @@ const reducers = {
 	inlineSupportArticle,
 	invites,
 	jetpack,
-	jetpackConnect,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
 	legal,
-	login,
 	media,
 	memberships,
 	mySites,
@@ -167,7 +172,6 @@ const reducers = {
 	selectedEditor,
 	sharing,
 	shortcodes,
-	signup,
 	simplePayments,
 	siteAddressChange,
 	siteKeyrings,

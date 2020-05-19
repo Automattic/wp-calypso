@@ -47,15 +47,15 @@ const ShippingZoneLocationDialogSettings = ( {
 	translate,
 	actions,
 } ) => {
-	const onWholeCountrySelect = event => {
+	const onWholeCountrySelect = ( event ) => {
 		event.stopPropagation();
 		actions.filterByWholeCountry();
 	};
-	const onStateSelect = event => {
+	const onStateSelect = ( event ) => {
 		event.stopPropagation();
 		actions.filterByState();
 	};
-	const onPostcodeSelect = event => {
+	const onPostcodeSelect = ( event ) => {
 		event.stopPropagation();
 		actions.filterByPostcode();
 	};
@@ -116,7 +116,7 @@ const ShippingZoneLocationDialogSettings = ( {
 	const renderState = ( state, index ) => {
 		const { name, selected, code, disabled } = state;
 
-		const onToggle = event => {
+		const onToggle = ( event ) => {
 			event.stopPropagation();
 			if ( disabled ) {
 				return;
@@ -144,7 +144,7 @@ const ShippingZoneLocationDialogSettings = ( {
 
 	const renderDetailedSettings = () => {
 		if ( filteredByPostcode ) {
-			const onPostcodeChange = event => actions.editPostcode( event.target.value );
+			const onPostcodeChange = ( event ) => actions.editPostcode( event.target.value );
 
 			return (
 				<FormFieldSet>
@@ -194,7 +194,7 @@ ShippingZoneLocationDialogSettings.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const locations = getShippingZoneLocationsWithEdits( state );
 
 		return {

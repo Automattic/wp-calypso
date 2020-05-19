@@ -14,5 +14,5 @@ export function sortBySales( data, limit ) {
 	if ( ! Array.isArray( data ) ) {
 		throw new Error( 'Incorrect data structure applied to "sortBySales". Input must be an array' );
 	}
-	return sortBy( data, d => -d.sales ).slice( 0, limit || data.length );
+	return sortBy( data, ( d ) => -d.sales ).slice( 0, limit || data.length );
 }

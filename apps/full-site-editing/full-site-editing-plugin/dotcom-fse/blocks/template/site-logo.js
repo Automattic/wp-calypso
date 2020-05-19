@@ -5,8 +5,8 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
 
-const addFSESiteLogoClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
+const addFSESiteLogoClassname = createHigherOrderComponent( ( BlockListBlock ) => {
+	return ( props ) => {
 		if ( props.attributes.className !== 'fse-site-logo' ) {
 			return <BlockListBlock { ...props } />;
 		}

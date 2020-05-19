@@ -14,6 +14,7 @@ import {
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_ITEM_REQUESTING,
+	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
@@ -25,10 +26,10 @@ import MediaQueryManager from 'lib/query-manager/media';
 import { validateMediaItem } from 'lib/media/utils';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 
-const isExternalMediaError = message =>
+const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
 
-const isMediaError = action =>
+const isMediaError = ( action ) =>
 	action.error && ( action.siteId || isExternalMediaError( action.error ) );
 
 /**
@@ -50,7 +51,7 @@ export const errors = ( state = {}, action ) => {
 			const items = Array.isArray( action.transientMedia )
 				? action.transientMedia
 				: [ action.transientMedia ];
-			const mediaErrors = items.reduce( function( memo, item ) {
+			const mediaErrors = items.reduce( function ( memo, item ) {
 				const itemErrors = validateMediaItem( action.site, item );
 				if ( itemErrors.length ) {
 					memo[ item.ID ] = itemErrors;
@@ -79,7 +80,7 @@ export const errors = ( state = {}, action ) => {
 				? action.error.errors
 				: [ action.error ];
 
-			const sanitizedErrors = mediaErrors.map( error => {
+			const sanitizedErrors = mediaErrors.map( ( error ) => {
 				switch ( error.error ) {
 					case 'http_404':
 						return MediaValidationErrors.UPLOAD_VIA_URL_404;
@@ -95,6 +96,8 @@ export const errors = ( state = {}, action ) => {
 						return MediaValidationErrors.SERVICE_AUTH_FAILED;
 					case 'servicefail':
 						return MediaValidationErrors.SERVICE_FAILED;
+					case 'service_unavailable':
+						return MediaValidationErrors.SERVICE_UNAVAILABLE;
 					default:
 						return MediaValidationErrors.SERVER_ERROR;
 				}
@@ -117,10 +120,10 @@ export const errors = ( state = {}, action ) => {
 			return {
 				...state,
 				[ action.siteId ]: pickBy(
-					mapValues( state[ action.siteId ], mediaErrors =>
+					mapValues( state[ action.siteId ], ( mediaErrors ) =>
 						without( mediaErrors, action.errorType )
 					),
-					mediaErrors => ! isEmpty( mediaErrors )
+					( mediaErrors ) => ! isEmpty( mediaErrors )
 				),
 			};
 
@@ -261,9 +264,92 @@ export const mediaItemRequests = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
+/**
+ * Returns the media library selected items state after an action has been
+ * dispatched. The state reflects a mapping of site ID pairing to an array
+ * that contains IDs of media items.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}       Updated state
+ */
+export const selectedItems = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_SOURCE_CHANGE: {
+			const { siteId } = action;
+			return {
+				...state,
+				[ siteId ]: [],
+			};
+		}
+		case MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE: {
+			const { media, siteId } = action;
+			return {
+				...state,
+				[ siteId ]: media.map( ( mediaItem ) => mediaItem.ID ),
+			};
+		}
+		case MEDIA_ITEM_CREATE: {
+			const { site, transientMedia } = action;
+
+			if ( ! action.site || ! action.transientMedia ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ site.ID ]: [ ...( state[ site.ID ] ?? [] ), transientMedia.ID ],
+			};
+		}
+		case MEDIA_RECEIVE: {
+			const { media, siteId } = action;
+
+			// We only want to auto-mark as selected media that has just been uploaded
+			if ( action.found || action.query ) {
+				return state;
+			}
+
+			const { [ siteId ]: existingMediaIds = [] } = state;
+
+			const nextMediaIds = media.reduce(
+				( aggregatedMediaIds, mediaItem ) =>
+					// avoid duplicating IDs
+					existingMediaIds.includes( mediaItem.ID )
+						? aggregatedMediaIds
+						: [ ...aggregatedMediaIds, mediaItem.ID ],
+				[ ...existingMediaIds ]
+			);
+
+			return {
+				...state,
+				[ siteId ]: nextMediaIds,
+			};
+		}
+		case MEDIA_ITEM_REQUEST_SUCCESS: {
+			const { mediaId: transientMediaId, siteId } = action;
+			const media = state[ siteId ] ?? [];
+
+			return {
+				...state,
+				[ siteId ]: media.filter( ( mediaId ) => transientMediaId !== mediaId ),
+			};
+		}
+		case MEDIA_DELETE: {
+			const { mediaIds, siteId } = action;
+			return {
+				...state,
+				[ siteId ]: state[ siteId ].filter( ( mediaId ) => ! mediaIds.includes( mediaId ) ),
+			};
+		}
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	errors,
 	queries,
 	queryRequests,
 	mediaItemRequests,
+	selectedItems,
 } );

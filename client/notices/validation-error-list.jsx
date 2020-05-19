@@ -27,7 +27,7 @@ class ValidationErrorList extends React.Component {
 					) }
 				</p>
 				<ul>
-					{ map( this.props.messages, function( message, index ) {
+					{ map( this.props.messages, function ( message, index ) {
 						return <li key={ index }>{ message }</li>;
 					} ) }
 				</ul>

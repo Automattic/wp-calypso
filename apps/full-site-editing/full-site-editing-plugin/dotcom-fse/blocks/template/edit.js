@@ -123,7 +123,7 @@ const TemplateEdit = compose(
 
 		const { align, className } = attributes;
 
-		const save = event => {
+		const save = ( event ) => {
 			event.stopPropagation();
 			setNavigateToTemplate( true );
 			if ( ! isDirty ) {

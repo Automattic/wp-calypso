@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
+import { sprintf } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
-import { Button, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
-import { useDebounce } from 'use-debounce';
-import classnames from 'classnames';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,167 +18,186 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
+import PlansButton from '../plans/plans-button';
 import SignupForm from '../../components/signup-form';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { usePath, useCurrentStep, Step } from '../../path';
+import { trackEventWithFlow } from '../../lib/analytics';
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-const Header: FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+const Header: React.FunctionComponent = () => {
+	const { __, i18nLocale } = useI18n();
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
+	const currentStep = useCurrentStep();
 
-	const { createSite } = useDispatch( SITE_STORE );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
+	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
 
-	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
+	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
+	const makePath = usePath();
+
+	const { createSite, setDomain } = useDispatch( ONBOARD_STORE );
+
+	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		PAID_DOMAINS_TO_SHOW
 	);
-	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
+	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
-	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
-	const freeDomainSuggestion = useSelect(
-		select => {
-			if ( ! domainSearch ) {
-				return;
-			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: true,
-				quantity: 1,
-				...{ vertical: siteVertical?.id },
-			} )?.[ 0 ];
-		},
-		[ domainSearch, siteVertical ]
-	);
-
-	useEffect( () => {
+	React.useEffect( () => {
 		if ( ! siteTitle ) {
 			setDomain( undefined );
 		}
 	}, [ siteTitle, setDomain ] );
 
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [ showSignupDialog, setShowSignupDialog ] = React.useState( false );
+	const [ previousRecommendedDomain, setPreviousRecommendedDomain ] = React.useState( '' );
+	if (
+		recommendedDomainSuggestion &&
+		previousRecommendedDomain !== recommendedDomainSuggestion.domain_name
+	) {
+		setPreviousRecommendedDomain( recommendedDomainSuggestion.domain_name );
+	}
 
 	const {
-		location: { pathname },
+		location: { pathname, search },
+		push,
 	} = useHistory();
-	useEffect( () => {
-		// Dialogs usually close naturally when the user clicks the browser's
-		// back/forward buttons because their parent is unmounted. However
-		// this header isn't unmounted on route changes so we need to
-		// explicitly hide the dialog.
-		setShowSignupDialog( false );
-	}, [ pathname, setShowSignupDialog ] );
 
-	const currentDomain = domain ?? freeDomainSuggestion;
+	React.useEffect( () => {
+		// This handles opening the signup modal when there is a ?signup query parameter
+		// then removes the parameter.
+		// The use case is a user clicking "Create account" from login
+		// TODO: We can remove this condition when we've converted signup into it's own page
+		if ( ! showSignupDialog && new URLSearchParams( search ).has( 'signup' ) ) {
+			setShowSignupDialog( true );
+			push( makePath( Step[ currentStep ] ) );
+		} else {
+			// Dialogs usually close naturally when the user clicks the browser's
+			// back/forward buttons because their parent is unmounted. However
+			// this header isn't unmounted on route changes so we need to
+			// explicitly hide the dialog.
+			setShowSignupDialog( false );
+		}
+	}, [ pathname, setShowSignupDialog ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const siteTitleElement = (
-		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-		</span>
-	);
+	const isMobile = useViewportMatch( 'mobile', '<' );
 
-	const domainElement = (
-		<span
-			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! currentDomain,
-			} ) }
-		>
-			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
-		</span>
-	);
+	const getDomainElementContent = () => {
+		if ( recommendedDomainSuggestion || previousRecommendedDomain !== '' ) {
+			/* translators: domain name is available, eg: "yourname.com is available" */
+			return sprintf(
+				__( '%s is available' ),
+				recommendedDomainSuggestion
+					? recommendedDomainSuggestion.domain_name
+					: previousRecommendedDomain
+			);
+		}
 
-	const handleCreateSite = useCallback(
-		( username: string, bearerToken?: string ) => {
-			const siteUrl = currentDomain?.domain_name || siteTitle || username;
-			createSite( {
-				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-				blog_title: siteTitle,
-				options: {
-					site_vertical: siteVertical?.id,
-					site_vertical_name: siteVertical?.label,
-					site_information: {
-						title: siteTitle,
-					},
-					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug }`,
-				},
-				...( bearerToken && { authToken: bearerToken } ),
-			} );
-		},
-		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
-	);
-
-	const handleSignup = () => {
-		setShowSignupDialog( true );
+		return 'example.wordpress.com';
 	};
 
-	useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username ) {
-			handleCreateSite( newUser.username, newUser.bearerToken );
-		}
-	}, [ newUser, handleCreateSite ] );
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const domainElement = domain ? (
+		domain.domain_name
+	) : (
+		<span className="gutenboarding__header-domain-picker-button-domain">
+			{ isMobile && __( 'Domain available' ) }
+			{ ! isMobile && getDomainElementContent() }
+		</span>
+	);
 
-	useEffect( () => {
-		if ( newSite ) {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
+	const handleCreateSite = React.useCallback(
+		( username: string, bearerToken?: string, planSlug?: string ) => {
+			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+		},
+		[ createSite, freeDomainSuggestion ]
+	);
+
+	const closeAuthDialog = () => {
+		setShowSignupDialog( false );
+	};
+
+	React.useEffect( () => {
+		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
+			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
 		}
-	}, [ newSite, resetOnboardStore ] );
+	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
+
+	const hasContent =
+		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
+
+	const hasPlaceholder =
+		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
+
+	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
+		trackEventWithFlow( 'calypso_newsite_domain_select', {
+			domain_name: suggestion?.domain_name,
+		} );
+		setDomain( suggestion );
+	};
 
 	return (
 		<div
 			className="gutenboarding__header"
 			role="region"
-			aria-label={ NO__( 'Top bar' ) }
+			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					<Icon icon="wordpress-alt" className="gutenboarding__header-wp-icon" />
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon="wordpress-alt" size={ 24 } />
+					</div>
 				</div>
-				<div className="gutenboarding__header-group">
-					{ siteTitle ? (
-						<DomainPickerButton
-							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ siteTitle }
-							disabled={ ! currentDomain }
-							onDomainSelect={ setDomain }
-							queryParameters={ { vertical: siteVertical?.id } }
-						>
-							{ siteTitleElement }
-							{ domainElement }
-						</DomainPickerButton>
-					) : (
-						siteTitleElement
-					) }
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
+					<div className="gutenboarding__header-site-title">
+						{ siteTitle ? siteTitle : __( 'Start your website' ) }
+					</div>
 				</div>
-			</div>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && (
-						<Button
-							className="gutenboarding__header-next-button"
-							isPrimary
-							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
-						>
-							{ NO__( 'Create my site' ) }
-						</Button>
-					) }
+				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
+					{
+						// We display the DomainPickerButton as soon as we have a domain suggestion,
+						// unless we're still at the IntentGathering step. In that case, we only
+						// show it comes from a site title (but hide it if it comes from a vertical).
+						domainElement &&
+							( siteTitle || previousRecommendedDomain || currentStep !== 'IntentGathering' ) && (
+								<div
+									className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
+										'has-content': hasContent,
+										'has-placeholder': hasPlaceholder,
+									} ) }
+								>
+									<DomainPickerButton
+										className="gutenboarding__header-domain-picker-button"
+										currentDomain={ domain }
+										onDomainSelect={ onDomainSelect }
+									>
+										{ domainElement }
+									</DomainPickerButton>
+								</div>
+							)
+					}
 				</div>
-			</div>
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
+					<PlansButton />
+				</div>
+			</section>
+			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default Header;

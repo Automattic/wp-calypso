@@ -16,7 +16,7 @@ export function getFollowersForQuery( state, query ) {
 		return null;
 	}
 	return state.followers.queries[ serializedQuery ]
-		.map( Id => {
+		.map( ( Id ) => {
 			return state.followers.items[ Id ];
 		} )
 		.filter( Boolean );
