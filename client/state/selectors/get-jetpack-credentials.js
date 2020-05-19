@@ -3,6 +3,11 @@
  */
 import { get, isEmpty } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import 'state/jetpack/init';
+
 // We might have to re-think this approach since the credentials from `jetpackScan.scan[siteId].credentials`
 // are only updated when we receive a new response from `/scan`. So, for instance, if a user completes
 // the server credentials form, this selector won't reflect that fact since submitting that form doesn't

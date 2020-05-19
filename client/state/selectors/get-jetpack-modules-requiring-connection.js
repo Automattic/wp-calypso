@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/jetpack/init';
 
 /**
  * Returns an array of modules that require connection in order to work.
