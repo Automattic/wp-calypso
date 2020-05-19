@@ -35,12 +35,6 @@ function setupLoggedOut() {
 		page( '/', () => {
 			page.redirect( '/devdocs/start' );
 		} );
-	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
-		page( '/', () => {
-			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/connect' );
-			}
-		} );
 	}
 }
 
