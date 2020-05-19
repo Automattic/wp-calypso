@@ -1,0 +1,29 @@
+{
+	"name": "@automattic/browser-data-collector",
+	"version": "0.0.1",
+	"description": "A tool to collect data from different browser APIs",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index",
+	"module": "dist/esm/index",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/browser-data-collector"
+	},
+	"types": "dist/types",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"scripts": {
+		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__browser-data-collector*\"",
+		"prepublish": "check-npm-client && yarn run clean",
+		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"web-vitals": "^0.2.2",
+		"wpcom-xhr-request": "^1.1.3"
+	}
+}
