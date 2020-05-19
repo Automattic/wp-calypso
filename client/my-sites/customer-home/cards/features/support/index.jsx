@@ -5,6 +5,7 @@ import { Card } from '@automattic/components';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +18,17 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import InlineHelpSearchResults from '../../../../../blocks/inline-help/inline-help-search-results';
 import InlineHelpSearchCard from '../../../../../blocks/inline-help/inline-help-search-card';
 import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
-import { getSearchQuery } from 'state/inline-help/selectors';
+import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+
+import {
+	RESULT_ARTICLE,
+	RESULT_DESCRIPTION,
+	RESULT_LINK,
+	RESULT_TITLE,
+	RESULT_TOUR,
+	RESULT_TYPE,
+} from '../../../../../blocks/inline-help/constants';
 
 /**
  * Style dependencies
@@ -29,12 +40,17 @@ import './style.scss';
  */
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 
-const openResultView = ( event ) => {
-	event.preventDefaut();
-};
+const amendYouTubeLink = ( link = '' ) =>
+	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const Support = ( { searchQuery } ) => {
+const Support = ( props ) => {
+	const { searchQuery, postId, postUrl = '' } = props;
 	const translate = useTranslate();
+
+	const openResultView = ( event ) => {
+		event.preventDefault();
+		props.openSupportArticleDialog( { postId, actionUrl: postUrl } );
+	};
 
 	return (
 		<Card className="support">
@@ -60,9 +76,17 @@ const mapStateToProps = ( state ) => {
 	const isStaticHomePage =
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 
+	const result = getInlineHelpCurrentlySelectedResult( state );
+
 	return {
 		isStaticHomePage,
 		searchQuery: getSearchQuery( state ),
+		type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
+		title: get( result, RESULT_TITLE ),
+		link: amendYouTubeLink( get( result, RESULT_LINK ) ),
+		description: get( result, RESULT_DESCRIPTION ),
+		tour: get( result, RESULT_TOUR ),
+		postId: get( result, 'post_id' ),
 	};
 };
 
@@ -85,6 +109,7 @@ const trackContactAction = ( isStaticHomePage ) =>
 const mapDispatchToProps = {
 	trackContactAction,
 	trackDocsAction,
+	openSupportArticleDialog,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -92,6 +117,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	return {
 		...ownProps,
 		...stateProps,
+		...dispatchProps,
 		trackContactAction: () => dispatchProps.trackContactAction( isStaticHomePage ),
 		trackDocsAction: () => dispatchProps.trackDocsAction( isStaticHomePage ),
 	};
