@@ -10,13 +10,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { localizeUrl } from 'lib/i18n-utils';
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import InlineHelpSearchResults from '../../../../../blocks/inline-help/inline-help-search-results';
+import InlineHelpSearchCard from '../../../../../blocks/inline-help/inline-help-search-card';
+import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
+import { getSearchQuery } from 'state/inline-help/selectors';
 
 /**
  * Style dependencies
@@ -28,7 +29,11 @@ import './style.scss';
  */
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 
-const Support = ( { trackContactAction, trackDocsAction } ) => {
+const openResultView = ( event ) => {
+	event.preventDefaut();
+};
+
+const Support = ( { searchQuery } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -39,18 +44,11 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 			</h6>
 			<div className="support__content">
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
-				<VerticalNav>
-					<VerticalNavItem
-						path={ localizeUrl( 'https://wordpress.com/support' ) }
-						external
-						onClick={ trackDocsAction }
-					>
-						{ translate( 'Support articles' ) }
-					</VerticalNavItem>
-					<VerticalNavItem path="/help/contact" external onClick={ trackContactAction }>
-						{ translate( 'Contact us' ) }
-					</VerticalNavItem>
-				</VerticalNav>
+				<QuerySupportTypes />
+				<div className="support__search">
+					<InlineHelpSearchCard openResult={ openResultView } query={ searchQuery } />
+					<InlineHelpSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+				</div>
 			</div>
 		</Card>
 	);
@@ -64,6 +62,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		isStaticHomePage,
+		searchQuery: getSearchQuery( state ),
 	};
 };
 
