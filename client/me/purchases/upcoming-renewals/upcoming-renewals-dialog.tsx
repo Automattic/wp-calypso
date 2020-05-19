@@ -98,7 +98,13 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
-		() => [ ...purchases ].sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
+		() =>
+			[ ...purchases ].sort( ( a, b ) => {
+				const compareDateA = isAutoRenewing( a ) ? a.renewDate : a.expiryDate;
+				const compareDateB = isAutoRenewing( b ) ? b.renewDate : b.expiryDate;
+
+				return compareDateA?.localeCompare?.( compareDateB );
+			} ),
 		[ purchases ]
 	);
 

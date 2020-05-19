@@ -6,6 +6,7 @@
  * External dependencies
  */
 import Modal from 'react-modal';
+import moment from 'moment';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';
 import React from 'react';
@@ -32,11 +33,13 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		modalRoot = null;
 	} );
 
-	const purchases = [
+	const mockPurchases = () => [
 		{
 			id: 1,
 			currencyCode: 'USD',
-			expiryDate: '2020-05-20T00:00:00+00:00',
+			expiryDate: moment().add( 20, 'days' ).format(),
+			expiryStatus: 'expiring',
+			renewDate: '',
 			productSlug: 'personal-bundle',
 			productName: 'Personal Plan',
 			amount: 100,
@@ -44,7 +47,9 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		{
 			id: 2,
 			currencyCode: 'USD',
-			expiryDate: '2020-05-15T00:00:00+00:00',
+			expiryDate: moment().add( 10, 'days' ).format(),
+			expiryStatus: 'expiring',
+			renewDate: '',
 			productSlug: 'dotlive_domain',
 			meta: 'personalsitetest1234.live',
 			productName: 'DotLive Domain Registration',
@@ -62,6 +67,48 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		render(
 			<UpcomingRenewalsDialog
 				isVisible={ true }
+				purchases={ mockPurchases() }
+				site={ site }
+				onConfirm={ jest.fn() }
+				onClose={ jest.fn() }
+			/>
+		);
+
+		expect(
+			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 0 ]
+		).toHaveTextContent(
+			/personalsitetest1234\.liveDotLive Domain Registration: expires in 10 days/
+		);
+		expect(
+			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 0 ]
+		).toHaveTextContent( '$200' );
+		expect(
+			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
+		).toHaveTextContent( /Personal PlanSite Plan: expires in 20 days/ );
+		expect(
+			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
+		).toHaveTextContent( '$100' );
+	} );
+
+	test( 'uses the renewDate to display and sort purposes for autoRenewing purchases', () => {
+		const purchases = [
+			...mockPurchases(),
+			{
+				id: 3,
+				currencyCode: 'USD',
+				expiryDate: moment().add( 35, 'days' ).format(),
+				expiryStatus: 'autoRenewing',
+				renewDate: moment().add( 5, 'days' ).format(),
+				productSlug: 'dotlive_domain',
+				meta: 'autorenewing-domain.live',
+				productName: 'DotLive Domain Registration',
+				isDomainRegistration: true,
+				amount: 200,
+			},
+		];
+		render(
+			<UpcomingRenewalsDialog
+				isVisible={ true }
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ jest.fn() }
@@ -71,20 +118,12 @@ describe( '<UpcomingRenewalsDialog>', () => {
 
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 0 ]
-		).toHaveTextContent( /personalsitetest1234\.liveDotLive Domain Registration: expire[sd]/ );
-		expect(
-			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 0 ]
-		).toHaveTextContent( '$200' );
-		expect(
-			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /Personal PlanSite Plan: expire[sd]/ );
-		expect(
-			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
-		).toHaveTextContent( '$100' );
+		).toHaveTextContent( /autorenewing-domain\.liveDotLive Domain Registration: renews in 5 days/ );
 	} );
 
 	test( 'selects all purchases by default', () => {
 		const onConfirm = jest.fn();
+		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
 				isVisible={ true }
@@ -102,6 +141,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 
 	test( 'submits only the selected purchases', () => {
 		const onConfirm = jest.fn();
+		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
 				isVisible={ true }
@@ -122,7 +162,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		render(
 			<UpcomingRenewalsDialog
 				isVisible={ true }
-				purchases={ purchases }
+				purchases={ mockPurchases() }
 				site={ site }
 				onConfirm={ jest.fn() }
 				onClose={ jest.fn() }
