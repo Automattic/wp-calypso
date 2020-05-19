@@ -11,6 +11,7 @@ declare module 'wpcom-xhr-request';
 type ReportData = Map< string, number | string | boolean >;
 
 interface Report {
+	id: string;
 	data: ReportData;
 	start: number;
 	end?: number;

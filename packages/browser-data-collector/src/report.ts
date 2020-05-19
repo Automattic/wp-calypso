@@ -4,14 +4,14 @@
 import { getNavigationStart } from './api/performance-timing';
 
 export class ReportImpl implements Report {
-	name: string;
+	id: string;
 	start: number;
 	end?: number;
 	duration?: number;
 	data: ReportData;
 
-	constructor( name: string, isInitial: boolean ) {
-		this.name = name;
+	constructor( id: string, isInitial: boolean ) {
+		this.id = id;
 		this.data = new Map();
 		if ( isInitial ) {
 			this.start = getNavigationStart();
@@ -38,6 +38,7 @@ export class ReportImpl implements Report {
 			{}
 		);
 		return {
+			id: this.id,
 			start: 0,
 			end: this.duration,
 			...data,
