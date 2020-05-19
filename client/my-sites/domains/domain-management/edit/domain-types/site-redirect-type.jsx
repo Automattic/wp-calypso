@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
@@ -12,8 +11,6 @@ import config from 'config';
 import { Card } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { isExpiringSoon } from 'lib/domains/utils';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import {
@@ -57,10 +54,6 @@ class SiteRedirectType extends React.Component {
 			return null;
 		}
 
-		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
-			return null;
-		}
-
 		return (
 			<div>
 				<RenewButton
@@ -68,7 +61,7 @@ class SiteRedirectType extends React.Component {
 					purchase={ purchase }
 					selectedSite={ this.props.selectedSite }
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
+					tracksProps={ { source: 'site-redirect-url', domain_status: domain.name } }
 				/>
 			</div>
 		);
@@ -88,7 +81,7 @@ class SiteRedirectType extends React.Component {
 				purchase={ purchase }
 				compact={ true }
 				withTextStatus={ true }
-				toggleSource="registered-domain-status"
+				toggleSource="site-redirect-status"
 			/>
 		);
 
@@ -121,21 +114,6 @@ class SiteRedirectType extends React.Component {
 		);
 	}
 
-	domainWarnings() {
-		return (
-			<DomainWarnings
-				domain={ this.props.domain }
-				position="registered-domain"
-				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [
-					'pendingGSuiteTosAcceptanceDomains',
-					'newTransfersWrongNS',
-					'pendingConsent',
-				] }
-			/>
-		);
-	}
-
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -155,7 +133,6 @@ class SiteRedirectType extends React.Component {
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ this.planUpsellForNonPrimaryDomain() }
-				{ this.domainWarnings() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
