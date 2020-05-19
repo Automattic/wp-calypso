@@ -35,6 +35,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Raleway',
 			},
 			categories: [ 'featured', 'portfolio' ],
+			premium: true,
 		},
 		{
 			title: 'Easley',
@@ -119,7 +120,6 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			premium: true,
 		},
 	],
 };
