@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -29,7 +28,6 @@ class JetpackPlansGrid extends Component {
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
-		hidePersonalOfferReset: PropTypes.bool,
 
 		// Connected
 		translate: PropTypes.func.isRequired,
@@ -54,17 +52,12 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
-		const { interval, hidePersonalOfferReset } = this.props;
+		const { interval } = this.props;
 		const defaultInterval = 'yearly';
-		const hidePersonal = hidePersonalOfferReset;
 
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
-				<div
-					className={ classNames( 'jetpack-connect__plans', {
-						'is-offer-reset-test': hidePersonal,
-					} ) }
-				>
+				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
 					<div id="plans">
 						<PlansFeaturesMain
@@ -76,7 +69,6 @@ class JetpackPlansGrid extends Component {
 							intervalType={ interval ? interval : defaultInterval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
-							hidePersonalPlan={ hidePersonal }
 						/>
 
 						<PlansSkipButton onClick={ this.handleSkipButtonClick } />

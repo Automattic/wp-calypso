@@ -39,7 +39,6 @@ import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { persistSignupDestination } from 'signup/utils';
 import { isJetpackProductSlug as getJetpackProductSlug } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -223,7 +222,6 @@ class Plans extends Component {
 					isLanding={ false }
 					interval={ interval }
 					selectedSite={ selectedSite }
-					hidePersonalOfferReset={ 'withoutPersonal' === abtest( 'jpcPlansOfferResetPersonal' ) }
 				>
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
