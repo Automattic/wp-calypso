@@ -162,7 +162,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Latest backups' ) } />
 				<SidebarNavigation />
-				<PageViewTracker path="/backups/:site" title="Backups" />
+				<PageViewTracker path="/backup/:site" title="Backups" />
 
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />

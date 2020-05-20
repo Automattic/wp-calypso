@@ -31,7 +31,7 @@ function Home( props: Props ) {
 		redirectUrl.search = window.location.search;
 
 		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-			redirectUrl.pathname = '/backups';
+			redirectUrl.pathname = '/backup';
 		} else if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
 			redirectUrl.pathname = '/scan';
 		}
@@ -45,7 +45,7 @@ function Home( props: Props ) {
 
 		// From capabilities, build proper URL.
 		if ( config.isEnabled( 'jetpack-cloud/backups' ) && siteCapabilities.includes( 'backup' ) ) {
-			redirectUrl.pathname = `/backups/${ siteSlug }`;
+			redirectUrl.pathname = `/backup/${ siteSlug }`;
 		} else if ( config.isEnabled( 'jetpack-cloud/scan' ) && siteCapabilities.includes( 'scan' ) ) {
 			redirectUrl.pathname = `/scan/${ siteSlug }`;
 		}
