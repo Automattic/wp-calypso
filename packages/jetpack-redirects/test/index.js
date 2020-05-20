@@ -6,7 +6,9 @@ import getRedirectUrl from '../src';
 describe( 'getRedirectUrl', () => {
 	test( 'simple url', () => {
 		const url = getRedirectUrl( 'simple' );
-		expect( url ).toBe( 'https://jetpack.com/redirect/?source=simple' );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'source' ) ).toBe( 'simple' );
 	} );
 
 	test( 'Invalid param', () => {
@@ -16,24 +18,34 @@ describe( 'getRedirectUrl', () => {
 
 	test( 'Test path', () => {
 		const url = getRedirectUrl( 'simple', { path: '1234' } );
-		expect( url ).toBe( 'https://jetpack.com/redirect/?source=simple&path=1234' );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'source' ) ).toBe( 'simple' );
+		expect( parsedUrl.searchParams.get( 'path' ) ).toBe( '1234' );
 	} );
 
 	test( 'Test path with special chars', () => {
 		const url = getRedirectUrl( 'simple', { path: 'weird value!' } );
-		const value = encodeURIComponent( 'weird value!' );
-		expect( url ).toBe( `https://jetpack.com/redirect/?source=simple&path=${ value }` );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'source' ) ).toBe( 'simple' );
+		expect( parsedUrl.searchParams.get( 'path' ) ).toBe( 'weird value!' );
 	} );
 
 	test( 'Test query', () => {
 		const url = getRedirectUrl( 'simple', { query: 'key=1234&other=super' } );
-		const value = encodeURIComponent( 'key=1234&other=super' );
-		expect( url ).toBe( `https://jetpack.com/redirect/?source=simple&query=${ value }` );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'source' ) ).toBe( 'simple' );
+		expect( parsedUrl.searchParams.get( 'query' ) ).toBe( 'key=1234&other=super' );
 	} );
 
 	test( 'Test anchor', () => {
 		const url = getRedirectUrl( 'simple', { anchor: 'section' } );
-		expect( url ).toBe( 'https://jetpack.com/redirect/?source=simple&anchor=section' );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'source' ) ).toBe( 'simple' );
+		expect( parsedUrl.searchParams.get( 'anchor' ) ).toBe( 'section' );
 	} );
 
 	test( 'Test all', () => {
@@ -62,17 +74,19 @@ describe( 'getRedirectUrl', () => {
 		const url = getRedirectUrl( 'https://wordpress.com/support', {
 			query: 'key=1234&other=super',
 		} );
-		const value = encodeURIComponent( 'https://wordpress.com/support' );
-		const query = encodeURIComponent( 'key=1234&other=super' );
-		expect( url ).toBe( `https://jetpack.com/redirect/?url=${ value }&query=${ query }` );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'url' ) ).toBe( 'https://wordpress.com/support' );
+		expect( parsedUrl.searchParams.get( 'query' ) ).toBe( 'key=1234&other=super' );
 	} );
 
 	test( 'Test informing URL and query discarding info from url', () => {
 		const url = getRedirectUrl( 'https://wordpress.com/support?super=mega&key=value#section1', {
 			query: 'key=1234&other=super',
 		} );
-		const value = encodeURIComponent( 'https://wordpress.com/support' );
-		const query = encodeURIComponent( 'key=1234&other=super' );
-		expect( url ).toBe( `https://jetpack.com/redirect/?url=${ value }&query=${ query }` );
+		const parsedUrl = new URL( url );
+
+		expect( parsedUrl.searchParams.get( 'url' ) ).toBe( 'https://wordpress.com/support' );
+		expect( parsedUrl.searchParams.get( 'query' ) ).toBe( 'key=1234&other=super' );
 	} );
 } );

@@ -12,7 +12,7 @@
  *
  * 		Additional arguments to build the url
  *
- * 		@type {string} site URL of the current site.
+ * 		@type {string} site URL of the current site, without protocol.
  * 		@type {string} path Additional path to be appended to the URL
  * 		@type {string} query Query parameters to be added to the URL
  * 		@type {string} anchor Anchor to be added to the URL
@@ -21,29 +21,23 @@
  * @returns {string} The redirect URL
  */
 export default function getRedirectUrl( source, args = {} ) {
-	const queryVars = {};
-
-	if ( source.search( 'https://' ) === 0 ) {
+	if ( source.startsWith( 'https://' ) ) {
 		const parsedUrl = new URL( source );
 
 		// discard any query and fragments.
 		source = `https://${ parsedUrl.host }${ parsedUrl.pathname }`;
-		queryVars.url = encodeURIComponent( source );
+		args.url = source;
 	} else {
-		queryVars.source = encodeURIComponent( source );
+		args.source = source;
 	}
 
-	const acceptedArgs = [ 'site', 'path', 'query', 'anchor' ];
+	const acceptedArgs = [ 'site', 'path', 'query', 'anchor', 'source', 'url' ];
 
-	Object.keys( args ).map( ( argName ) => {
-		if ( acceptedArgs.includes( argName ) ) {
-			queryVars[ argName ] = encodeURIComponent( args[ argName ] );
-		}
-	} );
-
-	const queryString = Object.keys( queryVars )
-		.map( ( key ) => `${ key }=${ queryVars[ key ] }` )
-		.join( '&' );
+	const pairs = Object.keys( args )
+		.filter( ( key ) => acceptedArgs.includes( key ) )
+		.map( ( key ) => [ key, args[ key ] ] );
+	const params = new globalThis.URLSearchParams( pairs );
+	const queryString = params.toString();
 
 	return `https://jetpack.com/redirect/?${ queryString }`;
 }
