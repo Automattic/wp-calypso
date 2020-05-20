@@ -38,6 +38,7 @@ export const stop = async ( id: string ): Promise< boolean > => {
 		throw new Error( `There is no in progress report with the key '${ id }'` );
 	}
 	existingReport.stop();
+	inFlightReporters.delete( id );
 	await applyGlobalCollectors( existingReport );
 	if ( shouldSend( existingReport ) ) {
 		return send( existingReport.toJSON() );
