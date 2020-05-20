@@ -8,7 +8,7 @@ import config from 'config';
  */
 import { start } from '@automattic/browser-data-collector';
 
-export const navigationStartMiddleware = ( pageName ) => {
+export const performanceTrackerStart = ( pageName ) => {
 	return ( context, next ) => {
 		if ( config.isEnabled( 'rum-tracking/logstash' ) ) {
 			start( pageName || 'calypso', {

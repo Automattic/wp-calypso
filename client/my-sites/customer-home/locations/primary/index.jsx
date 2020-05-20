@@ -29,7 +29,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
 } from 'my-sites/customer-home/cards/constants';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import { usePerformanceTrackerStop } from 'lib/performance-tracking';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -46,8 +46,10 @@ const cardComponents = {
 };
 
 const Primary = ( { cards } ) => {
+	usePerformanceTrackerStop( 'home' );
+
 	if ( ! cards || ! cards.length ) {
-		return <PerformanceTrackerStop id={ 'home' } />;
+		return null;
 	}
 
 	return (
@@ -60,7 +62,6 @@ const Primary = ( { cards } ) => {
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 					} )
 			) }
-			<PerformanceTrackerStop id={ 'home' } />
 		</>
 	);
 };
