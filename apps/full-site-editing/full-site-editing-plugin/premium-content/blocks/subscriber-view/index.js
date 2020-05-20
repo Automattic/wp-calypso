@@ -24,6 +24,7 @@ const settings = {
 	supports: {
 		// Hide this block from the inserter.
 		inserter: false,
+		html: false,
 	},
 	edit,
 	save,
