@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import type { DomainCategory } from '../../domains-constants';
 import { PLAN_ECOMMERCE } from '../plans/constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
@@ -30,7 +29,7 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
-export const setDomainCategory = ( domainCategory: DomainCategory | undefined ) => ( {
+export const setDomainCategory = ( domainCategory: string | undefined ) => ( {
 	type: 'SET_DOMAIN_CATEGORY' as const,
 	domainCategory,
 } );

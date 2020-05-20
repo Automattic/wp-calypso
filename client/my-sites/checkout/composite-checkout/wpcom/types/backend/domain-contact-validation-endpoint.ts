@@ -6,21 +6,21 @@
 export type DomainContactValidationRequest = {
 	domain_names: string[];
 	contact_information: {
-		firstName: string;
-		lastName: string;
-		organization: string;
-		email: string;
-		alternateEmail: string;
-		phone: string;
-		phoneNumberCountry: string;
-		address1: string;
-		address2: string;
-		city: string;
-		state: string;
-		postalCode: string;
-		countryCode: string;
-		fax: string;
-		vatId: string;
+		firstName?: string;
+		lastName?: string;
+		organization?: string;
+		email?: string;
+		alternateEmail?: string;
+		phone?: string;
+		phoneNumberCountry?: string;
+		address1?: string;
+		address2?: string;
+		city?: string;
+		state?: string;
+		postalCode?: string;
+		countryCode?: string;
+		fax?: string;
+		vatId?: string;
 		extra?: DomainContactValidationRequestExtraFields;
 	};
 };
@@ -37,20 +37,20 @@ export type GSuiteContactValidationRequest = {
 
 export type DomainContactValidationRequestExtraFields = {
 	ca?: {
-		lang: string;
-		legal_type: string;
-		cira_agreement_accepted: boolean;
+		lang?: string;
+		legal_type?: string;
+		cira_agreement_accepted?: boolean;
 	};
 	uk?: {
-		registrant_type: string;
-		registration_number: string;
-		trading_name: string;
+		registrant_type?: string;
+		registration_number?: string;
+		trading_name?: string;
 	};
 	fr?: {
-		registrant_type: string;
-		registrant_vat_id: string;
-		trademark_number: string;
-		siren_siret: string;
+		registrant_type?: string;
+		registrant_vat_id?: string;
+		trademark_number?: string;
+		siren_siret?: string;
 	};
 };
 

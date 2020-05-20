@@ -22,7 +22,7 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' | 'tracksName' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
 }

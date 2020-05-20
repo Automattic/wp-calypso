@@ -14,8 +14,16 @@ import { stringifyDomainQueryObject } from './utils';
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 const createSelectors = ( vendor: string ) => {
-	function getState( state: State ) {
-		return state;
+	function getCategories( state: State ) {
+		// Sort domain categories by tier, then by title.
+		return [
+			...state.categories
+				.filter( ( { tier } ) => tier !== null )
+				.sort( ( a, b ) => ( a > b ? 1 : -1)  ),
+			...state.categories
+				.filter( ( { tier } ) => tier === null )
+				.sort( ( a, b ) => a.title.localeCompare( b.title ) ),
+		];
 	}
 
 	function getDomainSuggestions(
@@ -88,7 +96,7 @@ const createSelectors = ( vendor: string ) => {
 	}
 
 	return {
-		getState,
+		getCategories,
 		getDomainSuggestions,
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,

@@ -66,6 +66,11 @@ export interface Props {
 	currentDomain?: DomainSuggestion;
 
 	quantity?: number;
+
+	/**
+	 * Name used to identify this component in tracks events.
+	 */
+	tracksName: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -78,6 +83,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
 	recordAnalytics,
+	tracksName,
 } ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
@@ -159,7 +165,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ allSuggestions, currentDomain ] );
 
-	useTrackModal( 'DomainPicker', () => ( {
+	useTrackModal( tracksName, () => ( {
 		selected_domain: getSelectedDomain()?.domain_name,
 	} ) );
 

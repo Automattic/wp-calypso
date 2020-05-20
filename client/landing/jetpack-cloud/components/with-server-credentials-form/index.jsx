@@ -16,6 +16,16 @@ import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-crede
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 
+const INITIAL_FORM_STATE = {
+	protocol: 'ssh',
+	host: '',
+	port: 22,
+	user: '',
+	pass: '',
+	path: '',
+	kpri: '',
+};
+
 function withServerCredentialsForm( WrappedComponent ) {
 	const ServerCredentialsFormClass = class ServerCredentialsForm extends Component {
 		static propTypes = {
@@ -32,15 +42,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 		};
 
 		state = {
-			form: {
-				protocol: 'ssh',
-				host: '',
-				port: 22,
-				user: '',
-				pass: '',
-				path: '',
-				kpri: '',
-			},
+			form: INITIAL_FORM_STATE,
 			formErrors: {
 				host: false,
 				port: false,
@@ -110,7 +112,11 @@ function withServerCredentialsForm( WrappedComponent ) {
 		UNSAFE_componentWillReceiveProps( nextProps ) {
 			const { rewindState, role, siteSlug } = nextProps;
 			const credentials = find( rewindState.credentials, { role: role } );
-			const nextForm = Object.assign( {}, this.state.form );
+			const siteHasChanged = this.props.siteId !== nextProps.siteId;
+			const nextForm = Object.assign(
+				{},
+				siteHasChanged ? { ...INITIAL_FORM_STATE } : this.state.form
+			);
 
 			// Populate the fields with data from state if credentials are already saved
 			nextForm.protocol = credentials ? credentials.type : nextForm.protocol;

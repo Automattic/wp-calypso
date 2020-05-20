@@ -4,6 +4,7 @@
 import {
 	ManagedContactDetailsShape,
 	updateManagedContactDetailsShape,
+	mapManagedContactDetailsShape,
 	flattenManagedContactDetailsShape,
 } from '../types/wpcom-store-state';
 
@@ -210,6 +211,133 @@ describe( 'updateManagedContactDetailsShape', function () {
 			getRandomBoolean() ? undefined : getRandomInt( 0, 10 )
 		);
 		testProperty( merge, construct, update, data );
+	} );
+} );
+
+describe( 'mapManagedContactDetailsShape', function () {
+	const testPropertyWithAccessor = ( f, data ) => ( accessor ) => {
+		const value = get( mapManagedContactDetailsShape( f, data ), accessor );
+		if ( get( data, accessor ) !== undefined ) {
+			it( 'data.A is defined at ' + accessor, function () {
+				expect( value ).toEqual( f( get( data, accessor ) ) );
+			} );
+		} else if ( get( data, accessor ) === undefined ) {
+			it( 'data.A is undefined at ' + accessor, function () {
+				expect( value ).toBeUndefined();
+			} );
+		} else {
+			throw new Error( 'testPropertyWithAccessor: this case should be unreachable.' );
+		}
+		return true;
+	};
+
+	const accessors = [
+		'firstName',
+		'lastName',
+		'organization',
+		'email',
+		'alternateEmail',
+		'phone',
+		'phoneNumberCountry',
+		'address1',
+		'address2',
+		'city',
+		'state',
+		'postalCode',
+		'countryCode',
+		'fax',
+		'vatId',
+		'extra.ca.lang',
+		'extra.ca.legalType',
+		'extra.ca.ciraAgreementAccepted',
+		'extra.uk.registrantType',
+		'extra.uk.registrationNumber',
+		'extra.uk.tradingName',
+		'extra.fr.registrantType',
+		'extra.fr.trademarkNumber',
+		'extra.fr.sirenSiret',
+	];
+
+	const testProperty = ( f, data ) => {
+		expect( accessors.map( testPropertyWithAccessor( f, data ) ).every( ( x ) => x ) ).toBeTruthy();
+	};
+
+	function getRandomBoolean( prob ): boolean {
+		return Math.random() >= ( prob ?? 0.5 );
+	}
+
+	function getRandomInt( min, max ): number {
+		return Math.floor( Math.random() * ( max - min ) ) + min;
+	}
+
+	// The property should be satisfied for _all_ data, so we check it for arbitrary data.
+	const arbitraryData: ( gen: () => T ) => ManagedContactDetailsShape< T > = ( gen ) => {
+		const data = {
+			firstName: gen(),
+			lastName: gen(),
+			organization: gen(),
+			email: gen(),
+			alternateEmail: gen(),
+			phone: gen(),
+			phoneNumberCountry: gen(),
+			address1: gen(),
+			address2: gen(),
+			city: gen(),
+			state: gen(),
+			postalCode: gen(),
+			countryCode: gen(),
+			fax: gen(),
+			vatId: gen(),
+			tldExtraFields: {},
+		};
+
+		if ( getRandomBoolean() ) {
+			data.tldExtraFields.ca = {
+				lang: gen(),
+				legalType: gen(),
+				ciraAgreementAccepted: gen(),
+			};
+		}
+		if ( getRandomBoolean() ) {
+			data.tldExtraFields.uk = {
+				registrantType: gen(),
+				registrationNumber: gen(),
+				tradingName: gen(),
+			};
+		}
+		if ( getRandomBoolean() ) {
+			data.tldExtraFields.fr = {
+				registrantType: gen(),
+				trademarkNumber: gen(),
+				sirenSiret: gen(),
+			};
+		}
+
+		return data;
+	};
+
+	describe( 'with data:number', function () {
+		// arbitrarily chosen function
+		const m = getRandomInt( -10, 10 );
+		const b = getRandomInt( -10, 10 );
+		const f: ( arg0: number ) => number = ( arg0 ) => {
+			return m * arg0 + b;
+		};
+		const data: ManagedContactDetailsShape< number > = arbitraryData( () => getRandomInt( 0, 10 ) );
+		testProperty( f, data );
+	} );
+
+	describe( 'with update:boolean and data:(number | undefined)', function () {
+		// arbitrarily chosen function
+		const m = getRandomInt( -10, 10 );
+		const b = getRandomInt( -10, 10 );
+		const f: ( arg0: number ) => number = ( arg0 ) => {
+			return m * arg0 + b;
+		};
+		const data: ManagedContactDetailsShape< number > = arbitraryData( () =>
+			getRandomBoolean() ? undefined : getRandomInt( 0, 10 )
+		);
+		testProperty( f, data );
 	} );
 } );
 

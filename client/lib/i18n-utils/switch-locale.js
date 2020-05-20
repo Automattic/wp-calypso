@@ -303,6 +303,11 @@ export default function switchLocale( localeSlug ) {
 				i18n.setLocale( body );
 				setLocaleInDOM();
 				loadUserUndeployedTranslations( localeSlug );
+			} )
+			.catch( () => {
+				debug(
+					`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
+				);
 			} );
 	} else {
 		getLanguageFile( localeSlug ).then(

@@ -15,7 +15,7 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps {
+interface Props extends Omit< DomainPickerProps, 'tracksName' > {
 	isOpen: boolean;
 }
 
@@ -41,7 +41,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, ...pro
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker { ...props } />
+				<DomainPicker tracksName="DomainPickerPopover" { ...props } />
 			</Popover>
 		</div>
 	);

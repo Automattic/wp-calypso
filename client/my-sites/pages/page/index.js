@@ -729,7 +729,6 @@ class Page extends Component {
 			__file: 'wp_template',
 			language: 'en',
 			title: page.title,
-			author: page.author,
 			demoURL: page.URL,
 			content: page.rawContent,
 		} );
