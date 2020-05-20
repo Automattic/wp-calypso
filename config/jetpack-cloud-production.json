@@ -10,6 +10,8 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 69041,
+	"port": false,
+	"protocol": "https",
 	"features": {
 		"current-site/domain-warning": false,
 		"current-site/notice": false,

@@ -27,7 +27,9 @@ export const connect: PageJS.Callback = ( context, next ) => {
 		const protocol = config( 'protocol' );
 		const host = config( 'hostname' );
 		const port = config( 'port' );
-		const redirectUri = `${ protocol }://${ host }:${ port }${ authTokenRedirectPath() }`;
+		const redirectUri = port
+			? `${ protocol }://${ host }:${ port }${ authTokenRedirectPath() }`
+			: `${ protocol }://${ host }${ authTokenRedirectPath() }`;
 
 		const params = {
 			response_type: 'token',
