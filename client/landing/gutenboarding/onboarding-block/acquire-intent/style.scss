@@ -79,8 +79,10 @@
 		background: transparent;
 		border: none;
 		padding: 0;
-		height: 1em;
+		height: 1.01em;
+		line-height: 1em;
 		color: var( --mainColor );
+		caret-color: var( --mainColor );
 
 		&:focus {
 			outline: none;
@@ -88,7 +90,6 @@
 
 		@include break-small {
 			font-size: 64px;
-			line-height: 80px;
 		}
 
 		// TODO focus for accessibility?
@@ -145,8 +146,11 @@
 .components-button.is-link.acquire-intent__skip-site-title {
 	@include onboarding-medium-text;
 	color: var( --studio-gray-40 );
-	position: absolute;
-	bottom: -15px;
-	left: 0;
-	transform: translate( 0, 100% );
+
+	@include break-small {
+		position: absolute;
+		bottom: -20px;
+		left: 0;
+		transform: translate( 0, 100% );
+	}
 }
