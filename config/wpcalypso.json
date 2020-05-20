@@ -57,6 +57,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
+		"home/layout-dev": true,
 		"inline-help": true,
 		"i18n/translation-scanner": true,
 		"ive/use-external-assignment": true,
