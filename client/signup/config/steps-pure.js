@@ -36,6 +36,7 @@ export function generateSteps( {
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
 	removeDomainStepForPaidPlans = noop,
+	sitelessRemoveDomainStepForPaidPlans = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
@@ -668,6 +669,7 @@ export function generateSteps( {
 			stepName: 'domains-siteless',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'shouldHideFreePlan' ],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
+			fulfilledStepCallback: sitelessRemoveDomainStepForPaidPlans,
 			props: {
 				isDomainOnly: false,
 				isSiteless: true,

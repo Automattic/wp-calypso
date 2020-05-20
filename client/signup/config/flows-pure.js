@@ -142,7 +142,11 @@ export function generateFlows( {
 		},
 
 		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains' ],
+			steps: [
+				'user',
+				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
+				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
+			],
 			destination: getSignupDestination,
 			description:
 				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
