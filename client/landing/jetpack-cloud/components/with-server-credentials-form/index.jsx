@@ -41,17 +41,35 @@ function withServerCredentialsForm( WrappedComponent ) {
 			requirePath: false,
 		};
 
-		state = {
-			form: INITIAL_FORM_STATE,
-			formErrors: {
-				host: false,
-				port: false,
-				user: false,
-				pass: false,
-				path: false,
-			},
-			showAdvancedSettings: false,
-		};
+		constructor( props ) {
+			super( props );
+			const { rewindState, role, siteSlug } = props;
+			const credentials = find( rewindState.credentials, { role: role } );
+			const form = Object.assign( {}, INITIAL_FORM_STATE );
+
+			// Populate the fields with data from state if credentials are already saved
+			if ( credentials ) {
+				form.protocol = credentials.type || form.protocol;
+				form.host = credentials.host || form.host;
+				form.port = credentials.port || form.port;
+				form.user = credentials.user || form.user;
+				form.path = credentials.path || form.path;
+			}
+			// Populate the host field with the site slug if needed
+			form.host = isEmpty( form.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : form.host;
+
+			this.state = {
+				form: form,
+				formErrors: {
+					host: false,
+					port: false,
+					user: false,
+					pass: false,
+					path: false,
+				},
+				showAdvancedSettings: false,
+			};
+		}
 
 		handleFieldChange = ( { target: { name, value } } ) => {
 			const changedProtocol = 'protocol' === name;
@@ -118,14 +136,15 @@ function withServerCredentialsForm( WrappedComponent ) {
 				siteHasChanged ? { ...INITIAL_FORM_STATE } : this.state.form
 			);
 
-			// Populate the fields with data from state if credentials are already saved
-			nextForm.protocol = credentials ? credentials.type : nextForm.protocol;
-			nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
-			nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
-			nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
-			nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
-
-			// Populate the host field with the site slug if needed
+			// Replace empty fields with what comes from the rewind state
+			if ( credentials ) {
+				nextForm.protocol = isEmpty( nextForm.protocol ) ? credentials.type : nextForm.protocol;
+				nextForm.host = isEmpty( nextForm.host ) ? credentials.host : nextForm.host;
+				nextForm.port = isEmpty( nextForm.port ) ? credentials.port : nextForm.port;
+				nextForm.user = isEmpty( nextForm.user ) ? credentials.user : nextForm.user;
+				nextForm.path = isEmpty( nextForm.path ) ? credentials.path : nextForm.path;
+				// Populate the host field with the site slug if needed
+			}
 			nextForm.host =
 				isEmpty( nextForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : nextForm.host;
 
