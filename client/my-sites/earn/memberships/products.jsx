@@ -8,6 +8,8 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 import Notice from 'components/notice';
+import classnames from 'classnames';
+
 /**
  * Internal dependencies
  */
@@ -15,6 +17,9 @@ import './style.scss';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
+import SectionNav from 'components/section-nav';
+import SectionNavTabs from 'components/section-nav/tabs';
+import SectionNavTabItem from 'components/section-nav/item';
 import { Button, CompactCard, Dialog } from '@automattic/components';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';
@@ -26,6 +31,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSelect from 'components/forms/form-select';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
+import FormTextArea from 'components/forms/form-textarea';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import {
@@ -69,6 +75,27 @@ const MINIMUM_CURRENCY_AMOUNT = {
  */
 const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
+/**
+ * Identifier for the General tab.
+ *
+ * @type {string}
+ */
+const TAB_GENERAL = 'general';
+
+/**
+ * Identifier for the Email tab.
+ *
+ * @type {string}
+ */
+const TAB_EMAIL = 'email';
+
+/**
+ * List of tab identifiers.
+ *
+ * @type {string[]}
+ */
+const TABS = [ TAB_GENERAL, TAB_EMAIL ];
+
 class MembershipsProductsSection extends Component {
 	constructor() {
 		super();
@@ -83,7 +110,10 @@ class MembershipsProductsSection extends Component {
 		editedMultiplePerUser: false,
 		editedPrice: { currency: 'USD', value: '' },
 		editedSchedule: '1 month',
+		editedPostsEmail: false,
+		editedCustomConfirmationMessage: '',
 		focusedName: false,
+		currentDialogTab: TAB_GENERAL,
 	};
 	renderEllipsisMenu( productId ) {
 		return (
@@ -137,6 +167,7 @@ class MembershipsProductsSection extends Component {
 			const product = this.props.products.filter( ( prod ) => prod.ID === editedProductId ).pop();
 			this.setState( {
 				showDialog: true,
+				currentDialogTab: TAB_GENERAL,
 				editedProductId,
 				editedProductName: product.title,
 				editedPrice: {
@@ -151,6 +182,7 @@ class MembershipsProductsSection extends Component {
 		} else {
 			this.setState( {
 				showDialog: true,
+				currentDialogTab: TAB_GENERAL,
 				editedProductId,
 				editedProductName: '',
 				editedPrice: {
@@ -209,30 +241,19 @@ class MembershipsProductsSection extends Component {
 		return true;
 	};
 
-	renderEditDialog() {
+	getTabName( tab ) {
+		const { translate } = this.props;
+		switch ( tab ) {
+			case TAB_GENERAL:
+				return translate( 'General' );
+			case TAB_EMAIL:
+				return translate( 'Email' );
+		}
+	}
+
+	renderGeneralTab() {
 		return (
-			<Dialog
-				isVisible={ this.state.showDialog }
-				onClose={ this.onCloseDialog }
-				buttons={ [
-					{
-						label: this.props.translate( 'Cancel' ),
-						action: 'cancel',
-					},
-					{
-						label: this.state.editedProductId
-							? this.props.translate( 'Edit' )
-							: this.props.translate( 'Add' ),
-						action: 'submit',
-						disabled: ! this.isFormValid(),
-					},
-				] }
-			>
-				<FormSectionHeading>
-					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
-					{ ! this.state.editedProductId &&
-						this.props.translate( 'Add New Recurring Payment plan' ) }
-				</FormSectionHeading>
+			<>
 				<p>
 					{ this.state.editedProductId &&
 						this.props.translate( 'Edit your existing Recurring Payments plan.' ) }
@@ -322,6 +343,109 @@ class MembershipsProductsSection extends Component {
 						) }
 					</FormToggle>
 				</FormFieldset>
+			</>
+		);
+	}
+
+	renderEmailTab() {
+		const { translate } = this.props;
+		const { editedPostsEmail, editedCustomConfirmationMessage } = this.state;
+		return (
+			<>
+				<FormFieldset>
+					<h6 className="memberships__dialog-form-header">{ translate( 'Posts via email' ) }</h6>
+					<p>
+						{ translate(
+							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
+						) }
+						<a href="/TODO">{ translate( 'Learn more' ) }.</a>
+					</p>
+					<FormToggle
+						onChange={ ( newValue ) => this.setState( { editedPostsEmail: newValue } ) }
+						checked={ editedPostsEmail }
+					>
+						{ this.props.translate(
+							'Email newly published posts to members of this recurring payment plan who have opted in.'
+						) }
+					</FormToggle>
+				</FormFieldset>
+				<FormFieldset>
+					<h6 className="memberships__dialog-form-header">
+						{ translate( 'Custom confirmation message' ) }
+					</h6>
+					<p>
+						{ translate(
+							'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
+						) }
+					</p>
+					<FormTextArea
+						value={ editedCustomConfirmationMessage }
+						onChange={ ( event ) =>
+							this.setState( { editedCustomConfirmationMessage: event.target.value } )
+						}
+					/>
+				</FormFieldset>
+			</>
+		);
+	}
+
+	renderEditDialog() {
+		return (
+			<Dialog
+				className="memberships__dialog"
+				isVisible={ this.state.showDialog }
+				onClose={ this.onCloseDialog }
+				buttons={ [
+					{
+						label: this.props.translate( 'Cancel' ),
+						action: 'cancel',
+					},
+					{
+						label: this.state.editedProductId
+							? this.props.translate( 'Edit' )
+							: this.props.translate( 'Add' ),
+						action: 'submit',
+						disabled: ! this.isFormValid(),
+					},
+				] }
+			>
+				<FormSectionHeading>
+					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
+					{ ! this.state.editedProductId &&
+						this.props.translate( 'Add New Recurring Payment plan' ) }
+				</FormSectionHeading>
+				<SectionNav
+					className="memberships__dialog-nav"
+					selectedText={ this.getTabName( this.state.currentDialogTab ) }
+				>
+					<SectionNavTabs>
+						{ TABS.map( ( tab ) => (
+							<SectionNavTabItem
+								key={ tab }
+								selected={ this.state.currentDialogTab === tab }
+								onClick={ () => this.setState( { currentDialogTab: tab } ) }
+							>
+								{ this.getTabName( tab ) }
+							</SectionNavTabItem>
+						) ) }
+					</SectionNavTabs>
+				</SectionNav>
+				<div className="memberships__dialog-sections">
+					<div
+						className={ classnames( 'memberships__dialog-section', {
+							'is-visible': this.state.currentDialogTab === TAB_GENERAL,
+						} ) }
+					>
+						{ this.renderGeneralTab() }
+					</div>
+					<div
+						className={ classnames( 'memberships__dialog-section', {
+							'is-visible': this.state.currentDialogTab === TAB_EMAIL,
+						} ) }
+					>
+						{ this.renderEmailTab() }
+					</div>
+				</div>
 			</Dialog>
 		);
 	}
