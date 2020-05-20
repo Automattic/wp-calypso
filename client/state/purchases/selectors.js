@@ -2,14 +2,13 @@
  * External dependencies
  */
 import { get, find, some } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
 import { createPurchasesArray } from 'lib/purchases/assembler';
-import { isSubscription, isRenewable, isPartnerPurchase, canExplicitRenew } from 'lib/purchases';
+import { isSubscription, needsToRenewSoon } from 'lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
@@ -17,7 +16,7 @@ import {
 	isJetpackBackup,
 } from 'lib/products-values';
 import { getPlan, findPlansKeys } from 'lib/plans';
-import { TYPE_PERSONAL, isMonthly } from 'lib/plans/constants';
+import { TYPE_PERSONAL } from 'lib/plans/constants';
 import { getPlanRawPrice } from 'state/plans/selectors';
 /**
  * Return the list of purchases from state object
@@ -73,23 +72,14 @@ export const getSitePurchases = ( state, siteId ) =>
 
 /**
  * Returns a list of Purchases associated with a Site that may be expiring soon
- * or have expired recently but is still renewable.
+ * or have expired recently but are still renewable.
  *
  * @param {object} state      global state
  * @param {number} siteId     the site id
  * @returns {Array} the matching expiring purchases if there are some
  */
 export const getRenewableSitePurchases = createSelector(
-	( state, siteId ) =>
-		getSitePurchases( state, siteId ).filter( ( purchase ) => {
-			const expiryThresholdInDays = isMonthly( purchase.productSlug ) ? 30 : 90;
-			return (
-				! isPartnerPurchase( purchase ) &&
-				isRenewable( purchase ) &&
-				canExplicitRenew( purchase ) &&
-				moment( purchase.expiryDate ).diff( Date.now(), 'days' ) < expiryThresholdInDays
-			);
-		} ),
+	( state, siteId ) => getSitePurchases( state, siteId ).filter( needsToRenewSoon ),
 	( state, siteId ) => [ state.purchases.data, siteId ]
 );
 
