@@ -9,10 +9,11 @@
 	"port": 3000,
 	"rtl": false,
 	"login_url": "/connect",
-	"logout_url": "https://wordpress.com/wp-login.php?action=logout",
+	"logout_url": "/",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 68663,
 	"features": {
+		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
