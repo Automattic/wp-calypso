@@ -41,7 +41,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, ...pro
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker { ...props } />
+				<DomainPicker tracksName="DomainPickerPopover" { ...props } />
 			</Popover>
 		</div>
 	);
