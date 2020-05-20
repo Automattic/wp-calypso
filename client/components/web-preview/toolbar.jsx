@@ -16,7 +16,11 @@ import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { getCustomizerUrl } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -81,7 +85,9 @@ class PreviewToolbar extends Component {
 
 	render() {
 		const {
+			canUserEditThemeOptions,
 			device: currentDevice,
+			customizeUrl,
 			editUrl,
 			externalUrl,
 			isModalWindow,
@@ -95,7 +101,6 @@ class PreviewToolbar extends Component {
 			showSEO,
 			showEditHeaderLink,
 			translate,
-			siteSlug,
 		} = this.props;
 
 		const selectedDevice = this.devices[ currentDevice ];
@@ -134,12 +139,12 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				) }
-				{ showEditHeaderLink && (
+				{ showEditHeaderLink && canUserEditThemeOptions && (
 					<Button
 						borderless
 						aria-label={ translate( 'Edit header' ) }
 						className="web-preview__edit-header-link"
-						href={ '/customize/identity/' + siteSlug }
+						href={ customizeUrl }
 					>
 						{ translate( 'Edit header' ) }
 					</Button>
@@ -183,10 +188,15 @@ class PreviewToolbar extends Component {
 
 export default connect(
 	( state ) => {
-		const siteSlug = getSelectedSiteSlug( state );
+		const currentUser = getCurrentUser( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
+		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 
 		return {
-			siteSlug,
+			canUserEditThemeOptions,
+			customizeUrl: getCustomizerUrl( state, siteId ),
 		};
 	},
 	{ recordTracksEvent }
