@@ -10,7 +10,6 @@ import { combineReducers } from '@wordpress/data';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
-import type { DomainCategory } from '../../domains-constants';
 
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
@@ -38,7 +37,7 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const domainCategory: Reducer< DomainCategory | undefined, OnboardAction > = ( state, action ) => {
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}

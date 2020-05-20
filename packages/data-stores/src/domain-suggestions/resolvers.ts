@@ -6,8 +6,15 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { receiveDomainSuggestions } from './actions';
-import { wpcomRequest } from '../wpcom-request-controls';
+import { receiveCategories, receiveDomainSuggestions } from './actions';
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+
+export function* getCategories() {
+	const categories = yield fetchAndParse(
+		'https://public-api.wordpress.com/wpcom/v2/onboarding/domains/categories'
+	);
+	return receiveCategories( categories.body );
+}
 
 export function* __internalGetDomainSuggestions(
 	// Resolver has the same signature as corresponding selector without the initial state argument
