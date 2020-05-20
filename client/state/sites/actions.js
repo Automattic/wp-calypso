@@ -81,6 +81,7 @@ export function requestSites() {
 		dispatch( {
 			type: SITES_REQUEST,
 		} );
+		const siteFilter = config( 'site_filter' );
 
 		return wpcom
 			.me()
@@ -91,7 +92,7 @@ export function requestSites() {
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
-				filters: config( 'site_filter' ).join( ',' ),
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
 				dispatch( receiveSites( response.sites ) );
@@ -121,12 +122,12 @@ export function requestSite( siteFragment ) {
 			type: SITE_REQUEST,
 			siteId: siteFragment,
 		} );
-
+		const siteFilter = config( 'site_filter' );
 		return wpcom
 			.site( siteFragment )
 			.get( {
 				apiVersion: '1.2',
-				filters: config( 'site_filter' ).join( ',' ),
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
