@@ -126,6 +126,7 @@ export function requestSite( siteFragment ) {
 			.site( siteFragment )
 			.get( {
 				apiVersion: '1.2',
+				filters: config( 'site_filter' ).join( ',' ),
 			} )
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
