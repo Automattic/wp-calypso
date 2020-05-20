@@ -497,6 +497,14 @@ const sections = [
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'jetpack-cloud-auth',
+		paths: [ '/connect', '/connect/oauth/token' ],
+		module: 'landing/jetpack-cloud/sections/auth',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

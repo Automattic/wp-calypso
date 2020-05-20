@@ -313,15 +313,6 @@ if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
 }
 
-// Don't bundle `wpcom-xhr-request` for the browser.
-// Even though it's requested, we don't need it on the browser, because we're using
-// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
-if ( isCalypsoClient && ! isDesktop ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
-	);
-}
-
 if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
 	// Use "evergreen" polyfill config, rather than fallback.
 	webpackConfig.plugins.push(

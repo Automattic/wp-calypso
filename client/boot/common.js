@@ -121,6 +121,7 @@ const oauthTokenMiddleware = () => {
 			'/start',
 			'/authorize',
 			'/api/oauth/token',
+			'/connect',
 		];
 
 		// Forces OAuth users to the /login page if no token is present
@@ -130,7 +131,12 @@ const oauthTokenMiddleware = () => {
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				const isJetpackCloud = [
+					'jetpack-cloud-development',
+					'jetpack-cloud-stage',
+					'jetpack-cloud-production',
+				].includes( config( 'env_id' ) );
+				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
 				page( redirectPath );
 				return;
 			}
