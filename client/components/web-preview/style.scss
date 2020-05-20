@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .web-preview {
 	position: fixed;
 	top: 0;
@@ -53,7 +56,7 @@
 	transform: translateY( 80vh );
 	transition: transform 0.2s ease-out, opacity 0.1s ease-in-out;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		top: 24px;
 		left: 24px;
 		right: 24px;
@@ -76,7 +79,7 @@
 	color: var( --color-primary );
 	border-radius: 0;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		padding: 6px 32px;
 	}
 
@@ -92,7 +95,7 @@
 	border-left: 1px solid var( --color-neutral-5 );
 	border-radius: 0;
 
-	@include breakpoint( '>960px' ) {
+	@include break-large {
 		padding: 6px 32px;
 	}
 
@@ -118,7 +121,7 @@ a.web-preview__external.button {
 	display: flex;
 	justify-content: flex-end;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		// Matches __device-switcher width + margin
 		// and allows the center area to flex equally
 		min-width: 212px;
@@ -126,11 +129,12 @@ a.web-preview__external.button {
 }
 
 .web-preview__device-switcher {
-	display: flex;
-	margin: 6px 0 0 12px;
-	width: 200px;
-	@include breakpoint( '<660px' ) {
-		display: none;
+	display: none;
+
+	@include break-small {
+		display: flex;
+		margin: 6px 0 0 12px;
+		width: 200px;
 	}
 }
 
@@ -170,7 +174,7 @@ a.web-preview__external.button {
 		color: var( --color-neutral-70 );
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@media ( max-width: $break-small ) {
 		display: none;
 	}
 }
@@ -196,10 +200,10 @@ a.web-preview__external.button {
 }
 
 .web-preview__back-to-preview-button {
-	display: none;
+	display: block;
 
-	@include breakpoint-deprecated( '<660px' ) {
-		display: block;
+	@include break-small {
+		display: none;
 	}
 }
 
