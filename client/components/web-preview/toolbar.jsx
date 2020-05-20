@@ -40,6 +40,8 @@ class PreviewToolbar extends Component {
 		showEdit: PropTypes.bool,
 		// Show edit the header link button
 		showEditHeaderLink: PropTypes.bool,
+		// The URL for the selected site's customizer
+		customizeUrl: PropTypes.string,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
@@ -52,6 +54,8 @@ class PreviewToolbar extends Component {
 		onClose: PropTypes.func.isRequired,
 		// Called when the edit button is clicked
 		onEdit: PropTypes.func,
+		// Whether or not the current user has access to the customizer
+		canUserEditThemeOptions: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,6 +74,12 @@ class PreviewToolbar extends Component {
 	handleEditorWebPreviewEdit = () => {
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_click' );
 		this.props.onEdit();
+	};
+
+	handleEditorWebPreviewEditHeader = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
+		window.location.href = this.props.customizeUrl;
 	};
 
 	constructor( props ) {
@@ -145,6 +155,7 @@ class PreviewToolbar extends Component {
 						aria-label={ translate( 'Edit header' ) }
 						className="web-preview__edit-header-link"
 						href={ customizeUrl }
+						onClick={ this.handleEditorWebPreviewEditHeader }
 					>
 						{ translate( 'Edit header' ) }
 					</Button>
