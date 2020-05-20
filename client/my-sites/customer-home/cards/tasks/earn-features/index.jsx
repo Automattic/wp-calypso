@@ -8,10 +8,10 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from 'my-sites/customer-home/cards/tasks/task';
-import { TASK_WEBINARS } from 'my-sites/customer-home/cards/constants';
+import { TASK_EARN_FEATURES } from 'my-sites/customer-home/cards/constants';
 import webinarsIllustration from 'assets/images/customer-home/illustration-webinars.svg';
 
-const Webinars = () => {
+const EarnFeatures = () => {
 	const translate = useTranslate();
 
 	return (
@@ -19,7 +19,7 @@ const Webinars = () => {
 			title={ translate( 'EARN FEATURES' ) }
 			description={ translate( 'A whole bunch of stuff about how Earn is cool.' ) }
 			actionText={ translate( 'Register for free' ) }
-			actionUrl="https://wordpress.com/webinars/"
+			actionUrl="https://wordpress.com/earn/"
 			actionTarget="_blank"
 			completeOnStart={ true }
 			illustration={ webinarsIllustration }
