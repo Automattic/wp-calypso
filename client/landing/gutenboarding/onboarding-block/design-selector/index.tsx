@@ -51,6 +51,7 @@ const DesignSelector: React.FunctionComponent = () => {
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
+		is_selected_design_premium: !! getSelectedDesign()?.premium,
 	} ) );
 
 	return (
