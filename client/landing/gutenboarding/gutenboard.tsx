@@ -21,6 +21,7 @@ import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
+import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 
 registerBlockType( name, settings );
 
@@ -28,6 +29,7 @@ export function Gutenboard() {
 	const { __ } = useI18n();
 
 	useOnSiteCreation();
+	usePageViewTracksEvents();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
