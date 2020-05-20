@@ -17,6 +17,8 @@ import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
 import {
+	recordEnterModal,
+	recordCloseModal,
 	recordTrainTracksEvent,
 	getNewRailcarId,
 	RecordTrainTracksEventProps,
@@ -131,6 +133,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onClose={ handlePopoverClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
+				onModalUnmount={ recordCloseModal }
+				onModalOpen={ recordEnterModal }
 			/>
 			<DomainPickerModal
 				analyticsFlowId={ FLOW_ID }
@@ -150,6 +154,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onCancel={ handleModalCancel }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
+				onModalUnmount={ recordCloseModal }
+				onModalOpen={ recordEnterModal }
 			/>
 		</>
 	);

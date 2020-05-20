@@ -31,6 +31,7 @@ const PAID_DOMAINS_TO_SHOW = 5;
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type DomainCategory = DomainSuggestions.DomainCategory;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -76,16 +77,16 @@ export interface Props {
 	onSetDomainSearch: ( query: string ) => void;
 
 	/** The domain category */
-	domainCategory: string | undefined;
+	domainCategory: DomainCategory | undefined;
 
 	/** Called when the domain category is set */
 	onSetDomainCategory: ( category ) => void;
 
 	/** Called when the modal is opened. Can be used for analytics */
-	onModalOpen: () => void;
+	onModalOpen: ( modalName: string ) => void;
 
 	/** Called when the modal is closed or unmounted in any way. Can be used for analytics */
-	onModalUnmount: () => void;
+	onModalUnmount: () => ( modalName: string, eventProps? ) => void;
 
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
@@ -96,7 +97,7 @@ export interface Props {
 	/** The flow where the Domain Picker is used. Eg Gutenboarding */
 	analyticsFlowId: string;
 
-	domainCategories: string[];
+	domainCategories: DomainCategory[];
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
