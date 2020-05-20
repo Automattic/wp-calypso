@@ -181,11 +181,13 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteSlug = getSelectedSiteSlug( state );
+export default connect(
+	( state ) => {
+		const siteSlug = getSelectedSiteSlug( state );
 
-	return {
-		siteSlug,
-		recordTracksEvent,
-	};
-} )( localize( PreviewToolbar ) );
+		return {
+			siteSlug,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( PreviewToolbar ) );
