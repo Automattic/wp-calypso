@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { capitalize, get } from 'lodash';
+import { capitalize, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -37,6 +37,10 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import SecurityKeyForm from './two-factor-authentication/security-key-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
@@ -380,18 +384,42 @@ class Login extends Component {
 			locale,
 		} = this.props;
 
-		if ( twoFactorEnabled ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
 			return (
-				<AsyncLoad
-					require="blocks/login/two-factor-authentication/two-factor-content"
-					isBrowserSupported={ this.state.isBrowserSupported }
-					isJetpack={ isJetpack }
-					isGutenboarding={ isGutenboarding }
-					twoFactorAuthType={ twoFactorAuthType }
-					twoFactorNotificationSent={ twoFactorNotificationSent }
-					handleValid2FACode={ this.handleValid2FACode }
-					rebootAfterLogin={ this.rebootAfterLogin }
-				/>
+				<div>
+					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ this.handleValid2FACode } />
+				</div>
+			);
+		}
+
+		let poller;
+		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
+			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
+		}
+
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+			return (
+				<div>
+					{ poller }
+					<VerificationCodeForm
+						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
+						onSuccess={ this.handleValid2FACode }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
+				</div>
+			);
+		}
+
+		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
+			return (
+				<div>
+					{ poller }
+					<WaitingTwoFactorNotificationApproval
+						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
+					/>
+				</div>
 			);
 		}
 
