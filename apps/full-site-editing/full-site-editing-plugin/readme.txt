@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 1.4
+Stable tag: 1.5
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,13 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.5 =
+* Global Styles: Fix a "Bad array access" error.
+* Remove default link colors from the editor (fixed in Gutenberg v8.1.0).
+* Add contextual tips to the Block Inserter Menu.
+* Add Premium Content Block success message on plan creation.
+* Rename Posts Carousel Block to Post Carousel Block.
 
 = 1.4 =
 * Update Premium Block Style and Behaviour
