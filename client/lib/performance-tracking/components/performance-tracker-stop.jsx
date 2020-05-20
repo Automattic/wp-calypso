@@ -3,7 +3,7 @@
  */
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { stopAndSend } from '@automattic/browser-data-collector';
+import { stop } from '@automattic/browser-data-collector';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import config from 'config';
 const PerformanceTrackerStop = ( { id } ) => {
 	useEffect( () => {
 		if ( config.isEnabled( 'rum-tracking/logstash' ) ) {
-			stopAndSend( id );
+			stop( id );
 		}
 	} );
 
