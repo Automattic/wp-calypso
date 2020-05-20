@@ -101,6 +101,16 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, useOwnDomain, this.explicitWaitMS );
 	}
 
+	async skipSuggestion() {
+		// currently used in 'launch-site' and 'new-launch' signup flows
+		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			skipSuggestion,
+			this.explicitWaitMS
+		);
+	}
+
 	async declineGoogleApps() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
