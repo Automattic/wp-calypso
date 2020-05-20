@@ -26,6 +26,21 @@ const INITIAL_FORM_STATE = {
 	kpri: '',
 };
 
+function mergeFormWithCredentials( form, credentials, siteSlug ) {
+	const newForm = Object.assign( {}, form );
+	// Replace empty fields with what comes from the rewind state
+	if ( credentials ) {
+		newForm.protocol = credentials.type || newForm.protocol;
+		newForm.host = credentials.host || newForm.host;
+		newForm.port = credentials.port || newForm.port;
+		newForm.user = credentials.user || newForm.user;
+		newForm.path = credentials.path || newForm.path;
+	}
+	// Populate the host field with the site slug if needed
+	newForm.host = isEmpty( newForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : newForm.host;
+	return newForm;
+}
+
 function withServerCredentialsForm( WrappedComponent ) {
 	const ServerCredentialsFormClass = class ServerCredentialsForm extends Component {
 		static propTypes = {
@@ -47,19 +62,8 @@ function withServerCredentialsForm( WrappedComponent ) {
 			const credentials = find( rewindState.credentials, { role: role } );
 			const form = Object.assign( {}, INITIAL_FORM_STATE );
 
-			// Populate the fields with data from state if credentials are already saved
-			if ( credentials ) {
-				form.protocol = credentials.type || form.protocol;
-				form.host = credentials.host || form.host;
-				form.port = credentials.port || form.port;
-				form.user = credentials.user || form.user;
-				form.path = credentials.path || form.path;
-			}
-			// Populate the host field with the site slug if needed
-			form.host = isEmpty( form.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : form.host;
-
 			this.state = {
-				form: form,
+				form: mergeFormWithCredentials( form, credentials, siteSlug ),
 				formErrors: {
 					host: false,
 					port: false,
@@ -135,20 +139,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 				{},
 				siteHasChanged ? { ...INITIAL_FORM_STATE } : this.state.form
 			);
-
-			// Replace empty fields with what comes from the rewind state
-			if ( credentials ) {
-				nextForm.protocol = isEmpty( nextForm.protocol ) ? credentials.type : nextForm.protocol;
-				nextForm.host = isEmpty( nextForm.host ) ? credentials.host : nextForm.host;
-				nextForm.port = isEmpty( nextForm.port ) ? credentials.port : nextForm.port;
-				nextForm.user = isEmpty( nextForm.user ) ? credentials.user : nextForm.user;
-				nextForm.path = isEmpty( nextForm.path ) ? credentials.path : nextForm.path;
-				// Populate the host field with the site slug if needed
-			}
-			nextForm.host =
-				isEmpty( nextForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : nextForm.host;
-
-			this.setState( { form: nextForm } );
+			this.setState( { form: mergeFormWithCredentials( nextForm, credentials, siteSlug ) } );
 		}
 
 		render() {
