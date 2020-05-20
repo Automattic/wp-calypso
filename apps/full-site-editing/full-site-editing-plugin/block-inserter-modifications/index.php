@@ -28,7 +28,7 @@ function enqueue_script( $filename, $in_footer = false ) {
 		);
 	}
 
-	$asset = require_once $asset_path;
+	$asset = require $asset_path;
 
 	wp_enqueue_script(
 		$filename,
@@ -42,7 +42,7 @@ function enqueue_script( $filename, $in_footer = false ) {
 /**
  * Enqueues a submodule style by its filename.
  *
- * @param string  $filename  Name of the style file w/o extension.
+ * @param string $filename  Name of the style file w/o extension.
  */
 function enqueue_style( $filename ) {
 	$style_file = is_rtl()
