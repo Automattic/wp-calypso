@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
@@ -52,7 +53,9 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, skippable } ) 
 			<div className="site-title__input-wrapper">
 				<TextControl
 					id="site-title__input"
-					className="site-title__input"
+					className={ classnames( 'site-title__input', {
+						'site-title__input--with-value': ! skippable,
+					} ) }
 					onChange={ setSiteTitle }
 					onBlur={ handleBlur }
 					value={ siteTitle }
