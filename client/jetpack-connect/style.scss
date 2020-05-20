@@ -682,39 +682,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.plans-skip-button {
 		margin-bottom: 32px;
 	}
-
-	&.is-offer-reset-test {
-		.plan-features__table {
-			max-width: none;
-		}
-
-		.plan-features__item {
-			margin: 0 24px;
-		}
-
-		.plan-features__item:last-child {
-			margin: 0 24px 12px;
-		}
-
-		.plan-features--signup .plan-features__actions {
-			padding: 0 24px 15px;
-		}
-
-		.plan-features__pricing {
-			margin-left: 24px;
-			margin-right: 24px;
-			padding: 0;
-		}
-
-		.foldable-card .foldable-card__header {
-			padding-left: 24px;
-			padding-right: 24px;
-		}
-
-		.foldable-card .foldable-card__action {
-			right: 12px;
-		}
-	}
 }
 
 .jetpack-connect__plans.placeholder {
