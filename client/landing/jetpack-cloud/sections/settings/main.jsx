@@ -69,7 +69,7 @@ class SettingsPage extends Component {
 	logOut() {
 		// Clears everything user related on the client site by
 		// calling user.clear() which calls store.clearAll();
-		userUtilities.logout( 'https://jetpack.com/' );
+		userUtilities.logout();
 		// @todo: track event (what type?)
 	}
 
