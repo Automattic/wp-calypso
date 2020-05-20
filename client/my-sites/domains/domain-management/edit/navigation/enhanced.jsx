@@ -476,6 +476,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			}
 		} else if ( domainTypes.MAPPED === domainType ) {
 			title = translate( 'Delete domain mapping' );
+		} else if ( domainTypes.SITE_REDIRECT === domainType ) {
+			title = translate( 'Delete site redirect' );
 		} else {
 			title = translate( 'Delete your domain permanently' );
 		}
@@ -538,7 +540,12 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	renderSiteRedirectNavigation() {
-		return <React.Fragment>{ this.getRedirectSettings() }</React.Fragment>;
+		return (
+			<React.Fragment>
+				{ this.getRedirectSettings() }
+				{ this.getDeleteDomain() }
+			</React.Fragment>
+		);
 	}
 
 	renderMappedDomainNavigation() {
