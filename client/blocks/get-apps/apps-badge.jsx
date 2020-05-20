@@ -44,7 +44,7 @@ const APP_STORE_BADGE_URLS = {
 			'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		storeLink: ( referrer ) =>
-			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ referrer }%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages`,
+			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ referrer }%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download`,
 		titleText: ( translate ) => translate( 'Download the WordPress Android mobile app.' ),
 		altText: ( translate ) => translate( 'Google Play Store download badge' ),
 		getLocaleSlug,
