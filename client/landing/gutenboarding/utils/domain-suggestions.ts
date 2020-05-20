@@ -16,10 +16,10 @@ export function getRecommendedDomainSuggestion( allSuggestions: DomainSuggestion
 		return;
 	}
 	const recommendedSuggestion = allSuggestions?.reduce( ( result, suggestion ) => {
-		if ( result.match_reasons?.includes( 'exact-match' ) ) {
+		if ( result.match_reasons?.indexOf( 'exact-match' ) > -1 ) {
 			return result;
 		}
-		if ( suggestion.match_reasons?.includes( 'exact-match' ) ) {
+		if ( suggestion.match_reasons?.indexOf( 'exact-match' ) > -1 ) {
 			return suggestion;
 		}
 		if ( suggestion.relevance > result.relevance ) {

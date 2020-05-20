@@ -54,6 +54,9 @@ export interface Props {
 
 	onMoreOptions?: () => void;
 
+	// TODO: How to use analytics type here?
+	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// @ts-ignore
 	recordAnalytics?: ( event ) => void;
 
 	/**
@@ -77,15 +80,18 @@ export interface Props {
 	onSetDomainSearch: ( query: string ) => void;
 
 	/** The domain category */
-	domainCategory: DomainCategory | undefined;
+	domainCategory: string | undefined;
 
 	/** Called when the domain category is set */
-	onSetDomainCategory: ( category ) => void;
+	onSetDomainCategory: ( category?: string ) => void;
 
 	/** Called when the modal is opened. Can be used for analytics */
 	onModalOpen: ( modalName: string ) => void;
 
 	/** Called when the modal is closed or unmounted in any way. Can be used for analytics */
+	// TODO: How to use analytics type here?
+	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// @ts-ignore
 	onModalUnmount: () => ( modalName: string, eventProps? ) => void;
 
 	/** The search results */

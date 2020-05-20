@@ -12,9 +12,12 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 /**
  * Internal dependencies
  */
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
+// import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
-const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
+// const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
+
+// TODO: Fix this.
+const DOMAIN_SUGGESTION_VENDOR = 'variation4_front';
 
 interface Props {
 	suggestion: DomainSuggestion;
@@ -22,6 +25,9 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
+	// TODO: How to use analytics type here?
+	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// @ts-ignore
 	recordAnalytics?: ( event ) => void;
 	uiPosition: number;
 	domainSearch: string;
