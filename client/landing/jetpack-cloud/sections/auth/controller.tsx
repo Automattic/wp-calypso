@@ -24,12 +24,12 @@ const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
-		const protocol = config( 'protocol' );
-		const host = config( 'hostname' );
-		const port = config( 'port' );
+		const protocol = window.location.protocol || `${ config( 'protocol' ) }:`;
+		const host = window.location.hostname || config( 'hostname' );
+		const port = window.location.port || config( 'port' );
 		const redirectUri = port
-			? `${ protocol }://${ host }:${ port }${ authTokenRedirectPath() }`
-			: `${ protocol }://${ host }${ authTokenRedirectPath() }`;
+			? `${ protocol }//${ host }:${ port }${ authTokenRedirectPath() }`
+			: `${ protocol }//${ host }${ authTokenRedirectPath() }`;
 
 		const params = {
 			response_type: 'token',
@@ -38,8 +38,9 @@ export const connect: PageJS.Callback = ( context, next ) => {
 			scope: 'global',
 		};
 
-		// page.redirect( `${ WP_AUTHORIZE_ENDPOINT  }?${ stringify( params ) }` );
-		context.primary = <Connect authUrl={ `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }` } />;
+		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
+		debug( `authUrl: ${ authUrl }` );
+		context.primary = <Connect authUrl={ authUrl } />;
 	} else {
 		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
 	}
