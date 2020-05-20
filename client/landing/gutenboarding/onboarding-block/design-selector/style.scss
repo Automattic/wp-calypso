@@ -74,6 +74,10 @@
 			row-gap: 48px;
 			margin: 0 0 30px;
 
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
+			}
+
 			@include break-large {
 				grid-template-columns: 1fr 1fr 1fr;
 			}
