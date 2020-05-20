@@ -186,7 +186,7 @@ class MasterbarLoggedIn extends React.Component {
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
-				<AsyncLoad require="my-sites/resume-editing" />
+				<AsyncLoad require="my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
 					<Publish
 						isActive={ this.isActive( 'post' ) }
