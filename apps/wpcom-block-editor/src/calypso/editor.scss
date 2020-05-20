@@ -3,18 +3,3 @@
 // Temporary load this here too to get it work on Atomic sites at least via Calypso
 // Will be moved to wpcom folder unless fixed otherwise
 @import './features/legacy-preview-button';
-
-// just temporarily adding here as this css file is already enqued
-.interface-interface-skeleton__sidebar.show-classic-editor-notice > div {
-    height: calc( 100% - 225px );
-}
-
-.edit-post-switch-to-classic-notice {
-    background-color: #f0f1f2;
-    height: 100%;
-    padding: 0;
-    width: 280px;
-    &__content {
-        padding: 32px;
-    }
-}
