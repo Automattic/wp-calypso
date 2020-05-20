@@ -157,10 +157,19 @@ class BackupsPage extends Component {
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 		const isToday = today.isSame( this.getSelectedDate(), 'day' );
+		const isBackupDaily = includes( siteCapabilities, 'backup-daily' );
+
+		let title = '';
+
+		if ( isBackupDaily ) {
+			title = translate( 'Daily Backups' );
+		} else if ( hasRealtimeBackups ) {
+			title = translate( 'Real-time Backups' );
+		}
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Latest backups' ) } />
+				<DocumentHead title={ title } />
 				<SidebarNavigation />
 				<PageViewTracker path="/backups/:site" title="Backups" />
 
