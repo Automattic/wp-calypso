@@ -120,7 +120,7 @@ references:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
@@ -231,6 +231,7 @@ jobs:
           name: Lint yarn.lock
           when: always
           command: |
+            yarn
             DIRTY_FILES=$(git status --porcelain 2>/dev/null)
             if [[ ! -z "$DIRTY_FILES" ]]; then
               echo "Repository contains uncommitted changes: "
