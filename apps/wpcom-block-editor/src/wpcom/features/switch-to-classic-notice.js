@@ -8,6 +8,10 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import url from 'url';
 /* eslint-enable import/no-extraneous-dependencies */
 
+const parsedEditorUrl = url.parse( window.location.href, true );
+
+const classicEditorUrl = `${ parsedEditorUrl.protocol }//${ parsedEditorUrl.hostname }${ parsedEditorUrl.pathname }?post=${ parsedEditorUrl.query.post }&action=${ parsedEditorUrl.query.action }&set-editor=classic`;
+
 const PluginDocumentSettingPanelDemo = () => (
 	<PluginDocumentSettingPanel
 		name="switch-to-classic"
@@ -15,14 +19,19 @@ const PluginDocumentSettingPanelDemo = () => (
 		className="features__switch-to-classic"
 	>
 		<h2>{ __( 'You are using the most modern WordPress editor yet.' ) }</h2>
-		<p>{ __( "If you'd prefer you canswitch back to the Classic Editor" ) } </p>
+		<p>
+			If you'd prefer you can switch back to the{ ' ' }
+			<a target="_top" href={ classicEditorUrl }>
+				Classic Editor
+			</a>{ ' ' }
+		</p>
 	</PluginDocumentSettingPanel>
 );
 
-const parsedEditorUrl = url.parse( window.location.href, true );
-// just temporarily using the 'action' query param - we need to pass through a custom query param
-// to identify group to show this option to as outlined in https://github.com/Automattic/wp-calypso/issues/41087.
-if ( parsedEditorUrl.query.action ) {
+// Need to replace this check with one that checks for a classicEditorUrl.query param - we need to pass through a
+// a custom query param from calyps to identify group to show this option to as outlined in
+// https://github.com/Automattic/wp-calypso/issues/41087.
+if ( 1 === 1 ) {
 	registerPlugin( 'plugin-document-setting-panel-demo', {
 		render: PluginDocumentSettingPanelDemo,
 		icon: null,
