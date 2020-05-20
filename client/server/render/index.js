@@ -145,9 +145,9 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
-		cachedLanguageManifest[ key ] = JSON.parse(
-			fs.readFileSync( languageManifestFilepath, 'utf8' )
-		);
+		cachedLanguageManifest[ key ] = fs.existsSync( languageManifestFilepath )
+			? JSON.parse( fs.readFileSync( languageManifestFilepath, 'utf8' ) )
+			: null;
 	}
 	return cachedLanguageManifest[ key ];
 };
@@ -162,28 +162,30 @@ export function attachI18n( context ) {
 	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
-			localeSlug: context.lang,
-			fileType: 'js',
-			targetBuild: context.target,
-			hash: context?.languageRevisions?.hashes?.[ context.lang ],
-		} );
+		const languageManifest = getLanguageManifest( context.lang, context.target );
 
-		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
+		if ( languageManifest ) {
+			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
+				localeSlug: context.lang,
+				fileType: 'js',
+				targetBuild: context.target,
+				hash: context?.languageRevisions?.hashes?.[ context.lang ],
+			} );
 
-		context.entrypoint.language.translations = context.entrypoint.js
-			.concat( context.chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name )
-			.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
-			.map( ( chunkId ) =>
-				getTranslationChunkFileUrl( {
-					chunkId,
-					localeSlug: context.lang,
-					fileType: 'js',
-					targetBuild: context.target,
-					hash: context?.languageRevisions?.[ context.lang ],
-				} )
-			);
+			context.entrypoint.language.translations = context.entrypoint.js
+				.concat( context.chunkFiles.js )
+				.map( ( chunk ) => path.parse( chunk ).name )
+				.filter( ( chunkId ) => languageManifest.translatedChunks.includes( chunkId ) )
+				.map( ( chunkId ) =>
+					getTranslationChunkFileUrl( {
+						chunkId,
+						localeSlug: context.lang,
+						fileType: 'js',
+						targetBuild: context.target,
+						hash: context?.languageRevisions?.[ context.lang ],
+					} )
+				);
+		}
 	}
 
 	if ( context.store ) {
