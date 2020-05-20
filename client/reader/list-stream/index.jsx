@@ -61,16 +61,11 @@ class ListStream extends React.Component {
 	render() {
 		const list = this.props.list,
 			shouldShowFollow = list && ! list.is_owner,
-			shouldShowEdit = ! shouldShowFollow,
 			emptyContent = <EmptyContent />,
 			listStreamIconClasses = 'gridicon gridicon__list';
 
-		let editUrl = null;
-
 		if ( list ) {
 			this.title = list.title;
-
-			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
 		}
 
 		if ( this.props.isMissing ) {
@@ -117,8 +112,6 @@ class ListStream extends React.Component {
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ shouldShowEdit }
-					editUrl={ editUrl }
 				/>
 			</Stream>
 		);
