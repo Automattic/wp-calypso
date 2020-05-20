@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { numberFormat, translate } from 'i18n-calypso';
 
 /**
@@ -90,47 +90,48 @@ export const getJetpackProductsShortNames = () => {
 };
 
 export const getJetpackProductsDisplayNames = () => {
+	const backupDaily = (
+		<>
+			{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
+	const backupRealtime = (
+		<>
+			{ ' ' }
+			{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
+	const search = translate( 'Jetpack Search' );
+
+	const scanDaily = (
+		<>
+			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Jetpack Search' ),
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Jetpack Search' ),
-		[ PRODUCT_JETPACK_SCAN ]: translate( 'Jetpack Scan' ),
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Jetpack Scan' ),
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
+		[ PRODUCT_JETPACK_SEARCH ]: search,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_SCAN ]: scanDaily,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
 	};
 };
 

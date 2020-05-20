@@ -64,7 +64,7 @@ const analyticsPageTitleByType = {
 	realtimebackup: 'Jetpack Realtime Backup',
 	backup: 'Jetpack Daily Backup',
 	jetpack_search: 'Jetpack Search',
-	scan: 'Jetpack Scan',
+	scan: 'Jetpack Scan Daily',
 };
 
 const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
