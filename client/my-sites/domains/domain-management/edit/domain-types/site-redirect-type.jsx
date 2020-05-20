@@ -18,13 +18,11 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'state/purchases/selectors';
-import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
 
@@ -102,18 +100,6 @@ class SiteRedirectType extends React.Component {
 		return this.renderAutoRenewToggle();
 	}
 
-	planUpsellForNonPrimaryDomain() {
-		const { domain } = this.props;
-
-		return (
-			<NonPrimaryDomainPlanUpsell
-				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
-				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
-				domain={ domain }
-			/>
-		);
-	}
-
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
@@ -125,14 +111,10 @@ class SiteRedirectType extends React.Component {
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
 
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				{ this.planUpsellForNonPrimaryDomain() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
@@ -167,21 +149,12 @@ class SiteRedirectType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}
