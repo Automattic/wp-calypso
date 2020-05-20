@@ -191,7 +191,6 @@ class PreviewMain extends React.Component {
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
-					showEditHeaderLink={ false }
 					onClose={ this.focusSidebar }
 					showEdit={ this.showEditButton() }
 					editUrl={ this.state.editUrl }
