@@ -92,8 +92,11 @@
 	padding: 6px 16px;
 	line-height: 34px;
 	color: var( --color-primary );
-	border-left: 1px solid var( --color-neutral-5 );
 	border-radius: 0;
+
+	@include break-small {
+		border-left: 1px solid var( --color-neutral-5 );
+	}
 
 	@include break-large {
 		padding: 6px 32px;
@@ -133,8 +136,7 @@ a.web-preview__external.button {
 
 	@include break-small {
 		display: flex;
-		margin: 6px 0 0 12px;
-		width: 200px;
+		margin: 6px 12px 0;
 	}
 }
 
