@@ -14,7 +14,7 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps {
+interface Props extends Omit< DomainPickerProps, 'tracksName' > {
 	isOpen: boolean;
 	onMoreOptions?: () => void;
 }
@@ -39,7 +39,13 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props
 			overlayClassName="domain-picker-modal-overlay"
 			bodyOpenClassName="has-domain-picker-modal"
 		>
-			<DomainPicker showDomainConnectButton showDomainCategories quantity={ 10 } { ...props } />
+			<DomainPicker
+				tracksName="DomainPickerModal"
+				showDomainConnectButton
+				showDomainCategories
+				quantity={ 10 }
+				{ ...props }
+			/>
 		</Modal>
 	);
 };
