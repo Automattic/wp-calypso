@@ -2,27 +2,31 @@
  * External dependencies
  */
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { stop } from '@automattic/browser-data-collector';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { getSectionName } from 'state/ui/selectors';
 
-const PerformanceTrackerStop = ( { id } ) => {
+const PerformanceTrackerStop = ( { sectionName } ) => {
 	useEffect( () => {
 		if ( config.isEnabled( 'rum-tracking/logstash' ) ) {
-			stop( id );
+			stop( sectionName );
 		}
-	} );
+	}, [ sectionName ] );
 
 	// Nothing to render, this component is all about side effects
 	return null;
 };
 
-PerformanceTrackerStop.propTypes = {
-	id: PropTypes.string.isRequired,
+const mapStateToProps = ( state ) => {
+	const sectionName = getSectionName( state );
+	return {
+		sectionName,
+	};
 };
 
-export default PerformanceTrackerStop;
+export default connect( mapStateToProps )( PerformanceTrackerStop );

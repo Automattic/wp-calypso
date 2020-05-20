@@ -183,7 +183,7 @@ export class PlanFeatures extends Component {
 								</tbody>
 							</table>
 						</PlanFeaturesScroller>
-						<PerformanceTrackerStop id={ 'plans' } />
+						<PerformanceTrackerStop />
 					</div>
 				</div>
 			</div>

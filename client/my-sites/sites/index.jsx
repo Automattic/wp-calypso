@@ -132,7 +132,7 @@ class Sites extends Component {
 						groups
 					/>
 				</Card>
-				<PerformanceTrackerStop id={ 'sites' } />
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	}

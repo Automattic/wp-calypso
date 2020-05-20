@@ -130,7 +130,7 @@ class StatModuleChartTabs extends Component {
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
 				/>
-				<PerformanceTrackerStop id={ 'stats' } />
+				<PerformanceTrackerStop />
 			</Card>
 		);
 	}
