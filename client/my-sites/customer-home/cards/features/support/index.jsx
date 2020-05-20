@@ -48,9 +48,15 @@ const Support = ( props ) => {
 	const { searchQuery } = props;
 
 	const openResultView = ( event, selectedResult ) => {
+		event.preventDefault();
+
+		// Edge case if no search result is selected
+		if ( ! selectedResult ) {
+			return;
+		}
+
 		const { post_id, link } = selectedResult;
 
-		event.preventDefault();
 		props.openSupportArticleDialog( { postId: post_id, actionUrl: link } );
 	};
 
