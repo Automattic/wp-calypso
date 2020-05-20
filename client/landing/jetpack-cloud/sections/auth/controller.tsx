@@ -24,9 +24,9 @@ const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
-		const protocol = window.location.protocol || `${ config( 'protocol' ) }:`;
-		const host = window.location.hostname || config( 'hostname' );
-		const port = window.location.port || config( 'port' );
+		const protocol = window.location.protocol;
+		const host = window.location.hostname;
+		const port = window.location.port;
 		const redirectUri = port
 			? `${ protocol }//${ host }:${ port }${ authTokenRedirectPath() }`
 			: `${ protocol }//${ host }${ authTokenRedirectPath() }`;
