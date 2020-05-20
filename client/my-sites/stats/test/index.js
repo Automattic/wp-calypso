@@ -19,9 +19,6 @@ jest.mock( 'controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
 } ) );
-jest.mock( 'lib/performance-tracking', () => ( {
-	trackNavigationStart: jest.fn(),
-} ) );
 
 import page from 'page';
 
@@ -33,12 +30,9 @@ import statsController from '../controller';
 import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
-import { trackNavigationStart } from 'lib/performance-tracking';
 
 import router from '../index';
 
-// Return the same tag so we can make assertions in the tets
-trackNavigationStart.mockImplementation( ( tag ) => tag );
 config.isEnabled.mockImplementation( ( flag ) => flag === 'manage/stats' );
 
 const validModules = [
@@ -56,57 +50,20 @@ const validModules = [
 const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
 const routes = {
-	'/stats/day': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.overview,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/week': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.overview,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/month': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.overview,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/year': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.overview,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/insights': [ 'stats', siteSelection, navigation, sites, makeLayout, clientRender ],
+	'/stats/day': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
+	'/stats/week': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
+	'/stats/month': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
+	'/stats/year': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
+	'/stats/insights': [ siteSelection, navigation, sites, makeLayout, clientRender ],
 	'/stats/insights/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.insights,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/day/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
+	'/stats/day/:site': [ siteSelection, navigation, statsController.site, makeLayout, clientRender ],
 	'/stats/week/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.site,
@@ -114,7 +71,6 @@ const routes = {
 		clientRender,
 	],
 	'/stats/month/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.site,
@@ -122,7 +78,6 @@ const routes = {
 		clientRender,
 	],
 	'/stats/year/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.site,
@@ -133,7 +88,6 @@ const routes = {
 		statsController.redirectToDefaultModulePage,
 	],
 	[ `/stats/day/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.summary,
@@ -141,7 +95,6 @@ const routes = {
 		clientRender,
 	],
 	[ `/stats/week/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.summary,
@@ -149,7 +102,6 @@ const routes = {
 		clientRender,
 	],
 	[ `/stats/month/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.summary,
@@ -157,7 +109,6 @@ const routes = {
 		clientRender,
 	],
 	[ `/stats/year/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.summary,
@@ -165,7 +116,6 @@ const routes = {
 		clientRender,
 	],
 	'/stats/post/:post_id/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.post,
@@ -174,7 +124,6 @@ const routes = {
 	],
 
 	'/stats/page/:post_id/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.post,
@@ -182,7 +131,6 @@ const routes = {
 		clientRender,
 	],
 	'/stats/follows/comment/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.follows,
@@ -190,16 +138,14 @@ const routes = {
 		clientRender,
 	],
 	'/stats/follows/comment/:page_num/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.follows,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/activity': [ 'stats', siteSelection, sites, redirectToAcivity, makeLayout, clientRender ],
+	'/stats/activity': [ siteSelection, sites, redirectToAcivity, makeLayout, clientRender ],
 	'/stats/activity/:site': [
-		'stats',
 		siteSelection,
 		navigation,
 		redirectToAcivity,
@@ -207,7 +153,6 @@ const routes = {
 		clientRender,
 	],
 	[ `/stats/ads/:period(${ validPeriods.join( '|' ) })/:site` ]: [
-		'stats',
 		siteSelection,
 		navigation,
 		statsController.wordAds,

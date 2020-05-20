@@ -16,6 +16,7 @@ import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
+import { navigationStartMiddleware } from 'lib/performance-tracking';
 
 import sections from './sections';
 receiveSections( sections );
@@ -69,6 +70,10 @@ function createPageDefinition( path, sectionDefinition ) {
 	if ( ! sectionDefinition.enableLoggedOut ) {
 		page( pathRegex, controller.redirectLoggedOut );
 	}
+
+	// Install navigation performance tracking. Unless the page has a component with the
+	// `usePerformanceTrackerStop` hook, this doesn't track anything by itself
+	page( pathRegex, navigationStartMiddleware( sectionDefinition.name ) );
 
 	page( pathRegex, async function ( context, next ) {
 		try {
