@@ -9,7 +9,12 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-const Badge: React.FunctionComponent = ( { children, className, ...props } ) => (
+interface Props {
+	children: React.ReactElement;
+	className?: string;
+}
+
+const Badge: React.FunctionComponent< Props > = ( { children, className, ...props } ) => (
 	<span { ...props } className={ classNames( 'badge', className ) }>
 		{ children }
 	</span>
