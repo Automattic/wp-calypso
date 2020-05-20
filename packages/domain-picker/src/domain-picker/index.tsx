@@ -18,10 +18,10 @@ import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
-} from './utils/domain-suggestions';
-import { useTrackModal } from './hooks/use-track-modal';
-import DomainCategories from './domain-categories';
-import CloseButton from './close-button';
+} from '../utils/domain-suggestions';
+import { useTrackModal } from '../hooks/use-track-modal';
+import DomainCategories from '../domain-categories';
+import CloseButton from '../close-button';
 
 const PAID_DOMAINS_TO_SHOW = 5;
 
