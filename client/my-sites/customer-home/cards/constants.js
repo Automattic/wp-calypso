@@ -20,3 +20,4 @@ export const TASK_GO_MOBILE_IOS = 'home-task-go-mobile-ios';
 export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_WEBINARS = 'home-task-webinars';
 export const TASK_EDITOR_DEPRECATION = 'home-task-editor-deprecation';
+export const TASK_EARN_FEATURES = 'home-task-earn-features';
