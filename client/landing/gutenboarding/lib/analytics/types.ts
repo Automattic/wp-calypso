@@ -42,12 +42,12 @@ export type TracksAcquireIntentEventProperties = {
 	/**
 	 * The slug of the selected vertical or undefined if the vertical is free-form user input
 	 */
-	selected_vertical_slug: string | undefined;
+	selected_vertical_slug?: string | undefined;
 
 	/**
 	 * Translated label of vertical or free-form user input
 	 */
-	selected_vertical_label: string | undefined;
+	selected_vertical_label?: string | undefined;
 
 	/**
 	 * Whether site title has been entered on the acquire intent page
