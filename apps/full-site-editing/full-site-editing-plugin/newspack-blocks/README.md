@@ -8,7 +8,7 @@ This block allows you to list your posts in various layouts and filter them by c
 
 It originally comes from the [Newspack Blocks collection](https://github.com/automattic/newspack-blocks) and the block is still being developed there.
 
-## Posts Carousel Block
+## Post Carousel Block
 
 This block allows you to create a carousel of post's featured images and filter them by criteria like category, tag or author.
 

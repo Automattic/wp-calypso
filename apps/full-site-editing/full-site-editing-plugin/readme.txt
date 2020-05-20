@@ -55,7 +55,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
 
 = 1.2 =
-* New Posts Carousel block.
+* New Post Carousel block.
 * New Premium Content block.
 * Update header button styling and full width block margins for Gutenberg v8.0.0.
 * Only load common module assets if they are required.
