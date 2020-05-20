@@ -357,7 +357,7 @@ class MembershipsProductsSection extends Component {
 					<p>
 						{ translate(
 							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
-						) }
+						) }{ ' ' }
 						<a href="/TODO">{ translate( 'Learn more' ) }.</a>
 					</p>
 					<FormToggle
