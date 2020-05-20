@@ -4,31 +4,43 @@
 import { ReportImpl } from './report';
 import { applyGlobalCollectors } from './collectors';
 import { send } from './transports/logstash';
+import { shouldSend } from './should-send';
 
 const inFlightReporters: Map< string, ReportImpl > = new Map();
 
-export const start = ( key: string, { fullPageLoad = true }: { fullPageLoad?: boolean } = {} ) => {
-	const existingReport = inFlightReporters.get( key );
+/**
+ * Starts a new report
+ *
+ * @param id id of the report, must be passed to `stop()` to stop it
+ * @param obj Options
+ * @param obj.fullPageLoad `true` if the report should start measuring from the load of the page, `false` to start measuring from now.
+ * @returns The created report
+ */
+export const start = ( id: string, { fullPageLoad = true }: { fullPageLoad?: boolean } = {} ) => {
+	const existingReport = inFlightReporters.get( id );
 	if ( existingReport ) {
-		throw new Error( `A report with the same key '${ key }'is already in process.` );
+		throw new Error( `A report with the same key '${ id }'is already in process.` );
 	}
-	const report = new ReportImpl( key, fullPageLoad );
-	inFlightReporters.set( key, report );
+	const report = new ReportImpl( id, fullPageLoad );
+	inFlightReporters.set( id, report );
 	return report;
 };
 
-export const stop = async ( key: string ): Promise< Report > => {
-	const existingReport = inFlightReporters.get( key );
+/**
+ * Stops a report and sends it to the transporter.
+ *
+ * @param id id of the report to send, comes from `start()`
+ * @returns `true` if the report was sent successfully, `false` otherwise
+ */
+export const stop = async ( id: string ): Promise< boolean > => {
+	const existingReport = inFlightReporters.get( id );
 	if ( ! existingReport ) {
-		throw new Error( `There is no in progress report with the key '${ key }'` );
+		throw new Error( `There is no in progress report with the key '${ id }'` );
 	}
 	existingReport.stop();
 	await applyGlobalCollectors( existingReport );
-	return existingReport;
-};
-
-export const stopAndSend = async ( key: string ): Promise< boolean > => {
-	const report = await stop( key );
-	const payload = report.toJSON();
-	return await send( payload );
+	if ( shouldSend( existingReport ) ) {
+		return send( existingReport.toJSON() );
+	}
+	return false;
 };

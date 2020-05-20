@@ -11,15 +11,18 @@ import { start, stop } from '@automattic/browser-data-collector';
 start('my-page', {fullPageLoad: true})
 
 // Later in the same page
-stopAndSend('my-page');
+stop('my-page');
 ```
 
 This will send a report to `Logstash` including (but not limited to):
 	- `start`: always 0
-	- `end`: when `stopAndSend()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
+	- `end`: when `stop()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
 	- `id`: name of the report, `"my-page"` in this case
 	- Environment data like Calypso version or build target
 	- Data from the Performance Timing API
+
+Sending reports is sampled to avoid overwhelming the REST endpoint. This logic is in `should-send.ts`. The full report is available in that function, so
+we can decide if a report should be sent not only based on the id, but on any property captured by a collector.
 
 ## Architecture
 
