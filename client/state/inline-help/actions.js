@@ -6,6 +6,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -15,23 +16,46 @@ import {
 	INLINE_HELP_POPOVER_HIDE,
 } from 'state/action-types';
 
+import { getContextResults } from '../../blocks/inline-help/contextual-help';
+
 /**
  * Triggers a network request to fetch search results for a query string.
  *
- * @param  {?string}  searchQuery Search query
+ * @param {?string} searchQuery Search query
+ * @param {string} currentSection the current Calypso section
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery ) {
+export function requestInlineHelpSearchResults( searchQuery, currentSection ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
 		} );
 
+		// Force reset flag for no API results
+		dispatch( {
+			type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+			hasAPIResults: false,
+		} );
+
 		wpcom
 			.undocumented()
 			.getHelpLinks( searchQuery )
 			.then( ( { wordpress_support_links: searchResults } ) => {
+				if ( searchResults && searchResults.length ) {
+					dispatch( {
+						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+						hasAPIResults: true,
+					} );
+				} else {
+					// Get static results based on which Calypso section we're in
+					searchResults = getContextResults( currentSection );
+					dispatch( {
+						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+						hasAPIResults: false,
+					} );
+				}
+
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,

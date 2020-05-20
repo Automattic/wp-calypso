@@ -24,6 +24,7 @@ import {
 	selectNextResult,
 	selectPreviousResult,
 } from 'state/inline-help/actions';
+import { getLastRouteAction } from 'state/ui/action-log/selectors';
 
 /**
  * Module variables
@@ -72,8 +73,14 @@ class InlineHelpSearchCard extends Component {
 	onSearch = ( searchQuery ) => {
 		debug( 'search query received: ', searchQuery );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } );
-		this.props.requestInlineHelpSearchResults( searchQuery );
+
+		// Make a search
+		this.props.requestInlineHelpSearchResults( searchQuery, this.props.lastRoute.path );
 	};
+
+	componentDidMount() {
+		this.props.requestInlineHelpSearchResults( '', this.props.lastRoute.path );
+	}
 
 	render() {
 		return (
@@ -94,6 +101,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
 	selectedResultIndex: getSelectedResultIndex( state ),
 	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+	lastRoute: getLastRouteAction( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,

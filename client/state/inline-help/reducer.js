@@ -6,6 +6,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -51,6 +52,7 @@ export const search = withoutPersistence(
 			items: {},
 			selectedResult: -1,
 			shouldOpenSelectedResult: false,
+			hasAPIResults: false,
 		},
 		action
 	) => {
@@ -68,6 +70,11 @@ export const search = withoutPersistence(
 						...state.items,
 						[ action.searchQuery ]: action.searchResults,
 					},
+				};
+			case INLINE_HELP_SEARCH_REQUEST_API_RESULTS:
+				return {
+					...state,
+					hasAPIResults: action.hasAPIResults,
 				};
 			case INLINE_HELP_SELECT_RESULT:
 				return {
