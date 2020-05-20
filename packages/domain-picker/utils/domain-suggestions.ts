@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
-
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
+// FIX ME: This code is duplicated within the domain-picker package
 export function getFreeDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
 	return allSuggestions?.filter( ( suggestion ) => suggestion.is_free );
 }
@@ -32,13 +28,4 @@ export function getRecommendedDomainSuggestion( allSuggestions: DomainSuggestion
 	} );
 
 	return recommendedSuggestion;
-}
-
-/**
- * Returns an ID for the domain suggestions vendor. Passing `true` to getSuggestionsVendor returns the signup variant.
- *
- * @returns {string} an ID for the domain suggestions vendor
- */
-export function getSignupDomainsSuggestionsVendor() {
-	return getSuggestionsVendor( true );
 }
