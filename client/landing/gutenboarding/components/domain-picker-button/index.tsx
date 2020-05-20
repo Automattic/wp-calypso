@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Props as DomainPickerProps } from '../../../../../packages/domain-picker';
+import { Props as DomainPickerProps } from '@automattic/domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
