@@ -20,10 +20,10 @@ const PluginDocumentSettingPanelDemo = () => (
 	>
 		<h2>{ __( 'You are using the most modern WordPress editor yet.' ) }</h2>
 		<p>
-			If you'd prefer you can switch back to the{ ' ' }
+			If you'd prefer you can switch back to the
 			<a target="_top" href={ classicEditorUrl }>
 				Classic Editor
-			</a>{ ' ' }
+			</a>
 		</p>
 	</PluginDocumentSettingPanel>
 );
