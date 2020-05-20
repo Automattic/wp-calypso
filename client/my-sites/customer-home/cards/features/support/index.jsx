@@ -44,12 +44,14 @@ const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
 const Support = ( props ) => {
-	const { searchQuery, postId, postUrl = '' } = props;
 	const translate = useTranslate();
+	const { searchQuery } = props;
 
-	const openResultView = ( event ) => {
+	const openResultView = ( event, selectedResult ) => {
+		const { post_id, link } = selectedResult;
+
 		event.preventDefault();
-		props.openSupportArticleDialog( { postId, actionUrl: postUrl } );
+		props.openSupportArticleDialog( { postId: post_id, actionUrl: link } );
 	};
 
 	return (

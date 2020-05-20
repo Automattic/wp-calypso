@@ -80,8 +80,9 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	onHelpLinkClick = ( selectionIndex ) => ( event ) => {
+		const selectedResult = this.props.searchResults[ selectionIndex ];
 		this.props.selectResult( selectionIndex );
-		this.props.openResult( event );
+		this.props.openResult( event, selectedResult );
 	};
 
 	renderHelpLink = ( link, index ) => {
