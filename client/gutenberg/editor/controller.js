@@ -24,6 +24,7 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
+import { reduxGetState } from 'lib/redux-bridge';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -109,7 +110,7 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( reduxGetState(), siteId ) ) {
 		isAuthenticated = false;
 	}
 

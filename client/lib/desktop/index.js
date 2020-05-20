@@ -22,6 +22,7 @@ import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { requestSite } from 'state/sites/actions';
 
 /**
  * Module variables
@@ -42,14 +43,24 @@ const Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
+		ipc.on( 'enable-site-option', this.onEnableSiteOption.bind( this ) );
+		ipc.on( 'refresh-site-state', this.onRefreshSiteState.bind( this ) );
+		ipc.on( 'navigate', this.onNavigate.bind( this ) );
+
+		// Register window listeners
+		window.addEventListener(
+			'desktop-notify-cannot-open-editor',
+			this.onCannotOpenEditor.bind( this )
+		);
+
+		window.addEventListener(
+			'desktop-notify-jetpack-module-activate-status',
+			this.onJetpackModuleActivation.bind( this )
+		);
 
 		this.store = await getReduxStore();
 
 		this.editorLoadedStatus();
-		// TODO: can probably combine a few of these subscribers
-		this.subscribeCannotOpenEditor();
-		this.subscribeEnableSiteOptionSSO();
-		this.subscribeJetpackModuleActivateStatus();
 
 		// Send some events immediately - this sets the app state
 		this.notificationStatus();
@@ -176,37 +187,49 @@ const Desktop = {
 		} );
 	},
 
-	subscribeCannotOpenEditor: function () {
-		window.addEventListener( 'desktop-notify-cannot-open-editor', ( event ) => {
-			const { site, editorUrl, reason } = event.detail;
-			debug(
-				'Dispatching desktop notifification via window event: cannot load editor for site: ',
-				site.URL
-			);
+	onCannotOpenEditor: function ( event ) {
+		const { site, editorUrl, reason } = event.detail;
+		debug(
+			'Dispatching desktop notifification via window event: cannot load editor for site: ',
+			site.URL
+		);
 
-			const state = this.store.getState();
-			const siteId = site.ID;
+		const state = this.store.getState();
+		const siteId = site.ID;
 
-			const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
+		const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
 
-			ipc.send( 'cannot-open-editor', { siteId, origin: site.URL, editorUrl, reason, isAdmin } );
-		} );
+		ipc.send( 'cannot-open-editor', { siteId, origin: site.URL, editorUrl, reason, isAdmin } );
 	},
 
-	subscribeJetpackModuleActivateStatus: function () {
-		window.addEventListener( 'desktop-notify-jetpack-module-activate-status', ( event ) => {
-			const { status, message } = event.detail;
-			ipc.send( 'enable-site-option-sso-status', { status, message } );
-		} );
+	onJetpackModuleActivation: function ( event ) {
+		const { status, message } = event.detail;
+		debug( 'Received Jetpack module activation event: ', message );
+		ipc.send( 'enable-site-option-response', { status, message } );
 	},
 
-	subscribeEnableSiteOptionSSO: function () {
-		ipc.on( 'enable-site-option-sso', ( event, info ) => {
-			const { siteId } = info;
-			debug( "User enabling option 'SSO' for siteId: ", siteId );
+	onEnableSiteOption: function ( event, info ) {
+		const { siteId, option } = info;
+		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
 
-			this.store.dispatch( activateModule( siteId, 'sso' ) );
-		} );
+		this.store.dispatch( activateModule( siteId, option ) );
+		// TODO: add and remove onJetpackModuleActivation listener here?
+	},
+
+	onRefreshSiteState: function ( event, siteId ) {
+		debug( 'Refreshing redux state for siteId: ', siteId );
+
+		this.store.dispatch( requestSite( siteId ) );
+		// TODO: handle failure? SITE_REQUEST_FAILURE and SITE_REQUEST_SUCCESS redux events
+		ipc.send( 'refresh-site-state-response', siteId );
+	},
+
+	onNavigate: function ( event, url ) {
+		debug( 'Navigating to URL: ', url );
+
+		if ( url ) {
+			this.navigate( url );
+		}
 	},
 
 	print: function ( title, html ) {
