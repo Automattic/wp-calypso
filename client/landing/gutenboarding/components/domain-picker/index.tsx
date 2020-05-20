@@ -70,7 +70,7 @@ export interface Props {
 	/**
 	 * Name used to identify this component in tracks events.
 	 */
-	tracksName?: string;
+	tracksName: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {

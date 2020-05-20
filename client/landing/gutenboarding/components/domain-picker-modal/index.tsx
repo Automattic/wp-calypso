@@ -14,7 +14,7 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps {
+interface Props extends Omit< DomainPickerProps, 'tracksName' > {
 	isOpen: boolean;
 	onMoreOptions?: () => void;
 }
