@@ -59,7 +59,7 @@ class Premium_Content_Dom {
 	 * @return string
 	 */
 	public function to_html() {
-		return $this->doc->saveHTML();
+		return utf8_decode( $this->doc->saveHTML() );
 	}
 
 	/**
