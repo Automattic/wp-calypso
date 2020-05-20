@@ -15,6 +15,7 @@ import './features/deprecate-coblocks-buttons';
 import './features/fix-block-invalidation-errors';
 import './features/reorder-block-categories';
 import './features/tracking';
+import './features/switch-to-classic-notice';
 
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 
