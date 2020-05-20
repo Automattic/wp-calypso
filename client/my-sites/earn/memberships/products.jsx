@@ -155,6 +155,8 @@ class MembershipsProductsSection extends Component {
 					interval: this.state.editedSchedule,
 					buyer_can_change_amount: this.state.editedPayWhatYouWant,
 					multiple_per_user: this.state.editedMultiplePerUser,
+					welcome_email_content: this.state.editedCustomConfirmationMessage,
+					subscribe_as_site_subscriber: this.state.editedPostsEmail,
 				},
 				this.props.translate( 'Updated "%s" product.', { args: this.state.editedProductName } )
 			);
@@ -178,6 +180,8 @@ class MembershipsProductsSection extends Component {
 				editedPayWhatYouWant: product.buyer_can_change_amount,
 				editedMultiplePerUser: !! product.multiple_per_user,
 				focusedName: false,
+				editedCustomConfirmationMessage: product.welcome_email_content,
+				editedPostsEmail: product.subscribe_as_site_subscriber,
 			} );
 		} else {
 			this.setState( {

@@ -33,6 +33,8 @@ export const membershipProductFromApi = ( product ) => ( {
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,
+	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
+	welcome_email_content: product.welcome_email_content,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
