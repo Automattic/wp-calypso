@@ -101,7 +101,6 @@
 		"privacy-policy": true,
 		"reader": true,
 		"reader/user-mention-suggestions": true,
-		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"safari-idb-mitigation": true,
