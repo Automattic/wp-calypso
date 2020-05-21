@@ -43,8 +43,8 @@ const Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
-		ipc.on( 'enable-site-option', this.onEnableSiteOption.bind( this ) );
-		ipc.on( 'refresh-site-state', this.onRefreshSiteState.bind( this ) );
+		ipc.on( 'enable-site-option', this.desktopCommandEnableSiteOption.bind( this ) );
+		ipc.on( 'refresh-site-state', this.desktopCommandRequestSite.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 
 		// Register window listeners
@@ -55,7 +55,12 @@ const Desktop = {
 
 		window.addEventListener(
 			'desktop-notify-jetpack-module-activate-status',
-			this.onJetpackModuleActivation.bind( this )
+			this.calypsoResponseJetpackModuleActivation.bind( this )
+		);
+
+		window.addEventListener(
+			'desktop-notify-site-request-status',
+			this.onCalypsoResponseSiteRequest.bind( this )
 		);
 
 		this.store = await getReduxStore();
@@ -202,26 +207,30 @@ const Desktop = {
 		ipc.send( 'cannot-open-editor', { siteId, origin: site.URL, editorUrl, reason, isAdmin } );
 	},
 
-	onJetpackModuleActivation: function ( event ) {
-		const { status, message } = event.detail;
-		debug( 'Received Jetpack module activation event: ', message );
-		ipc.send( 'enable-site-option-response', { status, message } );
+	calypsoResponseJetpackModuleActivation: function ( event ) {
+		const { status, siteId } = event.detail;
+		debug( 'Received Jetpack module activation for siteId: ', siteId );
+		ipc.send( 'enable-site-option-response', { status, siteId } );
 	},
 
-	onEnableSiteOption: function ( event, info ) {
+	desktopCommandEnableSiteOption: function ( event, info ) {
 		const { siteId, option } = info;
 		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
 
 		this.store.dispatch( activateModule( siteId, option ) );
-		// TODO: add and remove onJetpackModuleActivation listener here?
 	},
 
-	onRefreshSiteState: function ( event, siteId ) {
+	desktopCommandRequestSite: function ( event, siteId ) {
 		debug( 'Refreshing redux state for siteId: ', siteId );
 
 		this.store.dispatch( requestSite( siteId ) );
-		// TODO: handle failure? SITE_REQUEST_FAILURE and SITE_REQUEST_SUCCESS redux events
-		ipc.send( 'refresh-site-state-response', siteId );
+	},
+
+	onCalypsoResponseSiteRequest: function ( event ) {
+		debug( 'Received site request status', event.detail );
+
+		const { status, siteId } = event.detail;
+		ipc.send( 'refresh-site-state-response', siteId, status );
 	},
 
 	onNavigate: function ( event, url ) {

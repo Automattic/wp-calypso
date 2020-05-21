@@ -54,24 +54,8 @@ export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, sile
 	}
 
 	if ( messageType === 'success' ) {
-		window.dispatchEvent(
-			new window.CustomEvent( 'desktop-notify-jetpack-module-activate-status', {
-				detail: {
-					status: 'success',
-					message,
-				},
-			} )
-		);
 		return successNotice( message, noticeSettings );
 	} else if ( messageType === 'error' ) {
-		window.dispatchEvent(
-			new window.CustomEvent( 'desktop-notify-jetpack-module-activate-status', {
-				detail: {
-					status: 'error',
-					message,
-				},
-			} )
-		);
 		return errorNotice( message, noticeSettings );
 	}
 };
