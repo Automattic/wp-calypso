@@ -7,14 +7,13 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { useState } from '@wordpress/element';
-import { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type DomainCategory = DomainSuggestions.DomainCategory;
+type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
 
 export interface Props {
 	onSelect: ( domainCategorySlug?: string ) => void;

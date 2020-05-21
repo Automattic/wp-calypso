@@ -10,7 +10,6 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { DomainSuggestions } from '@automattic/data-stores';
 import SuggestionItem from './suggestion-item';
 import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
@@ -30,8 +29,9 @@ const PAID_DOMAINS_TO_SHOW = 5;
  */
 import './style.scss';
 
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type DomainCategory = DomainSuggestions.DomainCategory;
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
+type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
 
 export interface Props {
 	showDomainConnectButton?: boolean;
@@ -62,7 +62,7 @@ export interface Props {
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+	queryParameters?: Partial< DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
 
