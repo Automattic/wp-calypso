@@ -34,6 +34,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
+import InlineSupportLink from 'components/inline-support-link';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
@@ -362,7 +363,12 @@ class MembershipsProductsSection extends Component {
 						{ translate(
 							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
 						) }{ ' ' }
-						<a href="/TODO">{ translate( 'Learn more' ) }.</a>
+						<InlineSupportLink
+							supportPostId="154624"
+							supportLink="https://wordpress.com/support/wordpress-editor/blocks/recurring-payments-button/" // TODO: Link to specific section once article is update
+							showIcon={ false }
+							text={ translate( 'Learn more.' ) }
+						/>
 					</p>
 					<FormToggle
 						onChange={ ( newValue ) => this.setState( { editedPostsEmail: newValue } ) }
