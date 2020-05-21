@@ -198,6 +198,8 @@ class MembershipsProductsSection extends Component {
 				editedPayWhatYouWant: false,
 				editedMultiplePerUser: false,
 				focusedName: false,
+				editedCustomConfirmationMessage: '',
+				editedPostsEmail: false,
 			} );
 		}
 	};
