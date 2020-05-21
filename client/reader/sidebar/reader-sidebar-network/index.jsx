@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarNetworkList from './list';
-import getSitesWPForTeams from 'state/selectors/get-sites-wpforteams';
+import getReaderFollowsP2 from 'state/reader/follows/selectors/get-reader-follows-p2';
 
 export class ReaderSidebarNetwork extends Component {
 	static propTypes = {
@@ -35,7 +35,7 @@ export class ReaderSidebarNetwork extends Component {
 				{ unseen && unseen.status && <span className="sidebar__bubble" /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
-					title={ translate( 'P2 Network' ) }
+					title={ translate( 'P2' ) }
 					onClick={ onClick }
 					icon="globe"
 				>
@@ -47,5 +47,5 @@ export class ReaderSidebarNetwork extends Component {
 }
 
 export default connect( ( state ) => ( {
-	blogs: getSitesWPForTeams( state ),
+	blogs: getReaderFollowsP2( state ),
 } ) )( localize( ReaderSidebarNetwork ) );
