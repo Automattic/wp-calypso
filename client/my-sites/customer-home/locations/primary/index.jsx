@@ -29,7 +29,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
 } from 'my-sites/customer-home/cards/constants';
-import { usePerformanceTrackerStop } from 'lib/performance-tracking';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -46,8 +46,6 @@ const cardComponents = {
 };
 
 const Primary = ( { cards } ) => {
-	usePerformanceTrackerStop( 'home' );
-
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -66,4 +64,4 @@ const Primary = ( { cards } ) => {
 	);
 };
 
-export default Primary;
+export default withPerformanceTrackerStop( Primary );
