@@ -457,6 +457,7 @@ const sections = [
 		module: 'my-sites/customer-home',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'hosting',

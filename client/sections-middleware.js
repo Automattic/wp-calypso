@@ -71,9 +71,10 @@ function createPageDefinition( path, sectionDefinition ) {
 		page( pathRegex, controller.redirectLoggedOut );
 	}
 
-	// Install navigation performance tracking. Unless the page has a component with the
-	// `usePerformanceTrackerStop` hook, this doesn't track anything by itself
-	page( pathRegex, performanceTrackerStart( sectionDefinition.name ) );
+	// Install navigation performance tracking.
+	if ( sectionDefinition.trackLoadPerformance ) {
+		page( pathRegex, performanceTrackerStart( sectionDefinition.name ) );
+	}
 
 	page( pathRegex, async function ( context, next ) {
 		try {
