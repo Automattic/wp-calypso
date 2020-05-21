@@ -2,6 +2,10 @@
  * External dependencies
  */
 import querystring from 'querystring';
+
+/**
+ * Internal dependencies
+ */
 import config from 'config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {
