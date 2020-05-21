@@ -33,6 +33,7 @@ import {
 	requestUpdateProduct,
 	requestDeleteProduct,
 } from 'state/memberships/product-list/actions';
+import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 
 /**
  * @typedef {[string, number] CurrencyMinimum
@@ -352,39 +353,15 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
-				<Dialog
+				<RecurringPaymentsPlanDeleteModal
 					isVisible={ !! this.state.deletedProductId }
-					buttons={ [
-						{
-							label: this.props.translate( 'Cancel' ),
-							action: 'cancel',
-						},
-						{
-							label: this.props.translate( 'Delete' ),
-							isPrimary: true,
-							action: 'delete',
-						},
-					] }
+					planName={ get(
+						this.props.products.filter( ( p ) => p.ID === this.state.deletedProductId ),
+						[ 0, 'title' ],
+						''
+					) }
 					onClose={ this.onCloseDeleteProduct }
-				>
-					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-					<p>
-						{ this.props.translate( 'Do you want to delete "%s"?', {
-							args: get(
-								this.props.products.filter( ( p ) => p.ID === this.state.deletedProductId ),
-								[ 0, 'title' ],
-								''
-							),
-						} ) }
-					</p>
-					<Notice
-						text={ this.props.translate(
-							'Deleting a product does not cancel the subscription for existing subscribers.{{br/}}They will continue to be charged even after you delete it.',
-							{ components: { br: <br /> } }
-						) }
-						showDismiss={ false }
-					/>
-				</Dialog>
+				/>
 			</div>
 		);
 	}
