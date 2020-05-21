@@ -188,7 +188,6 @@ class Customize extends React.Component {
 		}
 		return domain + '/wp-admin/customize.php?' + this.buildCustomizerQuery();
 	};
-
 	buildCustomizerQuery = () => {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );

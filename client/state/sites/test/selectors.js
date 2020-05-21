@@ -3221,11 +3221,13 @@ describe( 'selectors', () => {
 				},
 				77203199,
 				null,
-				'https://wordpress.com'
+				'/things/are/going?to=be&okay=true'
 			);
 
 			chaiExpect( customizerUrl ).to.equal(
-				`/customize/example.com?return=${ encodeURIComponent( 'https://wordpress.com' ) }`
+				`/customize/example.com?return=${ encodeURIComponent(
+					'/things/are/going?to=be&okay=true'
+				) }`
 			);
 		} );
 
