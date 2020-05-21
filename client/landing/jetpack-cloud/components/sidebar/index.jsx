@@ -72,7 +72,7 @@ class JetpackCloudSidebar extends Component {
 	}
 
 	onNavigate = memoize( ( menuItem ) => () => {
-		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_cloud_sidebar_menuitem_click', {
+		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_sidebar_menu_click', {
 			menu_item: menuItem,
 		} );
 		this.scrollToTop();

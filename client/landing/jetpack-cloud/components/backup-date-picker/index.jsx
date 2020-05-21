@@ -55,9 +55,11 @@ class BackupDatePicker extends Component {
 		if ( ! this.canGoToPreviousDay() ) {
 			return false;
 		}
-		const { moment, onDateChange, selectedDate } = this.props;
 
+		const { moment, onDateChange, selectedDate } = this.props;
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
+
+		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_date_previous' );
 
 		onDateChange( newSelectedDate );
 	};
@@ -66,9 +68,11 @@ class BackupDatePicker extends Component {
 		if ( ! this.canGoToNextDay() ) {
 			return false;
 		}
-		const { moment, onDateChange, selectedDate } = this.props;
 
+		const { moment, onDateChange, selectedDate } = this.props;
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
+
+		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_date_next' );
 
 		onDateChange( newSelectedDate );
 	};
@@ -98,7 +102,7 @@ class BackupDatePicker extends Component {
 	};
 
 	render() {
-		const { selectedDate, siteId, siteSlug, moment } = this.props;
+		const { dispatchRecordTracksEvent, selectedDate, siteId, siteSlug, moment } = this.props;
 
 		const previousDate = moment( selectedDate ).subtract( 1, 'days' );
 		const nextDate = moment( selectedDate ).add( 1, 'days' );
@@ -161,7 +165,13 @@ class BackupDatePicker extends Component {
 								/>
 							</Button>
 						</div>
-						<a className="backup-date-picker__search-link" href={ backupActivityPath( siteSlug ) }>
+						<a
+							className="backup-date-picker__search-link"
+							href={ backupActivityPath( siteSlug ) }
+							onClick={ () => {
+								dispatchRecordTracksEvent( 'jetpack_cloud_backup_search' );
+							} }
+						>
 							<Gridicon icon="search" className="backup-date-picker__search-icon" />
 						</a>
 					</div>

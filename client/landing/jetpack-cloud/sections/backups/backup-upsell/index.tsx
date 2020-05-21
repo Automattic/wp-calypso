@@ -41,7 +41,7 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 			) }
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
-			onClick={ () => dispatch( recordTracksEvent( 'cloud_backups_vaultpress_click' ) ) }
+			onClick={ () => dispatch( recordTracksEvent( 'jetpack_cloud_backup_vaultpress_click' ) ) }
 			iconComponent={ <BackupsUpsellIcon /> }
 		/>
 	);
@@ -58,7 +58,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 				'Get peace of mind knowing your work will be saved, add backups today. Choose from real time or daily backups.'
 			) }
 			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'cloud_backups_upsell_click' ) ) }
+			onClick={ () => dispatch( recordTracksEvent( 'jetpack_cloud_backup_upsell_click' ) ) }
 			iconComponent={ <BackupsUpsellIcon /> }
 		/>
 	);

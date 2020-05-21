@@ -66,7 +66,7 @@ const ScanHistoryPage = ( {
 			if ( 'all' === filterValue ) {
 				filterValue = '';
 			}
-			dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
+			dispatchRecordTracksEvent( 'jetpack_cloud_scan_history_filter', {
 				site_id: siteId,
 				filter: filterValue,
 			} );

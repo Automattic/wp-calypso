@@ -91,7 +91,7 @@ class ScanPage extends Component< Props > {
 				href={ contactSupportUrl( siteUrl, scanStateType ) }
 				className="scan__button"
 				onClick={ () =>
-					dispatchRecordTracksEvent( 'calypso_scan_error_contact_support', {
+					dispatchRecordTracksEvent( 'jetpack_cloud_scan_error_contact', {
 						scan_state: scanStateType,
 						site_id: siteId,
 					} )

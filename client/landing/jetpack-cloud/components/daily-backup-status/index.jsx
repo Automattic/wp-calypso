@@ -85,6 +85,7 @@ class DailyBackupStatus extends Component {
 	renderGoodBackup( backup ) {
 		const {
 			allowRestore,
+			dispatchRecordTracksEvent,
 			doesRewindNeedCredentials,
 			hasRealtimeBackups,
 			siteSlug,
@@ -119,6 +120,7 @@ class DailyBackupStatus extends Component {
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
 					doesRewindNeedCredentials={ doesRewindNeedCredentials }
+					dispatchRecordTracksEvent={ dispatchRecordTracksEvent }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
 				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
@@ -389,6 +391,7 @@ class DailyBackupStatus extends Component {
 const ActionButtons = ( {
 	disabledDownload,
 	disabledRestore,
+	dispatchRecordTracksEvent,
 	doesRewindNeedCredentials,
 	rewindId,
 	siteSlug,
@@ -403,7 +406,9 @@ const ActionButtons = ( {
 				disabled={ disabledDownload }
 				isPrimary={ false }
 				onClick={ ( event ) => {
-					disabledDownload && event.preventDefault();
+					disabledDownload &&
+						event.preventDefault() &&
+						dispatchRecordTracksEvent( 'jetpack_cloud_backup_download', { rewindId } );
 				} }
 			>
 				{ translate( 'Download backup' ) }
@@ -413,7 +418,9 @@ const ActionButtons = ( {
 				href={ backupRestorePath( siteSlug, rewindId ) }
 				disabled={ disabledRestore || doesRewindNeedCredentials }
 				onClick={ ( event ) => {
-					( disabledRestore || doesRewindNeedCredentials ) && event.preventDefault();
+					( disabledRestore || doesRewindNeedCredentials ) &&
+						event.preventDefault() &&
+						dispatchRecordTracksEvent( 'jetpack_cloud_backup_restore', { rewindId } );
 				} }
 			>
 				<div className="daily-backup-status__restore-button-icon">
@@ -448,6 +455,9 @@ const ActionButtons = ( {
 							className="daily-backup-status__activate-restores-button"
 							href={ settingsPath( siteSlug ) }
 							isPrimary={ false }
+							onClick={ () => {
+								dispatchRecordTracksEvent( 'jetpack_cloud_backup_activate_click' );
+							} }
 						>
 							{ translate( 'Activate restores' ) }
 						</Button>

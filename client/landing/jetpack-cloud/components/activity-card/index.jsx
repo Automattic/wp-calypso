@@ -31,6 +31,7 @@ import PopoverMenu from 'components/popover/menu';
 import QueryRewindState from 'components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
 import { isSuccessfulRealtimeBackup } from 'landing/jetpack-cloud/sections/backups/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -67,6 +68,8 @@ class ActivityCard extends Component {
 	};
 
 	togglePopoverMenu = ( topPopoverMenu = true ) => {
+		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_actions_click' );
+
 		if ( topPopoverMenu ) {
 			this.setState( { showTopPopoverMenu: ! this.state.showTopPopoverMenu } );
 		} else {
@@ -76,7 +79,11 @@ class ActivityCard extends Component {
 
 	closePopoverMenu = () =>
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
-	toggleSeeContent = () => this.setState( { showContent: ! this.state.showContent } );
+
+	toggleSeeContent = () => {
+		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_content_expand' );
+		this.setState( { showContent: ! this.state.showContent } );
+	};
 
 	onSpace = ( evt, fn ) => {
 		if ( evt.key === ' ' ) {
@@ -333,6 +340,11 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )(
-	withLocalizedMoment( withApplySiteOffset( localize( ActivityCard ) ) )
-);
+const mapDispatchToProps = () => ( {
+	dispatchRecordTracksEvent: recordTracksEvent,
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( withLocalizedMoment( withApplySiteOffset( localize( ActivityCard ) ) ) );
