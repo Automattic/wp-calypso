@@ -11,7 +11,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Open Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			is_premium: false,
+			is_premium: true,
 		},
 		{
 			title: 'Cassel',
@@ -37,7 +37,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Raleway',
 			},
 			categories: [ 'featured', 'portfolio' ],
-			is_premium: true,
+			is_premium: false,
 		},
 		{
 			title: 'Easley',
@@ -128,7 +128,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			is_premium: false,
+			is_premium: true,
 		},
 	],
 };
