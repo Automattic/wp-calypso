@@ -143,10 +143,15 @@ const trackBlockRemoval = ( blocks ) => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {
-	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
-		block_name: name,
-		blocks_replaced: true,
-	} ) );
+	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( props ) => {
+		if ( ! props ) {
+			return;
+		}
+		return {
+			block_name: props.name,
+			blocks_replaced: true,
+		};
+	} );
 };
 
 /**
