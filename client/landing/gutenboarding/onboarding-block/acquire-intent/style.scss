@@ -38,6 +38,7 @@
 	@include break-small {
 		display: flex;
 		flex-wrap: wrap;
+		align-items: baseline;
 	}
 }
 
