@@ -136,6 +136,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				break;
 			case 'email_invalid':
 				errorMessage = __( 'Please enter a valid email address.' );
+				break;
 			case 'email_cant_be_used_to_signup':
 				errorMessage = __(
 					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
