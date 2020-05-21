@@ -267,15 +267,15 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ config.isEnabled( 'reader/seen-posts' ) && post.is_seen && (
 						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
-							{ size( posts ) > 0 && translate( 'Mark all as Unseen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as Unseen' ) }
+							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ config.isEnabled( 'reader/seen-posts' ) && ! post.is_seen && (
 						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
-							{ size( posts ) > 0 && translate( 'Mark all as Seen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as Seen' ) }
+							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
 						</PopoverMenuItem>
 					) }
 
