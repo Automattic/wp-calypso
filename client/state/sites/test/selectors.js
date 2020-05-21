@@ -3206,6 +3206,29 @@ describe( 'selectors', () => {
 			chaiExpect( customizerUrl ).to.equal( '/customize/example.com' );
 		} );
 
+		test( 'should return customizer URL with return query for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				null,
+				'https://wordpress.com'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				`/customize/example.com?return=${ encodeURIComponent( 'https://wordpress.com' ) }`
+			);
+		} );
+
 		test( 'should return null if admin URL for Jetpack site is not known', () => {
 			const customizerUrl = getCustomizerUrl(
 				{

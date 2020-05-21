@@ -117,6 +117,12 @@ class Customize extends React.Component {
 
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
+		const returnUrl = new URLSearchParams( window.location.search ).get( 'return' );
+
+		if ( returnUrl ) {
+			return returnUrl;
+		}
+
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
 			path = '/stats';
 			if ( this.props.domain ) {
