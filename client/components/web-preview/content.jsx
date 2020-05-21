@@ -302,6 +302,7 @@ export class WebPreviewContent extends Component {
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
+					showEditHeaderLink={ this.props.showEditHeaderLink }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
@@ -358,6 +359,8 @@ WebPreviewContent.propTypes = {
 	showDeviceSwitcher: PropTypes.bool,
 	// Show edit button
 	showEdit: PropTypes.bool,
+	// Show edit the header link button
+	showEditHeaderLink: PropTypes.bool,
 	// The URL for the edit button
 	editUrl: PropTypes.string,
 	// The URL that should be displayed in the iframe
@@ -404,6 +407,7 @@ WebPreviewContent.defaultProps = {
 	showSEO: true,
 	showDeviceSwitcher: true,
 	showEdit: false,
+	showEditHeaderLink: false,
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
