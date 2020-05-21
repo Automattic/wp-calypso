@@ -142,6 +142,8 @@ class MembershipsProductsSection extends Component {
 					interval: this.state.editedSchedule,
 					buyer_can_change_amount: this.state.editedPayWhatYouWant,
 					multiple_per_user: this.state.editedMultiplePerUser,
+					welcome_email_content: this.state.editedCustomConfirmationMessage,
+					subscribe_as_site_subscriber: this.state.editedPostsEmail,
 				},
 				this.props.translate( 'Added "%s" product.', { args: this.state.editedProductName } )
 			);
