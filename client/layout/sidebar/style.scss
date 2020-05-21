@@ -132,6 +132,16 @@
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-hover-text );
 		}
+
+		.count {
+			border-color: var( --color-border );
+		}
+	}
+
+	.count {
+		border-color: var( --color-neutral-5 );
+		color: var( --color-text );
+		background-color: var( --color-neutral-5 );
 	}
 
 	.badge {
@@ -145,6 +155,12 @@
 
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-selected-text );
+		}
+
+		.count {
+			background-color: transparent;
+			border-color: var( --studio-blue-70 );
+			color: var( --studio-blue-70 );
 		}
 	}
 
