@@ -4,10 +4,10 @@
 import { addQueryArgs } from 'lib/url';
 
 export const backupMainPath = ( siteName?: string | null, query = {} ) =>
-	siteName ? addQueryArgs( query, `/backups/${ siteName }` ) : '/backups';
+	siteName ? addQueryArgs( query, `/backup/${ siteName }` ) : '/backup';
 
 export const backupActivityPath = ( siteName?: string | null ) =>
-	siteName ? `/backups/activity/${ siteName }` : '/backups/activity';
+	siteName ? `/backup/activity/${ siteName }` : '/backup/activity';
 
 const backupSubSectionPath = (
 	siteName: string,
@@ -15,8 +15,8 @@ const backupSubSectionPath = (
 	subSectionId?: string | null
 ) =>
 	subSectionId
-		? `/backups/${ siteName }/${ subSection }/${ subSectionId }`
-		: `/backups/${ siteName }/${ subSection }`;
+		? `/backup/${ siteName }/${ subSection }/${ subSectionId }`
+		: `/backup/${ siteName }/${ subSection }`;
 
 export const backupRestorePath = ( siteName: string, rewindId: string ) =>
 	backupSubSectionPath( siteName, 'restore', rewindId );

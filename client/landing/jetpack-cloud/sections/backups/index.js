@@ -22,10 +22,10 @@ import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPa
 
 export default function () {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		/* handles /backups/activity, see `backupActivityPath` */
+		/* handles /backup/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
 
-		/* handles /backups/activity/:site, see `backupActivityPath` */
+		/* handles /backup/activity/:site, see `backupActivityPath` */
 		page(
 			backupActivityPath( ':site' ),
 			siteSelection,
@@ -37,7 +37,7 @@ export default function () {
 			clientRender
 		);
 
-		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
+		/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
 			backupDownloadPath( ':site', ':rewindId' ),
 			siteSelection,
@@ -49,7 +49,7 @@ export default function () {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
 				backupRestorePath( ':site', ':rewindId' ),
 				siteSelection,
@@ -60,7 +60,7 @@ export default function () {
 				clientRender
 			);
 		}
-		/* handles /backups/:site, see `backupMainPath` */
+		/* handles /backup/:site, see `backupMainPath` */
 		page(
 			backupMainPath( ':site' ),
 			siteSelection,

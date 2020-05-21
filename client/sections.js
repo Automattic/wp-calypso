@@ -483,7 +483,7 @@ const sections = [
 	},
 	{
 		name: 'backups',
-		paths: [ '/backups' ],
+		paths: [ '/backup' ],
 		module: 'landing/jetpack-cloud/sections/backups',
 		secondary: true,
 		group: 'jetpack-cloud',
