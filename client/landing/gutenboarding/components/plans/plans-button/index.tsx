@@ -6,7 +6,6 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { isFreePlan } from '../../../../../lib/plans';
 import config from 'config';
 
 /**
@@ -39,10 +38,10 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 
 	const plan = useSelectedPlan();
 
-	/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
-	const planLabel = isFreePlan( plan )
-		? __( 'View plans' )
-		: sprintf( __( '%s Plan' ), plan.getTitle() );
+	const planLabel = ! plan?.isFree
+		? /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+		  sprintf( __( '%s Plan' ), plan.getTitle() )
+		: __( 'View plans' );
 
 	return (
 		<>
