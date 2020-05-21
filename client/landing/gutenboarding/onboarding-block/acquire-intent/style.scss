@@ -114,6 +114,10 @@
 		// .accessible-focus &:focus {
 		// 	outline: 2px solid var( --highlightColor );
 		// }
+
+		&::-ms-clear {
+			display: none;
+		}
 	}
 }
 
