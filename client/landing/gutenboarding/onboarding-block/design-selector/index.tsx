@@ -30,7 +30,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const makePath = usePath();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedDesign, hasPaidDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const getDesignUrl = ( design: Design ) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
@@ -51,7 +51,7 @@ const DesignSelector: React.FunctionComponent = () => {
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
-		is_selected_design_premium: !! getSelectedDesign()?.premium,
+		is_selected_design_premium: hasPaidDesign(),
 	} ) );
 
 	return (
