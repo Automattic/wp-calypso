@@ -48,8 +48,8 @@
 	.support__results-list {
 		list-style: none;
 		text-align: left;
-		margin: 20px 0 0;
-		padding: 9px 0 8px;
+		margin: 21px 0 0;
+		padding: 8px 0;
 		border-top: 1px solid var( --color-neutral );
 
 		.help-contact-form & {
@@ -75,7 +75,7 @@
 			font-weight: normal;
 			line-height: 1.4;
 			display: block;
-			padding: 8px 16px;
+			padding: 8px 0;
 
 
 			flex: 1;
