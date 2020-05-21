@@ -37,6 +37,7 @@ $transition-period: 200ms;
 }
 
 .wpcom-block-editor-nav-sidebar__container {
+	box-sizing: border-box;
 	position: fixed;
 	top: 0;
 	left: -$sidebar-width;
