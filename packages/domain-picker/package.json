@@ -40,6 +40,7 @@
 		"@wordpress/data": "^4.18.0",
 		"@wordpress/element": "^2.14.0",
 		"@wordpress/icons": "^2.0.0",
+		"@wordpress/i18n": "^3.10.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
 		"use-debounce": "3.1.0",
