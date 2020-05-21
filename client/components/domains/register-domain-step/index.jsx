@@ -266,7 +266,7 @@ class RegisterDomainStep extends React.Component {
 			nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug
 		) {
 			this.setState( this.getState( nextProps ) );
-			this.onSearch( nextProps.suggestion );
+			nextProps.suggestion && this.onSearch( nextProps.suggestion );
 		}
 
 		if (
