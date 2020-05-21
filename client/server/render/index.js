@@ -131,10 +131,10 @@ export function render( element, key = JSON.stringify( element ), req ) {
 					logToLogstash( {
 						feature: 'calypso_ssr',
 						message: 'Exception thrown on render',
+						user_id: req.context.user?.ID,
 						extra: {
 							message: ex.message,
 							stack: ex.stack,
-							userId: req.context?.user?.ID,
 						},
 					} )
 				);
