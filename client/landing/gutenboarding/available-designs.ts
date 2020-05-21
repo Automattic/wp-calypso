@@ -11,7 +11,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Open Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Cassel',
@@ -24,7 +24,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Vesta',
@@ -37,7 +37,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Raleway',
 			},
 			categories: [ 'featured', 'portfolio' ],
-			premium: true,
+			is_premium: true,
 		},
 		{
 			title: 'Easley',
@@ -50,7 +50,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Roboto',
 			},
 			categories: [ 'featured', 'portfolio' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Camdem',
@@ -63,7 +63,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Roboto',
 			},
 			categories: [ 'featured', 'portfolio' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Reynolds',
@@ -76,7 +76,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'portfolio' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Overton',
@@ -89,7 +89,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Raleway',
 			},
 			categories: [ 'featured', 'business' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Doyle',
@@ -102,7 +102,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'business' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Brice',
@@ -115,7 +115,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'charity', 'non-profit' ],
-			premium: false,
+			is_premium: false,
 		},
 		{
 			title: 'Bowen',
@@ -128,7 +128,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			premium: false,
+			is_premium: false,
 		},
 	],
 };

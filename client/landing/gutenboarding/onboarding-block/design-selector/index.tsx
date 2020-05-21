@@ -98,7 +98,7 @@ const DesignSelector: React.FunctionComponent = () => {
 							<span className="design-selector__option-overlay">
 								<span id={ makeOptionId( design ) } className="design-selector__option-name">
 									{ design.title }
-									{ design.premium && (
+									{ design.is_premium && (
 										<Tooltip
 											position="top center"
 											text={ __( 'Requires a Personal plan or above' ) }

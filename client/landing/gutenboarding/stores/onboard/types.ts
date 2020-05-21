@@ -34,5 +34,5 @@ export interface Design {
 	template: string;
 	fonts: FontPair;
 	categories: Array< string >;
-	premium: boolean;
+	is_premium: boolean;
 }
