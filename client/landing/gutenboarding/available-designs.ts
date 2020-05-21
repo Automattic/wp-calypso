@@ -40,6 +40,19 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			is_premium: false,
 		},
 		{
+			title: 'Bowen',
+			slug: 'bowen',
+			template: 'bowen',
+			theme: 'coutoire',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'blog' ],
+			is_premium: true,
+		},
+		{
 			title: 'Easley',
 			slug: 'easley',
 			template: 'easley',
@@ -116,19 +129,6 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			},
 			categories: [ 'featured', 'charity', 'non-profit' ],
 			is_premium: false,
-		},
-		{
-			title: 'Bowen',
-			slug: 'bowen',
-			template: 'bowen',
-			theme: 'coutoire',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/',
-			fonts: {
-				headings: 'Playfair Display',
-				base: 'Fira Sans',
-			},
-			categories: [ 'featured', 'blog' ],
-			is_premium: true,
 		},
 	],
 };
