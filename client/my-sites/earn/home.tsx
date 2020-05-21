@@ -38,6 +38,7 @@ import adsImage from 'assets/images/earn/ads.svg';
 import recurringImage from 'assets/images/earn/recurring.svg';
 import referralImage from 'assets/images/earn/referral.svg';
 import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
+import premiumContentImage from 'assets/images/earn/premium-content.svg';
 
 interface ConnectedProps {
 	siteId: number;
@@ -97,7 +98,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Collect one-time payments' ),
+					text: translate( 'Add one-time payments' ),
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
@@ -116,10 +117,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Collect one-time payments' ),
 			body: hasSimplePayments
 				? translate(
-						'Accept PayPal payments for physical products, digital goods, services, or donations.'
+						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work.'
 				  )
 				: translate(
-						'Accept PayPal payments for physical products, digital goods, services, or donations. {{em}}Available only with a Premium, Business, or eCommerce plan{{/em}}.',
+						'Accept credit card payments for physical products, digital goods, services, donations, or support of your creative work. {{em}}Available with a Premium, Business, or eCommerce plan{{/em}}.',
 						{
 							components: {
 								em: <em />,
@@ -165,7 +166,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
 			  )
 			: translate(
-					'Charge for and automate recurring service payments, membership dues, or donations. {{em}}Available with a subscription to any paid plan{{/em}}.',
+					'Accept ongoing and automated credit card payments for subscriptions, memberships, services, and donations. {{em}}Available with any paid plan{{/em}}.',
 					{
 						components: {
 							em: <em />,
@@ -185,6 +186,63 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			badge: translate( 'New' ),
 			image: {
 				path: recurringImage,
+			},
+			actions: {
+				cta,
+				learnMoreLink,
+			},
+		};
+	};
+
+	/**
+	 * Return the content to display in the Premium Content Block card based on the current plan.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getPremiumContentCard = () => {
+		const cta = isFreePlan
+			? {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'premium-content' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
+			  }
+			: {
+					text: translate( 'Add premium content subscriptions' ),
+					action: () => {
+						trackCtaButton( 'premium-content' );
+						page( 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/' );
+					},
+			  };
+		const title = hasConnectedAccount
+			? translate( 'Manage Your Premium Content' )
+			: translate( 'Collect payments for content' );
+		const body = hasConnectedAccount
+			? translate(
+					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			  )
+			: translate(
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. {{em}}Available with any paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  );
+
+		const learnMoreLink = isFreePlan
+			? {
+					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+					onClick: () => trackLearnLink( 'premium-content' ),
+			  }
+			: null;
+		return {
+			title,
+			body,
+			badge: translate( 'New' ),
+			image: {
+				path: premiumContentImage,
 			},
 			actions: {
 				cta,
@@ -221,8 +279,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title: translate( 'Refer a friend, you’ll both earn credits' ),
 			body: peerReferralLink
 				? translate(
-						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
-							'By doing so you agree to the WordPress.com Peer Referral Program {{a}}Terms and Conditions.{{/a}}',
+						'To earn free credits, share the link below with your friends, family, and website visitors.'
+				  )
+				: translate(
+						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
 						{
 							components: {
 								a: (
@@ -232,14 +292,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 										rel="noopener noreferrer"
 									/>
 								),
-							},
-						}
-				  )
-				: translate(
-						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. {{em}}Available with every plan{{/em}}.',
-						{
-							components: {
-								em: <em />,
 							},
 						}
 				  ),
@@ -315,11 +367,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				path: earnSectionImage,
 				align: 'right',
 			},
-			body: translate( 'Turn your website into a reliable source of income.' ),
+			body: translate(
+				'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+			),
 		},
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
+			getPremiumContentCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
 		] ),
