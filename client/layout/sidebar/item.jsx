@@ -66,7 +66,7 @@ export default function SidebarItem( props ) {
 
 				{ customIcon && customIcon }
 
-				{ hasUnseen && <span className="sidebar__bubble" /> }
+				{ hasUnseen && <span className="sidebar__bubble" aria-label="You have unseen content" /> }
 
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>

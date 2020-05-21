@@ -33,7 +33,7 @@ export class ReaderSidebarLists extends Component {
 		return (
 			<div className={ hasUnseen ? 'has-unseen' : '' }>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				{ hasUnseen && <span className="sidebar__bubble" /> }
+				{ hasUnseen && <span className="sidebar__bubble" aria-label="You have unseen content" /> }
 				<ExpandableSidebarMenu
 					hasNew={ hasUnseen }
 					expanded={ isOpen }

@@ -58,7 +58,7 @@ export class ReaderSidebarTags extends Component {
 		return (
 			<ul className={ hasUnseen ? 'has-unseen' : '' }>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				{ hasUnseen && <span className="sidebar__bubble" /> }
+				{ hasUnseen && <span className="sidebar__bubble" aria-label="You have unseen content" /> }
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
