@@ -418,7 +418,7 @@ class MembershipsProductsSection extends Component {
 				] }
 			>
 				<FormSectionHeading>
-					{ this.state.editedProductId && this.props.translate( 'Edit' ) }
+					{ this.state.editedProductId && this.props.translate( 'Edit Recurring Payment plan' ) }
 					{ ! this.state.editedProductId &&
 						this.props.translate( 'Add New Recurring Payment plan' ) }
 				</FormSectionHeading>
