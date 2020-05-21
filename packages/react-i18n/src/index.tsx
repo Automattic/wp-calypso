@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import memize from 'memize';
-import { createI18n, LocaleData } from './create-i18n';
+import { createI18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 type I18n = ReturnType< typeof createI18n >;
