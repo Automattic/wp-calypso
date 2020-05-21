@@ -9,16 +9,6 @@ import { v4 as uuid } from 'uuid';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-/**
- * Internal dependencies
- */
-// import { getSuggestionsVendor } from 'lib/domains/suggestions';
-
-// const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
-
-// TODO: Fix this.
-const DOMAIN_SUGGESTION_VENDOR = 'variation4_front';
-
 interface Props {
 	suggestion: DomainSuggestion;
 	isRecommended?: boolean;
@@ -32,6 +22,7 @@ interface Props {
 	uiPosition: number;
 	domainSearch: string;
 	analyticsFlowId: string;
+	domainSuggestionVendor: string;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
@@ -44,6 +35,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	uiPosition,
 	domainSearch,
 	analyticsFlowId,
+	domainSuggestionVendor,
 } ) => {
 	const { __ } = useI18n();
 
@@ -52,7 +44,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const fetchAlgo = `/domains/search/${ DOMAIN_SUGGESTION_VENDOR }/${ analyticsFlowId }`;
+	const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }`;
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 

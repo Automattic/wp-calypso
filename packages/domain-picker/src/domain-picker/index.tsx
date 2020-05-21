@@ -104,6 +104,8 @@ export interface Props {
 	analyticsFlowId: string;
 
 	domainCategories: DomainCategory[];
+
+	domainSuggestionVendor: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -128,6 +130,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	railcarId,
 	analyticsFlowId,
 	domainCategories,
+	domainSuggestionVendor,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
@@ -260,6 +263,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										railcarId={ railcarId ? `${ railcarId }0` : undefined }
 										recordAnalytics={ recordAnalytics || undefined }
 										uiPosition={ 0 }
+										domainSuggestionVendor={ domainSuggestionVendor }
 									/>
 								) : (
 									<SuggestionNone />
@@ -280,6 +284,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											uiPosition={ i + 1 }
 											domainSearch={ domainSearch }
 											analyticsFlowId={ analyticsFlowId }
+											domainSuggestionVendor={ domainSuggestionVendor }
 										/>
 									) )
 								) : (
