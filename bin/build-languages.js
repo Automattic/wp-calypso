@@ -96,7 +96,7 @@ function downloadLanguagesRevions() {
 }
 
 // Request and write language files
-async function downloadLanguages() {
+async function downloadLanguages( languageRevisions ) {
 	let downloadedLanguagesCount = 0;
 
 	function log( status ) {
@@ -125,17 +125,32 @@ async function downloadLanguages() {
 						files.forEach( ( file ) => response.pipe( file ) );
 						response.on( 'data', ( chunk ) => ( body += chunk ) );
 						response.on( 'end', () => {
-							if ( response.statusCode !== 200 ) {
+							// Script should exit with an error if any of the
+							// translation download jobs for a language included
+							// in language revisions file fails.
+							// Failed downloads for languages that are not
+							// included in language revisions file could be skipped
+							// without interrupting the script.
+							if ( response.statusCode !== 200 && langSlug in languageRevisions ) {
 								console.error( `Failed to download translations for "${ langSlug }".` );
 								process.exit( 1 );
-							} else {
+							}
+
+							if ( response.statusCode === 200 ) {
 								downloadedLanguagesCount++;
 								log();
+
+								resolve( {
+									langSlug,
+									languageTranslations: JSON.parse( body ),
+								} );
+
+								return;
 							}
 
 							resolve( {
 								langSlug,
-								languageTranslations: JSON.parse( body ),
+								failed: true,
 							} );
 						} );
 					} );
@@ -151,6 +166,9 @@ async function downloadLanguages() {
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 	logUpdate( 'Building language chunks...' );
+
+	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
+	const unsuccessfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => failed );
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
 		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
@@ -217,7 +235,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				return [ ...strings ];
 			} );
 
-			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
+			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
 					.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
 					.omitBy( _.isEmpty )
@@ -293,13 +311,17 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		);
 	}
 
-	logUpdate( 'Building language chunks completed.\n' );
+	logUpdate(
+		`Building language chunks completed.\nSkipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
+			.map( ( { langSlug } ) => langSlug )
+			.join( ', ' ) }.`
+	);
 }
 
 async function run() {
 	createLanguagesDir();
 	const languageRevisions = await downloadLanguagesRevions();
-	const downloadedLanguages = await downloadLanguages();
+	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguageChunks( downloadedLanguages, languageRevisions );
 }
 
