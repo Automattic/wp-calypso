@@ -170,7 +170,7 @@
 			display: block;
 		}
 
-		&.not-connected .sharing-service-accounts-detail,
+		&.not-connected .connections__sharing-service-accounts-detail,
 		&.not-connected .connections__sharing-service-tip {
 			display: none;
 		}
@@ -180,7 +180,7 @@
 		display: none;
 	}
 
-	.sharing-service-accounts-detail {
+	.connections__sharing-service-accounts-detail {
 		h2 {
 			font-size: 1.2em;
 		}
@@ -195,7 +195,7 @@
 		}
 	}
 
-	.sharing-service-connected-accounts {
+	.connections__sharing-service-connected-accounts {
 		margin-left: 0;
 		margin-bottom: 8px;
 	}
@@ -270,12 +270,12 @@
 	}
 }
 
-@include sharing-service( 'facebook', var( --color-facebook ));
-@include sharing-service( 'twitter', var( --color-twitter ));
-@include sharing-service( 'google_plus', var( --color-google-plus ));
-@include sharing-service( 'tumblr', var( --color-tumblr ));
-@include sharing-service( 'linkedin', var( --color-linkedin ));
-@include sharing-service( 'instagram-basic-display', var( --color-instagram ));
+@include sharing-service( 'facebook', var( --color-facebook ) );
+@include sharing-service( 'twitter', var( --color-twitter ) );
+@include sharing-service( 'google_plus', var( --color-google-plus ) );
+@include sharing-service( 'tumblr', var( --color-tumblr ) );
+@include sharing-service( 'linkedin', var( --color-linkedin ) );
+@include sharing-service( 'instagram-basic-display', var( --color-instagram ) );
 
 .sharing-service__name {
 	clear: none;
@@ -543,7 +543,8 @@
 	margin-bottom: 20px;
 	padding: 20px 24px;
 	background: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 }
 
 .sharing-buttons__fieldset-group {
@@ -915,22 +916,22 @@
 	}
 }
 
-@include sharing-button-service( 'facebook', var( --color-facebook ));
-@include sharing-button-service( 'twitter', var( --color-twitter ));
-@include sharing-button-service( 'press-this', var( --color-wordpress-com ));
-@include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
-@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ));
-@include sharing-button-service( 'linkedin', var( --color-linkedin ));
-@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
-@include sharing-button-service( 'tumblr', var( --color-tumblr ));
-@include sharing-button-service( 'reddit', var( --color-reddit ));
-@include sharing-button-service( 'pinterest', var( --color-pinterest ));
-@include sharing-button-service( 'pocket', var( --color-pocket ));
-@include sharing-button-service( 'email', var( --color-email ));
-@include sharing-button-service( 'print', var( --color-print ));
-@include sharing-button-service( 'skype', var( --color-skype ));
-@include sharing-button-service( 'telegram', var( --color-telegram ));
-@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ));
+@include sharing-button-service( 'facebook', var( --color-facebook ) );
+@include sharing-button-service( 'twitter', var( --color-twitter ) );
+@include sharing-button-service( 'press-this', var( --color-wordpress-com ) );
+@include sharing-button-service( 'google-plus-1', var( --color-google-plus ) );
+@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ) );
+@include sharing-button-service( 'linkedin', var( --color-linkedin ) );
+@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ) );
+@include sharing-button-service( 'tumblr', var( --color-tumblr ) );
+@include sharing-button-service( 'reddit', var( --color-reddit ) );
+@include sharing-button-service( 'pinterest', var( --color-pinterest ) );
+@include sharing-button-service( 'pocket', var( --color-pocket ) );
+@include sharing-button-service( 'email', var( --color-email ) );
+@include sharing-button-service( 'print', var( --color-print ) );
+@include sharing-button-service( 'skype', var( --color-skype ) );
+@include sharing-button-service( 'telegram', var( --color-telegram ) );
+@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;

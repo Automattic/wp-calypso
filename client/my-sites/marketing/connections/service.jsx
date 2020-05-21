@@ -31,12 +31,12 @@ import {
 } from 'state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
-	getRemovableConnections,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'state/selectors/get-removable-connections';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
