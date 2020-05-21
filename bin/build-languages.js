@@ -8,116 +8,18 @@ const mkdirp = require( 'mkdirp' );
 const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
 
+const languagesMetaPath = fs.existsSync( '../client/languages/languages-meta.json' )
+	? '../client/languages/languages-meta.json'
+	: '../client/languages/fallback-languages-meta.json';
+const languages = require( languagesMetaPath );
+
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
 const CALYPSO_STRINGS = './calypso-strings.pot';
 const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
-const languages = [
-	'am',
-	'ast',
-	'gu',
-	'hi',
-	'hr',
-	'hu',
-	'he',
-	'af',
-	'as',
-	'ar',
-	'da',
-	'gd',
-	'cy',
-	'cs',
-	'de_formal',
-	'de',
-	'bel',
-	'bo',
-	'br',
-	'es-cl',
-	'eo',
-	'dv',
-	'bn',
-	'sl',
-	'eu',
-	'az',
-	'bg',
-	'el',
-	'en-gb',
-	'snd',
-	'es',
-	'fi',
-	'skr',
-	'el-po',
-	'sk',
-	'id',
-	'fo',
-	'so',
-	'fr-be',
-	'gl',
-	'te',
-	'es-mx',
-	'ms',
-	'hy',
-	'et',
-	'fa',
-	'fr',
-	'ml',
-	'mr',
-	'si',
-	'mn',
-	'oci',
-	'ps',
-	'fr-ch',
-	'sq',
-	'bs',
-	'ca',
-	'zh-tw',
-	'ro',
-	'pa',
-	'fr-ca',
-	'su',
-	'sr',
-	'sv',
-	'mwl',
-	'ckb',
-	'kk',
-	'kn',
-	'ne',
-	'ka',
-	'km',
-	'tir',
-	'lo',
-	'no',
-	'kir',
-	'mk',
-	'sr_latin',
-	'ta',
-	'ko',
-	'nl',
-	'zh-cn',
-	'nn',
-	'lv',
-	'ga',
-	'lt',
-	'pl',
-	'pt',
-	'ru',
-	'rup',
-	'yi',
-	'pt-br',
-	'ug',
-	'uz',
-	'vi',
-	'is',
-	'ur',
-	'uk',
-	'it',
-	'ja',
-	'tl',
-	'th',
-	'tr',
-]; // todo: can we use `../client/languages`?
+const langSlugs = languages.map( ( { langSlug } ) => langSlug );
 
 const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
 const languagesPaths = chunksMaps
@@ -200,14 +102,14 @@ async function downloadLanguages() {
 	function log( status ) {
 		logUpdate(
 			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
-				`(${ downloadedLanguagesCount }/${ languages.length })`
+				`(${ downloadedLanguagesCount }/${ langSlugs.length })`
 		);
 	}
 
 	log();
 
 	const downloadedLanguages = await Promise.all(
-		languages.map(
+		langSlugs.map(
 			( langSlug ) =>
 				new Promise( ( resolve ) => {
 					const filename = `${ langSlug }-v1.1.json`;
