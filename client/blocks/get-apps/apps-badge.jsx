@@ -90,7 +90,7 @@ export class AppsBadge extends PureComponent {
 	}
 
 	loadImage() {
-		this.image = new Image();
+		this.image = new globalThis.Image();
 		this.image.src = this.state.imageSrc;
 		this.image.onload = this.onLoadImageComplete;
 		this.image.onerror = this.onLoadImageError;
