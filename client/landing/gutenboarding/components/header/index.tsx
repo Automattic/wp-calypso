@@ -96,6 +96,12 @@ const Header: React.FunctionComponent = () => {
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	const getDomainElementContent = () => {
+		// If no site title entered (user skips intent gathering)
+		// and no domain was selected, show "Pick a domain"
+		if ( ! siteTitle && ! domain ) {
+			return __( 'Pick a domain' );
+		}
+
 		if ( recommendedDomainSuggestion || previousRecommendedDomain !== '' ) {
 			/* translators: domain name is available, eg: "yourname.com is available" */
 			return sprintf(
@@ -106,7 +112,7 @@ const Header: React.FunctionComponent = () => {
 			);
 		}
 
-		return 'example.wordpress.com';
+		return __( 'Pick a domain' );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
