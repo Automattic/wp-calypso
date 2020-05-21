@@ -52,7 +52,9 @@ class MasterbarItem extends Component {
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
 			>
-				{ this.props.hasUnseen && <span className="masterbar__item-bubble" /> }
+				{ this.props.hasUnseen && (
+					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
+				) }
 				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				<span className="masterbar__item-content">{ this.props.children }</span>
 			</a>
