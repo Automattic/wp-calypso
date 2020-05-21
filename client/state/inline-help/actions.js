@@ -19,7 +19,10 @@ import {
 import { getContextualHelpResults } from 'state/inline-help/selectors';
 
 /**
- * Triggers a network request to fetch search results for a query string.
+ * Fetches search results for a given query string.
+ * Triggers an API request. If this returns no results
+ * then hard coded results are returned based on the context of the
+ * current route (see `client/blocks/inline-help/contextual-help.js`).
  *
  * @param {?string} searchQuery Search query
  * @returns {Function}        Action thunk
@@ -41,6 +44,17 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 			.undocumented()
 			.getHelpLinks( searchQuery )
 			.then( ( { wordpress_support_links: searchResults } ) => {
+				// Searches will either:
+				//
+				// 1. return results from the search API endpoint
+				// ...or...
+				// 2. return hard-coded results based on the current route.
+				//
+				// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
+				// whether the search results came from the API or not. This
+				// enables UI to indicate a "no results" status and indicate
+				// that the results are contextual (if required).
+
 				if ( searchResults && searchResults.length ) {
 					dispatch( {
 						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
