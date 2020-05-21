@@ -106,10 +106,10 @@ export default connect( ( state, props ) => {
 		userSitesCount = getCurrentUserVisibleSiteCount( state ),
 	} = props;
 
-	const visibleSiteCount = sites.filter( isSiteVisible ).length;
+	const visibleSites = sites?.filter( isSiteVisible );
 
 	return {
-		sites,
-		count: config.isEnabled( 'realtime-site-count' ) ? visibleSiteCount : userSitesCount,
+		sites: config.isEnabled( 'realtime-site-count' ) ? visibleSites : sites,
+		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
 	};
 } )( localize( AllSites ) );
