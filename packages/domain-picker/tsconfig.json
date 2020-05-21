@@ -31,5 +31,5 @@
 		"tsBuildInfoFile": "../../.tsc-cache/packages__domain-picker"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"exclude": [ "**/test/*" ]
 }
