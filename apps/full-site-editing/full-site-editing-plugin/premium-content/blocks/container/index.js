@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 import { trimEnd } from 'lodash';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -93,6 +94,54 @@ const settings = {
 	supports: {
 		// Removes support for an HTML mode.
 		html: false,
+	},
+	transforms: {
+		from: [
+			{
+				type: 'block',
+				isMultiBlock: true,
+				blocks: [ '*' ],
+				__experimentalConvert( blocks ) {
+					// Avoid transforming a premium-content block
+					if ( blocks.length === 1 && blocks[ 0 ].name === 'premium-content/container' ) {
+						return;
+					}
+
+					// Clone the Blocks
+					// Failing to create new block references causes the original blocks
+					// to be replaced in the switchToBlockType call thereby meaning they
+					// are removed both from their original location and within the
+					// new premium content block.
+					const innerBlocksSubscribe = blocks.map( ( block ) => {
+						return createBlock( block.name, block.attributes, block.innerBlocks );
+					} );
+
+					const excerptLength = 2;
+					const loggedOutExcerpt = blocks.slice( 0, excerptLength ).map( ( block ) => {
+						return createBlock( block.name, block.attributes, block.innerBlocks );
+					} );
+
+					const innerBlocksLoggedOut = [
+						...loggedOutExcerpt,
+						createBlock( 'core/heading', {
+							content: __( 'Subscribe to get access', 'premium-content' ),
+							level: 3,
+						} ),
+						createBlock( 'core/paragraph', {
+							content: __(
+								'Read more of this content when you subscribe today.',
+								'premium-content'
+							),
+						} ),
+					];
+
+					return createBlock( 'premium-content/container', {}, [
+						createBlock( 'premium-content/subscriber-view', {}, innerBlocksSubscribe ),
+						createBlock( 'premium-content/logged-out-view', {}, innerBlocksLoggedOut ),
+					] );
+				},
+			},
+		],
 	},
 	keywords: [
 		'premium-content',
