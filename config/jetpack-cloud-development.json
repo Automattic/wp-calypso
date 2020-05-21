@@ -30,6 +30,7 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": true,
+		"pwa": false,
 		"realtime-site-count": true,
 		"site-indicator": false
 	},
