@@ -36,6 +36,9 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			searchQuery,
 		} );
 
+		// Ensure empty strings are removed as valid searches.
+		searchQuery = searchQuery.trim();
+
 		// If the search is empty return contextual results and exist
 		// early to avoid unwanted network requests.
 		if ( ! searchQuery ) {
