@@ -411,9 +411,7 @@ class MembershipsProductsSection extends Component {
 						action: 'cancel',
 					},
 					{
-						label: this.state.editedProductId
-							? this.props.translate( 'Edit' )
-							: this.props.translate( 'Add' ),
+						label: this.props.translate( 'Save' ),
 						action: 'submit',
 						disabled: ! this.isFormValid(),
 					},
