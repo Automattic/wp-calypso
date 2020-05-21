@@ -15,11 +15,11 @@ import { composeAnalytics, recordTracksEvent, bumpStat } from 'state/analytics/a
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import InlineHelpSearchResults from '../../../../../blocks/inline-help/inline-help-search-results';
-import InlineHelpSearchCard from '../../../../../blocks/inline-help/inline-help-search-card';
-import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
+import SupportSearchCard from './search-card';
+import SupportSearchResults from './search-results';
 
 import {
 	RESULT_ARTICLE,
@@ -70,8 +70,8 @@ const Support = ( props ) => {
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 				<QuerySupportTypes />
 				<div className="support__search">
-					<InlineHelpSearchCard openResult={ openResultView } query={ searchQuery } />
-					<InlineHelpSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+					<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
+					<SupportSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
 				</div>
 			</div>
 		</Card>
