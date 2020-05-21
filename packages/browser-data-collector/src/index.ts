@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { ReportImpl } from './report';
-import { applyGlobalCollectors } from './collectors';
 import { send } from './transports/logstash';
 import { shouldSend } from './should-send';
 
@@ -24,6 +23,7 @@ export const start = ( id: string, { fullPageLoad = true }: { fullPageLoad?: boo
 	if ( existingReport ) {
 		throw new Error( `A report with the same key '${ id }'is already in process.` );
 	}
+
 	const report = new ReportImpl( id, fullPageLoad );
 	inFlightReporters.set( id, report );
 };
@@ -40,9 +40,10 @@ export const stop = async ( id: string ): Promise< boolean > => {
 	// There is no in progress report with the key, fail silently to avoid messing with the rendering
 	if ( ! existingReport ) return false;
 
-	existingReport.stop();
 	inFlightReporters.delete( id );
-	await applyGlobalCollectors( existingReport );
+
+	await existingReport.stop();
+
 	if ( shouldSend( existingReport ) ) {
 		return send( existingReport.toJSON() );
 	}
