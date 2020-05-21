@@ -2,25 +2,25 @@
 @import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
 
-$sidebarWidth: 272px;
+$sidebar-width: 272px;
 $border: 1px solid $light-gray-500;
-$transitionPeriod: 200ms;
+$transition-period: 200ms;
 
 .is-wpcom-block-editor-nav-sidebar-attached {
 	.edit-post-layout {
-		transition: margin-left $transitionPeriod;
+		transition: margin-left $transition-period;
 		@include reduce-motion( 'transition' );
 	}
 
 	.edit-post-fullscreen-mode-close {
-		transition: width $transitionPeriod;
+		transition: width $transition-period;
 		@include reduce-motion( 'transition' );
 	}
 }
 
 .is-wpcom-block-editor-nav-sidebar-opened {
 	.edit-post-layout {
-		margin-left: $sidebarWidth;
+		margin-left: $sidebar-width;
 	}
 
 	.edit-post-fullscreen-mode-close {
@@ -39,11 +39,11 @@ $transitionPeriod: 200ms;
 .wpcom-block-editor-nav-sidebar__container {
 	position: fixed;
 	top: 0;
-	left: -$sidebarWidth;
+	left: -$sidebar-width;
 	bottom: 0;
-	width: $sidebarWidth;
+	width: $sidebar-width;
 	border-right: $border;
-	transition: left $transitionPeriod;
+	transition: left $transition-period;
 	@include reduce-motion( 'transition' );
 }
 
@@ -69,11 +69,11 @@ $transitionPeriod: 200ms;
 		box-shadow: none !important;
 
 		&.wpcom-block-editor-nav-sidebar__is-shrinking {
-			animation: wpcom-block-editor-nav-sidebar__shrink $transitionPeriod normal forwards;
+			animation: wpcom-block-editor-nav-sidebar__shrink $transition-period normal forwards;
 			@include reduce-motion( 'animation' );
 		}
 		&.wpcom-block-editor-nav-sidebar__is-growing {
-			animation: wpcom-block-editor-nav-sidebar__grow $transitionPeriod normal forwards;
+			animation: wpcom-block-editor-nav-sidebar__grow $transition-period normal forwards;
 			@include reduce-motion( 'animation' );
 		}
 	}
