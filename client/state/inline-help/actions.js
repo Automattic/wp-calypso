@@ -68,24 +68,17 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 				// enables UI to indicate a "no results" status and indicate
 				// that the results are contextual (if required).
 
-				if ( searchResults && searchResults.length ) {
-					dispatch( {
-						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-						hasAPIResults: true,
-					} );
-				} else {
-					// Get static results based on which Calypso section we're in
-					searchResults = contextualResults;
-					dispatch( {
-						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-						hasAPIResults: false,
-					} );
-				}
+				const hasAPIResults = searchResults && searchResults.length;
+
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults,
+				} );
 
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults,
+					searchResults: hasAPIResults ? searchResults : contextualResults,
 				} );
 			} )
 			.catch( ( error ) => {
@@ -94,6 +87,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					searchQuery,
 					error,
 				} );
+
 				// Force reset flag for no API results
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
