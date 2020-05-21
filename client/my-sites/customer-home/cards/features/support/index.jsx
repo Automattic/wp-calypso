@@ -35,11 +35,6 @@ import {
  */
 import './style.scss';
 
-/**
- * Image dependencies
- */
-import happinessIllustration from 'assets/images/customer-home/happiness.png';
-
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
@@ -62,12 +57,8 @@ const Support = ( props ) => {
 
 	return (
 		<Card className="support">
-			<CardHeading>{ translate( 'Support' ) }</CardHeading>
-			<h6 className="support__header customer-home__card-subheader">
-				{ translate( 'Get all the help you need.' ) }
-			</h6>
+			<CardHeading>{ translate( 'Get help' ) }</CardHeading>
 			<div className="support__content">
-				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 				<QuerySupportTypes />
 				<div className="support__search">
 					<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
