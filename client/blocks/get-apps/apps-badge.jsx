@@ -5,8 +5,8 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { identity, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { startsWith } from 'lodash';
+import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -30,8 +30,8 @@ const APP_STORE_BADGE_URLS = {
 		tracksEvent: 'calypso_app_download_ios_click',
 		getStoreLink: ( referrer ) =>
 			`https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=${ referrer }&mt=8`,
-		getTitleText: ( translate ) => translate( 'Download the WordPress iOS mobile app.' ),
-		getAltText: ( translate ) => translate( 'Apple App Store download badge' ),
+		titleText: translate( 'Download the WordPress iOS mobile app.' ),
+		altText: translate( 'Apple App Store download badge' ),
 		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
 			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
@@ -45,8 +45,8 @@ const APP_STORE_BADGE_URLS = {
 		tracksEvent: 'calypso_app_download_android_click',
 		getStoreLink: ( referrer, utm_campaign ) =>
 			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ referrer }%26utm_medium%3Dweb%26utm_campaign%3D${ utm_campaign }`,
-		getTitleText: ( translate ) => translate( 'Download the WordPress Android mobile app.' ),
-		getAltText: ( translate ) => translate( 'Google Play Store download badge' ),
+		titleText: translate( 'Download the WordPress Android mobile app.' ),
+		altText: translate( 'Google Play Store download badge' ),
 		getLocaleSlug,
 	},
 };
@@ -58,7 +58,6 @@ export class AppsBadge extends PureComponent {
 		storeName: PropTypes.oneOf( [ 'ios', 'android' ] ).isRequired,
 		titleText: TranslatableString,
 		referrer: PropTypes.string,
-		translate: PropTypes.func,
 		utm_campaign: PropTypes.string,
 	};
 
@@ -67,7 +66,6 @@ export class AppsBadge extends PureComponent {
 		storeLink: null,
 		titleText: '',
 		referrer: '',
-		translate: identity,
 		utm_campaign: '',
 	};
 
@@ -117,15 +115,7 @@ export class AppsBadge extends PureComponent {
 	};
 
 	render() {
-		const {
-			altText,
-			titleText,
-			storeLink,
-			storeName,
-			translate,
-			referrer,
-			utm_campaign,
-		} = this.props;
+		const { altText, titleText, storeLink, storeName, referrer, utm_campaign } = this.props;
 		const { imageSrc, hasExternalImageLoaded } = this.state;
 
 		const figureClassNames = classNames( 'get-apps__app-badge', {
@@ -145,8 +135,8 @@ export class AppsBadge extends PureComponent {
 				>
 					<img
 						src={ imageSrc }
-						title={ titleText ? titleText : badge.getTitleText( translate ) }
-						alt={ altText ? altText : badge.getAltText( translate ) }
+						title={ titleText ? titleText : badge.titleText }
+						alt={ altText ? altText : badge.altText }
 					/>
 				</a>
 			</figure>
@@ -156,4 +146,4 @@ export class AppsBadge extends PureComponent {
 
 export default connect( null, {
 	recordTracksEvent,
-} )( localize( AppsBadge ) );
+} )( AppsBadge );
