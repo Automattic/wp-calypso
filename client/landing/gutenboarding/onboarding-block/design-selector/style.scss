@@ -141,6 +141,11 @@
 		border-radius: 1em;
 		color: var( --studio-white );
 		margin: 0 6px;
+		padding: 1px 8px;
+
+		svg {
+			margin-left: -4px;
+		}
 
 		path {
 			fill: var( --studio-white );
