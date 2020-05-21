@@ -101,6 +101,7 @@ class ManagePurchase extends Component {
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
+		purchaseAttachedTo: PropTypes.object,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -529,6 +530,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			renewableSitePurchases,
 			purchase,
+			purchaseAttachedTo,
 			isPurchaseTheme,
 		} = this.props;
 		const classes = 'manage-purchase';
@@ -559,6 +561,7 @@ class ManagePurchase extends Component {
 						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
 						selectedSite={ site }
 						purchase={ purchase }
+						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
@@ -580,6 +583,10 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const purchaseAttachedTo =
+		purchase && purchase.attachedToPurchaseId
+			? getByPurchaseId( state, purchase.attachedToPurchaseId )
+			: null;
 	const siteId = purchase ? purchase.siteId : null;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
@@ -596,6 +603,7 @@ export default connect( ( state, props ) => {
 			: false,
 		hasCustomPrimaryDomain: hasCustomDomain( site ),
 		purchase,
+		purchaseAttachedTo,
 		siteId,
 		site,
 		renewableSitePurchases,

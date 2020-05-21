@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes } from 'lodash';
+import { find, includes, isObject } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -13,11 +13,15 @@ import debugFactory from 'debug';
 import notices from 'notices';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
+import { getPlan } from 'lib/plans';
+import { isMonthly as isMonthlyPlan } from 'lib/plans/constants';
 import {
+	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
+	isMonthly as isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isConciergeSession,
@@ -261,6 +265,91 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+/**
+ * Determines if this is a monthly purchase.
+ *
+ * This function takes into account WordPress.com and Jetpack plans as well as
+ * Jetpack products.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is monthly, or false if not
+ */
+function isMonthlyPurchase( purchase ) {
+	const plan = getPlan( purchase.productSlug );
+	if ( isObject( plan ) ) {
+		return isMonthlyPlan( purchase.productSlug );
+	}
+
+	// Note that getProductFromSlug() returns a string when given a non-product
+	// slug, so we need to check that it's an object before using it.
+	const product = getProductFromSlug( purchase.productSlug );
+	if ( isObject( product ) ) {
+		return isMonthlyProduct( product );
+	}
+
+	return false;
+}
+
+/**
+ * Determines if this is a recent monthly purchase (bought within the past week).
+ *
+ * This is often used to ensure that notices about purchases which expire
+ * "soon" are not displayed with error styling to a user who just purchased a
+ * monthly subscription (which by definition will expire relatively soon).
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is a recent monthy purchase, or false if not
+ */
+function isRecentMonthlyPurchase( purchase ) {
+	return subscribedWithinPastWeek( purchase ) && isMonthlyPurchase( purchase );
+}
+
+/**
+ * Determines if the purchase needs to renew soon.
+ *
+ * This will return true if the purchase is either already expired or
+ * expiring/renewing soon.
+ *
+ * The intention here is to identify purchases that the user might reasonably
+ * want to manually renew (regardless of whether they are also scheduled to
+ * auto-renew).
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase needs to renew soon, or false if not
+ */
+function needsToRenewSoon( purchase ) {
+	// Skip purchases that never need to renew or that can't be renewed.
+	if (
+		isOneTimePurchase( purchase ) ||
+		isPartnerPurchase( purchase ) ||
+		! isRenewable( purchase ) ||
+		! canExplicitRenew( purchase )
+	) {
+		return false;
+	}
+
+	return isCloseToExpiration( purchase );
+}
+
+/**
+ * Returns true for purchases that are expired or expiring/renewing soon.
+ *
+ * The latter is defined as within one month of expiration for monthly
+ * subscriptions (i.e., one billing period) and within three months of
+ * expiration for everything else.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is close to expiration, or false if not
+ */
+function isCloseToExpiration( purchase ) {
+	if ( ! purchase.expiryDate ) {
+		return false;
+	}
+
+	const expiryThresholdInMonths = isMonthlyPurchase( purchase ) ? 1 : 3;
+	return moment( purchase.expiryDate ).diff( Date.now(), 'months' ) < expiryThresholdInMonths;
 }
 
 /**
@@ -592,10 +681,13 @@ export {
 	isPaidWithCredits,
 	isPartnerPurchase,
 	hasPaymentMethod,
+	isCloseToExpiration,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
+	isMonthlyPurchase,
 	isOneTimePurchase,
+	isRecentMonthlyPurchase,
 	isRechargeable,
 	isRefundable,
 	isRemovable,
@@ -604,6 +696,7 @@ export {
 	isRenewing,
 	isSubscription,
 	maybeWithinRefundPeriod,
+	needsToRenewSoon,
 	paymentLogoType,
 	purchaseType,
 	cardProcessorSupportsUpdates,
