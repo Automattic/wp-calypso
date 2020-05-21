@@ -145,7 +145,6 @@
 		"privacy-policy": true,
 		"publicize-preview": true,
 		"push-notifications": true,
-		"pwa": true,
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
