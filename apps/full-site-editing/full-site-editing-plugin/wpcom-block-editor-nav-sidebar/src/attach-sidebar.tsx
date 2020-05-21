@@ -8,7 +8,7 @@ import React, { render } from '@wordpress/element';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import WpcomBlockEditorNavSidebar from './wpcom-block-editor-nav-sidebar';
+import WpcomBlockEditorNavSidebar, { selectNavItems } from './wpcom-block-editor-nav-sidebar';
 import './style.scss';
 
 async function findElement( selector: string, timeoutMs = 5000 ) {
@@ -79,7 +79,7 @@ async function attachSidebar() {
 	render( <WpcomBlockEditorNavSidebar />, sidebarContainer );
 
 	// Start resolving sidebar items
-	select( STORE_KEY ).getNavItems();
+	selectNavItems( select );
 }
 
 attachSidebar();

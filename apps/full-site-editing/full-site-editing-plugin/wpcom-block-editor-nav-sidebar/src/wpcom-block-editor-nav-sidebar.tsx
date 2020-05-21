@@ -15,7 +15,13 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import type { Post } from './store';
+
+interface Post {
+	id: number;
+	slug: string;
+	status: string;
+	title: { raw: string; rendered: string };
+}
 
 const Button = ( {
 	children,
@@ -26,13 +32,12 @@ const Button = ( {
 
 export default function WpcomBlockEditorNavSidebar() {
 	const [ items, isOpen, postType ] = useSelect( ( select ) => {
-		const { getCurrentPostType } = select( 'core/editor' );
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
-			select( STORE_KEY ).getNavItems(),
+			selectNavItems( select ),
 			select( STORE_KEY ).isSidebarOpened(),
-			getPostType( getCurrentPostType() ),
+			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 		];
 	} );
 
@@ -107,13 +112,21 @@ interface NavItemProps {
 	item: Post;
 }
 
-function NavItem( props: NavItemProps ) {
-	const { slug, title } = props.item;
-
+function NavItem( { item }: NavItemProps ) {
 	return (
 		<li>
-			<div>{ title }</div>
-			<pre>{ `/${ slug }/` }</pre>
+			<div>{ item.title.rendered }</div>
+			<pre>{ `/${ item.slug }/` }</pre>
 		</li>
 	);
+}
+
+export function selectNavItems( select: typeof import('@wordpress/data').select ): Post[] {
+	const currentPostType = select( 'core/editor' ).getCurrentPostType();
+
+	const items = select( 'core' ).getEntityRecords( 'postType', currentPostType, {
+		_fields: 'id,slug,status,title',
+	} );
+
+	return ( items as any ) || [];
 }
