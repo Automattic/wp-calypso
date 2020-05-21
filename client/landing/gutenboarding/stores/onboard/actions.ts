@@ -18,7 +18,6 @@ import { PLAN_ECOMMERCE } from '../plans/constants';
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
-type DomainCategory = DomainSuggestions.DomainCategory;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
