@@ -24,7 +24,7 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
-import { reduxGetState } from 'lib/redux-bridge';
+import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -110,7 +110,7 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( reduxGetState(), siteId ) ) {
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
@@ -140,14 +140,8 @@ export const authenticate = ( context, next ) => {
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
 
 	if ( isDesktop ) {
-		window.dispatchEvent(
-			new window.CustomEvent( 'desktop-notify-cannot-open-editor', {
-				detail: {
-					site: getSite( state, siteId ),
-					editorUrl: wpAdminLoginUrl,
-					reason: 'JETPACK-REQUIRES-SSO',
-				},
-			} )
+		context.store.dispatch(
+			notifyDesktopCannotOpenEditor( getSite( state, siteId ), 'jetpack:sso', wpAdminLoginUrl )
 		);
 	} else {
 		window.location.replace( wpAdminLoginUrl );

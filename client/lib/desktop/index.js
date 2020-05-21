@@ -44,15 +44,15 @@ const Desktop = {
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 		ipc.on( 'enable-site-option', this.desktopCommandEnableSiteOption.bind( this ) );
-		ipc.on( 'refresh-site-state', this.desktopCommandRequestSite.bind( this ) );
+		ipc.on( 'request-site', this.desktopCommandRequestSite.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 
-		// Register window listeners
 		window.addEventListener(
 			'desktop-notify-cannot-open-editor',
-			this.onCannotOpenEditor.bind( this )
+			this.onWindowEventCannotOpenEditor.bind( this )
 		);
 
+		// TODO: Add (and remove) these listeners within corresponding ipc command
 		window.addEventListener(
 			'desktop-notify-jetpack-module-activate-status',
 			this.calypsoResponseJetpackModuleActivation.bind( this )
@@ -192,19 +192,27 @@ const Desktop = {
 		} );
 	},
 
-	onCannotOpenEditor: function ( event ) {
-		const { site, editorUrl, reason } = event.detail;
+	onWindowEventCannotOpenEditor: function ( event ) {
+		const { site, wpAdminLoginUrl, reason } = event.detail;
 		debug(
-			'Dispatching desktop notifification via window event: cannot load editor for site: ',
+			'Dispatching desktop notification via window event: cannot load editor for site: ',
 			site.URL
 		);
 
 		const state = this.store.getState();
 		const siteId = site.ID;
 
+		// TODO: Handle known vs. unknown error codes (`jetpack:sso`)
+		// TODO: Since we have the site info, we probably don't need to re-fetch the entire redux state here.
 		const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
 
-		ipc.send( 'cannot-open-editor', { siteId, origin: site.URL, editorUrl, reason, isAdmin } );
+		ipc.send( 'cannot-open-editor', {
+			siteId,
+			origin: site.URL,
+			editorUrl: wpAdminLoginUrl,
+			reason,
+			isAdmin,
+		} );
 	},
 
 	calypsoResponseJetpackModuleActivation: function ( event ) {
@@ -228,9 +236,8 @@ const Desktop = {
 
 	onCalypsoResponseSiteRequest: function ( event ) {
 		debug( 'Received site request status', event.detail );
-
 		const { status, siteId } = event.detail;
-		ipc.send( 'refresh-site-state-response', siteId, status );
+		ipc.send( 'request-site-response', siteId, status );
 	},
 
 	onNavigate: function ( event, url ) {
