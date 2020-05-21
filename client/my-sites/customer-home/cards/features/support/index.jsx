@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Card } from '@automattic/components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
 import SupportSearchCard from './search-card';
@@ -40,7 +41,16 @@ const amendYouTubeLink = ( link = '' ) =>
 
 const Support = ( props ) => {
 	const translate = useTranslate();
-	const { searchQuery } = props;
+	const { searchQuery, hideInlineHelpUI, showInlineHelpUI } = props;
+
+	// When the Customer Home Support is shown we must hide the
+	// Inline Help FAB
+	// see https://github.com/Automattic/wp-calypso/issues/38860
+	useEffect( () => {
+		hideInlineHelpUI();
+
+		return () => showInlineHelpUI();
+	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
 	const openResultView = ( event, selectedResult ) => {
 		event.preventDefault();
@@ -52,7 +62,10 @@ const Support = ( props ) => {
 
 		const { post_id, link } = selectedResult;
 
-		props.openSupportArticleDialog( { postId: post_id, actionUrl: link } );
+		props.openSupportArticleDialog( {
+			postId: post_id,
+			actionUrl: link,
+		} );
 	};
 
 	return (
@@ -110,6 +123,8 @@ const trackContactAction = ( isStaticHomePage ) =>
 const mapDispatchToProps = {
 	trackContactAction,
 	trackDocsAction,
+	hideInlineHelpUI: hideInlineHelp,
+	showInlineHelpUI: showInlineHelp,
 	openSupportArticleDialog,
 };
 

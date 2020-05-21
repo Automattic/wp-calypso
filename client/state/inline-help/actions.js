@@ -14,6 +14,8 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
 } from 'state/action-types';
 
 import { getContextualHelpResults } from 'state/inline-help/selectors';
@@ -188,6 +190,22 @@ export function hideInlineHelpPopover() {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_HIDE,
+		} );
+	};
+}
+
+export function showInlineHelp() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: INLINE_HELP_SHOW,
+		} );
+	};
+}
+
+export function hideInlineHelp() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: INLINE_HELP_HIDE,
 		} );
 	};
 }

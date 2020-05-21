@@ -14,7 +14,20 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
 } from 'state/action-types';
+
+export const ui = withoutPersistence( ( state = { isVisible: true }, action ) => {
+	switch ( action.type ) {
+		case INLINE_HELP_SHOW:
+			return { ...state, isVisible: true };
+		case INLINE_HELP_HIDE:
+			return { ...state, isVisible: false };
+	}
+
+	return state;
+} );
 
 export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
 	switch ( action.type ) {
@@ -141,6 +154,7 @@ export const contactForm = withoutPersistence(
 );
 
 export default combineReducers( {
+	ui,
 	popover,
 	contactForm,
 	searchResults,

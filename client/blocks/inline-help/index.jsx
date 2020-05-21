@@ -23,7 +23,7 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import { isInlineHelpPopoverVisible, isInlineHelpVisible } from 'state/inline-help/selectors';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 
 /**
@@ -129,9 +129,11 @@ class InlineHelp extends Component {
 
 	render() {
 		// If the Customer Home Support Search is present then
-		// we hide the InlineLine Help FAB
+		// we do not want to render the InlineLine Help FAB at all
+		// otherwise there will be x2 Support Search UIs present on
+		// the page.
 		// see https://github.com/Automattic/wp-calypso/issues/38860
-		if ( this.props.lastRoute?.path.includes( '/home/' ) ) {
+		if ( ! this.props.isInlineHelpVisible ) {
 			return null;
 		}
 		const { translate, isPopoverVisible } = this.props;
@@ -187,6 +189,7 @@ const mapStateToProps = ( state ) => {
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 		lastRoute: getLastRouteAction( state ),
+		isInlineHelpVisible: isInlineHelpVisible( state ),
 	};
 };
 
