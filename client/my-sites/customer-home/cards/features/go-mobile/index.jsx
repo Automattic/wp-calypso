@@ -49,10 +49,14 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 				</div>
 				<div className="go-mobile__app-badges">
 					{ showIosBadge && (
-						<AppsBadge storeName={ 'ios' } referrer={ 'go-mobile-card' }></AppsBadge>
+						<AppsBadge storeName={ 'ios' } referrer={ 'calypso-customer-home' }></AppsBadge>
 					) }
 					{ showAndroidBadge && (
-						<AppsBadge storeName={ 'android' } referrer={ 'go-mobile-card' }></AppsBadge>
+						<AppsBadge
+							storeName={ 'android' }
+							referrer={ 'calypso-customer-home' }
+							utm_campaign={ 'mobile-download-promo-pages' }
+						></AppsBadge>
 					) }
 				</div>
 			</div>
