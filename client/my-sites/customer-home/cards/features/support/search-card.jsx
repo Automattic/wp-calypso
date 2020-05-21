@@ -90,7 +90,7 @@ class SupportSearchCard extends Component {
 				initialValue={ this.props.query }
 				onSearch={ this.onSearch }
 				onKeyDown={ this.onKeyDown }
-				placeholder={ this.props.translate( 'Search for help…' ) }
+				placeholder={ this.props.translate( 'Search support articles' ) }
 				delaySearch={ true }
 			/>
 		);
