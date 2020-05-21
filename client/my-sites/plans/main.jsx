@@ -36,6 +36,7 @@ import {
 	MARKETING_PRICE_GROUP_2020_Q2_TEST_2,
 	MARKETING_PRICE_GROUP_2020_Q2_TEST_3,
 } from 'state/current-user/constants';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -190,6 +191,7 @@ class Plans extends React.Component {
 									site={ selectedSite }
 									plansWithScroll={ false }
 								/>
+								<PerformanceTrackerStop />
 							</div>
 						</>
 					) }

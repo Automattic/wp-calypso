@@ -254,6 +254,7 @@ const sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites',
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'accept-invite',
