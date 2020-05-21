@@ -131,7 +131,18 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
+			case 'email_reserved':
 				errorMessage = __( 'An account with this email address already exists.' );
+				break;
+			case 'email_invalid':
+				errorMessage = __( 'Please enter a valid email address.' );
+			case 'email_cant_be_used_to_signup':
+				errorMessage = __(
+					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
+				);
+				break;
+			case 'email_not_allowed':
+				errorMessage = __( 'Sorry, that email address is not allowed!' );
 				break;
 			case 'password_invalid':
 				errorMessage = newUserError.message;
