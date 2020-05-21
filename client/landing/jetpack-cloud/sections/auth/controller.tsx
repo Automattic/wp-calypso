@@ -17,7 +17,7 @@ import userModule from 'lib/user';
 import wpcom from 'lib/wp';
 import { setCurrentUser } from 'state/current-user/actions';
 
-import { authTokenRedirectPath, authConnectPath } from './paths';
+import { authTokenRedirectPath } from './paths';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
@@ -60,7 +60,6 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 
-	// Extract this into a component...
 	context.primary = <GetToken />;
 
 	// Fetch user and redirect to / on success.
@@ -78,18 +77,4 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 	} );
 
 	next();
-};
-
-export const logoutRedirect: PageJS.Callback = ( context ) => {
-	store.remove( 'wpcom_token' );
-	store.remove( 'wpcom_token_expires_in' );
-
-	wpcom.loadToken( null );
-	// this does not work like we would want
-	context.store.dispatch( setCurrentUser( { ID: null } ) );
-	userModule()
-		.clear()
-		.finally( () => {
-			page.redirect( authConnectPath() );
-		} );
 };
