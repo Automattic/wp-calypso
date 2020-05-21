@@ -4,7 +4,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
-import times from 'lodash.times';
+import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
