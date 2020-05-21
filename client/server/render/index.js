@@ -125,6 +125,23 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	} catch ( ex ) {
 		if ( process.env.NODE_ENV === 'development' ) {
 			throw ex;
+		} else {
+			try {
+				req.context.store.dispatch(
+					logToLogstash( {
+						feature: 'calypso_ssr',
+						message: 'Exception thrown on render',
+						user_id: req.context.user?.ID,
+						extra: {
+							message: ex.message,
+							stack: ex.stack,
+						},
+					} )
+				);
+			} catch {
+				// Failed to log the error, swallow it so it doesn't break anything. This will serve
+				// a blank page and the client will render on top of it.
+			}
 		}
 	}
 	//todo: render an error?
