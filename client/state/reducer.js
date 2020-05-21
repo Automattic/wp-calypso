@@ -36,7 +36,6 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
-import domains from './domains/reducer';
 import emailForwarding from './email-forwarding/reducer';
 import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
@@ -122,7 +121,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	documentHead,
-	domains,
 	emailForwarding,
 	embeds,
 	experiments,

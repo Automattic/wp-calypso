@@ -17,6 +17,8 @@ import {
 	DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
 } from 'state/action-types';
 
+import 'state/domains/init';
+
 export function closeSiteRedirectNotice( siteId ) {
 	return {
 		type: DOMAINS_SITE_REDIRECT_NOTICE_CLOSE,

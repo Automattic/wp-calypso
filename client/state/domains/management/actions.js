@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -18,6 +17,8 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'state/action-types';
+
+import 'state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a cached domains
@@ -124,7 +125,7 @@ export function requestWhois( domain ) {
  *
  * @param   {string}   domain		domain to query
  * @param   {object}   whoisData	whois details object
- * @param	{Bool}     transferLock set 60-day transfer lock after update
+ * @param	  {boolean}  transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
 export function saveWhois( domain, whoisData, transferLock ) {

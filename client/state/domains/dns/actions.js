@@ -16,6 +16,8 @@ import {
 } from 'state/action-types';
 import { getDomainDns } from './selectors';
 
+import 'state/domains/init';
+
 export const fetchDns = ( domainName ) => ( dispatch, getState ) => {
 	const dns = getDomainDns( getState(), domainName );
 
