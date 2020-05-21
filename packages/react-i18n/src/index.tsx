@@ -3,16 +3,15 @@
  */
 import * as React from 'react';
 import memize from 'memize';
-import { createI18n, LocaleData } from '@wordpress/i18n';
+import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-type I18n = ReturnType< typeof createI18n >;
 
 export interface I18nReact {
 	__: I18n[ '__' ];
 	_n: I18n[ '_n' ];
 	_nx: I18n[ '_nx' ];
 	_x: I18n[ '_x' ];
+	isRTL: I18n[ 'isRTL' ];
 }
 
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
@@ -79,5 +78,6 @@ function makeContextValue( localeData?: LocaleData ): I18nReact {
 		_n: i18n._n.bind( i18n ),
 		_nx: i18n._nx.bind( i18n ),
 		_x: i18n._x.bind( i18n ),
+		isRTL: i18n.isRTL.bind( i18n ),
 	};
 }
