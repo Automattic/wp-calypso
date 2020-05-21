@@ -7,7 +7,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { PerformanceTrackerStop } from './performance-tracker-stop';
+import PerformanceTrackerStop from './performance-tracker-stop';
 
 export const withPerformanceTrackerStop = createHigherOrderComponent( ( Wrapped ) => {
 	return function WithPerformanceTrackerStop( props ) {
