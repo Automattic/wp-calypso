@@ -30,6 +30,8 @@ import { useHasPlanInCart } from '../hooks/has-plan';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
+import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
@@ -148,9 +150,10 @@ function CheckoutSummaryHelp() {
 	const translate = useTranslate();
 	const plans = useLineItemsOfType( 'plan' );
 
-	const happyChatAvailable = useSelector( ( state ) => isHappychatAvailable( state ) );
+	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
 
-	const presalesChatAvailable = useSelector( ( state ) => isPresalesChatAvailable( state ) );
+	const happyChatAvailable = useSelector( isHappychatAvailable );
+	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
 	const hasPresalesPlanInCart = plans.some(
 		( { wpcom_meta } ) =>
 			isWpComBusinessPlan( wpcom_meta.product_slug ) ||
@@ -177,25 +180,37 @@ function CheckoutSummaryHelp() {
 	};
 
 	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
-	if ( happyChatAvailable && ( isPresalesChatEligible || isSupportChatUser ) ) {
-		return <PaymentChatButton />;
-	}
+	const shouldRenderPaymentChatButton =
+		happyChatAvailable &&
+		( isPresalesChatEligible || ( supportVariationDetermined && isSupportChatUser ) );
 
 	// If chat isn't available, use the inline help button instead.
 	return (
-		<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-			{ isSupportChatUser
-				? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
-						components: {
-							underline: <span />,
-						},
-				  } )
-				: translate( 'Questions? {{underline}}Read more about plans and purchases.{{/underline}}', {
-						components: {
-							underline: <span />,
-						},
-				  } ) }
-		</CheckoutSummaryHelpButton>
+		<>
+			<QuerySupportTypes />
+			{ shouldRenderPaymentChatButton ? (
+				<PaymentChatButton />
+			) : (
+				supportVariationDetermined && (
+					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
+						{ isSupportChatUser
+							? translate( 'Questions? {{underline}}Ask a Happiness Engineer.{{/underline}}', {
+									components: {
+										underline: <span />,
+									},
+							  } )
+							: translate(
+									'Questions? {{underline}}Read more about plans and purchases.{{/underline}}',
+									{
+										components: {
+											underline: <span />,
+										},
+									}
+							  ) }
+					</CheckoutSummaryHelpButton>
+				)
+			) }
+		</>
 	);
 }
 
