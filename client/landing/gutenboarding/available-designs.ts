@@ -24,7 +24,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			is_premium: false,
+			is_premium: true,
 		},
 		{
 			title: 'Vesta',
