@@ -1,11 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useI18n } from '@automattic/react-i18n';
+import { Tooltip } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
+import React from 'react';
+import { Icon, starFilled } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -97,7 +99,15 @@ const DesignSelector: React.FunctionComponent = () => {
 								<span id={ makeOptionId( design ) } className="design-selector__option-name">
 									{ design.title }
 									{ design.premium && (
-										<Badge className="design-selector__premium">{ __( 'Premium' ) }</Badge>
+										<Tooltip
+											position="top center"
+											text={ __( 'Requires a Personal plan or above' ) }
+										>
+											<Badge className="design-selector__premium">
+												<Icon icon={ starFilled } size={ 20 } />
+												{ __( 'Premium' ) }
+											</Badge>
+										</Tooltip>
 									) }
 								</span>
 							</span>

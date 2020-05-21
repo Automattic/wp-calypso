@@ -137,6 +137,13 @@
 	}
 
 	.design-selector__premium {
+		background-color: var( --studio-yellow-30 );
+		border-radius: 1em;
+		color: var( --studio-white );
 		margin: 0 6px;
+
+		path {
+			fill: var( --studio-white );
+		}
 	}
 }
