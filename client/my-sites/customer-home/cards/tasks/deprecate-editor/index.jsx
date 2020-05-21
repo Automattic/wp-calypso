@@ -47,9 +47,9 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 							),
 							support: (
 								<InlineSupportLink
-									supportPostId={ 165338 }
+									supportPostId={ 167510 }
 									supportLink={ localizeUrl(
-										'https://wordpress.com/support/block-editor-is-coming'
+										'https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/'
 									) }
 									showIcon={ false }
 									tracksEvent="calypso_customer_home_editor_deprecate_support_page_view"
