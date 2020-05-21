@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
-import { getName, isExpired } from 'lib/purchases';
+import { getName, isExpired, isRenewing } from 'lib/purchases';
 import { isPlan, isDomainRegistration } from 'lib/products-values';
 import SectionHeader from 'components/section-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -226,6 +226,8 @@ function getMessages( {
 	const buttonLabel = translate( 'Add to Cart' );
 	let message: ReturnType< typeof translate > = '';
 	const translateOptions = {
+		comment:
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
 		args: {
 			purchaseName: getName( purchase ),
 			expiry: moment( purchase.expiryDate ).fromNow(),
@@ -247,6 +249,31 @@ function getMessages( {
 			message = translate(
 				'Your %(purchaseName)s subscription expired %(expiry)s. Would you like to renew it now?',
 				translateOptions
+			);
+		}
+	} else if ( isRenewing( purchase ) ) {
+		const renewingTranslateOptions = {
+			comment:
+				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
+			args: {
+				purchaseName: getName( purchase ),
+				relativeRenewDate: moment( purchase.renewDate ).fromNow(),
+			},
+		};
+		if ( isDomainRegistration( purchase ) ) {
+			message = translate(
+				'Your %(purchaseName)s domain is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
+			);
+		} else if ( isPlan( purchase ) ) {
+			message = translate(
+				'Your %(purchaseName)s plan is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
+			);
+		} else {
+			message = translate(
+				'Your %(purchaseName)s subscription is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {

@@ -16,7 +16,7 @@ import { capitalize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getName, getRenewalPrice, purchaseType, isExpired, isAutoRenewing } from 'lib/purchases';
+import { getName, getRenewalPrice, purchaseType, isExpired, isRenewing } from 'lib/purchases';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { Button, Dialog } from '@automattic/components';
@@ -61,7 +61,7 @@ function getExpiresText(
 	moment: ReturnType< typeof useLocalizedMoment >,
 	purchase: Purchase
 ): TranslateResult {
-	if ( isAutoRenewing( purchase ) ) {
+	if ( isRenewing( purchase ) ) {
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
@@ -98,7 +98,13 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
-		() => [ ...purchases ].sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
+		() =>
+			[ ...purchases ].sort( ( a, b ) => {
+				const compareDateA = isRenewing( a ) ? a.renewDate : a.expiryDate;
+				const compareDateB = isRenewing( b ) ? b.renewDate : b.expiryDate;
+
+				return compareDateA?.localeCompare?.( compareDateB );
+			} ),
 		[ purchases ]
 	);
 
