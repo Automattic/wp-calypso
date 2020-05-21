@@ -76,6 +76,7 @@
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
+				column-gap: 32px;
 			}
 
 			@include break-large {
