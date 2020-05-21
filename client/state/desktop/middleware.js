@@ -84,6 +84,7 @@ export const desktopMiddleware = () => {
 						detail: {
 							status: 'error',
 							siteId: action.siteId,
+							error: action.error,
 						},
 					} )
 				);

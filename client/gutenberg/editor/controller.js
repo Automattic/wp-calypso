@@ -24,6 +24,7 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
+import { BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/event-reasons';
 import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 
 function determinePostType( context ) {
@@ -141,7 +142,11 @@ export const authenticate = ( context, next ) => {
 
 	if ( isDesktop ) {
 		context.store.dispatch(
-			notifyDesktopCannotOpenEditor( getSite( state, siteId ), 'jetpack:sso', wpAdminLoginUrl )
+			notifyDesktopCannotOpenEditor(
+				getSite( state, siteId ),
+				BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
+				wpAdminLoginUrl
+			)
 		);
 	} else {
 		window.location.replace( wpAdminLoginUrl );

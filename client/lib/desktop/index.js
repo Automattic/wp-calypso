@@ -20,6 +20,7 @@ import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
+import { BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/event-reasons';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { requestSite } from 'state/sites/actions';
@@ -43,24 +44,24 @@ const Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
-		ipc.on( 'enable-site-option', this.desktopCommandEnableSiteOption.bind( this ) );
-		ipc.on( 'request-site', this.desktopCommandRequestSite.bind( this ) );
+		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 
 		window.addEventListener(
 			'desktop-notify-cannot-open-editor',
-			this.onWindowEventCannotOpenEditor.bind( this )
+			this.onCannotOpenEditor.bind( this )
 		);
 
 		// TODO: Add (and remove) these listeners within corresponding ipc command
 		window.addEventListener(
 			'desktop-notify-jetpack-module-activate-status',
-			this.calypsoResponseJetpackModuleActivation.bind( this )
+			this.onDidActivateJetpackSiteModule.bind( this )
 		);
 
 		window.addEventListener(
 			'desktop-notify-site-request-status',
-			this.onCalypsoResponseSiteRequest.bind( this )
+			this.onDidRequestSite.bind( this )
 		);
 
 		this.store = await getReduxStore();
@@ -192,52 +193,49 @@ const Desktop = {
 		} );
 	},
 
-	onWindowEventCannotOpenEditor: function ( event ) {
+	onCannotOpenEditor: function ( event ) {
 		const { site, wpAdminLoginUrl, reason } = event.detail;
 		debug(
 			'Dispatching desktop notification via window event: cannot load editor for site: ',
 			site.URL
 		);
 
-		const state = this.store.getState();
 		const siteId = site.ID;
-
-		// TODO: Handle known vs. unknown error codes (`jetpack:sso`)
-		// TODO: Since we have the site info, we probably don't need to re-fetch the entire redux state here.
+		const state = this.store.getState();
 		const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
+		const payload = { siteId, origin: site.URL, editorUrl: wpAdminLoginUrl, isAdmin };
 
-		ipc.send( 'cannot-open-editor', {
-			siteId,
-			origin: site.URL,
-			editorUrl: wpAdminLoginUrl,
-			reason,
-			isAdmin,
-		} );
+		switch ( reason ) {
+			case BLOCK_EDITOR_JETPACK_REQUIRES_SSO: {
+				ipc.send( 'cannot-open-editor', payload );
+				break;
+			}
+			default:
+				ipc.send( 'cannot-open-editor', { ...payload, error: `Unhandled reason: ${ reason }` } );
+		}
 	},
 
-	calypsoResponseJetpackModuleActivation: function ( event ) {
-		const { status, siteId } = event.detail;
-		debug( 'Received Jetpack module activation for siteId: ', siteId );
-		ipc.send( 'enable-site-option-response', { status, siteId } );
-	},
-
-	desktopCommandEnableSiteOption: function ( event, info ) {
+	onActivateJetpackSiteModule: function ( event, info ) {
 		const { siteId, option } = info;
 		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
-
 		this.store.dispatch( activateModule( siteId, option ) );
 	},
 
-	desktopCommandRequestSite: function ( event, siteId ) {
-		debug( 'Refreshing redux state for siteId: ', siteId );
+	onDidActivateJetpackSiteModule: function ( event ) {
+		debug( 'Received Jetpack module activation status for siteId: ', event.detail );
+		const { status, siteId, error } = event.detail;
+		ipc.send( 'enable-site-option-response', { status, siteId, error } );
+	},
 
+	onRequestSite: function ( event, siteId ) {
+		debug( 'Refreshing redux state for siteId: ', siteId );
 		this.store.dispatch( requestSite( siteId ) );
 	},
 
-	onCalypsoResponseSiteRequest: function ( event ) {
+	onDidRequestSite: function ( event ) {
 		debug( 'Received site request status', event.detail );
-		const { status, siteId } = event.detail;
-		ipc.send( 'request-site-response', siteId, status );
+		const { status, siteId, error } = event.detail;
+		ipc.send( 'request-site-response', { siteId, status, error } );
 	},
 
 	onNavigate: function ( event, url ) {
