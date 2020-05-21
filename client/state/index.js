@@ -59,7 +59,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
-		isDesktop && require( '../../client/lib/desktop/middleware.js' ).default,
+		isDesktop && require( './desktop/middleware.js' ).default,
 		navigationMiddleware,
 	].filter( Boolean );
 
