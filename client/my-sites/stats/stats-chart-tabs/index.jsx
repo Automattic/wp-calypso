@@ -25,7 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 import memoizeLast from 'lib/memoize-last';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -130,7 +130,6 @@ class StatModuleChartTabs extends Component {
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
 				/>
-				<PerformanceTrackerStop />
 			</Card>
 		);
 	}
@@ -180,4 +179,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(
+	localize,
+	connectComponent
+)( withPerformanceTrackerStop( StatModuleChartTabs ) );
