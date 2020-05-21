@@ -134,10 +134,11 @@ export function render( element, key = JSON.stringify( element ), req ) {
 						extra: {
 							message: ex.message,
 							stack: ex.stack,
+							userId: req.context?.user?.ID,
 						},
 					} )
 				);
-			} catch ( exception ) {
+			} catch {
 				// Failed to log the error, swallow it so it doesn't break anything. This will serve
 				// a blank page and the client will render on top of it.
 			}
