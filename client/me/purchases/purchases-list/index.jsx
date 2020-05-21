@@ -54,7 +54,9 @@ class PurchasesList extends Component {
 		const { nextAppointment, scheduleId } = this.props;
 
 		if ( null === scheduleId ) {
-			return <ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />;
+			return (
+				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
+			);
 		}
 
 		let bannerType;
