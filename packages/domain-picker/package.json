@@ -22,10 +22,6 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"files": [
-		"dist",
-		"src"
-	],
 	"types": "dist/types",
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
