@@ -368,7 +368,7 @@ class MembershipsProductsSection extends Component {
 							'Allow members of this recurring payment plan to opt into receiving new posts via email.'
 						) }{ ' ' }
 						<InlineSupportLink
-							supportPostId="154624"
+							supportPostId={ 154624 }
 							supportLink="https://wordpress.com/support/wordpress-editor/blocks/recurring-payments-button/" // TODO: Link to specific section once article is update
 							showIcon={ false }
 							text={ translate( 'Learn more.' ) }
