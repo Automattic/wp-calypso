@@ -56,16 +56,18 @@ const Support = ( props ) => {
 	};
 
 	return (
-		<Card className="support">
-			<CardHeading>{ translate( 'Get help' ) }</CardHeading>
-			<div className="support__content">
-				<QuerySupportTypes />
-				<div className="support__search">
-					<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
-					<SupportSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+		<>
+			<QuerySupportTypes />
+			<Card className="support">
+				<CardHeading>{ translate( 'Get help' ) }</CardHeading>
+				<div className="support__content">
+					<div className="support__search">
+						<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
+						<SupportSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+					</div>
 				</div>
-			</div>
-		</Card>
+			</Card>
+		</>
 	);
 };
 
