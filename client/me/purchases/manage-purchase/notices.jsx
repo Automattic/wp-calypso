@@ -43,6 +43,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { managePurchase } from 'me/purchases/paths';
 import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 
 /**
@@ -125,7 +126,7 @@ class PurchaseNotice extends Component {
 		if ( isPaidWithCredits( purchase ) ) {
 			if ( autoRenewingUpgradesLink ) {
 				return translate(
-					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! {{link}}Other upgrades{{/link}} on this site are scheduled to auto-renew soon.",
+					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 					translateOptions
 				);
 			}
@@ -140,7 +141,7 @@ class PurchaseNotice extends Component {
 			if ( isRechargeable( purchase ) ) {
 				if ( autoRenewingUpgradesLink ) {
 					return translate(
-						"%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don't lose out on your paid features! {{link}}Other upgrades{{/link}} on this site are scheduled to auto-renew soon.",
+						"%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 						translateOptions
 					);
 				}
@@ -153,7 +154,7 @@ class PurchaseNotice extends Component {
 
 			if ( autoRenewingUpgradesLink ) {
 				return translate(
-					"%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don't lose out on your paid features! {{link}}Other upgrades{{/link}} on this site are scheduled to auto-renew soon.",
+					"%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 					translateOptions
 				);
 			}
@@ -166,7 +167,7 @@ class PurchaseNotice extends Component {
 
 		if ( autoRenewingUpgradesLink ) {
 			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! {{link}}Other upgrades{{/link}} on this site are scheduled to auto-renew soon.",
+				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 				translateOptions
 			);
 		}
@@ -247,7 +248,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderPurchaseExpiringNotice() {
-		const { moment, purchase, purchaseAttachedTo, translate } = this.props;
+		const { moment, purchase, purchaseAttachedTo, selectedSite, translate } = this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -278,15 +279,22 @@ class PurchaseNotice extends Component {
 
 		if ( usePlanInsteadOfIncludedPurchase ) {
 			noticeText = translate(
-				'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) will expire and be removed from your site %(expiry)s.',
+				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire and be removed from your site %(expiry)s.',
 				{
 					args: {
 						purchaseName: getName( currentPurchase ),
 						includedPurchaseName: getName( includedPurchase ),
 						expiry: moment( currentPurchase.expiryDate ).fromNow(),
 					},
+					components: {
+						managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
+					},
 				}
 			);
+			// We can't show the action here, because it would try to renew the
+			// included purchase (rather than the plan that it is attached to).
+			// So we have to rely on the user going to the manage purchase page
+			// for the plan to renew it there.
 			showNoticeAction = false;
 		} else {
 			noticeText = this.getExpiringText( currentPurchase );
@@ -384,6 +392,7 @@ class PurchaseNotice extends Component {
 						onClick={ this.openUpcomingRenewalsDialog }
 					/>
 				),
+				managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
 			},
 		};
 
@@ -412,71 +421,71 @@ class PurchaseNotice extends Component {
 			if ( isExpired( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
-						'Your %(purchaseName)s domain expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+						'Your %(purchaseName)s domain expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 						translateOptions
 					);
 				} else if ( isPlan( currentPurchase ) ) {
 					if ( purchaseIsIncludedInPlan ) {
 						noticeText = translate(
-							'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 							translateOptions
 						);
 					} else {
 						noticeText = translate(
-							'Your %(purchaseName)s plan expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+							'Your %(purchaseName)s plan expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 							translateOptions
 						);
 					}
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s subscription expired %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+						'Your %(purchaseName)s subscription expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 						translateOptions
 					);
 				}
 			} else if ( anotherPurchaseIsCloseToExpiration ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
-						'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+						'Your %(purchaseName)s domain will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 						translateOptions
 					);
 				} else if ( isPlan( currentPurchase ) ) {
 					if ( purchaseIsIncludedInPlan ) {
 						noticeText = translate(
-							'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 							translateOptions
 						);
 					} else {
 						noticeText = translate(
-							'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+							'Your %(purchaseName)s plan will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 							translateOptions
 						);
 					}
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed soon unless you take action.',
+						'Your %(purchaseName)s subscription will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 						translateOptions
 					);
 				}
 			} else if ( isDomainRegistration( currentPurchase ) ) {
 				noticeText = translate(
-					'Your %(purchaseName)s domain will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+					'Your %(purchaseName)s domain will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed unless you take action.',
 					translateOptions
 				);
 			} else if ( isPlan( currentPurchase ) ) {
 				if ( purchaseIsIncludedInPlan ) {
 					noticeText = translate(
-						'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+						'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed unless you take action.',
 						translateOptions
 					);
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s plan will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+						'Your %(purchaseName)s plan will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed unless you take action.',
 						translateOptions
 					);
 				}
 			} else {
 				noticeText = translate(
-					'Your %(purchaseName)s subscription will expire %(expiry)s, and {{link}}other upgrades{{/link}} on this site will also be removed unless you take action.',
+					'Your %(purchaseName)s subscription will expire %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed unless you take action.',
 					translateOptions
 				);
 			}
@@ -494,47 +503,47 @@ class PurchaseNotice extends Component {
 			if ( isExpired( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
-						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
 					);
 				} else if ( isPlan( currentPurchase ) ) {
 					if ( purchaseIsIncludedInPlan ) {
 						noticeText = translate(
-							'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 							translateOptions
 						);
 					} else {
 						noticeText = translate(
-							'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+							'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 							translateOptions
 						);
 					}
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
 					);
 				}
 			} else if ( isDomainRegistration( currentPurchase ) ) {
 				noticeText = translate(
-					'Your %(purchaseName)s domain will expire %(expiry)s unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+					'Your %(purchaseName)s domain will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
 			} else if ( isPlan( currentPurchase ) ) {
 				if ( purchaseIsIncludedInPlan ) {
 					noticeText = translate(
-						'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+						'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
 					);
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s plan will expire %(expiry)s unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+						'Your %(purchaseName)s plan will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
 					);
 				}
 			} else {
 				noticeText = translate(
-					'Your %(purchaseName)s subscription will expire %(expiry)s unless you take action. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+					'Your %(purchaseName)s subscription will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
 			}
@@ -554,47 +563,47 @@ class PurchaseNotice extends Component {
 			if ( anotherPurchaseIsExpired ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
-						'Your %(purchaseName)s domain is scheduled to renew, but {{link}}other upgrades{{/link}} on this site expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
+						'Your %(purchaseName)s domain is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
 						translateOptions
 					);
 				} else if ( isPlan( currentPurchase ) ) {
 					if ( purchaseIsIncludedInPlan ) {
 						noticeText = translate(
-							'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) is scheduled to renew, but {{link}}other upgrades{{/link}} on this site expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
 							translateOptions
 						);
 					} else {
 						noticeText = translate(
-							'Your %(purchaseName)s plan is scheduled to renew, but {{link}}other upgrades{{/link}} on this site expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
+							'Your %(purchaseName)s plan is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
 							translateOptions
 						);
 					}
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s subscription is scheduled to renew, but {{link}}other upgrades{{/link}} on this site expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
+						'Your %(purchaseName)s subscription is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that expired %(earliestOtherExpiry)s and will be removed soon unless you take action.',
 						translateOptions
 					);
 				}
 			} else if ( isDomainRegistration( currentPurchase ) ) {
 				noticeText = translate(
-					'Your %(purchaseName)s domain is scheduled to renew, but {{link}}other upgrades{{/link}} on this site will expire %(earliestOtherExpiry)s unless you take action.',
+					'Your %(purchaseName)s domain is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that will expire %(earliestOtherExpiry)s unless you take action.',
 					translateOptions
 				);
 			} else if ( isPlan( currentPurchase ) ) {
 				if ( purchaseIsIncludedInPlan ) {
 					noticeText = translate(
-						'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) is scheduled to renew, but {{link}}other upgrades{{/link}} on this site will expire %(earliestOtherExpiry)s unless you take action.',
+						'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that will expire %(earliestOtherExpiry)s unless you take action.',
 						translateOptions
 					);
 				} else {
 					noticeText = translate(
-						'Your %(purchaseName)s plan is scheduled to renew, but {{link}}other upgrades{{/link}} on this site will expire %(earliestOtherExpiry)s unless you take action.',
+						'Your %(purchaseName)s plan is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that will expire %(earliestOtherExpiry)s unless you take action.',
 						translateOptions
 					);
 				}
 			} else {
 				noticeText = translate(
-					'Your %(purchaseName)s subscription is scheduled to renew, but {{link}}other upgrades{{/link}} on this site will expire %(earliestOtherExpiry)s unless you take action.',
+					'Your %(purchaseName)s subscription is scheduled to renew, but you have {{link}}other upgrades{{/link}} on this site that will expire %(earliestOtherExpiry)s unless you take action.',
 					translateOptions
 				);
 			}
@@ -611,7 +620,7 @@ class PurchaseNotice extends Component {
 				noticeIcon = 'info';
 				noticeImpressionName = 'current-renews-soon-others-renew-soon';
 				noticeText = translate(
-					'{{link}}Other upgrades{{/link}} on this site are also scheduled to renew soon.',
+					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
 			} else {
@@ -621,7 +630,7 @@ class PurchaseNotice extends Component {
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
 				noticeText = translate(
-					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 					merge( translateOptions, { args: this.creditCardDetails( currentPurchase ) } )
 				);
 			}
@@ -662,7 +671,7 @@ class PurchaseNotice extends Component {
 
 			if ( isPlan( currentPurchase ) && purchaseIsIncludedInPlan ) {
 				noticeText = translate(
-					'{{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
 			} else {
@@ -705,7 +714,7 @@ class PurchaseNotice extends Component {
 				noticeIcon = 'info';
 				noticeImpressionName = 'current-renews-later-others-renew-soon';
 				noticeText = translate(
-					'{{link}}Other upgrades{{/link}} on this site are scheduled to renew soon.',
+					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
 			} else {
@@ -715,7 +724,7 @@ class PurchaseNotice extends Component {
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';
 				noticeText = translate(
-					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. {{link}}Other upgrades{{/link}} on this site are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
+					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 					merge( translateOptions, { args: this.creditCardDetails( currentPurchase ) } )
 				);
 			}
@@ -832,7 +841,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const { purchase, purchaseAttachedTo, translate } = this.props;
+		const { purchase, purchaseAttachedTo, selectedSite, translate } = this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -855,20 +864,27 @@ class PurchaseNotice extends Component {
 		let noticeText = '';
 		let showNoticeAction = false;
 
-		if ( ! isRenewable( currentPurchase ) ) {
+		if ( ! isRenewable( purchase ) ) {
 			if ( ! usePlanInsteadOfIncludedPurchase ) {
 				return null;
 			}
 
 			noticeText = translate(
-				'Your %(purchaseName)s plan (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
+				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
 				{
 					args: {
 						purchaseName: getName( currentPurchase ),
 						includedPurchaseName: getName( includedPurchase ),
 					},
+					components: {
+						managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
+					},
 				}
 			);
+			// We can't show the action here, because it would try to renew the
+			// included purchase (rather than the plan that it is attached to).
+			// So we have to rely on the user going to the manage purchase page
+			// for the plan to renew it there.
 			showNoticeAction = false;
 		} else {
 			noticeText = translate( 'This purchase has expired and is no longer in use.' );
