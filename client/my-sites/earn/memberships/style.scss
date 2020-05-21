@@ -253,10 +253,9 @@
 .memberships__dialog-section {
 	grid-area: item; // Sections are displayed in the same grid area so the dialog takes the size of the biggest section.
 	background-color: var( --color-surface );
-	z-index: 0;
 
 	&.is-visible {
-		z-index: 1; // Visible section is placed above so it hides the ones below.
+		z-index: z-index( '.dialog__backdrop', '.memberships__dialog-section.is-visible' );  // Visible section is placed above so it hides the ones below.
 	}
 }
 
