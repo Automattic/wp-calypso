@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
-import { getName, isExpired, isAutoRenewing } from 'lib/purchases';
+import { getName, isExpired, isRenewing } from 'lib/purchases';
 import { isPlan, isDomainRegistration } from 'lib/products-values';
 import SectionHeader from 'components/section-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -251,7 +251,7 @@ function getMessages( {
 				translateOptions
 			);
 		}
-	} else if ( isAutoRenewing( purchase ) ) {
+	} else if ( isRenewing( purchase ) ) {
 		const renewingTranslateOptions = {
 			comment:
 				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
