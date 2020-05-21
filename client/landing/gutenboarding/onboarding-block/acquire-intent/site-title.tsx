@@ -23,7 +23,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, skippable } ) 
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 
-	const handleFormSubmit = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
 		e.preventDefault();
 		onSubmit();
