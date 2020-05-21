@@ -197,6 +197,12 @@ class DomainSearchResults extends React.Component {
 						</Notice>
 					);
 				}
+			} else {
+				availabilityElement = (
+					<Notice status="is-warning" showDismiss={ false }>
+						{ domainUnavailableMessage } { offer }
+					</Notice>
+				);
 			}
 		}
 
