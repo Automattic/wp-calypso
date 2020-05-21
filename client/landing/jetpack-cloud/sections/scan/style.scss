@@ -24,9 +24,11 @@
 	margin: 0 auto;
 	width: 48px;
 
+	// To align vertically with .backup-upsell__icon-header
+	padding: 9px 0;
+
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0;
-		padding: 0;
 	}
 }
 
