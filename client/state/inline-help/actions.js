@@ -24,10 +24,10 @@ import { getContextualHelpResults } from 'state/inline-help/selectors';
  * then hard coded results are returned based on the context of the
  * current route (see `client/blocks/inline-help/contextual-help.js`).
  *
- * @param {?string} searchQuery Search query
+ * @param {string} searchQuery Search query
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery ) {
+export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
