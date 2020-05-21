@@ -1,5 +1,4 @@
 /**
  * Internal dependencies
  */
-import DomainPicker from './domain-picker';
-export default DomainPicker;
+export { default } from './domain-picker';
