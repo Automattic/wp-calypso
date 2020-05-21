@@ -10,9 +10,6 @@ import { combineReducers } from '@wordpress/data';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
-import type { DomainSuggestions } from '@automattic/data-stores';
-
-type DomainCategory = DomainSuggestions.DomainCategory;
 
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
