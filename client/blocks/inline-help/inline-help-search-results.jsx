@@ -23,7 +23,6 @@ import {
 } from 'state/inline-help/selectors';
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
-// import { getContextResults } from './contextual-help';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class InlineHelpSearchResults extends Component {
@@ -50,7 +49,7 @@ class InlineHelpSearchResults extends Component {
 		return (
 			<>
 				{ ! isEmpty( this.props.searchQuery ) && ! this.props.hasAPIResults && (
-					<p className="inline-help__empty-results">No results.</p>
+					<p className="inline-help__empty-results">{ this.props.translate( 'No results.' ) }</p>
 				) }
 				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 			</>
