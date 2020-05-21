@@ -29,16 +29,29 @@ import { getContextualHelpResults } from 'state/inline-help/selectors';
  */
 export function requestInlineHelpSearchResults( searchQuery = '' ) {
 	return ( dispatch, getState ) => {
+		const contextualResults = getContextualHelpResults( getState() );
+
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
 		} );
 
-		// Force reset flag for no API results
-		dispatch( {
-			type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-			hasAPIResults: false,
-		} );
+		// If the search is empty return contextual results and exist
+		// early to avoid unwanted network requests.
+		if ( ! searchQuery ) {
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults: false,
+			} );
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+				searchQuery,
+				searchResults: contextualResults,
+			} );
+
+			// Exit early
+			return;
+		}
 
 		wpcom
 			.undocumented()
@@ -62,7 +75,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					} );
 				} else {
 					// Get static results based on which Calypso section we're in
-					searchResults = getContextualHelpResults( getState() );
+					searchResults = contextualResults;
 					dispatch( {
 						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 						hasAPIResults: false,
@@ -80,6 +93,11 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
 					searchQuery,
 					error,
+				} );
+				// Force reset flag for no API results
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults: false,
 				} );
 			} );
 	};
