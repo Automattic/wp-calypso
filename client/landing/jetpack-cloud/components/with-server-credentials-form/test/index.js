@@ -24,21 +24,19 @@ jest.doMock( 'components/data/query-rewind-state', () => {
 	return QueryRewindState;
 } );
 
-const mockCredentials = {
-	credentials: [
-		{
-			role: 'main',
-			user: 'someUser',
-			host: 'someHost',
-			port: 33,
-			path: 'somePath',
-		},
-	],
-};
-
 jest.mock( 'state/selectors/get-rewind-state', () => ( {
 	__esModule: true,
-	default: () => mockCredentials,
+	default: () => ( {
+		credentials: [
+			{
+				role: 'main',
+				user: 'rewindUser',
+				host: 'rewindHost',
+				port: 33,
+				path: 'rewindPath',
+			},
+		],
+	} ),
 } ) );
 
 jest.mock( 'state/sites/selectors', () => ( {
@@ -120,28 +118,23 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 
 	const FormComponent = withServerCredentialsForm( WrappedForm );
 
-	// We use this function to rerender the component so we can make assertions when
-	// props changes.
 	const store = createStore( () => {}, {} );
-	const FormComponentWithStore = ( otherProps = {} ) => (
+	const utils = render(
 		<Provider store={ store }>
-			<FormComponent role={ role } siteId={ siteId } siteUrl={ siteUrl } { ...otherProps } />
+			<FormComponent role={ role } siteId={ siteId } siteUrl={ siteUrl } />
 		</Provider>
 	);
-	const utils = render( FormComponentWithStore() );
 
-	return { utils, FormComponentWithStore };
+	return { utils };
 }
 
 describe( 'useWithServerCredentials HOC', () => {
 	it( 'should not update credentials (should display error messages)', async () => {
-		const { utils } = setup();
+		const { utils } = setup( {} );
 		const submitButton = utils.getByText( 'Submit' );
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
 		fireEvent.click( submitButton );
-		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server username.' );
 		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server password.' );
-		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter a valid server address.' );
 		expect( actions.updateCredentials ).not.toBeCalled();
 	} );
 
@@ -166,8 +159,8 @@ describe( 'useWithServerCredentials HOC', () => {
 				pass: 'pass',
 				host: 'host',
 				kpri: '',
-				path: '',
-				port: 22,
+				path: 'rewindPath',
+				port: 33,
 				protocol: 'ssh',
 			} )
 		);
@@ -191,30 +184,25 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( advancedSection.innerHTML ).toContain( 'Hidden content!' );
 	} );
 
-	//todo: (cleacos) I commented it to fix a issue in production with this test.
+	it( 'should use rewindState to prefill the form', async () => {
+		const { utils } = setup();
+		const submitButton = utils.getByText( 'Submit' );
+		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
+		const formDataContainer = utils.getByTestId( 'form-content' );
 
-	// it( 'should use rewindState to prefill the form', async () => {
-	// 	const { utils, FormComponentWithStore } = setup();
-	// 	const submitButton = utils.getByText( 'Submit' );
-	// 	const errorMessagesContainer = utils.getByTestId( 'error-messages' );
-	// 	const formDataContainer = utils.getByTestId( 'form-content' );
-	//
-	// 	// Simulate updating props with a rewindState
-	// 	utils.rerender(
-	// 		FormComponentWithStore( {
-	// 			rewindState: mockCredentials,
-	// 		} )
-	// 	);
-	// 	fireEvent.click( submitButton );
-	// 	expect( errorMessagesContainer.innerHTML ).not.toContain(
-	// 		'Please enter your server username.'
-	// 	);
-	// 	expect( errorMessagesContainer.innerHTML ).not.toContain(
-	// 		'Please enter a valid server address.'
-	// 	);
-	// 	expect( formDataContainer.innerHTML ).toContain( 'someUser' );
-	// 	expect( formDataContainer.innerHTML ).toContain( 'someHost' );
-	// 	expect( formDataContainer.innerHTML ).toContain( 33 );
-	// 	expect( formDataContainer.innerHTML ).toContain( 'somePath' );
-	// } );
+		// Verify the form was pre-filled with the current store rewind state
+		expect( formDataContainer.innerHTML ).toContain( 'rewindUser' );
+		expect( formDataContainer.innerHTML ).toContain( 'rewindHost' );
+		expect( formDataContainer.innerHTML ).toContain( 33 );
+		expect( formDataContainer.innerHTML ).toContain( 'rewindPath' );
+
+		fireEvent.click( submitButton );
+		expect( errorMessagesContainer.innerHTML ).not.toContain(
+			'Please enter your server username.'
+		);
+		expect( errorMessagesContainer.innerHTML ).not.toContain(
+			'Please enter a valid server address.'
+		);
+		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server password.' );
+	} );
 } );
