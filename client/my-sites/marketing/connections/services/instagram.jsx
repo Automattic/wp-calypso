@@ -29,10 +29,12 @@ export class Instagram extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
+	 *
+	 * @param {Array} [connections] List of connections to delete. If undefined, delete all connections.
 	 */
-	removeConnection = () => {
+	removeConnection = ( connections ) => {
 		this.setState( { isDisconnecting: true } );
-		map( this.props.keyringConnections, this.props.deleteStoredKeyringConnection );
+		map( connections || this.props.keyringConnections, this.props.deleteStoredKeyringConnection );
 	};
 
 	renderLogo = () => (
