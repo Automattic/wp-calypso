@@ -74,7 +74,7 @@ class SupportSearchResults extends Component {
 					onClick={ this.onHelpLinkClick( index ) }
 					title={ decodeEntities( link.description ) }
 				>
-					<span>{ preventWidows( decodeEntities( link.title ) ) }</span>
+					{ preventWidows( decodeEntities( link.title ) ) }
 				</a>
 			</li>
 		);
