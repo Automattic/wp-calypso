@@ -17,4 +17,3 @@ export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedVertical = ( state: State ) => state.siteVertical;
 export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
-export const wasVerticalSkipped = ( state: State ): boolean => state.wasVerticalSkipped;

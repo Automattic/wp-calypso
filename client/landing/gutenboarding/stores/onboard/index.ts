@@ -29,7 +29,6 @@ registerStore< State >( STORE_KEY, {
 		'siteTitle',
 		'siteVertical',
 		'hasUsedPlansStep',
-		'wasVerticalSkipped',
 		'pageLayouts',
 		'selectedDesign',
 		'selectedFonts',

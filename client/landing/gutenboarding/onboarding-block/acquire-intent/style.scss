@@ -34,8 +34,96 @@
 	}
 }
 
+.site-title {
+	@include break-small {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+	}
+}
+
+.site-title__input-label {
+	@include break-small {
+		// stylelint-disable-next-line unit-whitelist
+		margin-right: 0.4ch;
+	}
+}
+
+.site-title__input-wrapper {
+	position: relative;
+	flex: 1;
+	height: 42px;
+	margin-top: 10px;
+
+	@include break-small {
+		margin-top: 0;
+		min-width: 300px;
+		max-width: 500px;
+		height: 80px;
+	}
+}
+
+.site-title__input {
+	height: 100%;
+	margin-bottom: 10px;
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 1px;
+		height: 2px;
+		background-image: linear-gradient( to right, rgba( 238, 238, 238, 1 ), rgba( 238, 238, 238, 0.4 ) );
+		transition: background $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+		max-width: 400px;
+
+		@include break-small {
+			bottom: 4px;
+		}
+	}
+	&--with-value::after {
+		background: var( --mainColor );
+		max-width: none;
+	}
+
+	& > div {
+		height: 100%;
+	}
+
+	input[type='text'].components-text-control__input {
+		@include onboarding-heading-text-mobile;
+		line-height: 1em;
+		height: auto;
+		background: transparent;
+		border: none;
+		padding: 0;
+		color: var( --mainColor );
+		caret-color: var( --mainColor );
+
+		&:focus {
+			outline: none;
+		}
+
+		@include break-small {
+			font-size: 64px;
+			line-height: 80px;
+		}
+
+		// TODO focus for accessibility?
+		// .accessible-focus &:focus {
+		// 	outline: 2px solid var( --highlightColor );
+		// }
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
+}
+
 .acquire-intent__footer {
-	transition: opacity, transform $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	align-self: flex-end;
 
 	&--hidden {
 		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
@@ -43,52 +131,8 @@
 		visibility: hidden;
 	}
 
-	align-self: flex-end;
-
 	@include break-small {
 		align-self: flex-start;
-	}
-}
-
-.acquire-intent__mobile-back-arrow {
-	display: block;
-	margin-bottom: 25px;
-	transform: rotate( 180deg );
-}
-
-.madlib__input {
-	@include onboarding-font-recoleta;
-	background: transparent;
-	border: none;
-	font-size: inherit;
-	line-height: 1em;
-	word-break: break-word;
-	height: 1.01em;
-	padding: 0;
-
-	color: var( --mainColor );
-	border-bottom: 2px solid var( --mainColor );
-	caret-color: var( --mainColor );
-
-	&:focus {
-		outline: none;
-	}
-
-	// TODO focus for accessibility?
-	// .accessible-focus &:focus {
-	// 	outline: 2px solid var( --highlightColor );
-	// }
-}
-
-.madlib__input:empty {
-	border-bottom: 2px solid transparent;
-	position: absolute;
-	bottom: 0;
-	z-index: 1;
-	width: 1em;
-
-	@include break-small {
-		position: relative;
 	}
 }
 
@@ -121,84 +165,14 @@
 	}
 }
 
-.components-button.is-link.acquire-intent__skip-vertical {
+.components-button.is-link.acquire-intent__skip-site-title {
 	@include onboarding-medium-text;
 	color: var( --studio-gray-40 );
-}
-
-.site-title {
-	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	&--hidden {
-		visibility: hidden;
-		opacity: 0;
-
-		& + .acquire-intent__footer {
-			transform: translate( 0, -80px ); // Translate button up when site title is hidden
-		}
-	}
-}
-
-.site-title__input-wrapper {
-	display: block;
-	position: relative;
-	line-height: 1em;
-
-	.madlib__input:focus ~ .madlib__input-placeholder {
-		@include break-small {
-			display: none;
-		}
-	}
-
-	@include break-small {
-		display: inline;
-	}
-}
-
-.madlib__input-placeholder {
-	display: inline-block;
-	width: 100%;
-	color: var( --studio-gray-5 );
-	cursor: text;
 
 	@include break-small {
 		position: absolute;
-		height: 100%;
+		bottom: -20px;
 		left: 0;
-		bottom: 0;
-		z-index: 2;
-
-		.madlib__input-placeholder-text {
-			position: absolute;
-			white-space: nowrap; // force placeholder on a single line
-			width: 100%;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			line-height: 1em;
-		}
-	}
-
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: -2px;
-		height: 2px;
-		background-image: linear-gradient( to right, rgba( 238, 238, 238, 1 ), rgba( 238, 238, 238, 0.4 ) );
-	}
-}
-
-/* hide the placeholder when input is not empty */
-.madlib__input:not( :empty ) ~ .madlib__input-placeholder {
-	display: none;
-}
-
-.madlib__input:empty {
-	@include break-small {
-		padding-right: 300px; // there's not enough container width on smaller screens
-	}
-	@include break-medium {
-		padding-right: 400px;
+		transform: translate( 0, 100% );
 	}
 }
