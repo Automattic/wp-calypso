@@ -8,7 +8,7 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
+import { addFilter, applyFilter } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -569,6 +569,10 @@ function handleCloseEditor( calypsoPort ) {
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
 	const dispatchAction = ( e ) => {
+		if ( ! applyFilter( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
+			return;
+		}
+
 		e.preventDefault();
 
 		const { port2 } = new MessageChannel();
@@ -685,6 +689,18 @@ function getCloseButtonUrl( calypsoPort ) {
 
 		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
 	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
+		'wpcom-block-editor/getCloseButtonUrl',
+		( closeUrl ) => calypsoifyGutenberg.closeUrl || closeUrl
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
+		'wpcom-block-editor/getCloseButtonUrl',
+		( closeLabel ) => calypsoifyGutenberg.closeButtonLabel || closeLabel
+	);
 }
 
 /**

@@ -3,6 +3,7 @@
  */
 import { dispatch, select, subscribe } from '@wordpress/data';
 import React, { render } from '@wordpress/element';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -47,6 +48,8 @@ async function attachSidebar() {
 	if ( ! closePostButton ) {
 		return;
 	}
+
+	addFilter( 'a8c.wpcom-block-editor.shouldCloseEditor', '', () => false );
 
 	// Classes need to be attached to elements that aren't controlled by React,
 	// otherwise our alterations will be removed when React re-renders. So attach
