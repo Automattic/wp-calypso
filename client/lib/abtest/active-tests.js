@@ -126,4 +126,14 @@ export default {
 		localeTargets: [ 'en' ],
 		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
 	},
+	domainShowJPResultsInJapan: {
+		datestamp: '20200506',
+		variations: {
+			variantShowJPResults: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		localeTargets: 'any',
+		countryCodeTargets: [ 'JP' ],
+	},
 };
