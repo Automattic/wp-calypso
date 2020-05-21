@@ -16,17 +16,16 @@ import {
 	INLINE_HELP_POPOVER_HIDE,
 } from 'state/action-types';
 
-import { getContextResults } from '../../blocks/inline-help/contextual-help';
+import { getContextualHelpResults } from 'state/inline-help/selectors';
 
 /**
  * Triggers a network request to fetch search results for a query string.
  *
  * @param {?string} searchQuery Search query
- * @param {string} currentSection the current Calypso section
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery, currentSection ) {
-	return ( dispatch ) => {
+export function requestInlineHelpSearchResults( searchQuery ) {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
@@ -49,7 +48,7 @@ export function requestInlineHelpSearchResults( searchQuery, currentSection ) {
 					} );
 				} else {
 					// Get static results based on which Calypso section we're in
-					searchResults = getContextResults( currentSection );
+					searchResults = getContextualHelpResults( getState() );
 					dispatch( {
 						type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 						hasAPIResults: false,
