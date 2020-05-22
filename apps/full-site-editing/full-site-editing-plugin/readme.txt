@@ -42,6 +42,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 = 1.6 =
 * Remove plugin that notified users of the new location of Block Patterns.
+* Remove obsolete typedefs for @wordpress/icons.
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
