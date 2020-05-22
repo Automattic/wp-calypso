@@ -4,7 +4,7 @@
 .plans-button {
 	white-space: nowrap;
 
-	&.user-selected {
+	&.is-highlighted {
 		color: var( --studio-blue-40 );
 	}
 }

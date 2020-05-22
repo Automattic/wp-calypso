@@ -50,12 +50,14 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 			: /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
 			  sprintf( __( '%s Plan' ), plan.getTitle() );
 
+	const isPlanUserSelectedOrPaid = selectedPlan || ! plan?.isFree;
+
 	return (
 		<>
 			<Button
 				onClick={ handleButtonClick }
 				label={ __( planLabel ) }
-				className={ classNames( 'plans-button', { 'user-selected': selectedPlan } ) }
+				className={ classNames( 'plans-button', { 'is-highlighted': isPlanUserSelectedOrPaid } ) }
 				{ ...buttonProps }
 			>
 				{ isDesktop && planLabel }
