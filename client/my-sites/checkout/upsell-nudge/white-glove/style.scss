@@ -17,7 +17,7 @@ main.white-glove.main {
 		margin: 0;
 		padding: 16px 50px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding-top: 0;
 		}
 	}
@@ -42,7 +42,7 @@ main.white-glove.main {
 		height: 50px;
 		width: 100%;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			width: 80px;
 			height: 40px;
 		}
@@ -71,7 +71,7 @@ main.white-glove.main {
 		align-items: center;
 		padding: 20px 0;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			flex-direction: column-reverse;
 			padding: 0;
 		}
@@ -81,7 +81,7 @@ main.white-glove.main {
 		padding-right: 90px;
 		flex: 1 1 auto;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding-right: 0;
 		}
 	}
@@ -89,7 +89,7 @@ main.white-glove.main {
 	&__column-doodle {
 		flex: 1 0 280px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			flex: 1 0 auto;
 			margin-bottom: 1.5em;
 		}
@@ -121,12 +121,12 @@ main.white-glove.main {
 		h2 {
 			font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
 		}
-		
+
 		.white-glove__header-logo {
 			fill:  #117ac9;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 21px;
 		}
 	}
@@ -138,7 +138,7 @@ main.white-glove.main {
 		margin-top: 5px;
 		margin-bottom: 1.6em;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 18px;
 		}
 	}
@@ -152,7 +152,7 @@ main.white-glove.main {
 			align-items: flex-start;
 			margin-bottom: 1.2em;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				align-items: flex-start;
 			}
 		}
@@ -171,22 +171,22 @@ main.white-glove.main {
 	&__footer &__decline-offer-button {
 		color: var( --color-primary );
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			float: left;
 		}
 	}
 
 	&__footer &__accept-offer-button {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			float: right;
 		}
 	}
@@ -197,7 +197,7 @@ main.white-glove.main {
 		border-radius: 4px;
 		padding: 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			flex-direction: column;
 		}
 	}
@@ -207,7 +207,7 @@ main.white-glove.main {
 		padding-right: 20px;
 		flex: 1 1 0;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding: 0;
 			margin-top: 10px;
 		}
@@ -217,7 +217,7 @@ main.white-glove.main {
 			fill: var( --studio-jetpack-green-30 );
 			margin-right: 5px;
 		}
-	
+
 		.checklist__content {
 			flex: 1;
 			font-weight: bold;
@@ -225,5 +225,5 @@ main.white-glove.main {
 		}
 	}
 
-	
+
 }
