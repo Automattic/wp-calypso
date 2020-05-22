@@ -1,14 +1,14 @@
 .gutenboarding-editor-overrides {
-    .editor-post-switch-to-draft {
-        display: none;
-    }
+	.editor-post-switch-to-draft {
+		display: none;
+	}
 
-    .gutenboarding-editor-overrides__launch-button {
-        padding: 0 12px;
-        margin: 0 12px 0 3px;
-    }
+	.gutenboarding-editor-overrides__launch-button {
+		padding: 0 12px;
+		margin: 0 12px 0 3px;
+	}
 
-    // Override 'Save' button to have tertiary styles.
+	// Override 'Save' button to have tertiary styles.
 	.edit-post-header__settings {
 		.editor-post-publish-button__button {
 			color: #007cba !important;
@@ -16,7 +16,7 @@
 			border: none !important;
 			box-shadow: none !important;
 
-			&[aria-disabled=true] {
+			&[aria-disabled='true'] {
 				opacity: 0.3 !important;
 			}
 		}
