@@ -72,7 +72,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 			yield receiveNewUser( newUser );
 
-			return { ok: true } as const;
+			return { ok: true, username: newUser.username, userId: newUser.user_id } as const;
 		} catch ( newUserError ) {
 			yield receiveNewUserFailed( newUserError );
 

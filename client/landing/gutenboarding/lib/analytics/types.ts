@@ -38,6 +38,23 @@ export interface OnboardingCompleteParameters {
 	hasCartItems?: boolean;
 }
 
+export interface OnboardingRegistrationParameters {
+	/**
+	 * The new user ID
+	 */
+	userId: number;
+
+	/**
+	 * The new user's username if any'
+	 */
+	username: string | undefined;
+
+	/**
+	 * The new user's email
+	 */
+	email: string;
+}
+
 export type TracksAcquireIntentEventProperties = {
 	/**
 	 * The slug of the selected vertical or undefined if the vertical is free-form user input

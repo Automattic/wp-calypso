@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, identifyUser } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -9,7 +9,12 @@ import { v4 as uuid } from 'uuid';
  */
 import { FLOW_ID } from '../../constants';
 import type { StepNameType } from '../../path';
-import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
+import type {
+	ErrorParameters,
+	OnboardingCompleteParameters,
+	TracksEventProperties,
+	OnboardingRegistrationParameters,
+} from './types';
 
 export * from './recaptcha';
 
@@ -68,6 +73,22 @@ export function recordOnboardingError( params: ErrorParameters ): void {
 	trackEventWithFlow( 'calypso_newsite_error', {
 		error: params.error,
 		step: params.step,
+	} );
+}
+
+/**
+ * Record when a user registers for the first time
+ *
+ * @param {object} params A set of params to pass to analytics for signup errors
+ */
+export function recordOnboardingRegistration( params: OnboardingRegistrationParameters ): void {
+	identifyUser( {
+		ID: params.userId,
+		username: params.username,
+		email: params.email,
+	} );
+	trackEventWithFlow( 'calypso_user_registration_complete', {
+		type: 'default', // or 'social' when we have social
 	} );
 }
 

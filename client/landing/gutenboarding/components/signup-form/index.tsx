@@ -21,6 +21,7 @@ import {
 	initGoogleRecaptcha,
 	recordGoogleRecaptchaAction,
 	recordOnboardingError,
+	recordOnboardingRegistration,
 } from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
@@ -98,6 +99,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		} );
 
 		if ( result.ok ) {
+			recordOnboardingRegistration( {
+				userId: result.userId,
+				username: result.username,
+				email: emailVal,
+			} );
 			closeModal();
 		} else {
 			recordOnboardingError( {
