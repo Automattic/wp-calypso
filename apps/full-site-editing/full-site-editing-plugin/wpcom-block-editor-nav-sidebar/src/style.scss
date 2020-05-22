@@ -16,6 +16,10 @@ $transition-period: 200ms;
 		transition: width $transition-period;
 		@include reduce-motion( 'transition' );
 	}
+
+	.edit-post-fullscreen-mode-close {
+		min-width: 0;
+	}
 }
 
 .is-wpcom-block-editor-nav-sidebar-opened {
