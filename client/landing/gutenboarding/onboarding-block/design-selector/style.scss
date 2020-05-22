@@ -57,6 +57,11 @@
 				border-color: var( --highlightColor );
 			}
 		}
+
+		@include break-mobile {
+			width: calc( 50% - 32px );
+		}
+
 		@include break-large {
 			width: calc( 33.33% - 64px );
 		}
@@ -70,7 +75,6 @@
 		.design-selector__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			column-gap: 64px;
 			row-gap: 48px;
 			margin: 0 0 30px;
 
@@ -81,6 +85,7 @@
 
 			@include break-large {
 				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 64px;
 			}
 
 			@include onboarding-break-gigantic {
