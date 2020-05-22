@@ -125,14 +125,21 @@ class PurchaseNotice extends Component {
 
 		if ( isPaidWithCredits( purchase ) ) {
 			if ( autoRenewingUpgradesLink ) {
-				return translate(
-					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
-					translateOptions
+				return (
+					translate(
+						"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
+						translateOptions
+					) +
+					' ' +
+					translate(
+						'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					)
 				);
 			}
 
 			return translate(
-				"You purchased %(purchaseName)s with credits. Please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
+				"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
 				translateOptions
 			);
 		}
@@ -140,40 +147,61 @@ class PurchaseNotice extends Component {
 		if ( hasPaymentMethod( purchase ) ) {
 			if ( isRechargeable( purchase ) ) {
 				if ( autoRenewingUpgradesLink ) {
-					return translate(
-						"%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
-						translateOptions
+					return (
+						translate(
+							"%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don't lose out on your paid features!",
+							translateOptions
+						) +
+						' ' +
+						translate(
+							'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						)
 					);
 				}
 
 				return translate(
-					"%(purchaseName)s will expire and be removed from your site %(expiry)s. Please enable auto-renewal so you don't lose out on your paid features!",
+					"%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don't lose out on your paid features!",
 					translateOptions
 				);
 			}
 
 			if ( autoRenewingUpgradesLink ) {
-				return translate(
-					"%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
-					translateOptions
+				return (
+					translate(
+						"%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don't lose out on your paid features!",
+						translateOptions
+					) +
+					' ' +
+					translate(
+						'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					)
 				);
 			}
 
 			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s. Please renew before expiry so you don't lose out on your paid features!",
+				"%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don't lose out on your paid features!",
 				translateOptions
 			);
 		}
 
 		if ( autoRenewingUpgradesLink ) {
-			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
-				translateOptions
+			return (
+				translate(
+					"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features!",
+					translateOptions
+				) +
+				' ' +
+				translate(
+					'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+					translateOptions
+				)
 			);
 		}
 
 		return translate(
-			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Add a credit card so you don't lose out on your paid features!",
+			"%(purchaseName)s will expire and be removed from your site %(expiry)s - add a credit card so you don't lose out on your paid features!",
 			translateOptions
 		);
 	}
@@ -502,50 +530,98 @@ class PurchaseNotice extends Component {
 
 			if ( isExpired( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
-					noticeText = translate(
-						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-						translateOptions
-					);
+					noticeText =
+						translate(
+							'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action.',
+							translateOptions
+						) +
+						' ' +
+						translate(
+							'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
 				} else if ( isPlan( currentPurchase ) ) {
 					if ( purchaseIsIncludedInPlan ) {
-						noticeText = translate(
-							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-							translateOptions
-						);
+						noticeText =
+							translate(
+								'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action.',
+								translateOptions
+							) +
+							' ' +
+							translate(
+								'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+								translateOptions
+							);
 					} else {
-						noticeText = translate(
-							'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-							translateOptions
-						);
+						noticeText =
+							translate(
+								'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action.',
+								translateOptions
+							) +
+							' ' +
+							translate(
+								'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+								translateOptions
+							);
 					}
 				} else {
-					noticeText = translate(
-						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-						translateOptions
-					);
+					noticeText =
+						translate(
+							'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.',
+							translateOptions
+						) +
+						' ' +
+						translate(
+							'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
 				}
 			} else if ( isDomainRegistration( currentPurchase ) ) {
-				noticeText = translate(
-					'Your %(purchaseName)s domain will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-					translateOptions
-				);
+				noticeText =
+					translate(
+						'Your %(purchaseName)s domain will expire %(expiry)s unless you take action.',
+						translateOptions
+					) +
+					' ' +
+					translate(
+						'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					);
 			} else if ( isPlan( currentPurchase ) ) {
 				if ( purchaseIsIncludedInPlan ) {
-					noticeText = translate(
-						'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-						translateOptions
-					);
+					noticeText =
+						translate(
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire %(expiry)s unless you take action.',
+							translateOptions
+						) +
+						' ' +
+						translate(
+							'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
 				} else {
-					noticeText = translate(
-						'Your %(purchaseName)s plan will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-						translateOptions
-					);
+					noticeText =
+						translate(
+							'Your %(purchaseName)s plan will expire %(expiry)s unless you take action.',
+							translateOptions
+						) +
+						' ' +
+						translate(
+							'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
 				}
 			} else {
-				noticeText = translate(
-					'Your %(purchaseName)s subscription will expire %(expiry)s unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
-					translateOptions
-				);
+				noticeText =
+					translate(
+						'Your %(purchaseName)s subscription will expire %(expiry)s unless you take action.',
+						translateOptions
+					) +
+					' ' +
+					translate(
+						'You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					);
 			}
 		}
 
