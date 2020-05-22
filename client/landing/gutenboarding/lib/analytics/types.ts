@@ -72,6 +72,11 @@ type TracksDesignSelectEventProperties = {
 	 * The selected theme
 	 */
 	selected_design: string | undefined;
+
+	/**
+	 * If the selected theme is premium
+	 */
+	is_selected_design_premium: boolean;
 };
 
 type TracksDomainSelectEventProperties = {

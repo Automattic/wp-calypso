@@ -1,0 +1,12 @@
+.badge {
+	display: inline-block;
+	background: var( --studio-blue-40 );
+	border-radius: 2px;
+	padding: 4px 8px;
+	color: var( --studio-white );
+	margin-left: 8px;
+
+	> * {
+		vertical-align: middle;
+	}
+}

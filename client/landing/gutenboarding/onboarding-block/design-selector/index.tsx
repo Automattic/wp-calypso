@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useI18n } from '@automattic/react-i18n';
+import { Tooltip } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import { useI18n } from '@automattic/react-i18n';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from '../../available-designs';
-import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
-import Link from '../../components/link';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { SubTitle, Title } from '../../components/titles';
+import { usePath, Step } from '../../path';
 import { useTrackStep } from '../../hooks/use-track-step';
+import Badge from '../../components/badge';
+import designs from '../../available-designs';
+import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
+import Link from '../../components/link';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
@@ -29,7 +32,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const makePath = usePath();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedDesign, hasPaidDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const getDesignUrl = ( design: Design ) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
@@ -50,6 +53,7 @@ const DesignSelector: React.FunctionComponent = () => {
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
+		is_selected_design_premium: hasPaidDesign(),
 	} ) );
 
 	return (
@@ -92,8 +96,24 @@ const DesignSelector: React.FunctionComponent = () => {
 								/>
 							</span>
 							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-name">
-									{ design.title }
+								<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+									<span className="design-selector__option-name">{ design.title }</span>
+									{ design.is_premium && (
+										<Tooltip
+											position="bottom center"
+											text={ __( 'Requires a Personal plan or above' ) }
+										>
+											<div className="design-selector__premium-container">
+												<Badge className="design-selector__premium-badge">
+													<JetpackLogo
+														className="design-selector__premium-badge-logo"
+														size={ 20 }
+													/>
+													<span>{ __( 'Premium' ) }</span>
+												</Badge>
+											</div>
+										</Tooltip>
+									) }
 								</span>
 							</span>
 						</button>
