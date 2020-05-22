@@ -80,8 +80,12 @@ function getWebpackConfig( env = {}, argv = {} ) {
 				requestToExternal( request ) {
 					if ( request.startsWith( FSE_MODULE_PREFIX ) ) {
 						switch ( request ) {
+							// This is not a real module, it is a placeholder that corresponds to a WordPress script handle registered with the same name.
+							// This allows us to import the module, declaring the dependency via JavaScript.
+							// A TypeScript type helps ensure it's used properly. See `./typings/fse`
 							case 'a8c-fse-common-data-stores':
-								return [ 'wpcomFse', 'data-stores' ];
+								return request;
+
 							default:
 								throw new Error( `Received unknown module request ${ request }.` );
 						}

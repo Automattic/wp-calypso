@@ -21,6 +21,16 @@ This plugin should not be confused with the site editor work in core Gutenberg. 
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
   - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
 
+## Shared WordPress scripts
+
+WordPress has a mechanism to share scripts. We already depend on many core provided scripts. This plugin also includes its own shared scripts.
+
+The following scripts are made available by the plugin:
+
+- `a8c-fse-common-data-stores`: Import this script to register data stores.
+
+At the moment, scripts are only enqueued for their side effects, i.e. you cannot import anything from them. The imports serve to ensure the script
+is enqueued by WordPress as a script dependency.
 
 ## Build System
 
