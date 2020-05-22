@@ -1,6 +1,22 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 $search_results_top_spacing: 24px;
+$card_padding_small: 16px;
+$card_padding_large: 24px;
 
 .customer-home__layout .support {
+
+	&.card {
+		padding: 0;
+	}
+
+	.support__inner {
+		padding: 16px;
+
+		@include break-mobile {
+			padding: $card_padding_large;
+		}
+	}
 
 	.card-heading {
 		margin-bottom: 16px;
@@ -10,6 +26,49 @@ $search_results_top_spacing: 24px;
 		display: flex;
 		justify-content: space-between;
 	}
+
+	.support__footer {
+		margin-top: -#{$card_padding_large/2};
+		border-top: 1px solid var( --color-border-subtle );
+	}
+
+	.support__cta {
+		display: flex;
+		align-items: center;
+		padding: 10px $card_padding_large;
+		color: var( --color-text );
+
+		&:hover,
+		&:focus {
+			background: var( --color-neutral-0 );
+		}
+	}
+
+	.support__help-icon {
+		display: block;
+		width: 27px;
+		height: 27px;
+		margin-right: 12px;
+
+		background: var( --color-primary );
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+		border: 1px solid var( --color-primary );
+		border-radius: 100%;
+
+		.gridicon {
+			fill: var( --color-text-inverted );
+			margin: 1px 0 0 1px;
+			height: 24px;
+			width: 24px;
+		}
+	}
+
+	.support__go-icon {
+		fill: var( --color-text );
+		margin-left: auto; // push away from other cta content
+		margin-right: -6px; // visually pull arrow RHS to edge of card
+	}
+
 
 	.support__search {
 		// Don't allow ellipsis items to flow outside box
@@ -57,6 +116,8 @@ $search_results_top_spacing: 24px;
 					width: auto;
 				}
 			}
+
+
 		}
 	}
 

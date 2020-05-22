@@ -11,6 +11,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import Gridicon from 'components/gridicon';
+
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -72,12 +74,23 @@ const Support = ( props ) => {
 		<>
 			<QuerySupportTypes />
 			<Card className="support">
-				<CardHeading>{ translate( 'Get help' ) }</CardHeading>
-				<div className="support__content">
-					<div className="support__search">
-						<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
-						<SupportSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+				<div className="support__inner">
+					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
+					<div className="support__content">
+						<div className="support__search">
+							<SupportSearchCard openResult={ openResultView } query={ searchQuery } />
+							<SupportSearchResults openResult={ openResultView } searchQuery={ searchQuery } />
+						</div>
 					</div>
+				</div>
+				<div className="support__footer">
+					<a className="support__cta" href="/help">
+						<span className="support__help-icon">
+							<Gridicon icon="help-outline" size={ 24 } />
+						</span>
+						More Help
+						<Gridicon className="support__go-icon" icon="chevron-right" size={ 24 } />
+					</a>
 				</div>
 			</Card>
 		</>
