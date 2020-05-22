@@ -43,7 +43,7 @@
 		"@wordpress/i18n": "^3.10.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
-		"use-debounce": "3.1.0",
+		"use-debounce": "^3.1.0",
 		"uuid": "^8.0.0"
 	},
 	"private": true
