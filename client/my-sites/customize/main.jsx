@@ -146,7 +146,7 @@ class Customize extends React.Component {
 		let path = this.props.prevPath;
 
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
-			path = '/stats';
+			path = '/home';
 			if ( this.props.domain ) {
 				path += '/' + this.props.domain;
 			}
