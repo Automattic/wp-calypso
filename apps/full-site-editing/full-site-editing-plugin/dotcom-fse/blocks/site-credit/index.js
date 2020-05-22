@@ -12,8 +12,11 @@ import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/site-credit', {
-	title: __( 'WordPress.com Credit' ),
-	description: __( "This block tells the world that you're using WordPress.com." ),
+	title: __( 'WordPress.com Credit', 'full-site-editing' ),
+	description: __(
+		"This block tells the world that you're using WordPress.com.",
+		'full-site-editing'
+	),
 	icon: 'wordpress-alt',
 	category: 'layout',
 	supports: {
