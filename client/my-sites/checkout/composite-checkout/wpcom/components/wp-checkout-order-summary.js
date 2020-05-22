@@ -183,6 +183,7 @@ function CheckoutSummaryHelp() {
 	return (
 		<>
 			<QuerySupportTypes />
+			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
 				<PaymentChatButton />
 			) : (
@@ -325,5 +326,13 @@ const LoadingCopy = styled.p`
 		height: 18px;
 		background: ${( props ) => props.theme.colors.borderColorLight};
 		border-radius: 100%;
+	}
+`;
+
+const LoadingButton = styled( LoadingCopy )`
+	margin: 16px 8px 0;
+
+	:before {
+		display: none;
 	}
 `;
