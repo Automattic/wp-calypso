@@ -118,13 +118,13 @@ export default {
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200520',
 		variations: {
-			gutenberg: 10,
-			control: 90,
+			gutenberg: 25,
+			control: 75,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
-		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE', 'CA', 'AU' ],
 	},
 	domainShowJPResultsInJapan: {
 		datestamp: '20200506',
