@@ -3,6 +3,9 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
+import { sprintf } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
+import { useI18n, withI18n, I18nReact } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -67,7 +70,7 @@ const Header: React.FunctionComponent = () => {
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : siteTitleDefault }
+						{ siteTitle ? siteTitle : <StartYourWebsite /> }
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
@@ -95,5 +98,13 @@ const Header: React.FunctionComponent = () => {
 		</div>
 	);
 };
+
+const StartYourWebsite = withI18n(
+	class extends React.PureComponent< I18nReact > {
+		render() {
+			return this.props.__( 'Start your website' );
+		}
+	}
+);
 
 export default Header;
