@@ -11,7 +11,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -19,7 +19,6 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ExternalLink from 'components/external-link';
-import userUtilities from 'lib/user/utils';
 
 /**
  * Style dependencies
@@ -83,21 +82,12 @@ const SettingsPage = () => {
 		setFormOpen( ! isConnected );
 	}, [ isConnected ] );
 
-	// Clears everything user related on the client site by
-	// calling user.clear() which calls store.clearAll();
-	// @todo: track event (what type?)
-	const logOut = () => userUtilities.logout();
-
 	return (
 		<Main className="settings">
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<QueryRewindState siteId={ siteId } />
 			<PageViewTracker path="/settings/:site" title="Settings" />
-
-			<Button primary scary onClick={ logOut }>
-				Log out
-			</Button>
 
 			<div className="settings__title">
 				<h2>{ translate( 'Server connection details' ) }</h2>

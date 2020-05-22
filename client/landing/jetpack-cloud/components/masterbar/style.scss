@@ -46,4 +46,8 @@
 		min-width: 18px;
 		flex: 0 0 auto;
 	}
+
+	.masterbar__item-me--open {
+		box-shadow: 0 -1px 0 1px var( --studio-gray-20 );
+	}
 }
