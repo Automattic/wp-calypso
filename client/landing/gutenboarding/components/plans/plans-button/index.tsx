@@ -44,13 +44,12 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	// This accounts for plans that may come from e.g. selecting a domain or adding a plan via URL
 	const plan = useSelectedPlan();
 
-	const planLabel =
-		plan?.isFree && ! selectedPlan
-			? __( 'View plans' )
-			: /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
-			  sprintf( __( '%s Plan' ), plan.getTitle() );
-
 	const isPlanUserSelectedOrPaid = selectedPlan || ! plan?.isFree;
+
+	const planLabel = isPlanUserSelectedOrPaid
+		? /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+		  sprintf( __( '%s Plan' ), plan.getTitle() )
+		: __( 'View plans' );
 
 	return (
 		<>
