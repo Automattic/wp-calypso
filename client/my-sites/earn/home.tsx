@@ -159,7 +159,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = hasConnectedAccount
-			? translate( 'Manage Recurring Payments' )
+			? translate( 'Manage recurring payments' )
 			: translate( 'Collect recurring payments' );
 		const body = hasConnectedAccount
 			? translate(
