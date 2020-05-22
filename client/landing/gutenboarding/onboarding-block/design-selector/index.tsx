@@ -105,7 +105,10 @@ const DesignSelector: React.FunctionComponent = () => {
 										>
 											<div className="design-selector__premium-container">
 												<Badge className="design-selector__premium-badge">
-													<JetpackLogo size={ 20 } />
+													<JetpackLogo
+														className="design-selector__premium-badge-logo"
+														size={ 20 }
+													/>
 													{ __( 'Premium' ) }
 												</Badge>
 											</div>
