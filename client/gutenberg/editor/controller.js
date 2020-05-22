@@ -17,14 +17,20 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, getSiteOption, getSite, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteUrl,
+	getSiteOption,
+	getSite,
+	isJetpackSite,
+	isSSOEnabled,
+} from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
 import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
-import { BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/event-reasons';
+import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
 import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 
 function determinePostType( context ) {
@@ -77,12 +83,6 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function ssoEnabled( state, siteId ) {
-	const site = getSite( state, siteId );
-	const siteActiveModules = site.options.active_modules;
-	return siteActiveModules ? siteActiveModules.includes( 'sso' ) : false;
-}
-
 /**
  * Ensures the user is authenticated in WP Admin so the iframe can be loaded successfully.
  *
@@ -111,7 +111,7 @@ export const authenticate = ( context, next ) => {
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! ssoEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
@@ -144,7 +144,8 @@ export const authenticate = ( context, next ) => {
 		context.store.dispatch(
 			notifyDesktopCannotOpenEditor(
 				getSite( state, siteId ),
-				BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
+				REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
+				context.path,
 				wpAdminLoginUrl
 			)
 		);

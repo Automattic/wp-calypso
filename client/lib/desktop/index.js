@@ -20,7 +20,12 @@ import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 import { isEditorIframeLoaded } from 'state/ui/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
-import { BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/event-reasons';
+import {
+	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
+	NOTIFY_DESKTOP_DID_REQUEST_SITE,
+	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
+	REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
+} from 'state/desktop/window-events';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { requestSite } from 'state/sites/actions';
@@ -44,24 +49,13 @@ const Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
-		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
-		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
+		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
+		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
 
 		window.addEventListener(
-			'desktop-notify-cannot-open-editor',
+			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 			this.onCannotOpenEditor.bind( this )
-		);
-
-		// TODO: Add (and remove) these listeners within corresponding ipc command
-		window.addEventListener(
-			'desktop-notify-jetpack-module-activate-status',
-			this.onDidActivateJetpackSiteModule.bind( this )
-		);
-
-		window.addEventListener(
-			'desktop-notify-site-request-status',
-			this.onDidRequestSite.bind( this )
 		);
 
 		this.store = await getReduxStore();
@@ -194,48 +188,69 @@ const Desktop = {
 	},
 
 	onCannotOpenEditor: function ( event ) {
-		const { site, wpAdminLoginUrl, reason } = event.detail;
-		debug(
-			'Dispatching desktop notification via window event: cannot load editor for site: ',
-			site.URL
-		);
+		const { site, reason, editorUrl, wpAdminLoginUrl } = event.detail;
+		debug( 'Received window event: unable to load editor for site: ', site.URL );
 
 		const siteId = site.ID;
 		const state = this.store.getState();
-		const isAdmin = canCurrentUserManageSiteOptions( state, siteId );
-		const payload = { siteId, origin: site.URL, editorUrl: wpAdminLoginUrl, isAdmin };
+		const canUserManageOptions = canCurrentUserManageSiteOptions( state, siteId );
+		const payload = { siteId, origin: site.URL, editorUrl, wpAdminLoginUrl, canUserManageOptions };
 
 		switch ( reason ) {
-			case BLOCK_EDITOR_JETPACK_REQUIRES_SSO: {
-				ipc.send( 'cannot-open-editor', payload );
+			case REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO: {
+				ipc.send( 'cannot-use-editor', payload );
 				break;
 			}
 			default:
-				ipc.send( 'cannot-open-editor', { ...payload, error: `Unhandled reason: ${ reason }` } );
+				ipc.send( 'cannot-use-editor', {
+					...payload,
+					error: `Cannot use editor, unhandled reason: ${ reason }`,
+				} );
 		}
 	},
 
 	onActivateJetpackSiteModule: function ( event, info ) {
 		const { siteId, option } = info;
 		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
-		this.store.dispatch( activateModule( siteId, option ) );
-	},
 
-	onDidActivateJetpackSiteModule: function ( event ) {
-		debug( 'Received Jetpack module activation status for siteId: ', event.detail );
-		const { status, siteId, error } = event.detail;
-		ipc.send( 'enable-site-option-response', { status, siteId, error } );
+		const response = NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE;
+		function onDidActivateJetpackSiteModule( responseEvent ) {
+			debug( 'Received Jetpack module activation response for: ', responseEvent.detail );
+
+			window.removeEventListener( response, this );
+			const { status, siteId: responseSiteId } = responseEvent.detail;
+			let { error } = responseEvent.detail;
+			if ( Number( siteId ) !== Number( responseSiteId ) ) {
+				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
+			}
+			ipc.send( 'enable-site-option-response', { status, siteId, error } );
+		}
+		window.addEventListener(
+			response,
+			onDidActivateJetpackSiteModule.bind( onDidActivateJetpackSiteModule )
+		);
+
+		this.store.dispatch( activateModule( siteId, option ) );
 	},
 
 	onRequestSite: function ( event, siteId ) {
 		debug( 'Refreshing redux state for siteId: ', siteId );
-		this.store.dispatch( requestSite( siteId ) );
-	},
 
-	onDidRequestSite: function ( event ) {
-		debug( 'Received site request status', event.detail );
-		const { status, siteId, error } = event.detail;
-		ipc.send( 'request-site-response', { siteId, status, error } );
+		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
+		function onDidRequestSite( responseEvent ) {
+			debug( 'Received site request response for: ', responseEvent.detail );
+
+			window.removeEventListener( response, this );
+			const { status, siteId: responseSiteId } = responseEvent.detail;
+			let { error } = responseEvent.detail;
+			if ( Number( siteId ) !== Number( responseSiteId ) ) {
+				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
+			}
+			ipc.send( 'request-site-response', { siteId, status, error } );
+		}
+		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
+
+		this.store.dispatch( requestSite( siteId ) );
 	},
 
 	onNavigate: function ( event, url ) {
