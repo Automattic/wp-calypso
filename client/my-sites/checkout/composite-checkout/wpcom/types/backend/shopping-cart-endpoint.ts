@@ -76,6 +76,7 @@ export interface ResponseCart {
 	locale: string;
 	is_signup: boolean;
 	messages?: { errors: ResponseCartError[] };
+	new_site_data?: object;
 	tax: {
 		location: {
 			country_code?: string;
@@ -111,6 +112,7 @@ export const emptyResponseCart = {
 	locale: 'en-us',
 	tax: { location: [], display_taxes: false },
 	is_signup: false,
+	new_site_data: {},
 } as ResponseCart;
 
 /**
@@ -187,6 +189,7 @@ export function convertResponseCartToRequestCart( {
 	locale,
 	coupon,
 	is_coupon_applied,
+	new_site_data,
 	tax,
 }: ResponseCart ): RequestCart {
 	return {
@@ -198,6 +201,7 @@ export function convertResponseCartToRequestCart( {
 		temporary: false,
 		tax,
 		extra: '', // TODO: fix this
+		...( new_site_data && { new_site_data } ),
 	} as RequestCart;
 }
 

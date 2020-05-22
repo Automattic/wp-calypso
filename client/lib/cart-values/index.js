@@ -58,6 +58,7 @@ export function preprocessCartForServer( {
 	temporary,
 	extra,
 	products,
+	new_site_data,
 	tax,
 } ) {
 	const needsUrlCoupon = ! (
@@ -91,7 +92,10 @@ export function preprocessCartForServer( {
 			urlCoupon && {
 				coupon: urlCoupon,
 				is_coupon_applied: false,
-			}
+			},
+		new_site_data && {
+			new_site_data,
+		}
 	);
 }
 

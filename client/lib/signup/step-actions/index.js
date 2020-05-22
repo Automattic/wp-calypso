@@ -133,31 +133,16 @@ function getSiteVertical( state ) {
 }
 
 export function addDomainToSitelessCart( callback, dependencies, stepData, reduxStore ) {
-	const domainItem = dependencies.domainItem
-		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore )
-		: null;
-
-	const cartKey = 'no-site';
-	const providedDependencies = {
-		siteId: null,
-		siteSlug: cartKey,
-		domainItem,
-		themeItem: stepData.themeItem,
-		// @todo: save this somewhere =>
-		// suggestedSiteUrl: stepData.siteUrl || tell-to-autogenerate-if-skipped,
-	};
-
-	if ( ! domainItem ) {
-		return defer( () => callback( undefined, providedDependencies ) );
-	}
-
-	const domainChoiceCart = [ domainItem ];
-	SignupCart.addToCart( cartKey, domainChoiceCart, function ( cartError ) {
-		callback( cartError, providedDependencies );
-	} );
+	return createSiteWithCart( callback, dependencies, stepData, reduxStore, true );
 }
 
-export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
+export function createSiteWithCart(
+	callback,
+	dependencies,
+	stepData,
+	reduxStore,
+	isSiteless = false
+) {
 	const {
 		cartItem,
 		domainItem,
@@ -256,6 +241,29 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
+	}
+
+	if ( isSiteless ) {
+		const cartKey = 'no-site';
+		const providedDependencies = {
+			siteId: null,
+			siteSlug: cartKey,
+			domainItem,
+			themeItem,
+		};
+
+		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
+			( item ) => item
+		);
+
+		return SignupCart.createOrUpdateCart(
+			cartKey,
+			newCartItems,
+			{ new_site_data: newSiteParams },
+			function ( cartError ) {
+				callback( cartError, providedDependencies );
+			}
+		);
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {

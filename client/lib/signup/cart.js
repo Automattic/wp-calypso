@@ -56,4 +56,21 @@ export default {
 			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );
 	},
+	createOrUpdateCart: function ( cartKey, newCartItems, additionalCartData, callback ) {
+		wpcom.undocumented().getCart( cartKey, function ( error, data ) {
+			if ( error ) {
+				return callback( error );
+			}
+
+			if ( ! Array.isArray( newCartItems ) ) {
+				newCartItems = [ newCartItems ];
+			}
+
+			let newCart = addProductsToCart( data, newCartItems );
+			newCart = { ...newCart, ...additionalCartData };
+			newCart = preprocessCartForServer( newCart );
+
+			wpcom.undocumented().setCart( cartKey, newCart, callback );
+		} );
+	},
 };
