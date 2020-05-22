@@ -98,6 +98,14 @@
 					font-size: 16px;
 				}
 			}
+
+			a {
+				color: currentColor;
+
+				.gridicons-external {
+					margin-left: 4px;
+				}
+			}
 		}
 
 		> .domain-status__icon {
