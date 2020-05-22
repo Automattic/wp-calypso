@@ -401,9 +401,7 @@ class MembershipsProductsSection extends Component {
 						{ translate( 'Custom confirmation message' ) }
 					</h6>
 					<p>
-						{ translate(
-							'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
-						) }
+						{ translate( 'Add a short message to the confirmation email sent to subscribers.' ) }
 					</p>
 					<CountedTextarea
 						value={ editedCustomConfirmationMessage }
@@ -412,7 +410,7 @@ class MembershipsProductsSection extends Component {
 						}
 						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
 						showRemainingCharacters={ true }
-						placeholder={ translate( 'Write a short welcome message' ) }
+						placeholder={ translate( 'Thank you for subscribing!' ) }
 					/>
 				</FormFieldset>
 			</>
