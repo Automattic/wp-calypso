@@ -711,6 +711,19 @@
 }
 
 .jetpack-cloud {
+	.masterbar__oauth-client {
+		height: unset;
+		.masterbar__oauth-client-main-nav {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			.masterbar__oauth-client-logo {
+				padding: 14px 0;
+				line-height: normal;
+			}
+		}
+	}
+
 	.masterbar.masterbar__oauth-client {
 		border: none;
 	}

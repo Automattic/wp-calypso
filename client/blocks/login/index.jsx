@@ -28,7 +28,6 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { rebootAfterLogin } from 'state/login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,

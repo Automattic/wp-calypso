@@ -15,5 +15,5 @@ export const isWooOAuth2Client = ( oauth2Client ) => {
 
 export const isJetpackCloudOAuth2Client = ( oauth2Client ) => {
 	// 68663 => Jetpack Cloud Dev,
-	return oauth2Client && includes( [ 68663 ], oauth2Client.id );
+	return oauth2Client && includes( [ 68663, 69040, 69041 ], oauth2Client.id );
 };

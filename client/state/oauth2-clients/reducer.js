@@ -50,19 +50,16 @@ export const initialClientsData = {
 		id: 68663,
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
-		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
 	},
 	69040: {
 		id: 69040,
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
-		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
 	},
 	69041: {
 		id: 69041,
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
-		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
 	},
 };
 
