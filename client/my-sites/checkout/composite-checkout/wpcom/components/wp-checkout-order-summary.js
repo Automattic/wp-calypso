@@ -170,12 +170,7 @@ function CheckoutSummaryHelp() {
 
 	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
-		onEvent( {
-			type: 'calypso_checkout_composite_summary_help_click',
-			payload: {
-				isSupportChatUser,
-			},
-		} );
+		onEvent( { type: 'calypso_checkout_composite_summary_help_click' } );
 		reduxDispatch( showInlineHelpPopover() );
 	};
 
