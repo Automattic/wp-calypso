@@ -21,7 +21,7 @@ class WPCOM_Offline_Subscription_Service extends WPCOM_Token_Subscription_Servic
 		// running a job (sending email subscription) OR
 		// handling API request on WPCOM (reader)
 		return (
-			( defined( 'IS_JOBS' ) && IS_JOBS ) ||
+			( defined( 'WPCOM_JOBS' ) && WPCOM_JOBS ) ||
 			( defined( 'IS_WPCOM' ) && IS_WPCOM === true && ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) )
 		       ) && is_user_logged_in();
 	}
