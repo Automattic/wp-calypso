@@ -106,18 +106,20 @@ $card_padding_large: 24px;
 				margin-right: 1px;
 			}
 
-			.search__icon-navigation {
+			.search__icon-navigation,
+			.spinner {
 				padding: 0 6px;
 				width: 24px;
 				height: 24px;
-
-				.gridicon {
-					// allow to scale to container
-					width: auto;
-				}
 			}
 
+			&.is-searching .search__icon-navigation {
+				display: none;
+			}
 
+			.search__icon-navigation .gridicon {
+				width: auto; // allow to scale to container
+			}
 		}
 	}
 
