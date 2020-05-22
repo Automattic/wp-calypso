@@ -190,12 +190,8 @@ class MobileDownloadCard extends React.Component {
 						</p>
 					</div>
 					<div className="get-apps__badges">
-						<AppsBadge
-							storeName={ 'android' }
-							referrer={ 'calypso-get-apps' }
-							utm_campaign={ 'mobile-download-promo-pages' }
-						/>
-						<AppsBadge storeName={ 'ios' } referrer={ 'calypso-get-apps-button' } />
+						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-get-apps' } />
+						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-get-apps-button' } />
 					</div>
 				</div>
 

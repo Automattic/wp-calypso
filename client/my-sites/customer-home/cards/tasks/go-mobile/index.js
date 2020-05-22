@@ -17,13 +17,9 @@ const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();
 
 	const actionButton = isIos ? (
-		<AppsBadge storeName={ 'ios' } referrer="calypso-customer-home"></AppsBadge>
+		<AppsBadge storeName={ 'ios' } utm_source="calypso-customer-home"></AppsBadge>
 	) : (
-		<AppsBadge
-			storeName={ 'android' }
-			referrer={ 'calypso-customer-home' }
-			utm_campaign={ 'mobile-download-promo-pages' }
-		></AppsBadge>
+		<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
 	);
 
 	return (
