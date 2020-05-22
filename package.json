@@ -358,7 +358,7 @@
 		"wp-e2e-tests": "^0.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
-		"yargs": "^13.3.0"
+		"yargs": "^15.0.0"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
