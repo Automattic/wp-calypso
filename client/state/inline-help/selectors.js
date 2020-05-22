@@ -58,18 +58,6 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 }
 
 /**
- * Indicates whether the current search results came from the API or are
- * statically coded "contextual" results.
- * see: client/blocks/inline-help/contextual-help.js
- *
- * @param  {object}  state  Global state tree
- * @returns {boolean} Whether the search results came from the API or are static "contextual" results
- */
-export function hasInlineHelpAPIResults( state ) {
-	return get( state, 'inlineHelp.searchResults.search.hasAPIResults' );
-}
-
-/**
  * Returns an array of contextual results
  *
  * @param  {object}  state  Global state tree
@@ -126,15 +114,4 @@ export function isShowingQandAInlineHelpContactForm( state ) {
  */
 export function isInlineHelpPopoverVisible( state ) {
 	return get( state, 'inlineHelp.popover.isVisible', false );
-}
-/**
- * Returns a bool indicating if the inline help ui should be visibile
- * or not. Note this is not hiding the popover. This means the UI will be
- * hidden entirely.
- *
- * @param  {object}  state  Global state tree
- * @returns {boolean}        Is the inline help UI showing.
- */
-export function isInlineHelpVisible( state ) {
-	return get( state, 'inlineHelp.ui.isVisible', true );
 }
