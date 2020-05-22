@@ -15,10 +15,7 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	// TODO: How to use analytics type here?
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	recordAnalytics?: ( event ) => void;
+	recordAnalytics?: ( event: object ) => void;
 	uiPosition: number;
 	domainSearch: string;
 	analyticsFlowId: string;

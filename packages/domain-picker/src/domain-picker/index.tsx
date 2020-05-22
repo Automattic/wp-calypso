@@ -54,10 +54,7 @@ export interface Props {
 
 	onMoreOptions?: () => void;
 
-	// TODO: How to use analytics type here?
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	recordAnalytics?: ( event ) => void;
+	recordAnalytics?: ( event: object ) => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -89,10 +86,7 @@ export interface Props {
 	onModalOpen: ( modalName: string ) => void;
 
 	/** Called when the modal is closed or unmounted in any way. Can be used for analytics */
-	// TODO: How to use analytics type here?
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	onModalUnmount: () => ( modalName: string, eventProps? ) => void;
+	onModalUnmount: () => ( modalName: string, eventProps?: object ) => void;
 
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
