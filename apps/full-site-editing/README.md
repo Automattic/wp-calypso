@@ -30,7 +30,11 @@ The following scripts are made available by the plugin:
 - `a8c-fse-common-data-stores`: Import this script to register data stores.
 
 At the moment, scripts are only enqueued for their side effects, i.e. you cannot import anything from them. The imports serve to ensure the script
-is enqueued by WordPress as a script dependency.
+is enqueued by WordPress as a script dependency. To depend on a script, add an import:
+
+```js
+import 'a8c-fse-common-data-stores';
+```
 
 ## Build System
 
