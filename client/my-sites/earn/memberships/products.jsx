@@ -31,7 +31,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSelect from 'components/forms/form-select';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
-import FormTextArea from 'components/forms/form-textarea';
+import CountedTextarea from 'components/forms/counted-textarea';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import InlineSupportLink from 'components/inline-support-link';
@@ -70,6 +70,11 @@ const MINIMUM_CURRENCY_AMOUNT = {
 	SEK: 3.0,
 	SGD: 0.5,
 };
+
+/**
+ * @type {number}
+ */
+const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 
 /**
  * @type Array<{ code: string }>
@@ -247,6 +252,13 @@ class MembershipsProductsSection extends Component {
 		if ( ( field === 'name' || ! field ) && this.state.editedProductName.length === 0 ) {
 			return false;
 		}
+		if (
+			! field &&
+			this.state.editedCustomConfirmationMessage.length >
+				MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE
+		) {
+			return false;
+		}
 		return true;
 	};
 
@@ -392,11 +404,14 @@ class MembershipsProductsSection extends Component {
 							'Add a custom message to the confirmation email that is sent out for this recurring payment plan.'
 						) }
 					</p>
-					<FormTextArea
+					<CountedTextarea
 						value={ editedCustomConfirmationMessage }
 						onChange={ ( event ) =>
 							this.setState( { editedCustomConfirmationMessage: event.target.value } )
 						}
+						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
+						showRemainingCharacters={ true }
+						placeholder={ translate( 'Write a short welcome message' ) }
 					/>
 				</FormFieldset>
 			</>
@@ -418,6 +433,7 @@ class MembershipsProductsSection extends Component {
 						label: this.props.translate( 'Save' ),
 						action: 'submit',
 						disabled: ! this.isFormValid(),
+						isPrimary: true,
 					},
 				] }
 			>
