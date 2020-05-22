@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import Modal from 'react-modal';
+import { useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -10,6 +11,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PlansGrid, { Props as PlansGridProps } from '../plans-grid';
+import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import { useTrackModal } from '../../../hooks/use-track-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 
@@ -27,6 +29,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	Modal.setAppElement( '#wpcom' );
 
 	const plan = useSelectedPlan();
+	const { setPlan } = useDispatch( PLANS_STORE );
 
 	React.useEffect( () => {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
@@ -42,6 +45,11 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 		selected_plan: selectedPlanRef.current,
 	} ) );
 
+	const handleConfirm = () => {
+		setPlan( plan?.getStoreSlug() );
+		onClose();
+	};
+
 	return (
 		<Modal
 			isOpen
@@ -51,7 +59,7 @@ const PlansGridModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 		>
 			<PlansGrid
 				confirmButton={
-					<Button isPrimary onClick={ onClose }>
+					<Button isPrimary onClick={ handleConfirm }>
 						{ __( 'Confirm' ) }
 					</Button>
 				}
