@@ -188,7 +188,7 @@ class MembershipsProductsSection extends Component {
 				editedPayWhatYouWant: product.buyer_can_change_amount,
 				editedMultiplePerUser: !! product.multiple_per_user,
 				focusedName: false,
-				editedCustomConfirmationMessage: product.welcome_email_content,
+				editedCustomConfirmationMessage: product.welcome_email_content || '',
 				editedPostsEmail: product.subscribe_as_site_subscriber,
 			} );
 		} else {
@@ -254,6 +254,7 @@ class MembershipsProductsSection extends Component {
 		}
 		if (
 			! field &&
+			this.state.editedCustomConfirmationMessage &&
 			this.state.editedCustomConfirmationMessage.length >
 				MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE
 		) {
