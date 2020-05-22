@@ -52,6 +52,18 @@ export const initialClientsData = {
 		title: 'Jetpack Cloud',
 		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
 	},
+	69040: {
+		id: 69040,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
+	},
+	69041: {
+		id: 69041,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+		icon: 'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png',
+	},
 };
 
 export default function oauth2Clients( state = initialClientsData, action ) {
