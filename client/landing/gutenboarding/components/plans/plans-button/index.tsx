@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import config from 'config';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -54,7 +55,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 			<Button
 				onClick={ handleButtonClick }
 				label={ __( planLabel ) }
-				className="plans-button"
+				className={ classNames( 'plans-button', { 'user-selected': selectedPlan } ) }
 				{ ...buttonProps }
 			>
 				{ isDesktop && planLabel }

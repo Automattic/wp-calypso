@@ -1,7 +1,12 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../variables.scss';
 
 .plans-button {
 	white-space: nowrap;
+
+	&.user-selected {
+		color: var( --studio-blue-40 );
+	}
 }
 
 .plans-button__jetpack-logo {
