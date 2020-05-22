@@ -2,11 +2,13 @@
 
 A helper function to build URLs using the `jetpack.com/redirect` service.
 
+If you are an automattician, refer to PCYsg-pY7-p2 for all related information and links to our internal tools.
+
 ## Usage
 
 `getRedirectUrl( required source, optional args );`
 
-### $source (required)
+### source (required)
 
 Source can be either a “source handler” or a URL.
 
@@ -14,7 +16,7 @@ A “source handler” must be registered in the Jetpack Redirects service, on t
 
 A “URL” is a string that must start with “https://" and doesn’t need to be registered on the server. However, if it is registered, it will point to the URL set as target there rather than to the source. (Note: It will only work for whitelisted domains)
 
-### $args (optional)
+### args (optional)
 
 This is optional and allows you to pass an array (or object in JS) with more parameters to build the URL:
 
@@ -32,9 +34,9 @@ This is optional and allows you to pass an array (or object in JS) with more par
 
 `getRedirectUrl( 'jetpack', { query: 'foo=bar', anchor: 'section' } );`
 
-This will create: `https://jetpack.com/redirect?source=jetpack&anchor=section&query=foo%3Dbar`
+This will return the following URL: `https://jetpack.com/redirect?source=jetpack&anchor=section&query=foo%3Dbar`
 
-That will point to: `https://jetpack.com/?foo=bar#section`
+When accessing this URL, the user will redirected to: `https://jetpack.com/?foo=bar#section`
 
 ### Example 2 (placeholders):
 
@@ -47,8 +49,8 @@ getRedirectUrl(
 	}
 )
 ```
-This will create: h`ttps://jetpack.com/redirect?site=example.org&source=calypso-edit-post&path=1234`
+This will return the following URL: `ttps://jetpack.com/redirect?site=example.org&source=calypso-edit-post&path=1234`
 
-The calypso-edit-post source points to `https://wordpress.com/post/[site]/[path]`, so the final URL will be:
+The `calypso-edit-post` source is registered in the server and it points to `https://wordpress.com/post/[site]/[path]`, so the final URL that the user will be redirected to is:
 
 `https://wordpress.com/post/example.org/1234`
