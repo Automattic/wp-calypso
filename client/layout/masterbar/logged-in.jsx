@@ -99,6 +99,10 @@ class MasterbarLoggedIn extends React.Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 	};
 
+	clickClose = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+	};
+
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
 	};
@@ -155,12 +159,20 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
+		const { domainOnlySite, translate, isCheckout, isMigrationInProgress, siteSlug } = this.props;
 
 		if ( isCheckout === true ) {
 			return (
 				<Masterbar>
 					<div className="masterbar__secure-checkout">
+						<Item
+							url={ '/plans/' + siteSlug }
+							icon="cross"
+							className="masterbar__close-button"
+							onClick={ this.clickClose }
+							tooltip={ translate( 'Close Checkout' ) }
+							tipTarget="close"
+						/>
 						<WordPressWordmark className="masterbar__wpcom-wordmark" />
 						<span className="masterbar__secure-checkout-text">
 							{ translate( 'Secure checkout' ) }

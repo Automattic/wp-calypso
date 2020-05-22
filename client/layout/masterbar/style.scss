@@ -153,6 +153,15 @@ $autobar-height: 20px;
 		animation: none;
 	}
 
+	&.masterbar__close-button {
+		border-right: 1px solid var( --color-primary-light );
+		margin-right: 15px;
+
+		.masterbar__item-content {
+			display: none;
+		}
+	}
+
 	.is-support-session &.is-active {
 		background: var( --studio-orange-70 );
 	}
@@ -561,7 +570,6 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	padding-left: 10px;
 
 	.masterbar__wpcom-wordmark {
 		margin-right: 5px;
