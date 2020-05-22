@@ -64,13 +64,13 @@ describe( 'getRedirectUrl', () => {
 		expect( parsedUrl.searchParams.get( 'path' ) ).toBe( '123' );
 	} );
 
-	test( 'Test informing URL', () => {
+	test( 'Test passing an URL as the first parameter', () => {
 		const url = getRedirectUrl( 'https://wordpress.com/support' );
 		const value = encodeURIComponent( 'https://wordpress.com/support' );
 		expect( url ).toBe( `https://jetpack.com/redirect/?url=${ value }` );
 	} );
 
-	test( 'Test informing URL and query', () => {
+	test( 'Test passing an URL as the first parameter and query', () => {
 		const url = getRedirectUrl( 'https://wordpress.com/support', {
 			query: 'key=1234&other=super',
 		} );
@@ -80,7 +80,7 @@ describe( 'getRedirectUrl', () => {
 		expect( parsedUrl.searchParams.get( 'query' ) ).toBe( 'key=1234&other=super' );
 	} );
 
-	test( 'Test informing URL and query discarding info from url', () => {
+	test( 'Test passing an URL as the first parameter and query discarding info from url', () => {
 		const url = getRedirectUrl( 'https://wordpress.com/support?super=mega&key=value#section1', {
 			query: 'key=1234&other=super',
 		} );
