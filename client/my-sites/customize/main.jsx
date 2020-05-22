@@ -48,6 +48,7 @@ class Customize extends React.Component {
 			iframeLoaded: false,
 			errorFromIframe: false,
 			timeoutError: false,
+			returnUrl: undefined,
 		};
 	}
 
@@ -79,6 +80,11 @@ class Customize extends React.Component {
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
+		this.getReturnUrl().then( ( validatedUrl ) => {
+			this.setState( {
+				returnUrl: validatedUrl,
+			} );
+		} );
 	}
 
 	componentWillUnmount() {
@@ -115,7 +121,26 @@ class Customize extends React.Component {
 		return false;
 	};
 
-	getReturnUrl = () => new URLSearchParams( window.location.search ).get( 'return' );
+	getReturnUrl = async () => {
+		const returnUrl = new URLSearchParams( window.location.search ).get( 'return' );
+
+		if ( ! returnUrl ) {
+			return null;
+		}
+
+		try {
+			const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: returnUrl } );
+
+			if ( ! response || ! response.redirect_to ) {
+				return null;
+			}
+
+			return response.redirect_to;
+		} catch {
+			// Ignore error, treat URL as invalid
+			return null;
+		}
+	};
 
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
@@ -130,8 +155,7 @@ class Customize extends React.Component {
 	};
 
 	goBack = () => {
-		const returnUrl = this.getReturnUrl();
-		const path = returnUrl || this.getPreviousPath();
+		const path = this.state.returnUrl || this.getPreviousPath();
 
 		if ( path.includes( '/themes' ) ) {
 			trackClick( 'customizer', 'close' );
