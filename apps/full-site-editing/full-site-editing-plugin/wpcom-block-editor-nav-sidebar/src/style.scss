@@ -116,18 +116,18 @@ $transition-period: 200ms;
 
 @keyframes wpcom-block-editor-nav-sidebar__shrink {
 	0% {
-		scale: 100%;
+		transform: scale( 1 );
 	}
 	100% {
-		scale: 55%;
+		transform: scale( 0.55 );
 	}
 }
 
 @keyframes wpcom-block-editor-nav-sidebar__grow {
 	0% {
-		scale: 55%;
+		transform: scale( 0.55 );
 	}
 	100% {
-		scale: 100%;
+		transform: scale( 1 );
 	}
 }
