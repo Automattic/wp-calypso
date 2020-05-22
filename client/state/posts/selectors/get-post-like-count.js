@@ -9,13 +9,13 @@ import { get } from 'lodash';
 import 'state/posts/init';
 
 /**
- * Returns the total of post likes for a given site ID, post ID.
+ * Returns the count of post likes for a given site ID, post ID.
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post ID
  * @returns {Array}          Post Likes
  */
-export default function countPostLikes( state, siteId, postId ) {
-	return get( state.posts.likes.items, [ siteId, postId, 'found' ], null );
+export function getPostLikeCount( state, siteId, postId ) {
+	return get( state.posts.likes.items, [ siteId, postId, 'found' ], 0 );
 }

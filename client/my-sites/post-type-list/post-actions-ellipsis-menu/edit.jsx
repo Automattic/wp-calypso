@@ -13,7 +13,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
-import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
+import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { preload } from 'sections-helper';
 
@@ -32,6 +32,7 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 			onClick={ bumpStat }
 			icon="pencil"
 			onMouseOver={ preloadEditor }
+			onFocus={ preloadEditor }
 		>
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>

@@ -60,7 +60,7 @@ import Emojify from 'components/emojify';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { isLikedPost } from 'state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';

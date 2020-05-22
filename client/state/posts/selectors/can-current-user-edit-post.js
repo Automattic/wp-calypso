@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPost } from 'state/posts/selectors';
+import { getPost } from 'state/posts/selectors/get-post';
 
 import 'state/posts/init';
 
@@ -17,7 +17,7 @@ import 'state/posts/init';
  * @param  {string}  globalId Post global ID
  * @returns {boolean}          Whether the current user can edit the given post
  */
-export default function canCurrentUserEditPost( state, globalId ) {
+export function canCurrentUserEditPost( state, globalId ) {
 	const post = getPost( state, globalId );
 	return get( post, [ 'capabilities', 'edit_post' ], null );
 }
