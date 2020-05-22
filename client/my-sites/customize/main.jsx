@@ -73,6 +73,11 @@ class Customize extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
+		this.getReturnUrl().then( ( validatedUrl ) => {
+			this.setState( {
+				returnUrl: validatedUrl,
+			} );
+		} );
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -82,11 +87,6 @@ class Customize extends React.Component {
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
-		this.getReturnUrl().then( ( validatedUrl ) => {
-			this.setState( {
-				returnUrl: validatedUrl,
-			} );
-		} );
 	}
 
 	componentWillUnmount() {
@@ -217,9 +217,8 @@ class Customize extends React.Component {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );
 		const { panel, site } = this.props;
-		const returnUrl = this.getReturnUrl();
 
-		query.return = returnUrl || protocol + '//' + host + this.getPreviousPath();
+		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
 		if ( site.options && site.options.frame_nonce ) {
