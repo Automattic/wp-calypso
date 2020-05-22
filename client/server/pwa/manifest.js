@@ -10,8 +10,6 @@ import config from 'config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 	gcm_sender_id: '87234302238',
-	background_color: '#0078be',
-	theme_color: '#0078be',
 	icons: [
 		{
 			src: '/calypso/images/manifest/icon-144x144.png' + environmentUrlSuffix,
@@ -42,8 +40,6 @@ const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 } );
 
 const getJetpackCloudOptions = ( environmentUrlSuffix ) => ( {
-	background_color: '#2fb41f',
-	theme_color: '#2fb41f',
 	icons: [
 		{
 			src: '/calypso/images/manifest/jetpack-icon-144x144.png' + environmentUrlSuffix,
@@ -87,6 +83,8 @@ const buildManifest = ( { branchName } ) => {
 		name: config( 'site_name' ),
 		short_name: config( 'site_name' ),
 		start_url: '/' + environmentUrlSuffix,
+		background_color: config( 'theme_color' ),
+		theme_color: config( 'theme_color' ),
 		...( config.isEnabled( 'jetpack-cloud' )
 			? getJetpackCloudOptions( environmentUrlSuffix )
 			: getWordPressOptions( environmentUrlSuffix ) ),
