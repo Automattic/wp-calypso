@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import './style.scss';
 
 interface Props {
-	children: React.ReactElement;
+	children: React.ReactElement[];
 	className?: string;
 }
 
