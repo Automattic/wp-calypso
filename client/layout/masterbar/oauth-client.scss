@@ -712,6 +712,42 @@
 
 .jetpack-cloud {
 	.login.is-jetpack-cloud {
+		// 	max-width: 375px;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		form {
+			width: 100%;
+		}
+	}
+
+	.login__form-header-wrapper {
+		max-width: 375px;
+	}
+	.login__form {
+		max-width: 375px;
+	}
+
+	.login__divider {
+		width: 100%;
+		&::before {
+			background: var( --color-neutral-5 );
+			content: '';
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			z-index: 1;
+		}
+	}
+
+	.login__social {
+		max-width: 375px;
+	}
+	.wp-login__links {
 		max-width: 375px;
 	}
 
@@ -746,13 +782,31 @@
 			box-shadow: none;
 		}
 		.card.login__form {
-			border-bottom: 1px solid var( --studio-gray-5 );
+			border-bottom: unset;
 		}
 
 		.wp-login__container {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+		}
+
+		.login__form {
+			display: flex;
+			flex-direction: column;
+
+			.login__form-userdata {
+				order: 1;
+			}
+			.login__form-action {
+				order: 2;
+			}
+			.login__form-terms {
+				order: 3;
+			}
+			.login__form-signup-link {
+				order: 4;
+			}
 		}
 	}
 
