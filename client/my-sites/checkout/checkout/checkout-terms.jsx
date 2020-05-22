@@ -8,7 +8,7 @@ import React, { Fragment } from 'react';
  */
 import { hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import TermsOfService from './terms-of-service';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import ConciergeRefundPolicy from './concierge-refund-policy';
@@ -31,7 +31,7 @@ class CheckoutTerms extends React.Component {
 				<TermsOfService hasRenewableSubscription={ hasRenewableSubscription( cart ) } />
 				<DomainRegistrationAgreement cart={ cart } />
 				<DomainRegistrationHsts cart={ cart } />
-				<DomainRegistrationRefundPolicy cart={ cart } />
+				<DomainRefundPolicy cart={ cart } />
 				<ConciergeRefundPolicy cart={ cart } />
 				<BundledDomainNotice cart={ cart } />
 			</Fragment>
