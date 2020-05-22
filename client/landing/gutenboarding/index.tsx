@@ -3,7 +3,7 @@
  */
 import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
-import { I18nProvider } from '@automattic/react-i18n';
+import { I18nProvider, useI18n } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
 import {
 	getLanguageFile,
@@ -12,7 +12,7 @@ import {
 	switchWebpackCSS,
 } from '../../lib/i18n-utils/switch-locale';
 import { getUrlParts } from '../../lib/url/url-parts';
-import React from 'react';
+import * as React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
@@ -52,7 +52,8 @@ function generateGetSuperProps() {
 }
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
-const USE_TRANSLATION_CHUNKS: string =
+const USE_TRANSLATION_CHUNKS: boolean =
+	false || // TODO: Force disable translation chunks
 	config.isEnabled( 'use-translation-chunks' ) ||
 	getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
@@ -94,22 +95,14 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let i18nLocaleData;
+	let initialLocaleData;
 	try {
-		const [ userLocale, { translatedChunks, ...localeData } ]: (
-			| string
-			| any
-		 )[] = await getLocale();
-		i18nLocaleData = localeData;
+		const [ userLocale, { translatedChunks, ...localeData } ]: [ string, any ] = await getLocale();
 		setLocaleData( localeData );
+		initialLocaleData = localeData;
 
 		if ( USE_TRANSLATION_CHUNKS ) {
 			await setupTranslationChunks( userLocale, translatedChunks );
-		}
-
-		// FIXME: Use rtl detection tooling
-		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
-			switchWebpackCSS( true );
 		}
 	} catch {}
 
@@ -118,7 +111,8 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<I18nProvider localeData={ i18nLocaleData }>
+		<CalypsoI18nProvider initialLocaleData={ initialLocaleData }>
+			<WindowLocaleEffectManager />
 			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>
@@ -129,10 +123,46 @@ window.AppBoot = async () => {
 					</Route>
 				</Switch>
 			</BrowserRouter>
-		</I18nProvider>,
+		</CalypsoI18nProvider>,
 		document.getElementById( 'wpcom' )
 	);
 };
+
+const CalypsoI18nProvider: React.FunctionComponent< {
+	initialLocaleData: any;
+} > = ( { children, initialLocaleData } ) => {
+	const [ localeData, setLocale ] = React.useState( initialLocaleData );
+
+	// For testing
+	React.useEffect( () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+		// @ts-ignore
+		window.updateLocale = async ( newLocale: string ) => {
+			if ( newLocale === DEFAULT_LOCALE_SLUG ) {
+				setLocale( undefined );
+			}
+			try {
+				const newLocaleData = await getLanguageFile( newLocale );
+				setLocale( newLocaleData );
+			} catch {}
+		};
+	}, [] );
+
+	React.useEffect( () => {
+		setLocaleData( localeData );
+	}, [ localeData ] );
+
+	return <I18nProvider localeData={ localeData }>{ children }</I18nProvider>;
+};
+
+function WindowLocaleEffectManager() {
+	const { isRTL } = useI18n();
+	const rtl = isRTL();
+	React.useEffect( () => {
+		switchWebpackCSS( rtl );
+	}, [ rtl ] );
+	return null;
+}
 
 /**
  * Load the user's locale
