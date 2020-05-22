@@ -49,7 +49,7 @@ async function attachSidebar() {
 		return;
 	}
 
-	addFilter( 'a8c.wpcom-block-editor.shouldCloseEditor', '', () => false );
+	addFilter( 'a8c.wpcom-block-editor.shouldCloseEditor', 'a8c/fse/attachSidebar', () => false );
 
 	// Classes need to be attached to elements that aren't controlled by React,
 	// otherwise our alterations will be removed when React re-renders. So attach
