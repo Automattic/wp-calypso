@@ -21,23 +21,30 @@
  * @returns {string} The redirect URL
  */
 export default function getRedirectUrl( source, args = {} ) {
+	let params = {};
+
 	if ( source.startsWith( 'https://' ) ) {
 		const parsedUrl = new URL( source );
 
 		// discard any query and fragments.
 		source = `https://${ parsedUrl.host }${ parsedUrl.pathname }`;
-		args.url = source;
+		params.url = source;
 	} else {
-		args.source = source;
+		params.source = source;
 	}
+
+	params = {
+		...args,
+		...params,
+	};
 
 	const acceptedArgs = [ 'site', 'path', 'query', 'anchor', 'source', 'url' ];
 
-	const pairs = Object.keys( args )
+	const pairs = Object.keys( params )
 		.filter( ( key ) => acceptedArgs.includes( key ) )
-		.map( ( key ) => [ key, args[ key ] ] );
-	const params = new globalThis.URLSearchParams( pairs );
-	const queryString = params.toString();
+		.map( ( key ) => [ key, params[ key ] ] );
+	const urlParams = new globalThis.URLSearchParams( pairs );
+	const queryString = urlParams.toString();
 
 	return `https://jetpack.com/redirect/?${ queryString }`;
 }
