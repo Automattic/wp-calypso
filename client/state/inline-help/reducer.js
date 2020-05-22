@@ -6,7 +6,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
@@ -14,20 +13,7 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
-	INLINE_HELP_SHOW,
-	INLINE_HELP_HIDE,
 } from 'state/action-types';
-
-export const ui = withoutPersistence( ( state = { isVisible: true }, action ) => {
-	switch ( action.type ) {
-		case INLINE_HELP_SHOW:
-			return { ...state, isVisible: true };
-		case INLINE_HELP_HIDE:
-			return { ...state, isVisible: false };
-	}
-
-	return state;
-} );
 
 export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
 	switch ( action.type ) {
@@ -65,7 +51,6 @@ export const search = withoutPersistence(
 			items: {},
 			selectedResult: -1,
 			shouldOpenSelectedResult: false,
-			hasAPIResults: false,
 		},
 		action
 	) => {
@@ -83,11 +68,6 @@ export const search = withoutPersistence(
 						...state.items,
 						[ action.searchQuery ]: action.searchResults,
 					},
-				};
-			case INLINE_HELP_SEARCH_REQUEST_API_RESULTS:
-				return {
-					...state,
-					hasAPIResults: action.hasAPIResults,
 				};
 			case INLINE_HELP_SELECT_RESULT:
 				return {
@@ -154,7 +134,6 @@ export const contactForm = withoutPersistence(
 );
 
 export default combineReducers( {
-	ui,
 	popover,
 	contactForm,
 	searchResults,
