@@ -5,13 +5,7 @@
 
 		"baseUrl": ".",
 		"module": "esnext",
-
-		// TODO: Remove this section when i18n instances are publish
-		"allowJs": true,
-		"checkJs": true,
-		"noImplicitAny": false,
-		// end TODO
-
+		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "dist/types",
