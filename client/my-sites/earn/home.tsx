@@ -212,7 +212,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					text: translate( 'Add premium content subscriptions' ),
 					action: () => {
 						trackCtaButton( 'premium-content' );
-						page( 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/' );
+						page( '/earn/payments-plans/${ selectedSiteSlug }' );
 					},
 			  };
 		const title = hasConnectedAccount
@@ -220,7 +220,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: translate( 'Collect payments for content' );
 		const body = hasConnectedAccount
 			? translate(
-					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
 			  )
 			: translate(
 					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. {{em}}Available with any paid plan{{/em}}.',
