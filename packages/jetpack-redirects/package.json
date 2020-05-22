@@ -10,9 +10,6 @@
 		"jetpack"
 	],
 	"author": "Automattic Inc.",
-	"contributors": [
-		"leogermani"
-	],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
