@@ -28,6 +28,7 @@ export function generateSteps( {
 	createSite = noop,
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
+	addDomainToSitelessCart = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
@@ -667,8 +668,15 @@ export function generateSteps( {
 
 		'domains-siteless': {
 			stepName: 'domains-siteless',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'shouldHideFreePlan' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
+			apiRequestFunction: addDomainToSitelessCart,
 			fulfilledStepCallback: sitelessRemoveDomainStepForPaidPlans,
 			props: {
 				isDomainOnly: false,

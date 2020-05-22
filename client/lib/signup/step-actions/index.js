@@ -132,6 +132,31 @@ function getSiteVertical( state ) {
 	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
+export function addDomainToSitelessCart( callback, dependencies, stepData, reduxStore ) {
+	const domainItem = dependencies.domainItem
+		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore )
+		: null;
+
+	const cartKey = 'no-site';
+	const providedDependencies = {
+		siteId: null,
+		siteSlug: cartKey,
+		domainItem,
+		themeItem: stepData.themeItem,
+		// @todo: save this somewhere =>
+		// suggestedSiteUrl: stepData.siteUrl || tell-to-autogenerate-if-skipped,
+	};
+
+	if ( ! domainItem ) {
+		return defer( () => callback( undefined, providedDependencies ) );
+	}
+
+	const domainChoiceCart = [ domainItem ];
+	SignupCart.addToCart( cartKey, domainChoiceCart, function ( cartError ) {
+		callback( cartError, providedDependencies );
+	} );
+}
+
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
 	const {
 		cartItem,
@@ -315,7 +340,13 @@ export function addPlanToCart(
 }
 
 export function addSitelessPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore, true );
+	addPlanToCart(
+		callback,
+		{ ...dependencies, siteSlug: dependencies.siteSlug || 'no-site' },
+		stepProvidedItems,
+		reduxStore,
+		true
+	);
 }
 
 export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {

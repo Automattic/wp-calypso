@@ -147,7 +147,9 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
 				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
 			],
-			destination: getSignupDestination,
+			destination: isEnabled( 'signup/siteless-checkout' )
+				? getThankYouNoSiteDestination
+				: getSignupDestination,
 			description:
 				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
 			lastModified: '2020-04-22',
