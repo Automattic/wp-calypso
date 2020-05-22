@@ -127,27 +127,44 @@
 		}
 	}
 
-	.design-selector__option-name {
-		color: var( --studio-gray-40 );
-		display: block;
+	.design-selector__option-meta {
+		display: inline-grid;
 		margin: 16px 0;
-		text-align: center;
 		width: 100%;
-		@include onboarding-medium-text;
+		gap: 6px;
+		grid-template-columns: 1fr [name] auto [badge] 1fr;
 	}
 
-	.design-selector__premium {
-		background-color: var( --studio-yellow-30 );
+	.design-selector__option-name {
+		@include onboarding-medium-text;
+		align-self: center;
+		color: var( --studio-gray-40 );
+		grid-area: name;
+		text-align: center;
+	}
+
+	.design-selector__premium-container {
+		grid-area: badge;
+		text-align: left;
+	}
+
+	.design-selector__premium-badge {
+		background-color: var( --studio-black );
 		border-radius: 1em;
 		color: var( --studio-white );
-		margin: 0 6px;
-		padding: 1px 8px;
+		margin: 0;
+		padding: 2px 8px;
+		white-space: nowrap;
 
-		svg {
+		.jetpack-logo {
 			margin-left: -4px;
 		}
 
-		path {
+		.jetpack-logo__icon-circle {
+			fill: transparent;
+		}
+
+		.jetpack-logo__icon-triangle {
 			fill: var( --studio-white );
 		}
 	}

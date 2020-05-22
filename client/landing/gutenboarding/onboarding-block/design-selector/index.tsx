@@ -7,19 +7,19 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import React from 'react';
-import { Icon, starFilled } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from '../../available-designs';
-import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
-import Badge from '../../components/badge';
-import Link from '../../components/link';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { SubTitle, Title } from '../../components/titles';
+import { usePath, Step } from '../../path';
 import { useTrackStep } from '../../hooks/use-track-step';
+import Badge from '../../components/badge';
+import designs from '../../available-designs';
+import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
+import Link from '../../components/link';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
@@ -96,17 +96,19 @@ const DesignSelector: React.FunctionComponent = () => {
 								/>
 							</span>
 							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-name">
-									{ design.title }
+								<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+									<span className="design-selector__option-name">{ design.title }</span>
 									{ design.is_premium && (
 										<Tooltip
-											position="top center"
+											position="bottom center"
 											text={ __( 'Requires a Personal plan or above' ) }
 										>
-											<Badge className="design-selector__premium">
-												<Icon icon={ starFilled } size={ 20 } />
-												{ __( 'Premium' ) }
-											</Badge>
+											<div className="design-selector__premium-container">
+												<Badge className="design-selector__premium-badge">
+													<JetpackLogo size={ 20 } />
+													{ __( 'Premium' ) }
+												</Badge>
+											</div>
 										</Tooltip>
 									) }
 								</span>
