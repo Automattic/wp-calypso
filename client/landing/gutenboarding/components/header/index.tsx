@@ -211,6 +211,9 @@ const Header: React.FunctionComponent = () => {
 const StartYourWebsite = withI18n(
 	class extends React.PureComponent< I18nReact > {
 		render() {
+			// Demonstrate a stable provider. This should update iff the locale is changed.
+			// eslint-disable-next-line no-console
+			console.log( 'Rendered <StartYourWebsite /> PureComponent!' );
 			return this.props.__( 'Start your website' );
 		}
 	}
