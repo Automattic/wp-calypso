@@ -115,13 +115,10 @@ class Customize extends React.Component {
 		return false;
 	};
 
+	getReturnUrl = () => new URLSearchParams( window.location.search ).get( 'return' );
+
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
-		const returnUrl = new URLSearchParams( window.location.search ).get( 'return' );
-
-		if ( returnUrl ) {
-			return returnUrl;
-		}
 
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
 			path = '/stats';
@@ -133,7 +130,8 @@ class Customize extends React.Component {
 	};
 
 	goBack = () => {
-		const path = this.getPreviousPath();
+		const returnUrl = this.getReturnUrl();
+		const path = returnUrl || this.getPreviousPath();
 
 		if ( path.includes( '/themes' ) ) {
 			trackClick( 'customizer', 'close' );
@@ -193,8 +191,9 @@ class Customize extends React.Component {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );
 		const { panel, site } = this.props;
+		const returnUrl = this.getReturnUrl();
 
-		query.return = protocol + '//' + host + this.getPreviousPath();
+		query.return = returnUrl || protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
 		if ( site.options && site.options.frame_nonce ) {

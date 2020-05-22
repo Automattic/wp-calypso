@@ -207,12 +207,7 @@ export default connect(
 
 		return {
 			canUserEditThemeOptions,
-			customizeUrl: getCustomizerUrl(
-				state,
-				siteId,
-				null,
-				window.location.pathname + window.location.search
-			),
+			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
 		};
 	},
 	{ recordTracksEvent }
