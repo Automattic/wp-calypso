@@ -8,7 +8,7 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addFilter, applyFilter } from '@wordpress/hooks';
+import { addFilter, applyFilters } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -569,7 +569,7 @@ function handleCloseEditor( calypsoPort ) {
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
 	const dispatchAction = ( e ) => {
-		if ( ! applyFilter( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
+		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
 			return;
 		}
 
