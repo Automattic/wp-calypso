@@ -28,7 +28,7 @@
 	},
 	"files": [
 		"dist",
-		"src"
+		"README.md"
 	],
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
