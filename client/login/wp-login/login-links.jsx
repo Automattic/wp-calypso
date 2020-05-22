@@ -348,6 +348,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
 				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
+					! isJetpackCloudOAuth2Client( this.props.oauth2Client ) &&
 					! this.props.isGutenboarding &&
 					this.renderBackLink() }
 			</div>
