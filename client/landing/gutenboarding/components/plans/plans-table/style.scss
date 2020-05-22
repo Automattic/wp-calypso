@@ -56,7 +56,7 @@
 	font-size: 32px;
 	line-height: 24px;
 
-	&[data-is-loading='true'] {
+	&.is-loading {
 		max-width: 60px;
 		@include placeholder();
 	}

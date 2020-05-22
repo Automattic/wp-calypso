@@ -71,7 +71,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					{ isPopular && <Badge className="plan-item__badge">{ __( 'Popular' ) }</Badge> }
 				</div>
 				<div className="plan-item__price">
-					<div className="plan-item__price-amount" data-is-loading={ ! price }>
+					<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
 						{ price || nbsp }
 					</div>
 					<div className="plan-item__price-note">
