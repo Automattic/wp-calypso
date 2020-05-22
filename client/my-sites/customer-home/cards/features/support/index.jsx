@@ -88,7 +88,7 @@ const Support = ( props ) => {
 						<span className="support__help-icon">
 							<Gridicon icon="help-outline" size={ 24 } />
 						</span>
-						More Help
+						{ translate( 'More help' ) }
 						<Gridicon className="support__go-icon" icon="chevron-right" size={ 24 } />
 					</a>
 				</div>
