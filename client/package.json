@@ -56,6 +56,7 @@
 		"@wordpress/notices": "^2.1.0",
 		"@wordpress/nux": "^3.13.0",
 		"@wordpress/plugins": "^2.13.0",
+		"@wordpress/primitives": "^1.5.0",
 		"@wordpress/redux-routine": "^3.7.0",
 		"@wordpress/rich-text": "^3.13.0",
 		"@wordpress/server-side-render": "^1.9.0",

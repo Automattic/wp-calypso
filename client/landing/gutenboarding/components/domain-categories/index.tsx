@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { useState } from '@wordpress/element';
@@ -43,7 +44,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 				onClick={ () => setIsOpen( ! isOpen ) }
 			>
 				<span>{ ! selected ? __( 'All Categories' ) : selected }</span>
-				<Icon icon="arrow-down-alt2" size={ 12 }></Icon>
+				<Icon icon={ chevronDown } size={ 16 } />
 			</Button>
 			<ul className="domain-categories__item-group">
 				<li
