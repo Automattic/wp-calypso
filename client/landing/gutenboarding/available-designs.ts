@@ -24,7 +24,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			is_premium: true,
+			is_premium: false,
 		},
 		{
 			title: 'Vesta',
@@ -40,6 +40,19 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			is_premium: false,
 		},
 		{
+			title: 'Doyle',
+			slug: 'doyle',
+			template: 'doyle',
+			theme: 'alves',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/doyle/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'business' ],
+			is_premium: true,
+		},
+		{
 			title: 'Bowen',
 			slug: 'bowen',
 			template: 'bowen',
@@ -50,7 +63,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'blog' ],
-			is_premium: true,
+			is_premium: false,
 		},
 		{
 			title: 'Easley',
@@ -100,19 +113,6 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			fonts: {
 				headings: 'Cabin',
 				base: 'Raleway',
-			},
-			categories: [ 'featured', 'business' ],
-			is_premium: false,
-		},
-		{
-			title: 'Doyle',
-			slug: 'doyle',
-			template: 'doyle',
-			theme: 'alves',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/doyle/',
-			fonts: {
-				headings: 'Playfair Display',
-				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'business' ],
 			is_premium: false,
