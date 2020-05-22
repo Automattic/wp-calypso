@@ -711,6 +711,10 @@
 }
 
 .jetpack-cloud {
+	.login.is-jetpack-cloud {
+		max-width: 375px;
+	}
+
 	.masterbar__oauth-client {
 		height: unset;
 		.masterbar__oauth-client-main-nav {
@@ -725,7 +729,7 @@
 	}
 
 	.masterbar.masterbar__oauth-client {
-		border: none;
+		border: 1px solid var( --studio-gray-5 );
 	}
 
 	// background: #e6e6e6;
@@ -734,13 +738,21 @@
 	main.wp-login__main.main {
 		background: var( --studio-white );
 		padding-bottom: 0;
+		max-width: 640px;
+		border: 1px solid var( --studio-gray-5 );
 
 		.card.login__form,
 		.card.login__social {
 			box-shadow: none;
 		}
 		.card.login__form {
-			border-bottom: 1px solid var( --color-border-subtle );
+			border-bottom: 1px solid var( --studio-gray-5 );
+		}
+
+		.wp-login__container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 		}
 	}
 
@@ -783,8 +795,10 @@
 	}
 
 	.login__jetpack-cloud-wrapper {
+		padding-top: 32px;
+
 		svg.wordpress-logo {
-			fill: var( --studio-wordpress-blue );
+			fill: var( --studio-wordpress-blue-40 );
 		}
 	}
 }
