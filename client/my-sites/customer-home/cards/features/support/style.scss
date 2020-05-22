@@ -3,6 +3,7 @@
 $search_results_top_spacing: 24px;
 $card_padding_small: 16px;
 $card_padding_large: 24px;
+$min_results_height: 175px;
 
 .customer-home__layout .support {
 
@@ -83,14 +84,6 @@ $card_padding_large: 24px;
 		.search {
 			height: auto;
 
-			&.is-open.has-focus {
-				// box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
-
-				// @include breakpoint-deprecated( '>660px' ) {
-				// 	box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
-				// }
-			}
-
 			.search__input {
 				padding: 11px 0;
 				font-size: 14px;
@@ -125,6 +118,7 @@ $card_padding_large: 24px;
 
 
 	.support__results-list {
+		min-height: $min_results_height;
 		list-style: none;
 		text-align: left;
 		margin: $search_results_top_spacing 0 0;
@@ -138,9 +132,9 @@ $card_padding_large: 24px;
 
 		a {
 			font-weight: normal;
-			line-height: 1.4;
+			line-height: 1;
 			display: block;
-			padding: 8px 0;
+			padding: 10px 0;
 
 			// Ellipsis overflow handling
 			flex: 1;
@@ -169,8 +163,6 @@ $card_padding_large: 24px;
 				}
 			}
 		}
-
-
 	}
 
 	.support__empty-results {
@@ -186,3 +178,74 @@ $card_padding_large: 24px;
 	}
 
 }
+
+// PlaceholderLines component
+.support__results-placeholder {
+	min-height: $min_results_height;
+	margin: $search_results_top_spacing 0 0;
+	padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+	border-top: 1px solid var( --color-border-subtle );
+}
+
+.support__results-placeholder-item {
+	height: 15px;
+	margin: 20px 0;
+	border-radius: 16px;
+	background-color: var( --color-neutral-5 );
+	color: transparent;
+	animation: support-results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
+		infinite;
+	animation-delay: 0s;
+
+	&:first-child {
+		margin-top: 8px;
+	}
+
+	&:last-child {
+		margin-bottom: 8px;
+	}
+
+	&:nth-child( 1 ) {
+		animation-delay: -1.3s;
+	}
+
+	&:nth-child( 2 ) {
+		animation-delay: -2.5s;
+	}
+
+	&:nth-child( 3 ) {
+		animation-delay: -3.8s;
+	}
+
+	&:nth-child( 4 ) {
+		animation-delay: -5.1s;
+	}
+
+	&::after {
+		content: '\00a0';
+	}
+}
+
+@keyframes support-results-placeholder-loading {
+	0% {
+		opacity: 0.3;
+		width: 65%;
+	}
+	25% {
+		opacity: 0.6;
+		width: 90%;
+	}
+	50% {
+		opacity: 0.5;
+		width: 18%;
+	}
+	75% {
+		opacity: 0.8;
+		width: 75%;
+	}
+	100% {
+		opacity: 0.3;
+		width: 65%;
+	}
+}
+

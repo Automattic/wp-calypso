@@ -10,6 +10,7 @@ export default function PlaceholderLines() {
 			<li className="support__results-placeholder-item" />
 			<li className="support__results-placeholder-item" />
 			<li className="support__results-placeholder-item" />
+			<li className="support__results-placeholder-item" />
 		</ul>
 	);
 }
