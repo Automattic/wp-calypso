@@ -12,7 +12,6 @@
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	margin: 0 -20px;
 	padding: 25px 20px 20px;
 	transition: color $acquire-intent-transition-duration
@@ -124,6 +123,7 @@
 .acquire-intent__footer {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	align-self: flex-end;
+	margin-top: 20px;
 
 	&--hidden {
 		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
@@ -133,6 +133,7 @@
 
 	@include break-small {
 		align-self: flex-start;
+		margin-top: 0;
 	}
 }
 
