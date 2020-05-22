@@ -4043,16 +4043,6 @@
     "@types/react-dom" "*"
     csstype "^2.2.0"
 
-"@types/wordpress__i18n@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__i18n/-/wordpress__i18n-3.4.0.tgz#b111f331895bcdfadd5ae4391546875501a93523"
-  integrity sha512-YD/Zh/rof9gAypXXKpfKHOe8w4+deohqwC04q9dt01AyZwSviOFY8mfpa+0gR4t1eyZiYKI8g/Gv6D2ccmYs9g==
-
-"@types/wordpress__is-shallow-equal@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__is-shallow-equal/-/wordpress__is-shallow-equal-1.4.0.tgz#4bb04a6cf5cb4aa99fb875af305b637d7c782b5b"
-  integrity sha512-UsmnPfa2LzzQmLqOTVo0WPc4eWHYkIxcxKk6u8y9tymCfo/6zzDK34gAP2r/BQDcgJPO0h8h5KAtcbAXf+bOFg==
-
 "@types/wordpress__keycodes@*", "@types/wordpress__keycodes@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@types/wordpress__keycodes/-/wordpress__keycodes-2.3.0.tgz#022c8f159c5de413f1dadcfd4a3e1dbed0f4682d"
@@ -4082,11 +4072,6 @@
     "@types/react" "*"
     "@types/wordpress__data" "*"
     "@types/wordpress__rich-text" "*"
-
-"@types/wordpress__url@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__url/-/wordpress__url-2.3.0.tgz#f9f35727c9e468494ff364efba4f2d2c0ce11dfe"
-  integrity sha512-xgZzKZUOeG5GmvcFblk2CoJAPhHm/xAIiyg3JiCw5Y5AkBoqLumUp1eqJvmIYS2h6q2r7m5PaE33abs/kCAu7A==
 
 "@types/yargs-parser@*":
   version "15.0.0"
