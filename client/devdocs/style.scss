@@ -10,7 +10,7 @@ $devdocs-max-width: 720px;
 // Search
 .devdocs__result {
 	.devdocs__result-title {
-		font-weight: bold;
+		font-weight: 600;
 		font-size: 18px;
 
 		.devdocs__result-link {
@@ -252,7 +252,7 @@ $devdocs-max-width: 720px;
 	.docs-selectors__result-name {
 		font-family: $code;
 		text-decoration: underline;
-		font-weight: bold;
+		font-weight: 600;
 		font-size: 16px;
 	}
 
@@ -421,7 +421,7 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		font-weight: bold;
+		font-weight: 600;
 		font-size: 15px;
 		padding: 1px 5px 2px;
 		border-radius: 3px;
