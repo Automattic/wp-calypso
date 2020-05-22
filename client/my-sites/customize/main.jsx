@@ -26,6 +26,7 @@ import { getCustomizerFocus } from './panels';
 import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import wpcom from 'lib/wp';
 import { addItem } from 'lib/cart/actions';
 import { trackClick } from 'my-sites/themes/helpers';
@@ -63,6 +64,7 @@ class Customize extends React.Component {
 		isJetpack: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		isCustomerHomeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -146,7 +148,7 @@ class Customize extends React.Component {
 		let path = this.props.prevPath;
 
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
-			path = '/home';
+			path = this.props.isCustomerHomeEnabled ? '/home' : '/stats';
 			if ( this.props.domain ) {
 				path += '/' + this.props.domain;
 			}
@@ -413,6 +415,7 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
+		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, siteId );
 		return {
 			site,
 			siteId,
@@ -420,6 +423,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
+			isCustomerHomeEnabled,
 		};
 	},
 	{ requestSite, themeActivated }
