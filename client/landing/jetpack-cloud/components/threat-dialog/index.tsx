@@ -23,7 +23,6 @@ import { getThreatFix } from 'landing/jetpack-cloud/components/threat-item/utils
 interface Props {
 	threat: Threat;
 	action: 'fix' | 'ignore';
-	siteId: number;
 	siteName: string;
 	showDialog: boolean;
 	onCloseDialog: Function;
@@ -34,7 +33,6 @@ const ThreatDialog: React.FC< Props > = ( {
 	action,
 	onCloseDialog,
 	onConfirmation,
-	siteId,
 	siteName,
 	showDialog,
 	threat,
@@ -69,7 +67,6 @@ const ThreatDialog: React.FC< Props > = ( {
 
 	return (
 		<ServerCredentialsWizardDialog
-			siteId={ siteId }
 			showDialog={ showDialog }
 			onCloseDialog={ onCloseDialog }
 			skipServerCredentials={ action === 'ignore' }
