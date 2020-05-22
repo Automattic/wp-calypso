@@ -116,13 +116,7 @@ const settings = {
 						return createBlock( block.name, block.attributes, block.innerBlocks );
 					} );
 
-					const excerptLength = 2;
-					const loggedOutExcerpt = blocks.slice( 0, excerptLength ).map( ( block ) => {
-						return createBlock( block.name, block.attributes, block.innerBlocks );
-					} );
-
 					const innerBlocksLoggedOut = [
-						...loggedOutExcerpt,
 						createBlock( 'core/heading', {
 							content: __( 'Subscribe to get access', 'premium-content' ),
 							level: 3,
