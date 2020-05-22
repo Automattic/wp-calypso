@@ -7,7 +7,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Button as OriginalButton } from '@wordpress/components';
 import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { applyFilters } from '@wordpress/hooks';
+import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -64,6 +64,13 @@ export default function WpcomBlockEditorNavSidebar() {
 	let closeLabel = get( postType, [ 'labels', 'all_items' ], __( 'Back' ) );
 	closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', closeLabel );
 
+	const handleClose = ( e: React.WPSyntheticEvent ) => {
+		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
+			e.preventDefault();
+			doAction( 'a8c.wpcom-block-editor.closeEditor' );
+		}
+	};
+
 	return (
 		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
 			{ ( isOpen || isClosing ) && (
@@ -100,6 +107,7 @@ export default function WpcomBlockEditorNavSidebar() {
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar__home-button"
 					icon={ chevronLeft }
+					onClick={ handleClose }
 				>
 					{ closeLabel }
 				</Button>

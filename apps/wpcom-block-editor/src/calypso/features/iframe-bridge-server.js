@@ -8,7 +8,7 @@ import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addFilter, applyFilters } from '@wordpress/hooks';
+import { addAction, addFilter, applyFilters, doAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -568,13 +568,7 @@ function handleCloseEditor( calypsoPort ) {
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
-	const dispatchAction = ( e ) => {
-		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
-			return;
-		}
-
-		e.preventDefault();
-
+	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
 		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
@@ -585,6 +579,16 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
+	} );
+
+	const dispatchAction = ( e ) => {
+		if ( ! applyFilters( 'a8c.wpcom-block-editor.shouldCloseEditor', true ) ) {
+			return;
+		}
+
+		e.preventDefault();
+
+		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
