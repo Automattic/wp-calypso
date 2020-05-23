@@ -4,6 +4,7 @@
 import { isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React, { Component } from 'react';
 
 /**
@@ -15,11 +16,12 @@ import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { addQueryArgs } from 'lib/url';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import versionCompare from 'lib/version-compare';
 
 import './style.scss';
 
@@ -41,6 +43,7 @@ export class ThankYouCard extends Component {
 			showSearchRedirects,
 			showScanCTAs,
 			siteAdminUrl,
+			selectedSite,
 			selectedSiteSlug,
 			title,
 			translate,
@@ -61,6 +64,8 @@ export class ThankYouCard extends Component {
 				value,
 			} );
 		};
+
+		const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
 
 		return (
 			<div className="current-plan-thank-you">
@@ -106,10 +111,16 @@ export class ThankYouCard extends Component {
 						<p className="current-plan-thank-you__followup">
 							<Button
 								primary
-								href={ siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search' }
+								href={
+									jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
+										? siteAdminUrl + 'plugins.php'
+										: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
+								}
 								onClick={ () => recordThankYouClick( 'customizer' ) }
 							>
-								{ translate( 'Try Search and customize it now' ) }
+								{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
+									? translate( 'Update Jetpack' )
+									: translate( 'Try Search and customize it now' ) }
 							</Button>
 						</p>
 					) }
@@ -132,6 +143,7 @@ export class ThankYouCard extends Component {
 export default connect(
 	( state ) => {
 		const currentUser = getCurrentUser( state );
+		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
@@ -139,6 +151,7 @@ export default connect(
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		return {
 			siteAdminUrl,
+			selectedSite,
 			selectedSiteSlug,
 			currentRoute: getCurrentRoute( state ),
 			queryArgs: getCurrentQueryArguments( state ),
