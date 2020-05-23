@@ -4,7 +4,6 @@ module.exports = {
 	rules: {
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
 		'react/react-in-jsx-scope': 0,
-		'jsdoc/require-param-description': 0,
 		'@wordpress/i18n-text-domain': [
 			'error',
 			{
