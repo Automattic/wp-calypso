@@ -8,6 +8,7 @@ module.exports = {
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
+		'plugin:@wordpress/eslint-plugin/i18n',
 		'prettier/react',
 	],
 	overrides: [
@@ -18,6 +19,25 @@ module.exports = {
 				'no-console': 'off',
 				'no-process-exit': 'off',
 				'valid-jsdoc': 'off',
+			},
+		},
+		{
+			files: [ 'apps/full-site-editing/**/*' ],
+			rules: {
+				'@wordpress/i18n-text-domain': [
+					'error',
+					{
+						allowedTextDomain: 'full-site-editing',
+					},
+				],
+				'wpcalypso/jsx-classname-namespace': 'off',
+				'wpcalypso/import-docblock': 'off',
+				'jsdoc/no-undefined-types': 'off',
+				'jsdoc/require-param-description': 'off',
+				'jsdoc/check-param-names': 'off',
+				'no-unused-vars': 'off',
+				'no-undef': 'off',
+				'react-hooks/exhaustive-deps': 'off',
 			},
 		},
 		{
