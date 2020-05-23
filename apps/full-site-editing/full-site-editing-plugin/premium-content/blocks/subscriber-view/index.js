@@ -17,9 +17,9 @@ const settings = {
 	attributes: {},
 
 	/* translators: block name */
-	title: __( 'Subscriber View', 'premium-content' ),
+	title: __( 'Subscriber View', 'full-site-editing' ),
 	/* translators: block description */
-	description: __( 'Subscriber View.', 'premium-content' ),
+	description: __( 'Subscriber View.', 'full-site-editing' ),
 	parent: [ 'premium-content/container' ],
 	supports: {
 		// Hide this block from the inserter.

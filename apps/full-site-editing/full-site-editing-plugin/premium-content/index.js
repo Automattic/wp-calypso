@@ -13,7 +13,7 @@ import * as loggedOutView from './blocks/logged-out-view';
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration} BlockConfiguration
  *
- * @typedef {Object} Block
+ * @typedef {object} Block
  * @property {string} name
  * @property {string} category
  * @property {BlockConfiguration} settings

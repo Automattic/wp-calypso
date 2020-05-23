@@ -10,7 +10,7 @@ import { withDispatch } from '@wordpress/data';
 /**
  * @typedef { import('react').MouseEvent<HTMLElement> } MouseEvent
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { (event: MouseEvent) => void } autosaveAndRedirect
  * @property { string } stripeConnectUrl
  * @property { () => void } onClick
@@ -29,7 +29,7 @@ export const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 					isDefault
 					className="premium-content-block-nudge__button"
 				>
-					{ __( 'Connect', 'premium-content' ) }
+					{ __( 'Connect', 'full-site-editing' ) }
 				</Button>,
 			]
 		}
@@ -39,12 +39,12 @@ export const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 			{ <Dashicon icon="star-filled" /> }
 			<span className="premium-content-block-nudge__text-container">
 				<span className="premium-content-block-nudge__title">
-					{ __( 'Connect to Stripe to use this block on your site', 'premium-content' ) }
+					{ __( 'Connect to Stripe to use this block on your site', 'full-site-editing' ) }
 				</span>
 				<span className="premium-content-block-nudge__message">
 					{ __(
 						'This block will be hidden from your visitors until you connect to Stripe.',
-						'premium-content'
+						'full-site-editing'
 					) }
 				</span>
 			</span>
@@ -62,12 +62,14 @@ export default compose( [
 	withDispatch(
 		/**
 		 * Complicated to define the valid type with JSDoc
+		 *
+		 * @param dispatch
 		 */
 		// @ts-ignore
 		( dispatch, { stripeConnectUrl } ) => ( {
 			/**
 			 * @param { MouseEvent } event
-			 * @return { Promise<void> } When completed
+			 * @returns { Promise<void> } When completed
 			 */
 			autosaveAndRedirect: async ( event ) => {
 				event.preventDefault(); // Don't follow the href before autosaving

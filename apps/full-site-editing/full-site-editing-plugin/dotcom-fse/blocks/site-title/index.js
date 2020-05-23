@@ -12,8 +12,8 @@ import edit from './edit';
 import './style.scss';
 
 registerBlockType( 'a8c/site-title', {
-	title: __( 'Site Title' ),
-	description: __( 'Your site title.' ),
+	title: __( 'Site Title', 'full-site-editing' ),
+	description: __( 'Your site title.', 'full-site-editing' ),
 	icon: 'layout',
 	category: 'layout',
 	supports: {
