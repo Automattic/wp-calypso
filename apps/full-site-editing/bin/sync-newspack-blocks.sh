@@ -125,7 +125,6 @@ cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
 # Fix the text domain
-phpcbf --sniffs=WordPress.Utils.I18nTextDomainFixer
 npx eslint . --fix
 
 if [ "$MODE" = "npm" ] ; then

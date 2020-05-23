@@ -9,8 +9,10 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 
 const composerBinDir = path.join( __dirname, '..', 'vendor', 'bin' );
-const phpcsPath = path.join( composerBinDir, 'phpcs' );
-const phpcbfPath = path.join( composerBinDir, 'phpcbf' );
+const phpcsPath =
+	execSync( 'command -v phpcs', { encoding: 'utf8' } ) || path.join( composerBinDir, 'phpcs' );
+const phpcbfPath =
+	execSync( 'command -v phpcbf', { encoding: 'utf8' } ) || path.join( composerBinDir, 'phpcbf' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
