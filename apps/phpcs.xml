@@ -6,6 +6,15 @@
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Docs"/>
 	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="WordPress.Utils.I18nTextDomainFixer">
+		<properties>
+			<property name="old_text_domain" type="array">
+				<element value="newspack-blocks" />
+				<element value="premium-content" />
+			</property>
+			<property name="new_text_domain" value="full-site-editing" />
+		</properties>
+	</rule>
 
 	<arg name="extensions" value="php"/>
 
