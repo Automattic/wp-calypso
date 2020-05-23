@@ -15,6 +15,16 @@ import save from './save';
 const name = 'premium-content/container';
 const category = 'common';
 
+const blockContainsPremiumBlock = ( block ) => {
+	if ( block.name.indexOf( 'premium-content/' ) === 0 ) {
+		return true;
+	}
+	if ( ! block.innerBlocks ) {
+		return false;
+	}
+	return block.innerBlocks.some( blockContainsPremiumBlock );
+};
+
 /**
  * @typedef {object} Attributes
  * @property { string } newPlanName
@@ -102,8 +112,8 @@ const settings = {
 				isMultiBlock: true,
 				blocks: [ '*' ],
 				__experimentalConvert( blocks ) {
-					// Avoid transforming a premium-content block
-					if ( blocks.length === 1 && blocks[ 0 ].name === 'premium-content/container' ) {
+					// Avoid transforming any premium-content blocks
+					if ( blocks.some( blockContainsPremiumBlock ) ) {
 						return;
 					}
 
