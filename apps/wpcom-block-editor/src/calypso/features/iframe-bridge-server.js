@@ -734,6 +734,53 @@ function getGutenboardingStatus( calypsoPort ) {
 }
 
 /**
+ * Hooks the nav sidebar to change some of its button labels and behaviour.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getNavSidebarLabels( calypsoPort ) {
+	let allPostsLabels = null;
+	let createPostLabels = null;
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getNavSidebarLabels',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		allPostsLabels = data.allPostsLabels;
+		createPostLabels = data.createPostLabels;
+	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.allPostsLabel',
+		'wpcom-block-editor/getNavSidebarLabels',
+		( label, postType ) => {
+			if ( allPostsLabels && allPostsLabels[ postType ] ) {
+				return allPostsLabels[ postType ];
+			}
+
+			return label;
+		}
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
+		'wpcom-block-editor/getNavSidebarLabels',
+		( label, postType ) => {
+			if ( createPostLabels && createPostLabels[ postType ] ) {
+				return createPostLabels[ postType ];
+			}
+
+			return label;
+		}
+	);
+}
+
+/**
  * Passes uncaught errors in window.onerror to Calypso for logging.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
@@ -850,6 +897,8 @@ function initPort( message ) {
 		getCloseButtonUrl( calypsoPort );
 
 		getGutenboardingStatus( calypsoPort );
+
+		getNavSidebarLabels( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
 	}

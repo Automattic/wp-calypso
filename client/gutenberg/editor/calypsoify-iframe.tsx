@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
 import url from 'url';
+import { localize, LocalizeProps } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -103,9 +104,13 @@ enum EditorActions {
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
+	GetNavSidebarLabels = 'getNavSidebarLabels',
 }
 
-class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
+class CalypsoifyIframe extends Component<
+	Props & ConnectedProps & ProtectedFormProps & LocalizeProps,
+	State
+> {
 	state: State = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
@@ -302,6 +307,21 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`,
+			} );
+		}
+
+		if ( EditorActions.GetNavSidebarLabels === action ) {
+			const { translate } = this.props;
+
+			ports[ 0 ].postMessage( {
+				allPostsLabels: {
+					page: translate( 'View all pages' ),
+					post: translate( 'View all posts' ),
+				},
+				createPostLabels: {
+					page: translate( 'Create new page' ),
+					post: translate( 'Create new post' ),
+				},
 			} );
 		}
 
@@ -751,4 +771,7 @@ const mapDispatchToProps = {
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect( mapStateToProps, mapDispatchToProps )( protectForm( CalypsoifyIframe ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( protectForm( CalypsoifyIframe ) ) );
