@@ -2,6 +2,11 @@
 	"description": "WordPress.com page templates",
 	"templates": [
 		{
+			"title": "alves",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
 			"title": "bowen",
 			"defaults": "bowen",
 			"vertical-whitelist": []
@@ -60,6 +65,11 @@
 			"title": "barnsbury",
 			"defaults": "barnsbury",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "twentytwenty",
+			"defaults": "twentytwenty",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
@@ -102,6 +112,10 @@
 		{
 			"title": "twentytwenty",
 			"demo": "https://twentytwentydemo.wordpress.com/"
+		},
+		{
+			"title": "alves",
+			"demo": "https://alvesdemo.wordpress.com/"
 		}
 	]
 }
