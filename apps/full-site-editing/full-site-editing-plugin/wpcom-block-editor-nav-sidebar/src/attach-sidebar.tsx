@@ -9,8 +9,7 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import WpcomBlockEditorNavSidebar, { selectNavItems } from './wpcom-block-editor-nav-sidebar';
-import './style.scss';
+import WpcomBlockEditorNavSidebar, { selectNavItems } from './components/nav-sidebar';
 
 async function findElement( selector: string, timeoutMs = 5000 ) {
 	let pendingQuery;

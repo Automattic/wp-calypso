@@ -15,7 +15,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from './constants';
+import { STORE_KEY } from '../../constants';
+import CreatePage from '../create-page';
+import ViewAllPosts from '../view-all-posts';
+import './style.scss';
 
 interface Post {
 	id: number;
@@ -72,15 +75,15 @@ export default function WpcomBlockEditorNavSidebar() {
 	};
 
 	return (
-		<div className="wpcom-block-editor-nav-sidebar__container" aria-hidden={ ! isOpen }>
+		<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__container" aria-hidden={ ! isOpen }>
 			{ ( isOpen || isClosing ) && (
-				<div className="wpcom-block-editor-nav-sidebar__header">
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
 						icon={ wordpress }
 						iconSize={ 36 }
 						className={ classNames( {
-							'wpcom-block-editor-nav-sidebar__is-shrinking': isOpen,
-							'wpcom-block-editor-nav-sidebar__is-growing': isClosing,
+							'is-shrinking': isOpen,
+							'is-growing': isClosing,
 						} ) }
 						onClick={ () => {
 							if ( isOpen ) {
@@ -101,22 +104,26 @@ export default function WpcomBlockEditorNavSidebar() {
 					/>
 				</div>
 			) }
-			<div className="wpcom-block-editor-nav-sidebar__header-space" />
-			<div className="wpcom-block-editor-nav-sidebar__home-button-container">
+			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header-space" />
+			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button-container">
 				<Button
 					href={ closeUrl }
-					className="wpcom-block-editor-nav-sidebar__home-button"
+					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ chevronLeft }
 					onClick={ handleClose }
 				>
 					{ closeLabel }
 				</Button>
 			</div>
-			<ul className="wpcom-block-editor-nav-sidebar__page-list">
-				{ items.map( ( item ) => (
-					<NavItem key={ item.id } item={ item } />
-				) ) }
-			</ul>
+			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
+				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+					{ items.map( ( item ) => (
+						<NavItem key={ item.id } item={ item } />
+					) ) }
+				</ul>
+				<CreatePage postType={ postType } />
+				<ViewAllPosts postType={ postType } />
+			</div>
 		</div>
 	);
 }
