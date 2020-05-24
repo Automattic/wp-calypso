@@ -195,6 +195,7 @@ export default function () {
 		paths: [
 			paths.domainManagementEdit( ':site', ':domain' ),
 			paths.domainManagementTransferIn( ':site', ':domain' ),
+			paths.domainManagementEdit( ':site', ':domain', null, paths.domainManagementUserRoot() ),
 		],
 		handlers: [
 			...getCommonHandlers(),

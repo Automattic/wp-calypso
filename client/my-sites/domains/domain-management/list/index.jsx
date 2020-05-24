@@ -45,6 +45,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 /**
  * Style dependencies
  */
@@ -430,7 +431,14 @@ export class List extends React.Component {
 
 	goToEditDomainRoot = ( domain ) => {
 		if ( domain.type !== type.TRANSFER ) {
-			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
+			page(
+				domainManagementEdit(
+					this.props.selectedSite.slug,
+					domain.name,
+					null,
+					this.props.currentRoute
+				)
+			);
 		} else {
 			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
@@ -487,6 +495,7 @@ export default connect(
 		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
 
 		return {
+			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),

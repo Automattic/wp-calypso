@@ -4,6 +4,13 @@
 import { filter, startsWith } from 'lodash';
 import { stringify } from 'qs';
 
+function resolveRootPath( relativeTo = null ) {
+	if ( relativeTo && relativeTo.startsWith( domainManagementUserRoot() ) ) {
+		return domainManagementUserRoot();
+	}
+	return domainManagementRoot();
+}
+
 export function domainAddNew( siteName, searchTerm ) {
 	const path = `/domains/add/${ siteName }`;
 
@@ -22,11 +29,14 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
-export function domainManagementList( siteName ) {
+export function domainManagementList( siteName, relativeTo = null ) {
+	if ( relativeTo && relativeTo.startsWith( domainManagementUserRoot() ) ) {
+		return domainManagementUserRoot() + '/';
+	}
 	return domainManagementRoot() + '/' + siteName;
 }
 
-export function domainManagementEdit( siteName, domainName, slug ) {
+export function domainManagementEdit( siteName, domainName, slug, relativeTo = null ) {
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -36,7 +46,7 @@ export function domainManagementEdit( siteName, domainName, slug ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
+	return resolveRootPath( relativeTo ) + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
 export function domainManagementAddGSuiteUsers( siteName, domainName ) {
@@ -51,23 +61,23 @@ export function domainManagementAddGSuiteUsers( siteName, domainName ) {
 	return path;
 }
 
-export function domainManagementContactsPrivacy( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'contacts-privacy' );
+export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'contacts-privacy', relativeTo );
 }
 
-export function domainManagementEditContactInfo( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
+export function domainManagementEditContactInfo( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
-export function domainManagementManageConsent( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'manage-consent' );
+export function domainManagementManageConsent( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'manage-consent', relativeTo );
 }
 
-export function domainManagementEmail( siteName, domainName ) {
+export function domainManagementEmail( siteName, domainName, relativeTo = null ) {
 	let path;
 
 	if ( domainName ) {
-		path = domainManagementEdit( siteName, domainName, 'email' );
+		path = domainManagementEdit( siteName, domainName, 'email', relativeTo );
 	} else if ( siteName ) {
 		path = domainManagementRoot() + '/email/' + siteName;
 	} else {
@@ -77,60 +87,66 @@ export function domainManagementEmail( siteName, domainName ) {
 	return path;
 }
 
-export function domainManagementEmailForwarding( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
+export function domainManagementEmailForwarding( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'email-forwarding', relativeTo );
 }
 
-export function domainManagementChangeSiteAddress( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'change-site-address' );
+export function domainManagementChangeSiteAddress( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'change-site-address', relativeTo );
 }
 
-export function domainManagementNameServers( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'name-servers' );
+export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'name-servers', relativeTo );
 }
 
-export function domainManagementDns( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'dns' );
+export function domainManagementDns( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'dns', relativeTo );
 }
 
-export function domainManagementRedirectSettings( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'redirect-settings' );
+export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'redirect-settings', relativeTo );
 }
 
-export function domainManagementSecurity( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'security' );
+export function domainManagementSecurity( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'security', relativeTo );
 }
 
-export function domainManagementPrimaryDomain( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'primary-domain' );
+export function domainManagementPrimaryDomain( siteName, domainName, relativeTo = null ) {
+	return domainManagementEdit( siteName, domainName, 'primary-domain', relativeTo );
 }
 
-export function domainManagementTransfer( siteName, domainName, transferType = '' ) {
+export function domainManagementTransfer(
+	siteName,
+	domainName,
+	transferType = '',
+	relativeTo = null
+) {
 	return domainManagementEdit(
 		siteName,
 		domainName,
-		filter( [ 'transfer', transferType ] ).join( '/' )
+		filter( [ 'transfer', transferType ] ).join( '/' ),
+		relativeTo
 	);
 }
 
-export function domainManagementTransferIn( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'in' );
+export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'in', relativeTo );
 }
 
-export function domainManagementTransferInPrecheck( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'precheck' );
+export function domainManagementTransferInPrecheck( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'precheck', relativeTo );
 }
 
-export function domainManagementTransferOut( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'out' );
+export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'out', relativeTo );
 }
 
-export function domainManagementTransferToAnotherUser( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'other-user' );
+export function domainManagementTransferToAnotherUser( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'other-user', relativeTo );
 }
 
-export function domainManagementTransferToOtherSite( siteName, domainName ) {
-	return domainManagementTransfer( siteName, domainName, 'other-site' );
+export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransfer( siteName, domainName, 'other-site', relativeTo );
 }
 
 export function domainMapping( siteName, domain = '' ) {
