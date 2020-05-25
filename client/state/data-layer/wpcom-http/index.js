@@ -82,17 +82,10 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	);
 
 	if ( 'POST' === method && onProgress ) {
-		// wpcomProxyRequest request
+		// wpcomProxyRequest request - wpcomXhrRequests come through here with .upload
 		if ( request.upload ) {
 			request.upload.onprogress = ( event ) =>
 				dispatch( extendAction( onProgress, progressMeta( event ) ) );
-			// wpcomXhrWrapper request
-		} else {
-			request.on( 'progress', ( event ) => {
-				if ( 'upload' === event.direction ) {
-					dispatch( extendAction( onProgress, progressMeta( event ) ) );
-				}
-			} );
 		}
 	}
 };
