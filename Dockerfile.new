@@ -44,7 +44,7 @@ ENV YARN_CACHE_FOLDER=/home/circleci/wp-calypso/.yarn-cache
 WORKDIR /home/circleci/wp-calypso/
 
 # Add .git repo
-RUN apk add --no-cache git \
+RUN apk add --no-cache git openssh \
 	&& git clone --no-checkout --depth 1 --branch master https://github.com/Automattic/wp-calypso.git . \
 	&& git remote set-url origin git@github.com:Automattic/wp-calypso.git
 
