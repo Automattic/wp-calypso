@@ -500,7 +500,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy' ) }
+					title={ translate( 'Privacy', { context: 'header privacy settings' } ) }
 				/>
 				<Card>
 					<form>{ this.visibilityOptionsComingSoon() }</form>
