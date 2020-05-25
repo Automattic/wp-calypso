@@ -728,7 +728,9 @@
 	input:focus:hover[type='text'],
 	input:focus[type='text'],
 	input:focus:hover[type='password'],
-	input:focus[type='password'] {
+	input:focus[type='password'],
+	input:focus:hover[type='tel'],
+	input:focus[type='tel'] {
 		box-shadow: 0 0 0 2px var( --studio-jetpack-green-10 );
 	}
 
