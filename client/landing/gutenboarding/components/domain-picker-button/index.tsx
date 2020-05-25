@@ -12,7 +12,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Props as DomainPickerProps } from '@automattic/domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
@@ -37,9 +36,10 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends Omit< DomainPickerProps, 'onClose' | 'tracksName' >, Button.BaseProps {
+interface Props extends Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
+	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
