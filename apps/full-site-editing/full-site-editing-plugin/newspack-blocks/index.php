@@ -79,8 +79,6 @@ function newspack_blocks_block_args( $args, $name ) {
 
 	$args['editor_script'] = $block_prefix . 'editor';
 	$args['editor_style']  = $block_prefix . 'editor';
-	$args['script']        = $block_prefix . 'view';
-	$args['style']         = $block_prefix . 'view';
 
 	wp_set_script_translations( $block_prefix . 'editor', 'full-site-editing' );
 
