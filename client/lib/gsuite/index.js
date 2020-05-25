@@ -38,7 +38,7 @@ function canDomainAddGSuite( domainName ) {
 		return false;
 	}
 
-	return ! isGSuiteRestricted();
+	return canUserPurchaseGSuite();
 }
 
 /**
@@ -234,22 +234,23 @@ function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
 }
 
 /**
- * Is the user G Suite restricted
+ * Determines whether G Suite can be purchased by the user based on their country.
  *
- * @returns {boolean} - Is the user G Suite restricted
+ * @returns {boolean} true if the user is allowed to purchase G Suite, false otherwise
  */
-function isGSuiteRestricted() {
+function canUserPurchaseGSuite() {
 	const user = userFactory();
 
-	return ! get( user.get(), 'is_valid_google_apps_country', false );
+	return get( user.get(), 'is_valid_google_apps_country', false );
 }
 
 export {
 	canDomainAddGSuite,
+	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getGSuiteSupportedDomains,
 	getGSuiteMailboxCount,
+	getGSuiteSupportedDomains,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
@@ -259,5 +260,4 @@ export {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteProductSlug,
-	isGSuiteRestricted,
 };

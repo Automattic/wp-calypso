@@ -3,14 +3,14 @@
  */
 import {
 	canDomainAddGSuite,
+	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getMonthlyPrice,
 	getGSuiteSupportedDomains,
+	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
-	isGSuiteRestricted,
 } from 'lib/gsuite';
 
 jest.mock( 'lib/user/', () => {
@@ -249,9 +249,9 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( '#isGSuiteRestricted', () => {
-		test( 'returns false if user is not G Suite restricted', () => {
-			expect( isGSuiteRestricted() ).toEqual( false );
+	describe( '#canUserPurchaseGSuite', () => {
+		test( 'returns true if the user is allowed to purchase G Suite', () => {
+			expect( canUserPurchaseGSuite() ).toEqual( true );
 		} );
 	} );
 } );

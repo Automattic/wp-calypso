@@ -19,7 +19,7 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
@@ -136,7 +136,7 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( isGSuiteRestricted() ) {
+	if ( ! canUserPurchaseGSuite() ) {
 		next();
 	}
 

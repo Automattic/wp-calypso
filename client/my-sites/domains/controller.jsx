@@ -34,7 +34,7 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -185,7 +185,7 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
-	if ( ! isGSuiteRestricted() ) {
+	if ( canUserPurchaseGSuite() ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
