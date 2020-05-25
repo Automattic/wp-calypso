@@ -9,6 +9,9 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
+    - image: node:12.16.2-alpine
+
+  base-docker-image: &base-docker-image
     - image: scinos/wp-calypso-ci:latest
 
   setup-results-and-artifacts: &setup-results-and-artifacts
@@ -60,7 +63,7 @@ references:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile && yarn cache clean
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
@@ -104,15 +107,14 @@ commands:
 jobs:
   setup:
     <<: *defaults
+    docker-image: *base-docker-image
     steps:
       - checkout
       - run: *yarn-install
       - persist_to_workspace:
           root: '~'
           paths:
-            - wp-calypso/node_modules
-            - wp-calypso/client/node_modules
-            - wp-calypso/test/e2e/node_modules
+            - wp-calypso
 
   typecheck:
     <<: *defaults
