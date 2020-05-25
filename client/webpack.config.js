@@ -167,9 +167,7 @@ const webpackConfig = {
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: Minify( {
-			cache: process.env.CIRCLECI
-				? `${ process.env.HOME }/terser-cache/${ extraPath }`
-				: 'docker' !== process.env.CONTAINER,
+			cache: path.resolve( 'build', '.terser-cache', extraPath ),
 			parallel: workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
