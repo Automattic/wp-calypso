@@ -318,7 +318,7 @@ if ( isCalypsoClient ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
 			if ( res.context.includes( '@wordpress/components/' ) ) {
-				res.request = 'lodash-es/noop';
+				res.request = 'components/empty-component';
 			}
 		} )
 	);
