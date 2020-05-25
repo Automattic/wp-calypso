@@ -245,24 +245,32 @@ export function createSiteWithCart(
 
 	if ( isSiteless ) {
 		const cartKey = 'no-site';
+		const siteSlug = cartKey;
+		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 		const providedDependencies = {
 			siteId: null,
 			siteSlug: cartKey,
 			domainItem,
 			themeItem,
+			newSiteParams,
 		};
 
 		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
 			( item ) => item
 		);
 
-		if ( ! newCartItems.length ) {
-			return defer( () => callback( undefined, providedDependencies ) );
-		}
-
-		return SignupCart.addToCart( cartKey, newCartItems, function ( cartError ) {
-			callback( cartError, providedDependencies );
-		} );
+		return defer( () =>
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				{ isSiteless }
+			)
+		);
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
@@ -327,11 +335,30 @@ export function addPlanToCart(
 	reduxStore,
 	{ isSiteless = false } = {}
 ) {
-	const { siteSlug } = dependencies;
+	const { siteSlug, newSiteParams } = dependencies;
 	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
-		defer( callback );
+		if ( isSiteless && newSiteParams ) {
+			wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
+				if ( error ) {
+					callback( error );
+
+					return;
+				}
+
+				const parsedBlogURL = parseURL( response.blog_details.url );
+				const newSiteSlug = parsedBlogURL.hostname;
+				const siteId = response.blog_details.blogid;
+				const providedDependencies = {
+					siteId,
+					siteSlug: newSiteSlug,
+				};
+				callback( undefined, providedDependencies );
+			} );
+		} else {
+			defer( callback );
+		}
 
 		return;
 	}

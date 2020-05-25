@@ -16,6 +16,7 @@ export function generateFlows( {
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
+	getSitelessFinalDestination = noop,
 	getChecklistThemeDestination = noop,
 	getEditorDestination = noop,
 } = {} ) {
@@ -35,7 +36,7 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-business-siteless' : 'plans-business',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
+				? getSitelessFinalDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2020-03-03',
@@ -48,7 +49,7 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-premium-siteless' : 'plans-premium',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
+				? getSitelessFinalDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2020-03-03',
@@ -61,7 +62,7 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-personal-siteless' : 'plans-personal',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
+				? getSitelessFinalDestination
 				: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2020-03-03',
@@ -134,7 +135,7 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'plans-siteless' : 'plans',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
+				? getSitelessFinalDestination
 				: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
@@ -148,7 +149,7 @@ export function generateFlows( {
 				isEnabled( 'signup/siteless-checkout' ) ? 'domains-siteless' : 'domains',
 			],
 			destination: isEnabled( 'signup/siteless-checkout' )
-				? getThankYouNoSiteDestination
+				? getSitelessFinalDestination
 				: getSignupDestination,
 			description:
 				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',

@@ -176,8 +176,9 @@ export function generateSteps( {
 		'plans-siteless': {
 			stepName: 'plans-siteless',
 			apiRequestFunction: addPlanToCartWithoutSite,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			dependencies: [ 'siteSlug', 'newSiteParams' ],
+			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
+			optionalDependencies: [ 'siteId', 'siteSlug' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
@@ -366,6 +367,7 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'newSiteParams',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan' ],
 			apiRequestFunction: addDomainToCartWithoutSite,
@@ -374,6 +376,7 @@ export function generateSteps( {
 				isDomainOnly: false,
 				isSiteless: true,
 			},
+			delayApiRequestUntilComplete: true,
 		},
 
 		'domain-only': {

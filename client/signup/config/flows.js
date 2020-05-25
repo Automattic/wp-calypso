@@ -70,6 +70,13 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getSitelessFinalDestination( dependencies ) {
+	if ( dependencies?.siteSlug !== 'no-site' ) {
+		return `/home/${ dependencies.siteSlug }`;
+	}
+	return `/checkout/thank-you/no-site`;
+}
+
 function getChecklistThemeDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
@@ -84,6 +91,7 @@ const flows = generateFlows( {
 	getSignupDestination,
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
+	getSitelessFinalDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 } );
