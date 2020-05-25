@@ -23,10 +23,8 @@ import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'me/profile-links';
-import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
 import { localizeUrl } from 'lib/i18n-utils';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -68,7 +66,6 @@ const Profile = createReactClass( {
 			<Main className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
 					<EditGravatar />
