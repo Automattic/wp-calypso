@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-export { default } from './domain-picker';
+export { default, Props } from './domain-picker';
