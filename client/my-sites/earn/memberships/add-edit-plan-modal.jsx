@@ -27,6 +27,52 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 
 /**
+ * @typedef {[string, number] CurrencyMinimum
+ *
+ *
+ * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
+ *
+ * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
+ *
+ * @type { [currency: string]: number }
+ */
+const MINIMUM_CURRENCY_AMOUNT = {
+	USD: 0.5,
+	AUD: 0.5,
+	BRL: 0.5,
+	CAD: 0.5,
+	CHF: 0.5,
+	DKK: 2.5,
+	EUR: 0.5,
+	GBP: 0.3,
+	HKD: 4.0,
+	INR: 0.5,
+	JPY: 50,
+	MXN: 10,
+	NOK: 3.0,
+	NZD: 0.5,
+	PLN: 2.0,
+	SEK: 3.0,
+	SGD: 0.5,
+};
+
+/**
+ * @type Array<{ code: string }>
+ */
+const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
+
+/**
+ * Return the minimum transaction amount for a currency.
+ *
+ *
+ * @param {string} currency - Currency.
+ * @returns {number} Minimum transaction amount for given currency.
+ */
+function minimumCurrencyTransactionAmount( currency ) {
+	return MINIMUM_CURRENCY_AMOUNT[ currency ];
+}
+
+/**
  * @type {number}
  */
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
@@ -52,13 +98,7 @@ const TAB_EMAIL = 'email';
  */
 const TABS = [ TAB_GENERAL, TAB_EMAIL ];
 
-const RecurringPaymentsPlanAddEditModal = ( {
-	currencyList,
-	isVisible,
-	minimumCurrencyTransactionAmount,
-	onClose,
-	product,
-} ) => {
+const RecurringPaymentsPlanAddEditModal = ( { isVisible, onClose, product } ) => {
 	const translate = useTranslate();
 	const initialPrice = product
 		? { currency: product.currency, value: product.price }
