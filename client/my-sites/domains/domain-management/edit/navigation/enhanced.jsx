@@ -209,9 +209,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( ! privacyAvailable ) {
 			description = translate( 'Privacy protection: not available' );
 		} else if ( privateDomain ) {
-			description = translate( 'Privacy protection: yes' );
+			description = translate( 'Privacy protection: on' );
 		} else {
-			description = translate( 'Privacy protection: no' );
+			description = translate( 'Privacy protection: off' );
 		}
 
 		return (
