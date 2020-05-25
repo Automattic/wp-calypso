@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { createRef, FunctionComponent, useState } from 'react';
+import React, { createRef, FunctionComponent, useState, useEffect } from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
