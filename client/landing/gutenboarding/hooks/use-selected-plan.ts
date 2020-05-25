@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
 import { STORE_KEY as PLANS_STORE } from '../stores/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
+import { PLAN_FREE } from '../stores/plans/constants';
 
 export function useSelectedPlan() {
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );
@@ -18,9 +19,22 @@ export function useSelectedPlan() {
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );
+
 	const defaultPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultPlan( hasPaidDomain, hasPaidDesign )
 	);
+
+	// If the selected plan is not a paid plan
+	// and the user selects a premium domain
+	// return the default paid plan.
+	if (
+		selectedPlan?.getStoreSlug() === PLAN_FREE &&
+		defaultPlan?.getStoreSlug() !== PLAN_FREE &&
+		! planFromPath &&
+		hasPaidDesign
+	) {
+		return defaultPlan;
+	}
 
 	/**
 	 * Plan is decided in this order

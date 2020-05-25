@@ -11,8 +11,6 @@ import React from 'react';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../../stores/plans';
-import { DEFAULT_PAID_PLAN } from '../../stores/plans/constants';
 import { SubTitle, Title } from '../../components/titles';
 import { usePath, Step } from '../../path';
 import { useTrackStep } from '../../hooks/use-track-step';
@@ -33,25 +31,11 @@ const DesignSelector: React.FunctionComponent = () => {
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const { setPlan } = useDispatch( PLANS_STORE );
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
-
-	const handleDesignSelect = ( design: Design ) => {
-		setSelectedDesign( design );
-
-		// Update fonts to the design defaults
-		setFonts( design.fonts );
-
-		if ( design.is_premium ) {
-			setPlan( DEFAULT_PAID_PLAN );
-		}
-
-		push( makePath( Step.Style ) );
-	};
 
 	return (
 		<div className="gutenboarding-page design-selector">
@@ -76,7 +60,14 @@ const DesignSelector: React.FunctionComponent = () => {
 						<button
 							key={ design.slug }
 							className="design-selector__design-option"
-							onClick={ () => handleDesignSelect( design ) }
+							onClick={ () => {
+								setSelectedDesign( design );
+
+								// Update fonts to the design defaults
+								setFonts( design.fonts );
+
+								push( makePath( Step.Style ) );
+							} }
 						>
 							<span className="design-selector__image-frame">
 								<img
