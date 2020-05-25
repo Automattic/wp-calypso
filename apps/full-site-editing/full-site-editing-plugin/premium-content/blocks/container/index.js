@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 import { trimEnd } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -19,10 +20,14 @@ const blockContainsPremiumBlock = ( block ) => {
 	if ( block.name.indexOf( 'premium-content/' ) === 0 ) {
 		return true;
 	}
-	if ( ! block.innerBlocks ) {
-		return false;
-	}
+
 	return block.innerBlocks.some( blockContainsPremiumBlock );
+};
+
+const blockHasParentPremiumBlock = ( block ) => {
+	const { getBlocksByClientId, getBlockParents } = select( 'core/block-editor' );
+	const parents = getBlocksByClientId( getBlockParents( block.clientId ) );
+	return !! parents.find( ( parent ) => parent.name.indexOf( 'premium-content/' ) === 0 );
 };
 
 /**
@@ -112,8 +117,14 @@ const settings = {
 				isMultiBlock: true,
 				blocks: [ '*' ],
 				__experimentalConvert( blocks ) {
-					// Avoid transforming any premium-content blocks
+					// Avoid transforming any premium-content block.
 					if ( blocks.some( blockContainsPremiumBlock ) ) {
+						return;
+					}
+
+					// Avoid transforming if any parent is a premium-content block. Blocks share same parents since they
+					// are siblings, so checking the first one is enough.
+					if ( blockHasParentPremiumBlock( blocks[ 0 ] ) ) {
 						return;
 					}
 
