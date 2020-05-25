@@ -34,7 +34,8 @@ COPY --from=base /calypso/build/ ./build/
 #### Used by Circle CI
 FROM circleci/node:12.16.2-browsers as wp-calypso-ci
 
-ENV YARN_CACHE_FOLDER=/calypso/.yarn-cache
+USER circleci:circleci
+ENV YARN_CACHE_FOLDER=/home/circleci/wp-calypso/.yarn-cache
 WORKDIR /home/circleci/wp-calypso/
 
 # Add .git repo
