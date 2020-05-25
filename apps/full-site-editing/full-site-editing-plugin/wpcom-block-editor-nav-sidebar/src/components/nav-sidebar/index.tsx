@@ -146,6 +146,9 @@ export function selectNavItems( select: typeof import('@wordpress/data').select 
 
 	const items = select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 		_fields: 'id,slug,status,title',
+		orderby: 'modified',
+		per_page: 10,
+		status: 'draft,future,pending,private,publish',
 	} );
 
 	return ( items as any ) || [];
