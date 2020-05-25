@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { omit, mapValues } from 'lodash';
 
 /**
@@ -20,6 +19,8 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
+
+import 'state/jetpack/init';
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 	return ( dispatch ) => {
