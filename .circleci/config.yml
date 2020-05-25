@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:12.16.2-browsers
+    - image: scinos/wp-calypso-ci:latest
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -57,91 +57,11 @@ references:
     paths:
       - ~/jest-cache
 
-  #
-  # Terser cache caching
-  #
-  restore-terser-cache: &restore-terser-cache
-    name: Restore Terser cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
-  save-terser-cache: &save-terser-cache
-    name: Save Terser cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/terser-cache
-
-  # Git cache
-  #
-  # Calypso is a big repository with a lot of history. It can take a long time to do a full checkout.
-  # By including the `.git` directory in the cache, we can speed things up by only needing to update
-  # the local repository.
-  #
-  # We cache on the branch and revision, falling back to master, or any recent cache.
-  #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-git-cache: &restore-git-cache
-    name: Restore git cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
-  update-git-master: &update-git-master
-    name: Update master branch
-    command: git fetch --force origin master
-  save-git-cache: &save-git-cache
-    name: Save git cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - '.git'
-
-  # yarn cache
-  #
-  # yarn caches the modules it installs in ~/.cache/yarn.
-  # We cache that cache to save time pulling modules from the network.
-  #
-  #
-  # Some prior art:
-  #   - https://github.com/Automattic/wp-calypso/pull/25431
-  #   - https://github.com/Automattic/wp-calypso/pull/25487
-  #   - https://github.com/Automattic/wp-calypso/pull/27180
-  #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching and https://circleci.com/docs/2.0/yarn/
-  restore-yarn-cache: &restore-yarn-cache
-    name: 'Restore yarn cache'
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
-
   yarn-install: &yarn-install
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
     command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
-
-  save-yarn-cache: &save-yarn-cache
-    name: 'Save yarn cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-    paths:
-      - ~/.cache/yarn
-
-  # Babel cache
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore Babel Client Cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
-  save-babel-client-cache: &save-babel-client-cache
-    name: Save Babel Client Cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - 'build/.babel-client-cache'
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
@@ -184,15 +104,8 @@ jobs:
   setup:
     <<: *defaults
     steps:
-      # repo
-      - restore_cache: *restore-git-cache
       - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-yarn-cache
       - run: *yarn-install
-      - save_cache: *save-yarn-cache
       - run: yarn run build-packages
       - persist_to_workspace:
           root: '~'
@@ -476,9 +389,7 @@ jobs:
               echo 'PRs from external authors cannot run on calypso.live'
               exit 1
             fi
-      - restore_cache: *restore-git-cache
       - checkout
-      # Don't bother updating the git cache here, it would be the second time in the workflow
       - run:
           name: Wait for calypso.live build
           command: ./test/e2e/scripts/wait-for-running-branch.sh

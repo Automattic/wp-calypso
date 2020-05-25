@@ -6,6 +6,7 @@ WORKDIR    /calypso
 
 ENV        CONTAINER 'docker'
 ENV        PROGRESS=true
+ENV        YARN_CACHE_FOLDER=/calypso/.yarn-cache
 
 # Build a "base" layer
 #
@@ -25,6 +26,9 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
+COPY --from=scinos/wp-calypso-base:latest /calypso/.yarn-cache/ ./.yarn-cache/
+COPY --from=scinos/wp-calypso-base:latest /calypso/build/ ./build/
+
 RUN yarn install --frozen-lockfile && yarn cache clean
 
 
