@@ -21,7 +21,7 @@
  * @returns {string} The redirect URL
  */
 export default function getRedirectUrl( source, args = {} ) {
-	let params = {};
+	const params = { ...args };
 
 	if ( source.startsWith( 'https://' ) ) {
 		const parsedUrl = new URL( source );
@@ -32,11 +32,6 @@ export default function getRedirectUrl( source, args = {} ) {
 	} else {
 		params.source = source;
 	}
-
-	params = {
-		...args,
-		...params,
-	};
 
 	const acceptedArgs = [ 'site', 'path', 'query', 'anchor', 'source', 'url' ];
 
