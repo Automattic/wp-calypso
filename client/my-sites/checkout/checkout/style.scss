@@ -162,7 +162,7 @@
 
 	h5 {
 		color: var( --color-neutral-40 );
-		font-size: 15px;
+		font-size: $font-body;
 		font-weight: 600;
 		opacity: 0.7;
 		text-transform: uppercase;
@@ -228,7 +228,7 @@
 		position: relative;
 
 		select {
-			font-size: 15px;
+			font-size: $font-body;
 			width: 100%;
 		}
 
@@ -518,7 +518,7 @@
 
 				> span {
 					color: var( --color-text-subtle );
-					font-size: 15px;
+					font-size: $font-body;
 				}
 			}
 
@@ -854,7 +854,7 @@
 .checkout__privacy-protection-price-text {
 	color: var( --color-neutral-light );
 	margin: 4px 0 0;
-	font-size: 15px;
+	font-size: $font-body;
 
 	span {
 		&.free-with-plan {
@@ -908,7 +908,7 @@
 .checkout__privacy-protection-radio-price-text {
 	color: var( --color-primary );
 	margin: 4px 0 0 10px;
-	font-size: 15px;
+	font-size: $font-body;
 }
 
 .checkout__alternative-payment-methods {

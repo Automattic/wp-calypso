@@ -35,7 +35,7 @@
 
 .comments__comment-content {
 	@extend %content-font;
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.56;
 	word-break: break-word;
 

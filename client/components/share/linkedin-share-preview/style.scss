@@ -27,7 +27,7 @@
 }
 
 .linkedin-share-preview__profile-line {
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 20px;
 }
 
@@ -72,7 +72,7 @@
 .linkedin-share-preview__message {
 	color: rgba( 0, 0, 0, 0.85 );
 	display: -webkit-box;
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	line-height: 16px;
 	max-height: 40px;

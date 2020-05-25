@@ -148,7 +148,7 @@
 		margin: 0 -32px;
 		padding: 16px 32px 8px;
 		font-family: $sans;
-		font-size: 15px;
+		font-size: $font-body;
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var( --color-neutral-10 );
@@ -165,7 +165,7 @@
 		position: relative;
 			top: 16px;
 		font-family: $sans;
-		font-size: 15px;
+		font-size: $font-body;
 		padding-top: 5px;
 		border-top: 1px solid var( --color-neutral-10 );
 

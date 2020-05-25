@@ -71,7 +71,7 @@
 }
 
 .thank-you-card__price {
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	color: var( --color-success-5 );
 
@@ -104,7 +104,7 @@
 	line-height: 20px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 	}
 }
 

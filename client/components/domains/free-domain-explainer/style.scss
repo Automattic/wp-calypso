@@ -11,7 +11,7 @@
 .free-domain-explainer__subtitle {
     color: var( --color-text );
     font-weight: 400;
-    font-size: 15px;
+    font-size: $font-body;
     margin: 0;
     margin-bottom: 0.3em;
 
@@ -20,7 +20,7 @@
     & .button:focus {
         color: var( --color-link );
         display: inline;
-        font-size: 15px;
+        font-size: $font-body;
         margin-left: 0.3em;
         text-decoration: underline;
         vertical-align: baseline;

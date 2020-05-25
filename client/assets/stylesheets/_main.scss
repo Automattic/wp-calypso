@@ -50,7 +50,7 @@ body,
 body {
 	background: var( --color-surface-backdrop );
 	color: var( --color-text );
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.5;
 
 	-ms-overflow-style: scrollbar;
@@ -195,7 +195,7 @@ address {
 pre {
 	background: var( --color-neutral-0 );
 	font-family: $monospace;
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.6;
 	margin-bottom: 1.6em;
 	padding: 1.6em;

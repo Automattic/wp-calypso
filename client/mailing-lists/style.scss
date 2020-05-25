@@ -78,13 +78,13 @@
 	h4 {
 		font-weight: 600;
 		color: var( --color-neutral-50 );
-		font-size: 15px;
+		font-size: $font-body;
 	}
 
 	p {
 		color: var( --color-neutral-40 );
 		margin: 0;
-		font-size: 15px;
+		font-size: $font-body;
 	}
 
 	.button {

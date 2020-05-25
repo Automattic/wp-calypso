@@ -29,7 +29,7 @@ $devdocs-max-width: 720px;
 	}
 
 	.devdocs__result-snippet {
-		font-size: 15px;
+		font-size: $font-body;
 		color: var( --color-text );
 		margin-top: 4px;
 
@@ -325,7 +325,7 @@ $devdocs-max-width: 720px;
 		p {
 			margin: 0;
 			padding-top: 4px;
-			font-size: 15px;
+			font-size: $font-body;
 		}
 	}
 
@@ -406,7 +406,7 @@ $devdocs-max-width: 720px;
 		background-color: var( --color-surface );
 		border-radius: 3px;
 		color: var( --color-primary-dark );
-		font-size: 15px;
+		font-size: $font-body;
 		padding: 2px 6px;
 		max-width: 100px;
 	}
@@ -422,7 +422,7 @@ $devdocs-max-width: 720px;
 
 	.label {
 		font-weight: 600;
-		font-size: 15px;
+		font-size: $font-body;
 		padding: 1px 5px 2px;
 		border-radius: 3px;
 
@@ -468,7 +468,7 @@ $devdocs-max-width: 720px;
 
 .design__typography-code-example {
 	font-family: $code;
-	font-size: 15px;
+	font-size: $font-body;
 }
 
 .design__typography-modular-scale {

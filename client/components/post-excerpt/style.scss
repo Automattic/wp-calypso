@@ -11,7 +11,7 @@
 		max-height: 24px * 3;
 
 		@include breakpoint-deprecated( '<480px' ) {
-			font-size: 15px;
+			font-size: $font-body;
 			line-height: 22px;
 			max-height: 22px * 3;
 		}

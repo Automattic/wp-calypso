@@ -180,7 +180,7 @@
 				color: var( --color-text );
 
 				@include breakpoint-deprecated( '>660px' ) {
-					font-size: 15px;
+					font-size: $font-body;
 					padding: 16px 0;
 				}
 			}

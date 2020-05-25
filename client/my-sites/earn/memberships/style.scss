@@ -43,7 +43,7 @@
 	margin-bottom: 24px;
 }
 .memberships__onboarding-paragraph {
-	font-size: 15px;
+	font-size: $font-body;
 	margin-bottom: 24px;
 	color: var( --color-text-subtle );
 }
@@ -180,7 +180,7 @@
 	font-size: 13px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		margin-top: -3px;
 	}
 }

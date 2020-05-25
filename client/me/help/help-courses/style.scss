@@ -48,7 +48,7 @@
 .help-courses__course-video-description,
 .help-courses__course-description {
 	@extend %content-font;
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 22px;
 	margin-bottom: 0;
 
@@ -71,7 +71,7 @@
 	white-space: normal;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 	}
 }
 

@@ -29,7 +29,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup.is-crowdsignal .formatted-header__subtitle {
 	color: var( --color-text-subtle );
-	font-size: 15px;
+	font-size: $font-body;
 
 	a {
 		font-weight: 600;

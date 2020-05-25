@@ -8,7 +8,7 @@
 }
 
 .get-apps__card-title {
-	font-size: 15px;
+	font-size: $font-body;
 	margin-bottom: 4px;
 
 	@include breakpoint-deprecated('>480px') {
@@ -33,7 +33,7 @@
 	margin-bottom: 4px;
 
 	@include breakpoint-deprecated('>480px') {
-		font-size: 15px;
+		font-size: $font-body;
 	}
 }
 
