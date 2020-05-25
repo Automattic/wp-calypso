@@ -132,7 +132,17 @@ function getSiteVertical( state ) {
 	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
-export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
+export function addDomainToCartWithoutSite( callback, dependencies, stepData, reduxStore ) {
+	return createSiteWithCart( callback, dependencies, stepData, reduxStore, { isSiteless: true } );
+}
+
+export function createSiteWithCart(
+	callback,
+	dependencies,
+	stepData,
+	reduxStore,
+	{ isSiteless = false } = {}
+) {
 	const {
 		cartItem,
 		domainItem,
@@ -233,6 +243,28 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.options.in_page_builder = true;
 	}
 
+	if ( isSiteless ) {
+		const cartKey = 'no-site';
+		const providedDependencies = {
+			siteId: null,
+			siteSlug: cartKey,
+			domainItem,
+			themeItem,
+		};
+
+		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
+			( item ) => item
+		);
+
+		if ( ! newCartItems.length ) {
+			return defer( () => callback( undefined, providedDependencies ) );
+		}
+
+		return SignupCart.addToCart( cartKey, newCartItems, function ( cartError ) {
+			callback( cartError, providedDependencies );
+		} );
+	}
+
 	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
 		if ( error ) {
 			callback( error );
@@ -282,7 +314,19 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		} );
 }
 
-export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+export function addPlanToCartWithoutSite( callback, dependencies, stepProvidedItems, reduxStore ) {
+	return addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore, {
+		isSiteless: true,
+	} );
+}
+
+export function addPlanToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	{ isSiteless = false } = {}
+) {
 	const { siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
@@ -296,7 +340,9 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 
 	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null, {
+		isSiteless,
+	} );
 }
 
 export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -316,7 +362,8 @@ function processItemCart(
 	reduxStore,
 	siteSlug,
 	isFreeThemePreselected,
-	themeSlugWithRepo
+	themeSlugWithRepo,
+	{ isSiteless = false } = {}
 ) {
 	const addToCartAndProceed = () => {
 		const newCartItemsToAdd = newCartItems.map( ( item ) =>
@@ -332,7 +379,9 @@ function processItemCart(
 		}
 	};
 
-	if ( ! user.get() && isFreeThemePreselected ) {
+	if ( isSiteless ) {
+		addToCartAndProceed();
+	} else if ( ! user.get() && isFreeThemePreselected ) {
 		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 	} else if ( user.get() && isFreeThemePreselected ) {
 		fetchSitesAndUser(
@@ -602,11 +651,22 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
+function excludeDomainStep(
+	stepName,
+	tracksEventValue,
+	submitSignupStep,
+	{ isSiteless = false } = {}
+) {
 	let fulfilledDependencies = [];
 	const domainItem = undefined;
 
-	submitSignupStep( { stepName, domainItem }, { domainItem } );
+	submitSignupStep(
+		{ stepName, domainItem },
+		{
+			domainItem,
+			...( isSiteless && { siteId: null, siteSlug: 'no-site' } ),
+		}
+	);
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
 	fulfilledDependencies = [ 'domainItem' ];
@@ -625,7 +685,12 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
+export function removeDomainStepForPaidPlans(
+	stepName,
+	defaultDependencies,
+	nextProps,
+	{ isSiteless = false } = {}
+) {
 	// This is for domainStepPlanStepSwap A/B test.
 	// Remove the domain step if a paid plan is selected, check https://wp.me/pbxNRc-cj#comment-277
 	// Exit if not in the right flow.
@@ -638,8 +703,14 @@ export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nex
 
 	if ( ! isEmpty( cartItem ) ) {
 		const tracksEventValue = null;
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
+		excludeDomainStep( stepName, tracksEventValue, submitSignupStep, { isSiteless } );
 	}
+}
+
+export function sitelessRemoveDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
+	return removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps, {
+		isSiteless: true,
+	} );
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
