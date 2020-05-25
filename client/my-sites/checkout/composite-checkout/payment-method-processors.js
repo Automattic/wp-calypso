@@ -62,6 +62,26 @@ export async function stripeCardProcessor( submitData ) {
 	return pending;
 }
 
+export async function existingCardProcessor( submitData ) {
+	const pending = submitStripeCardTransaction(
+		{
+			...submitData,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( select ),
+		},
+		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
+}
+
 function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
 	return createStripePaymentMethod( stripe, {
 		name,
