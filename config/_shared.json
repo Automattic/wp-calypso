@@ -139,5 +139,6 @@
 	},
 	"site_filter": [],
 	"theme": "default",
-	"site_name": "WordPress.com"
+	"site_name": "WordPress.com",
+	"restricted_me_access": true
 }

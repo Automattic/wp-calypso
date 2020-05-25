@@ -213,11 +213,13 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
-					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
-				) : (
-					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
-				) }
+				{ config.isEnabled( 'i18n/community-translator' )
+					? isCommunityTranslatorEnabled() && (
+							<AsyncLoad require="components/community-translator" />
+					  )
+					: config( 'restricted_me_access' ) && (
+							<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
+					  ) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="components/happychat" />
