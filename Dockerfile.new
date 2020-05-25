@@ -1,6 +1,6 @@
 #### builder image
 #### Used to generate caches. This image shouldn't be exported
-FROM node:12.16.2-alpine as builder
+FROM node:12.16.2-alpine as base
 LABEL maintainer="Automattic"
 
 ARG workers=4
@@ -20,26 +20,21 @@ COPY . ./
 RUN yarn && yarn build
 
 
-#### base image
-#### Used to build dev/CI/deployment images. Caches already primed.
-FROM node:12.16.2-alpine as base
-LABEL maintainer="Automattic"
+#### prod image
+#### Used to build the production image
+FROM node:12.16.2 as wp-calypso-builder
 
 ENV YARN_CACHE_FOLDER=/calypso/.yarn-cache
 WORKDIR /calypso
-
-COPY --from=builder /calypso/.yarn-cache/ ./.yarn-cache/
-COPY --from=builder /calypso/build/.terser-cache/ ./build/.terser-cache/
-COPY --from=builder /calypso/build/.moment-timezone-data-webpack-plugin-cache/ ./build/.moment-timezone-data-webpack-plugin-cache/
-COPY --from=builder /calypso/build/.babel-client-cache/ ./build/.babel-client-cache/
-COPY --from=builder /calypso/build/.babel-server-cache/ ./build/.babel-server-cache/
+COPY --from=base /calypso/.yarn-cache/ ./.yarn-cache
+COPY --from=base /calypso/build/ ./build/
 
 
 #### ci image
 #### Used by Circle CI
-FROM circleci/node:12.16.2-browsers as ci
+FROM circleci/node:12.16.2-browsers as wp-calypso-ci
 
-ENV YARN_CACHE_FOLDER=/tmp/.yarn-cache
+ENV YARN_CACHE_FOLDER=/calypso/.yarn-cache
 WORKDIR /home/circleci/wp-calypso/
 
 # Add .git repo
@@ -47,5 +42,5 @@ RUN git clone https://github.com/Automattic/wp-calypso.git . \
 	&& git remote set-url origin git@github.com:Automattic/wp-calypso.git
 
 # Copy primed caches
-COPY --chown=circleci:circleci --from=scinos/wp-calypso-base:latest /calypso/.yarn-cache/ /tmp/.yarn-cache
-COPY --chown=circleci:circleci --from=scinos/wp-calypso-base:latest /calypso/build ./build/
+COPY --chown=circleci:circleci --from=wp-calypso-builder /calypso/.yarn-cache/ ./.yarn-cache
+COPY --chown=circleci:circleci --from=wp-calypso-builder /calypso/build ./build/

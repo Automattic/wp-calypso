@@ -1,4 +1,4 @@
-FROM node:12.16.2
+FROM automattic/wp-calypso-builder:1.0.0
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -26,11 +26,7 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-COPY --from=scinos/wp-calypso-base:latest /calypso/.yarn-cache/ ./.yarn-cache/
-COPY --from=scinos/wp-calypso-base:latest /calypso/build/ ./build/
-
 RUN yarn install --frozen-lockfile && yarn cache clean
-
 
 # Build the final layer
 #
