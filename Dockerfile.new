@@ -1,0 +1,35 @@
+#### base image
+#### Used to collect caches
+FROM node:12.16.2-alpine as base
+LABEL maintainer="Automattic"
+
+ARG workers=4
+ENV YARN_CACHE_FOLDER=/calypso/.yarn-cache
+ENV NODE_ENV=production
+ENV CALYPSO_ENV=production
+ENV BUILD_TRANSLATION_CHUNKS=true
+ENV WORKERS=$workers
+WORKDIR /calypso
+
+# Install bash, used for building FSE
+RUN apk add --no-cache bash
+
+COPY . ./
+
+# Prime caches
+RUN yarn && yarn build
+
+
+#### buidler image
+#### Used by dev/CI/deployment to build other images. Caches already primed
+FROM node:12.16.2-alpine as builder
+LABEL maintainer="Automattic"
+
+ENV YARN_CACHE_FOLDER=/calypso/.yarn-cache
+WORKDIR /calypso
+
+COPY --from=base /calypso/.yarn-cache/ ./.yarn-cache/
+COPY --from=base /calypso/build/.terser-cache/ ./build/.terser-cache/
+COPY --from=base /calypso/build/.moment-timezone-data-webpack-plugin-cache/ ./build/.moment-timezone-data-webpack-plugin-cache/
+COPY --from=base /calypso/build/.babel-client-cache/ ./build/.babel-client-cache/
+COPY --from=base /calypso/build/.babel-server-cache/ ./build/.babel-server-cache/
