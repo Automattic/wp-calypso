@@ -137,22 +137,9 @@ const settings = {
 						return createBlock( block.name, block.attributes, block.innerBlocks );
 					} );
 
-					const innerBlocksLoggedOut = [
-						createBlock( 'core/heading', {
-							content: __( 'Subscribe to get access', 'premium-content' ),
-							level: 3,
-						} ),
-						createBlock( 'core/paragraph', {
-							content: __(
-								'Read more of this content when you subscribe today.',
-								'premium-content'
-							),
-						} ),
-					];
-
 					return createBlock( 'premium-content/container', {}, [
 						createBlock( 'premium-content/subscriber-view', {}, innerBlocksSubscribe ),
-						createBlock( 'premium-content/logged-out-view', {}, innerBlocksLoggedOut ),
+						createBlock( 'premium-content/logged-out-view' ),
 					] );
 				},
 			},
