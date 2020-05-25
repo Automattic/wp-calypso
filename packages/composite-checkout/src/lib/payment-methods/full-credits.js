@@ -15,6 +15,7 @@ import {
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
+	useResponseCart,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
@@ -54,6 +55,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
+	const responseCart = useResponseCart();
 	const submitTransaction = usePaymentProcessor( 'full-credits' );
 
 	useEffect( () => {
@@ -82,6 +84,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 		setFormSubmitting();
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		submitTransaction( {
+			responseCart,
 			items,
 		} )
 			.then( () => {

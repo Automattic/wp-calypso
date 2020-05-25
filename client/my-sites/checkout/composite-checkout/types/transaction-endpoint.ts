@@ -43,6 +43,7 @@ export type WPCOMTransactionEndpointCart = {
 	currency: string;
 	temporary: false;
 	extra: string[];
+	new_site_data: any;
 	products: {
 		product_id: number;
 		meta?: string;
@@ -74,6 +75,7 @@ export type WPCOMTransactionEndpointDomainDetails = {
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
+	responseCart,
 	siteId,
 	couponId,
 	country,
@@ -81,6 +83,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	subdivisionCode,
 	items,
 }: {
+	responseCart: any;
 	siteId: string;
 	couponId?: string;
 	country: string;
@@ -123,10 +126,12 @@ export function createTransactionEndpointCartFromLineItems( {
 				subdivision_code: subdivisionCode,
 			},
 		},
+		new_site_data: responseCart.new_site_data,
 	};
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
+	responseCart,
 	siteId,
 	couponId,
 	country,
@@ -140,6 +145,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	storedDetailsId,
 	name,
 }: {
+	responseCart: any;
 	siteId: string;
 	couponId?: string;
 	country: string;
@@ -155,6 +161,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
+			responseCart,
 			siteId,
 			couponId: couponId || getCouponIdFromProducts( items ),
 			country,

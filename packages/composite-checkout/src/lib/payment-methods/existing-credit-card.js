@@ -16,6 +16,7 @@ import {
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
+	useResponseCart,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
@@ -207,6 +208,7 @@ const CardHolderName = styled.span`
 
 function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 	const localize = useLocalize();
+	const responseCart = useResponseCart();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const transactionStatus = useSelect( ( select ) =>
@@ -306,6 +308,7 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 					setFormSubmitting,
 					resetTransaction,
 					onEvent,
+					responseCart,
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
@@ -357,12 +360,14 @@ async function submitExistingCardPayment( {
 	setFormReady,
 	resetTransaction,
 	onEvent,
+	responseCart,
 } ) {
 	debug( 'submitting existing card payment with the id', id );
 	try {
 		onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 		setFormSubmitting();
 		beginCardTransaction( {
+			responseCart,
 			items,
 			total,
 		} );

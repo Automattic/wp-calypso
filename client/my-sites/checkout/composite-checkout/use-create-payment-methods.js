@@ -35,7 +35,13 @@ import {
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
 const { select, dispatch } = defaultRegistry;
 
-function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems, getCouponItem } ) {
+function useCreatePayPal( {
+	onlyLoadPaymentMethods,
+	getThankYouUrl,
+	getItems,
+	getCouponItem,
+	getResponseCart,
+} ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'paypal' )
 		: true;
@@ -65,6 +71,7 @@ function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems, ge
 
 			return makePayPalExpressRequest(
 				{
+					responseCart: getResponseCart(),
 					items: getItems(),
 					successUrl,
 					cancelUrl,
@@ -263,12 +270,14 @@ export default function useCreatePaymentMethods( {
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
+	responseCart,
 } ) {
 	const paypalMethod = useCreatePayPal( {
 		onlyLoadPaymentMethods,
 		getThankYouUrl,
 		getItems: () => items,
 		getCouponItem: () => couponItem,
+		getResponseCart: () => responseCart,
 	} );
 
 	const stripeMethod = useCreateStripe( {

@@ -276,6 +276,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
+		responseCart,
 	} );
 
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
@@ -420,6 +421,7 @@ export default function CompositeCheckout( {
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CheckoutProvider
 				locale={ 'en-us' }
+				responseCart={ responseCart }
 				items={ itemsForCheckout }
 				total={ total }
 				onPaymentComplete={ onPaymentComplete }

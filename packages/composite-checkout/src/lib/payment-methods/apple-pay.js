@@ -13,6 +13,7 @@ import {
 	useLineItems,
 	useMessages,
 	useEvents,
+	useResponseCart,
 } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
@@ -60,6 +61,7 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 		setTransactionComplete,
 	} = useTransactionStatus();
 	const onEvent = useEvents();
+	const responseCart = useResponseCart();
 	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
@@ -67,6 +69,7 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 			setFormSubmitting();
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			submitTransaction( {
+				responseCart,
 				stripe,
 				paymentMethodToken,
 				name,
@@ -97,6 +100,7 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 			stripeConfiguration,
 			showErrorMessage,
 			setFormSubmitting,
+			responseCart,
 		]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {

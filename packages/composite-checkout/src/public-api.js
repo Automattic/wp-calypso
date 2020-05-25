@@ -21,7 +21,12 @@ import {
 } from './components/order-review-line-items';
 import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
-import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
+import {
+	usePaymentMethod,
+	usePaymentMethodId,
+	useAllPaymentMethods,
+	useResponseCart,
+} from './lib/payment-methods';
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
 	createRegistry,
@@ -107,4 +112,5 @@ export {
 	useSelect,
 	useTotal,
 	useTransactionStatus,
+	useResponseCart,
 };

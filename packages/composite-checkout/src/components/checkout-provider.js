@@ -43,6 +43,7 @@ export const CheckoutProvider = ( props ) => {
 		isLoading,
 		isValidating,
 		children,
+		responseCart,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods?.length ? paymentMethods[ 0 ].id : null
@@ -84,6 +85,7 @@ export const CheckoutProvider = ( props ) => {
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
+			responseCart,
 		} ),
 		[
 			formStatus,
@@ -96,6 +98,7 @@ export const CheckoutProvider = ( props ) => {
 			showSuccessMessage,
 			transactionStatusManager,
 			paymentProcessors,
+			responseCart,
 		]
 	);
 

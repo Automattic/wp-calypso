@@ -25,6 +25,7 @@ import {
 	useLineItems,
 	renderDisplayValueMarkdown,
 	useEvents,
+	useResponseCart,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
@@ -388,6 +389,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 		setTransactionRedirecting,
 		setTransactionError,
 	} = useTransactionStatus();
+	const responseCart = useResponseCart();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
 
@@ -473,6 +475,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 					setFormSubmitting();
 					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
 					submitTransaction( {
+						responseCart,
 						stripe,
 						name: cardholderName?.value,
 						items,

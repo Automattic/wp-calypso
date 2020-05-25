@@ -19,6 +19,11 @@ export function usePaymentMethodId() {
 	return [ paymentMethodId, setPaymentMethodId ];
 }
 
+export function useResponseCart() {
+	const { responseCart } = useContext( CheckoutContext );
+	return responseCart;
+}
+
 export function usePaymentMethod() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
 	const allPaymentMethods = useAllPaymentMethods();

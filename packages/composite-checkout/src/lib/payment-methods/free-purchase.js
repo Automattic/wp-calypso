@@ -15,6 +15,7 @@ import {
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
+	useResponseCart,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
@@ -103,6 +104,7 @@ function FreePurchaseLabel() {
 function FreePurchaseSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { beginFreeTransaction } = useDispatch( 'free-purchase' );
+	const responseCart = useResponseCart();
 	const [ items, total ] = useLineItems();
 	const transactionStatus = useSelect( ( select ) =>
 		select( 'free-purchase' ).getTransactionStatus()
@@ -140,6 +142,7 @@ function FreePurchaseSubmitButton( { disabled } ) {
 		setFormSubmitting();
 		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
 		beginFreeTransaction( {
+			responseCart,
 			items,
 		} );
 	};
