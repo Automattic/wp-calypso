@@ -714,6 +714,10 @@
 	background: var( --studio-gray-0 );
 	min-height: 100%;
 
+	.step-wrapper .formatted-header {
+		margin-top: 0;
+	}
+
 	.login.is-jetpack-cloud {
 		width: 100%;
 		display: flex;
@@ -725,19 +729,37 @@
 		}
 	}
 
-	input:focus:hover[type='text'],
-	input:focus[type='text'],
-	input:focus:hover[type='password'],
-	input:focus[type='password'],
-	input:focus:hover[type='tel'],
-	input:focus[type='tel'] {
+	// primary text rules
+	.login__form-header,
+	.signup-form__jetpack-cloud-wrapper h3 {
+		font-weight: 600;
+		font-size: 22px;
+		line-height: 32px;
+		margin-bottom: 24px;
+		margin-top: 16px;
+		text-align: center;
+	}
+
+	input:focus:hover[type],
+	input:focus[type] {
 		box-shadow: 0 0 0 2px var( --studio-jetpack-green-10 );
+	}
+
+	.login__form-header-wrapper,
+	.signup-form__jetpack-cloud-wrapper {
+		padding: 32px 0 0;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		width: 100%;
+		> * {
+			max-width: 375px;
+		}
 	}
 
 	.wp-login__links,
 	.login__social,
-	.login__form,
-	.login__form-header-wrapper {
+	.login__form {
 		width: 100%;
 		max-width: 375px;
 	}
@@ -914,19 +936,6 @@
 		&:hover,
 		&:focus {
 			color: var( --studio-jetpack-green-60 );
-		}
-	}
-
-	.login__form-header-wrapper {
-		padding: 16px;
-	}
-
-	.signup-form__jetpack-cloud-wrapper,
-	.login__jetpack-cloud-wrapper {
-		padding-top: 32px;
-
-		svg.wordpress-logo {
-			fill: var( --studio-wordpress-blue-40 );
 		}
 	}
 }

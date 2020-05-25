@@ -186,6 +186,11 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// jetpack cloud cannot have users being sent to WordPress.com
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			return null;
+		}
+
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
 		if (
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
@@ -231,6 +236,11 @@ export class LoginLinks extends React.Component {
 
 	renderResetPasswordLink() {
 		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+			return null;
+		}
+
+		// jetpack cloud needs to keep users in the flow
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -348,7 +358,6 @@ export class LoginLinks extends React.Component {
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
 				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
-					! isJetpackCloudOAuth2Client( this.props.oauth2Client ) &&
 					! this.props.isGutenboarding &&
 					this.renderBackLink() }
 			</div>
