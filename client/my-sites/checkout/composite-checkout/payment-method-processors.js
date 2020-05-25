@@ -12,6 +12,7 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitCreditsTransaction,
+	submitExistingCardPayment,
 } from './payment-method-helpers';
 import { createStripePaymentMethod } from 'lib/stripe';
 
@@ -63,7 +64,7 @@ export async function stripeCardProcessor( submitData ) {
 }
 
 export async function existingCardProcessor( submitData ) {
-	const pending = submitStripeCardTransaction(
+	const pending = submitExistingCardPayment(
 		{
 			...submitData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
