@@ -78,7 +78,7 @@
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -86,7 +86,7 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 

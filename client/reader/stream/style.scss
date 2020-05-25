@@ -153,7 +153,7 @@
 		display: flex;
 
 		.reader__post-title {
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: normal;
 			margin: 0;
 			cursor: pointer;
@@ -189,7 +189,7 @@
 
 		.reader__post-title {
 			display: block;
-			font-size: 16px;
+			font-size: $font-body;
 			margin: 0;
 			position: absolute;
 				top: 14px;
@@ -331,7 +331,7 @@
 		blockquote {
 			margin-left: 0;
 			margin-right: 0;
-			font-size: 16px;
+			font-size: $font-body;
 		}
 
 		p {

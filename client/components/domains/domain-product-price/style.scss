@@ -9,7 +9,7 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-end;
-		font-size: 16px;
+		font-size: $font-body;
 
 		.featured-domain-suggestions & {
 			align-items: flex-start;

@@ -113,7 +113,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		text-align: left;
 		color: var( --color-neutral-dark );
 		font-weight: 600;
-		font-size: 16px;
+		font-size: $font-body;
 		border-radius: 0;
 		z-index: 0;
 

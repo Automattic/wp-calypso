@@ -17,12 +17,12 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 16px 24px;
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 16px 32px;
 		max-width: 960px;
 		left: calc( 50% - 480px );

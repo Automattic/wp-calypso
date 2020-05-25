@@ -24,7 +24,7 @@
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 
@@ -35,7 +35,7 @@
 		margin-bottom: 16px;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 

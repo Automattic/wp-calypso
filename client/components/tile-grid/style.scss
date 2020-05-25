@@ -153,7 +153,7 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		background: none;
 		text-align: left;
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.4;
 		border: 0;
 		padding: 0;

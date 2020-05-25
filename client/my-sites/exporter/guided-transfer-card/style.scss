@@ -72,7 +72,7 @@
 .guided-transfer-card__in-progress {
 	padding-top: 32px;
 	padding-bottom: 32px;
-	font-size: 16px;
+	font-size: $font-body;
 	text-align: center;
 
 	@include breakpoint-deprecated( '>660px' ) {

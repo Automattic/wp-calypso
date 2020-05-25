@@ -87,7 +87,7 @@ $feature-upsell-break-at: '1040px';
 
 		//@include breakpoint-deprecated( '<660px' ) {
 		//	&.is-h4 {
-		//		font-size: 16px;
+		//		font-size: $font-body;
 		//	}
 		//}
 	}
@@ -102,7 +102,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-button {
 		display: block;
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 14px 48px;
 		line-height: 1.2;
 
@@ -240,7 +240,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-content {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.625;
 		margin-top: 20px;
 		@include breakpoint-deprecated( '<660px' ) {
@@ -292,7 +292,7 @@ $feature-upsell-break-at: '1040px';
 		flex: 0;
 		flex-basis: 340px;
 		margin-left: 32px;
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.625;
 
 		@include breakpoint-deprecated( '<1280px' ) {
@@ -351,7 +351,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-description {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.625;
 		margin-top: 10px;
 		@include breakpoint-deprecated( '<660px' ) {
@@ -505,7 +505,7 @@ $feature-upsell-break-at: '1040px';
 		margin: 11px 0 0;
 
 		@include breakpoint-deprecated( '<1040px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 

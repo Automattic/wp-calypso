@@ -67,7 +67,7 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 

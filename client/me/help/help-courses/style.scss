@@ -53,7 +53,7 @@
 	margin-bottom: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.618;
 	}
 }

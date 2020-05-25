@@ -253,7 +253,7 @@ $devdocs-max-width: 720px;
 		font-family: $code;
 		text-decoration: underline;
 		font-weight: 600;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	.docs-selectors__result-description {
@@ -262,7 +262,7 @@ $devdocs-max-width: 720px;
 
 	.docs-selectors__result-io {
 		display: none;
-		font-size: 16px;
+		font-size: $font-body;
 
 		.docs-selectors__result-arguments {
 			flex: 3;
@@ -341,7 +341,7 @@ $devdocs-max-width: 720px;
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
 	margin: 32px 20px;
-	font-size: 16px;
+	font-size: $font-body;
 	font-family: $serif;
 
 	@include breakpoint-deprecated( '>660px' ) {

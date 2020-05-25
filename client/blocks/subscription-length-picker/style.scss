@@ -4,7 +4,7 @@
 	&__header {
 		margin-bottom: 10px;
 		flex-basis: 100%;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	&__options {
@@ -92,7 +92,7 @@
 	}
 
 	.subscription-length-picker__option-description {
-		font-size: 16px;
+		font-size: $font-body;
 		margin-top: 2px;
 	}
 

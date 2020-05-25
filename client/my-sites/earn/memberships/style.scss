@@ -111,7 +111,7 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -160,7 +160,7 @@
 
 .memberships__subscriber-username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
@@ -216,7 +216,7 @@
 }
 .memberships__products-product-price {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.5;
 }
 .memberships__products-product-title {

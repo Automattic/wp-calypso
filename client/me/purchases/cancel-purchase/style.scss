@@ -2,7 +2,7 @@
 	h2 {
 		color: var( --color-neutral-70 );
 		font-size: 21px;
-		font-weight: 200;
+		font-weight: 400;
 		margin-bottom: 20px;
 	}
 
@@ -42,7 +42,7 @@
 }
 
 .cancel-purchase__purchase-name {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 }
 
@@ -63,7 +63,7 @@
 
 .cancel-purchase__section-header {
 	display: block;
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 400;
 }
 

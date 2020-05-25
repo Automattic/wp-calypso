@@ -62,7 +62,7 @@
 
 .activity-card__activity-description {
 	margin: 1rem 0 0.5rem;
-	font-size: 16px;
+	font-size: $font-body;
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -93,7 +93,7 @@
 		display: flex;
 		align-items: center;
 		@include breakpoint-deprecated( '>660px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 
 		// gridicons within buttons have very specific rules for font sizes, disable them to let flex take care of it

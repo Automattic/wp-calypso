@@ -233,7 +233,7 @@
 	padding: 32px 20px;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 60px 24px;
 		text-align: left;
 	}
@@ -626,7 +626,7 @@
 }
 
 .is-section-checkout-thank-you .empty-content__line {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: normal;
 }
 
