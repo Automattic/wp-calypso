@@ -45,7 +45,6 @@ function updateSettingsBar() {
 		const textContent = document.createTextNode( __( 'Launch' ) );
 		launchLink.appendChild( textContent );
 
-		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
 	} );
 }
