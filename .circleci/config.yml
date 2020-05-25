@@ -63,7 +63,7 @@ references:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     name: Install dependencies
-    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile && yarn cache clean
+    command: CHROMEDRIVER_VERSION=$(<.chromedriver_version) yarn install --frozen-lockfile
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
