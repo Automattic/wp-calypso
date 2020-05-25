@@ -84,6 +84,11 @@ references:
     docker: *docker-image
     environment: *shared-environment
 
+  defaults-setup: &defaults-setup
+    working_directory: ~/wp-calypso
+    docker: *base-docker-image
+    environment: *shared-environment
+
 commands:
   prepare:
     description: 'Prepare Job'
@@ -106,8 +111,7 @@ commands:
 
 jobs:
   setup:
-    <<: *defaults
-    docker-image: *base-docker-image
+    <<: *defaults-setup
     steps:
       - checkout
       - run: *yarn-install
