@@ -33,7 +33,12 @@ export default function CreatePage( { postType }: Props ) {
 	);
 
 	return (
-		<Button isPrimary className="wpcom-block-editor-nav-sidebar-create-page" href={ url }>
+		<Button
+			target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
+			isPrimary
+			className="wpcom-block-editor-nav-sidebar-create-page"
+			href={ url }
+		>
 			{ label }
 		</Button>
 	);

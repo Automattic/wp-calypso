@@ -37,7 +37,12 @@ export default function ViewAllPosts( { postType }: Props ) {
 	);
 
 	return (
-		<Button isSecondary className="wpcom-block-editor-nav-sidebar-view-all-posts" href={ url }>
+		<Button
+			target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
+			isSecondary
+			className="wpcom-block-editor-nav-sidebar-view-all-posts"
+			href={ url }
+		>
 			{ label }
 		</Button>
 	);

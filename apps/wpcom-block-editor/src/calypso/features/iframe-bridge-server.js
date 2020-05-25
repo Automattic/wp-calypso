@@ -818,6 +818,13 @@ function getCalypsoUrlInfo( calypsoPort ) {
 			return url;
 		}
 	);
+
+	// All links should open outside the iframe
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.linkTarget',
+		'wpcom-block-editor/getSiteSlug',
+		() => '_parent'
+	);
 }
 
 /**
