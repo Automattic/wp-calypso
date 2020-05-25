@@ -30,7 +30,10 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^1.10.0"
+		"tslib": "^1.10.0",
+		"classnames": "^2.2.6",
+		"use-debounce": "^3.1.0",
+		"uuid": "^8.0.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8",
@@ -41,10 +44,7 @@
 		"@wordpress/element": "^2.14.0",
 		"@wordpress/icons": "^2.0.0",
 		"@wordpress/i18n": "^3.10.0",
-		"classnames": "^2.2.6",
-		"lodash": "^4.17.15",
-		"use-debounce": "^3.1.0",
-		"uuid": "^8.0.0"
+		"lodash": "^4.17.15"
 	},
 	"private": true
 }
