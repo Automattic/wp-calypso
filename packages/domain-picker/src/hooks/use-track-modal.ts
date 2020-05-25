@@ -21,7 +21,7 @@ export function useTrackModal(
 	modalName: string,
 	onModalOpen: Function,
 	onModalUnmount: Function,
-	eventProperties: { selected_domain?: string }
+	eventProperties: { selected_domain: string | undefined }
 ) {
 	useOnUnmount( () => {
 		onModalUnmount?.( modalName, eventProperties );

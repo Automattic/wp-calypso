@@ -33,6 +33,25 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 type DomainSuggestionQuery = import('@automattic/data-stores').DomainSuggestions.DomainSuggestionQuery;
 type DomainCategory = import('@automattic/data-stores').DomainSuggestions.DomainCategory;
 
+interface AnalyticsRenderEvent {
+	trainTracksType: 'render';
+	fetchAlgo: string;
+	query: string;
+	railcarId: string;
+	result: string;
+	uiPosition: number;
+}
+
+interface AnalyticsInteractEvent {
+	trainTracksType: 'interact';
+	action: 'domain_selected';
+	railcarId: string;
+}
+
+export type RecordsAnalyticsHandler = (
+	event: AnalyticsInteractEvent | AnalyticsRenderEvent
+) => void;
+
 export interface Props {
 	showDomainConnectButton?: boolean;
 
@@ -54,7 +73,7 @@ export interface Props {
 
 	onMoreOptions?: () => void;
 
-	recordAnalytics?: ( event: object ) => void;
+	recordAnalytics?: RecordsAnalyticsHandler;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -86,7 +105,10 @@ export interface Props {
 	onModalOpen: ( modalName: string ) => void;
 
 	/** Called when the modal is closed or unmounted in any way. Can be used for analytics */
-	onModalUnmount: () => ( modalName: string, eventProps?: object ) => void;
+	onModalUnmount: (
+		modalName: string,
+		eventProperties?: { selected_domain: string | undefined }
+	) => void;
 
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];

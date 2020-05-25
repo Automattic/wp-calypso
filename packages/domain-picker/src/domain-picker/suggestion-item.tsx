@@ -9,13 +9,15 @@ import { v4 as uuid } from 'uuid';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
+import type { RecordsAnalyticsHandler } from '.';
+
 interface Props {
 	suggestion: DomainSuggestion;
 	isRecommended?: boolean;
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	recordAnalytics?: ( event: object ) => void;
+	recordAnalytics?: RecordsAnalyticsHandler;
 	uiPosition: number;
 	domainSearch: string;
 	analyticsFlowId: string;
