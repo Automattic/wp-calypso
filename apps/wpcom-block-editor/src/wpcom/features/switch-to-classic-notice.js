@@ -5,18 +5,21 @@
 import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
-import { useEffect, createInterpolateElement } from '@wordpress/element';
-import { withNotices } from '@wordpress/components';
+import { useState, createInterpolateElement } from '@wordpress/element';
+import { withNotices, Notice } from '@wordpress/components';
 import url from 'url';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const parsedEditorUrl = url.parse( window.location.href, true );
-const dismissNotice = () => {
-	console.log( 'Notice dismissed' );
-	localStorage.setItem( 'dismissedClassicEditorNotice', 'true' );
-};
 
-const ClassicEditorNotice = ( { noticeOperations, noticeUI } ) => {
+const ClassicEditorNotice = () => {
+	const [ noticedDismissed, setNoticeDismissed ] = useState( false );
+
+	const dismissNotice = () => {
+		setNoticeDismissed( true );
+		localStorage.setItem( 'dismissedClassicEditorNotice', 'true' );
+	};
+
 	const noticeText = createInterpolateElement(
 		'If you prefer the Classic editor, you can always switch. Open the options menu by click in the button at the top right of your screen, and select <strong>Switch to Classic editor</strong>.',
 		{ strong: <strong /> }
@@ -24,22 +27,23 @@ const ClassicEditorNotice = ( { noticeOperations, noticeUI } ) => {
 
 	const noticeContent = (
 		<div>
-			<h2>{ __( "You're usng the most modern WordPress Editor." ) } </h2>
+			<h2>{ __( "You're using the most modern WordPress Editor." ) } </h2>
 			<p>{ noticeText }</p>
 		</div>
 	);
 
-	useEffect( () => {
-		noticeOperations.createNotice( {
-			className: 'edit-post-switch-to-classic-notice',
-			status: 'info',
-			content: noticeContent,
-			isDismissible: true,
-			onRemove: dismissNotice,
-		} );
-	}, [ noticeOperations ] );
-
-	return <div>{ noticeUI }</div>;
+	return (
+		! noticedDismissed && (
+			<Notice
+				className="edit-post-switch-to-classic-notice"
+				status="info"
+				isDismissible={ true }
+				onRemove={ dismissNotice }
+			>
+				{ noticeContent }
+			</Notice>
+		)
+	);
 };
 
 const NoticeComponent = withNotices( ClassicEditorNotice );
