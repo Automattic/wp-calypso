@@ -758,25 +758,13 @@ function getNavSidebarLabels( calypsoPort ) {
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.allPostsLabel',
 		'wpcom-block-editor/getNavSidebarLabels',
-		( label, postType ) => {
-			if ( allPostsLabels && allPostsLabels[ postType ] ) {
-				return allPostsLabels[ postType ];
-			}
-
-			return label;
-		}
+		( label, postType ) => ( allPostsLabels && allPostsLabels[ postType ] ) || label
 	);
 
 	addFilter(
 		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
 		'wpcom-block-editor/getNavSidebarLabels',
-		( label, postType ) => {
-			if ( createPostLabels && createPostLabels[ postType ] ) {
-				return createPostLabels[ postType ];
-			}
-
-			return label;
-		}
+		( label, postType ) => ( createPostLabels && createPostLabels[ postType ] ) || label
 	);
 }
 
