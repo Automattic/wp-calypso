@@ -3,3 +3,19 @@
 // Temporary load this here too to get it work on Atomic sites at least via Calypso
 // Will be moved to wpcom folder unless fixed otherwise
 @import './features/legacy-preview-button';
+
+// Putting here as this css is already enqueued so saves an extra diff for this temporary notice
+.edit-post-switch-to-classic-notice.is-dismissible {
+	margin: 0;
+	padding: 0 12px 0 0;
+
+	.components-notice__content {
+		margin: 0;
+		line-height: inherit;
+		padding: 12px;
+
+		h2 {
+			margin-top: 0;
+		}
+	}
+}
