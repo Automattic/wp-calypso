@@ -39,13 +39,13 @@ COPY --from=builder /calypso/build/.babel-server-cache/ ./build/.babel-server-ca
 #### Used by Circle CI
 FROM circleci/node:12.16.2-browsers as ci
 
-ENV YARN_CACHE_FOLDER=/home/circleci/wp-calypso/.yarn-cache
+ENV YARN_CACHE_FOLDER=/tmp/.yarn-cache
 WORKDIR /home/circleci/wp-calypso/
 
 # Add .git repo
-RUN git clone --no-checkout --depth 1 --branch master https://github.com/Automattic/wp-calypso.git . \
+RUN git clone https://github.com/Automattic/wp-calypso.git . \
 	&& git remote set-url origin git@github.com:Automattic/wp-calypso.git
 
 # Copy primed caches
-COPY --from=base /calypso/.yarn-cache/ ./.yarn-cache/
-COPY --from=base /calypso/build ./build/
+COPY --chown=circleci:circleci --from=scinos/wp-calypso-base:latest /calypso/.yarn-cache/ /tmp/.yarn-cache
+COPY --chown=circleci:circleci --from=scinos/wp-calypso-base:latest /calypso/build ./build/
