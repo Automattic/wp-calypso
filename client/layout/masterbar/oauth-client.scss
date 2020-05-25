@@ -725,12 +725,27 @@
 		}
 	}
 
+	input:focus:hover[type='text'],
+	input:focus[type='text'],
+	input:focus:hover[type='password'],
+	input:focus[type='password'] {
+		box-shadow: 0 0 0 2px var( --studio-jetpack-green-10 );
+	}
+
 	.wp-login__links,
 	.login__social,
 	.login__form,
 	.login__form-header-wrapper {
 		width: 100%;
 		max-width: 375px;
+	}
+
+	.login__form-terms {
+		margin-top: 8px;
+	}
+
+	.login__form-signup-link {
+		padding-top: 0;
 	}
 
 	.login__divider {

@@ -42,7 +42,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'lib/webauthn';
-import WordPressLogo from 'components/wordpress-logo';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Style dependencies
@@ -287,7 +287,7 @@ class Login extends Component {
 				headerText = translate( 'Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
 					<div className="login__jetpack-cloud-wrapper">
-						<WordPressLogo />
+						<JetpackLogo full={ false } size={ 60 } />
 					</div>
 				);
 			}
@@ -458,6 +458,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+
 				{ this.renderFooter() }
 			</div>
 		);
