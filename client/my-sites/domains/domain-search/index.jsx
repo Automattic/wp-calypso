@@ -19,7 +19,7 @@ import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, removeItem } from 'lib/cart/actions';
-import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
+import { canDomainAddGSuite } from 'lib/gsuite';
 import {
 	hasDomainInCart,
 	domainMapping,
@@ -123,7 +123,7 @@ class DomainSearch extends Component {
 
 		addItem( registration );
 
-		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
+		if ( canDomainAddGSuite( domain ) ) {
 			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
 		} else {
 			page( '/checkout/' + this.props.selectedSiteSlug );
