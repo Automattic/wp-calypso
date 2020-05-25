@@ -28,7 +28,6 @@ export const settings: BlockConfiguration< Attributes > = {
 		multiple: false,
 		reusable: false,
 	},
-	icon: 'universal-access-alt',
 	edit,
 	save: () => null,
 	getEditWrapperProps() {

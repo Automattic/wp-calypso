@@ -313,6 +313,17 @@ if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
 }
 
+// Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
+if ( isCalypsoClient ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
+			if ( res.context.includes( '@wordpress/components/' ) ) {
+				res.request = 'components/empty-component';
+			}
+		} )
+	);
+}
+
 if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
 	// Use "evergreen" polyfill config, rather than fallback.
 	webpackConfig.plugins.push(
