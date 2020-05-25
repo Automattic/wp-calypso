@@ -36,12 +36,6 @@ function updateSettingsBar() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-		const saveButton = settingsBar.querySelector( '.editor-post-publish-button__button' );
-		// This line causes a reconciliation error in React and a page bork
-		// leaving it in there until we can decide on the UX for this component
-		//saveButton && ( saveButton.innerText = __( 'Save' ) );
-
 		// Wrap 'Launch' button link to frankenflow.
 		const launchLink = document.createElement( 'a' );
 		launchLink.href = calypsoifyGutenberg.frankenflowUrl;
@@ -53,6 +47,5 @@ function updateSettingsBar() {
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchLink );
-		saveButton && settingsBar.prepend( saveButton );
 	} );
 }
