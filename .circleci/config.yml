@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: node:12.16.2-alpine
+    - image: circleci/node:12.16.2-browsers
 
   base-docker-image: &base-docker-image
     - image: scinos/wp-calypso-ci:latest
