@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import * as React from 'react';
@@ -24,7 +28,7 @@ describe( 'traintracks events', () => {
 	describe( 'render event', () => {
 		it( 'sends render events when first rendered', async () => {
 			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../src/suggestion-item' );
+			const { default: SuggestionItem } = await import( '../suggestion-item' );
 
 			const recordAnalytics = jest.fn();
 			const railcarId = 'id';
