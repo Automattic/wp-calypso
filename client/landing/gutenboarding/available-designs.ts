@@ -169,12 +169,12 @@ export const getDesignImageUrl = ( design: Design ) => {
 /**
  * Asynchronously load available design images
  */
-export function preloadDesignThumbs() {
+export function prefetchDesignThumbs() {
 	if ( typeof window !== 'undefined' ) {
 		availableDesigns.featured.forEach( ( design: Design ) => {
 			const href = getDesignImageUrl( design );
 			const link = document.createElement( 'link' );
-			link.rel = 'preload';
+			link.rel = 'prefetch';
 			link.as = 'image';
 			link.href = href;
 			document.head.appendChild( link );
