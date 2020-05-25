@@ -14,13 +14,13 @@ Source can be either a “source handler” or a URL.
 
 A “source handler” must be registered in the Jetpack Redirects service, on the server side. It’s a slug that points to an URL that may or may not have dynamic parts in it.
 
-A “URL” is a string that must start with “https://" and doesn’t need to be registered on the server. However, if it is registered, it will point to the URL set as target there rather than to the source. (Note: It will only work for whitelisted domains)
+A “URL” is a string that must start with “https://" and doesn’t need to be registered on the server. However, if it is registered, it will point to the URL set as target there rather than to the source. (Note: It will only work for whitelisted domains, unless the URL is explicitly registered on the server)
 
 ### args (optional)
 
-This is optional and allows you to pass an array (or object in JS) with more parameters to build the URL:
+This is optional and allows you to pass an object with more parameters to build the URL:
 
-* **site**: This is used to identify the site and also to fill in the `[site]` placeholder in the target. 
+* **site**: Optional (but recommended). This is used to identify the site and also to fill in the `[site]` placeholder in the target. 
 
 * **path**: Optional. Used to fill in the `[path]` placeholder in the target.
 

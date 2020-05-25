@@ -1,11 +1,11 @@
 /**
  * Builds an URL using the jetpack.com/redirect service
  *
- * If $source is a simple slug, it will be sent using the source query parameter. e.g. jetpack.com/redirect?source=slug
+ * If source is a simple slug, it will be sent using the source query parameter. e.g. jetpack.com/redirect?source=slug
  *
- * If $source is a full URL, starting with https://, it will be sent using the url query parameter. e.g. jetpack.com/redirect?url=https://wordpress.com
+ * If source is a full URL, starting with https://, it will be sent using the url query parameter. e.g. jetpack.com/redirect?url=https://wordpress.com
  *
- * Note: if using full URL, query parameters and anchor must be passed in $args. Any querystring of url fragment in the URL will be discarded.
+ * Note: if using full URL, query parameters and anchor must be passed in args. Any querystring of url fragment in the URL will be discarded.
  *
  * @param {string}  source The URL handler registered in the server or the full destination URL (starting with https://).
  * @param {object}  args {
