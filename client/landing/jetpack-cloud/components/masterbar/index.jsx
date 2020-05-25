@@ -27,7 +27,7 @@ const JetpackCloudMasterBar = () => {
 	const headerTitle = useSelector( getDocumentHeadTitle );
 	const currentRoute = useSelector( getCurrentRoute );
 	const isNarrow = useBreakpoint( '<660px' );
-	const isExteriorPage = /^\/(?:backups|scan)\/[^/]*$/.test( currentRoute );
+	const isExteriorPage = /^\/(?:backup|scan)\/[^/]*$/.test( currentRoute );
 	return (
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace

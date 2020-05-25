@@ -26,7 +26,7 @@ export function showUpsellIfNoBackup( context, next ) {
 	next();
 }
 
-/* handles /backups/:site, see `backupMainPath` */
+/* handles /backup/:site, see `backupMainPath` */
 export function backups( context, next ) {
 	const { date } = context.query;
 
@@ -34,7 +34,7 @@ export function backups( context, next ) {
 	next();
 }
 
-/* handles /backups/activity/:site, see `backupActivityPath` */
+/* handles /backup/activity/:site, see `backupActivityPath` */
 export function backupActivity( context, next ) {
 	context.primary = (
 		<BackupActivityLogPage
@@ -47,7 +47,7 @@ export function backupActivity( context, next ) {
 	next();
 }
 
-/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
+/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
 export function backupDownload( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
@@ -55,7 +55,7 @@ export function backupDownload( context, next ) {
 	next();
 }
 
-/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />

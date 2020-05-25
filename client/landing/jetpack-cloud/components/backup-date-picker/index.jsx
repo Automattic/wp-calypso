@@ -86,7 +86,7 @@ class BackupDatePicker extends Component {
 	};
 
 	goToActivityLog = () => {
-		page.redirect( `/backups/activity/${ this.props.siteSlug }` );
+		page.redirect( backupActivityPath( this.props.siteSlug ) );
 	};
 
 	onSpace = ( evt, fn ) => {
