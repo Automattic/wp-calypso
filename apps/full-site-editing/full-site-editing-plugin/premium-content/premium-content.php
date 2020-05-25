@@ -83,7 +83,6 @@ function premium_content_block_init() {
 		array(
 			'editor_script'   => 'premium-content-container-block-editor',
 			'editor_style'    => 'premium-content-container-block-editor',
-			'style'           => 'premium-content-container-block',
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',
 		)
 	);
@@ -193,6 +192,7 @@ function premium_content_container_render( $attributes, $content ) {
  * @return string
  */
 function premium_content_block_logged_out_view_render( $attributes, $content ) {
+	wp_enqueue_style( 'premium-content-container-block' );
 	wp_enqueue_script( 'premium-content-frontend' );
 
 	$button_styles = array();
