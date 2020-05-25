@@ -5,9 +5,9 @@
 @import './features/legacy-preview-button';
 
 // Putting here as this css is already enqueued so saves an extra diff for this temporary notice
-.edit-post-switch-to-classic-notice.is-dismissible {
+.features__switch-to-classic-notice.is-dismissible {
 	margin: 0;
-	padding: 0 12px 0 0;
+	padding: 0;
 
 	.components-notice__content {
 		margin: 0;

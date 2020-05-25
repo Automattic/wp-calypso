@@ -17,11 +17,13 @@ const ClassicEditorNotice = () => {
 
 	const dismissNotice = () => {
 		setNoticeDismissed( true );
-		localStorage.setItem( 'dismissedClassicEditorNotice', 'true' );
+		if ( window.localStorage ) {
+			window.localStorage.setItem( 'dismissedClassicEditorNotice', true );
+		}
 	};
 
 	const noticeText = createInterpolateElement(
-		'If you prefer the Classic editor, you can always switch. Open the options menu by click in the button at the top right of your screen, and select <strong>Switch to Classic editor</strong>.',
+		'If you prefer the Classic editor, you can always switch. Open the options menu by clicking on the button at the top right of your screen, and select <strong>Switch to Classic editor</strong>.',
 		{ strong: <strong /> }
 	);
 
@@ -35,7 +37,7 @@ const ClassicEditorNotice = () => {
 	return (
 		! noticedDismissed && (
 			<Notice
-				className="edit-post-switch-to-classic-notice"
+				className="features__switch-to-classic-notice"
 				status="info"
 				isDismissible={ true }
 				onRemove={ dismissNotice }
@@ -48,27 +50,25 @@ const ClassicEditorNotice = () => {
 
 const NoticeComponent = withNotices( ClassicEditorNotice );
 
-const noticeDismissed = localStorage.getItem( 'dismissedClassicEditorNotice' );
+const noticeDismissed = window.localStorage
+	? window.localStorage.getItem( 'dismissedClassicEditorNotice' )
+	: null;
 
-// Need to replace this check with one that checks for a specific parsedEditorUrl.query param
-// https://github.com/Automattic/wp-calypso/issues/41087.
-if ( parsedEditorUrl.query[ 'environment-id' ] === 'stage' && noticeDismissed !== 'true' ) {
+if ( parsedEditorUrl.query[ 'show-classic-notice' ] && ! noticeDismissed ) {
 	domReady( () => {
 		const editInception = setInterval( () => {
-			// Cycle through interval until sidebar is found.
-			const sidebar = document.querySelector( '.components-panel__body.edit-post-post-status' );
+			// Cycle through interval until postStatus is found.
+			const postStatus = document.querySelector( '.components-panel__body.edit-post-post-status' );
 
-			if ( ! sidebar ) {
+			if ( ! postStatus ) {
 				return;
 			}
 
 			clearInterval( editInception );
 
-			sidebar.classList.add( 'show-classic-editor-notice' );
-
 			const switchToClassicNotice = document.createElement( 'div' );
 			switchToClassicNotice.className = 'edit-post-switch-to-classic-notice';
-			sidebar.after( switchToClassicNotice );
+			postStatus.parentNode.insertBefore( switchToClassicNotice, postStatus );
 
 			ReactDOM.render( <NoticeComponent />, switchToClassicNotice );
 		} );
