@@ -66,6 +66,14 @@ Just run
 sudo yarn start
 ```
 
+### Command failed with exit code 127
+Sometimes, usually during the first build, you see an error message similar to:
+```
+error Command failed with exit code 127.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command
+```
+Run `yarn` before running `yarn start`.
+
 ### Other build problems - try to clean the build
 Sometimes, especially while switching branches, previous build leaves some artifacts in your directory.
 This can cause problems with the next build. Simply re-runnning `yarn start` doesn't always clean it up.
