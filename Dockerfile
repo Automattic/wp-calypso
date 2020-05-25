@@ -1,4 +1,4 @@
-FROM automattic/wp-calypso-builder:1.0.0
+FROM automattic/wp-calypso-builder:latest
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso

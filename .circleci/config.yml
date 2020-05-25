@@ -12,7 +12,7 @@ references:
     - image: circleci/node:12.16.2-browsers
 
   base-docker-image: &base-docker-image
-    - image: automattic/wp-calypso-ci:1.0.0
+    - image: automattic/wp-calypso-ci:latest
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
