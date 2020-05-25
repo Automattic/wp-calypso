@@ -16,7 +16,7 @@ import { Step, usePath } from '../../path';
 import Link from '../../components/link';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { preloadDesignThumbs } from '../../available-designs';
+import { prefetchDesignThumbs } from '../../available-designs';
 import { recordSiteTitleSkip } from '../../lib/analytics';
 
 /**
@@ -39,7 +39,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const hasSiteTitle = getSelectedSiteTitle()?.trim().length > 2;
 
-	React.useEffect( preloadDesignThumbs, [] );
+	React.useEffect( prefetchDesignThumbs, [] );
 
 	const handleSiteTitleSubmit = () => {
 		history.push( nextStepPath );
