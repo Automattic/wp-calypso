@@ -76,7 +76,6 @@ function WPLineItem( {
 			) }
 			{ isGSuite && (
 				<LineItemMeta singleLine={ true }>
-					{ translate( 'billed annually' ) }
 					{ item.amount.value < item.wpcom_meta?.item_original_cost_integer && (
 						<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
 					) }
