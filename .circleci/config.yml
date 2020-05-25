@@ -93,10 +93,8 @@ commands:
   prepare:
     description: 'Prepare Job'
     steps:
-      - checkout
       - attach_workspace:
           at: '~'
-      - run: *yarn-install
       # folders to collect results
       - run: *setup-results-and-artifacts
   store-artifacts-and-test-results:
