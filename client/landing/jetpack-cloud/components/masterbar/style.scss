@@ -45,6 +45,14 @@
 	.masterbar__item-me {
 		min-width: 18px;
 		flex: 0 0 auto;
+
+		// Calypso's masterbar hides this item content and we need to show it
+		// so we override its display property.
+		@include breakpoint-deprecated( '<480px' ) {
+			.masterbar__item-content {
+				display: block;
+			}
+		}
 	}
 
 	.masterbar__item-me--open {
