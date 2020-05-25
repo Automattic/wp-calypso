@@ -153,6 +153,7 @@ export function createSiteWithCart(
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
+		domainStepSkippedBecausePaidPlanWasSelected,
 	} = stepData;
 
 	const state = reduxStore.getState();
@@ -243,7 +244,16 @@ export function createSiteWithCart(
 		newSiteParams.options.in_page_builder = true;
 	}
 
-	if ( isSiteless ) {
+	const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
+		( item ) => item
+	);
+
+	const isPlanFirstFlowWithFreeSiteAndNoCartItems =
+		flowToCheck === 'onboarding-plan-first' &&
+		! domainStepSkippedBecausePaidPlanWasSelected &&
+		newCartItems.length === 0;
+
+	if ( isSiteless && ! isPlanFirstFlowWithFreeSiteAndNoCartItems ) {
 		const cartKey = 'no-site';
 		const siteSlug = cartKey;
 		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
@@ -254,10 +264,6 @@ export function createSiteWithCart(
 			themeItem,
 			newSiteParams,
 		};
-
-		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
-			( item ) => item
-		);
 
 		return defer( () =>
 			processItemCart(
@@ -290,11 +296,8 @@ export function createSiteWithCart(
 			siteSlug,
 			domainItem,
 			themeItem,
+			...( isSiteless && { newSiteParams } ),
 		};
-
-		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
-			( item ) => item
-		);
 
 		processItemCart(
 			providedDependencies,
@@ -336,10 +339,12 @@ export function addPlanToCart(
 	{ isSiteless = false } = {}
 ) {
 	const { siteSlug, newSiteParams } = dependencies;
-	const { cartItem } = stepProvidedItems;
+	const { cartItem, flowName, lastKnownFlow } = stepProvidedItems;
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
-		if ( isSiteless && newSiteParams ) {
+		if ( isSiteless && newSiteParams && flowToCheck !== 'onboarding-plan-first' ) {
 			wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
 				if ( error ) {
 					callback( error );
@@ -688,7 +693,7 @@ function excludeDomainStep(
 	const domainItem = undefined;
 
 	submitSignupStep(
-		{ stepName, domainItem },
+		{ stepName, domainItem, domainStepSkippedBecausePaidPlanWasSelected: true },
 		{
 			domainItem,
 			...( isSiteless && { siteId: null, siteSlug: 'no-site' } ),
