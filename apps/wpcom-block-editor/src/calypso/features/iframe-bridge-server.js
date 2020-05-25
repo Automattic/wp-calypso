@@ -781,6 +781,58 @@ function getNavSidebarLabels( calypsoPort ) {
 }
 
 /**
+ * Retrieves info to allow the bridge to build calypso urls. Hook parts of
+ * the editor that use this info.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getCalypsoUrlInfo( calypsoPort ) {
+	let origin = null;
+	let siteSlug = null;
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCalypsoUrlInfo',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		origin = data.origin;
+		siteSlug = data.siteSlug;
+	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.allPostsUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postType ) => {
+			if ( origin && siteSlug ) {
+				if ( postType === 'page' ) {
+					return `${ origin }/pages/${ siteSlug }`;
+				} else if ( postType === 'post' ) {
+					return `${ origin }/posts/${ siteSlug }`;
+				}
+			}
+
+			return url;
+		}
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.createPostUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postType ) => {
+			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
+				return `${ origin }/block-editor/${ postType }/${ siteSlug }`;
+			}
+
+			return url;
+		}
+	);
+}
+
+/**
  * Passes uncaught errors in window.onerror to Calypso for logging.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
@@ -899,6 +951,8 @@ function initPort( message ) {
 		getGutenboardingStatus( calypsoPort );
 
 		getNavSidebarLabels( calypsoPort );
+
+		getCalypsoUrlInfo( calypsoPort );
 
 		handleUncaughtErrors( calypsoPort );
 	}
