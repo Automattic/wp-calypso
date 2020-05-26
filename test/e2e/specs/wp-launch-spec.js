@@ -88,6 +88,10 @@ describe( `[${ host }] Launch (${ screenSize }) @parallel`, function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( firstSiteName );
+			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				await sideBarComponent.ensureSidebarMenuVisible();
+				await sideBarComponent.selectMyHome();
+			}
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
