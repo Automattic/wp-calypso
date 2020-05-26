@@ -1,0 +1,13 @@
+@import './variables.scss';
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+@mixin domain-picker-package--font-recoleta {
+	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+	font-weight: 400;
+	letter-spacing: -0.4px;
+}
+
+@mixin domain-picker-package-medium-text {
+	font-size: 14px;
+	line-height: 17px;
+}
