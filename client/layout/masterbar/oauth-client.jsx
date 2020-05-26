@@ -9,9 +9,14 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+} from 'lib/oauth2-clients';
 import { localizeUrl } from 'lib/i18n-utils';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import CrowdsignalOauthMasterbar from './crowdsignal';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Style dependencies
@@ -23,10 +28,16 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 		<nav>
 			<ul className="masterbar__oauth-client-main-nav">
 				<li className="masterbar__oauth-client-current">
-					{ oauth2Client.icon && (
+					{ isJetpackCloudOAuth2Client( oauth2Client ) ? (
 						<div className="masterbar__oauth-client-logo">
-							<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
+							<JetpackLogo full monochrome={ false } size={ 28 } />
 						</div>
+					) : (
+						oauth2Client.icon && (
+							<div className="masterbar__oauth-client-logo">
+								<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
+							</div>
+						)
 					) }
 				</li>
 
@@ -38,7 +49,7 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 					</li>
 				) }
 
-				{ ! isWooOAuth2Client( oauth2Client ) && (
+				{ ! isWooOAuth2Client( oauth2Client ) && ! isJetpackCloudOAuth2Client( oauth2Client ) && (
 					<li className="masterbar__oauth-client-wpcc-sign-in">
 						<a
 							href={ localizeUrl( 'https://wordpress.com/' ) }

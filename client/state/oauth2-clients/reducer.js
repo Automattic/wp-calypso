@@ -46,6 +46,21 @@ export const initialClientsData = {
 		title: 'WooCommerce.com',
 		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
+	68663: {
+		id: 68663,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69040: {
+		id: 69040,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69041: {
+		id: 69041,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
 };
 
 export default function oauth2Clients( state = initialClientsData, action ) {

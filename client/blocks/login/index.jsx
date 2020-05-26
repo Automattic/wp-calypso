@@ -28,7 +28,11 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { rebootAfterLogin } from 'state/login/actions';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
 import AsyncLoad from 'components/async-load';
@@ -38,6 +42,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'lib/webauthn';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Style dependencies
@@ -278,6 +283,15 @@ class Login extends Component {
 				);
 			}
 
+			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+				headerText = translate( 'Log in to Jetpack.com with your WordPress.com account.' );
+				preHeader = (
+					<div className="login__jetpack-cloud-wrapper">
+						<JetpackLogo full={ false } size={ 60 } />
+					</div>
+				);
+			}
+
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
@@ -429,9 +443,14 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack } = this.props;
+		const { isJetpack, oauth2Client } = this.props;
 		return (
-			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
+			<div
+				className={ classNames( 'login', {
+					'is-jetpack': isJetpack,
+					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+				} ) }
+			>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
@@ -439,6 +458,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+
 				{ this.renderFooter() }
 			</div>
 		);
