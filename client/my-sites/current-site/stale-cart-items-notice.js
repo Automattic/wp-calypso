@@ -14,6 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName, getSelectedSiteSlug } from 'state/ui/selectors';
+import { reloadCart } from 'lib/cart/actions';
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 
@@ -55,6 +56,7 @@ class StaleCartItemsNotice extends React.Component {
 	};
 
 	componentDidMount() {
+		reloadCart();
 		CartStore.on( 'change', this.showStaleCartItemsNotice );
 	}
 
