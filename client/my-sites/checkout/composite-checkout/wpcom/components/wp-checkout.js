@@ -9,6 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
+	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
@@ -187,36 +188,28 @@ export default function WPCheckout( {
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
+				<CheckoutStepBody
+					stepId="review-order-step"
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCouponAndResetActiveStep }
+							onChangePlanLength={ changePlanLength }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							siteUrl={ siteUrl }
+						/>
+					}
+					titleContent={ <OrderReviewTitle /> }
+				/>
 				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={
-							<WPCheckoutOrderReview
-								removeItem={ removeItem }
-								couponStatus={ couponStatus }
-								couponFieldStateProps={ couponFieldStateProps }
-								removeCoupon={ removeCouponAndResetActiveStep }
-								onChangePlanLength={ changePlanLength }
-								variantRequestStatus={ variantRequestStatus }
-								variantSelectOverride={ variantSelectOverride }
-								getItemVariants={ getItemVariants }
-								siteUrl={ siteUrl }
-							/>
-						}
-						titleContent={ <OrderReviewTitle /> }
-						completeStepContent={ <InactiveOrderReview /> }
-						editButtonText={ translate( 'Edit' ) }
-						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-						nextStepButtonText={ translate( 'Continue' ) }
-						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-						validatingButtonAriaLabel={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-					/>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
