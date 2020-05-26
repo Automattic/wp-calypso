@@ -24,7 +24,6 @@ import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
-	REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
 } from 'state/desktop/window-events';
 import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
@@ -194,19 +193,16 @@ const Desktop = {
 		const siteId = site.ID;
 		const state = this.store.getState();
 		const canUserManageOptions = canCurrentUserManageSiteOptions( state, siteId );
-		const payload = { siteId, origin: site.URL, editorUrl, wpAdminLoginUrl, canUserManageOptions };
+		const payload = {
+			siteId,
+			reason,
+			editorUrl,
+			wpAdminLoginUrl,
+			origin: site.URL,
+			canUserManageOptions,
+		};
 
-		switch ( reason ) {
-			case REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO: {
-				ipc.send( 'cannot-use-editor', payload );
-				break;
-			}
-			default:
-				ipc.send( 'cannot-use-editor', {
-					...payload,
-					error: `Cannot use editor, unhandled reason: ${ reason }`,
-				} );
-		}
+		ipc.send( 'cannot-use-editor', payload );
 	},
 
 	onActivateJetpackSiteModule: function ( event, info ) {
