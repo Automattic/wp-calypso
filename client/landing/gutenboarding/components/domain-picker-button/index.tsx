@@ -1,33 +1,19 @@
 /**
  * External dependencies
  */
-import React, { createRef, FunctionComponent, useState, useEffect } from 'react';
+import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
-
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
-import {
-	recordEnterModal,
-	recordCloseModal,
-	recordTrainTracksEvent,
-	getNewRailcarId,
-	RecordTrainTracksEventProps,
-} from '../../lib/analytics';
-import { STORE_KEY } from '../../stores/onboard';
-import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
-
-const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
+import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
 
 /**
  * Style dependencies
@@ -36,10 +22,9 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' | 'tracksName' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
-	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
@@ -50,28 +35,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
-
-	const domainSuggestions = useDomainSuggestions( { locale: useI18n().i18nLocale, quantity: 10 } );
-
-	const domainCategories = useSelect( ( select ) =>
-		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
-	);
-
-	const [ railcarId, setRailcarId ] = useState< string | undefined >();
-
-	useEffect( () => {
-		// Only generate a railcarId when the domain suggestions change and are not empty.
-		if ( domainSuggestions ) {
-			setRailcarId( getNewRailcarId() );
-		}
-	}, [ domainSuggestions, setRailcarId ] );
-
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
-
-	const { domainSearch, domainCategory } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
-	const { setDomainSearch, setDomainCategory } = useDispatch( STORE_KEY );
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
@@ -119,14 +82,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
 			<DomainPickerPopover
-				analyticsFlowId={ FLOW_ID }
-				domainSuggestions={ domainSuggestions }
-				domainCategory={ domainCategory }
-				domainCategories={ domainCategories }
-				onSetDomainCategory={ setDomainCategory }
-				domainSearch={ domainSearch }
-				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainPopoverVisible }
 				showDomainConnectButton={ false }
 				showDomainCategories={ false }
@@ -135,20 +90,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onMoreOptions={ handleMoreOptions }
 				onClose={ handlePopoverClose }
 				recordAnalytics={ recordAnalytics }
-				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
-				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 			<DomainPickerModal
-				analyticsFlowId={ FLOW_ID }
-				domainSuggestions={ domainSuggestions }
-				domainCategory={ domainCategory }
-				domainCategories={ domainCategories }
-				onSetDomainCategory={ setDomainCategory }
-				domainSearch={ domainSearch }
-				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainModalVisible }
 				showDomainConnectButton
 				showDomainCategories
@@ -157,10 +100,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onClose={ handleModalClose }
 				onCancel={ handleModalCancel }
 				recordAnalytics={ recordAnalytics }
-				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
-				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 		</>
 	);
