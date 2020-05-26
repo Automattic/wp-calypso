@@ -120,7 +120,7 @@ export function removeCoupon() {
 
 export function getRememberedCoupon() {
 	// read coupon list from localStorage, return early if it's not there
-	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
+	const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
 	const coupons = JSON.parse( couponsJson );
 	if ( ! coupons ) {
 		debug( 'No coupons found in localStorage: ', coupons );
@@ -158,7 +158,7 @@ export function getRememberedCoupon() {
 
 	// write remembered coupons back to localStorage
 	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 	if (
 		COUPON_CODE_WHITELIST.includes(
 			-1 !== mostRecentCouponCode.indexOf( '_' )
