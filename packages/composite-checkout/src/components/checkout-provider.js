@@ -46,7 +46,6 @@ export const CheckoutProvider = ( props ) => {
 		isValidating,
 		children,
 	} = props;
-	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
 		paymentMethods?.length ? paymentMethods[ 0 ].id : null
 	);
@@ -69,7 +68,6 @@ export const CheckoutProvider = ( props ) => {
 			onPaymentComplete( { paymentMethodId } );
 		}
 	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
-	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
@@ -116,7 +114,10 @@ export const CheckoutProvider = ( props ) => {
 				<RegistryProvider value={ registryRef.current }>
 					<LocalizeProvider locale={ locale }>
 						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+							<CheckoutContext.Provider value={ value }>
+								<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+								{ children }
+							</CheckoutContext.Provider>
 						</LineItemsProvider>
 					</LocalizeProvider>
 				</RegistryProvider>
@@ -243,4 +244,10 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		redirectToUrl,
 		localize,
 	] );
+}
+
+function TransactionStatusHandler( { redirectToUrl } ) {
+	const defaultRedirect = useCallback( ( url ) => ( window.location = url ), [] );
+	useTransactionStatusHandler( redirectToUrl || defaultRedirect );
+	return null;
 }
