@@ -670,7 +670,7 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
 				isTopButtons={ showSkip }
