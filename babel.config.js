@@ -1,12 +1,9 @@
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
-// Use commonjs for Node
-const modules = isBrowser ? false : 'commonjs';
-
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const babelConfig = {
-	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
+	presets: [ '@automattic/calypso-build/babel/default' ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser } ] ],
 	env: {
 		production: {
