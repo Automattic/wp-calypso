@@ -137,7 +137,7 @@ export default {
 		countryCodeTargets: [ 'JP' ],
 	},
 	whiteGloveUpsell: {
-		datestamp: '20200428',
+		datestamp: '20200526',
 		variations: {
 			variantShowOffer: 50,
 			control: 50,
