@@ -20,6 +20,7 @@ import {
 	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
+	CART_RELOAD,
 } from './action-types';
 import Dispatcher from 'dispatcher';
 import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
@@ -184,4 +185,8 @@ export function setTaxPostalCode( postalCode ) {
 		type: CART_TAX_POSTAL_CODE_SET,
 		postalCode,
 	} );
+}
+
+export function reloadCart() {
+	Dispatcher.handleViewAction( { type: CART_RELOAD } );
 }
