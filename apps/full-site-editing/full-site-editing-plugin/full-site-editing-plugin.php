@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
@@ -35,7 +36,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '1.5' );
+define('PLUGIN_VERSION', '1.5');
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -43,32 +44,35 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
 /**
  * Load Core Site Editor.
  */
-function load_core_site_editor() {
+function load_core_site_editor()
+{
 	require_once __DIR__ . '/site-editor/index.php';
 	initialize_site_editor();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_core_site_editor');
 
 /**
  * Load Full Site Editing.
  */
-function load_full_site_editing() {
+function load_full_site_editing()
+{
 	// Bail if FSE should not be active on the site. We do not
 	// want to load FSE functionality on non-supported sites!
-	if ( ! is_full_site_editing_active() ) {
+	if (!is_full_site_editing_active()) {
 		return;
 	}
 	// Not dangerous here since we have already checked for eligibility.
 	dangerously_load_full_site_editing_files();
 	Full_Site_Editing::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_full_site_editing');
 
 /**
  * Load Posts List Block.
  */
-function load_posts_list_block() {
-	if ( class_exists( 'Posts_List_Block' ) ) {
+function load_posts_list_block()
+{
+	if (class_exists('Posts_List_Block')) {
 		return;
 	}
 
@@ -79,7 +83,7 @@ function load_posts_list_block() {
 	 *
 	 * @param bool true if Post List Block should be disabled, false otherwise.
 	 */
-	if ( apply_filters( 'a8c_disable_post_list_block', false ) ) {
+	if (apply_filters('a8c_disable_post_list_block', false)) {
 		return;
 	}
 
@@ -88,15 +92,16 @@ function load_posts_list_block() {
 
 	Posts_List_Block::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_posts_list_block');
 
 /**
  * Load Starter_Page_Templates.
  */
-function load_starter_page_templates() {
+function load_starter_page_templates()
+{
 	// We don't want the user to choose a template when copying a post.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( isset( $_GET['jetpack-copy'] ) ) {
+	if (isset($_GET['jetpack-copy'])) {
 		return;
 	}
 
@@ -107,7 +112,7 @@ function load_starter_page_templates() {
 	 *
 	 * @param bool true if Starter Page Templates should be disabled, false otherwise.
 	 */
-	if ( apply_filters( 'a8c_disable_starter_page_templates', false ) ) {
+	if (apply_filters('a8c_disable_starter_page_templates', false)) {
 		return;
 	}
 
@@ -115,39 +120,43 @@ function load_starter_page_templates() {
 
 	Starter_Page_Templates::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates');
 
 /**
  * Load Global Styles plugin.
  */
-function load_global_styles() {
+function load_global_styles()
+{
 	require_once __DIR__ . '/global-styles/class-global-styles.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_global_styles');
 
 /**
  * Load Event Countdown Block
  */
-function load_countdown_block() {
+function load_countdown_block()
+{
 	require_once __DIR__ . '/event-countdown-block/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_countdown_block');
 
 /**
  * Load Timeline Block
  */
-function load_timeline_block() {
+function load_timeline_block()
+{
 	require_once __DIR__ . '/jetpack-timeline/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_timeline_block');
 
 /**
  * Load common module.
  */
-function load_common_module() {
+function load_common_module()
+{
 	require_once __DIR__ . '/common/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_common_module');
 
 /**
  * Add front-end CoBlocks gallery block scripts.
@@ -157,62 +166,64 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
  * if gallery blocks are present, and `has_block` is not aware of content sections outside of
  * post_content yet.
  */
-function enqueue_coblocks_gallery_scripts() {
-	if ( ! function_exists( 'CoBlocks' ) || ! is_full_site_editing_active() ) {
+function enqueue_coblocks_gallery_scripts()
+{
+	echo ('hi');
+	if (!function_exists('CoBlocks') || !is_full_site_editing_active()) {
 		return;
 	}
 
 	// This happens in the Customizer because we try very hard not to load things and we get a fatal
 	// https://github.com/Automattic/wp-calypso/issues/36680.
-	if ( ! class_exists( '\A8C\FSE\WP_Template' ) ) {
+	if (!class_exists('\A8C\FSE\WP_Template')) {
 		require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
 	}
 	$template = new WP_Template();
-	$header   = $template->get_template_content( 'header' );
-	$footer   = $template->get_template_content( 'footer' );
+	$header   = $template->get_template_content('header');
+	$footer   = $template->get_template_content('footer');
 
 	// Define where the asset is loaded from.
-	$dir = CoBlocks()->asset_source( 'js' );
+	$dir = CoBlocks()->asset_source('js');
 
 	// Define where the vendor asset is loaded from.
-	$vendors_dir = CoBlocks()->asset_source( 'js', 'vendors' );
+	$vendors_dir = CoBlocks()->asset_source('js', 'vendors');
 
 	// Masonry block.
-	if ( has_block( 'coblocks/gallery-masonry', $header . $footer ) ) {
+	if (has_block('coblocks/gallery-masonry', $header . $footer)) {
 		wp_enqueue_script(
 			'coblocks-masonry',
 			$dir . 'coblocks-masonry' . COBLOCKS_ASSET_SUFFIX . '.js',
-			array( 'jquery', 'masonry', 'imagesloaded' ),
+			array('jquery', 'masonry', 'imagesloaded'),
 			COBLOCKS_VERSION,
 			true
 		);
 	}
 
 	// Carousel block.
-	if ( has_block( 'coblocks/gallery-carousel', $header . $footer ) ) {
+	if (has_block('coblocks/gallery-carousel', $header . $footer)) {
 		wp_enqueue_script(
 			'coblocks-flickity',
 			$vendors_dir . '/flickity' . COBLOCKS_ASSET_SUFFIX . '.js',
-			array( 'jquery' ),
+			array('jquery'),
 			COBLOCKS_VERSION,
 			true
 		);
 	}
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts');
 
 /**
  * Load Blog Posts block.
  */
-function load_blog_posts_block() {
+function load_blog_posts_block()
+{
 	$slug          = 'newspack-blocks/newspack-blocks.php';
 	$disable_block = (
-		( defined( 'WP_CLI' ) && WP_CLI ) ||
+		(defined('WP_CLI') && WP_CLI) ||
 		/* phpcs:ignore WordPress.Security.NonceVerification */
-		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $slug === $_GET['plugin'] ) ||
-		in_array( $slug, (array) get_option( 'active_plugins', array() ), true ) ||
-		in_array( $slug, (array) get_site_option( 'active_sitewide_plugins', array() ), true )
-	);
+		(isset($_GET['action'], $_GET['plugin']) && 'activate' === $_GET['action'] && $slug === $_GET['plugin']) ||
+		in_array($slug, (array) get_option('active_plugins', array()), true) ||
+		in_array($slug, (array) get_site_option('active_sitewide_plugins', array()), true));
 
 	/**
 	 * Can be used to disable the Blog Posts block.
@@ -221,28 +232,30 @@ function load_blog_posts_block() {
 	 *
 	 * @param bool $disable_block True if Blog Posts block should be enabled, false otherwise.
 	 */
-	if ( apply_filters( 'a8c_disable_blog_posts_block', $disable_block ) ) {
+	if (apply_filters('a8c_disable_blog_posts_block', $disable_block)) {
 		return;
 	}
 
 	require_once __DIR__ . '/newspack-blocks/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block');
 
 /**
  * Load WPCOM Block Editor NUX
  */
-function load_wpcom_block_editor_nux() {
+function load_wpcom_block_editor_nux()
+{
 
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux');
 
 /**
  * Load FSE block patterns
  */
-function load_block_patterns() {
-	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
+function load_block_patterns()
+{
+	if (!function_exists('\gutenberg_load_block_pattern')) {
 		return;
 	}
 
@@ -250,36 +263,39 @@ function load_block_patterns() {
 
 	Block_Patterns::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_block_patterns');
 
 /**
  * Load Premium Content Block
  */
-function load_premium_content() {
+function load_premium_content()
+{
 	/**
 	 * Disabled until we're ready to disable the premium content plugin in mp-plugins/earn
 	 */
-	if ( function_exists( '\A8C\FSE\Earn\PremiumContent\premium_content_block_init' ) ) {
+	if (function_exists('\A8C\FSE\Earn\PremiumContent\premium_content_block_init')) {
 		return;
 	}
 	require_once __DIR__ . '/premium-content/premium-content.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_premium_content');
 
 /**
  * Load Block Inserter Modifications module
  */
-function load_block_inserter_modifications() {
+function load_block_inserter_modifications()
+{
 	require_once __DIR__ . '/block-inserter-modifications/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications');
 
 /**
  * Load WPCOM block editor nav sidebar
  */
-function load_wpcom_block_editor_sidebar() {
-	if ( defined( 'WPCOM_BLOCK_EDITOR_SIDEBAR' ) && WPCOM_BLOCK_EDITOR_SIDEBAR ) {
+function load_wpcom_block_editor_sidebar()
+{
+	if (defined('WPCOM_BLOCK_EDITOR_SIDEBAR') && WPCOM_BLOCK_EDITOR_SIDEBAR) {
 		require_once __DIR__ . '/wpcom-block-editor-nav-sidebar/class-wpcom-block-editor-nav-sidebar.php';
 	}
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
+add_action('plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar');
