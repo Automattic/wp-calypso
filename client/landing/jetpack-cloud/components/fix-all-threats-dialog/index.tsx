@@ -24,17 +24,10 @@ interface Props {
 	onCloseDialog: Function;
 	onConfirmation: Function;
 	showDialog: boolean;
-	siteId: number;
 	threats: Array< FixableThreat >;
 }
 
-const FixAllThreatsDialog = ( {
-	onConfirmation,
-	onCloseDialog,
-	showDialog,
-	siteId,
-	threats,
-}: Props ) => {
+const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threats }: Props ) => {
 	const buttons = React.useMemo(
 		() => [
 			<Button className="fix-all-threats-dialog__btn" onClick={ onCloseDialog }>
@@ -49,7 +42,6 @@ const FixAllThreatsDialog = ( {
 
 	return (
 		<ServerCredentialsWizardDialog
-			siteId={ siteId }
 			showDialog={ showDialog }
 			isSingular={ false }
 			onCloseDialog={ onCloseDialog }

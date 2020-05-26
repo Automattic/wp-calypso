@@ -15,6 +15,7 @@ import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import ServerCredentialsForm from 'landing/jetpack-cloud/components/server-credentials-form';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -24,7 +25,6 @@ import './style.scss';
 interface Props {
 	onCloseDialog: Function;
 	showDialog: boolean;
-	siteId: number;
 	skipServerCredentials?: boolean;
 	isSingular?: boolean;
 	children: React.ReactNode;
@@ -37,7 +37,6 @@ interface Props {
 const ServerCredentialsWizardDialog = ( {
 	onCloseDialog,
 	showDialog,
-	siteId,
 	skipServerCredentials = false,
 	isSingular = true,
 	buttons,
@@ -46,6 +45,7 @@ const ServerCredentialsWizardDialog = ( {
 	baseDialogClassName,
 	children,
 }: Props ) => {
+	const siteId = useSelector( getSelectedSiteId );
 	const userNeedsCredentials = useSelector( ( state ) =>
 		isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
 	);
