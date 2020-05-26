@@ -139,9 +139,10 @@
 	}
 
 	.count {
-		border-color: var( --color-neutral-5 );
-		color: var( --color-text );
-		background-color: var( --color-neutral-5 );
+		//border-color: var( --color-neutral-5 );
+		//color: var( --color-text );
+		//background-color: var( --color-neutral-5 );
+		margin-left: 8px;
 	}
 
 	.badge {
@@ -158,9 +159,9 @@
 		}
 
 		.count {
-			background-color: transparent;
-			border-color: var( --studio-blue-70 );
-			color: var( --studio-blue-70 );
+			//background-color: transparent;
+			//border-color: var( --studio-blue-70 );
+			//color: var( --studio-blue-70 );
 		}
 	}
 

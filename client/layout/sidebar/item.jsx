@@ -72,8 +72,8 @@ export default function SidebarItem( props ) {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
 					{ props.label }
+					{ !! count && <Count count={ count } /> }
 				</span>
-				{ !! count && <Count count={ count } /> }
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
 			</a>
