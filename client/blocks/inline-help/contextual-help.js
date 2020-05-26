@@ -967,7 +967,7 @@ const getContextLinksForSection = () => ( {
 	],
 	domains: [
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/add-email/' ),
+			link: localizeUrl( 'https://wordpress.com/support/add-email/' ),
 			post_id: 34087,
 			title: translate( 'Add Email to your Domain' ),
 			description: translate(
@@ -975,7 +975,7 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domains/custom-dns/' ),
+			link: localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ),
 			post_id: 6595,
 			title: translate( 'Manage Custom DNS' ),
 			description: translate(
@@ -984,7 +984,7 @@ const getContextLinksForSection = () => ( {
 		},
 		{
 			link: localizeUrl(
-				'https://en.support.wordpress.com/move-domain/transfer-domain-registration/'
+				'https://wordpress.com/support/move-domain/transfer-domain-registration/'
 			),
 			post_id: 41298,
 			title: translate( 'Transfer a Domain to Another Registrar' ),
@@ -993,7 +993,7 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domain-mapping-vs-domain-transfer/' ),
+			link: localizeUrl( 'https://wordpress.com/support/domain-mapping-vs-domain-transfer/' ),
 			post_id: 157655,
 			title: translate( 'Connect an Existing Domain' ),
 			description: translate(
@@ -1001,7 +1001,7 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
+			link: localizeUrl( 'https://wordpress.com/support/domains/' ),
 			post_id: 1988,
 			title: translate( 'All about domains' ),
 			description: translate(
