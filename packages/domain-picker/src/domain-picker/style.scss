@@ -1,7 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
-@import '../../mixins';
+@import '../mixins';
 
 $domain-picker__suggestion-item-height: 24px;
 
@@ -63,7 +63,7 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__header-title {
-	@include onboarding-font-recoleta;
+	@include domain-picker-package--font-recoleta;
 	font-size: 26px;
 	line-height: 35px;
 	margin-bottom: 3px;
@@ -110,7 +110,7 @@ $domain-picker__suggestion-item-height: 24px;
 }
 
 .domain-picker__suggestion-none {
-	@include onboarding-medium-text;
+	@include domain-picker-package-medium-text;
 	line-height: 20px; // matching design
 	display: flex;
 	justify-content: space-between;
@@ -258,7 +258,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__more-button {
 	&.components-button.is-tertiary {
-		@include onboarding-medium-text;
+		@include domain-picker-package-medium-text;
 		color: var( --color-neutral-100 );
 		align-items: center;
 	}
