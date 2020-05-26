@@ -76,20 +76,28 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
 
+	const handlePopoverOpen = () => {
+		recordEnterModal( 'DomainPickerPopover' );
+	};
+
 	const handlePopoverClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
 			return;
 		}
 		setDomainPopoverVisibility( false );
+		recordCloseModal( 'DomainPickerPopover', {
+			selected_domain: getSelectedDomain()?.domain_name,
+		} );
+	};
+
+	const handleModalOpen = () => {
+		recordEnterModal( 'DomainPickerModal' );
 	};
 
 	const handleModalClose = () => {
 		setDomainModalVisibility( false );
-	};
-
-	const handleModalCancel = () => {
-		setDomainModalVisibility( false );
+		recordCloseModal( 'DomainPickerModal', { selected_domain: getSelectedDomain()?.domain_name } );
 	};
 
 	const handleMoreOptions = () => {
@@ -126,18 +134,16 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onSetDomainCategory={ setDomainCategory }
 				domainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainPopoverVisible }
 				showDomainConnectButton={ false }
 				showDomainCategories={ false }
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onMoreOptions={ handleMoreOptions }
+				onOpen={ handlePopoverOpen }
 				onClose={ handlePopoverClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 			<DomainPickerModal
@@ -148,18 +154,16 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onSetDomainCategory={ setDomainCategory }
 				domainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainModalVisible }
 				showDomainConnectButton
 				showDomainCategories
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
+				onOpen={ handleModalOpen }
 				onClose={ handleModalClose }
-				onCancel={ handleModalCancel }
+				onCancel={ handleModalClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 		</>

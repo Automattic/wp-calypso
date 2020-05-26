@@ -15,15 +15,20 @@ import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-pic
  */
 import './style.scss';
 
-interface Props extends Omit< DomainPickerProps, 'tracksName' > {
+interface Props extends DomainPickerProps {
 	isOpen: boolean;
+	onOpen: () => void;
 }
 
-const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, ...props } ) => {
+const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onOpen, ...props } ) => {
 	const onClose = props.onClose;
 
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
+
+	React.useEffect( () => {
+		isOpen && onOpen && onOpen();
+	}, [ isOpen, onOpen ] );
 
 	// Don't render popover when isOpen is false.
 	// We need this component to be hot because useViewportMatch
@@ -41,7 +46,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, ...pro
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker tracksName="DomainPickerPopover" { ...props } />
+				<DomainPicker { ...props } />
 			</Popover>
 		</div>
 	);

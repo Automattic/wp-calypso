@@ -14,12 +14,13 @@ import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-pic
  */
 import './style.scss';
 
-interface Props extends Omit< DomainPickerProps, 'tracksName' > {
+interface Props extends DomainPickerProps {
 	isOpen: boolean;
+	onOpen?: () => void;
 	onMoreOptions?: () => void;
 }
 
-const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props } ) => {
+const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onOpen, ...props } ) => {
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
 
@@ -29,6 +30,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props
 		// This fixes modal being shown without
 		// header margin when the modal is opened.
 		window.scrollTo( 0, 0 );
+		onOpen && onOpen();
 	};
 
 	return (
@@ -39,13 +41,7 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props
 			overlayClassName="domain-picker-modal-overlay"
 			bodyOpenClassName="has-domain-picker-modal"
 		>
-			<DomainPicker
-				tracksName="DomainPickerModal"
-				showDomainConnectButton
-				showDomainCategories
-				quantity={ 10 }
-				{ ...props }
-			/>
+			<DomainPicker showDomainConnectButton showDomainCategories quantity={ 10 } { ...props } />
 		</Modal>
 	);
 };
