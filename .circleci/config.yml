@@ -93,10 +93,10 @@ commands:
   prepare:
     description: 'Prepare Job'
     steps:
-      - attach_workspace:
-          at: '~'
       # folders to collect results
       - run: *setup-results-and-artifacts
+      - attach_workspace:
+          at: '~'
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
