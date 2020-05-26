@@ -168,7 +168,7 @@ add_action('plugins_loaded', __NAMESPACE__ . '\load_common_module');
  */
 function enqueue_coblocks_gallery_scripts()
 {
-	echo ('hi');
+	echo ('hi2');
 	if (!function_exists('CoBlocks') || !is_full_site_editing_active()) {
 		return;
 	}
