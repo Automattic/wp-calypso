@@ -29,7 +29,6 @@ import {
 	submitFreePurchaseTransaction,
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
-	submitExistingCardPayment,
 } from './payment-method-helpers';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
@@ -220,30 +219,10 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 				cardExpiry: storedDetails.expiry,
 				brand: storedDetails.card_type,
 				last4: storedDetails.card,
+				storedDetailsId: storedDetails.stored_details_id,
+				paymentMethodToken: storedDetails.mp_ref,
+				paymentPartnerProcessorId: storedDetails.payment_partner,
 				stripeConfiguration,
-				submitTransaction: ( submitData ) => {
-					const pending = submitExistingCardPayment(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							storedDetailsId: storedDetails.stored_details_id,
-							paymentMethodToken: storedDetails.mp_ref,
-							paymentPartnerProcessorId: storedDetails.payment_partner,
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( ( result ) => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-				registerStore,
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			} )
 		);
 	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
