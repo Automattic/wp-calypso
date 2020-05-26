@@ -284,7 +284,7 @@ class Login extends Component {
 			}
 
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Log in to Jetpack.com with your WordPress.com account.' );
+				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
 					<div className="login__jetpack-cloud-wrapper">
 						<JetpackPlusWpComLogo size={ 60 } />
