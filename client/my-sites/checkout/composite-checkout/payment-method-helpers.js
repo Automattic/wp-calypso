@@ -70,7 +70,7 @@ export async function submitApplePayPayment( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function makePayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
