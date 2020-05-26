@@ -101,7 +101,7 @@ class ConnectedApplications extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Main className="connected-applications">
+			<Main className="security connected-applications">
 				<QueryConnectedApplications />
 
 				<PageViewTracker
