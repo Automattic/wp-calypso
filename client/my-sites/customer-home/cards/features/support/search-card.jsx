@@ -71,7 +71,7 @@ class SupportSearchCard extends Component {
 
 	onSearch = ( searchQuery ) => {
 		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_customerhomehelp_search', {
+		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
 			search_query: searchQuery,
 		} );
 
