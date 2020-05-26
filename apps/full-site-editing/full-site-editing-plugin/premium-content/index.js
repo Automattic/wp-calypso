@@ -7,6 +7,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import * as container from './blocks/container';
 import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
+import * as button from './blocks/button';
 
 /**
  * Function to register an individual block.
@@ -25,6 +26,8 @@ const registerBlock = ( block ) => {
 		return;
 	}
 
+	console.log( block );
+
 	const { name, category, settings } = block;
 
 	registerBlockType( name, {
@@ -37,7 +40,7 @@ const registerBlock = ( block ) => {
  * Function to register blocks provided by CoBlocks.
  */
 export const registerPremiumContentBlocks = () => {
-	[ container, loggedOutView, subscriberView ].forEach( registerBlock );
+	[ container, loggedOutView, subscriberView, button ].forEach( registerBlock );
 };
 
 registerPremiumContentBlocks();
