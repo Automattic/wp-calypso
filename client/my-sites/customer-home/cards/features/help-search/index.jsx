@@ -13,24 +13,14 @@ import { get } from 'lodash';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import { getSearchQuery } from 'state/inline-help/selectors';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
 import HelpSearchCard from './search-card';
 import HelpSearchResults from './search-results';
 
-import {
-	RESULT_ARTICLE,
-	RESULT_DESCRIPTION,
-	RESULT_LINK,
-	RESULT_TITLE,
-	RESULT_TOUR,
-	RESULT_TYPE,
-} from '../../../../../blocks/inline-help/constants';
+import { RESULT_POST_ID, RESULT_LINK } from '../../../../../blocks/inline-help/constants';
 
 /**
  * Style dependencies
@@ -61,11 +51,13 @@ const HelpSearch = ( props ) => {
 			return;
 		}
 
-		const { post_id, link } = selectedResult;
+		// Grab properties using constants for safety
+		const resultPostId = get( selectedResult, RESULT_POST_ID );
+		const resultLink = amendYouTubeLink( get( selectedResult, RESULT_LINK ) );
 
 		props.openSupportArticleDialog( {
-			postId: post_id,
-			actionUrl: link,
+			postId: resultPostId,
+			actionUrl: resultLink,
 		} );
 	};
 
@@ -97,22 +89,8 @@ const HelpSearch = ( props ) => {
 };
 
 const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
-
-	const result = getInlineHelpCurrentlySelectedResult( state );
-
 	return {
-		isStaticHomePage,
 		searchQuery: getSearchQuery( state ),
-		type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
-		title: get( result, RESULT_TITLE ),
-		link: amendYouTubeLink( get( result, RESULT_LINK ) ),
-		description: get( result, RESULT_DESCRIPTION ),
-		tour: get( result, RESULT_TOUR ),
-		postId: get( result, 'post_id' ),
 	};
 };
 
