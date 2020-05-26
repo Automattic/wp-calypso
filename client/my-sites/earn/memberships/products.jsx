@@ -21,21 +21,13 @@ import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
-import {
-	requestAddProduct,
-	requestUpdateProduct,
-	requestDeleteProduct,
-} from 'state/memberships/product-list/actions';
+import { requestDeleteProduct } from 'state/memberships/product-list/actions';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 
 class MembershipsProductsSection extends Component {
-	constructor() {
-		super();
-		this.onCloseDialog = this.onCloseDialog.bind( this );
-	}
 	state = {
 		showDialog: false,
-		product: {},
+		product: null,
 	};
 	renderEllipsisMenu( productId ) {
 		return (
@@ -51,42 +43,6 @@ class MembershipsProductsSection extends Component {
 			</EllipsisMenu>
 		);
 	}
-
-	onCloseDialog = ( reason ) => {
-		if ( reason === 'submit' && ! this.state.editedProductId ) {
-			this.props.requestAddProduct(
-				this.props.siteId,
-				{
-					currency: this.state.editedPrice.currency,
-					price: this.state.editedPrice.value,
-					title: this.state.editedProductName,
-					interval: this.state.editedSchedule,
-					buyer_can_change_amount: this.state.editedPayWhatYouWant,
-					multiple_per_user: this.state.editedMultiplePerUser,
-					welcome_email_content: this.state.editedCustomConfirmationMessage,
-					subscribe_as_site_subscriber: this.state.editedPostsEmail,
-				},
-				this.props.translate( 'Added "%s" product.', { args: this.state.editedProductName } )
-			);
-		} else if ( reason === 'submit' && this.state.editedProductId ) {
-			this.props.requestUpdateProduct(
-				this.props.siteId,
-				{
-					ID: this.state.editedProductId,
-					currency: this.state.editedPrice.currency,
-					price: this.state.editedPrice.value,
-					title: this.state.editedProductName,
-					interval: this.state.editedSchedule,
-					buyer_can_change_amount: this.state.editedPayWhatYouWant,
-					multiple_per_user: this.state.editedMultiplePerUser,
-					welcome_email_content: this.state.editedCustomConfirmationMessage,
-					subscribe_as_site_subscriber: this.state.editedPostsEmail,
-				},
-				this.props.translate( 'Updated "%s" product.', { args: this.state.editedProductName } )
-			);
-		}
-		this.setState( { showDialog: false, editedProductId: null } );
-	};
 
 	openProductDialog = ( editedProductId ) => {
 		if ( editedProductId ) {
@@ -114,12 +70,14 @@ class MembershipsProductsSection extends Component {
 		this.setState( { deletedProductId: null } );
 	};
 
+	closeDialog = () => this.setState( { showDialog: false } );
+
 	renderAddNewPlanDialog() {
 		return (
 			<RecurringPaymentsPlanAddEditModal
+				closeDialog={ this.closeDialog }
 				isVisible={ this.state.showDialog === 'addNewPlan' }
-				onClose={ this.onCloseDialog }
-				productId={ null }
+				product={ null }
 			/>
 		);
 	}
@@ -127,8 +85,8 @@ class MembershipsProductsSection extends Component {
 	renderEditPlanDialog() {
 		return (
 			<RecurringPaymentsPlanAddEditModal
+				closeDialog={ this.closeDialog }
 				isVisible={ this.state.showDialog === 'editPlan' }
-				onClose={ this.onCloseDialog }
 				product={ this.state.product }
 			/>
 		);
@@ -210,5 +168,5 @@ export default connect(
 			products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 		};
 	},
-	{ requestAddProduct, requestUpdateProduct, requestDeleteProduct }
+	{ requestDeleteProduct }
 )( localize( MembershipsProductsSection ) );

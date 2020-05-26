@@ -2,7 +2,8 @@
  * External dependencies
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'components/notice';
 import formatCurrency from '@automattic/format-currency';
@@ -21,7 +22,9 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import InlineSupportLink from 'components/inline-support-link';
+import { requestAddProduct, requestUpdateProduct } from 'state/memberships/product-list/actions';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
@@ -98,24 +101,31 @@ const TAB_EMAIL = 'email';
  */
 const TABS = [ TAB_GENERAL, TAB_EMAIL ];
 
-const RecurringPaymentsPlanAddEditModal = ( { isVisible, onClose, product } ) => {
+const RecurringPaymentsPlanAddEditModal = ( { closeDialog, isVisible, product, siteId } ) => {
 	const translate = useTranslate();
-	const initialPrice = product
-		? { currency: product.currency, value: product.price }
-		: { currency: 'USD', value: minimumCurrencyTransactionAmount( 'USD' ) };
 	const [ currentDialogTab, setCurrentDialogTab ] = useState( TAB_GENERAL );
-	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
-		product?.welcome_email_content ?? ''
-	);
-	const [ editedPrice, setEditedPrice ] = useState( initialPrice );
-	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
-	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
-		product?.buyer_can_change_amount ?? false
-	);
+	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState( '' );
 	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState( false );
+	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState( false );
+	const [ editedPrice, setEditedPrice ] = useState( {
+		currency: 'USD',
+		value: minimumCurrencyTransactionAmount( 'USD' ),
+	} );
+	const [ editedProductName, setEditedProductName ] = useState( '' );
 	const [ editedPostsEmail, setEditedPostsEmail ] = useState( false );
 	const [ editedSchedule, setEditedSchedule ] = useState( '1 month' );
 	const [ focusedName, setFocusedName ] = useState( false );
+
+	useEffect( () => {
+		if ( product ) {
+			setEditedPrice( { currency: product.currency, value: product.price } );
+			setEditedProductName( product.title );
+			setEditedPayWhatYouWant( product.buyer_can_change_amount );
+			setEditedSchedule( product.renewal_schedule );
+			setEditedCustomConfirmationMessage( product.welcome_email_content );
+			setEditedMultiplePerUser( product.multiple_per_user );
+		}
+	}, [ product ] );
 
 	const getTabName = ( tab ) => {
 		switch ( tab ) {
@@ -161,6 +171,42 @@ const RecurringPaymentsPlanAddEditModal = ( { isVisible, onClose, product } ) =>
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
+
+	const onClose = ( reason ) => {
+		if ( reason === 'submit' && ! product ) {
+			requestAddProduct(
+				siteId,
+				{
+					currency: editedPrice.currency,
+					price: editedPrice.value,
+					title: editedProductName,
+					interval: editedSchedule,
+					buyer_can_change_amount: editedPayWhatYouWant,
+					multiple_per_user: editedMultiplePerUser,
+					welcome_email_content: editedCustomConfirmationMessage,
+					subscribe_as_site_subscriber: editedPostsEmail,
+				},
+				translate( 'Added "%s" product.', { args: editedProductName } )
+			);
+		} else if ( reason === 'submit' && product ) {
+			requestUpdateProduct(
+				siteId,
+				{
+					ID: product.ID,
+					currency: editedPrice.currency,
+					price: editedPrice.value,
+					title: editedProductName,
+					interval: editedSchedule,
+					buyer_can_change_amount: editedPayWhatYouWant,
+					multiple_per_user: editedMultiplePerUser,
+					welcome_email_content: editedCustomConfirmationMessage,
+					subscribe_as_site_subscriber: editedPostsEmail,
+				},
+				translate( 'Updated "%s" product.', { args: editedProductName } )
+			);
+		}
+		closeDialog();
+	};
 
 	const renderGeneralTab = () => {
 		return (
@@ -347,4 +393,9 @@ const RecurringPaymentsPlanAddEditModal = ( { isVisible, onClose, product } ) =>
 	);
 };
 
-export default RecurringPaymentsPlanAddEditModal;
+export default connect(
+	( state ) => ( {
+		siteId: getSelectedSiteId( state ),
+	} ),
+	{ requestAddProduct, requestUpdateProduct }
+)( RecurringPaymentsPlanAddEditModal );
