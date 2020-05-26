@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-import debugFactory from 'debug';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -11,15 +10,12 @@ import Button from '../../components/button';
 import {
 	useTransactionStatus,
 	usePaymentProcessor,
-	useMessages,
 	useLineItems,
 	useEvents,
 	renderDisplayValueMarkdown,
 } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
-
-const debug = debugFactory( 'composite-checkout:full-credits-payment-method' );
 
 export function createFullCreditsMethod() {
 	return {
@@ -43,40 +39,11 @@ function FullCreditsLabel() {
 }
 
 function FullCreditsSubmitButton( { disabled } ) {
-	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
-	const {
-		transactionStatus,
-		transactionError,
-		setTransactionComplete,
-		setTransactionError,
-	} = useTransactionStatus();
-	const { showErrorMessage } = useMessages();
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { setTransactionComplete, setTransactionError } = useTransactionStatus();
+	const { formStatus, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'full-credits' );
-
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: transactionError || '' } );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'full credits transaction is complete' );
-			setFormComplete();
-		}
-	}, [
-		onEvent,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
 
 	const onClick = () => {
 		setFormSubmitting();

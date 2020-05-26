@@ -119,7 +119,6 @@ function ExistingCardPayButton( {
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const {
 		transactionStatus,
-		transactionError,
 		transactionLastResponse,
 		setTransactionComplete,
 		resetTransaction,
@@ -128,37 +127,8 @@ function ExistingCardPayButton( {
 		setTransactionError,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'existing-card' );
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: transactionError || '' } );
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'existing card transaction is complete' );
-			setFormComplete();
-		}
-		if ( transactionStatus === 'redirect' ) {
-			debug( 'redirecting' );
-			showInfoMessage( localize( 'Redirecting...' ) );
-			window.location = transactionLastResponse.redirect_url;
-		}
-	}, [
-		onEvent,
-		transactionLastResponse,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		showInfoMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
 
 	useEffect( () => {
 		let isSubscribed = true;

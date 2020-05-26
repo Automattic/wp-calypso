@@ -11,7 +11,6 @@ import {
 	useTransactionStatus,
 	usePaymentProcessor,
 	useLineItems,
-	useMessages,
 	useEvents,
 } from '../../public-api';
 import { useLocalize } from '../../lib/localize';
@@ -50,15 +49,8 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 	const localize = useLocalize();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
-	const { showErrorMessage } = useMessages();
-	const {
-		transactionStatus,
-		transactionError,
-		resetTransaction,
-		setTransactionError,
-		setTransactionComplete,
-	} = useTransactionStatus();
+	const { setFormSubmitting } = useFormStatus();
+	const { setTransactionError, setTransactionComplete } = useTransactionStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
@@ -99,31 +91,6 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 		stripe,
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
-
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: transactionError || '' } );
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-	}, [
-		onEvent,
-		resetTransaction,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
 
 	if ( ! isLoading && ! canMakePayment ) {
 		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );

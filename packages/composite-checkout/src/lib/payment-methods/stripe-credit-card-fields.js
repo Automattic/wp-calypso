@@ -378,11 +378,10 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
+	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const {
 		transactionStatus,
 		transactionLastResponse,
-		transactionError,
 		resetTransaction,
 		setTransactionComplete,
 		setTransactionAuthorizing,
@@ -391,39 +390,6 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: transactionError || '' } );
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-		if ( transactionStatus === 'redirecting' ) {
-			debug( 'redirecting' );
-			showInfoMessage( localize( 'Redirecting...' ) );
-			// TODO: make this redirect able to be mocked
-			window.location = transactionLastResponse.redirect_url;
-		}
-	}, [
-		onEvent,
-		resetTransaction,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		showInfoMessage,
-		transactionStatus,
-		transactionError,
-		transactionLastResponse,
-		localize,
-	] );
 
 	useEffect( () => {
 		let isSubscribed = true;
