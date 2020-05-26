@@ -7,7 +7,7 @@
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
 	"login_url": "/connect",
-	"logout_url": "/",
+	"logout_url": "https://jetpack.com",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 69040,
 	"features": {
