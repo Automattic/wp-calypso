@@ -129,7 +129,7 @@ export function createStripePaymentMethodStore() {
 
 export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 	return {
-		id: 'stripe-card',
+		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
 			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />

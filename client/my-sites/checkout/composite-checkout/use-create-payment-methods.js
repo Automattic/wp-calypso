@@ -59,9 +59,6 @@ function useCreateStripe( {
 				: null,
 		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
 	);
-	if ( stripeMethod ) {
-		stripeMethod.id = 'card';
-	}
 	return stripeMethod;
 }
 
