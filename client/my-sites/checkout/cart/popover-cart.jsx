@@ -52,7 +52,7 @@ class PopoverCart extends React.Component {
 	}
 
 	itemCount() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if ( ! this.props.cart.hasLoadedFromServer || this.props.cart.hasPendingServerUpdates ) {
 			return;
 		}
 
@@ -147,7 +147,7 @@ class PopoverCart extends React.Component {
 	}
 
 	renderCartBody() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if ( ! this.props.cart.hasLoadedFromServer || this.props.cart.hasPendingServerUpdates ) {
 			return <CartBodyLoadingPlaceholder />;
 		}
 
