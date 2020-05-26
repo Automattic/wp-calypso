@@ -290,7 +290,7 @@ describe( 'utils', () => {
 
 			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
 			expect(
-				localizeUrl( localizeUrl( 'https://wordpress.com/support/all-about-domains/' ) )
+				localizeUrl( localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) )
 			).toEqual( 'https://wordpress.com/de/support/all-about-domains/' );
 			getLocaleSlug();
 			getLocaleSlug(); // make sure to consume it.
@@ -382,70 +382,70 @@ describe( 'utils', () => {
 
 		test( 'support url', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/de/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/br/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
 			);
 
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/de/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/br/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/support/path/'
 			);
 
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/de/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/br/support/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
 			);
 
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/de/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/br/support/path/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
+			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
 				'https://wordpress.com/support/path/'
 			);
 		} );
