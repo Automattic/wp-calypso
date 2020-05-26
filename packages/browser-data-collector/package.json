@@ -23,7 +23,6 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"web-vitals": "^0.2.2",
 		"wpcom-proxy-request": "^6.0.0"
 	}
 }
