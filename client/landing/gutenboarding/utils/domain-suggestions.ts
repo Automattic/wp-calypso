@@ -1,25 +1,28 @@
+/**
+ * External dependencies
+ */
+import { getSuggestionsVendor } from '../../../lib/domains/suggestions';
+
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 export function getFreeDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
 	return allSuggestions?.filter( ( suggestion ) => suggestion.is_free );
 }
 
-// FIX ME: this function is duplicated within the domain-picker package
 export function getPaidDomainSuggestions( allSuggestions: DomainSuggestion[] | undefined ) {
 	return allSuggestions?.filter( ( suggestion ) => ! suggestion.is_free );
 }
 
 // Recommend either an exact match or the highest relevance score
-// FIX ME: this function is duplicated within the domain-picker package
 export function getRecommendedDomainSuggestion( allSuggestions: DomainSuggestion[] | undefined ) {
 	if ( ! ( Array.isArray( allSuggestions ) && allSuggestions.length > 0 ) ) {
 		return;
 	}
 	const recommendedSuggestion = allSuggestions?.reduce( ( result, suggestion ) => {
-		if ( result.match_reasons && result.match_reasons.indexOf( 'exact-match' ) > -1 ) {
+		if ( result.match_reasons?.includes( 'exact-match' ) ) {
 			return result;
 		}
-		if ( suggestion.match_reasons && suggestion.match_reasons.indexOf( 'exact-match' ) > -1 ) {
+		if ( suggestion.match_reasons?.includes( 'exact-match' ) ) {
 			return suggestion;
 		}
 		if ( suggestion.relevance > result.relevance ) {
@@ -29,4 +32,13 @@ export function getRecommendedDomainSuggestion( allSuggestions: DomainSuggestion
 	} );
 
 	return recommendedSuggestion;
+}
+
+/**
+ * Returns an ID for the domain suggestions vendor. Passing `true` to getSuggestionsVendor returns the signup variant.
+ *
+ * @returns {string} an ID for the domain suggestions vendor
+ */
+export function getSignupDomainsSuggestionsVendor() {
+	return getSuggestionsVendor( true );
 }

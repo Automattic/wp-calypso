@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
+import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
 
 /**
  * Style dependencies

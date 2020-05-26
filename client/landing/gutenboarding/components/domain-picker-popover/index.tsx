@@ -8,7 +8,7 @@ import { useViewportMatch } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
+import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
 
 /**
  * Style dependencies

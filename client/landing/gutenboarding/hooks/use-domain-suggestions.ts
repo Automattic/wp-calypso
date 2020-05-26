@@ -13,9 +13,9 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { PAID_DOMAINS_TO_SHOW, selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { getSignupDomainsSuggestionsVendor } from '../utils/domain-suggestions';
 
-const DOMAIN_SUGGESTION_VENDOR = getSuggestionsVendor( true );
+const DOMAIN_SUGGESTION_VENDOR = getSignupDomainsSuggestionsVendor();
 
 export function useDomainSuggestions( {
 	searchOverride = '',
