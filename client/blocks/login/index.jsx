@@ -287,7 +287,7 @@ class Login extends Component {
 				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
 					<div className="login__jetpack-cloud-wrapper">
-						<JetpackPlusWpComLogo size={ 60 } />
+						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
 					</div>
 				);
 			}
