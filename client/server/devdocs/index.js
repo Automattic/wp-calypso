@@ -16,7 +16,7 @@ import 'prismjs/components/prism-scss';
  */
 import config from 'config';
 import searchIndex from 'server/devdocs/search-index';
-import selectors from './selectors';
+import { primeSelectorsCache, selectorsRouter } from './selectors';
 
 const docsIndex = lunr.Index.load( searchIndex.index );
 
@@ -210,11 +210,11 @@ module.exports = function () {
 	// In environments where enabled, prime the selectors search cache whenever
 	// a request is made for DevDocs
 	app.use( '/devdocs', function ( request, response, next ) {
-		selectors.prime();
+		primeSelectorsCache();
 		next();
 	} );
 
-	app.use( '/devdocs/service/selectors', selectors.router );
+	app.use( '/devdocs/service/selectors', selectorsRouter );
 
 	return app;
-};
+}

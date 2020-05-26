@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-
-const lodash = require( 'lodash' );
-const camelCase = lodash.camelCase;
-const forEach = lodash.forEach;
-const fs = require( 'fs' );
-const path = require( 'path' );
-const express = require( 'express' );
-const Fuse = require( 'fuse.js' );
-const doctrine = require( 'doctrine' );
+import { camelCase, forEach, once } from 'lodash';
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import Fuse from 'fuse.js';
+import doctrine from 'doctrine';
 
 /**
  * Constants
@@ -17,13 +14,6 @@ const doctrine = require( 'doctrine' );
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = path.resolve( __dirname, '../../../../client/state/selectors' );
-
-/**
- * Module variables
- */
-
-const router = express.Router();
-let prepareFuse;
 
 function parseSelectorFile( file ) {
 	return new Promise( ( resolve, reject ) => {
@@ -49,12 +39,8 @@ function parseSelectorFile( file ) {
 	} );
 }
 
-function prime() {
-	if ( prepareFuse ) {
-		return;
-	}
-
-	prepareFuse = new Promise( ( resolve ) => {
+export const primeSelectorsCache = once( () => {
+	return new Promise( ( resolve ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
@@ -85,14 +71,13 @@ function prime() {
 				);
 			} );
 		} );
-	} ).then( ( fuse ) => {
-		prepareFuse = Promise.resolve( fuse );
-		return fuse;
 	} );
-}
+} );
 
-router.get( '/', ( request, response ) => {
-	prepareFuse
+export const selectorsRouter = express.Router();
+
+selectorsRouter.get( '/', ( request, response ) => {
+	primeSelectorsCache()
 		.then( ( fuse ) => {
 			let results;
 			if ( request.query.search ) {
@@ -107,6 +92,3 @@ router.get( '/', ( request, response ) => {
 			response.status( 500 ).json( error );
 		} );
 } );
-
-module.exports.prime = prime;
-module.exports.router = router;
