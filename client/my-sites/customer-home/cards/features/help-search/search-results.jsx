@@ -25,7 +25,7 @@ import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
-class SupportSearchResults extends Component {
+class HelpSearchResults extends Component {
 	static propTypes = {
 		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
@@ -49,9 +49,9 @@ class SupportSearchResults extends Component {
 		return (
 			<>
 				{ ! isEmpty( this.props.searchQuery ) && ! this.props.hasAPIResults && (
-					<p className="support__empty-results">{ this.props.translate( 'No results.' ) }</p>
+					<p className="help-search__empty-results">{ this.props.translate( 'No results.' ) }</p>
 				) }
-				<ul className="support__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+				<ul className="help-search__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 			</>
 		);
 	}
@@ -67,7 +67,7 @@ class SupportSearchResults extends Component {
 		return (
 			<li
 				key={ link.link ? link.link : link.key }
-				className={ classNames( 'support__results-item', classes ) }
+				className={ classNames( 'help-search__results-item', classes ) }
 			>
 				<a
 					href={ localizeUrl( link.link ) }
@@ -106,4 +106,4 @@ const mapDispatchToProps = {
 	selectResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SupportSearchResults ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpSearchResults ) );

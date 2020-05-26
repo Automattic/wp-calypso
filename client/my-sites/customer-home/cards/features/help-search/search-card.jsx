@@ -30,7 +30,7 @@ import {
  */
 const debug = debugFactory( 'calypso:customer-home-help' );
 
-class SupportSearchCard extends Component {
+class HelpSearchCard extends Component {
 	static propTypes = {
 		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
@@ -110,4 +110,4 @@ const mapDispatchToProps = {
 	selectPreviousResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SupportSearchCard ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpSearchCard ) );
