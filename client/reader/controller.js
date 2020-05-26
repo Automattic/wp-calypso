@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
 import { sectionify } from 'lib/route';
@@ -50,7 +50,7 @@ const exported = {
 	},
 
 	prettyRedirects( context, next ) {
-		// Do we have a 'pretty' site or feed URL?
+		// Do we have a 'pretty' site or feed URL? We only use this for /discover.
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = getPrettySiteUrl( context.params.blog_id );
