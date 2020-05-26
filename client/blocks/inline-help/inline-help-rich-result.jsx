@@ -69,6 +69,7 @@ class InlineHelpRichResult extends Component {
 				search_query: searchQuery,
 				tour,
 				result_url: link,
+				location: 'inline-help-popover',
 			},
 			isUndefined
 		);
