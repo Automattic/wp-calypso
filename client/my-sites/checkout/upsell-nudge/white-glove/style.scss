@@ -1,6 +1,7 @@
 main.white-glove.main {
 	margin: auto;
 	border: 5px solid #117ac9;
+	font-family: helvetica, arial, sans-serif;
 }
 
 .white-glove {
@@ -80,6 +81,7 @@ main.white-glove.main {
 	&__column-content {
 		padding-right: 90px;
 		flex: 1 1 auto;
+		font-size: 16px;
 
 		@include breakpoint-deprecated( '<480px' ) {
 			padding-right: 0;
@@ -168,26 +170,36 @@ main.white-glove.main {
 		}
 	}
 
+	&__footer {
+		display: flex;
+		align-items: center;
+	}
+
 	&__footer &__decline-offer-button {
-		color: var( --color-primary );
+		color: #117ac9;
+		font-family: helvetica, arial, sans-serif;
+		font-size: 16px;
 
 		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 		}
-
-		@include breakpoint-deprecated( '>480px' ) {
-			float: left;
-		}
 	}
 
 	&__footer &__accept-offer-button {
+		background: #117ac9;
+		color: var( --color-text-inverted );
+		border-radius: 5px;
+		padding: 15px 50px;
+		font-family: helvetica, arial, sans-serif;
+		font-size: 16px;
+
 		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
 
 		@include breakpoint-deprecated( '>480px' ) {
-			float: right;
+			margin-right: 45px;
 		}
 	}
 
@@ -195,7 +207,7 @@ main.white-glove.main {
 		display: flex;
 		background: #ecf7ff;
 		border-radius: 4px;
-		padding: 20px;
+		padding: 30px 0 30px 25px;
 
 		@include breakpoint-deprecated( '<480px' ) {
 			flex-direction: column;
@@ -204,7 +216,7 @@ main.white-glove.main {
 
 	.checklist {
 		display: flex;
-		padding-right: 20px;
+		padding-right: 22px;
 		flex: 1 1 0;
 
 		@include breakpoint-deprecated( '<480px' ) {
@@ -213,8 +225,8 @@ main.white-glove.main {
 		}
 
 		.checklist__icon {
-			width: 18px;
-			fill: var( --studio-jetpack-green-30 );
+			width: 12px;
+			fill: #117ac9;
 			margin-right: 5px;
 		}
 
@@ -222,6 +234,7 @@ main.white-glove.main {
 			flex: 1;
 			font-weight: bold;
 			font-size: 14px;
+			line-height: 125%;
 		}
 	}
 

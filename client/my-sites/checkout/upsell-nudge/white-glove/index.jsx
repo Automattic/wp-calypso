@@ -93,18 +93,22 @@ export class WhiteGlove extends PureComponent {
 	}
 
 	footer() {
-		const { translate, handleClickAccept, handleClickDecline } = this.props;
+		const { handleClickAccept, handleClickDecline } = this.props;
 		return (
 			<footer className="white-glove__footer">
-				<Button className="white-glove__decline-offer-button" onClick={ handleClickDecline }>
-					{ translate( "No thanks, I'll stick with the free site" ) }
-				</Button>
 				<Button
-					primary
 					className="white-glove__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( "Yes, I'd love to try it out!" ) }
+					Buy now
+				</Button>
+
+				<Button
+					className="white-glove__decline-offer-button"
+					onClick={ handleClickDecline }
+					borderless
+				>
+					No thanks, continue &rsaquo;
 				</Button>
 			</footer>
 		);
