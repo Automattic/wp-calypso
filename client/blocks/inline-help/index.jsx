@@ -24,7 +24,6 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import AsyncLoad from 'components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
 import { isInlineHelpPopoverVisible, isInlineHelpVisible } from 'state/inline-help/selectors';
-import { getLastRouteAction } from 'state/ui/action-log/selectors';
 
 /**
  * Style dependencies
@@ -188,7 +187,6 @@ const mapStateToProps = ( state ) => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
-		lastRoute: getLastRouteAction( state ),
 		isInlineHelpVisible: isInlineHelpVisible( state ),
 	};
 };
