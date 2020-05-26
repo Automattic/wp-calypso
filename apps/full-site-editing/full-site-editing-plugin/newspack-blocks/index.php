@@ -79,6 +79,15 @@ function newspack_blocks_block_args( $args, $name ) {
 
 	$args['editor_script'] = $block_prefix . 'editor';
 	$args['editor_style']  = $block_prefix . 'editor';
+	
+	// This fires from newspack-blocks at render time.
+	add_action(
+		'newspack_blocks_render_post_carousel',
+		function() use ( $block_prefix ) {
+			wp_enqueue_style( $block_prefix . 'view' );
+			wp_enqueue_script( $block_prefix . 'view' );
+		}
+	);
 
 	wp_set_script_translations( $block_prefix . 'editor', 'full-site-editing' );
 
