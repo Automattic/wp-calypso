@@ -13,7 +13,6 @@ import { flowRight, partialRight, pick } from 'lodash';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
@@ -49,7 +48,6 @@ const SiteSettingsTraffic = ( {
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
 		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
-		<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
 		{ ! isAdmin && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
