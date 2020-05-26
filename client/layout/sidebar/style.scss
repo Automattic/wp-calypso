@@ -165,6 +165,14 @@
 		}
 	}
 
+	.selected & .count {
+		line-height: 0;
+		margin-left: 8px;
+		padding: 8px 6px;
+		position: absolute;
+			top: 9px;
+	}
+
 	// Some links are marked as "external" and show
 	// an icon to visually indicate they will open
 	// a new window/tab.
