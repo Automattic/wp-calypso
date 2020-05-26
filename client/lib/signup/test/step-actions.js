@@ -12,6 +12,7 @@ import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { getUserStub } from 'lib/user';
+import SignupCart from 'lib/signup/cart';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
 
@@ -25,6 +26,8 @@ jest.mock( 'lib/user', () => {
 
 	return user;
 } );
+
+jest.mock( 'lib/signup/cart', () => ( { createCart: jest.fn(), addToCart: jest.fn() } ) );
 
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
@@ -48,6 +51,8 @@ describe( 'createSiteWithCart()', () => {
 	} );
 
 	beforeEach( () => {
+		SignupCart.createCart.mockReset();
+		SignupCart.addToCart.mockReset();
 		isDomainStepSkippable.mockReset();
 		getUserStub.mockReset();
 	} );
@@ -233,6 +238,47 @@ describe( 'createSiteWithCart()', () => {
 			fakeStore
 		);
 	} );
+
+	describe( 'when isSiteless option is enabled', () => {
+		test( 'adds the domain registration to the cart without creating a site', () => {
+			SignupCart.addToCart.mockImplementation( ( cartKey, newCartItems, callback ) => callback() );
+			return new Promise( ( done ) => {
+				const fakeStore = {
+					getState: () => ( {
+						productsList: {
+							items: [],
+						},
+					} ),
+				};
+
+				createSiteWithCart(
+					( error, providedDependencies ) => {
+						expect( error ).toBeFalsy();
+						expect( providedDependencies ).toHaveProperty( 'newSiteParams' );
+						expect( providedDependencies ).toHaveProperty( 'siteId', null );
+						expect( providedDependencies ).toHaveProperty( 'siteSlug', 'no-site' );
+						expect( SignupCart.addToCart ).toHaveBeenCalledWith(
+							'no-site',
+							[ expect.objectContaining( { meta: 'sitelessdomain.live' } ) ],
+							expect.any( Function )
+						);
+						done();
+					},
+					[],
+					{
+						siteUrl: undefined,
+						domainItem: {
+							product_slug: 'dotlive_domain',
+							meta: 'sitelessdomain.live',
+							is_domain_registration: true,
+						},
+					},
+					fakeStore,
+					{ isSiteless: true }
+				);
+			} );
+		} );
+	} );
 } );
 
 describe( 'isDomainFulfilled', () => {
@@ -254,7 +300,7 @@ describe( 'isDomainFulfilled', () => {
 		isDomainFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainItem: undefined },
+			{ stepName, domainItem: undefined, domainStepSkippedBecausePaidPlanWasSelected: true },
 			{ domainItem: undefined }
 		);
 	} );

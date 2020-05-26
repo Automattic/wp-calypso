@@ -253,6 +253,8 @@ export function createSiteWithCart(
 		! domainStepSkippedBecausePaidPlanWasSelected &&
 		newCartItems.length === 0;
 
+	// When the user is on the onboardin-plan-first flow, we need to force the site creation when they pick
+	// a free plan and no domain, even if the isSiteless flag is turned on
 	if ( isSiteless && ! isPlanFirstFlowWithFreeSiteAndNoCartItems ) {
 		const cartKey = 'no-site';
 		const siteSlug = cartKey;
