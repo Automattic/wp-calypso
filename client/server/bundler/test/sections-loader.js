@@ -13,7 +13,7 @@ describe( '#addModuleImportToSections', () => {
 			},
 		];
 
-		const expected = `module.exports = [
+		const expected = `export default [
 	{
 		"name": "moduleName",
 		"module": "module-to-require",
@@ -32,7 +32,7 @@ describe( '#addModuleImportToSections', () => {
 			},
 		];
 
-		const expected = `module.exports = [
+		const expected = `export default [
 	{
 		"name": "moduleName",
 		"module": "module-to-require",
@@ -61,7 +61,7 @@ describe( '#addModuleImportToSections', () => {
 			},
 		];
 
-		const expected = `module.exports = [
+		const expected = `export default [
 	{
 		"name": "moduleName",
 		"module": "module-to-require"

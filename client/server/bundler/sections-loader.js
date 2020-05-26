@@ -37,7 +37,7 @@ function addModuleImportToSections( sections, { useRequire, onlyIsomorphic } = {
 		'load": $1'
 	);
 
-	const sectionsFile = `module.exports = ${ sectionStringsWithImportFns }`;
+	const sectionsFile = `export default ${ sectionStringsWithImportFns }`;
 	return sectionsFile;
 }
 
