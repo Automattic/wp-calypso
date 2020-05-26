@@ -10,26 +10,17 @@ import {
 	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
-	registerStore,
-	defaultRegistry,
 } from '@automattic/composite-checkout';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import {
-	getDomainDetails,
-	wpcomTransaction,
 	WordPressCreditsLabel,
 	WordPressCreditsSummary,
-	submitFreePurchaseTransaction,
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
 } from './payment-method-helpers';
-
-const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
-const { select, dispatch } = defaultRegistry;
 
 function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
@@ -99,28 +90,7 @@ function useCreateFree( { onlyLoadPaymentMethods } ) {
 		if ( ! shouldLoadFreePaymentMethod ) {
 			return null;
 		}
-		return createFreePaymentMethod( {
-			registerStore,
-			submitTransaction: ( submitData ) => {
-				const pending = submitFreePurchaseTransaction(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-						// this data is intentionally empty so we do not charge taxes
-						country: null,
-						postalCode: null,
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( ( result ) => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-		} );
+		return createFreePaymentMethod();
 	}, [ shouldLoadFreePaymentMethod ] );
 	if ( freePaymentMethod ) {
 		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
