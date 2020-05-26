@@ -93,6 +93,54 @@ function premium_content_block_init() {
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_logged_out_view_render',
 		)
 	);
+
+	wp_register_script(
+		'premium-content-frontend-button',
+		"$url_path/blocks/button/front.js",
+		array(),
+		$script_asset['version']
+	);
+
+	register_block_type( 'premium-content/button',
+		array(
+			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_render_button_block',
+			'editor_style' => 'premium-content-container-block-editor',
+			'attributes' => array(
+				'buttonText' => array(
+					'type' => 'string',
+					'default' => 'Log In'
+				),
+				'align' => array(
+					'type' => 'string',
+					'default' => 'center'
+				),
+				'buttonType' => array(
+					'type' => 'string',
+					'default' => 'login'
+				),
+				'buttonClasses' => array(
+					'type' => 'string',
+					'default' => ''
+				),
+				'backgroundButtonColor' => array(
+					'type' => 'string',
+					'default' => ''
+				),
+				'textButtonColor' => array(
+					'type' => 'string',
+					'default' => ''
+				),
+				'customBackgroundButtonColor' => array(
+					'type' => 'string',
+					'default' => ''
+				),
+				'customTextButtonColor' => array(
+					'type' => 'string',
+					'default' => ''
+				),
+			),
+		)
+	);
 }
 
 /**
@@ -289,3 +337,59 @@ function premium_content_default_service( $service ) {
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );
+
+
+function premium_content_render_button_block( $attributes, $content ){
+	wp_enqueue_style( 'premium-content-container-block' );
+	wp_enqueue_script( 'premium-content-frontend' );
+
+	$button_styles = array();
+	if ( ! empty( $attributes['customBackgroundButtonColor'] ) ) {
+		/**
+		 * @psalm-suppress PossiblyNullArgument
+		 */
+		array_push(
+			$button_styles,
+			sprintf(
+				'background-color: %s',
+				sanitize_hex_color( $attributes['customBackgroundButtonColor'] ) ?? 'transparent'
+			)
+		);
+	}
+	if ( ! empty( $attributes['customTextButtonColor'] ) ) {
+		/**
+		 * @psalm-suppress PossiblyNullArgument
+		 */
+		array_push(
+			$button_styles,
+			sprintf(
+				'color: %s',
+				sanitize_hex_color( $attributes['customTextButtonColor'] ) ?? 'inherit'
+			)
+		);
+	}
+	$button_styles = implode( ';', $button_styles );
+
+	if ( $attributes['buttonType'] === 'login' ) {
+		$button = sprintf(
+			'<div class="wp-block-button"><a role="button" href="%1$s" class="%2$s" style="%3$s">%4$s</a></div>',
+			premium_content_subscription_service()->access_url(),
+			empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+			esc_attr( $button_styles ),
+			empty( $attributes['loginButtonText'] ) ? __( 'Log In', 'premium-content' ) : $attributes['loginButtonText']
+		);
+	} elseif ( $attributes['buttonType'] === 'subscribe' ) {
+		$button = \Jetpack_Memberships::get_instance()->render_button(
+			array(
+				'planId' => empty( $attributes['selectedPlanId'] ) ? 46 : $attributes['selectedPlanId'],
+				'submitButtonClasses' => empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+				'customTextButtonColor' => empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
+				'customBackgroundButtonColor' => empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
+				'submitButtonText' => empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe' ) : esc_attr( $attributes['buttonText'] ),
+			)
+		);
+	}
+
+	return $content . "<div class='wp-block-premium-content-logged-out-view__buttons'>{$button}</div>";
+}
+
