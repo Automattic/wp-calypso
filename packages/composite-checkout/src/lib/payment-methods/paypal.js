@@ -15,6 +15,7 @@ import {
 	useEvents,
 	usePaymentProcessor,
 	useTransactionStatus,
+	useLineItems,
 } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
@@ -51,10 +52,13 @@ export function PaypalSubmitButton( { disabled } ) {
 	const onEvent = useEvents();
 	const { setTransactionRedirecting, setTransactionError } = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'paypal' );
+	const [ items ] = useLineItems();
 
 	const onClick = () => {
 		onEvent( { type: 'PAYPAL_TRANSACTION_BEGIN' } );
-		submitTransaction()
+		submitTransaction( {
+			items,
+		} )
 			.then( ( response ) => {
 				setTransactionRedirecting( response );
 			} )
