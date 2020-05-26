@@ -23,6 +23,7 @@ import Popover from 'components/popover';
 import CartEmpty from './cart-empty';
 import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { reloadCart } from 'lib/cart/actions';
 
 /**
  * Style dependencies
@@ -41,6 +42,10 @@ class PopoverCart extends React.Component {
 
 	toggleButtonRef = React.createRef();
 	hasUnmounted = false;
+
+	componentDidMount() {
+		reloadCart();
+	}
 
 	componentWillUnmount() {
 		this.hasUnmounted = true;
