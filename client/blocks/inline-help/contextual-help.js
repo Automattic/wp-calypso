@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { compact, first, get } from 'lodash';
-import { translate } from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -13,7 +13,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 /**
  * Module variables
  */
-const fallbackLinks = [
+const getFallbackLinks = () => [
 	{
 		link: localizeUrl(
 			'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
@@ -55,8 +55,9 @@ const fallbackLinks = [
 		description: translate( 'Limit your site’s visibility or make it completely private.' ),
 	},
 ];
+let fallbackLinks = getFallbackLinks();
 
-const contextLinksForSection = {
+const getContextLinksForSection = () => ( {
 	stats: [
 		{
 			link: localizeUrl( 'https://wordpress.com/support/stats/' ),
@@ -1008,7 +1009,8 @@ const contextLinksForSection = {
 			),
 		},
 	],
-};
+} );
+let contextLinksForSection = getContextLinksForSection();
 
 /*
 source: https://www.youtube.com/playlist?list=PLQFhxUeNFfdKx9gO0a2mp9h8pKjb2y9la
@@ -1021,7 +1023,7 @@ document.querySelectorAll('.yt-simple-endpoint.ytd-playlist-video-renderer').for
 console.log( data );
 ```
 */
-const videosForSection = {
+const getVideosForSection = () => ( {
 	sharing: [
 		{
 			type: RESULT_VIDEO,
@@ -1395,9 +1397,10 @@ const videosForSection = {
 			description: translate( 'Find out how to change your WordPress.com theme.' ),
 		},
 	],
-};
+} );
+let videosForSection = getVideosForSection();
 
-const toursForSection = {
+const getToursForSection = () => ( {
 	'post-editor': [
 		{
 			type: RESULT_TOUR,
@@ -1420,7 +1423,16 @@ const toursForSection = {
 			),
 		},
 	],
-};
+} );
+let toursForSection = getToursForSection();
+
+// Update links when i18n changes.
+i18n.on( 'change', () => {
+	fallbackLinks = getFallbackLinks();
+	contextLinksForSection = getContextLinksForSection();
+	videosForSection = getVideosForSection();
+	toursForSection = getToursForSection();
+} );
 
 export function getContextResults( section ) {
 	// Posts and Pages have a common help section
