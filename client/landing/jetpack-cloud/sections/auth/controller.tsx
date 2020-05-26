@@ -11,7 +11,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import Connect from './connect';
 import GetToken from './get-token';
 import userModule from 'lib/user';
 import wpcom from 'lib/wp';
@@ -40,7 +39,7 @@ export const connect: PageJS.Callback = ( context, next ) => {
 
 		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
 		debug( `authUrl: ${ authUrl }` );
-		context.primary = <Connect authUrl={ authUrl } />;
+		window.location.replace( authUrl );
 	} else {
 		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
 	}
