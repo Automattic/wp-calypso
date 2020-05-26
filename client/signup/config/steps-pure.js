@@ -176,7 +176,7 @@ export function generateSteps( {
 		'plans-siteless': {
 			stepName: 'plans-siteless',
 			apiRequestFunction: addPlanToCartWithoutSite,
-			dependencies: [ 'siteSlug', 'newSiteParams' ],
+			dependencies: [ 'siteSlug', 'siteId', 'domainItem', 'newSiteParams' ],
 			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
 			optionalDependencies: [ 'siteId', 'siteSlug' ],
 			fulfilledStepCallback: isPlanFulfilled,

@@ -300,7 +300,7 @@ describe( 'isDomainFulfilled', () => {
 		isDomainFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainItem: undefined, domainStepSkippedBecausePaidPlanWasSelected: true },
+			{ stepName, domainItem: undefined },
 			{ domainItem: undefined }
 		);
 	} );

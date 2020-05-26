@@ -153,7 +153,6 @@ export function createSiteWithCart(
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
-		domainStepSkippedBecausePaidPlanWasSelected,
 	} = stepData;
 
 	const state = reduxStore.getState();
@@ -247,18 +246,11 @@ export function createSiteWithCart(
 	const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
 		( item ) => item
 	);
+	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 
-	const isPlanFirstFlowWithFreeSiteAndNoCartItems =
-		flowToCheck === 'onboarding-plan-first' &&
-		! domainStepSkippedBecausePaidPlanWasSelected &&
-		newCartItems.length === 0;
-
-	// When the user is on the onboardin-plan-first flow, we need to force the site creation when they pick
-	// a free plan and no domain, even if the isSiteless flag is turned on
-	if ( isSiteless && ! isPlanFirstFlowWithFreeSiteAndNoCartItems ) {
+	if ( isSiteless ) {
 		const cartKey = 'no-site';
 		const siteSlug = cartKey;
-		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 		const providedDependencies = {
 			siteId: null,
 			siteSlug: cartKey,
@@ -292,13 +284,11 @@ export function createSiteWithCart(
 
 		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
-		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 			domainItem,
 			themeItem,
-			...( isSiteless && { newSiteParams } ),
 		};
 
 		processItemCart(
@@ -340,13 +330,11 @@ export function addPlanToCart(
 	reduxStore,
 	{ isSiteless = false } = {}
 ) {
-	const { siteSlug, newSiteParams } = dependencies;
-	const { cartItem, flowName, lastKnownFlow } = stepProvidedItems;
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
+	const { siteSlug, siteId, domainItem, newSiteParams } = dependencies;
+	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
-		if ( isSiteless && newSiteParams && flowToCheck !== 'onboarding-plan-first' ) {
+		if ( isSiteless && siteId === null && isEmpty( domainItem ) && ! isEmpty( newSiteParams ) ) {
 			wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
 				if ( error ) {
 					callback( error );
@@ -356,9 +344,9 @@ export function addPlanToCart(
 
 				const parsedBlogURL = parseURL( response.blog_details.url );
 				const newSiteSlug = parsedBlogURL.hostname;
-				const siteId = response.blog_details.blogid;
+				const newSiteId = response.blog_details.blogid;
 				const providedDependencies = {
-					siteId,
+					siteId: newSiteId,
 					siteSlug: newSiteSlug,
 				};
 				callback( undefined, providedDependencies );
@@ -695,7 +683,7 @@ function excludeDomainStep(
 	const domainItem = undefined;
 
 	submitSignupStep(
-		{ stepName, domainItem, domainStepSkippedBecausePaidPlanWasSelected: true },
+		{ stepName, domainItem },
 		{
 			domainItem,
 			...( isSiteless && { siteId: null, siteSlug: 'no-site' } ),
