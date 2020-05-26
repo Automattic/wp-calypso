@@ -135,7 +135,7 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
-module.exports = function () {
+export default function devdocs() {
 	const app = express();
 
 	// this middleware enforces access control

@@ -476,7 +476,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			return;
 		}
 
-		const user = require( 'server/user-bootstrap' );
+		const user = require( 'server/user-bootstrap' ).default;
 
 		start = new Date().getTime();
 
@@ -710,7 +710,7 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-module.exports = function () {
+export default function pages() {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -944,7 +944,7 @@ module.exports = function () {
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
-		const user = require( 'server/user-bootstrap' );
+		const user = require( 'server/user-bootstrap' ).default;
 
 		debug( 'Issuing API call to fetch user object' );
 
@@ -985,4 +985,4 @@ module.exports = function () {
 	app.use( renderServerError() );
 
 	return app;
-};
+}

@@ -32,10 +32,9 @@ const debug = debugFactory( 'calypso:bootstrap' ),
  * Requests the current user for user bootstrap.
  *
  * @param {object} request An Express request.
- *
  * @returns {Promise<object>} A promise for a user object.
  */
-module.exports = async function ( request ) {
+export default async function getBootstrappedUser( request ) {
 	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];
 	const geoCountry = request.get( 'x-geoip-country-code' ) || '';
 	const supportSessionHeader = request.get( 'x-support-session' );
@@ -111,4 +110,4 @@ module.exports = async function ( request ) {
 
 		throw error;
 	}
-};
+}
