@@ -81,6 +81,7 @@ const FollowingStream = ( props ) => {
 					event="reader-vote-prompt"
 					href="https://www.usa.gov/election-office"
 					icon="star"
+					horizontal
 				/>
 			) }
 			<CompactCard className="following__search">
