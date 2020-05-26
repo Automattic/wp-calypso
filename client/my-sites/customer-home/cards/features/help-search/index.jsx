@@ -13,7 +13,6 @@ import { get } from 'lodash';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 
-import { composeAnalytics, recordTracksEvent, bumpStat } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -117,39 +116,10 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const trackDocsAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_support_docs_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'support_docs' )
-	);
-
-const trackContactAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_support_contact_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'support_contact' )
-	);
-
 const mapDispatchToProps = {
-	trackContactAction,
-	trackDocsAction,
 	hideInlineHelpUI: hideInlineHelp,
 	showInlineHelpUI: showInlineHelp,
 	openSupportArticleDialog,
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { isStaticHomePage } = stateProps;
-	return {
-		...ownProps,
-		...stateProps,
-		...dispatchProps,
-		trackContactAction: () => dispatchProps.trackContactAction( isStaticHomePage ),
-		trackDocsAction: () => dispatchProps.trackDocsAction( isStaticHomePage ),
-	};
-};
-
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( HelpSearch );
+export default connect( mapStateToProps, mapDispatchToProps )( HelpSearch );
