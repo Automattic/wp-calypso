@@ -249,28 +249,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 			}
 
-			// TODO: remove this when we migrate free purchases to processor function
-			case 'FREE_PURCHASE_TRANSACTION_ERROR': {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_payment_error', {
-						error_code: null,
-						reason: String( action.payload ),
-					} )
-				);
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-						error_code: null,
-						payment_method: 'WPCOM_Billing_WPCOM',
-						reason: String( action.payload ),
-					} )
-				);
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_free_purchase_transaction_error', {
-						error_message: String( action.payload ),
-					} )
-				);
-			}
-
 			case 'PAYPAL_TRANSACTION_BEGIN': {
 				reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 				reduxDispatch(
