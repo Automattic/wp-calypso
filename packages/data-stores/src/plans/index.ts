@@ -3,7 +3,7 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 /**
  * Internal dependencies

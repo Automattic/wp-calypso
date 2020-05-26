@@ -10,12 +10,13 @@ import { isEnabled } from 'config';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../stores/plans';
-import { PLAN_FREE, PLAN_ECOMMERCE } from '../stores/plans/constants';
+import { Plans } from '@automattic/data-stores';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan } from './use-selected-plan';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 const wpcom = wp.undocumented();
 
@@ -79,11 +80,11 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
+			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					meta: selectedPlan.getTitle(),
-					product_id: selectedPlan.getProductId(),
-					product_slug: selectedPlan.getStoreSlug(),
+					meta: selectedPlan.title,
+					product_id: selectedPlan.productId,
+					product_slug: selectedPlan.pathSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -107,10 +108,9 @@ export default function useOnSiteCreation() {
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
-					const redirectionUrl =
-						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
-							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+					const redirectionUrl = selectedPlan.isPublicSite
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
@@ -167,5 +167,6 @@ export default function useOnSiteCreation() {
 		resetPlan,
 		setIsRedirecting,
 		setSelectedSite,
+		flowCompleteTrackingParams,
 	] );
 }

@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { PLAN_ECOMMERCE } from '../plans/constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -92,7 +91,7 @@ export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
 	bearerToken?: string,
-	planSlug?: string
+	isPublicSite = false
 ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
@@ -101,7 +100,6 @@ export function* createSite(
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
-	const isPublicSite = planSlug === PLAN_ECOMMERCE;
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],

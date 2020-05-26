@@ -8,7 +8,7 @@ import { apiFetch } from '@wordpress/data-controls';
  */
 import { supportedPlanSlugs } from './reducer';
 import { setPrices } from './actions';
-import { APIPlan } from './types';
+import { APIPlan, PlanSlug } from './types';
 import { currenciesFormats } from './constants';
 
 /**
@@ -41,8 +41,8 @@ export function* getPrices() {
 	} );
 
 	// filter for supported plans
-	const WPCOMPlans: APIPlan[] = plans.filter( ( plan: APIPlan ) =>
-		supportedPlanSlugs.includes( plan.product_slug )
+	const WPCOMPlans: APIPlan[] = plans.filter(
+		( plan: APIPlan ) => -1 !== supportedPlanSlugs.indexOf( plan.product_slug as PlanSlug )
 	);
 
 	// create a [slug => price] map

@@ -3,8 +3,13 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 import type { PlanAction } from './actions';
+import type { PlanSlug } from './types';
 
-export const supportedPlanSlugs = [
+type PricesMap = {
+	[ slug in PlanSlug ]?: string;
+};
+
+export const supportedPlanSlugs: PlanSlug[] = [
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -13,9 +18,9 @@ export const supportedPlanSlugs = [
 ];
 
 const DEFAUlT_STATE: {
-	selectedPlanSlug: string | undefined;
-	supportedPlanSlugs: Array< string >;
-	prices: Record< string, string >;
+	supportedPlanSlugs: PlanSlug[];
+	selectedPlanSlug?: PlanSlug;
+	prices: PricesMap;
 } = {
 	supportedPlanSlugs,
 	selectedPlanSlug: undefined,
@@ -41,6 +46,6 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 	}
 };
 
-export type State = ReturnType< typeof reducer >;
+export type State = typeof DEFAUlT_STATE;
 
 export default reducer;

@@ -17,7 +17,9 @@ import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automat
 import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 import { useCurrentStep, Step } from '../../../path';
-import { STORE_KEY as PLANS } from '../../../stores/plans';
+import { Plans } from '@automattic/data-stores';
+
+const PLANS = Plans.STORE_KEY;
 
 /**
  * Style dependencies
@@ -48,7 +50,7 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 
 	const planLabel = isPlanUserSelectedOrPaid
 		? /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
-		  sprintf( __( '%s Plan' ), plan.getTitle() )
+		  sprintf( __( '%s Plan' ), plan?.title )
 		: __( 'View plans' );
 
 	return (

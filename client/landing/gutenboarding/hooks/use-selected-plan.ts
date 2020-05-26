@@ -2,13 +2,15 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as PLANS_STORE } from '../stores/plans';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { usePlanRouteParam } from '../path';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 export function useSelectedPlan() {
 	const selectedPlan = useSelect( ( select ) => select( PLANS_STORE ).getSelectedPlan() );

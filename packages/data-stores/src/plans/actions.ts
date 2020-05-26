@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import type { PlanSlug } from './types';
+
 export const setPrices = ( prices: Record< string, string > ) => {
 	return {
 		type: 'SET_PRICES' as const,
@@ -5,10 +10,10 @@ export const setPrices = ( prices: Record< string, string > ) => {
 	};
 };
 
-export const setPlan = ( slug: string | undefined ) => {
+export const setPlan = ( slug?: PlanSlug ) => {
 	return {
 		type: 'SET_PLAN' as const,
-		slug,
+		slug: slug,
 	};
 };
 

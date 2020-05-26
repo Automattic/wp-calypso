@@ -40,7 +40,8 @@ const Header: React.FunctionComponent = () => {
 
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const selectedPlanSlug = useSelectedPlan().getStoreSlug();
+
+	const selectedPlan = useSelectedPlan();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -126,8 +127,8 @@ const Header: React.FunctionComponent = () => {
 	);
 
 	const handleCreateSite = React.useCallback(
-		( username: string, bearerToken?: string, planSlug?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken, planSlug );
+		( username: string, bearerToken?: string, isPublicSite?: boolean ) => {
+			createSite( username, freeDomainSuggestion, bearerToken, isPublicSite );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);
@@ -138,9 +139,9 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
+			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlan?.isPublicSite );
 		}
-	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
+	}, [ newSite, newUser, handleCreateSite, selectedPlan ] );
 
 	const hasContent =
 		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
