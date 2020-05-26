@@ -39,6 +39,8 @@ const output = JSON.stringify( {
 fs.writeFileSync( "workflow_data.json", output, "utf8" );
 '
 
+echo -e "Sending data to MC...\n"
+
 # Send metadata and build zip file to the endpoint.
 response=`curl -s \
 	--write-out "HTTPSTATUS:%{http_code}" \
