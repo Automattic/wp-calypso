@@ -16,10 +16,10 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.3.0.tgz#6549e77f823514bdcf520cb2c48932c2c9db379f"
   integrity sha512-GRMV4PMtn2iE+30+RP33LyJSe4Qp8oILFNvk+iF8zd0LzUUaErZu86rk8YpEcLvFJzOU2BTXSewSdwyGc/sa1g==
 
-"@automattic/lasagna@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.5.1.tgz#103e6e189f2c7b467f2ee2158d8650e944a6b7a2"
-  integrity sha512-1AaHmyhc7kep+2tnuIYKv39i92nv9Qw98NB/SUcD5kcvr3evit5iI6jMFURm3bZujQKdefk4mCLeplDf38+0rg==
+"@automattic/lasagna@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.5.2.tgz#e25e3a63e98c2baf87edabbc8497fc7d2a382ef4"
+  integrity sha512-VtydUfdMHyo0Bfwm/2pxxZG6hRs3DO4/f8viHcBnrABVDanLYcIKD5nvsOz+asPUo/f9TrvVZrU8eM9Rjce96g==
   dependencies:
     jwt-decode "^2.2.0"
     phoenix "^1.5.1"
@@ -18814,9 +18814,9 @@ performance-now@^2.1.0:
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
 phoenix@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.1.tgz#a8bee36a02a9448c052ad3ba6f7e3ba061d46ce2"
-  integrity sha512-0cTQ5XfAqt8l3+KnnX0AW3hww0N37bOgTTeyt1cH80VJNeEMab8+0bK421XhVoaQ8R0Vsc0GS3W6CyI4eND0Ew==
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.3.tgz#994487b67adc8ca683f76c41dca3271e476184bd"
+  integrity sha512-wcyHTac54uxpyycKsdXfSpN+5YuYwaXQnkLahxseznDn+V5K3mIEJg+d6QhLBdrn5/0pWIPE7bBC6SBswnIvOg==
 
 phone@^2.4.2:
   version "2.4.2"
