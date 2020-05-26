@@ -38,6 +38,7 @@ $min_results_height: 175px;
 		align-items: center;
 		padding: 10px $card_padding_large;
 		color: var( --color-text );
+		line-height: 1;
 
 		&:hover,
 		&:focus {
