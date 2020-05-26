@@ -42,7 +42,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'lib/webauthn';
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
 
 /**
  * Style dependencies
@@ -284,10 +284,10 @@ class Login extends Component {
 			}
 
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Log in to Jetpack.com with your WordPress.com account.' );
+				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 				preHeader = (
 					<div className="login__jetpack-cloud-wrapper">
-						<JetpackLogo full={ false } size={ 60 } />
+						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
 					</div>
 				);
 			}

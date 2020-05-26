@@ -735,8 +735,8 @@
 		font-weight: 600;
 		font-size: 22px;
 		line-height: 32px;
-		margin-bottom: 24px;
 		margin-top: 16px;
+		margin-bottom: 8px;
 		text-align: center;
 	}
 
@@ -764,11 +764,25 @@
 		max-width: 375px;
 	}
 
+	.wp-login__links a {
+		font-size: 16px;
+		font-weight: 400;
+	}
+
+	.login__form-action button {
+		font-size: 16px;
+		line-height: 23px;
+	}
+
 	.login__form-terms {
+		font-size: 14px;
+		line-height: 24px;
 		margin-top: 8px;
 	}
 
 	.login__form-signup-link {
+		font-size: 16px;
+		line-height: 24px;
 		padding-top: 0;
 	}
 
@@ -867,6 +881,21 @@
 				order: 4;
 			}
 		}
+
+		.login__form-userdata label {
+			font-size: 18px;
+			font-weight: 400;
+		}
+	}
+
+	.login__social-tos {
+		font-size: 14px;
+		line-height: 24px;
+	}
+
+	.login__social-buttons .social-buttons__button {
+		margin-top: 16px;
+		box-shadow: 0 2px 0 #afbbc6;
 	}
 
 	.card.two-factor-authentication__verification-code-form,

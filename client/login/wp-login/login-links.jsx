@@ -101,6 +101,14 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
+		if (
+			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGutenboarding
+		) {
+			return null;
+		}
+
 		const redirectTo = this.props.query?.redirect_to;
 		if ( redirectTo ) {
 			const { pathname, searchParams: redirectToQuery } = getUrlParts( redirectTo );
@@ -357,9 +365,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
-					! this.props.isGutenboarding &&
-					this.renderBackLink() }
+				{ this.renderBackLink() }
 			</div>
 		);
 	}
