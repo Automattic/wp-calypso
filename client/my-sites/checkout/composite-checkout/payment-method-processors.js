@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { defaultRegistry } from '@automattic/composite-checkout';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -9,10 +10,12 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 import {
 	getDomainDetails,
 	wpcomTransaction,
+	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
+	submitPayPalExpressRequest,
 } from './payment-method-helpers';
 import { createStripePaymentMethod } from 'lib/stripe';
 
@@ -104,6 +107,43 @@ export async function fullCreditsProcessor( submitData ) {
 			postalCode: null,
 		},
 		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
+}
+
+export async function payPalProcessor( submitData, getThankYouUrl, couponItem ) {
+	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+	const successUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: getThankYouUrl(),
+	} );
+	const cancelUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname,
+	} );
+
+	const pending = submitPayPalExpressRequest(
+		{
+			...submitData,
+			successUrl,
+			cancelUrl,
+			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+			domainDetails: getDomainDetails( select ),
+			couponId: couponItem?.wpcom_meta?.couponCode,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
+			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
+		},
+		wpcomPayPalExpress
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
