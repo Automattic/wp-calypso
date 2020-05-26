@@ -1,29 +1,34 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-trigger_payload=`cat $GITHUB_EVENT_PATH`
-
-workflow_data="{
-	\"action\": \"$GITHUB_ACTION\",
-	\"actor\": \"$GITHUB_ACTOR\",
-	\"run_id\": \"$GITHUB_RUN_ID\",
-	\"run_num\": \"$GITHUB_RUN_NUMBER\",
-	\"repo\": \"$GITHUB_REPOSITORY\",
-	\"trigger_payload\": $trigger_payload
-}"
-
 # cd here so that the parent directories are not included in the zip file.
 cd apps/full-site-editing/full-site-editing-plugin
 
 # Create a zip of the FSE plugin. Should include built files at this point.
 build_archive=plugin-archive.zip
-zip -r $build_archive ./*
+zip --quiet --recurse-paths $build_archive ./*
+
+
+# Use node to process data into JSON file
+node -e '
+const fs = require("fs");
+const trigger_payload = JSON.parse( fs.readFileSync( process.env.GITHUB_EVENT_PATH, "utf8" ) );
+const output = JSON.stringify( {
+	action: process.env.GITHUB_ACTION,
+	actor: process.env.GITHUB_ACTOR,
+	run_id: process.env.GITHUB_RUN_ID,
+	run_num: process.env.GITHUB_RUN_NUMBER,
+	repo: process.env.GITHUB_REPOSITORY,
+	trigger_payload,
+} );
+fs.writeFileSync( "workflow_data.json", output, "utf8" );
+'
 
 # Send metadata and build zip file to the endpoint.
 response=`curl -s \
-	-w "HTTPSTATUS:%{http_code}" \
-	-F "meta=$workflow_data" \
-	-F "build_archive=@$build_archive;type=application/zip" \
+	--write-out "HTTPSTATUS:%{http_code}" \
+	--form "meta=<workflow_data.json" \
+	--form "build_archive=@$build_archive;type=application/zip" \
 	"$TRIGGER_CALYPSO_APP_BUILD_ENDPOINT?calypso_app=$CALYPSO_APP"`
 
 # Echo the output given by the server. (Like error messages.)
