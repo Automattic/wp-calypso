@@ -685,6 +685,12 @@ const mapStateToProps = (
 		queryArgs[ 'editor-after-deprecation' ] = 1;
 	}
 
+	// TODO: At this point we need to work out who should get the notice
+	// Endpoint added at D43926-code returns true if user is forced to block
+	// editor on deprecation, so just need to work out best way to get this from
+	// api/store at this point
+	queryArgs[ 'show-classic-notice' ] = 1;
+
 	const siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
