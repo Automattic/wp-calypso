@@ -113,7 +113,12 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 		};
 
-		//goBack = () => page.back();
+		recordTracks = ( url, type ) => {
+			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+				url: url,
+				type: type,
+			} );
+		};
 
 		makeSafeRedirectionFunction( func ) {
 			return ( url ) => {
@@ -125,36 +130,26 @@ const jetpackConnection = ( WrappedComponent ) => {
 		}
 
 		goToPlans = this.makeSafeRedirectionFunction( ( url ) => {
-			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-				url: url,
-				type: 'plans_selection',
-			} );
+			this.recordTracks( url, 'plans_selection' );
 
 			page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
 		} );
 
 		goToRemoteAuth = this.makeSafeRedirectionFunction( ( url ) => {
-			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-				url: url,
-				type: 'remote_auth',
-			} );
+			this.recordTracks( url, 'remote_auth' );
 			externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 		} );
 
 		goToRemoteInstall = this.makeSafeRedirectionFunction( ( url ) => {
-			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-				url: url,
-				type: 'remote_install',
-			} );
+			this.recordTracks( url, 'remote_install' );
+
 			page.redirect( url );
 		} );
 
 		goToInstallInstructions = this.makeSafeRedirectionFunction( ( url ) => {
 			const urlWithQuery = addQueryArgs( { url: url }, url );
-			this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-				url: urlWithQuery,
-				type: 'install_instructions',
-			} );
+			this.recordTracks( urlWithQuery, 'install_instructions' );
+
 			page( urlWithQuery );
 		} );
 
