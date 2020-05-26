@@ -9,7 +9,7 @@
 	"port": 3000,
 	"rtl": false,
 	"login_url": "/connect",
-	"logout_url": "/",
+	"logout_url": "https://jetpack.com",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 68663,
 	"features": {

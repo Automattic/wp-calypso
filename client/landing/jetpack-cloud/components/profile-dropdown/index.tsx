@@ -67,7 +67,10 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
 	// @todo: track event (what type?)
-	const logOut = () => userUtilities.logout();
+	const logOut = ( e: MouseEvent ) => {
+		e.preventDefault();
+		userUtilities.logout();
+	};
 	const ref = React.useRef( null );
 	useCallIfOutOfContext( ref, close );
 
