@@ -59,6 +59,7 @@ interface DefaultProps {
 
 interface State {
 	initialized: boolean;
+	hasScrolled: boolean;
 	stepPos?: Coordinate;
 }
 
@@ -83,7 +84,10 @@ export default class Step extends Component< Props, State > {
 
 	scrollContainer: Element | null = null;
 
-	state: State = { initialized: false };
+	state: State = {
+		initialized: false,
+		hasScrolled: false,
+	};
 
 	/**
 	 * A mutation observer to watch whether the target exists
@@ -103,6 +107,7 @@ export default class Step extends Component< Props, State > {
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
+			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
 		} );
@@ -119,8 +124,20 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
+	componentDidUpdate( prevProps: Props ) {
+		const { name: prevName } = prevProps;
+		const { name } = this.props;
+
+		// Reinitialize scrolling behaviour when step changes
+		if ( prevName !== name ) {
+			this.setState( { hasScrolled: false } );
+		}
+	}
+
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
-		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
+		// Scrolling must happen only once
+		const shouldScrollTo = nextProps.shouldScrollTo && ! this.state.hasScrolled;
+
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
@@ -339,13 +356,16 @@ export default class Step extends Component< Props, State > {
 
 	setStepPosition( props: Props, shouldScrollTo = false ) {
 		const { placement, target } = props;
-		const stepPos = getStepPosition( {
+		const { stepPos, scrollDiff } = getStepPosition( {
 			placement,
 			targetSlug: target,
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
 		} );
-		this.setState( { stepPos } );
+		this.setState( ( state ) => ( {
+			stepPos,
+			hasScrolled: ! state.hasScrolled && scrollDiff > 0,
+		} ) );
 	}
 
 	render() {

@@ -30,6 +30,7 @@ export const JetpackSignInTour = makeTour(
 				animationDelay: '0.7s',
 				zIndex: 1,
 			} }
+			shouldScrollTo
 		>
 			{ ( { translate } ) => (
 				<Fragment>
