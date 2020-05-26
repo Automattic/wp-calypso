@@ -84,7 +84,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
 		const userLocaleSlug = currentUser && currentUser.localeSlug;
-		const pathname = window.location.pathname.replace( /\/?$/, '' );
+		const pathname = window.location.pathname.replace( /\/$/, '' );
 		const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 		const pathLocaleSlug =
 			getLanguageSlugs().includes( lastPathSegment ) &&
