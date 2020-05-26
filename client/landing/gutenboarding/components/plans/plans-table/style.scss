@@ -37,12 +37,12 @@
 	display: flex;
 	align-items: center;
 	width: 100%;
-	margin-bottom: 16px;
+	margin-bottom: 12px;
 }
 
 .plan-item__name {
 	font-weight: 700;
-	font-size: 20px;
+	font-size: 18px;
 	line-height: 24px;
 	display: inline-block;
 }
@@ -71,11 +71,11 @@
 }
 
 .plan-item__price {
-	margin-bottom: 26px;
+	margin-bottom: 16px;
 }
 
 .plan-item__actions {
-	margin-bottom: 32px;
+	margin-bottom: 16px;
 }
 
 .plan-item__domain {
@@ -134,7 +134,7 @@
 		position: relative;
 		top: 0;
 		left: 0;
-		margin: 20px 0;
+		margin: 16px 0;
 	}
 }
 
@@ -142,5 +142,5 @@
 	font-size: 14px;
 	line-height: 22px;
 	letter-spacing: 0.2px;
-	margin: 12px 0;
+	margin: 4px 0;
 }
