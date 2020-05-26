@@ -43,6 +43,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 = 1.6 =
 * Remove plugin that notified users of the new location of Block Patterns.
 * Remove obsolete typedefs for @wordpress/icons.
+* Support for any UTF-8 character in the Premium Content block.
+* Fixed availability of Premium Content subscription email service.
+* Premium Content block styles adjusted to only load when block is used.
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
