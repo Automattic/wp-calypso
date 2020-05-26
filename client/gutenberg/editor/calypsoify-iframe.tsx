@@ -44,6 +44,7 @@ import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 /**
  * Types
@@ -685,11 +686,11 @@ const mapStateToProps = (
 		queryArgs[ 'editor-after-deprecation' ] = 1;
 	}
 
-	// TODO: At this point we need to work out who should get the notice
-	// Endpoint added at D43926-code returns true if user is forced to block
-	// editor on deprecation, so just need to work out best way to get this from
-	// api/store at this point
-	queryArgs[ 'show-classic-notice' ] = 1;
+	// We want to temporarily show a notice in the editor to those users that have been forced to
+	// the block editor post deprecation of the calypso classic editor
+	if ( getSelectedEditor( state, siteId ) === 'gutenberg-iframe-forced' ) {
+		queryArgs[ 'show-classic-notice' ] = 1;
+	}
 
 	const siteAdminUrl =
 		editorType === 'site'

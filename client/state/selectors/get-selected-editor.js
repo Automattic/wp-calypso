@@ -21,6 +21,7 @@ export const getSelectedEditor = ( state, siteId ) => {
 
 	const validEditors = [
 		'gutenberg-iframe',
+		'gutenberg-iframe-forced',
 		'gutenberg-redirect',
 		'gutenberg-redirect-and-style',
 		'classic',
