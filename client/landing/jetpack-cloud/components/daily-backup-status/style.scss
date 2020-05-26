@@ -194,6 +194,14 @@
 	padding: 0 8px;
 }
 
+.daily-backup-status__credentials-warning-text a {
+	display: block;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: inline;
+	}
+}
+
 .button.daily-backup-status__activate-restores-button,
 .button.daily-backup-status__activate-restores-button:visited {
 	float: none;
