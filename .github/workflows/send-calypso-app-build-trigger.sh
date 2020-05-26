@@ -18,22 +18,21 @@ const fs = require("fs");
 const trigger_payload = JSON.parse( fs.readFileSync( process.env.GITHUB_EVENT_PATH, "utf8" ) );
 
 // Makes sure that the data we need exists.
-const checkEnv = ( varNames ) => {
-	varNames.forEach( ( varName ) => {
-		if ( ! process.env[ varName ] ) {
-			throw new Error( `${ varName } env variable missing!` );
-		}
-	} );
+const getEnv = ( varName ) => {
+	const envVal = process.env[ varName ];
+	// Fail for any falsey value except 0 (including empty strings).
+	if ( ! envVal && envVal !== 0 ) {
+		throw new Error( `${ varName } env variable missing!` );
+	}
+	return envVal;
 }
 
-checkEnv( [ "GITHUB_ACTION", "GITHUB_ACTOR", "GITHUB_RUN_ID", "GITHUB_RUN_NUMBER", "GITHUB_REPOSITORY" ] );
-
 const output = JSON.stringify( {
-	action: process.env.GITHUB_ACTION,
-	actor: process.env.GITHUB_ACTOR,
-	run_id: process.env.GITHUB_RUN_ID,
-	run_num: process.env.GITHUB_RUN_NUMBER,
-	repo: process.env.GITHUB_REPOSITORY,
+	action: getEnv( "GITHUB_ACTION" ),
+	actor: getEnv( "GITHUB_ACTOR" ),
+	run_id: getEnv( "GITHUB_RUN_ID" ),
+	run_num: getEnv( "GITHUB_RUN_NUMBER" ),
+	repo: getEnv( "GITHUB_REPOSITORY" ),
 	trigger_payload,
 } );
 fs.writeFileSync( "workflow_data.json", output, "utf8" );
