@@ -714,6 +714,11 @@
 	background: var( --studio-gray-0 );
 	min-height: 100%;
 
+	// make sure jetpack logo is the correct green
+	.jetpack-logo__icon-circle {
+		fill: var( --studio-jetpack-green-40 );
+	}
+
 	.step-wrapper .formatted-header {
 		margin-top: 0;
 	}
@@ -726,6 +731,10 @@
 
 		form {
 			width: 100%;
+		}
+
+		> :last-child:not( .wp-login__links ) {
+			margin-bottom: 64px;
 		}
 	}
 
@@ -759,7 +768,9 @@
 
 	.wp-login__links,
 	.login__social,
-	.login__form {
+	.login__form,
+	.two-factor-authentication__verification-code-form,
+	.two-factor-authentication__actions {
 		width: 100%;
 		max-width: 375px;
 	}
