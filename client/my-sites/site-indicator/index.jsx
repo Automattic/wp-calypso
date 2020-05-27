@@ -205,6 +205,7 @@ class SiteIndicator extends Component {
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
+			const { siteIsAutomatedTransfer } = this.props;
 			accessFailedMessage = (
 				<span>
 					{ translate( 'This site cannot be accessed.' ) }
@@ -212,10 +213,14 @@ class SiteIndicator extends Component {
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }` }
+						href={ `/settings/disconnect-site/${ site.slug }${
+							siteIsAutomatedTransfer ? '' : '?type=down'
+						}` }
 						onClick={ this.props.trackSiteDisconnect }
 					>
-						{ translate( 'Remove Site' ) }
+						{ siteIsAutomatedTransfer
+							? translate( 'Remove Site' )
+							: translate( 'I’d like to fix this now' ) }
 					</Button>
 				</span>
 			);
