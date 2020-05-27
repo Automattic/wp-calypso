@@ -23,7 +23,8 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import { isInlineHelpPopoverVisible, isInlineHelpVisible } from 'state/inline-help/selectors';
+import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import isInlineHelpVisible from 'state/selectors/is-inline-help-visible';
 
 /**
  * Style dependencies
