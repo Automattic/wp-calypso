@@ -65,7 +65,7 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return translate( 'Review your order' );
+	return translate( 'Your order' );
 };
 
 const paymentMethodStep = getDefaultPaymentMethodStep();
