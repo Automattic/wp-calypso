@@ -58,7 +58,7 @@ class DomainStatus extends React.Component {
 			<Card compact={ true } className={ cardClasses }>
 				<h2 className={ headerClasses }>
 					<a target="_blank" rel="noopener noreferrer" href={ 'http://' + header }>
-						{ header }
+						<span>{ header }</span>
 						<Gridicon icon="external" size={ 18 } />
 					</a>
 				</h2>
