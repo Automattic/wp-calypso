@@ -306,7 +306,7 @@
 		"md5-file": "^4.0.0",
 		"micromatch": "^4.0.2",
 		"mixedindentlint": "^1.2.0",
-		"mkdirp": "^0.5.1",
+		"mkdirp": "^1.0.0",
 		"mock-fs": "^4.11.0",
 		"mockdate": "^2.0.5",
 		"moment-timezone-data-webpack-plugin": "^1.1.0",
