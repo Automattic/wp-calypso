@@ -24,6 +24,7 @@ import {
 	validatePaymentMethods,
 } from '../lib/validation';
 import { useLocalize } from '../localize';
+import { usePaymentMethodId } from '../lib/payment-methods';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -211,6 +212,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 		resetTransaction,
 	} = useTransactionStatus();
 	const onEvent = useEvents();
+	const [ paymentMethodId ] = usePaymentMethodId();
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -218,7 +220,10 @@ function useTransactionStatusHandler( redirectToUrl ) {
 			showErrorMessage(
 				transactionError || localize( 'An error occurred during the transaction' )
 			);
-			onEvent( { type: 'TRANSACTION_ERROR', payload: transactionError || '' } );
+			onEvent( {
+				type: 'TRANSACTION_ERROR',
+				payload: { message: transactionError || '', paymentMethodId },
+			} );
 			resetTransaction();
 			setFormReady();
 		}
@@ -232,6 +237,7 @@ function useTransactionStatusHandler( redirectToUrl ) {
 			redirectToUrl( transactionRedirectUrl );
 		}
 	}, [
+		paymentMethodId,
 		onEvent,
 		resetTransaction,
 		setFormReady,
