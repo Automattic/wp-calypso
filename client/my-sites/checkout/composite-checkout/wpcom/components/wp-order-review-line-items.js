@@ -155,7 +155,7 @@ WPLineItem.propTypes = {
 	} ),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.bool,
+	couponStatus: PropTypes.string,
 };
 
 function LineItemPrice( { item } ) {
@@ -317,7 +317,7 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	couponStatus: PropTypes.bool,
+	couponStatus: PropTypes.string,
 };
 
 const WPOrderReviewList = styled.ul`
