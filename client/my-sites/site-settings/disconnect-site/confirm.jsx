@@ -24,6 +24,7 @@ import { submitSurvey } from 'lib/purchases/actions';
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
 		reason: PropTypes.string,
+		type: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 		// Provided by HOCs
 		purchase: PropTypes.object,
@@ -63,7 +64,11 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, translate } = this.props;
+		const { type, siteId, siteSlug, translate } = this.props;
+
+		const backHref =
+			`/settings/disconnect-site/${ siteSlug }` +
+			( type ? `?type=${ encodeURIComponent( type ) }` : '' );
 
 		return (
 			<Main className="disconnect-site__confirm">
@@ -83,7 +88,7 @@ class ConfirmDisconnection extends PureComponent {
 					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink href={ '/settings/disconnect-site/' + siteSlug } direction="back" />
+					<NavigationLink href={ backHref } direction="back" />
 				</div>
 			</Main>
 		);

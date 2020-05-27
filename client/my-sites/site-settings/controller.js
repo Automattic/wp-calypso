@@ -72,9 +72,9 @@ export function disconnectSite( context, next ) {
 }
 
 export function disconnectSiteConfirm( context, next ) {
-	const { reason, text } = context.query;
+	const { reason, type, text } = context.query;
 	context.store.dispatch( hideSidebar() );
-	context.primary = <ConfirmDisconnection reason={ reason } text={ text } />;
+	context.primary = <ConfirmDisconnection reason={ reason } type={ type } text={ text } />;
 	next();
 }
 

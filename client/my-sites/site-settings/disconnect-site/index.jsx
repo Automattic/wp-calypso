@@ -32,7 +32,7 @@ const DisconnectSite = ( {
 	site: { name: siteName, URL: siteUrl },
 	translate,
 } ) => {
-	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
+	const confirmHref = `/settings/disconnect-site/confirm/${ siteSlug }?type=down`;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
 	if ( reason ) {
