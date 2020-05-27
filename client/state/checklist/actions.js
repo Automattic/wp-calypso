@@ -8,6 +8,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/checklist';
+import 'state/checklist/init';
 
 /**
  * Action creator function: SITE_CHECKLIST_RECEIVE
