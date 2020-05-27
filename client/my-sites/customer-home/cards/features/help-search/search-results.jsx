@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,49 +21,28 @@ import {
 	isRequestingInlineHelpSearchResultsForQuery,
 	hasInlineHelpAPIResults,
 } from 'state/inline-help/selectors';
-import { getLastRouteAction } from 'state/ui/action-log/selectors';
+
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
-class HelpSearchResults extends Component {
-	static propTypes = {
-		openResult: PropTypes.func.isRequired,
-		translate: PropTypes.func,
-		searchQuery: PropTypes.string,
+function HelpSearchResults( props ) {
+	const {
+		translate = identity,
+		searchQuery = '',
+		hasAPIResults = false,
+		searchResults = [],
+		selectedResultIndex = -1,
+		isSearching = false,
+	} = props;
+
+	const onHelpLinkClick = ( selectionIndex ) => ( event ) => {
+		const selectedResult = searchResults?.[ selectionIndex ] ?? null;
+		props.selectResult( selectionIndex );
+		props.openResult( event, selectedResult );
 	};
 
-	static defaultProps = {
-		translate: identity,
-		searchQuery: '',
-	};
-
-	renderSearchResults() {
-		if ( this.props.isSearching ) {
-			// search, but no results so far
-			return <PlaceholderLines />;
-		}
-
-		// found something
-		const links = this.props.searchResults;
-
-		return (
-			<>
-				{ ! isEmpty( this.props.searchQuery ) && ! this.props.hasAPIResults && (
-					<p className="help-search__empty-results">{ this.props.translate( 'No results.' ) }</p>
-				) }
-				<ul className="help-search__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-			</>
-		);
-	}
-
-	onHelpLinkClick = ( selectionIndex ) => ( event ) => {
-		const selectedResult = this.props.searchResults && this.props.searchResults[ selectionIndex ];
-		this.props.selectResult( selectionIndex );
-		this.props.openResult( event, selectedResult );
-	};
-
-	renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': this.props.selectedResultIndex === index };
+	const renderHelpLink = ( link, index ) => {
+		const classes = { 'is-selected': selectedResultIndex === index };
 		return (
 			<li
 				key={ link.link ? link.link : link.key }
@@ -71,7 +50,7 @@ class HelpSearchResults extends Component {
 			>
 				<a
 					href={ localizeUrl( link.link ) }
-					onClick={ this.onHelpLinkClick( index ) }
+					onClick={ onHelpLinkClick( index ) }
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
@@ -80,21 +59,44 @@ class HelpSearchResults extends Component {
 		);
 	};
 
-	render() {
+	const renderSearchResults = () => {
+		if ( isSearching ) {
+			// search, but no results so far
+			return <PlaceholderLines />;
+		}
+
+		// found something
+		const links = searchResults;
+
 		return (
-			<div>
-				<QueryInlineHelpSearch
-					query={ this.props.searchQuery }
-					requesting={ this.props.isSearching }
-				/>
-				{ this.renderSearchResults() }
-			</div>
+			<>
+				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
+					<p className="help-search__empty-results">{ translate( 'No results.' ) }</p>
+				) }
+				<ul className="help-search__results-list">{ links && links.map( renderHelpLink ) }</ul>
+			</>
 		);
-	}
+	};
+
+	return (
+		<div>
+			<QueryInlineHelpSearch query={ searchQuery } requesting={ props.isSearching } />
+			{ renderSearchResults() }
+		</div>
+	);
 }
 
+HelpSearchResults.propTypes = {
+	translate: PropTypes.func,
+	searchQuery: PropTypes.string,
+	openResult: PropTypes.func.isRequired,
+	hasAPIResults: PropTypes.bool,
+	searchResults: PropTypes.array,
+	selectedResultIndex: PropTypes.number,
+	isSearching: PropTypes.bool,
+};
+
 const mapStateToProps = ( state, ownProps ) => ( {
-	lastRoute: getLastRouteAction( state ),
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	selectedResultIndex: getSelectedResultIndex( state ),
