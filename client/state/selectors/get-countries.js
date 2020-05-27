@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/countries/init';
+
+/**
  * Retrieves the list of countries from the specified type.
  *
  * @param {object} state - global state tree
