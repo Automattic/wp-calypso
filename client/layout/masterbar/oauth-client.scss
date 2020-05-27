@@ -764,7 +764,7 @@
 		max-width: 375px;
 	}
 
-	.wp-login__links a {
+	.wp-login__links {
 		font-size: 16px;
 		font-weight: 400;
 	}
@@ -959,7 +959,8 @@
 
 	a,
 	a:visited,
-	.login__form-change-username {
+	.login__form-change-username,
+	.wp-login__links button {
 		color: var( --studio-jetpack-green-40 );
 
 		&:hover,
