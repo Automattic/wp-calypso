@@ -31,6 +31,6 @@ Move the SVG files in the sub-folder matching the category used on material.io.
 
 Rebuild `material-icons.svg` by running:
 
-	yarn workspace @automattic/material-design-icons build
+	yarn workspace @automattic/material-design-icons run build
 
 Beware that default style and size for `MaterialIcon` class is `outline` and `24`.

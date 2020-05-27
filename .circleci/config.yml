@@ -302,7 +302,7 @@ jobs:
       - run:
           name: Build Notifications Panel
           command: |
-            cd apps/notifications/ && NODE_ENV=production yarn build --output-path=$CIRCLE_ARTIFACTS/notifications-panel
+            cd apps/notifications/ && NODE_ENV=production yarn run build --output-path=$CIRCLE_ARTIFACTS/notifications-panel
       - store-artifacts-and-test-results
 
   build-o2-blocks:
@@ -313,7 +313,7 @@ jobs:
       - run:
           name: Build Gutenberg Blocks for internal p2s
           command: |
-            cd apps/o2-blocks/ && NODE_ENV=production yarn build --output-path=$CIRCLE_ARTIFACTS/o2-blocks
+            cd apps/o2-blocks/ && NODE_ENV=production yarn run build --output-path=$CIRCLE_ARTIFACTS/o2-blocks
       - store-artifacts-and-test-results
 
   build-wpcom-block-editor:
@@ -334,7 +334,7 @@ jobs:
       - run:
           name: Run Full Site Editing client tests
           command: |
-            cd apps/full-site-editing && yarn test:js
+            cd apps/full-site-editing && yarn run test:js
   test-client:
     <<: *defaults
     parallelism: 6
