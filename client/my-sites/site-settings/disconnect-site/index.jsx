@@ -66,7 +66,7 @@ const DisconnectSite = ( {
 					<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
 						<FormattedHeader
 							isSecondary
-							align="start"
+							align="left"
 							headerText={ translate( 'Confirm your site is loading' ) }
 							subHeaderText={ translate(
 								'As a first step, we suggest trying to open your site to ensure it’s loading correctly.'
@@ -80,7 +80,7 @@ const DisconnectSite = ( {
 					>
 						<FormattedHeader
 							isSecondary
-							align="start"
+							align="left"
 							headerText={ translate( 'Troubleshoot Jetpack' ) }
 							subHeaderText={ translate(
 								'Select this option if you’re still using Jetpack but seeing this error.'
@@ -90,7 +90,7 @@ const DisconnectSite = ( {
 					<CompactCard href={ confirmHref }>
 						<FormattedHeader
 							isSecondary
-							align="start"
+							align="left"
 							headerText={ translate( 'Disconnect Jetpack' ) }
 							subHeaderText={ translate(
 								'Select this option if your site isn’t available anymore or if you’ve stopped using Jetpack and/or WordPress.'

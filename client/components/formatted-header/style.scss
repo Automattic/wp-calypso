@@ -26,29 +26,6 @@
 	&.is-right-align {
 		text-align: right;
 	}
-
-	&.is-start-align {
-		text-align: left;
-		text-align: start;
-	}
-
-	&.is-end-align {
-		text-align: right;
-		text-align: end;
-	}
-}
-
-[dir=rtl] .formatted-header,
-[dir=rtl].formatted-header {
-	&.is-start-align {
-		text-align: right;
-		text-align: start;
-	}
-
-	&.is-end-align {
-		text-align: left;
-		text-align: end;
-	}
 }
 
 .formatted-header__title {
