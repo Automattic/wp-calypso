@@ -32,10 +32,6 @@ const EarnFeatures = ( { siteSlug } ) => {
 	);
 };
 
-const ConnectedDismissibleCardExample = connect( null, {
-	clearPreference: partial( savePreference, 'home-task-earn-features', null ),
-} )( EarnFeatures );
-
 const mapStateToProps = ( state ) => {
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
