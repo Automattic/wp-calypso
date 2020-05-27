@@ -11,23 +11,19 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackConnectNotices from './jetpack-connect-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
-import page from 'page';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
+import { checkUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { persistSession } from './persistence-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import jetpackConnection from './jetpack-connection';
-
-import { IS_DOT_COM } from './connection-notice-types';
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -85,27 +81,6 @@ export class JetpackConnectMain extends Component {
 		processJpSite( currentUrl );
 	}
 
-	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
-
-	goBack = () => page.back();
-
-	isCurrentUrlFetched() {
-		return (
-			this.props.jetpackConnectSite &&
-			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetched
-		);
-	}
-
-	isCurrentUrlFetching() {
-		return (
-			this.state.currentUrl !== '' &&
-			this.props.jetpackConnectSite &&
-			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetching
-		);
-	}
-
 	handleUrlChange = ( event ) => {
 		const url = event.target.value;
 		this.setState( {
@@ -142,17 +117,7 @@ export class JetpackConnectMain extends Component {
 	renderSiteInput( status ) {
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
-				{ ! this.isCurrentUrlFetching() &&
-				this.isCurrentUrlFetched() &&
-				! this.props.jetpackConnectSite.isDismissed &&
-				status ? (
-					<JetpackConnectNotices
-						noticeType={ status }
-						onDismissClick={ IS_DOT_COM === status ? this.goBack : this.dismissUrl }
-						url={ this.state.currentUrl }
-						onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
-					/>
-				) : null }
+				{ this.props.renderNotices() }
 
 				<SiteUrlInput
 					url={ this.state.shownUrl }
@@ -161,7 +126,7 @@ export class JetpackConnectMain extends Component {
 					onSubmit={ this.handleUrlSubmit }
 					isError={ status }
 					isFetching={
-						this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites
+						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ this.isInstall() }
 				/>
@@ -195,23 +160,15 @@ export class JetpackConnectMain extends Component {
 
 const connectComponent = connect(
 	( state ) => {
-		// Note: reading from a cookie here rather than redux state,
-		// so any change in value will not execute connect().
-		const jetpackConnectSite = getConnectingSite( state );
-		const siteData = jetpackConnectSite.data || {};
-
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isRequestingSites: isRequestingSites( state ),
-			jetpackConnectSite,
-			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
 		};
 	},
 	{
 		checkUrl,
-		dismissUrl,
 		recordTracksEvent,
 	}
 );

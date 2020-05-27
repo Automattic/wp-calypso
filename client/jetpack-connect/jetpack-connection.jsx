@@ -12,13 +12,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import page from 'page';
 import versionCompare from 'lib/version-compare';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
-import { checkUrl } from 'state/jetpack-connect/actions';
+import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -55,6 +56,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 		state = {
 			status: '',
 			url: '',
+			redirecting: false,
+			waitingForSites: true,
 		};
 
 		renderFooter = () => {
@@ -69,6 +72,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 			);
 		};
 
+		dismissUrl = () => this.props.dismissUrl( this.state.url );
+
+		goBack = () => page.back();
+
 		processJpSite = ( url ) => {
 			const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
 
@@ -82,13 +89,13 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! forceRemoteInstall &&
 				! this.state.redirecting
 			) {
-				this.goToRemoteAuth( this.props.siteHomeUrl );
+				this.redirect( 'remote_auth', this.props.siteHomeUrl );
 			}
 			if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
 				if ( isMobileAppFlow ) {
 					this.redirectToMobileApp( 'already-connected' );
 				}
-				this.goToPlans( url );
+				this.redirect( 'plans_selection', url );
 			}
 
 			if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
@@ -106,9 +113,9 @@ const jetpackConnection = ( WrappedComponent ) => {
 					! isMobileAppFlow &&
 					! skipRemoteInstall
 				) {
-					this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+					this.redirect( 'remote_install', JPC_PATH_REMOTE_INSTALL );
 				} else {
-					this.goToInstallInstructions( '/jetpack/connect/instructions' );
+					this.redirect( 'install_instructions', '/jetpack/connect/instructions' );
 				}
 			}
 		};
@@ -120,44 +127,35 @@ const jetpackConnection = ( WrappedComponent ) => {
 			} );
 		};
 
-		makeSafeRedirectionFunction( func ) {
-			return ( url ) => {
-				if ( ! this.state.redirecting ) {
-					this.setState( { redirecting: true } );
-					func( url );
+		redirect = ( type, url ) => {
+			if ( ! this.state.redirecting ) {
+				this.setState( { redirecting: true } );
+
+				this.recordTracks( url, type );
+
+				type === 'plans_selection' && page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
+				type === 'remote_install' && page.redirect( url );
+				type === 'remote_auth' &&
+					externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
+
+				if ( type === 'install_instructions' ) {
+					{
+						const urlWithQuery = addQueryArgs( { url: url }, url );
+						page( urlWithQuery );
+					}
 				}
-			};
-		}
+			}
+		};
 
-		goToPlans = this.makeSafeRedirectionFunction( ( url ) => {
-			this.recordTracks( url, 'plans_selection' );
+		redirectToMobileApp = ( reason ) => {
+			if ( ! this.state.redirecting ) {
+				this.setState( { redirecting: true } );
 
-			page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
-		} );
-
-		goToRemoteAuth = this.makeSafeRedirectionFunction( ( url ) => {
-			this.recordTracks( url, 'remote_auth' );
-			externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
-		} );
-
-		goToRemoteInstall = this.makeSafeRedirectionFunction( ( url ) => {
-			this.recordTracks( url, 'remote_install' );
-
-			page.redirect( url );
-		} );
-
-		goToInstallInstructions = this.makeSafeRedirectionFunction( ( url ) => {
-			const urlWithQuery = addQueryArgs( { url: url }, url );
-			this.recordTracks( urlWithQuery, 'install_instructions' );
-
-			page( urlWithQuery );
-		} );
-
-		redirectToMobileApp = this.makeSafeRedirectionFunction( ( reason ) => {
-			const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
-			debug( `Redirecting to mobile app ${ url }` );
-			externalRedirect( url );
-		} );
+				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+				debug( `Redirecting to mobile app ${ url }` );
+				externalRedirect( url );
+			}
+		};
 
 		isCurrentUrlFetched() {
 			return (
@@ -197,6 +195,20 @@ const jetpackConnection = ( WrappedComponent ) => {
 				get( this.props.jetpackConnectSite, [ 'error', 'error' ] ) === error
 			);
 		}
+
+		renderNotices = () => {
+			return ! this.isCurrentUrlFetching() &&
+				this.isCurrentUrlFetched() &&
+				! this.props.jetpackConnectSite.isDismissed &&
+				this.state.status ? (
+				<JetpackConnectNotices
+					noticeType={ this.state.status }
+					onDismissClick={ IS_DOT_COM === this.state.status ? this.goBack : this.dismissUrl }
+					url={ this.state.url }
+					onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
+				/>
+			) : null;
+		};
 
 		getStatus = ( url ) => {
 			if ( url === '' ) {
@@ -275,6 +287,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 					processJpSite={ this.processJpSite }
 					status={ this.state.status }
 					renderFooter={ this.renderFooter }
+					renderNotices={ this.renderNotices }
+					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
 				/>
 			);
 		}
@@ -304,6 +318,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 		},
 		{
 			checkUrl,
+			dismissUrl,
 			recordTracksEvent,
 		}
 	);
