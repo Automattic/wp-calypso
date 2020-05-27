@@ -22,8 +22,8 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
  * Image dependencies
  */
 import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
-import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
-import advertisingRemovedImage from 'assets/images/upgrades/advertising-removed.svg';
+import googleAdwordsImage from 'assets/images/illustrations/adwords-google.svg';
+import advertisingRemovedImage from 'assets/images/upgrades/removed-advertising.svg';
 import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'assets/images/upgrades/media-post.svg';
 import wordAdsImage from 'assets/images/upgrades/word-ads.svg';
