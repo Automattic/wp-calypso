@@ -18,8 +18,6 @@ import {
 } from 'lib/cart-values/cart-items';
 
 class DomainRefundPolicy extends React.Component {
-	static displayName = 'RegistrationRefundPolicy';
-
 	recordCancelDomainSupportClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Cancel Domain Support Link' );
 	};
