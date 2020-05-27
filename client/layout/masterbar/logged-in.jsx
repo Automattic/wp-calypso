@@ -37,6 +37,7 @@ import { updateSiteMigrationMeta } from 'state/sites/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'state/ui/reader/seen-posts/selectors';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -99,6 +100,10 @@ class MasterbarLoggedIn extends React.Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 	};
 
+	clickClose = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+	};
+
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
 	};
@@ -155,12 +160,32 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
+		const {
+			domainOnlySite,
+			translate,
+			isCheckout,
+			isMigrationInProgress,
+			previousPath,
+			siteSlug,
+		} = this.props;
 
 		if ( isCheckout === true ) {
+			let closeUrl = siteSlug ? '/plans/' + siteSlug : '/plans';
+			if ( '' !== previousPath ) {
+				closeUrl = previousPath;
+			}
+
 			return (
 				<Masterbar>
 					<div className="masterbar__secure-checkout">
+						<Item
+							url={ closeUrl }
+							icon="cross"
+							className="masterbar__close-button"
+							onClick={ this.clickClose }
+							tooltip={ translate( 'Close Checkout' ) }
+							tipTarget="close"
+						/>
 						<WordPressWordmark className="masterbar__wpcom-wordmark" />
 						<span className="masterbar__secure-checkout-text">
 							{ translate( 'Secure checkout' ) }
@@ -252,6 +277,7 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			previousPath: getPreviousPath( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
