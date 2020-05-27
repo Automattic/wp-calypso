@@ -408,7 +408,7 @@ const ActionButtons = ( {
 				onClick={ ( event ) => {
 					disabledDownload &&
 						event.preventDefault() &&
-						dispatchRecordTracksEvent( 'jetpack_cloud_backup_download', { rewindId } );
+						dispatchRecordTracksEvent( 'calypso_jetpack_backup_download', { rewindId } );
 				} }
 			>
 				{ translate( 'Download backup' ) }
@@ -420,7 +420,7 @@ const ActionButtons = ( {
 				onClick={ ( event ) => {
 					( disabledRestore || doesRewindNeedCredentials ) &&
 						event.preventDefault() &&
-						dispatchRecordTracksEvent( 'jetpack_cloud_backup_restore', { rewindId } );
+						dispatchRecordTracksEvent( 'calypso_jetpack_backup_restore', { rewindId } );
 				} }
 			>
 				<div className="daily-backup-status__restore-button-icon">
@@ -456,7 +456,7 @@ const ActionButtons = ( {
 							href={ settingsPath( siteSlug ) }
 							isPrimary={ false }
 							onClick={ () => {
-								dispatchRecordTracksEvent( 'jetpack_cloud_backup_activate_click' );
+								dispatchRecordTracksEvent( 'calypso_jetpack_backup_activate_click' );
 							} }
 						>
 							{ translate( 'Activate restores' ) }

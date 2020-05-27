@@ -59,7 +59,7 @@ class BackupDatePicker extends Component {
 		const { moment, onDateChange, selectedDate } = this.props;
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
 
-		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_date_previous' );
+		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_date_previous' );
 
 		onDateChange( newSelectedDate );
 	};
@@ -72,7 +72,7 @@ class BackupDatePicker extends Component {
 		const { moment, onDateChange, selectedDate } = this.props;
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
 
-		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_date_next' );
+		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_date_next' );
 
 		onDateChange( newSelectedDate );
 	};
@@ -169,7 +169,7 @@ class BackupDatePicker extends Component {
 							className="backup-date-picker__search-link"
 							href={ backupActivityPath( siteSlug ) }
 							onClick={ () => {
-								dispatchRecordTracksEvent( 'jetpack_cloud_backup_search' );
+								dispatchRecordTracksEvent( 'calypso_jetpack_backup_search' );
 							} }
 						>
 							<Gridicon icon="search" className="backup-date-picker__search-icon" />

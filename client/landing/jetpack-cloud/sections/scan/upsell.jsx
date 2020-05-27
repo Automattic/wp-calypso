@@ -42,7 +42,7 @@ function ScanVPActiveBody() {
 			) }
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
-			onClick={ () => dispatch( recordTracksEvent( 'jetpack_cloud_scan_vaultpress_click' ) ) }
+			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_vaultpress_click' ) ) }
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
 	);
@@ -59,7 +59,7 @@ function ScanUpsellBody() {
 				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 			) }
 			buttonLink={ `https://wordpress.com/checkout/jetpack_scan/${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'jetpack_cloud_scan_upsell_click' ) ) }
+			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
 			iconComponent={ <SecurityIcon icon="info" /> }
 		/>
 	);

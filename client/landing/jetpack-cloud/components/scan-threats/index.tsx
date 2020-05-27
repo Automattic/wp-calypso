@@ -109,7 +109,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 
 	const openFixAllThreatsDialog = React.useCallback( () => {
 		dispatch(
-			recordTracksEvent( `jetpack_cloud_scan_allthreats_open`, {
+			recordTracksEvent( `calypso_jetpack_scan_allthreats_open`, {
 				site_id: site.ID,
 			} )
 		);

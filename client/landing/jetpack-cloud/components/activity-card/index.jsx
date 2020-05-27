@@ -68,7 +68,7 @@ class ActivityCard extends Component {
 	};
 
 	togglePopoverMenu = ( topPopoverMenu = true ) => {
-		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_actions_click' );
+		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_actions_click' );
 
 		if ( topPopoverMenu ) {
 			this.setState( { showTopPopoverMenu: ! this.state.showTopPopoverMenu } );
@@ -81,7 +81,7 @@ class ActivityCard extends Component {
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
 
 	toggleSeeContent = () => {
-		this.props.dispatchRecordTracksEvent( 'jetpack_cloud_backup_content_expand' );
+		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_content_expand' );
 		this.setState( { showContent: ! this.state.showContent } );
 	};
 
