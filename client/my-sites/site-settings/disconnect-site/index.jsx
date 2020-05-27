@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { CompactCard } from '@automattic/components';
 import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
@@ -32,7 +33,27 @@ const DisconnectSite = ( { reason, type, siteSlug, translate } ) => {
 	}
 
 	if ( type === 'down' ) {
-		return <div>Hello, world!</div>;
+		return (
+			<div>
+				<Main className="disconnect-site__site-settings">
+					<DocumentHead title={ translate( 'Site Settings' ) } />
+					<FormattedHeader
+						headerText={ translate( 'Your site My Jetpack Site cannot be accessed' ) }
+						subHeaderText={ translate(
+							'Jetpack wasn’t able to connect to your site at FIXME. There might be a few reasons for that, how do you want to proceed?'
+						) }
+					/>
+					<CompactCard href={ confirmHref }>
+						{ translate( 'Confirm your site is loading' ) }
+					</CompactCard>
+					<CompactCard href={ confirmHref }>{ translate( 'Troubleshoot Jetpack' ) }</CompactCard>
+					<CompactCard href={ confirmHref }>{ translate( 'Disconnect Jetpack' ) }</CompactCard>
+					<div className="disconnect-site__navigation-links">
+						<NavigationLink href={ backHref } direction="back" />
+					</div>
+				</Main>
+			</div>
+		);
 	}
 
 	return (
