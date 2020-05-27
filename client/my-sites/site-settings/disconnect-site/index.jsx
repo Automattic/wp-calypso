@@ -13,6 +13,7 @@ import { CompactCard } from '@automattic/components';
 import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
@@ -65,6 +66,10 @@ const DisconnectSite = ( {
 					/>
 					<div className="disconnect-site__actions">
 						<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
+							<Gridicon
+								className="disconnect-site__action-icon disconnect-site__confirm-icon"
+								icon="globe"
+							/>
 							<FormattedHeader
 								isSecondary
 								align="left"
@@ -79,6 +84,10 @@ const DisconnectSite = ( {
 								'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 							) }
 						>
+							<Gridicon
+								className="disconnect-site__action-icon disconnect-site__troubleshoot-icon"
+								icon="plans"
+							/>
 							<FormattedHeader
 								isSecondary
 								align="left"
@@ -89,6 +98,10 @@ const DisconnectSite = ( {
 							/>
 						</CompactCard>
 						<CompactCard href={ confirmHref }>
+							<Gridicon
+								className="disconnect-site__action-icon disconnect-site__disconnect-icon"
+								icon="cross-circle"
+							/>
 							<FormattedHeader
 								isSecondary
 								align="left"

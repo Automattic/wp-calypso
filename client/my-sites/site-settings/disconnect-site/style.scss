@@ -18,21 +18,6 @@
 }
 
 .disconnect-site__down-flow {
-	.card {
-		.formatted-header {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
-
-		.formatted-header__title {
-			font-size: 16px;
-		}
-
-		.formatted-header__subtitle {
-			margin-bottom: 0;
-		}
-	}
-
 	> p {
 		font-size: 14px;
 		text-align: center;
@@ -41,7 +26,49 @@
 }
 
 .disconnect-site__actions {
+	$title-size: 16px;
+
 	margin-bottom: 1.5em;
+
+	.card {
+		// .card.is-card-link’s padding-right
+		padding-left: 48px;
+
+		.formatted-header {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.formatted-header__title {
+			font-size: $title-size;
+		}
+
+		.formatted-header__subtitle {
+			margin-bottom: 0;
+		}
+	}
+
+	.disconnect-site__action-icon {
+		position: absolute;
+
+		$padding: 16px; // .card’s padding
+		$icon-height: 24px; // Gridicon’s intrinsic height
+		$text-height: $title-size * 1.2; // formatted-header__title’s line-height (without em)
+		top: $padding - ( $icon-height - $text-height ) / 2;
+		left: $padding;
+	}
+
+	.disconnect-site__confirm-icon {
+		color: var( --color-primary );
+	}
+
+	.disconnect-site__troubleshoot-icon {
+		color: var( --color-jetpack );
+	}
+
+	.disconnect-site__disconnect-icon {
+		color: var( --color-error-40 );
+	}
 }
 
 .disconnect-site__site-settings {
