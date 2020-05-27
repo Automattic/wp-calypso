@@ -21,7 +21,7 @@ dispatch( fetchPluginData( 'akismet' ) );
 Data from the aforementioned actions is added to the global state tree, under `plugins.wporg`, with the following structure:
 
 ```js
-state.plugins.wporg = {
+state.plugins.wporg.items = {
 	'akismet': {
 		"isFetching": false,
 		"banners": {
