@@ -16,8 +16,6 @@ import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
 import {
-	recordEnterModal,
-	recordCloseModal,
 	recordTrainTracksEvent,
 	getNewRailcarId,
 	RecordTrainTracksEventProps,
@@ -66,8 +64,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		}
 	}, [ domainSuggestions, setRailcarId ] );
 
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
-
 	const { domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
@@ -85,10 +81,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	};
 
 	const handleModalClose = () => {
-		setDomainModalVisibility( false );
-	};
-
-	const handleModalCancel = () => {
 		setDomainModalVisibility( false );
 	};
 
@@ -126,7 +118,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onSetDomainCategory={ setDomainCategory }
 				domainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainPopoverVisible }
 				showDomainConnectButton={ false }
 				showDomainCategories={ false }
@@ -136,8 +127,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onClose={ handlePopoverClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 			<DomainPickerModal
@@ -148,18 +137,14 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onSetDomainCategory={ setDomainCategory }
 				domainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
-				selectedDomain={ getSelectedDomain() }
 				isOpen={ isDomainModalVisible }
 				showDomainConnectButton
 				showDomainCategories
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onClose={ handleModalClose }
-				onCancel={ handleModalCancel }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
-				onModalUnmount={ recordCloseModal }
-				onModalOpen={ recordEnterModal }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }
 			/>
 		</>

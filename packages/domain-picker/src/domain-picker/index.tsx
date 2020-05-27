@@ -18,7 +18,6 @@ import {
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
 } from '../utils/domain-suggestions';
-import { useTrackModal } from '../hooks/use-track-modal';
 import DomainCategories from '../domain-categories';
 import CloseButton from '../close-button';
 
@@ -69,8 +68,6 @@ export interface Props {
 	 */
 	onClose: () => void;
 
-	onCancel?: () => void;
-
 	onMoreOptions?: () => void;
 
 	recordAnalytics?: RecordsAnalyticsHandler;
@@ -84,12 +81,6 @@ export interface Props {
 
 	quantity?: number;
 
-	/**
-	 * Name used to identify this component in tracks events.
-	 */
-	tracksName: string;
-	selectedDomain: DomainSuggestion | undefined;
-
 	/** The domain search query */
 	domainSearch: string;
 	/** Called when the domain search query is changed */
@@ -100,15 +91,6 @@ export interface Props {
 
 	/** Called when the domain category is set */
 	onSetDomainCategory: ( category?: string ) => void;
-
-	/** Called when the modal is opened. Can be used for analytics */
-	onModalOpen: ( modalName: string ) => void;
-
-	/** Called when the modal is closed or unmounted in any way. Can be used for analytics */
-	onModalUnmount: (
-		modalName: string,
-		eventProperties?: { selected_domain: string | undefined }
-	) => void;
 
 	/** The search results */
 	domainSuggestions?: DomainSuggestion[];
@@ -129,19 +111,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onClose,
-	onCancel,
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
 	recordAnalytics,
-	tracksName,
-	selectedDomain,
 	domainSearch,
 	onSetDomainSearch,
 	domainCategory,
 	onSetDomainCategory,
-	onModalOpen,
-	onModalUnmount,
 	domainSuggestions,
 	railcarId,
 	analyticsFlowId,
@@ -178,14 +155,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
 		return (
-			<Button
-				isLink
-				className="domain-picker__cancel-button"
-				onClick={ () => {
-					onCancel && onCancel();
-				} }
-				{ ...props }
-			>
+			<Button isLink className="domain-picker__cancel-button" onClick={ onClose } { ...props }>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
@@ -213,10 +183,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			setCurrentSelection( latestFreeSuggestion[ 0 ] );
 		}
 	}, [ allSuggestions, currentDomain ] );
-
-	useTrackModal( tracksName, onModalOpen, onModalUnmount, {
-		selected_domain: selectedDomain?.domain_name,
-	} );
 
 	return (
 		<Panel className="domain-picker">
