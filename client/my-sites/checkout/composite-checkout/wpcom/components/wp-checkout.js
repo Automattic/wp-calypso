@@ -9,6 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
+	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
@@ -64,7 +65,7 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return translate( 'Review your order' );
+	return translate( 'Your order' );
 };
 
 const paymentMethodStep = getDefaultPaymentMethodStep();
@@ -187,36 +188,28 @@ export default function WPCheckout( {
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
+				<CheckoutStepBody
+					stepId="review-order-step"
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCouponAndResetActiveStep }
+							onChangePlanLength={ changePlanLength }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							siteUrl={ siteUrl }
+						/>
+					}
+					titleContent={ <OrderReviewTitle /> }
+				/>
 				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={
-							<WPCheckoutOrderReview
-								removeItem={ removeItem }
-								couponStatus={ couponStatus }
-								couponFieldStateProps={ couponFieldStateProps }
-								removeCoupon={ removeCouponAndResetActiveStep }
-								onChangePlanLength={ changePlanLength }
-								variantRequestStatus={ variantRequestStatus }
-								variantSelectOverride={ variantSelectOverride }
-								getItemVariants={ getItemVariants }
-								siteUrl={ siteUrl }
-							/>
-						}
-						titleContent={ <OrderReviewTitle /> }
-						completeStepContent={ <InactiveOrderReview /> }
-						editButtonText={ translate( 'Edit' ) }
-						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-						nextStepButtonText={ translate( 'Continue' ) }
-						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-						validatingButtonAriaLabel={
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-					/>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
@@ -377,43 +370,6 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	);
 }
 
-function InactiveOrderReview() {
-	const [ items ] = useLineItems();
-	return (
-		<SummaryContent>
-			<ProductList>
-				{ items.filter( shouldLineItemBeShownWhenStepInactive ).map( ( product ) => {
-					return <InactiveOrderReviewLineItem key={ product.id } product={ product } />;
-				} ) }
-			</ProductList>
-		</SummaryContent>
-	);
-}
-
-function InactiveOrderReviewLineItem( { product } ) {
-	const gSuiteUsersCount = product.wpcom_meta?.extra?.google_apps_users?.length ?? 0;
-	if ( gSuiteUsersCount ) {
-		return (
-			<ProductListItem>
-				{ product.label } ({ gSuiteUsersCount })
-			</ProductListItem>
-		);
-	}
-	if ( isLineItemADomain( product ) ) {
-		return (
-			<ProductListItem>
-				<strong>{ product.label }</strong>
-			</ProductListItem>
-		);
-	}
-	return <ProductListItem>{ product.label }</ProductListItem>;
-}
-
-function shouldLineItemBeShownWhenStepInactive( item ) {
-	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
-	return ! itemTypesToIgnore.includes( item.type );
-}
-
 const CheckoutTermsUI = styled.div`
 	& > * {
 		margin: 16px 0 16px -24px;
@@ -447,32 +403,5 @@ const CheckoutTermsUI = styled.div`
 
 	a:hover {
 		text-decoration: none;
-	}
-`;
-
-const SummaryContent = styled.div`
-	margin-top: 12px;
-
-	@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-	}
-`;
-
-const ProductList = styled.ul`
-	margin: 0;
-	padding: 0;
-`;
-
-const ProductListItem = styled.li`
-	color: ${( props ) => props.theme.colors.textColor};
-	font-size: 14px;
-	margin: 0 0 6px;
-	padding: 0;
-	list-style-type: none;
-
-	&:last-of-type {
-		margin-bottom: 0;
 	}
 `;
