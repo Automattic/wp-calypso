@@ -68,7 +68,7 @@
 
 // make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
-	> .activity-card {
+	.activity-card {
 		margin-bottom: 32px;
 		.activity-card__time-icon.gridicon {
 			background: var( --color-surface-backdrop );
