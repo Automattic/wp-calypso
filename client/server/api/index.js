@@ -8,6 +8,8 @@ import express from 'express';
  */
 import { version } from '../../package.json';
 import config from 'config';
+import oauth from './oauth';
+import signInWithApple from './sign-in-with-apple';
 
 export default function api() {
 	const app = express();
@@ -17,11 +19,11 @@ export default function api() {
 	} );
 
 	if ( config.isEnabled( 'oauth' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
-		require( './oauth' ).default( app );
+		oauth( app );
 	}
 
 	if ( config.isEnabled( 'sign-in-with-apple/redirect' ) ) {
-		require( './sign-in-with-apple' ).default( app );
+		signInWithApple( app );
 	}
 
 	return app;
