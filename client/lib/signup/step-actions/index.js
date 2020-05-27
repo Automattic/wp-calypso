@@ -330,6 +330,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 				const providedDependencies = {
 					siteId: newSiteId,
 					siteSlug: newSiteSlug,
+					cartItem,
 				};
 				callback( undefined, providedDependencies );
 			} );

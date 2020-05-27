@@ -293,10 +293,15 @@ export default class SignupFlowController {
 		this._processingSteps.add( step.stepName );
 
 		const dependencies = get( steps, [ step.stepName, 'dependencies' ], [] );
-		const dependenciesFound = pick(
-			getSignupDependencyStore( this._reduxStore.getState() ),
-			dependencies
+		const optionalIncomingDependencies = get(
+			steps,
+			[ step.stepName, 'optionalIncomingDependencies' ],
+			[]
 		);
+		const dependenciesFound = pick( getSignupDependencyStore( this._reduxStore.getState() ), [
+			...dependencies,
+			...optionalIncomingDependencies,
+		] );
 
 		/*
 			AB Test: passwordlessSignup
