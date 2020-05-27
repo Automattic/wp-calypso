@@ -255,7 +255,7 @@
 		"caniuse-lite": "^1.0.30001041",
 		"chai": "^4.2.0",
 		"chai-enzyme": "^1.0.0-beta.1",
-		"chalk": "^3.0.0",
+		"chalk": "^4.0.0",
 		"check-node-version": "^4.0.2",
 		"check-npm-client": "^1.1.1",
 		"chokidar-cli": "^2.1.0",
@@ -287,7 +287,7 @@
 		"gzip-size": "^5.1.1",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
-		"husky": "^3.1.0",
+		"husky": "^4.0.0",
 		"i18n-calypso": "^5.0.0",
 		"i18n-calypso-cli": "^1.0.0",
 		"ignore-loader": "^0.1.2",
@@ -306,7 +306,7 @@
 		"md5-file": "^4.0.0",
 		"micromatch": "^4.0.2",
 		"mixedindentlint": "^1.2.0",
-		"mkdirp": "^0.5.1",
+		"mkdirp": "^1.0.0",
 		"mock-fs": "^4.11.0",
 		"mockdate": "^2.0.5",
 		"moment-timezone-data-webpack-plugin": "^1.1.0",
@@ -355,7 +355,7 @@
 		"wp-e2e-tests": "^0.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
-		"yargs": "^13.3.0"
+		"yargs": "^15.0.0"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
