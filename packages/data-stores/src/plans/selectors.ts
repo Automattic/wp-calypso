@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { State, supportedPlanSlugs } from './reducer';
+import { State } from './reducer';
 import { planDetails, PLANS_LIST } from './plans-data';
 import { DEFAULT_PAID_PLAN, PLAN_FREE, PLAN_ECOMMERCE } from './constants';
 import type { PlanSlug } from './types';
@@ -20,8 +20,8 @@ export const getDefaultPlan = ( _: State, hasPaidDomain: boolean, hasPaidDesign:
 
 export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
 
-export const getPlanByPath = ( _: State, path: PlanSlug | undefined ) =>
-	getPlan( supportedPlanSlugs.find( ( slug ) => PLANS_LIST[ slug ].pathSlug === path ) );
+export const getPlanByPath = ( state: State, path: string ) =>
+	getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
 
 export const getPlansDetails = () => planDetails;
 

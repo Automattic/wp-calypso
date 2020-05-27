@@ -4,18 +4,13 @@
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 import type { PlanAction } from './actions';
 import type { PlanSlug } from './types';
+import { PLANS_LIST } from './plans-data';
 
 type PricesMap = {
 	[ slug in PlanSlug ]: string;
 };
 
-export const supportedPlanSlugs: PlanSlug[] = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-];
+export const supportedPlanSlugs = Object.keys( PLANS_LIST );
 
 const DEFAUlT_STATE: {
 	supportedPlanSlugs: PlanSlug[];
