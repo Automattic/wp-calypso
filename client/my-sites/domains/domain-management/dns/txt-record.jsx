@@ -63,7 +63,10 @@ class TxtRecord extends React.Component {
 						<FormInputValidation text={ translate( 'TXT Record has non-ASCII data' ) } isWarning />
 					) }
 					{ ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid TXT Record' ) } isError />
+						<FormInputValidation
+							text={ translate( 'TXT records may not exceed 255 characters' ) }
+							isError
+						/>
 					) }
 				</FormFieldset>
 			</div>
