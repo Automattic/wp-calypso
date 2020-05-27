@@ -17,7 +17,6 @@ import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import CartData from 'components/data/cart';
 import { getStepUrl } from 'signup/utils';
-import { isSitelessCheckoutEnabledForFlow } from 'signup/siteless';
 import StepWrapper from 'signup/step-wrapper';
 import {
 	domainRegistration,
@@ -65,7 +64,6 @@ class DomainsStep extends React.Component {
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
-		isSiteless: PropTypes.bool,
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
@@ -291,12 +289,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{
-				domainItem,
-				...( this.isSiteless() && { siteId: null, siteSlug: 'no-site' } ),
-				...shouldHideFreePlanItem,
-				...useThemeHeadstartItem,
-			}
+			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -304,11 +297,6 @@ class DomainsStep extends React.Component {
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
-	};
-
-	isSiteless = () => {
-		const { flowName, lastKnownFlow } = this.props;
-		return isSitelessCheckoutEnabledForFlow( flowName || lastKnownFlow );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
@@ -333,11 +321,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{
-				domainItem,
-				...( this.isSiteless() && { siteId: null, siteSlug: 'no-site' } ),
-				...useThemeHeadstartItem,
-			}
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
@@ -371,11 +355,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{
-				domainItem,
-				...( this.isSiteless() && { siteId: null, siteSlug: 'no-site' } ),
-				...useThemeHeadstartItem,
-			}
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
