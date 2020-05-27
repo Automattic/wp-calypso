@@ -19,7 +19,7 @@
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@automattic/lasagna": "^0.5.2",
+		"@automattic/lasagna": "^0.5.3",
 		"@automattic/load-script": "^1.0.0",
 		"@automattic/material-design-icons": "^1.0.0",
 		"@automattic/popup-monitor": "^1.0.0",

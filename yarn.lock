@@ -16,10 +16,10 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.3.0.tgz#6549e77f823514bdcf520cb2c48932c2c9db379f"
   integrity sha512-GRMV4PMtn2iE+30+RP33LyJSe4Qp8oILFNvk+iF8zd0LzUUaErZu86rk8YpEcLvFJzOU2BTXSewSdwyGc/sa1g==
 
-"@automattic/lasagna@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.5.2.tgz#e25e3a63e98c2baf87edabbc8497fc7d2a382ef4"
-  integrity sha512-VtydUfdMHyo0Bfwm/2pxxZG6hRs3DO4/f8viHcBnrABVDanLYcIKD5nvsOz+asPUo/f9TrvVZrU8eM9Rjce96g==
+"@automattic/lasagna@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.5.3.tgz#f38b32a83d341ca9166743e114b7a579dbc03ec6"
+  integrity sha512-BaXn2VW4Q+7wi+B6qSQuGZSHnr2Tc2/Fy10AiaXrm0ow3Axk+lPG/3x4T6HJbB5/Ok747GkiFf7dcnxx3PPLWQ==
   dependencies:
     jwt-decode "^2.2.0"
     phoenix "^1.5.1"
