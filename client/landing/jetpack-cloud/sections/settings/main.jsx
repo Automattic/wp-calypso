@@ -61,20 +61,15 @@ const getCardProps = ( isConnected, message, translate ) => {
 	return disconnectedProps( translate, message );
 };
 
-const ConnectionStatus = ( { cardProps } ) => {
-	// const translate = useTranslate();
-	// const cardProps = isConnected ? connectedProps( translate ) : disconnectedProps( translate );
-
-	return (
-		<Card compact={ true } className={ cardProps.className }>
-			<img className="settings__icon" src={ cardProps.iconPath } alt="" />
-			<div className="settings__details">
-				<div className="settings__details-head"> { cardProps.title } </div>
-				<div>{ cardProps.content }</div>
-			</div>
-		</Card>
-	);
-};
+const ConnectionStatus = ( { cardProps } ) => (
+	<Card compact={ true } className={ cardProps.className }>
+		<img className="settings__icon" src={ cardProps.iconPath } alt="" />
+		<div className="settings__details">
+			<div className="settings__details-head"> { cardProps.title } </div>
+			<div>{ cardProps.content }</div>
+		</div>
+	</Card>
+);
 
 const SettingsPage = () => {
 	const translate = useTranslate();
@@ -120,7 +115,7 @@ const SettingsPage = () => {
 
 	const productCode = hasBackup | ( hasScan << 1 );
 
-	const message = messages[ ( +isConnected ).toString() ][ productCode.toString() ];
+	const message = messages[ +isConnected ][ productCode ];
 
 	const cardProps = getCardProps( isConnected, message, translate );
 
