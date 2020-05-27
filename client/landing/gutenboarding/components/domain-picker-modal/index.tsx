@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import Modal from 'react-modal';
-import { useSelect } from '@wordpress/data';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -27,7 +27,6 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 	Modal.setAppElement( '#wpcom' );
 
 	const tracksName = 'DomainPickerModal';
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const handleOpen = () => {
 		// This fixes modal being shown without
@@ -37,7 +36,9 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 	};
 
 	const handleClose = () => {
-		recordCloseModal( tracksName, { selected_domain: getSelectedDomain()?.domain_name } );
+		recordCloseModal( tracksName, {
+			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
+		} );
 		onClose && onClose();
 	};
 

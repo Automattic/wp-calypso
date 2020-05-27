@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Popover } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -27,7 +27,6 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 	const isMobile = useViewportMatch( 'medium', '<' );
 
 	const tracksName = 'DomainPickerPopover';
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
 
 	React.useEffect( () => {
 		if ( isOpen ) {
@@ -37,7 +36,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 
 	const handleClose = () => {
 		recordCloseModal( tracksName, {
-			selected_domain: getSelectedDomain()?.domain_name,
+			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
 		} );
 		onClose && onClose();
 	};
