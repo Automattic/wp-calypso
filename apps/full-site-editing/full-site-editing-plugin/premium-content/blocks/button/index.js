@@ -65,6 +65,10 @@ const settings = {
 			type: 'string',
 			default: '',
 		},
+		'premium-content/container/selectedPlanId': {
+			type: 'number',
+			default: 0,
+		},
 	},
 
 	/**
@@ -91,11 +95,13 @@ const settings = {
 	title: __( 'Premium Content Button', 'premium-content' ),
 	/* translators: block description */
 	description: __( 'Premium Content Button.', 'premium-content' ),
+	parent: [ 'premium-content/logged-out-view' ],
 	supports: {
 		html: false,
 	},
 	edit,
 	save: () => null,
+	context: [ 'premium-content/container/selectedPlanId' ],
 };
 
 export { name, category, settings };

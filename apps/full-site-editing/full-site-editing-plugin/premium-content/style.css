@@ -24,9 +24,12 @@
 	margin-right: 20px;
 }
 
-.wp-block-premium-content-logged-out-view p:last-child,
 .wp-block-premium-content-logged-out-view h3 {
 	margin-bottom: 20px;
+}
+
+.wp-block-premium-content-logged-out-view .wp-block-columns {
+	margin-top: 20px;
 }
 
 /** Notices close button **/

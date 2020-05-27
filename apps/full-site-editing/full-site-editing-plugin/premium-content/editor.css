@@ -136,3 +136,7 @@
 	margin-bottom: 20px;
 }
 
+div.block-editor-block-list__block[data-type='premium-content/button'] {
+	margin: 0px;
+}
+

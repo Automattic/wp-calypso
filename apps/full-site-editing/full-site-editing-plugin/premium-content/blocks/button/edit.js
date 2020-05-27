@@ -160,7 +160,14 @@ function Edit( props ) {
 	useEffect( () => {
 		setButtonClasses();
 		setCustomButtonColors();
-	}, [ props.backgroundButtonColor, props.textButtonColor ] );
+		setBlockContext();
+	}, [ props.backgroundButtonColor, props.textButtonColor, props.context ] );
+
+	function setBlockContext() {
+		const { context } = props;
+		props.setAttributes( context );
+		console.log( context );
+	}
 
 	function setButtonClasses() {
 		const buttonClasses = getButtonClasses();

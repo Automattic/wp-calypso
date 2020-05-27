@@ -32,23 +32,14 @@ import SubmitButtons from './submit-buttons';
 function Edit( props ) {
 	useEffect( () => {
 		props.selectBlock();
-	}, [] );
+		setBlockContext();
+	}, [ props.context ] );
 
-	const buttons = (
-		<SubmitButtons
-			{ ...{
-				attributes: pick( props.attributes, [
-					'subscribeButtonText',
-					'loginButtonText',
-					'backgroundButtonColor',
-					'textButtonColor',
-					'customBackgroundButtonColor',
-					'customTextButtonColor',
-				] ),
-				setAttributes: props.setAttributes,
-			} }
-		/>
-	);
+	function setBlockContext() {
+		const { context } = props;
+		props.setAttributes( context );
+		console.log( context );
+	}
 
 	return (
 		<Context.Consumer>
@@ -73,9 +64,22 @@ function Edit( props ) {
 									),
 								},
 							],
+							[
+								'core/columns',
+								{},
+								[
+									[
+										'premium-content/button',
+										{
+											buttonType: 'subscribe',
+											buttonText: __( 'Subscribe', 'premium-content' ),
+										},
+									],
+									[ 'premium-content/button' ],
+								],
+							],
 						] }
 					/>
-					{ buttons }
 				</div>
 			) }
 		</Context.Consumer>
