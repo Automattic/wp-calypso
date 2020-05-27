@@ -287,7 +287,7 @@
 		"gzip-size": "^5.1.1",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
-		"husky": "^3.1.0",
+		"husky": "^4.0.0",
 		"i18n-calypso": "^5.0.0",
 		"i18n-calypso-cli": "^1.0.0",
 		"ignore-loader": "^0.1.2",
