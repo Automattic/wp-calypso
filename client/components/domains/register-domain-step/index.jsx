@@ -1213,8 +1213,6 @@ class RegisterDomainStep extends React.Component {
 				this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
-		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
-
 		const hasResults =
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
 			! this.state.loadingResults;
@@ -1258,7 +1256,7 @@ class RegisterDomainStep extends React.Component {
 					placeholderQuantity={ PAGE_SIZE }
 					isSignupStep={ this.props.isSignupStep }
 					railcarId={ this.state.railcarId }
-					fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
+					fetchAlgo={ this.getFetchAlgo() }
 					cart={ this.props.cart }
 					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 					unavailableDomains={ this.state.unavailableDomains }
@@ -1285,6 +1283,18 @@ class RegisterDomainStep extends React.Component {
 				</DomainSearchResults>
 			</>
 		);
+	}
+
+	getFetchAlgo() {
+		const fetchAlgoPrefix = '/domains/search/' + this.props.vendor;
+
+		if ( this.props.isDomainOnly ) {
+			return fetchAlgoPrefix + '/domain-only';
+		}
+		if ( this.props.isSignupStep ) {
+			return fetchAlgoPrefix + '/signup';
+		}
+		return fetchAlgoPrefix + '/domains';
 	}
 
 	getMapDomainUrl() {
