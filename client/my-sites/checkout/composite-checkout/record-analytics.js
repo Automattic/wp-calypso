@@ -212,21 +212,22 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
-						reason: String( action.payload ),
+						reason: String( action.payload.message ),
 					} )
 				);
-				// FIXME: how do we get the payment method id?
-				const payment_method = translateCheckoutPaymentMethodToWpcomPaymentMethod( id );
+				const payment_method = translateCheckoutPaymentMethodToWpcomPaymentMethod(
+					action.payload.paymentMethodId
+				);
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method,
-						reason: String( action.payload ),
+						reason: String( action.payload.message ),
 					} )
 				);
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-						error_message: String( action.payload ),
+						error_message: String( action.payload.message ),
 					} )
 				);
 			}
