@@ -19,8 +19,9 @@ import {
 	getInlineHelpSearchResultsForQuery,
 	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
-	hasInlineHelpAPIResults,
 } from 'state/inline-help/selectors';
+
+import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
 
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { localizeUrl } from 'lib/i18n-utils';
