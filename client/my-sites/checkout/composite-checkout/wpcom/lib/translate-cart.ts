@@ -127,6 +127,8 @@ function translateReponseCartProductToWPCOMCartItem(
 		currency,
 		item_original_cost_display,
 		item_original_cost_integer,
+		item_original_monthly_cost_display,
+		item_original_monthly_cost_integer,
 		item_subtotal_display,
 		item_subtotal_integer,
 		is_domain_registration,
@@ -157,9 +159,11 @@ function translateReponseCartProductToWPCOMCartItem(
 
 	// for displaying crossed-out original price
 	let itemOriginalCostDisplay = item_original_cost_display || '';
+	let itemOriginalMonthlyCostDisplay = item_original_monthly_cost_display || '';
 	// but for the credits item this is confusing and unnecessary
 	if ( 'wordpress-com-credits' === product_slug ) {
 		itemOriginalCostDisplay = '';
+		itemOriginalMonthlyCostDisplay = '';
 	}
 
 	return {
@@ -183,6 +187,8 @@ function translateReponseCartProductToWPCOMCartItem(
 			is_bundled: is_bundled || false,
 			item_original_cost_display: itemOriginalCostDisplay,
 			item_original_cost_integer: item_original_cost_integer || 0,
+			item_original_monthly_cost_display: itemOriginalMonthlyCostDisplay,
+			item_original_monthly_cost_integer: item_original_monthly_cost_integer || 0,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',
 		},
