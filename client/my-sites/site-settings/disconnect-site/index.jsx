@@ -18,13 +18,20 @@ import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import Troubleshoot from './troubleshoot';
 import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const DisconnectSite = ( { reason, type, siteSlug, site: { name: siteName }, translate } ) => {
+const DisconnectSite = ( {
+	reason,
+	type,
+	siteSlug,
+	site: { name: siteName, URL: siteUrl },
+	translate,
+} ) => {
 	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
@@ -35,7 +42,7 @@ const DisconnectSite = ( { reason, type, siteSlug, site: { name: siteName }, tra
 	if ( type === 'down' ) {
 		return (
 			<div>
-				<Main className="disconnect-site__site-settings">
+				<Main className="disconnect-site__down-flow">
 					<DocumentHead title={ translate( 'Site Settings' ) } />
 					<FormattedHeader
 						headerText={ translate(
@@ -56,11 +63,40 @@ const DisconnectSite = ( { reason, type, siteSlug, site: { name: siteName }, tra
 							}
 						) }
 					/>
-					<CompactCard href={ confirmHref }>
-						{ translate( 'Confirm your site is loading' ) }
+					<CompactCard href={ siteUrl } target="_blank" rel="noopener noreferrer">
+						<FormattedHeader
+							isSecondary
+							align="start"
+							headerText={ translate( 'Confirm your site is loading' ) }
+							subHeaderText={ translate(
+								'As a first step, we suggest trying to open your site to ensure it’s loading correctly.'
+							) }
+						/>
 					</CompactCard>
-					<CompactCard href={ confirmHref }>{ translate( 'Troubleshoot Jetpack' ) }</CompactCard>
-					<CompactCard href={ confirmHref }>{ translate( 'Disconnect Jetpack' ) }</CompactCard>
+					<CompactCard
+						href={ localizeUrl(
+							'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
+						) }
+					>
+						<FormattedHeader
+							isSecondary
+							align="start"
+							headerText={ translate( 'Troubleshoot Jetpack' ) }
+							subHeaderText={ translate(
+								'Select this option if you’re still using Jetpack but seeing this error.'
+							) }
+						/>
+					</CompactCard>
+					<CompactCard href={ confirmHref }>
+						<FormattedHeader
+							isSecondary
+							align="start"
+							headerText={ translate( 'Disconnect Jetpack' ) }
+							subHeaderText={ translate(
+								'Select this option if your site isn’t available anymore or if you’ve stopped using Jetpack and/or WordPress.'
+							) }
+						/>
+					</CompactCard>
 					<div className="disconnect-site__navigation-links">
 						<NavigationLink href={ backHref } direction="back" />
 					</div>

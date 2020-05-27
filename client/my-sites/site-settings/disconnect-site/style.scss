@@ -17,6 +17,23 @@
 	}
 }
 
+.disconnect-site__down-flow {
+	.card {
+		.formatted-header {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.formatted-header__title {
+			font-size: 16px;
+		}
+
+		.formatted-header__subtitle {
+			margin-bottom: 0;
+		}
+	}
+}
+
 .disconnect-site__site-settings {
 	.section-header__label::before {
 		background: inherit;

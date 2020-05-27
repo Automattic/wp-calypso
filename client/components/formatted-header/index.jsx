@@ -30,6 +30,8 @@ function FormattedHeader( {
 		'is-compact-on-mobile': compactOnMobile,
 		'is-left-align': 'left' === align,
 		'is-right-align': 'right' === align,
+		'is-start-align': 'start' === align,
+		'is-end-align': 'end' === align,
 	} );
 
 	return (
