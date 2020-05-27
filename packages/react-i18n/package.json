@@ -33,7 +33,6 @@
 	"dependencies": {
 		"@wordpress/compose": "1.x.x - 3.x.x",
 		"@wordpress/i18n": "^3.11.0",
-		"memize": "^1.1.0",
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
