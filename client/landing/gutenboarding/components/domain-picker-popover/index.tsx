@@ -38,14 +38,16 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClos
 		recordCloseModal( tracksName, {
 			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
 		} );
-		onClose && onClose();
+		onClose?.();
 	};
 
 	// Don't render popover when isOpen is false.
 	// We need this component to be hot because useViewportMatch
 	// returns false on initial mount before returning true,
 	// causing search input to be automatically focused.
-	if ( ! isOpen ) return null;
+	if ( ! isOpen ) {
+		return null;
+	}
 
 	return (
 		<div className="domain-picker-popover">

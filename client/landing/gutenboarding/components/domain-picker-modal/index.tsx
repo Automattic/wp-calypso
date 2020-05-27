@@ -23,6 +23,10 @@ interface Props extends DomainPickerProps {
 }
 
 const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
+	if ( ! isOpen ) {
+		return null;
+	}
+
 	// This is needed otherwise it throws a warning.
 	Modal.setAppElement( '#wpcom' );
 
@@ -39,10 +43,8 @@ const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, onClose,
 		recordCloseModal( tracksName, {
 			selected_domain: select( STORE_KEY ).getSelectedDomain()?.domain_name,
 		} );
-		onClose && onClose();
+		onClose?.();
 	};
-
-	if ( ! isOpen ) return null;
 
 	return (
 		<Modal

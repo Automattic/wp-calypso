@@ -155,14 +155,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const CancelButton: FunctionComponent< Button.ButtonProps > = ( { ...props } ) => {
 		return (
-			<Button
-				isLink
-				className="domain-picker__cancel-button"
-				onClick={ () => {
-					onClose();
-				} }
-				{ ...props }
-			>
+			<Button isLink className="domain-picker__cancel-button" onClick={ onClose } { ...props }>
 				{ __( 'Cancel' ) }
 			</Button>
 		);
