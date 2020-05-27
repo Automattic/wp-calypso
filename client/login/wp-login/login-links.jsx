@@ -277,6 +277,10 @@ export class LoginLinks extends React.Component {
 			locale,
 		} = this.props;
 
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+			return null;
+		}
+
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
 		if (
