@@ -6,12 +6,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics, composeAnalytics } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import {
 	getInlineHelpCurrentlySelectedLink,
@@ -24,11 +23,6 @@ import {
 	selectNextResult,
 	selectPreviousResult,
 } from 'state/inline-help/actions';
-
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:customer-home-help' );
 
 class HelpSearchCard extends Component {
 	static propTypes = {
@@ -70,22 +64,15 @@ class HelpSearchCard extends Component {
 	};
 
 	onSearch = ( searchQuery ) => {
-		const query = searchQuery.trim();
-		if ( ! query || ! query.length ) {
-			return debug( 'empty query. Skip recording tracks-event.' );
+		if ( ! searchQuery || ! searchQuery.trim().length ) {
+			// Make an empty search.
+			this.props.requestInlineHelpSearchResults( searchQuery );
 		}
-
-		debug( 'search query received: ', searchQuery );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_search', {
-			search_query: searchQuery,
-		} );
-
-		// Make a search
-		this.props.requestInlineHelpSearchResults( searchQuery );
+		this.props.requestInlineSearchResultsAndTrack( searchQuery );
 	};
 
 	componentDidMount() {
-		this.props.requestInlineHelpSearchResults();
+		this.props.requestInlineSearchResultsAndTrack();
 	}
 
 	render() {
@@ -108,9 +95,18 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	selectedResultIndex: getSelectedResultIndex( state ),
 	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
+
+const requestInlineSearchResultsAndTrack = ( searchQuery ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_inlinehelp_search', { search_query: searchQuery } )
+		),
+		requestInlineHelpSearchResults( searchQuery )
+	);
+
 const mapDispatchToProps = {
 	recordTracksEvent,
-	requestInlineHelpSearchResults,
+	requestInlineSearchResultsAndTrack,
 	selectNextResult,
 	selectPreviousResult,
 };
