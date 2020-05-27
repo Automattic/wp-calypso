@@ -7,7 +7,7 @@
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
 	"login_url": "/connect",
-	"logout_url": "/",
+	"logout_url": "https://jetpack.com",
 	"site_name": "Jetpack.com",
 	"oauth_client_id": 69041,
 	"features": {
@@ -15,6 +15,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"i18n/community-translator": false,
 		"jetpack-cloud": true,
 		"jetpack-cloud/backups-restore": true,
 		"jetpack-cloud/backups": true,
@@ -40,5 +41,7 @@
 		"jetpack-cloud-auth": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud"
+	"theme": "jetpack-cloud",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f"
 }

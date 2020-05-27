@@ -15,7 +15,11 @@ import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'lib/oauth2-clients';
 import { addQueryArgs, getUrlParts } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -97,6 +101,14 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
+		if (
+			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGutenboarding
+		) {
+			return null;
+		}
+
 		const redirectTo = this.props.query?.redirect_to;
 		if ( redirectTo ) {
 			const { pathname, searchParams: redirectToQuery } = getUrlParts( redirectTo );
@@ -182,6 +194,11 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// jetpack cloud cannot have users being sent to WordPress.com
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			return null;
+		}
+
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
 		if (
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
@@ -227,6 +244,11 @@ export class LoginLinks extends React.Component {
 
 	renderResetPasswordLink() {
 		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+			return null;
+		}
+
+		// jetpack cloud needs to keep users in the flow
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -313,6 +335,16 @@ export class LoginLinks extends React.Component {
 			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
 		}
 
+		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const oauth2Params = new URLSearchParams( {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			} );
+
+			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		}
+
 		return (
 			<a
 				href={ signupUrl }
@@ -333,9 +365,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
-					! this.props.isGutenboarding &&
-					this.renderBackLink() }
+				{ this.renderBackLink() }
 			</div>
 		);
 	}

@@ -66,6 +66,7 @@ import {
 	applePayProcessor,
 	stripeCardProcessor,
 	fullCreditsProcessor,
+	existingCardProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -411,6 +412,7 @@ export default function CompositeCheckout( {
 			'apple-pay': applePayProcessor,
 			card: stripeCardProcessor,
 			'full-credits': fullCreditsProcessor,
+			'existing-card': existingCardProcessor,
 		} ),
 		[]
 	);

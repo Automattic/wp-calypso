@@ -2,6 +2,10 @@
 
 .plans-button {
 	white-space: nowrap;
+
+	&.is-highlighted {
+		color: var( --studio-blue-40 );
+	}
 }
 
 .plans-button__jetpack-logo {

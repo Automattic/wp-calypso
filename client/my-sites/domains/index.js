@@ -171,14 +171,12 @@ export default function () {
 
 	if ( config.isEnabled( 'manage/all-domains' ) ) {
 		page(
-			paths.domainManagementUserRoot(),
+			paths.domainManagementRoot(),
 			...getCommonHandlers( { noSitePath: false } ),
 			domainManagementController.domainManagementListAllSites,
 			makeLayout,
 			clientRender
 		);
-
-		page.redirect( paths.domainManagementRoot(), paths.domainManagementUserRoot() );
 	} else {
 		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
 	}

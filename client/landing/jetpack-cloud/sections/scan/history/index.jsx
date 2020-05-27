@@ -150,6 +150,7 @@ const ScanHistoryPage = ( {
 						showDialog={ showThreatDialog }
 						onCloseDialog={ closeDialog }
 						onConfirmation={ fixThreat }
+						siteId={ siteId }
 						siteName={ siteName }
 						threat={ selectedThreat }
 						action={ 'fix' }

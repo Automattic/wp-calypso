@@ -51,12 +51,12 @@
 		text-overflow: ellipsis;
 	}
 
-	.dashicon {
-		margin-left: 0.5em;
+	svg {
+		margin-left: 0.2em;
 		transition: transform 100ms ease-in-out;
 	}
 
-	&.is-open .dashicon {
+	&.is-open svg {
 		transform: rotate( 180deg );
 	}
 

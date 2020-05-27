@@ -79,7 +79,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 
 	return (
 		<Main className="backup-activity-log">
-			<DocumentHead title="Activity log" />
+			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/backup/activity/:site" title="Activity log" />
 			<div className="backup-activity-log__content">

@@ -227,7 +227,7 @@ const sections = [
 	},
 	{
 		name: 'domains',
-		paths: [ '/domains', '/me/domains' ],
+		paths: [ '/domains' ],
 		module: 'my-sites/domains',
 		secondary: true,
 		group: 'sites',
@@ -299,7 +299,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -341,7 +341,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/recommendations' ],
+		paths: [ '/read/search' ],
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',

@@ -129,6 +129,12 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					// Use `@wordpress/icons` instead of `Icon` or `Dashicon` from `@wordpress/components`.
+					{
+						name: '@wordpress/components',
+						importNames: [ 'Dashicon', 'Icon' ],
+						message: 'Please use `@wordpress/icons` instead.',
+					},
 				],
 			},
 		],

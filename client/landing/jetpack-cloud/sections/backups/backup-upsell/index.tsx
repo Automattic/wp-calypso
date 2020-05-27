@@ -66,7 +66,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 
 const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => (
 	<Main className="backup-upsell">
-		<DocumentHead title="Backups" />
+		<DocumentHead title="Backup" />
 		<SidebarNavigation />
 		<div className="backup-upsell__content">
 			{ 'vp_active_on_site' === reason ? <BackupsVPActiveBody /> : <BackupsUpsellBody /> }

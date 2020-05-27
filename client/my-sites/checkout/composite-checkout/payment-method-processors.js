@@ -12,6 +12,7 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitCreditsTransaction,
+	submitExistingCardPayment,
 } from './payment-method-helpers';
 import { createStripePaymentMethod } from 'lib/stripe';
 
@@ -51,6 +52,26 @@ export async function stripeCardProcessor( submitData ) {
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( select ),
 			paymentMethodToken,
+		},
+		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		// TODO: do this automatically when calling setTransactionComplete
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
+}
+
+export async function existingCardProcessor( submitData ) {
+	const pending = submitExistingCardPayment(
+		{
+			...submitData,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( select ),
 		},
 		wpcomTransaction
 	);

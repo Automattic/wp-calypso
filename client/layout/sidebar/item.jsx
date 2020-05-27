@@ -13,6 +13,7 @@ import { isFunction } from 'lodash';
  */
 import { isExternal } from 'lib/url';
 import MaterialIcon from 'components/material-icon';
+import Count from 'components/count';
 import { preload } from 'sections-helper';
 import TranslatableString from 'components/translatable/proptype';
 
@@ -23,7 +24,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, hasUnseen } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, hasUnseen, count } = props;
 
 	let _preloaded = false;
 
@@ -71,6 +72,7 @@ export default function SidebarItem( props ) {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
 					{ props.label }
+					{ !! count && <Count count={ count } /> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
@@ -95,4 +97,5 @@ SidebarItem.propTypes = {
 	hasUnseen: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
+	count: PropTypes.number,
 };

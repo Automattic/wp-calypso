@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import config from 'config';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -43,18 +44,19 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 	// This accounts for plans that may come from e.g. selecting a domain or adding a plan via URL
 	const plan = useSelectedPlan();
 
-	const planLabel =
-		plan?.isFree && ! selectedPlan
-			? __( 'View plans' )
-			: /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
-			  sprintf( __( '%s Plan' ), plan.getTitle() );
+	const isPlanUserSelectedOrPaid = selectedPlan || ! plan?.isFree;
+
+	const planLabel = isPlanUserSelectedOrPaid
+		? /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+		  sprintf( __( '%s Plan' ), plan.getTitle() )
+		: __( 'View plans' );
 
 	return (
 		<>
 			<Button
 				onClick={ handleButtonClick }
 				label={ __( planLabel ) }
-				className="plans-button"
+				className={ classnames( 'plans-button', { 'is-highlighted': isPlanUserSelectedOrPaid } ) }
 				{ ...buttonProps }
 			>
 				{ isDesktop && planLabel }

@@ -12,6 +12,12 @@ export const hasPaidDomain = ( state: State ): boolean => {
 	}
 	return ! state.domain.is_free;
 };
+export const hasPaidDesign = ( state: State ): boolean => {
+	if ( ! state.selectedDesign ) {
+		return false;
+	}
+	return state.selectedDesign.is_premium;
+};
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedVertical = ( state: State ) => state.siteVertical;

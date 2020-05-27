@@ -78,7 +78,7 @@ function renderUpsell( reason ) {
 export default function ScanUpsellPage( { reason } ) {
 	return (
 		<Main className="scan__main">
-			<DocumentHead title="Scanner" />
+			<DocumentHead title="Scan" />
 			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
 			<div className="scan__content">{ renderUpsell( reason ) }</div>

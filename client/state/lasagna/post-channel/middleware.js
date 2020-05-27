@@ -22,7 +22,8 @@ const topicIss = 'wordpress.com';
 const topicSubPrefix = 'wp_post';
 
 const getTopic = ( { scheme, post } ) => {
-	return [ scheme, topicIss, topicSubPrefix, post.global_ID ].join( ':' );
+	const postIdSiteIdKey = `${ post.ID }-${ post.site_ID }`;
+	return [ scheme, topicIss, topicSubPrefix, postIdSiteIdKey ].join( ':' );
 };
 
 const getJoinParams = ( store, postKey ) => {

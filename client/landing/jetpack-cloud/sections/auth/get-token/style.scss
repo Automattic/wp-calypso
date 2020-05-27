@@ -1,9 +1,9 @@
-.connect.main {
+.get-token.main {
 	margin: auto;
 	max-width: 480px;
 }
 
-.connect__content {
+.get-token__content {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
@@ -12,5 +12,9 @@
 
 	& > * {
 		margin-bottom: 32px;
+	}
+
+	div.pulsing-dot {
+		position: unset;
 	}
 }
