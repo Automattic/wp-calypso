@@ -439,13 +439,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 					isSubscribed && setTransactionComplete();
 				} )
 				.catch( ( error ) => {
-					debug( 'showing error for auth', error.message );
-					showErrorMessage(
-						localize( 'Authorization failed for that card. Please try a different payment method.' )
-					);
-					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error.message } );
 					isSubscribed && setTransactionError( error.message );
-					isSubscribed && setFormReady();
 				} );
 		}
 
@@ -495,10 +489,6 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );
-							setFormReady();
-							onEvent( { type: 'STRIPE_TRANSACTION_ERROR', payload: error.message } );
-							debug( 'showing error for submit', error.message );
-							showErrorMessage( error.message );
 						} );
 				}
 			} }

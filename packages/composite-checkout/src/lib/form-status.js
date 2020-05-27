@@ -13,16 +13,22 @@ const debug = debugFactory( 'composite-checkout:form-status' );
 
 export function useFormStatus() {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
-	return useMemo(
+	const formStatusActions = useMemo(
 		() => ( {
-			formStatus,
 			setFormLoading: () => setFormStatus( 'loading' ),
 			setFormReady: () => setFormStatus( 'ready' ),
 			setFormSubmitting: () => setFormStatus( 'submitting' ),
 			setFormValidating: () => setFormStatus( 'validating' ),
 			setFormComplete: () => setFormStatus( 'complete' ),
 		} ),
-		[ formStatus, setFormStatus ]
+		[ setFormStatus ]
+	);
+	return useMemo(
+		() => ( {
+			...formStatusActions,
+			formStatus,
+		} ),
+		[ formStatus, formStatusActions ]
 	);
 }
 

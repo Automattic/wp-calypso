@@ -174,13 +174,7 @@ function ExistingCardPayButton( {
 					isSubscribed && setTransactionComplete( authenticationResponse );
 				} )
 				.catch( ( error ) => {
-					debug( 'showing error for auth', error.message );
-					showErrorMessage(
-						localize( 'Authorization failed for that card. Please try a different payment method.' )
-					);
-					onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error } );
-					isSubscribed && resetTransaction();
-					isSubscribed && setFormReady();
+					isSubscribed && setTransactionError( error.message );
 				} );
 		}
 
@@ -189,6 +183,7 @@ function ExistingCardPayButton( {
 		onEvent,
 		resetTransaction,
 		setTransactionComplete,
+		setTransactionError,
 		setFormReady,
 		showInfoMessage,
 		showErrorMessage,
@@ -229,9 +224,6 @@ function ExistingCardPayButton( {
 					} )
 					.catch( ( error ) => {
 						setTransactionError( error.message );
-						setFormReady();
-						onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error.message } );
-						showErrorMessage( error.message );
 					} );
 			} }
 			buttonState={ disabled ? 'disabled' : 'primary' }

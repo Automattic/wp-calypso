@@ -78,16 +78,11 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 					setTransactionComplete();
 				} )
 				.catch( ( error ) => {
-					// TODO: do these things automatically
 					setTransactionError( error.message );
-					setFormReady();
-					onEvent( { type: 'APPLE_PAY_TRANSACTION_ERROR', payload: error.message } );
-					showErrorMessage( error.message );
 				} );
 		},
 		[
 			submitTransaction,
-			setFormReady,
 			setTransactionComplete,
 			setTransactionError,
 			onEvent,
@@ -95,7 +90,6 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 			total,
 			stripe,
 			stripeConfiguration,
-			showErrorMessage,
 			setFormSubmitting,
 		]
 	);

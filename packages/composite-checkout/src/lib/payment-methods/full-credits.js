@@ -88,11 +88,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 				setTransactionComplete();
 			} )
 			.catch( ( error ) => {
-				// TODO: do these things automatically
 				setTransactionError( error.message );
-				setFormReady();
-				onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message } );
-				showErrorMessage( error.message );
 			} );
 	};
 
