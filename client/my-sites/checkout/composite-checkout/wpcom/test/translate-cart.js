@@ -629,6 +629,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					item_original_cost_display: '$144',
 					item_original_monthly_cost_integer: 1200,
 					item_original_monthly_cost_display: '$12',
+					months_per_bill_period: 12,
 					item_subtotal: 127,
 					item_subtotal_integer: 12700,
 					item_subtotal_display: '$127',
@@ -724,6 +725,9 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			} );
 			it( 'has the expected original monthly cost display value', function () {
 				expect( clientCart.items[ 0 ].wpcom_meta.item_original_monthly_cost_display ).toBe( '$12' );
+			} );
+			it( 'has the expected months per bill period', function () {
+				expect( clientCart.items[ 0 ].wpcom_meta.months_per_bill_period ).toBe( 12 );
 			} );
 			it( 'has the expected value', function () {
 				expect( clientCart.items[ 0 ].amount.value ).toBe( 12700 );
