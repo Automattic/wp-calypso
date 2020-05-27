@@ -17,11 +17,16 @@ const category = 'common';
 
 /**
  * @typedef {object} Attributes
- * @property { string } newPlanName
- * @property { string } newPlanCurrency
- * @property { number } newPlanPrice
- * @property { string } newPlanInterval
- * @property { number } selectedPlanId
+ * @property { string } blockID
+ * @property { string } buttonText
+ * @property { string } align
+ * @property { string } buttonType
+ * @property { string } buttonClasses
+ * @property { string } backgroundButtonColor
+ * @property { string } textButtonColor
+ * @property { string } customBackgroundButtonColor
+ * @property { string } customTextButtonColor
+ * @property { number } premium-content/container/selectedPlanId
  *
  * @typedef {import('@wordpress/blocks').BlockConfiguration<Attributes>} BlockConfiguration
  * @type {BlockConfiguration}

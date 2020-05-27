@@ -144,15 +144,22 @@ const inspectorControls = ( props ) => {
 /**
  * Block edit function
  *
+ * @typedef { import('@wordpress/block-editor').ColorPalette.Color } Color
+ * @property { string } class
+ * @property { string } color
+ * @property { string } name
+ * @property { string } slug
+ *
  * @typedef { import('./').Attributes } Attributes
  * @typedef { Object } Props
- * @property { boolean } isSelected
- * @property { string } className
- * @property { string } clientId
- * @property { string } containerClientId
+ * @property { Color } backgroundButtonColor
+ * @property { Color } textButtonColor
+ * @property { string } fallbackBackgroundColor
+ * @property { string } fallbackTextColor
  * @property { Attributes } attributes
+ * @property { () => void } setBackgroundButtonColor
+ * @property { () => void } setTextButtonColor
  * @property { (attributes: Partial<Attributes>) => void } setAttributes
- * @property { () => void } selectBlock
  *
  * @param { Props } props
  */
