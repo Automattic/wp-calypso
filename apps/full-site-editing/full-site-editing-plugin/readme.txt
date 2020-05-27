@@ -46,6 +46,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Support for any UTF-8 character in the Premium Content block.
 * Fixed availability of Premium Content subscription email service.
 * Premium Content block styles adjusted to only load when block is used.
+* Hide Gutenberg's inserter (in favor of ours).
 
 = 1.5 =
 * Global Styles: Fix a "Bad array access" error.
