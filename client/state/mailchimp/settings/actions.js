@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MAILCHIMP_SETTINGS_LIST,
 	MAILCHIMP_SETTINGS_RECEIVE,
@@ -13,6 +12,7 @@ import {
 import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/mailchimp';
+import 'state/mailchimp/init';
 
 export const requestSettings = ( siteId ) => ( {
 	siteId,
