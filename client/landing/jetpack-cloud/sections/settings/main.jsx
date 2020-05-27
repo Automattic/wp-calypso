@@ -14,6 +14,8 @@ import ServerCredentialsForm from 'components/jetpack/server-credentials-form';
 import { Card } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteScanState from 'state/selectors/get-site-scan-state';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -27,36 +29,41 @@ import './style.scss';
 import connectedIcon from 'assets/images/jetpack/connected.svg';
 import disconnectedIcon from 'assets/images/jetpack/disconnected.svg';
 
-const connectedProps = ( translate ) => ( {
+const connectedProps = ( translate, connectedMessage ) => ( {
 	iconPath: connectedIcon,
-	className: 'settings_connected',
+	className: 'settings__connected',
 	title: translate( 'Server status: Connected' ),
-	content: translate( 'One-click restores are enabled.' ),
+	content: connectedMessage,
 } );
 
-const disconnectedProps = ( translate ) => ( {
+const disconnectedProps = ( translate, disconnectedMessage ) => ( {
 	iconPath: disconnectedIcon,
-	className: 'settings_disconnected',
+	className: 'settings__disconnected',
 	title: translate( 'Server status: Not connected' ),
-	content: translate(
-		'Enter your server credentials to enable one-click restores for Backups. {{a}}Need help? Find your server credentials{{/a}}',
-		{
-			components: {
-				a: (
-					<ExternalLink
-						className="settings__link-external"
-						icon
-						href="https://jetpack.com/support/adding-credentials-to-jetpack/"
-					/>
-				),
-			},
-		}
-	),
+	content: translate( '%s {{a}}Need help? Find your server credentials{{/a}}', {
+		args: [ disconnectedMessage ],
+		components: {
+			a: (
+				<ExternalLink
+					className="settings__link-external"
+					icon
+					href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+				/>
+			),
+		},
+	} ),
 } );
 
-const ConnectionStatus = ( { isConnected } ) => {
-	const translate = useTranslate();
-	const cardProps = isConnected ? connectedProps( translate ) : disconnectedProps( translate );
+const getCardProps = ( isConnected, message, translate ) => {
+	if ( isConnected ) {
+		return connectedProps( translate, message );
+	}
+	return disconnectedProps( translate, message );
+};
+
+const ConnectionStatus = ( { cardProps } ) => {
+	// const translate = useTranslate();
+	// const cardProps = isConnected ? connectedProps( translate ) : disconnectedProps( translate );
 
 	return (
 		<Card compact={ true } className={ cardProps.className }>
@@ -73,9 +80,49 @@ const SettingsPage = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const rewind = useSelector( ( state ) => getRewindState( state, siteId ) );
-	const isInitialized = rewind.state !== 'uninitialized';
-	const isConnected = rewind.state === 'active';
+	const NO_PRODUCT = 0;
+	const HAS_BACKUP = 1;
+	const HAS_SCAN = 2;
+	const HAVE_BOTH = 3;
+
+	const DISCONNECTED = 0;
+	const CONNECTED = 1;
+
+	const messages = {
+		[ DISCONNECTED ]: {
+			[ NO_PRODUCT ]: '',
+			[ HAS_BACKUP ]: translate(
+				'Enter your server credentials to enable one-click restores for [Real-time/Daily] Backups.'
+			),
+			[ HAS_SCAN ]: translate(
+				'Enter your server credentials to enable Jetpack to auto fix threats.'
+			),
+			[ HAVE_BOTH ]: translate(
+				'Enter your server credentials to enable one-click restores for backups & to auto-fix threats.'
+			),
+		},
+		[ CONNECTED ]: {
+			[ NO_PRODUCT ]: '',
+			[ HAS_BACKUP ]: translate( 'One-click restores are enabled.' ),
+			[ HAS_SCAN ]: translate( 'Auto-fix threats are enabled.' ),
+			[ HAVE_BOTH ]: translate( 'One-click restores & auto-fix threats are enabled.' ),
+		},
+	};
+
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const backupState = useSelector( ( state ) => getRewindState( state, siteId ) );
+
+	const isInitialized = backupState.state !== 'uninitialized';
+	const isConnected = backupState.state === 'active';
+
+	const hasBackup = backupState?.state !== 'unavailable';
+	const hasScan = scanState?.state !== 'unavailable';
+
+	const productCode = hasBackup | ( hasScan << 1 );
+
+	const message = messages[ ( +isConnected ).toString() ][ productCode.toString() ];
+
+	const cardProps = getCardProps( isConnected, message, translate );
 
 	const [ formOpen, setFormOpen ] = useState( false );
 	useEffect( () => {
@@ -87,6 +134,7 @@ const SettingsPage = () => {
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<QueryRewindState siteId={ siteId } />
+			<QueryJetpackScan siteId={ siteId } />
 			<PageViewTracker path="/settings/:site" title="Settings" />
 
 			<div className="settings__title">
@@ -94,7 +142,7 @@ const SettingsPage = () => {
 			</div>
 
 			{ ! isInitialized && <div className="settings__status-uninitialized" /> }
-			{ isInitialized && <ConnectionStatus isConnected={ isConnected } /> }
+			{ isInitialized && <ConnectionStatus cardProps={ cardProps } /> }
 
 			{ ! isInitialized && <div className="settings__form-uninitialized" /> }
 			{ isInitialized && (
