@@ -9,7 +9,7 @@ import {
 
 export const triggerScanRun = ( siteId: number ) => ( dispatch: Function ) => {
 	dispatch(
-		recordTracksEvent( 'calypso_scan_run', {
+		recordTracksEvent( 'calypso_jetpack_scan_run', {
 			site_id: siteId,
 		} )
 	);

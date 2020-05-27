@@ -21,7 +21,9 @@ export const useThreats = ( siteId: number ) => {
 		( action: 'fix' | 'ignore' ) => {
 			if ( typeof selectedThreat !== 'undefined' ) {
 				const eventName =
-					action === 'fix' ? 'calypso_scan_threat_fix' : 'calypso_scan_threat_ignore';
+					action === 'fix'
+						? 'calypso_jetpack_scan_threat_fix'
+						: 'calypso_jetpack_scan_threat_ignore';
 				dispatch(
 					recordTracksEvent( eventName, {
 						site_id: siteId,
@@ -38,7 +40,7 @@ export const useThreats = ( siteId: number ) => {
 	const fixThreats = React.useCallback(
 		( fixableThreats: FixableThreat[] ) => {
 			dispatch(
-				recordTracksEvent( `calypso_scan_all_threats_fix`, {
+				recordTracksEvent( `calypso_jetpack_scan_allthreats_fix`, {
 					site_id: siteId,
 					threats_number: fixableThreats.length,
 				} )

@@ -66,7 +66,7 @@ const ScanHistoryPage = ( {
 			if ( 'all' === filterValue ) {
 				filterValue = '';
 			}
-			dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
+			dispatchRecordTracksEvent( 'calypso_jetpack_scan_history_filter', {
 				site_id: siteId,
 				filter: filterValue,
 			} );
@@ -77,7 +77,7 @@ const ScanHistoryPage = ( {
 
 	const openDialog = React.useCallback(
 		( threat ) => {
-			const eventName = 'calypso_scan_fix_threat_dialog_open';
+			const eventName = 'calypso_jetpack_scan_fixthreat_dialogopen';
 			dispatch(
 				recordTracksEvent( eventName, {
 					site_id: siteId,

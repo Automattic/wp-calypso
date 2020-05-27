@@ -44,6 +44,7 @@ import QuerySiteSettings from 'components/data/query-site-settings'; // Required
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import { backupMainPath } from './paths';
 import { emptyFilter } from 'state/activity-log/reducer';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -132,6 +133,7 @@ class BackupsPage extends Component {
 	renderMain() {
 		const {
 			allowRestore,
+			dispatchRecordTracksEvent,
 			doesRewindNeedCredentials,
 			siteCapabilities,
 			logs,
@@ -172,12 +174,15 @@ class BackupsPage extends Component {
 				<div className="backups__main-wrap">
 					<div className="backups__last-backup-status">
 						<BackupDatePicker
-							onDateChange={ this.onDateChange }
-							selectedDate={ this.getSelectedDate() }
-							siteId={ siteId }
-							oldestDateAvailable={ oldestDateAvailable }
-							today={ today }
-							siteSlug={ siteSlug }
+							{ ...{
+								onDateChange: this.onDateChange,
+								selectedDate: this.getSelectedDate(),
+								siteId,
+								oldestDateAvailable,
+								today,
+								siteSlug,
+								dispatchRecordTracksEvent,
+							} }
 						/>
 
 						{ isLoadingBackups && <div className="backups__is-loading" /> }
@@ -199,6 +204,7 @@ class BackupsPage extends Component {
 										deltas,
 										metaDiff,
 										doesRewindNeedCredentials,
+										dispatchRecordTracksEvent,
 									} }
 								/>
 							</>
@@ -367,6 +373,7 @@ const mapDispatchToProps = ( dispatch ) => ( {
 	clearFilter: ( siteId ) =>
 		// skipUrlUpdate prevents this action from trigger a redirect back to backups/activity in state/navigation/middleware.js
 		dispatch( { ...setFilter( siteId, emptyFilter ), meta: { skipUrlUpdate: true } } ),
+	dispatchRecordTracksEvent: recordTracksEvent,
 } );
 
 export default connect(
