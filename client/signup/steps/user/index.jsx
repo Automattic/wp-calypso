@@ -65,6 +65,7 @@ export class UserStep extends Component {
 
 		if (
 			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
 			this.props.subHeaderText !== nextProps.subHeaderText
 		) {
 			this.setSubHeaderText( nextProps );

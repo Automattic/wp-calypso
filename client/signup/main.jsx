@@ -16,6 +16,7 @@ import {
 	isEqual,
 	kebabCase,
 	map,
+	omit,
 	pick,
 	startsWith,
 } from 'lodash';
@@ -473,7 +474,11 @@ class Signup extends React.Component {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
-		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		const propsFromConfig = assign(
+			{},
+			omit( this.props, 'locale' ),
+			steps[ this.props.stepName ].props
+		);
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
