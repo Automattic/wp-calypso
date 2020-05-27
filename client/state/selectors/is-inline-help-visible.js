@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Returns a bool indicating if the inline help ui should be visibile
  * or not. Note this is not hiding the popover. This means the UI will be
  * hidden entirely.
@@ -12,5 +7,5 @@ import { get } from 'lodash';
  * @returns {boolean}        Is the inline help UI showing.
  */
 export default function isInlineHelpVisible( state ) {
-	return get( state, 'inlineHelp.ui.isVisible', true );
+	return state?.inlineHelp?.ui?.isVisible ?? true;
 }
