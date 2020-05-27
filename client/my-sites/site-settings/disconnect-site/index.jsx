@@ -23,12 +23,16 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const DisconnectSite = ( { reason, siteSlug, translate } ) => {
+const DisconnectSite = ( { reason, type, siteSlug, translate } ) => {
 	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
 	if ( reason ) {
 		backHref = '/settings/disconnect-site/' + siteSlug;
+	}
+
+	if ( type === 'down' ) {
+		return <div>Hello, world!</div>;
 	}
 
 	return (

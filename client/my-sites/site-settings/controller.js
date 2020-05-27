@@ -67,7 +67,7 @@ export function deleteSite( context, next ) {
 
 export function disconnectSite( context, next ) {
 	context.store.dispatch( hideSidebar() );
-	context.primary = <DisconnectSite reason={ context.params.reason } />;
+	context.primary = <DisconnectSite reason={ context.params.reason } type={ context.query.type } />;
 	next();
 }
 
