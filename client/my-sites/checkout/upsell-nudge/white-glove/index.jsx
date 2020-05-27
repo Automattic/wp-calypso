@@ -33,9 +33,7 @@ export class WhiteGlove extends PureComponent {
 
 				<CompactCard className="white-glove__card-header">{ this.header() }</CompactCard>
 
-				<CompactCard className="white-glove__card-body" isBorderless>
-					{ this.body() }
-				</CompactCard>
+				<CompactCard className="white-glove__card-body">{ this.body() }</CompactCard>
 				<CompactCard className="white-glove__card-footer">{ this.footer() }</CompactCard>
 			</>
 		);
@@ -82,8 +80,8 @@ export class WhiteGlove extends PureComponent {
 					<Checklist content="Access to hundreds of themes and plugins" />
 				</div>
 
-				<div class="white-glove__column-pane">
-					<div class="white-glove__content-right">
+				<div className="white-glove__column-pane">
+					<div className="white-glove__content-right">
 						More support. More customization. Our White Glove Service lets you take control. We’ll
 						show you how.
 					</div>

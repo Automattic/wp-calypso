@@ -2,6 +2,7 @@ main.white-glove.main {
 	margin: auto;
 	border: 5px solid #117ac9;
 	font-family: helvetica, arial, sans-serif;
+	background: var( --color-surface );
 }
 
 .white-glove {
@@ -18,7 +19,7 @@ main.white-glove.main {
 		margin: 0;
 		padding: 16px 50px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding-top: 0;
 		}
 	}
@@ -43,7 +44,7 @@ main.white-glove.main {
 		height: 50px;
 		width: 100%;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 80px;
 			height: 40px;
 		}
@@ -72,7 +73,7 @@ main.white-glove.main {
 		align-items: center;
 		padding: 20px 0;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			flex-direction: column-reverse;
 			padding: 0;
 		}
@@ -83,7 +84,7 @@ main.white-glove.main {
 		flex: 1 1 auto;
 		font-size: 16px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding-right: 0;
 		}
 	}
@@ -91,9 +92,17 @@ main.white-glove.main {
 	&__column-doodle {
 		flex: 1 0 280px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		img {
+			width: 280px;
+		}
+
+		@include breakpoint-deprecated( '<660px' ) {
 			flex: 1 0 auto;
 			margin-bottom: 1.5em;
+
+			img {
+				width: 380px;
+			}
 		}
 	}
 
@@ -101,8 +110,11 @@ main.white-glove.main {
 		font-family: 'Recoleta', Georgia, 'Times New Roman', Times, serif;
 		color: #117ac9;
 		font-size: 25px;
-		width: 400px;
-		margin-left: auto;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			width: 400px;
+			margin-left: auto;
+		}
 	}
 
 	&__small-header {
@@ -126,10 +138,6 @@ main.white-glove.main {
 
 		.white-glove__header-logo {
 			fill:  #117ac9;
-		}
-
-		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 21px;
 		}
 	}
 	&__sub-header {
@@ -209,8 +217,10 @@ main.white-glove.main {
 		border-radius: 4px;
 		padding: 30px 0 30px 25px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			flex-direction: column;
+			padding: 20px;
+			margin-bottom: 1.5em;
 		}
 	}
 
@@ -219,7 +229,7 @@ main.white-glove.main {
 		padding-right: 22px;
 		flex: 1 1 0;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding: 0;
 			margin-top: 10px;
 		}
@@ -228,6 +238,7 @@ main.white-glove.main {
 			width: 12px;
 			fill: #117ac9;
 			margin-right: 5px;
+			margin-top: -3px;
 		}
 
 		.checklist__content {
