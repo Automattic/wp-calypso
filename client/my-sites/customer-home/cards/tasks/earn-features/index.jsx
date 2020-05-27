@@ -3,13 +3,15 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Task from 'my-sites/customer-home/cards/tasks/task';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { TASK_EARN_FEATURES } from 'my-sites/customer-home/cards/constants';
-import webinarsIllustration from 'assets/images/customer-home/illustration-webinars.svg';
+import earnIllustration from 'assets/images/customer-home/illustration--task-earn.svg';
 
 const EarnFeatures = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -23,11 +25,21 @@ const EarnFeatures = ( { siteSlug } ) => {
 			actionText={ translate( 'Start making money' ) }
 			actionUrl={ `/earn/${ siteSlug }` }
 			completeOnStart={ false }
-			illustration={ webinarsIllustration }
-			timing={ 2 }
+			illustration={ earnIllustration }
+			timing={ 3 }
 			taskId={ TASK_EARN_FEATURES }
 		/>
 	);
 };
 
-export default EarnFeatures;
+const ConnectedDismissibleCardExample = connect( null, {
+	clearPreference: partial( savePreference, 'home-task-earn-features', null ),
+} )( EarnFeatures );
+
+const mapStateToProps = ( state ) => {
+	return {
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+};
+
+export default connect( mapStateToProps )( EarnFeatures );

@@ -3,31 +3,33 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
-import EducationalContent from '../../educational-content';
+import EducationalContent from '../educational-content';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Image dependencies
  */
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
-const PremiumContent = () => {
+const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
 		<EducationalContent
-			title={ translate( 'Sell access to premium content' ) }
+			title={ translate( 'Make money from your website' ) }
 			description={ translate(
-				'Sell monthly or yearly subscriptions that offer exclusive access to premium content on your site.'
+				'Accept credit and debit card payments on your website for just about anything.'
 			) }
 			links={ [
 				{
-					postId: 145498,
-					url: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
+					buttonLink: true,
+					url:  `/earn/${ siteSlug }`,
 					text: translate( 'Sell Premium Content' ),
 					icon: 'video',
 					tracksEvent: 'calypso_customer_home_free_photo_library_video_support_page_view',
@@ -39,4 +41,10 @@ const PremiumContent = () => {
 	);
 };
 
-export default PremiumContent;
+const mapStateToProps = ( state ) => {
+	return {
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+};
+
+export default connect( mapStateToProps ) ( EducationEarn );
