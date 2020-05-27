@@ -768,7 +768,9 @@
 
 	.wp-login__links,
 	.login__social,
-	.login__form {
+	.login__form,
+	.two-factor-authentication__verification-code-form,
+	.two-factor-authentication__actions {
 		width: 100%;
 		max-width: 375px;
 	}
