@@ -56,6 +56,17 @@ function WPLineItem( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
+			{ item.wpcom_meta?.months_per_bill_period && (
+				<LineItemMonthlyBreakdown
+					monthlyPriceBreakdown={ translate( '%(monthlyPrice) per month × %(monthsPerBillPeriod)', {
+						args: {
+							monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+							monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+						},
+						comment: 'monthly breakdown of total cost',
+					} ) }
+				/>
+			) }
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } />
 			</span>
@@ -170,6 +181,10 @@ function LineItemPrice( { item } ) {
 			) }
 		</LineItemPriceUI>
 	);
+}
+
+function LineItemMonthlyBreakdown( { monthlyPriceBreakdown } ) {
+	return <span>{ monthlyPriceBreakdown }</span>;
 }
 
 export const LineItemUI = styled( WPLineItem )`
