@@ -56,7 +56,7 @@ function WPLineItem( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
-			{ item.wpcom_meta?.months_per_bill_period && (
+			{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
 				<LineItemMonthlyBreakdown
 					monthlyPriceBreakdown={ translate( '%(monthlyPrice) per month × %(monthsPerBillPeriod)', {
 						args: {
