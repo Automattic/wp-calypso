@@ -120,8 +120,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		( action: ThreatAction, threat: Threat ) => {
 			const eventName =
 				action === 'fix'
-					? 'calypso_scan_fix_threat_dialog_open'
-					: 'calypso_scan_ignore_threat_dialog_open';
+					? 'calypso_jetpack_scan_fixthreat_dialogopen'
+					: 'calypso_jetpack_scan_ignorethreat_dialogopen';
 			dispatch(
 				recordTracksEvent( eventName, {
 					site_id: site.ID,
