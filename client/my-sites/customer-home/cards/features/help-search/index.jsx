@@ -16,11 +16,11 @@ import Gridicon from 'components/gridicon';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
-import QuerySupportTypes from '../../../../../blocks/inline-help/inline-help-query-support-types';
 import HelpSearchCard from './search-card';
 import HelpSearchResults from './search-results';
 
-import { RESULT_POST_ID, RESULT_LINK } from '../../../../../blocks/inline-help/constants';
+import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
+import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
 
 /**
  * Style dependencies
