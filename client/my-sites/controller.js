@@ -47,7 +47,6 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
-	domainManagementUserRoot,
 } from 'my-sites/domains/paths';
 import {
 	emailManagement,
@@ -61,7 +60,6 @@ import { makeLayout, render as clientRender } from 'controller';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import EmptyContentComponent from 'components/empty-content';
 import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
-import AsyncLoad from 'components/async-load';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -88,10 +86,6 @@ function createNavigation( context ) {
 
 	if ( siteFragment ) {
 		basePath = sectionify( context.pathname );
-	}
-
-	if ( startsWith( context.pathname, domainManagementUserRoot() ) ) {
-		return <AsyncLoad require="me/sidebar" context={ context } />;
 	}
 
 	return (
