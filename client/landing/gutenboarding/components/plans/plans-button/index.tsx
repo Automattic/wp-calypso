@@ -4,9 +4,11 @@
 import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import config from 'config';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,6 +17,7 @@ import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automat
 import PlansModal from '../plans-modal';
 import { useSelectedPlan } from '../../../hooks/use-selected-plan';
 import { useCurrentStep, Step } from '../../../path';
+import { STORE_KEY as PLANS } from '../../../stores/plans';
 
 /**
  * Style dependencies
@@ -23,6 +26,7 @@ import './style.scss';
 
 const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...buttonProps } ) => {
 	const { __ } = useI18n();
+	const selectedPlan = useSelect( ( select ) => select( PLANS ).getSelectedPlan() );
 	const currentStep = useCurrentStep();
 
 	// mobile first to match SCSS media query https://github.com/Automattic/wp-calypso/pull/41471#discussion_r415678275
@@ -36,17 +40,23 @@ const PlansButton: React.FunctionComponent< Button.ButtonProps > = ( { ...button
 		}
 	};
 
+	// This hook is different from `getSelectedPlan` in the store.
+	// This accounts for plans that may come from e.g. selecting a domain or adding a plan via URL
 	const plan = useSelectedPlan();
 
-	/* translators: Button label where %s is the WordPress.com plan name (eg: Free, Personal, Premium, Business) */
-	const planLabel = sprintf( __( '%s Plan' ), plan.getTitle() );
+	const isPlanUserSelectedOrPaid = selectedPlan || ! plan?.isFree;
+
+	const planLabel = isPlanUserSelectedOrPaid
+		? /* translators: Button label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+		  sprintf( __( '%s Plan' ), plan.getTitle() )
+		: __( 'View plans' );
 
 	return (
 		<>
 			<Button
 				onClick={ handleButtonClick }
 				label={ __( planLabel ) }
-				className="plans-button"
+				className={ classnames( 'plans-button', { 'is-highlighted': isPlanUserSelectedOrPaid } ) }
 				{ ...buttonProps }
 			>
 				{ isDesktop && planLabel }

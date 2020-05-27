@@ -16,7 +16,7 @@ import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
-import SiteRedirect from './site-redirect';
+import SiteRedirectType from './domain-types/site-redirect-type';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
@@ -63,7 +63,7 @@ class Edit extends React.Component {
 				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
-				return SiteRedirect;
+				return SiteRedirectType;
 
 			case domainTypes.TRANSFER:
 				return TransferInDomainType;

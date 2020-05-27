@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last, isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,10 +29,12 @@ export class Instagram extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
+	 *
+	 * @param {Array} [connections] List of connections to delete. If undefined, delete all connections.
 	 */
-	removeConnection = () => {
+	removeConnection = ( connections ) => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
+		map( connections || this.props.keyringConnections, this.props.deleteStoredKeyringConnection );
 	};
 
 	renderLogo = () => (

@@ -26,7 +26,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
-import { getPlan } from 'lib/plans';
+import { getPlan, planHasFeature } from 'lib/plans';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -38,7 +38,14 @@ import {
 	isJetpackProduct,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
+	isJetpackBackup,
+	isJetpackScan,
 } from 'lib/products-values';
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+} from 'lib/products-values/constants';
 
 class PurchasesListing extends Component {
 	static propTypes = {
@@ -188,7 +195,7 @@ class PurchasesListing extends Component {
 		let label = translate( 'Manage plan' );
 
 		if ( isJetpackProduct( purchase ) ) {
-			label = translate( 'Manage product' );
+			label = translate( 'Manage subscription' );
 		}
 
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
@@ -199,6 +206,71 @@ class PurchasesListing extends Component {
 			<Button href={ managePurchase( selectedSiteSlug, purchase.id ) } compact>
 				{ label }
 			</Button>
+		);
+	}
+
+	getPlanActionButtons( plan ) {
+		const { translate, selectedSiteSlug: site } = this.props;
+
+		// Determine if the plan contains Backup or Scan.
+		let serviceButtonText = null;
+
+		// The function planHasFeature does not check inferior features.
+		const planHasBackup =
+			planHasFeature( plan.productSlug, PRODUCT_JETPACK_BACKUP_DAILY ) ||
+			planHasFeature( plan.productSlug, PRODUCT_JETPACK_BACKUP_REALTIME );
+		const planHasScan = planHasFeature( plan.productSlug, PRODUCT_JETPACK_SCAN );
+
+		if ( planHasBackup && planHasScan ) {
+			serviceButtonText = translate( 'View Backup & Scan' );
+		} else if ( planHasBackup ) {
+			serviceButtonText = translate( 'View Backup' );
+		} else if ( planHasScan ) {
+			serviceButtonText = translate( 'View Scan' );
+		}
+
+		let serviceButton = null;
+		if ( serviceButtonText ) {
+			// Scan threats always show regardless of filter, so they'll display as well.
+			serviceButton = (
+				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
+					{ serviceButtonText }
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				{ this.getActionButton( plan ) }
+				{ serviceButton }
+			</>
+		);
+	}
+
+	getProductActionButtons( purchase ) {
+		const { translate, selectedSiteSlug: site } = this.props;
+		const actionButton = this.getActionButton( purchase );
+
+		let serviceButton = null;
+		if ( isJetpackBackup( purchase ) ) {
+			serviceButton = (
+				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
+					{ translate( 'View backups' ) }
+				</Button>
+			);
+		} else if ( isJetpackScan( purchase ) ) {
+			serviceButton = (
+				<Button href={ `/activity-log/${ site }` } compact>
+					{ translate( 'View scan results' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				{ actionButton }
+				{ serviceButton }
+			</>
 		);
 	}
 
@@ -214,7 +286,7 @@ class PurchasesListing extends Component {
 					<MyPlanCard isPlaceholder />
 				) : (
 					<MyPlanCard
-						action={ this.getActionButton( currentPlan ) }
+						action={ this.getPlanActionButtons( currentPlan ) }
 						details={ this.getExpirationInfoForPlan( currentPlan ) }
 						isError={ isPlanExpiring }
 						product={ currentPlanSlug }
@@ -244,7 +316,7 @@ class PurchasesListing extends Component {
 				{ productPurchases.map( ( purchase ) => (
 					<MyPlanCard
 						key={ purchase.id }
-						action={ this.getActionButton( purchase ) }
+						action={ this.getProductActionButtons( purchase ) }
 						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }

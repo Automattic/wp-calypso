@@ -40,15 +40,35 @@ function enqueue_script( $filename, $in_footer = false ) {
 }
 
 /**
- * Enqueue script for the New Blocks Showcase submodule.
+ * Enqueues a submodule style by its filename.
+ *
+ * @param string  $filename  Name of the style file w/o extension.
  */
-function enqueue_new_blocks_showcase_script() {
+function enqueue_style( $filename ) {
+	$style_file = is_rtl()
+		? $filename . '.rtl.css'
+		: $filename . '.css';
+
+	wp_enqueue_style(
+		$filename,
+		plugins_url( 'dist/' . $style_file, __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+	);
+}
+
+/**
+ * Enqueue script for the Block Inserter modifications.
+ */
+function enqueue_block_inserter_modifications() {
 	/**
 	 * We're enqueuing the script in the head because we need it to run before any
 	 * blocks are registered, so they're all available for filter that sets the
 	 * "New" category.
 	 */
 	enqueue_script( 'new-blocks-showcase', false );
-}
 
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_new_blocks_showcase_script', 0 );
+	enqueue_script( 'contextual-tips', true );
+	enqueue_style( 'contextual-tips', false );
+}
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );

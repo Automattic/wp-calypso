@@ -299,7 +299,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
@@ -341,7 +341,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/recommendations' ],
+		paths: [ '/read/search' ],
 		module: 'reader/search',
 		secondary: true,
 		group: 'reader',
@@ -483,7 +483,7 @@ const sections = [
 	},
 	{
 		name: 'backups',
-		paths: [ '/backups' ],
+		paths: [ '/backup' ],
 		module: 'landing/jetpack-cloud/sections/backups',
 		secondary: true,
 		group: 'jetpack-cloud',
@@ -493,6 +493,14 @@ const sections = [
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'landing/jetpack-cloud/sections/settings',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-auth',
+		paths: [ '/connect', '/connect/oauth/token' ],
+		module: 'landing/jetpack-cloud/sections/auth',
 		secondary: true,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

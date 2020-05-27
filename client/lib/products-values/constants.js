@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { numberFormat, translate } from 'i18n-calypso';
 
 /**
@@ -40,8 +40,8 @@ export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCA
 
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
-	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
+	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
 ];
 
 // Jetpack Search tiers
@@ -84,53 +84,54 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
+		[ PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
 	};
 };
 
 export const getJetpackProductsDisplayNames = () => {
+	const backupDaily = (
+		<>
+			{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
+	const backupRealtime = (
+		<>
+			{ ' ' }
+			{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
+	const search = translate( 'Jetpack Search' );
+
+	const scanDaily = (
+		<>
+			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }{ ' ' }
+		</>
+	);
+
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
-			<Fragment>
-				{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</Fragment>
-		),
-		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Jetpack Search' ),
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Jetpack Search' ),
-		[ PRODUCT_JETPACK_SCAN ]: translate( 'Jetpack Scan' ),
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Jetpack Scan' ),
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
+		[ PRODUCT_JETPACK_SEARCH ]: search,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_SCAN ]: scanDaily,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
 	};
 };
 
@@ -212,6 +213,33 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_BACKUP_PRODUCTS,
 		},
 	];
+	isEnabled( 'jetpack/scan-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Scan' ),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
+			hasPromo: false,
+			id: PRODUCT_JETPACK_SCAN,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_scan_description',
+					slug: 'learn-more-scan',
+				},
+				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+			},
+			options: {
+				yearly: [ PRODUCT_JETPACK_SCAN ],
+				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames(),
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_SCAN_PRODUCTS,
+		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
@@ -283,33 +311,6 @@ export const getJetpackProducts = () => {
 				);
 			},
 			slugs: JETPACK_SEARCH_PRODUCTS,
-		} );
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: PRODUCT_JETPACK_SCAN,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_scan_description',
-					slug: 'learn-more-scan',
-				},
-				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
-			},
-			options: {
-				yearly: [ PRODUCT_JETPACK_SCAN ],
-				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: JETPACK_SCAN_PRODUCTS,
 		} );
 
 	return output;

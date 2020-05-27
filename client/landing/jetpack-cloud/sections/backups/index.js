@@ -13,26 +13,19 @@ import { makeLayout, render as clientRender } from 'controller';
 import wrapInSiteOffsetProvider from 'landing/jetpack-cloud/lib/wrap-in-site-offset';
 import {
 	backupActivity,
-	backupDetail,
 	backupDownload,
 	backupRestore,
 	backups,
 	showUpsellIfNoBackup,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import {
-	backupMainPath,
-	backupActivityPath,
-	backupRestorePath,
-	backupDownloadPath,
-	backupDetailPath,
-} from './paths';
+import { backupMainPath, backupActivityPath, backupRestorePath, backupDownloadPath } from './paths';
 
 export default function () {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		/* handles /backups/activity, see `backupActivityPath` */
+		/* handles /backup/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
 
-		/* handles /backups/activity/:site, see `backupActivityPath` */
+		/* handles /backup/activity/:site, see `backupActivityPath` */
 		page(
 			backupActivityPath( ':site' ),
 			siteSelection,
@@ -44,17 +37,7 @@ export default function () {
 			clientRender
 		);
 
-		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
-		page(
-			backupDetailPath( ':site', ':backupId' ),
-			siteSelection,
-			navigation,
-			backupDetail,
-			wrapInSiteOffsetProvider,
-			makeLayout,
-			clientRender
-		);
-		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
+		/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
 			backupDownloadPath( ':site', ':rewindId' ),
 			siteSelection,
@@ -66,7 +49,7 @@ export default function () {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+			/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
 				backupRestorePath( ':site', ':rewindId' ),
 				siteSelection,
@@ -77,7 +60,7 @@ export default function () {
 				clientRender
 			);
 		}
-		/* handles /backups/:site, see `backupMainPath` */
+		/* handles /backup/:site, see `backupMainPath` */
 		page(
 			backupMainPath( ':site' ),
 			siteSelection,

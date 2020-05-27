@@ -28,6 +28,8 @@ class Premium_Content_Dom {
 	function __construct( $content ) {
 		$this->doc = new \DOMDocument();
 		libxml_use_internal_errors( true );
+		// Ensures UTF-8 characters are correctly encoded.
+		$content = mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' );
 		// Do not set doctype, html, or body tags
 		$status = $this->doc->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 		if ( $status === false ) {

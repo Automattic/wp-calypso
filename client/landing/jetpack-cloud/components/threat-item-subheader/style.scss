@@ -7,7 +7,7 @@
 		align-items: flex-start;
 		margin-top: 4px;
 
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint-deprecated( '>1280px' ) {
 			flex-direction: row;
 			align-items: center;
 		}
@@ -24,7 +24,7 @@
 	&__date-separator {
 		display: none;
 
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint-deprecated( '>1280px' ) {
 			display: inline-block;
 			background: var( --color-threat-ignored );
 			margin: 0 12px;

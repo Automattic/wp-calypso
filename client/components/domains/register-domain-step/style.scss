@@ -3,9 +3,9 @@
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
-		padding-bottom: 28px;
+		padding-bottom: 24px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 		}
 	}

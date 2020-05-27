@@ -2,23 +2,8 @@
 @import '../../../mixins.scss';
 @import '../../../variables.scss';
 
-.plans-details__viewport {
-	overflow: auto;
-
-	.plans-details__table {
-		border-left: 30px solid transparent;
-		border-right: 30px solid transparent;
-
-		@include break-medium {
-			border-left: 0;
-			border-right: 0;
-		}
-	}
-}
-
 .plans-details__table {
 	width: 100%;
-	min-width: $break-medium;
 	table-layout: fixed;
 
 	th,
@@ -27,7 +12,7 @@
 
 		&:first-child {
 			padding-left: 0;
-			width: 25%;
+			width: 20%;
 
 			@include break-mobile {
 				width: 40%;

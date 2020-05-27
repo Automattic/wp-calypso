@@ -5,9 +5,10 @@ import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
-import { Icon } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -28,6 +29,9 @@ import {
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
+import { trackEventWithFlow } from '../../lib/analytics';
+
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 const Header: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
@@ -92,6 +96,12 @@ const Header: React.FunctionComponent = () => {
 	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	const getDomainElementContent = () => {
+		// If no site title entered (user skips intent gathering)
+		// and no domain was selected, show "Pick a domain"
+		if ( ! siteTitle && ! domain ) {
+			return __( 'Pick a domain' );
+		}
+
 		if ( recommendedDomainSuggestion || previousRecommendedDomain !== '' ) {
 			/* translators: domain name is available, eg: "yourname.com is available" */
 			return sprintf(
@@ -102,7 +112,7 @@ const Header: React.FunctionComponent = () => {
 			);
 		}
 
-		return 'example.wordpress.com';
+		return __( 'Pick a domain' );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -131,6 +141,20 @@ const Header: React.FunctionComponent = () => {
 			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlanSlug );
 		}
 	}, [ newSite, newUser, handleCreateSite, selectedPlanSlug ] );
+
+	const hasContent =
+		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
+
+	const hasPlaceholder =
+		!! siteTitle && ! recommendedDomainSuggestion && previousRecommendedDomain !== '';
+
+	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
+		trackEventWithFlow( 'calypso_newsite_domain_select', {
+			domain_name: suggestion?.domain_name,
+		} );
+		setDomain( suggestion );
+	};
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -141,7 +165,7 @@ const Header: React.FunctionComponent = () => {
 			<section className="gutenboarding__header-section">
 				<div className="gutenboarding__header-section-item">
 					<div className="gutenboarding__header-wp-logo">
-						<Icon icon="wordpress-alt" size={ 24 } />
+						<Icon icon={ wordpress } size={ 28 } />
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
@@ -156,24 +180,22 @@ const Header: React.FunctionComponent = () => {
 						// show it comes from a site title (but hide it if it comes from a vertical).
 						domainElement &&
 							( siteTitle || previousRecommendedDomain || currentStep !== 'IntentGathering' ) && (
-								<DomainPickerButton
-									className="gutenboarding__header-domain-picker-button"
-									currentDomain={ domain }
-									onDomainSelect={ setDomain }
-									hasContent={
-										!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== ''
-									}
-									hasPlaceholder={
-										!! siteTitle &&
-										! recommendedDomainSuggestion &&
-										previousRecommendedDomain !== ''
-									}
+								<div
+									className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
+										'has-content': hasContent,
+										'has-placeholder': hasPlaceholder,
+									} ) }
 								>
-									{ domainElement }
-								</DomainPickerButton>
+									<DomainPickerButton
+										className="gutenboarding__header-domain-picker-button"
+										currentDomain={ domain }
+										onDomainSelect={ onDomainSelect }
+									>
+										{ domainElement }
+									</DomainPickerButton>
+								</div>
 							)
 					}
-					&nbsp;
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
 					<PlansButton />

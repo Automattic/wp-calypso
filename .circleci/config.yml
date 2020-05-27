@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.6.0
+  slack: circleci/slack@3.4.2
 
 references:
   shared-environment: &shared-environment
@@ -231,6 +231,7 @@ jobs:
           name: Lint yarn.lock
           when: always
           command: |
+            yarn
             DIRTY_FILES=$(git status --porcelain 2>/dev/null)
             if [[ ! -z "$DIRTY_FILES" ]]; then
               echo "Repository contains uncommitted changes: "

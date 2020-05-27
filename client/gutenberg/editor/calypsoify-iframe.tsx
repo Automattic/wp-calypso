@@ -636,6 +636,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					onClose={ this.closePreviewModal }
 					overridePost={ editedPost }
 					previewUrl={ previewUrl }
+					showEditHeaderLink={ true }
 					showPreview={ isPreviewVisible }
 				/>
 			</Fragment>

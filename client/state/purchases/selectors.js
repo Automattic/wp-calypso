@@ -8,7 +8,7 @@ import { get, find, some } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { createPurchasesArray } from 'lib/purchases/assembler';
-import { isSubscription } from 'lib/purchases';
+import { isSubscription, needsToRenewSoon } from 'lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
@@ -69,6 +69,19 @@ export const getByPurchaseId = ( state, purchaseId ) =>
  */
 export const getSitePurchases = ( state, siteId ) =>
 	getPurchases( state ).filter( ( purchase ) => purchase.siteId === siteId );
+
+/**
+ * Returns a list of Purchases associated with a Site that may be expiring soon
+ * or have expired recently but are still renewable.
+ *
+ * @param {object} state      global state
+ * @param {number} siteId     the site id
+ * @returns {Array} the matching expiring purchases if there are some
+ */
+export const getRenewableSitePurchases = createSelector(
+	( state, siteId ) => getSitePurchases( state, siteId ).filter( needsToRenewSoon ),
+	( state, siteId ) => [ state.purchases.data, siteId ]
+);
 
 /**
  * Whether a site has an active Jetpack backup purchase.

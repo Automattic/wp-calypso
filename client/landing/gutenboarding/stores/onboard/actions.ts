@@ -13,7 +13,6 @@ import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import type { DomainCategory } from '../../domains-constants';
 import { PLAN_ECOMMERCE } from '../plans/constants';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
@@ -30,7 +29,7 @@ export const setDomainSearch = ( domainSearch: string ) => ( {
 	domainSearch,
 } );
 
-export const setDomainCategory = ( domainCategory: DomainCategory | undefined ) => ( {
+export const setDomainCategory = ( domainCategory: string | undefined ) => ( {
 	type: 'SET_DOMAIN_CATEGORY' as const,
 	domainCategory,
 } );
@@ -43,10 +42,6 @@ export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	type: 'SET_SITE_VERTICAL' as const,
 	siteVertical,
-} );
-
-export const skipSiteVertical = () => ( {
-	type: 'SKIP_SITE_VERTICAL' as const,
 } );
 
 export const resetSiteVertical = () => ( {
@@ -86,6 +81,11 @@ export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	type: 'SET_IS_REDIRECTING' as const,
 	isRedirecting,
+} );
+
+export const setHasUsedPlansStep = ( hasUsedPlansStep: boolean ) => ( {
+	type: 'SET_HAS_USED_PLANS_STEP' as const,
+	hasUsedPlansStep,
 } );
 
 export function* createSite(
@@ -144,10 +144,10 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCategory
 	| typeof setFonts
 	| typeof setIsRedirecting
+	| typeof setHasUsedPlansStep
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
-	| typeof skipSiteVertical
 	| typeof togglePageLayout
 >;

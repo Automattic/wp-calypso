@@ -36,7 +36,6 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
-import domains from './domains/reducer';
 import emailForwarding from './email-forwarding/reducer';
 import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
@@ -55,7 +54,6 @@ import imports from './imports/reducer';
 import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
-import jetpack from './jetpack/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -122,7 +120,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	documentHead,
-	domains,
 	emailForwarding,
 	embeds,
 	experiments,
@@ -143,7 +140,6 @@ const reducers = {
 	inlineHelp,
 	inlineSupportArticle,
 	invites,
-	jetpack,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,

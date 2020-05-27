@@ -17,15 +17,16 @@ export function useSelectedPlan() {
 	const planFromPath = useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
+	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );
 	const defaultPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultPlan( hasPaidDomain )
+		select( PLANS_STORE ).getDefaultPlan( hasPaidDomain, hasPaidDesign )
 	);
 
 	/**
 	 * Plan is decided in this order
 	 * 1. selected from PlansGrid (by dispatching setPlan)
 	 * 2. having the plan slug in the URL
-	 * 3. selecting a paid domain
+	 * 3. selecting a paid domain or design
 	 */
 	return selectedPlan || planFromPath || defaultPlan;
 }

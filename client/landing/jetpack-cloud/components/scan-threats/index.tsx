@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Button } from '@automattic/components';
 
 /**
@@ -21,7 +20,6 @@ import {
 	ThreatAction,
 } from 'landing/jetpack-cloud/components/threat-item/types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 import { useThreats } from 'landing/jetpack-cloud/lib/use-threats';
 import { triggerScanRun } from 'landing/jetpack-cloud/lib/trigger-scan-run';
@@ -51,11 +49,9 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 
 	return (
 		<div className="scan-threats__error">
-			{ translate( 'The scanner was unable to check all files and errored before completion.' ) }
-			<br />
 			{ isEnabled( 'jetpack-cloud/on-demand-scan' )
 				? translate(
-						'Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						'The scanner was unable to check all files and errored before completion. Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
 						{
 							components: {
 								runScan: (
@@ -72,7 +68,7 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 						}
 				  )
 				: translate(
-						'Deal with the threats found above and if the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+						'The scanner was unable to check all files and errored before completion. Deal with the threats found above and if the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
 						{
 							components: {
 								linkToSupport: (
@@ -100,13 +96,14 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
-	const userHasCredentials = useSelector(
-		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
-	);
 	const dispatch = useDispatch();
+	const dispatchScanRun = React.useCallback( () => {
+		triggerScanRun( site.ID )( dispatch );
+	}, [ dispatch, site ] );
 
 	const allFixableThreats = threats.filter(
-		( threat ): threat is FixableThreat => threat.fixable !== false
+		( threat ): threat is FixableThreat =>
+			threat.fixable !== false && threat.fixerStatus !== 'in_progress'
 	);
 	const hasFixableThreats = !! allFixableThreats.length;
 
@@ -224,6 +221,21 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				) ) }
 			</div>
 
+			{ ! error && (
+				<div className="scan-threats__rerun">
+					{ translate(
+						'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
+						{
+							components: {
+								button: (
+									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+								),
+							},
+						}
+					) }
+				</div>
+			) }
+
 			{ error && <ScanError site={ site } /> }
 
 			{ selectedThreat && (
@@ -231,6 +243,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
 					onConfirmation={ confirmAction }
+					siteId={ site.ID }
 					siteName={ site.name }
 					threat={ selectedThreat }
 					action={ actionToPerform }
@@ -242,7 +255,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
 				onConfirmation={ confirmFixAllThreats }
-				userHasCredentials={ userHasCredentials }
 			/>
 		</>
 	);

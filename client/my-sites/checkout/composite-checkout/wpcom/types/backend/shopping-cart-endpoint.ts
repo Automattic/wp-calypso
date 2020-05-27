@@ -137,6 +137,8 @@ export interface ResponseCartProduct {
 	price: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
+	is_renewal?: boolean;
+	subscription_id?: string;
 }
 
 /**
@@ -163,6 +165,8 @@ export interface TempResponseCartProduct {
 	price: null;
 	product_type: null;
 	included_domain_purchase_amount: null;
+	is_renewal: undefined;
+	subscription_id: undefined;
 }
 
 export function convertResponseCartProductToRequestCartProduct(
@@ -338,5 +342,7 @@ function convertRequestCartProductToResponseCartProduct(
 		price: null,
 		product_type: null,
 		included_domain_purchase_amount: null,
+		is_renewal: undefined,
+		subscription_id: undefined,
 	};
 }

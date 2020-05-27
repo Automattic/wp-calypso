@@ -439,11 +439,15 @@ class Global_Styles {
 		 * This is a fallback mechanism in case there are themes
 		 * we don't want to / can't migrate to use CSS vars.
 		 */
-		$theme_support = get_theme_support( $this->theme_support )[0];
+		$theme_defaults = get_theme_support( $this->theme_support );
+		if ( is_array( $theme_defaults ) ) {
+			$theme_defaults = $theme_defaults[0];
+		}
+
 		if (
-			is_array( $theme_support ) &&
-			array_key_exists( 'enqueue_experimental_styles', $theme_support ) &&
-			true === $theme_support['enqueue_experimental_styles']
+			is_array( $theme_defaults ) &&
+			array_key_exists( 'enqueue_experimental_styles', $theme_defaults ) &&
+			true === $theme_defaults['enqueue_experimental_styles']
 		) {
 			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'static/style.css', true );
 		}
@@ -459,7 +463,11 @@ class Global_Styles {
 	 * @return array Filtered result.
 	 */
 	public function maybe_filter_font_list( $result ) {
-		$theme_defaults = get_theme_support( $this->theme_support )[0];
+		$theme_defaults = get_theme_support( $this->theme_support );
+		if ( is_array( $theme_defaults ) ) {
+			$theme_defaults = $theme_defaults[0];
+		}
+
 		if (
 			array_key_exists( 'font_options', $result ) &&
 			(

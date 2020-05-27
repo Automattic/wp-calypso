@@ -51,10 +51,12 @@ import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
+import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
+import ActivateAccountFlow from '../lib/flows/activate-account-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import AccountSettingsPage from '../lib/pages/account/account-settings-page';
-import ChecklistPage from '../lib/pages/checklist-page';
+import MyHomePage from '../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
@@ -358,7 +360,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency @parallel @canary', function () {
+	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -465,8 +467,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			await checklistPage.updateHomepage();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
 
@@ -488,6 +490,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
+		} );
+
+		step( 'Can launch the site', async function () {
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickMySites();
+			await new ActivateAccountFlow( driver, emailAddress ).activateAccount();
+			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
 		after( 'Can delete our newly created account', async function () {
@@ -1101,8 +1110,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			await checklistPage.updateHomepage();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
 
@@ -1728,8 +1737,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				return this.skip();
 			}
 			await driver.get( verificationLink );
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			return await checklistPage.isEmailverified();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			return await myHomePage.isEmailVerified();
 		} );
 
 		after( 'Can delete our newly created account', async function () {

@@ -23,6 +23,7 @@ import {
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
+	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
@@ -38,7 +39,11 @@ import {
 	getName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	getRenewableSitePurchases,
+} from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
@@ -96,6 +101,8 @@ class ManagePurchase extends Component {
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
+		purchaseAttachedTo: PropTypes.object,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -143,6 +150,10 @@ class ManagePurchase extends Component {
 
 	handleRenew = () => {
 		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+	};
+
+	handleRenewMultiplePurchases = ( purchases ) => {
+		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
@@ -513,7 +524,15 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { site, siteId, siteSlug, purchase, isPurchaseTheme } = this.props;
+		const {
+			site,
+			siteId,
+			siteSlug,
+			renewableSitePurchases,
+			purchase,
+			purchaseAttachedTo,
+			isPurchaseTheme,
+		} = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
@@ -539,8 +558,11 @@ class ManagePurchase extends Component {
 					<PurchaseNotice
 						isDataLoading={ isDataLoading( this.props ) }
 						handleRenew={ this.handleRenew }
+						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
 						selectedSite={ site }
 						purchase={ purchase }
+						purchaseAttachedTo={ purchaseAttachedTo }
+						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
 					<AsyncLoad
@@ -561,7 +583,12 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const purchaseAttachedTo =
+		purchase && purchase.attachedToPurchaseId
+			? getByPurchaseId( state, purchase.attachedToPurchaseId )
+			: null;
 	const siteId = purchase ? purchase.siteId : null;
+	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
 	const site = getSite( state, siteId );
@@ -576,8 +603,10 @@ export default connect( ( state, props ) => {
 			: false,
 		hasCustomPrimaryDomain: hasCustomDomain( site ),
 		purchase,
+		purchaseAttachedTo,
 		siteId,
 		site,
+		renewableSitePurchases,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),

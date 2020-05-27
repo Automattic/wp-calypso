@@ -48,11 +48,13 @@ import {
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
+import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import { getPlan, findPlansKeys } from 'lib/plans';
+import { getTld } from 'lib/domains';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -60,11 +62,23 @@ import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
 import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
-import { applePayProcessor, stripeCardProcessor } from './payment-method-processors';
+import {
+	applePayProcessor,
+	stripeCardProcessor,
+	fullCreditsProcessor,
+	existingCardProcessor,
+} from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import createContactValidationCallback from './contact-validation';
+import createContactValidationCallback, {
+	createGSuiteContactValidationCallback,
+} from './contact-validation';
 import { fillInSingleCartItemAttributes } from 'lib/cart-values';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -79,6 +93,8 @@ const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 const wpcomValidateDomainContactInformation = ( ...args ) =>
 	wpcom.validateDomainContactInformation( ...args );
+const wpcomValidateGSuiteContactInformation = ( ...args ) =>
+	wpcom.validateGoogleAppsContactInformation( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -289,28 +305,83 @@ export default function CompositeCheckout( {
 		validateDomainContact: validateDomainContactDetails || wpcomValidateDomainContactInformation,
 		recordEvent,
 		showErrorMessage: showErrorMessageBriefly,
-		translate,
+	} );
+
+	const gSuiteContactValidationCallback = createGSuiteContactValidationCallback( {
+		validateGSuiteContact: wpcomValidateGSuiteContactInformation,
+		recordEvent,
+		showErrorMessage: showErrorMessageBriefly,
 	} );
 
 	const renderDomainContactFields = (
+		domainNames,
 		contactDetails,
 		contactDetailsErrors,
 		updateDomainContactFields,
 		shouldShowContactDetailsValidationErrors,
 		isDisabled
 	) => {
+		const needsOnlyGoogleAppsDetails =
+			hasGoogleApps( responseCart ) &&
+			! hasDomainRegistration( responseCart ) &&
+			! hasTransferProduct( responseCart );
 		const getIsFieldDisabled = () => isDisabled;
+		const tlds = getAllTlds( domainNames );
+
 		return (
-			<ContactDetailsFormFields
-				countriesList={ countriesList }
-				contactDetails={ contactDetails }
-				contactDetailsErrors={
-					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
-				}
-				onContactDetailsChange={ updateDomainContactFields }
-				shouldForceRenderOnPropChange={ true }
-				getIsFieldDisabled={ getIsFieldDisabled }
-			/>
+			<React.Fragment>
+				<ManagedContactDetailsFormFields
+					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
+					contactDetails={ contactDetails }
+					contactDetailsErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
+					onContactDetailsChange={ updateDomainContactFields }
+					getIsFieldDisabled={ getIsFieldDisabled }
+				/>
+				{ tlds.includes( 'ca' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.ca ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'ca' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+				{ tlds.includes( 'uk' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.uk ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'uk' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+				{ tlds.includes( 'fr' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ contactDetails?.extra?.fr ?? {} }
+						onContactDetailsChange={ updateDomainContactFields }
+						contactDetailsValidationErrors={
+							shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+						}
+						tld={ 'fr' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+						isManaged={ true }
+					/>
+				) }
+			</React.Fragment>
 		);
 	};
 
@@ -337,7 +408,12 @@ export default function CompositeCheckout( {
 	);
 
 	const paymentProcessors = useMemo(
-		() => ( { 'apple-pay': applePayProcessor, card: stripeCardProcessor } ),
+		() => ( {
+			'apple-pay': applePayProcessor,
+			card: stripeCardProcessor,
+			'full-credits': fullCreditsProcessor,
+			'existing-card': existingCardProcessor,
+		} ),
 		[]
 	);
 
@@ -378,6 +454,7 @@ export default function CompositeCheckout( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
+					gSuiteContactValidationCallback={ gSuiteContactValidationCallback }
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
@@ -701,4 +778,8 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 		analyticsPath = '/checkout/no-site';
 	}
 	return { analyticsPath, analyticsProps };
+}
+
+function getAllTlds( domainNames ) {
+	return Array.from( new Set( domainNames.map( getTld ) ) ).sort();
 }

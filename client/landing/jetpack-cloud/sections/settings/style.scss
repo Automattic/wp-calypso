@@ -18,9 +18,20 @@
     height: 4rem;
 }
 
-.settings__is-uninitialized {
-	height: 100px;
-	margin-bottom: 32px;
+.settings__status-uninitialized {
+	height: 90px;
+	margin-bottom: 8px;
+	@include placeholder( --color-neutral-10 );
+}
+
+.settings__form-card {
+	margin-top: 8px;
+	background: none;
+	box-shadow: none;
+}
+
+.settings__form-uninitialized {
+	height: 64px;
 	@include placeholder( --color-neutral-10 );
 }
 
@@ -42,7 +53,7 @@
 	font-weight: 600;
 	margin: 16px 0 24px;
 
-	@include breakpoint('>660px') {
+	@include breakpoint-deprecated('>660px') {
 		font-size: 36px;
 		margin: 32px 0;
 	}

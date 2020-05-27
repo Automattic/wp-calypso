@@ -2,10 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
-import { ENTER } from '@wordpress/keycodes';
+import { TextControl } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -15,85 +13,48 @@ import { STORE_KEY } from '../../stores/onboard';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 
 interface Props {
-	isVisible?: boolean;
-	isMobile?: boolean; // needed as a prop to be defined when component mounts
+	skipButton: React.ReactNode;
 	onSubmit: () => void;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { isVisible, isMobile, onSubmit } ) => {
+const SiteTitle: React.FunctionComponent< Props > = ( { skipButton, onSubmit } ) => {
 	const { __ } = useI18n();
-	const { siteTitle, siteVertical, wasVerticalSkipped } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
-	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 
-	const handleKeyDown = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		if ( e.keyCode === ENTER ) {
-			// As last input on first step, hitting 'Enter' should direct to next step.
-			e.preventDefault();
-			onSubmit();
-		}
+	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+		// hitting 'Enter' when focused on the input field should direct to next step.
+		e.preventDefault();
+		onSubmit();
 	};
-
-	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) =>
-		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
 
 	const handleBlur = () => {
 		recordSiteTitleSelection( !! siteTitle );
 	};
 
-	React.useEffect( () => {
-		if ( siteTitle ) {
-			inputRef.current.innerText = siteTitle;
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	React.useEffect( () => {
-		if ( ( siteVertical?.label && isVisible ) || wasVerticalSkipped ) {
-			inputRef.current.focus();
-		}
-	}, [ siteVertical, isVisible, inputRef, wasVerticalSkipped ] );
-
-	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = __( 'Itʼs called <Input />' );
-	// translators: Form input for a site's title where "<Input />" is replaced by user input with an existing value.
-	const madlibTemplateWithPeriod = __( 'Itʼs called <Input />.' );
-	const madlib = createInterpolateElement(
-		siteTitle.trim().length && ! isMobile ? madlibTemplateWithPeriod : madlibTemplate,
-		{
-			Input: (
-				<span className="site-title__input-wrapper">
-					{ ! isMobile && ' ' }
-					<span
-						contentEditable
-						tabIndex={ 0 }
-						role="textbox"
-						aria-multiline="true"
-						spellCheck={ false }
-						ref={ inputRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className="madlib__input"
-						onKeyDown={ handleKeyDown }
-						onKeyUp={ handleKeyUp }
-						onBlur={ handleBlur }
-					/>
-					<span className="site-title__placeholder"></span>
-				</span>
-			),
-		}
-	);
+	// translators: label for site title input in Gutenboarding
+	const inputLabel = __( 'My site is called' );
 
 	return (
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-		<form
-			className={ classnames( 'site-title', {
-				'site-title--hidden': ! isVisible,
-			} ) }
-			onClick={ () => inputRef.current.focus() } // focus the input when clicking label or next to it
-		>
-			{ madlib }
+		<form className="site-title" onSubmit={ handleFormSubmit }>
+			<label htmlFor="site-title__input" className="site-title__input-label">
+				{ inputLabel }
+			</label>
+			<div className="site-title__input-wrapper">
+				<TextControl
+					id="site-title__input"
+					className="site-title__input"
+					onChange={ setSiteTitle }
+					onBlur={ handleBlur }
+					value={ siteTitle }
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+					spellCheck={ false }
+					autoComplete="off"
+					autoCorrect="off"
+					data-hj-whitelist
+				/>
+				{ skipButton }
+			</div>
 		</form>
 	);
 };

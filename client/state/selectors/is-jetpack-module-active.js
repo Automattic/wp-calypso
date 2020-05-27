@@ -1,10 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
+
+import 'state/jetpack/init';
 
 /**
  * Returns true if the module is currently active. False otherwise.

@@ -9,8 +9,8 @@ import debugFactory from 'debug';
  */
 import Button from '../../components/button';
 import {
-	useSelect,
-	useDispatch,
+	useTransactionStatus,
+	usePaymentProcessor,
 	useMessages,
 	useLineItems,
 	useEvents,
@@ -21,66 +21,7 @@ import { useFormStatus } from '../form-status';
 
 const debug = debugFactory( 'composite-checkout:full-credits-payment-method' );
 
-export function createFullCreditsMethod( { registerStore, submitTransaction } ) {
-	const actions = {
-		*beginCreditsTransaction( payload ) {
-			let response;
-			try {
-				response = yield {
-					type: 'FULL_CREDITS_TRANSACTION_BEGIN',
-					payload,
-				};
-				debug( 'full credits transaction complete', response );
-			} catch ( error ) {
-				debug( 'full credits transaction had an error', error.message );
-				return { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message };
-			}
-			debug( 'full credits transaction requires is successful' );
-			return { type: 'FULL_CREDITS_TRANSACTION_END', payload: response };
-		},
-	};
-
-	const selectors = {
-		getTransactionError( state ) {
-			return state.transactionError;
-		},
-		getTransactionStatus( state ) {
-			return state.transactionStatus;
-		},
-	};
-
-	registerStore( 'full-credits', {
-		reducer(
-			state = {
-				transactionStatus: null,
-				transactionError: null,
-			},
-			action
-		) {
-			switch ( action.type ) {
-				case 'FULL_CREDITS_TRANSACTION_END':
-					return {
-						...state,
-						transactionStatus: 'complete',
-					};
-				case 'FULL_CREDITS_TRANSACTION_ERROR':
-					return {
-						...state,
-						transactionStatus: 'error',
-						transactionError: action.payload,
-					};
-			}
-			return state;
-		},
-		actions,
-		selectors,
-		controls: {
-			FULL_CREDITS_TRANSACTION_BEGIN( action ) {
-				return submitTransaction( action.payload );
-			},
-		},
-	} );
-
+export function createFullCreditsMethod() {
 	return {
 		id: 'full-credits',
 		label: <FullCreditsLabel />,
@@ -103,17 +44,17 @@ function FullCreditsLabel() {
 
 function FullCreditsSubmitButton( { disabled } ) {
 	const localize = useLocalize();
-	const { beginCreditsTransaction } = useDispatch( 'full-credits' );
 	const [ items, total ] = useLineItems();
-	const transactionStatus = useSelect( ( select ) =>
-		select( 'full-credits' ).getTransactionStatus()
-	);
-	const transactionError = useSelect( ( select ) =>
-		select( 'full-credits' ).getTransactionError()
-	);
+	const {
+		transactionStatus,
+		transactionError,
+		setTransactionComplete,
+		setTransactionError,
+	} = useTransactionStatus();
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
+	const submitTransaction = usePaymentProcessor( 'full-credits' );
 
 	useEffect( () => {
 		if ( transactionStatus === 'error' ) {
@@ -140,9 +81,19 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const onClick = () => {
 		setFormSubmitting();
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
-		beginCreditsTransaction( {
+		submitTransaction( {
 			items,
-		} );
+		} )
+			.then( () => {
+				setTransactionComplete();
+			} )
+			.catch( ( error ) => {
+				// TODO: do these things automatically
+				setTransactionError( error.message );
+				setFormReady();
+				onEvent( { type: 'FULL_CREDITS_TRANSACTION_ERROR', payload: error.message } );
+				showErrorMessage( error.message );
+			} );
 	};
 
 	return (

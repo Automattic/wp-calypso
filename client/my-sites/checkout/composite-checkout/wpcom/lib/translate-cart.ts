@@ -155,6 +155,13 @@ function translateReponseCartProductToWPCOMCartItem(
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
+	// for displaying crossed-out original price
+	let itemOriginalCostDisplay = item_original_cost_display || '';
+	// but for the credits item this is confusing and unnecessary
+	if ( 'wordpress-com-credits' === product_slug ) {
+		itemOriginalCostDisplay = '';
+	}
+
 	return {
 		id: uuid,
 		label,
@@ -174,7 +181,7 @@ function translateReponseCartProductToWPCOMCartItem(
 			volume,
 			is_domain_registration: is_domain_registration || false,
 			is_bundled: is_bundled || false,
-			item_original_cost_display: item_original_cost_display || '',
+			item_original_cost_display: itemOriginalCostDisplay,
 			item_original_cost_integer: item_original_cost_integer || 0,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',

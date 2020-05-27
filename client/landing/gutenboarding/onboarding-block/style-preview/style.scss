@@ -167,13 +167,13 @@
 	display: block;
 	margin-bottom: 28px;
 
-	.dashicon {
-		margin-left: 0.5em;
-		vertical-align: bottom;
+	svg {
+		margin-left: 0.2em;
+		vertical-align: middle;
 		transition: transform 100ms ease-in-out;
 	}
 
-	.is-open .dashicon {
+	.is-open svg {
 		transform: rotate( 180deg );
 	}
 

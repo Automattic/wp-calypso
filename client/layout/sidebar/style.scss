@@ -16,7 +16,7 @@
 	overflow: auto;
 
 	// Not sure this is needed.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
 
@@ -69,13 +69,13 @@
 
 // Checklist progress
 .sidebar__menu .myhome .sidebar__menu-link-text {
-	max-width: 75%;
+	max-width: calc( 100% - 80px );
 	white-space: normal;
 	padding-right: 8px;
 }
 
 .sidebar__checklist-progress {
-	width: 25%;
+	width: 80px;
 
 	.sidebar__checklist-progress-text {
 		font-size: 12px;
@@ -132,6 +132,21 @@
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-hover-text );
 		}
+
+		.count {
+			border-color: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	.count {
+		margin-left: 8px;
+		color: var( --color-sidebar-menu-hover-text );
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		line-height: 0;
+		padding: 8px 6px;
+		position: absolute;
+			top: 9px;
 	}
 
 	.badge {
@@ -145,6 +160,12 @@
 
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-selected-text );
+		}
+
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 
@@ -220,6 +241,49 @@
 			transform: rotate( 180deg );
 		}
 	}
+}
+
+.sidebar__bubble {
+	border: solid 2px var( --color-sidebar-menu-hover-background );
+	border-radius: 50%;
+	display: none;
+	font-size: 8px;
+	height: 8px;
+	letter-spacing: 0;
+	line-height: 12px;
+	margin: 0 0 0 15px;
+	padding: 0;
+	position: absolute;
+	top: 9px;
+	left: 0;
+	width: 8px;
+	z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
+
+	// Animation
+	animation: bubble-unread-indication 0.5s linear both;
+	transition: all 150ms ease-in;
+}
+
+li.has-unseen,
+ul.has-unseen,
+div.has-unseen {
+	position: relative;
+}
+
+.has-unseen .sidebar__bubble {
+	display: block;
+	border-color: var( --color-sidebar-background );
+	background: var( --color-sidebar-menu-hover-text );
+}
+
+.sidebar__menu li:hover .sidebar__bubble {
+	display: block;
+	border-color: var( --color-sidebar-menu-hover-background );
+}
+
+.sidebar__menu li.selected .sidebar__bubble {
+	display: block;
+	border-color: var( --color-sidebar-menu-selected-background );
 }
 
 // Sometimes we show info at the bottom of the sidebar. For

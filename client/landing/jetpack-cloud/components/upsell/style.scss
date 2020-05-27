@@ -12,7 +12,7 @@
 	text-align: center;
 	width: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		text-align: auto;
 		width: auto;
 	}

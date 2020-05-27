@@ -4,14 +4,14 @@
 import { MenuItem } from '@wordpress/components';
 
 /**
- * @typedef { Object } Plan
+ * @typedef {object} Plan
  * @property { number } id
  * @property { string } title
  * @property { string } price
  * @property { string } currency
  * @property { string } interval
  *
- * @typedef { Object } Props
+ * @typedef {object} Props
  * @property { Plan } plan
  * @property { string } className
  * @property { undefined | Plan } selectedPlan
@@ -22,14 +22,7 @@ import { MenuItem } from '@wordpress/components';
  * @param { Props } props
  */
 export default function Plan( props ) {
-	const {
-		className,
-		plan,
-		selectedPlan,
-		onSelected,
-		onClose,
-		getPlanDescription,
-	} = props;
+	const { className, plan, selectedPlan, onSelected, onClose, getPlanDescription } = props;
 
 	const isSelected = selectedPlan && plan.id === selectedPlan.id;
 	const classNames = ( isSelected ? [ 'is-selected' ] : [] ).concat( [ className ] ).join( ' ' );

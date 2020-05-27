@@ -20,6 +20,7 @@ import {
 	usePaymentMethod,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -31,20 +32,30 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
-import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
+import SecondaryCartPromotions from './secondary-cart-promotions';
+
+const debug = debugFactory( 'calypso:wp-checkout' );
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ items ] = useLineItems();
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 
 	if ( areDomainsInLineItems( items ) ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
+	}
+	if ( isGSuiteInCart ) {
+		return ! isActive && isComplete
+			? translate( 'G Suite account information' )
+			: translate( 'Enter your G Suite account information' );
 	}
 	return ! isActive && isComplete
 		? translate( 'Billing information' )
@@ -76,6 +87,7 @@ export default function WPCheckout( {
 	variantSelectOverride,
 	getItemVariants,
 	domainContactValidationCallback,
+	gSuiteContactValidationCallback,
 	responseCart,
 	addItemToCart,
 	subtotal,
@@ -88,8 +100,10 @@ export default function WPCheckout( {
 
 	const [ items ] = useLineItems();
 	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.wpcom_meta.meta : siteUrl;
 	const isDomainFieldsVisible = !! firstDomainItem;
+	const isGSuiteInCart = items.find(
+		( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length
+	);
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
@@ -112,12 +126,29 @@ export default function WPCheckout( {
 		touchContactFields();
 
 		if ( isDomainFieldsVisible ) {
+			const domainNames = items
+				.filter( isLineItemADomain )
+				.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
+
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
 				contactInfo,
-				[ domainName ],
+				domainNames,
 				applyDomainContactValidationResults
 			);
+			return ! hasValidationErrors;
+		} else if ( isGSuiteInCart ) {
+			const domainNames = items
+				.filter( ( item ) => !! item.wpcom_meta?.extra?.google_apps_users?.length )
+				.map( ( item ) => item.wpcom_meta?.meta ?? '' );
+
+			const hasValidationErrors = await gSuiteContactValidationCallback(
+				activePaymentMethod.id,
+				contactInfo,
+				domainNames,
+				applyDomainContactValidationResults
+			);
+			debug( 'gSuiteContactValidationCallback returned', hasValidationErrors );
 			return ! hasValidationErrors;
 		}
 
@@ -137,10 +168,6 @@ export default function WPCheckout( {
 		setActiveStepNumber( 1 );
 	};
 
-	// By this point we have definitely loaded the cart using useShoppingCart
-	// so we mock the loaded property the CartStore would inject.
-	const mockCart = { ...responseCart, hasLoadedFromServer: true };
-
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -156,9 +183,7 @@ export default function WPCheckout( {
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
 					<WPCheckoutOrderSummary />
-					<UpsellWrapperUI>
-						<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-					</UpsellWrapperUI>
+					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea>
@@ -326,60 +351,6 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-const UpsellWrapperUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
-
-	@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-		margin-top: 24px;
-	}
-
-	.cart__upsell-wrapper {
-		@media ( ${( props ) => props.theme.breakpoints.smallPhoneUp} ) {
-			border-left: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-			border-right: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		}
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		}
-	}
-
-	.cart__upsell-header {
-		border-top: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		box-shadow: none;
-		margin-left: 20px;
-		margin-right: 20px;
-		padding-left: 0;
-		padding-right: 0;
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			border-top: none;
-			border-bottom: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-			margin-left: 0;
-			margin-right: 0;
-			padding-left: 20px;
-			padding-right: 20px;
-		}
-
-		.section-header__label {
-			color: ${( props ) => props.theme.colors.textColor};
-			font-size: 16px;
-		}
-	}
-
-	.cart__upsell-body {
-		padding: 0 20px 20px;
-
-		@media ( ${( props ) => props.theme.breakpoints.desktopUp} ) {
-			padding: 20px;
-		}
-
-		p {
-			margin-bottom: 1.2em;
-		}
-	}
-`;
-
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
@@ -411,19 +382,34 @@ function InactiveOrderReview() {
 	return (
 		<SummaryContent>
 			<ProductList>
-				{ items.filter( shouldItemBeInSummary ).map( ( product ) => {
-					return (
-						<ProductListItem key={ product.id }>
-							{ isLineItemADomain( product ) ? <strong>{ product.label }</strong> : product.label }
-						</ProductListItem>
-					);
+				{ items.filter( shouldLineItemBeShownWhenStepInactive ).map( ( product ) => {
+					return <InactiveOrderReviewLineItem key={ product.id } product={ product } />;
 				} ) }
 			</ProductList>
 		</SummaryContent>
 	);
 }
 
-function shouldItemBeInSummary( item ) {
+function InactiveOrderReviewLineItem( { product } ) {
+	const gSuiteUsersCount = product.wpcom_meta?.extra?.google_apps_users?.length ?? 0;
+	if ( gSuiteUsersCount ) {
+		return (
+			<ProductListItem>
+				{ product.label } ({ gSuiteUsersCount })
+			</ProductListItem>
+		);
+	}
+	if ( isLineItemADomain( product ) ) {
+		return (
+			<ProductListItem>
+				<strong>{ product.label }</strong>
+			</ProductListItem>
+		);
+	}
+	return <ProductListItem>{ product.label }</ProductListItem>;
+}
+
+function shouldLineItemBeShownWhenStepInactive( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }

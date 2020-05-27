@@ -121,7 +121,6 @@ const incompatiblePlugins = new Set( [
 	'unplug-jetpack',
 	'really-simple-ssl',
 	'robo-gallery',
-	'under-construction-page',
 	'video-importer',
 	'woozone',
 	'wp-cleanfix',

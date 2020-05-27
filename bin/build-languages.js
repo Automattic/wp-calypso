@@ -239,12 +239,17 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		const translationsFlatten = _.reduce(
 			translations,
 			( result, contextTranslations, context ) => {
-				const mappedTranslations = context
-					? _.mapKeys(
-							contextTranslations,
-							( value, key ) => context + String.fromCharCode( 4 ) + key
-					  )
-					: contextTranslations;
+				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
+					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
+						String.fromCharCode( parseInt( matchedGroup, 16 ) )
+					);
+
+					if ( context ) {
+						mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
+					}
+
+					return mappedKey;
+				} );
 
 				return _.merge( result, mappedTranslations );
 			},

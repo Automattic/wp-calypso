@@ -79,9 +79,9 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( {
 
 	return (
 		<Main className="backup-activity-log">
-			<DocumentHead title="Activity log" />
+			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
-			<PageViewTracker path="/backups/activity/:site" title="Activity log" />
+			<PageViewTracker path="/backup/activity/:site" title="Activity log" />
 			<div className="backup-activity-log__content">
 				<div className="backup-activity-log__header">
 					<h2>{ translate( 'Find a backup or restore point' ) }</h2>

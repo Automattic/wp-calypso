@@ -12,104 +12,172 @@
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	margin: 0 -20px;
-	padding: 20px;
+	padding: 25px 20px 20px;
 	transition: color $acquire-intent-transition-duration
 			$acquire-intent-transition-algorithm,
 		background-color $acquire-intent-transition-duration
 			$acquire-intent-transition-algorithm;
 
-	&--mobile-vertical-step {
-		justify-content: center;
-
-		.acquire-intent__footer {
-			margin-top: auto;
-		}
-	}
-
 	@include break-small {
+		@include onboarding-heading-text;
 		margin: 0 -44px; // override block margins
 		padding: 0 120px;
-		font-size: 64px;
-		line-height: 80px;
 		justify-content: center;
 	}
 
 	@include break-medium {
 		margin: 0 -88px; // override block margins
 		padding: 12px 170px 0;
+		font-size: 64px;
+		line-height: 80px;
+	}
+}
+
+.site-title {
+	@include break-small {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+	}
+}
+
+.site-title__input-label {
+	@include break-small {
+		// stylelint-disable-next-line unit-whitelist
+		margin-right: 0.4ch;
+	}
+}
+
+.site-title__input-wrapper {
+	position: relative;
+	flex: 1;
+	height: 42px;
+	margin-top: 10px;
+
+	.acquire-intent__skip-site-title {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+
+	@include break-small {
+		margin-top: 0;
+		min-width: 300px;
+		max-width: 400px;
+		height: 57px;
+
+		.acquire-intent__skip-site-title {
+			display: block;
+		}
+	}
+
+	@include break-medium {
+		height: 80px;
+		max-width: 500px;
 	}
 }
 
 .acquire-intent__footer {
-	transition: opacity, transform $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	&--hidden {
-		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
-		opacity: 0;
-		visibility: hidden;
-	}
-
-	align-self: flex-end;
+	display: flex;
+	justify-content: space-between;
+	margin-top: 25px;
 
 	@include break-small {
-		align-self: flex-start;
+		.acquire-intent__skip-site-title {
+			display: none;
+		}
 	}
 }
 
-.acquire-intent__mobile-back-arrow {
-	transform: rotate( 180deg );
+.acquire-intent--with-skip {
+	.site-title__input::after {
+		background-image: linear-gradient( to right, $light-gray-700, $light-gray-200 );
+	}
+	.acquire-intent__footer {
+		.acquire-intent__next {
+			// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
+			opacity: 0;
+			visibility: hidden;
+		}
+	}
+	.site-title__input-wrapper .acquire-intent__skip-site-title {
+		visibility: visible;
+		opacity: 1;
+	}
 }
 
-.madlib__input {
-	@include onboarding-font-recoleta;
-	background: transparent;
-	border: none;
-	font-size: inherit;
-	line-height: 1em;
-	word-break: break-word;
-	height: 1.01em;
-	padding: 0;
+.site-title__input {
+	height: 100%;
+	margin-bottom: 10px;
 
-	color: var( --mainColor );
-	border-bottom: 2px solid var( --mainColor );
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 1px;
+		height: 2px;
+		background: var( --mainColor );
+		transition: background $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
-	&:focus {
-		outline: none;
+		@include break-small {
+			bottom: 4px;
+		}
 	}
 
-	// TODO focus for accessibility?
-	// .accessible-focus &:focus {
-	// 	outline: 2px solid var( --highlightColor );
-	// }
-}
+	& > div {
+		height: 100%;
+	}
 
-.madlib__input:empty {
-	border-bottom: 2px solid transparent;
-	position: relative;
-	z-index: 1;
-	vertical-align: middle;
+	input[type='text'].components-text-control__input {
+		@include onboarding-heading-text-mobile;
+		line-height: 1em;
+		height: auto;
+		background: transparent;
+		border: none;
+		padding: 0;
+		color: var( --mainColor );
+		caret-color: var( --mainColor );
+
+		&:focus {
+			outline: none;
+		}
+
+		@include break-small {
+			@include onboarding-heading-text;
+		}
+
+		@include break-medium {
+			font-size: 64px;
+			line-height: 80px;
+		}
+
+		// TODO focus for accessibility?
+		// .accessible-focus &:focus {
+		// 	outline: 2px solid var( --highlightColor );
+		// }
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
 }
 
 // Themed core button component
-.components-button.is-primary.acquire-intent__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
+.components-button.is-primary.acquire-intent__next:not( :disabled ):not( [aria-disabled='true'] ) {
 	background: var( --mainColor );
 	border-color: var( --mainColor );
 	border-radius: 4px;
 	box-shadow: none;
 	color: var( --contrastColor );
 	@include onboarding-medium-text;
-	// stylelint-disable-next-line scales/font-weight
-	font-weight: 500;
+	font-weight: 600;
 	letter-spacing: 0;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
-	transition: background $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		border-color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	transition: background, border-color, color, opacity $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm;
 
 	&:active,
 	&:hover,
@@ -122,73 +190,15 @@
 	}
 }
 
-.components-button.is-link.acquire-intent__skip-vertical {
+.components-button.is-link.acquire-intent__skip-site-title {
 	@include onboarding-medium-text;
 	color: var( --studio-gray-40 );
-}
-
-.site-title {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
-	&--hidden {
-		visibility: hidden;
-		opacity: 0;
-
-		& + .acquire-intent__footer {
-			transform: translate( 0, -80px ); // Translate button up when site title is hidden
-		}
-	}
-}
-
-.site-title__input-wrapper {
-	display: block;
-	position: relative;
-	min-height: 40px; // make sure there is a tappable area on mobile when the input is empty
-
-	.madlib__input:empty {
-		@include break-small {
-			padding-right: 300px; // there's not enough container width on smaller screens
-		}
-		@include break-medium {
-			padding-right: 400px;
-		}
-	}
-
 	@include break-small {
-		display: inline;
-	}
-}
-
-.site-title__placeholder {
-	display: inline-block;
-	width: 100%;
-	color: var( --studio-gray-5 );
-
-	@include break-small {
-		height: 80px;
 		position: absolute;
+		bottom: -20px;
 		left: 0;
-		z-index: 2;
-	}
-
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: -2px;
-		height: 2px;
-		background-image: linear-gradient( to right, rgba( 238, 238, 238, 1 ), rgba( 238, 238, 238, 0.4 ) );
-	}
-}
-
-/* hide the placeholder when input is not empty */
-.madlib__input:not( :empty ) ~ .site-title__placeholder {
-	display: none;
-}
-
-.madlib__input:focus ~ .site-title__placeholder {
-	@include break-small {
-		display: none;
+		transform: translate( 0, 100% );
 	}
 }

@@ -14,7 +14,6 @@ import DocumentHead from 'components/data/document-head';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ScanPlaceholder from 'landing/jetpack-cloud/components/scan-placeholder';
-import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { Scan, Site } from 'landing/jetpack-cloud/sections/scan/types';
 import { isEnabled } from 'config';
@@ -63,14 +62,15 @@ class ScanPage extends Component< Props > {
 	renderProvisioning() {
 		return (
 			<>
-				<SecurityIcon icon="in-progress" />
+				<SecurityIcon />
 				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
 				<p>
-					Lorem ipsum. We need to change this text. The scan was unable to process the themes
-					directory and did not completed successfully. In order to complete the scan you will need
-					to speak to support who can help determine what went wrong.
+					{ translate(
+						"Welcome to Jetpack Scan! We're scoping out your site, setting up to do a full scan. " +
+							"We'll let you know if we spot any issues that might impact a scan, " +
+							'then your first full scan will start.'
+					) }
 				</p>
-				{ this.renderContactSupportButton() }
 			</>
 		);
 	}
@@ -101,23 +101,6 @@ class ScanPage extends Component< Props > {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
 			</Button>
-		);
-	}
-	// @todo: missing copy and design for this state
-	renderUnavailable() {
-		return (
-			<>
-				<SecurityIcon icon="scan-error" />
-				{ this.renderHeader( 'Scan is unavailable' ) }
-				<p>
-					{ translate(
-						'The scan was unable to process the themes directory and did not completed ' +
-							'successfully. In order to complete the scan you will need to speak to support ' +
-							'who can help determine what went wrong.'
-					) }
-				</p>
-				{ this.renderContactSupportButton() }
-			</>
 		);
 	}
 
@@ -231,11 +214,6 @@ class ScanPage extends Component< Props > {
 			return this.renderProvisioning();
 		}
 
-		// @todo: missing copy and design for these states
-		if ( state === 'unavailable' ) {
-			return this.renderUnavailable();
-		}
-
 		if ( state === 'scanning' ) {
 			return this.renderScanning();
 		}
@@ -266,14 +244,6 @@ class ScanPage extends Component< Props > {
 				<QueryJetpackScan siteId={ siteId } />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
-				<StatsFooter
-					header="Scan Summary"
-					noticeText={ translate(
-						'Failing to plan is planning to fail. Regular backups ensure that should ' +
-							'the worst happen, you are prepared. Jetpack Backup has you covered.'
-					).toString() }
-					noticeLink="https://jetpack.com/upgrade/backup"
-				/>
 			</Main>
 		);
 	}

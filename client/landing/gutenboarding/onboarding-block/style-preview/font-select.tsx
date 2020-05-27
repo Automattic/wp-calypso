@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Dashicon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -120,7 +121,7 @@ const FontSelect: React.FunctionComponent = () => {
 					>
 						<span className="style-preview__font-option-contents">
 							{ selectedFontOption }
-							<Dashicon icon="arrow-down-alt2" size={ 16 } />
+							<Icon icon={ chevronDown } size={ 22 } />
 						</span>
 					</Button>
 					<div

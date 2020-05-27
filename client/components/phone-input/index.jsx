@@ -184,36 +184,46 @@ function useSharedRef( inputRef ) {
 
 function usePhoneNumberState( value, countryCode, countriesList, freezeSelection ) {
 	const previousValue = useRef( value );
-	const [ phoneNumberState, setPhoneNumberState ] = useState(
+	const previousCountry = useRef( countryCode );
+	const [ phoneNumberState, setPhoneNumberState ] = useState( () =>
 		getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
 	);
 	const { rawValue, displayValue } = phoneNumberState;
-	const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
 
 	useEffect( () => {
 		// No need to update if the value has not changed
-		if ( previousValue.current === value ) {
+		if ( previousValue.current === value && previousCountry.current === countryCode ) {
+			debug( 'props change did not change value or country' );
+			return;
+		}
+		// No need to update if the prop value is equal to one form of the current value
+		const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
+		if (
+			previousCountry.current === countryCode &&
+			( value === rawValue || value === displayValue || value === icannValue )
+		) {
+			debug( 'props change did not change normalized value', value );
 			return;
 		}
 		previousValue.current = value;
-		// No need to update if the prop value is equal to one form of the current value
-		if ( value === rawValue || value === displayValue || value === icannValue ) {
-			return;
-		}
-		debug(
-			'props changed, updating value; raw value is',
+		previousCountry.current = countryCode;
+		const newState = getPhoneNumberStatesFromProp(
+			value,
+			countryCode,
+			countriesList,
+			freezeSelection
+		);
+		debug( 'props changed, updating value; ', {
 			rawValue,
-			'display value is',
 			displayValue,
-			'icannValue is',
 			icannValue,
-			'and prop value is',
-			value
-		);
-		setPhoneNumberState(
-			getPhoneNumberStatesFromProp( value, countryCode, countriesList, freezeSelection )
-		);
-	}, [ rawValue, displayValue, icannValue, value, countryCode, countriesList, freezeSelection ] );
+			value,
+			countryCode,
+			oldCountry: previousCountry.current,
+			newState,
+		} );
+		setPhoneNumberState( newState );
+	}, [ rawValue, displayValue, value, countryCode, countriesList, freezeSelection ] );
 
 	return [ phoneNumberState, setPhoneNumberState ];
 }

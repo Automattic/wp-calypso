@@ -90,7 +90,7 @@
 		@include long-content-fade();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		font-size: 18px;
 		max-width: none;
 	}

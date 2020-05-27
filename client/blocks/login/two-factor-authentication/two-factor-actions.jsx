@@ -17,6 +17,7 @@ import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
+import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
@@ -84,7 +85,8 @@ class TwoFactorActions extends Component {
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
-		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
+		const isSecurityKeyAvailable =
+			isWebAuthnSupported() && isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
 
 		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;

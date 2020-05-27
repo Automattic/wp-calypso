@@ -4,7 +4,6 @@
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal Dependencies
@@ -54,6 +53,16 @@ export default {
 	redirectTests( context, next ) {
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
+		} else if (
+			context.pathname.indexOf( 'domain' ) >= 0 ||
+			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'wpcc' ) >= 0 ||
+			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.params.flowName === 'user' ||
+			context.params.flowName === 'account'
+		) {
+			removeWhiteBackground();
+			next();
 		} else {
 			waitForData( {
 				geo: () => requestGeoLocation(),
@@ -61,8 +70,7 @@ export default {
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						recordTracksEvent( 'calypso_newsite_init' );
-						window.location = window.location.origin + '/new';
+						window.location.replace( window.location.origin + '/new' + window.location.search );
 					} else {
 						removeWhiteBackground();
 						next();

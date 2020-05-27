@@ -44,7 +44,7 @@
 	&__fix-button.is-summary {
 		display: none;
 
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			display: inline-block;
 			margin-left: 20px;
 		}
@@ -55,7 +55,7 @@
 		width: 100%;
 		margin-left: 0;
 
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			display: none;
 		}
 	}

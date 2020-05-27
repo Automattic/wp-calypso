@@ -18,11 +18,13 @@ class MasterbarItem extends Component {
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
+		hasUnseen: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		icon: '',
 		onClick: noop,
+		hasUnseen: false,
 	};
 
 	_preloaded = false;
@@ -37,6 +39,7 @@ class MasterbarItem extends Component {
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
+			'has-unseen': this.props.hasUnseen,
 		} );
 
 		return (
@@ -49,6 +52,9 @@ class MasterbarItem extends Component {
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
 			>
+				{ this.props.hasUnseen && (
+					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
+				) }
 				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				<span className="masterbar__item-content">{ this.props.children }</span>
 			</a>

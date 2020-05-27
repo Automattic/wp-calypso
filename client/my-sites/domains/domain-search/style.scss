@@ -16,7 +16,7 @@
 	font-size: 15px;
 	word-wrap: break-word;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 17px;
 	}
 }

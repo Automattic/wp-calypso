@@ -10,7 +10,6 @@ import { combineReducers } from '@wordpress/data';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
-import type { DomainCategory } from '../../domains-constants';
 
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
@@ -38,7 +37,7 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const domainCategory: Reducer< DomainCategory | undefined, OnboardAction > = ( state, action ) => {
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}
@@ -74,16 +73,6 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	}
 	if ( action.type === 'RESET_SITE_VERTICAL' || action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
-	}
-	return state;
-};
-
-const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
-		return true;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
 	}
 	return state;
 };
@@ -137,18 +126,28 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 	return state;
 };
 
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
 	domainCategory,
 	isRedirecting,
+	hasUsedPlansStep,
 	pageLayouts,
 	selectedFonts,
 	selectedDesign,
 	selectedSite,
 	siteTitle,
 	siteVertical,
-	wasVerticalSkipped,
 } );
 
 export type State = ReturnType< typeof reducer >;

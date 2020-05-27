@@ -96,6 +96,10 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
+		if ( this.props.marketingPriceGroup === MARKETING_PRICE_GROUP_2020_Q2_TEST_2 ) {
+			return 'business';
+		}
+
 		if ( this.props.customerType ) {
 			return this.props.customerType;
 		}

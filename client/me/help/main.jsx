@@ -202,7 +202,8 @@ class Help extends React.PureComponent {
 		return (
 			<HelpTeaserButton
 				onClick={ this.trackCoursesButtonClick }
-				href="/help/courses"
+				href="https://wordpress.com/webinars"
+				target="_blank"
 				title={ this.props.translate( 'Courses' ) }
 				description={ this.props.translate(
 					'Learn how to make the most of your site with these courses and webinars'

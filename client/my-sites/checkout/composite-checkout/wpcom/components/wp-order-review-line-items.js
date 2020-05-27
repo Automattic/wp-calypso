@@ -50,6 +50,7 @@ function WPLineItem( {
 
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = item.wpcom_meta && ! item.wpcom_meta.extra?.purchaseId;
+	const isGSuite = !! item.wpcom_meta?.extra?.google_apps_users?.length;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -58,7 +59,7 @@ function WPLineItem( {
 				<LineItemPrice item={ item } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta>
+				<LineItemMeta singleLine={ true }>
 					{ 'plan' !== item.type || ! shouldShowVariantSelector
 						? translate( '%(sublabel)s: %(interval)s', {
 								args: {
@@ -69,10 +70,19 @@ function WPLineItem( {
 						  } )
 						: item.sublabel }
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
-						<BundledDomainFreeUI>{ translate( 'First year free' ) }</BundledDomainFreeUI>
+						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
 					) }
 				</LineItemMeta>
 			) }
+			{ isGSuite && (
+				<LineItemMeta singleLine={ true }>
+					{ translate( 'billed annually' ) }
+					{ item.amount.value < item.wpcom_meta?.item_original_cost_integer && (
+						<DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>
+					) }
+				</LineItemMeta>
+			) }
+			{ isGSuite && <GSuiteUsersList users={ item.wpcom_meta.extra.google_apps_users } /> }
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<>
 					<DeleteButton
@@ -176,13 +186,13 @@ export const LineItemUI = styled( WPLineItem )`
 
 const LineItemMeta = styled.div`
 	color: ${( props ) => props.theme.colors.textColorLight};
-	display: flex;
+	display: ${( { singleLine } ) => ( singleLine ? 'flex' : 'block') };
 	font-size: 14px;
 	justify-content: space-between;
 	width: 100%;
 `;
 
-const BundledDomainFreeUI = styled.div`
+const DiscountCalloutUI = styled.div`
 	color: ${( props ) => props.theme.colors.success};
 	text-align: right;
 `;
@@ -316,6 +326,16 @@ const WPOrderReviewListItem = styled.li`
 	display: block;
 	list-style: none;
 `;
+
+function GSuiteUsersList( { users } ) {
+	return (
+		<LineItemMeta singleLine={ false }>
+			{ users.map( ( { email } ) => (
+				<div key={ email }>{ email }</div>
+			) ) }
+		</LineItemMeta>
+	);
+}
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
 	const modalCopy = {};

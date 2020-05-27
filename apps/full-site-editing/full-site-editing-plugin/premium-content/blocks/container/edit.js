@@ -2,7 +2,14 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Placeholder, Button, ExternalLink, withNotices, Spinner } from '@wordpress/components';
+import {
+	Placeholder,
+	Button,
+	ExternalLink,
+	withNotices,
+	Spinner,
+	Notice,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -19,10 +26,7 @@ import Inspector from './inspector';
 import StripeNudge from './stripe-nudge';
 import Context from './context';
 import apiFetch from '@wordpress/api-fetch';
-import {
-	isPriceValid,
-	minimumTransactionAmountForCurrency,
-} from '.';
+import { isPriceValid, minimumTransactionAmountForCurrency } from '.';
 
 /**
  * @typedef { import('./plan').Plan } Plan
@@ -40,7 +44,7 @@ const tabs = [
 	},
 	{
 		id: 'wall',
-		label: <span>{ __( 'Logged Out View', 'premium-content' ) }</span>,
+		label: <span>{ __( 'Non-subscriber View', 'premium-content' ) }</span>,
 		className: 'wp-premium-content-logged-out-view',
 	},
 ];
@@ -114,10 +118,10 @@ function Edit( props ) {
 
 		const newPrice = parseFloat( attributes.newPlanPrice );
 		const minPrice = minimumTransactionAmountForCurrency( attributes.newPlanCurrency );
-		const minimumPriceNote = sprintf( __( 'Minimum allowed price is %s.', 'premium-content' ), formatCurrency(
-			minPrice,
-			attributes.newPlanCurrency
-		) );
+		const minimumPriceNote = sprintf(
+			__( 'Minimum allowed price is %s.', 'premium-content' ),
+			formatCurrency( minPrice, attributes.newPlanCurrency )
+		);
 
 		if ( newPrice < minPrice ) {
 			onError( props, minimumPriceNote );
@@ -157,6 +161,7 @@ function Edit( props ) {
 				setProducts( products.concat( [ newProduct ] ) );
 				// After successful adding of product, we want to select it. Presumably that is the product user wants.
 				selectPlan( newProduct );
+				onSuccess( props, __( 'Successfully created plan', 'premium-content' ) );
 				if ( callback ) {
 					callback( true );
 				}
@@ -405,6 +410,17 @@ function onError( props, message ) {
 	const { noticeOperations } = props;
 	noticeOperations.removeAllNotices();
 	noticeOperations.createErrorNotice( message );
+}
+
+/**
+ * @param { Props } props
+ * @param { string } message
+ * @return { void }
+ */
+function onSuccess( props, message ) {
+	const { noticeOperations } = props;
+	noticeOperations.removeAllNotices();
+	noticeOperations.createNotice( { status: 'info', content: message } );
 }
 
 /**

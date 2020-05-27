@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/domains/init';
 
 /**
  * Return a boolean value indicating whether requesting WHOIS details is in progress.

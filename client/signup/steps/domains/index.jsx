@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, has, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -54,6 +54,7 @@ import { abtest } from 'lib/abtest';
  * Style dependencies
  */
 import './style.scss';
+import { requestGeoLocation } from '../../../state/data-getters';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -70,6 +71,7 @@ class DomainsStep extends React.Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
+		userGeoCountryCode: PropTypes.string,
 		vertical: PropTypes.string,
 	};
 
@@ -448,13 +450,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const hasCartItemInDependencyStore = has( this.props, 'signupDependencies.cartItem' );
-		const cartItem = get( this.props, 'signupDependencies.cartItem', false );
-		const hasSelectedFreePlan = hasCartItemInDependencyStore && ! cartItem;
-		const shouldHideFreeDomainExplainer =
-			'onboarding-plan-first' === this.props.flowName && cartItem;
-		const showFreeDomainExplainerForFreePlan =
-			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
+		const shouldHideFreeDomainExplainer = 'onboarding-plan-first' === this.props.flowName;
 
 		return (
 			<RegisterDomainStep
@@ -480,7 +476,7 @@ class DomainsStep extends React.Component {
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( true ) }
+				vendor={ getSuggestionsVendor( true, this.props.userGeoCountryCode ) }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
@@ -488,7 +484,6 @@ class DomainsStep extends React.Component {
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
 				shouldHideFreeDomainExplainer={ shouldHideFreeDomainExplainer }
-				showFreeDomainExplainerForFreePlan={ showFreeDomainExplainerForFreePlan }
 			/>
 		);
 	};
@@ -734,6 +729,7 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			userGeoCountryCode: requestGeoLocation().data,
 		};
 	},
 	{

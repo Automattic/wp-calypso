@@ -31,7 +31,7 @@
 	margin-bottom: 1rem;
 }
 
-@include breakpoint( '<660px' ) {
+@include breakpoint-deprecated( '<660px' ) {
 	.activity-card-list .filterbar__wrap.card {
 		background: transparent;
 		box-shadow: none;
@@ -68,7 +68,7 @@
 
 // make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
-	.activity-card {
+	> .activity-card {
 		margin-bottom: 32px;
 		.activity-card__time-icon.gridicon {
 			background: var( --color-surface-backdrop );
@@ -79,8 +79,8 @@
 // primary cards get primary card emphasis on the left
 .activity-card-list__primary-card,
 .activity-card-list__primary-card-with-more {
-	.card {
-		padding-left: 20px; // reduce standard 24px padding by 4
+	> .card {
+		padding-left: 12px; // reduce standard 16px padding by 4
 		border-left: 4px solid var( --color-primary-40 );
 	}
 }
@@ -123,12 +123,12 @@
 	width: calc( 100% - 32px - 16px );
 
 	// scooch secondary card elements over
-	.activity-card__time,
-	.card {
+	> .activity-card__time,
+	> .card {
 		transform: translateX( 32px );
 	}
 
-	.card {
+	> .card {
 		// this draws the horizontal line
 		&::before {
 			// same as the left on the vertical line above
@@ -147,7 +147,7 @@
 .activity-card-list__secondary-card {
 	// draw over the line that goes off the screen on the last card
 	&:last-of-type {
-		.card {
+		> .card {
 			&::after {
 				background: var( --color-surface-backdrop );
 				content: '';
@@ -168,7 +168,7 @@
 .activity-card-list__secondary-card-with-more {
 	// a tiny circle at the end of the line, indicating there is more on the next pagination
 	&:last-of-type {
-		.card {
+		> .card {
 			&::after {
 				background: var( --color-neutral-5 );
 				content: '';

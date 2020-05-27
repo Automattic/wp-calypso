@@ -687,6 +687,14 @@ Undocumented.prototype.validateDomainContactInformation = function (
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
 
+	// Due to backend limitations some versions of this endpoint
+	// serialize a nested object in the response, encoding e.g.
+	//   { foo: { bar: { baz: [ "error" ] } } }
+	// as
+	//   { foo.bar.baz: [ "error" ] }
+	// here we decide whether to rehydrate this.
+	const shouldReshapeResponse = query?.apiVersion === '1.2';
+
 	return this.wpcom.req.post(
 		{ path: '/me/domain-contact-information/validate' },
 		query,
@@ -697,7 +705,7 @@ Undocumented.prototype.validateDomainContactInformation = function (
 			}
 
 			// Reshape the error messages to a nested object
-			if ( successData.messages && query?.apiVersion === '1.2' ) {
+			if ( successData.messages && shouldReshapeResponse ) {
 				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
 					set( obj, key, successData.messages[ key ] );
 					return obj;
@@ -716,31 +724,41 @@ Undocumented.prototype.validateDomainContactInformation = function (
 /**
  * Validates the specified Google Apps contact information
  *
+ * The contactInformation keys can be in camelCase or snake_case, and will be
+ * converted to snake_case before being submitted. The returned data keys will
+ * be converted to camelCase before being passed to the callback or the resolved
+ * Promise.
+ *
  * @param {object} contactInformation - user's contact information
- * @param {Function} callback The callback function
- * @returns {Promise} A promise that resolves when the request completes
+ * @param {string[]} domainNames - domain names for which GSuite is being purchased
+ * @param {(error: string, data: object) => void} [callback] The callback function.
+ * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
  */
 Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	contactInformation,
+	domainNames,
 	callback
 ) {
-	const data = mapKeysRecursively( { contactInformation }, snakeCase );
+	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
+	debug( '/me/google-apps/validate', contact_information, domainNames );
 
-	return this.wpcom.req.post(
-		{ path: '/me/google-apps/validate' },
-		data,
-		( error, successData ) => {
-			if ( error ) {
-				return callback( error );
-			}
+	const stripHeadersFromHttpResponse = ( httpResponse ) =>
+		Object.keys( httpResponse )
+			.filter( ( key ) => key !== '_headers' )
+			.reduce( ( newResponse, key ) => ( { ...newResponse, [ key ]: httpResponse[ key ] } ), {} );
 
-			const newData = mapKeysRecursively( successData, ( key ) => {
-				return key === '_headers' ? key : camelCase( key );
-			} );
+	const camelCaseKeys = ( httpResponse ) =>
+		mapKeysRecursively( stripHeadersFromHttpResponse( httpResponse ), ( key ) => camelCase( key ) );
 
-			callback( null, newData );
-		}
+	const camelCaseCallback = ( error, httpResponse ) =>
+		callback( error, error ? null : camelCaseKeys( httpResponse ) );
+
+	const result = this.wpcom.req.post(
+		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
+		callback ? camelCaseCallback : null
 	);
+
+	return result.then?.( camelCaseKeys );
 };
 
 /**
@@ -961,7 +979,7 @@ Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
  * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefetch, fn ) {
-	debug( '/me/keyring-connections query' );
+	debug( '/me/connections query' );
 
 	// set defaults, first argument is actually a callback
 	if ( typeof forceExternalUsersRefetch === 'function' ) {
@@ -970,7 +988,7 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
 	}
 
 	return this.wpcom.req.get(
-		'/me/keyring-connections',
+		{ path: '/me/connections', apiNamespace: 'wpcom/v2' },
 		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
 		fn
 	);
@@ -983,11 +1001,12 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
  * @param {Function} fn Method to invoke when request is complete
  */
 Undocumented.prototype.deletekeyringConnection = function ( keyringConnectionId, fn ) {
-	debug( '/me/keyring-connections/:keyring_connection_id:/delete query' );
-	return this.wpcom.req.post(
+	debug( '/me/connections/:keyring_connection_id:/ delete' );
+	return this.wpcom.req.get(
 		{
-			path: '/me/keyring-connections/' + keyringConnectionId + '/delete',
-			apiVersion: '1.1',
+			path: '/me/connections/' + keyringConnectionId,
+			apiNamespace: 'wpcom/v2',
+			method: 'DELETE',
 		},
 		fn
 	);

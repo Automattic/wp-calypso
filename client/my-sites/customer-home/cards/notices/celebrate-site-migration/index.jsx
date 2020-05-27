@@ -7,16 +7,27 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CelebrateNotice from '../celebrate-notice';
+import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_MIGRATION } from 'my-sites/customer-home/cards/constants';
 
-const CelebrateSiteMigration = ( { checklistMode, displayChecklist } ) => {
+/**
+ * Image dependencies
+ */
+import migrationIllustration from 'assets/images/customer-home/illustration--import-complete.svg';
+
+const CelebrateSiteMigration = () => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			checklistMode={ checklistMode }
-			dismissalPreferenceName="home-notice-site-migrated"
-			displayChecklist={ displayChecklist }
-			message={ translate( 'Your site has been imported!' ) }
+			actionText={ translate( "Show me what's next" ) }
+			description={ translate(
+				"You finished importing your site. We'll guide you on the next steps to start growing your site."
+			) }
+			noticeId={ NOTICE_CELEBRATE_SITE_MIGRATION }
+			title={ translate( 'Your site has been imported!' ) }
+			illustration={ migrationIllustration }
+			showSkip={ true }
+			skipText={ translate( 'Dismiss' ) }
 		/>
 	);
 };

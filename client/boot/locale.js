@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 
 /**
@@ -17,11 +18,25 @@ import {
 import { getUrlParts } from 'lib/url/url-parts';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
+const debug = debugFactory( 'calypso:i18n' );
+
 const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 	const { translatedChunks, locale } = await getLanguageManifestFile(
 		localeSlug,
 		window.BUILD_TARGET
-	);
+	).catch( () => {
+		debug( `Failed to get language manifest for ${ localeSlug }.` );
+
+		return {};
+	} );
+
+	if ( ! locale || ! translatedChunks ) {
+		debug(
+			`Encountered an error setting up translation chunks for ${ localeSlug }. Falling back to English.`
+		);
+
+		return;
+	}
 
 	reduxStore.dispatch( setLocaleRawData( locale ) );
 
@@ -69,9 +84,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
 		const userLocaleSlug = currentUser && currentUser.localeSlug;
-		const lastPathSegment = window.location.pathname.substr(
-			window.location.pathname.lastIndexOf( '/' ) + 1
-		);
+		const pathname = window.location.pathname.replace( /\/$/, '' );
+		const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 		const pathLocaleSlug =
 			getLanguageSlugs().includes( lastPathSegment ) &&
 			! isDefaultLocale( lastPathSegment ) &&

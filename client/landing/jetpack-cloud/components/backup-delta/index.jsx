@@ -16,34 +16,18 @@ import './style.scss';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const {
-			allowRestore,
-			timezone,
-			gmtOffset,
-			moment,
-			realtimeBackups,
-			siteSlug,
-			translate,
-		} = this.props;
+		const { realtimeBackups, translate, isToday } = this.props;
 
 		const cards = realtimeBackups.map( ( activity ) => (
-			<ActivityCard
-				key={ activity.activityId }
-				{ ...{
-					moment,
-					activity,
-					allowRestore,
-					timezone,
-					gmtOffset,
-					siteSlug,
-				} }
-			/>
+			<ActivityCard activity={ activity } key={ activity.activityId } />
 		) );
 
 		return (
 			<div className="backup-delta__realtime">
 				<div className="backup-delta__realtime-header">
-					{ translate( 'More backups from today' ) }
+					{ isToday
+						? translate( 'More backups from today' )
+						: translate( 'More backups from this day' ) }
 				</div>
 				<div className="backup-delta__realtime-description">
 					{ translate(

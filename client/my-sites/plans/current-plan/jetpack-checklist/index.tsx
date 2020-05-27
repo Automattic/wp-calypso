@@ -186,8 +186,8 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ isPaidPlan && isRewindUnavailable && productInstallStatus && (
 						<Task
 							id="jetpack_vaultpress"
-							title={ translate( "We're automatically turning on Backup and Scan." ) }
-							completedTitle={ translate( "We've automatically turned on Backup and Scan." ) }
+							title={ translate( "We're automatically turning on VaultPress." ) }
+							completedTitle={ translate( "We've automatically turned on VaultPress." ) }
 							completedButtonText={ translate( 'View security dashboard' ) }
 							completed={ vaultpressFinished }
 							href="https://dashboard.vaultpress.com"

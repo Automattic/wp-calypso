@@ -16,6 +16,31 @@ import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-crede
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 
+const INITIAL_FORM_STATE = {
+	protocol: 'ssh',
+	host: '',
+	port: 22,
+	user: '',
+	pass: '',
+	path: '',
+	kpri: '',
+};
+
+function mergeFormWithCredentials( form, credentials, siteSlug ) {
+	const newForm = Object.assign( {}, form );
+	// Replace empty fields with what comes from the rewind state
+	if ( credentials ) {
+		newForm.protocol = credentials.type || newForm.protocol;
+		newForm.host = credentials.host || newForm.host;
+		newForm.port = credentials.port || newForm.port;
+		newForm.user = credentials.user || newForm.user;
+		newForm.path = credentials.path || newForm.path;
+	}
+	// Populate the host field with the site slug if needed
+	newForm.host = isEmpty( newForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : newForm.host;
+	return newForm;
+}
+
 function withServerCredentialsForm( WrappedComponent ) {
 	const ServerCredentialsFormClass = class ServerCredentialsForm extends Component {
 		static propTypes = {
@@ -31,25 +56,24 @@ function withServerCredentialsForm( WrappedComponent ) {
 			requirePath: false,
 		};
 
-		state = {
-			form: {
-				protocol: 'ssh',
-				host: '',
-				port: 22,
-				user: '',
-				pass: '',
-				path: '',
-				kpri: '',
-			},
-			formErrors: {
-				host: false,
-				port: false,
-				user: false,
-				pass: false,
-				path: false,
-			},
-			showAdvancedSettings: false,
-		};
+		constructor( props ) {
+			super( props );
+			const { rewindState, role, siteSlug } = props;
+			const credentials = find( rewindState.credentials, { role: role } );
+			const form = Object.assign( {}, INITIAL_FORM_STATE );
+
+			this.state = {
+				form: mergeFormWithCredentials( form, credentials, siteSlug ),
+				formErrors: {
+					host: false,
+					port: false,
+					user: false,
+					pass: false,
+					path: false,
+				},
+				showAdvancedSettings: false,
+			};
+		}
 
 		handleFieldChange = ( { target: { name, value } } ) => {
 			const changedProtocol = 'protocol' === name;
@@ -110,20 +134,12 @@ function withServerCredentialsForm( WrappedComponent ) {
 		UNSAFE_componentWillReceiveProps( nextProps ) {
 			const { rewindState, role, siteSlug } = nextProps;
 			const credentials = find( rewindState.credentials, { role: role } );
-			const nextForm = Object.assign( {}, this.state.form );
-
-			// Populate the fields with data from state if credentials are already saved
-			nextForm.protocol = credentials ? credentials.type : nextForm.protocol;
-			nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
-			nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
-			nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
-			nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
-
-			// Populate the host field with the site slug if needed
-			nextForm.host =
-				isEmpty( nextForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : nextForm.host;
-
-			this.setState( { form: nextForm } );
+			const siteHasChanged = this.props.siteId !== nextProps.siteId;
+			const nextForm = Object.assign(
+				{},
+				siteHasChanged ? { ...INITIAL_FORM_STATE } : this.state.form
+			);
+			this.setState( { form: mergeFormWithCredentials( nextForm, credentials, siteSlug ) } );
 		}
 
 		render() {

@@ -5,7 +5,7 @@
 	position: relative;
 	margin: 0 0 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
 	}
 
@@ -34,7 +34,7 @@
 	font-size: 24px;
 	margin: 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0 0 8px;
 	}
 }

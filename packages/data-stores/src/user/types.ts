@@ -62,6 +62,8 @@ export interface CreateAccountParams {
 	is_passwordless?: boolean;
 	signup_flow_name?: string;
 	locale?: string;
+	'g-recaptcha-error'?: string;
+	'g-recaptcha-response'?: string;
 	extra?: {
 		first_name?: string;
 		last_name?: string;

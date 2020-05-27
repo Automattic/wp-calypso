@@ -22,7 +22,8 @@ const topicIss = 'wordpress.com';
 const topicSubPrefix = 'wp_post';
 
 const getTopic = ( { scheme, post } ) => {
-	return [ scheme, topicIss, topicSubPrefix, post.global_ID ].join( ':' );
+	const postIdSiteIdKey = `${ post.ID }-${ post.site_ID }`;
+	return [ scheme, topicIss, topicSubPrefix, postIdSiteIdKey ].join( ':' );
 };
 
 const getJoinParams = ( store, postKey ) => {
@@ -87,17 +88,26 @@ export default ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case READER_VIEWING_FULL_POST_SET: {
 			const joinParams = getJoinParams( store, action.postKey );
-			if ( joinParams ) {
-				joinChannel( store, joinParams );
+			if ( ! joinParams ) {
+				return false;
 			}
+
+			joinChannel( store, joinParams );
 			break;
 		}
 
 		case READER_VIEWING_FULL_POST_UNSET: {
-			const topic = getTopic( getJoinParams( store, action.postKey ) );
-			if ( topic ) {
-				leaveChannel( topic );
+			const joinParams = getJoinParams( store, action.postKey );
+			if ( ! joinParams ) {
+				return false;
 			}
+
+			const topic = getTopic( joinParams );
+			if ( ! topic ) {
+				return false;
+			}
+
+			leaveChannel( topic );
 			break;
 		}
 	}

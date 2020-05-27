@@ -107,16 +107,16 @@ export default {
 		allowExistingUsers: true,
 	},
 	domainStepPlanStepSwap: {
-		datestamp: '20200415',
+		datestamp: '20200513',
 		variations: {
-			variantShowSwapped: 0,
-			control: 100,
+			variantShowSwapped: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200501',
+		datestamp: '20200520',
 		variations: {
 			gutenberg: 10,
 			control: 90,
@@ -124,6 +124,16 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
-		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE' ],
+		countryCodeTargets: [ 'US', 'ID', 'NG', 'BD', 'NL', 'SE', 'SG', 'LK', 'NZ', 'IE', 'CA', 'AU' ],
+	},
+	domainShowJPResultsInJapan: {
+		datestamp: '20200506',
+		variations: {
+			variantShowJPResults: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		localeTargets: 'any',
+		countryCodeTargets: [ 'JP' ],
 	},
 };

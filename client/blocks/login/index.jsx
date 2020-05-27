@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import config from 'config';
 import {
-	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
@@ -28,10 +27,13 @@ import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/s
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import { rebootAfterLogin } from 'state/login/actions';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
-import userFactory from 'lib/user';
 import Notice from 'components/notice';
 import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
@@ -40,13 +42,12 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'lib/webauthn';
+import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
@@ -59,8 +60,7 @@ class Login extends Component {
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
-		recordTracksEvent: PropTypes.func.isRequired,
-		redirectTo: PropTypes.string,
+		rebootAfterLogin: PropTypes.func.isRequired,
 		requestNotice: PropTypes.object,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
@@ -177,23 +177,10 @@ class Login extends Component {
 		this.setState( { continueAsAnotherUser: true } );
 	};
 
-	rebootAfterLogin = async () => {
-		this.props.recordTracksEvent( 'calypso_login_success', {
-			two_factor_enabled: this.props.twoFactorEnabled,
+	rebootAfterLogin = () => {
+		this.props.rebootAfterLogin( {
 			social_service_connected: this.props.socialConnect,
 		} );
-
-		// Redirects to / if no redirect url is available
-		const url = this.props.redirectTo || '/';
-
-		// User data is persisted in localstorage at `lib/user/user` line 157.
-		// Only clear the data if a user is currently set, otherwise keep the
-		// logged out state around so that it can be used in signup.
-		if ( user.get() ) {
-			await user.clear();
-		}
-
-		window.location.href = url;
 	};
 
 	renderHeader() {
@@ -293,6 +280,15 @@ class Login extends Component {
 							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
 						) }
 					</p>
+				);
+			}
+
+			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
+				preHeader = (
+					<div className="login__jetpack-cloud-wrapper">
+						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
+					</div>
 				);
 			}
 
@@ -447,9 +443,14 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack } = this.props;
+		const { isJetpack, oauth2Client } = this.props;
 		return (
-			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
+			<div
+				className={ classNames( 'login', {
+					'is-jetpack': isJetpack,
+					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+				} ) }
+			>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
@@ -457,6 +458,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+
 				{ this.renderFooter() }
 			</div>
 		);
@@ -466,7 +468,6 @@ class Login extends Component {
 export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
-		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
@@ -480,5 +481,5 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
-	{ recordTracksEvent }
+	{ rebootAfterLogin }
 )( localize( Login ) );

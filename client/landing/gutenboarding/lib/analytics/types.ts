@@ -31,18 +31,23 @@ export interface OnboardingCompleteParameters {
 	 * The blog id of the newly created site
 	 */
 	blogId: number | string | undefined;
+
+	/**
+	 * Whether the user has a paid plan or other checkout item
+	 */
+	hasCartItems?: boolean;
 }
 
 export type TracksAcquireIntentEventProperties = {
 	/**
 	 * The slug of the selected vertical or undefined if the vertical is free-form user input
 	 */
-	selected_vertical_slug: string | undefined;
+	selected_vertical_slug?: string | undefined;
 
 	/**
 	 * Translated label of vertical or free-form user input
 	 */
-	selected_vertical_label: string | undefined;
+	selected_vertical_label?: string | undefined;
 
 	/**
 	 * Whether site title has been entered on the acquire intent page
@@ -67,6 +72,11 @@ type TracksDesignSelectEventProperties = {
 	 * The selected theme
 	 */
 	selected_design: string | undefined;
+
+	/**
+	 * If the selected theme is premium
+	 */
+	is_selected_design_premium: boolean;
 };
 
 type TracksDomainSelectEventProperties = {

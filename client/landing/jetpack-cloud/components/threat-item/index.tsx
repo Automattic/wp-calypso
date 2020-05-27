@@ -47,11 +47,17 @@ const ThreatItem: React.FC< Props > = ( {
 	 */
 	const renderFixThreatButton = React.useCallback(
 		( className: string ) => {
+			// Without this, clicking the [Fix threat] button will open the
+			// entire ThreatItem element as well
+			const onClickHandler = ( e: React.MouseEvent< HTMLElement > ) => {
+				e.stopPropagation();
+				onFixThreat && onFixThreat();
+			};
 			return (
 				<Button
 					compact
 					className={ classnames( 'threat-item__fix-button', className ) }
-					onClick={ onFixThreat }
+					onClick={ onClickHandler }
 					disabled={ isFixing }
 				>
 					{ translate( 'Fix threat' ) }
@@ -68,7 +74,7 @@ const ThreatItem: React.FC< Props > = ( {
 
 		if ( ! threat.fixable ) {
 			return translate(
-				'Jetpack Scan cannot automatically fix this threat. Please {{link}}contact us{{/link}} for help.',
+				'Jetpack Scan cannot automatically fix this threat. You can fix it manually and re-run scan afterwards, or {{link}}contact us{{/link}} for help.',
 				{
 					components: {
 						link: <a href={ contactSupportUrl } rel="noopener noreferrer" target="_blank" />,
@@ -112,6 +118,7 @@ const ThreatItem: React.FC< Props > = ( {
 				  }
 				: {} ) }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
+			clickableHeader={ true }
 		>
 			<ThreatDescription
 				status={ threat.status }

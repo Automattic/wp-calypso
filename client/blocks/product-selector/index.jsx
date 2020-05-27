@@ -234,6 +234,7 @@ export class ProductSelector extends Component {
 		if ( ! this.props.selectedSiteSlug ) {
 			return (
 				description +
+				'\n' +
 				this.props.translate(
 					'The price of this subscription is based on the number of records you have on your site.'
 				)

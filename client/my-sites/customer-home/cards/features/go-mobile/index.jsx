@@ -15,8 +15,6 @@ import config from 'config';
 import AppsBadge from 'blocks/get-apps/apps-badge';
 import userAgent from 'lib/user-agent';
 import CardHeading from 'components/card-heading';
-import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
-import googlePlayLogo from 'assets/images/customer-home/google-play.png';
 import { sendEmailLogin } from 'state/auth/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
@@ -44,38 +42,27 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 		<Card className="go-mobile">
 			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
 				<div className="go-mobile__title">
-					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
+					<CardHeading>{ translate( 'WordPress app' ) }</CardHeading>
 					<h6 className="go-mobile__subheader customer-home__card-subheader">
-						{ translate( 'Make updates on the go' ) }
+						{ translate( 'Make updates on the go.' ) }
 					</h6>
 				</div>
 				<div className="go-mobile__app-badges">
 					{ showIosBadge && (
-						<AppsBadge
-							storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
-						>
-							<img src={ appleStoreLogo } alt="" />
-						</AppsBadge>
+						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-customer-home' }></AppsBadge>
 					) }
 					{ showAndroidBadge && (
-						<AppsBadge
-							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
-						>
-							<img src={ googlePlayLogo } alt="" />
-						</AppsBadge>
+						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
 					) }
 				</div>
 			</div>
 			{ isDesktopView && ! isDesktopApp && (
-				<Button className="go-mobile__email-link-button" onClick={ emailLogin }>
-					{ translate( 'Email download link' ) }
-				</Button>
+				<div className="go-mobile__email-link">
+					{ translate( 'Get a download link via email — click it on your phone to get the app.' ) }
+					<Button className="go-mobile__email-link-button is-link" onClick={ emailLogin }>
+						{ translate( 'Send my download link' ) }
+					</Button>
+				</div>
 			) }
 		</Card>
 	);

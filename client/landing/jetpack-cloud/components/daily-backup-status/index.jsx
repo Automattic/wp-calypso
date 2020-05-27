@@ -9,20 +9,21 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { withLocalizedMoment } from 'components/localized-moment';
-import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
-	/*backupDetailPath,*/ backupDownloadPath,
+	backupDownloadPath,
 	backupRestorePath,
 	backupMainPath,
+	settingsPath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import ExternalLink from 'components/external-link';
 import { INDEX_FORMAT } from 'landing/jetpack-cloud/sections/backups/main';
 import BackupChanges from './backup-changes';
 
@@ -31,7 +32,11 @@ import BackupChanges from './backup-changes';
  */
 import './style.scss';
 import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
-import backupErrorIcon from './backup-error.svg';
+import missingCredentialsIcon from './missing-credentials.svg';
+import cloudErrorIcon from './icons/cloud-error.svg';
+import cloudWarningIcon from './icons/cloud-warning.svg';
+import cloudSuccessIcon from './icons/cloud-success.svg';
+import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
 class DailyBackupStatus extends Component {
 	getValidRestoreId = () => {
@@ -78,9 +83,18 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, hasRealtimeBackups, siteSlug, deltas, metaDiff, translate } = this.props;
-
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			hasRealtimeBackups,
+			siteSlug,
+			deltas,
+			metaDiff,
+			translate,
+		} = this.props;
 		const displayDate = this.getDisplayDate( backup.activityTs );
+		const displayDateNoLatest = this.getDisplayDate( backup.activityTs, false );
+
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
 		// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
@@ -89,16 +103,22 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<div className="daily-backup-status__icon-section">
-					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
-					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudSuccessIcon } alt="" role="presentation" />
+					<div className="daily-backup-status__hide-mobile">{ translate( 'Latest backup' ) }</div>
 				</div>
-				<div className="daily-backup-status__date">{ displayDate }</div>
+				<div className="daily-backup-status__hide-desktop">
+					<div className="daily-backup-status__title">{ displayDate }</div>
+				</div>
+				<div className="daily-backup-status__hide-mobile">
+					<div className="daily-backup-status__title">{ displayDateNoLatest }</div>
+				</div>
 				<div className="daily-backup-status__meta">{ meta }</div>
 				<ActionButtons
 					rewindId={ backup.rewindId }
 					siteSlug={ siteSlug }
 					disabledRestore={ ! allowRestore }
+					doesRewindNeedCredentials={ doesRewindNeedCredentials }
 				/>
 				{ showBackupDetails && this.renderBackupDetails( backup ) }
 				{ ! hasRealtimeBackups && <BackupChanges { ...{ deltas, metaDiff } } /> }
@@ -116,11 +136,11 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<div className="daily-backup-status__failed-message-head">
-					<img src={ backupErrorIcon } alt="" role="presentation" />
-					<div>{ translate( 'Backup failed' ) }</div>
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudErrorIcon } alt="" role="presentation" />
+					<div className="daily-backup-status__message-error">{ translate( 'Backup failed' ) }</div>
 				</div>
-				<div className="daily-backup-status__failed-message">
+				<div className="daily-backup-status__title">
 					{ this.getDisplayDate( backup.activityTs, false ) }
 				</div>
 				<div className="daily-backup-status__label">
@@ -167,13 +187,11 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
-
-				<div className="daily-backup-status__date">
-					{ translate( 'No backups are available yet.' ) }
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudWarningIcon } alt="" role="presentation" />
+					<div>{ translate( 'No backups are available yet' ) }</div>
 				</div>
-
-				<div className="daily-backup-status__unavailable">
+				<div className="daily-backup-status__label">
 					{ translate(
 						'But don’t worry, one should become available in the next 24 hours. Contact support if you still need help.'
 					) }
@@ -201,8 +219,15 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
-				<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
+				<div className="daily-backup-status__message-head">
+					<img
+						className="daily-backup-status__warning-color"
+						src={ cloudWarningIcon }
+						alt=""
+						role="presentation"
+					/>
+					<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
+				</div>
 
 				<div className="daily-backup-status__label">
 					<p>
@@ -272,9 +297,16 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<>
-				<Gridicon className="daily-backup-status__gridicon-backup-scheduled" icon="cloud-upload" />
-				<div className="daily-backup-status__static-title">
-					{ translate( 'Backup Scheduled:' ) }
+				<div className="daily-backup-status__message-head">
+					<img src={ cloudScheduleIcon } alt="" role="presentation" />
+					<div className="daily-backup-status__hide-mobile">
+						{ translate( 'Backup Scheduled' ) }
+					</div>
+				</div>
+				<div className="daily-backup-status__title">
+					<div className="daily-backup-status__hide-desktop">
+						{ translate( 'Backup Scheduled' ) }:
+					</div>
 					<div>{ nextBackupHoursText }</div>
 				</div>
 				<div className="daily-backup-status__no-backup-last-backup">
@@ -297,21 +329,10 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderBackupDetails( backup ) {
-		const { moment, allowRestore, timezone, gmtOffset, siteSlug } = this.props;
 		return (
 			<div className="daily-backup-status__realtime-details">
 				<div className="daily-backup-status__realtime-details-card">
-					<ActivityCard
-						{ ...{
-							moment,
-							activity: backup,
-							allowRestore,
-							timezone,
-							gmtOffset,
-							siteSlug,
-							summarize: true,
-						} }
-					/>
+					<ActivityCard activity={ backup } summarize />
 				</div>
 			</div>
 		);
@@ -365,7 +386,13 @@ class DailyBackupStatus extends Component {
 	}
 }
 
-const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug } ) => {
+const ActionButtons = ( {
+	disabledDownload,
+	disabledRestore,
+	doesRewindNeedCredentials,
+	rewindId,
+	siteSlug,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -384,19 +411,56 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 			<Button
 				className="daily-backup-status__restore-button"
 				href={ backupRestorePath( siteSlug, rewindId ) }
-				disabled={ disabledRestore }
+				disabled={ disabledRestore || doesRewindNeedCredentials }
 				onClick={ ( event ) => {
-					disabledRestore && event.preventDefault();
+					( disabledRestore || doesRewindNeedCredentials ) && event.preventDefault();
 				} }
 			>
-				{ translate( 'Restore to this point' ) }
+				<div className="daily-backup-status__restore-button-icon">
+					{ doesRewindNeedCredentials && (
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+					) }
+					<div>{ translate( 'Restore to this point' ) }</div>
+				</div>
 			</Button>
+			{ doesRewindNeedCredentials && (
+				<div className="daily-backup-status__credentials-warning">
+					<div className="daily-backup-status__credentials-warning-top">
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+						<div>{ translate( 'Restore points have not been enabled for your account' ) }</div>
+					</div>
+					<div className="daily-backup-status__credentials-warning-bottom">
+						{ translate(
+							'A backup of your data has been made, but you must enter your server credentials to enable one-click restores. {{a}}Find your server credentials{{/a}}',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon
+											href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/"
+											onClick={ () => {} }
+										/>
+									),
+								},
+							}
+						) }
+						<Button
+							className="daily-backup-status__activate-restores-button"
+							href={ settingsPath( siteSlug ) }
+							isPrimary={ false }
+						>
+							{ translate( 'Activate restores' ) }
+						</Button>
+					</div>
+				</div>
+			) }
 		</>
 	);
 };
 ActionButtons.defaultProps = {
 	disabledDownload: false,
 	disabledRestore: false,
+	doesRewindNeedCredentials: false,
 };
 
 export default localize( withLocalizedMoment( DailyBackupStatus ) );

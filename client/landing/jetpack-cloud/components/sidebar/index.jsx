@@ -82,9 +82,8 @@ class JetpackCloudSidebar extends Component {
 		const { selectedSiteSlug, translate, threats, siteId, scanProgress } = this.props;
 		const numberOfThreatsFound = threats.length;
 
-		const scanTitle = this.props.translate( 'Scan', {
-			comment: 'Jetpack Cloud / Scan sidebar navigation item',
-		} );
+		const backupTitle = 'Backup';
+		const scanTitle = 'Scan';
 
 		const scanBadge = (
 			<ScanBadge progress={ scanProgress } numberOfThreatsFound={ numberOfThreatsFound } />
@@ -98,9 +97,7 @@ class JetpackCloudSidebar extends Component {
 						<ExpandableSidebarMenu
 							onClick={ this.toggleSection( SIDEBAR_SECTION_BACKUP ) }
 							expanded={ this.props.isBackupSectionOpen }
-							title={ this.props.translate( 'Backup', {
-								comment: 'Jetpack Cloud / Backup sidebar navigation item',
-							} ) }
+							title={ backupTitle }
 							materialIcon="backup"
 							materialIconStyle="filled"
 						>
@@ -119,7 +116,7 @@ class JetpackCloudSidebar extends Component {
 								/>
 								<SidebarItem
 									expandSection={ this.expandBackupSection }
-									label={ translate( 'Activity Log', {
+									label={ translate( 'Activity log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
 									link={ backupActivityPath( selectedSiteSlug ) }

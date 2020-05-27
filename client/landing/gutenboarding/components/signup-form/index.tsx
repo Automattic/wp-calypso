@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -17,9 +17,14 @@ import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { recordOnboardingError } from '../../lib/analytics';
+import {
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+	recordOnboardingError,
+} from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
+import config from '../../../../config';
 
 interface Props {
 	onRequestClose: () => void;
@@ -29,6 +34,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
@@ -46,13 +52,44 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const lang = useLangRouteParam();
 
+	useEffect( () => {
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( ( result ) => {
+			if ( ! result ) {
+				return;
+			}
+			setRecaptchaClientId( result.clientId );
+		} );
+	}, [ setRecaptchaClientId ] );
+
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		const username_hint = siteTitle || siteVertical?.label || null;
 
+		let recaptchaToken;
+		let recaptchaError;
+
+		if ( typeof recaptchaClientId === 'number' ) {
+			recaptchaToken = await recordGoogleRecaptchaAction(
+				recaptchaClientId,
+				'calypso/signup/formSubmit'
+			);
+
+			if ( ! recaptchaToken ) {
+				recaptchaError = 'recaptcha_failed';
+			}
+		} else {
+			recaptchaError = 'recaptcha_didnt_load';
+		}
+
 		const result = await createAccount( {
 			email: emailVal,
+			'g-recaptcha-error': recaptchaError,
+			'g-recaptcha-response': recaptchaToken || undefined,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
@@ -79,13 +116,34 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	);
 
+	// translators: English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
+	const recaptcha_text = __(
+		'This site is protected by reCAPTCHA and the Google <link_to_policy>Privacy Policy</link_to_policy> and <link_to_tos>Terms of Service</link_to_tos> apply.'
+	);
+	const recaptcha_tos = createInterpolateElement( recaptcha_text, {
+		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" />,
+		link_to_tos: <ExternalLink href="https://policies.google.com/terms" />,
+	} );
+
 	let errorMessage: string | undefined;
 	if ( newUserError ) {
 		switch ( newUserError.error ) {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
+			case 'email_reserved':
 				errorMessage = __( 'An account with this email address already exists.' );
+				break;
+			case 'email_invalid':
+				errorMessage = __( 'Please enter a valid email address.' );
+				break;
+			case 'email_cant_be_used_to_signup':
+				errorMessage = __(
+					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
+				);
+				break;
+			case 'email_not_allowed':
+				errorMessage = __( 'Sorry, that email address is not allowed!' );
 				break;
 			case 'password_invalid':
 				errorMessage = newUserError.message;
@@ -164,13 +222,20 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							</p>
 
 							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ __( 'Create account' ) }
 							</ModalSubmitButton>
+
+							<p className="signup-form__link signup-form__terms-of-service-link signup-form__recaptcha_tos">
+								{ recaptcha_tos }
+							</p>
 						</div>
 					</fieldset>
 				</form>
 			</div>
+
+			<div id="g-recaptcha"></div>
 		</Modal>
 	);
 };

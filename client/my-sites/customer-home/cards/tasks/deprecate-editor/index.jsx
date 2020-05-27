@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
  */
 import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Task from '../task';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_EDITOR_DEPRECATION } from 'my-sites/customer-home/cards/constants';
 
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -46,9 +47,9 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 							),
 							support: (
 								<InlineSupportLink
-									supportPostId={ 165338 }
+									supportPostId={ 167510 }
 									supportLink={ localizeUrl(
-										'https://wordpress.com/support/block-editor-is-coming'
+										'https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/'
 									) }
 									showIcon={ false }
 									tracksEvent="calypso_customer_home_editor_deprecate_support_page_view"
@@ -64,7 +65,7 @@ const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 			actionOnClick={ actionCallback }
 			illustration={ blockEditorImage }
 			badgeText={ translate( "What's new" ) }
-			taskId="editor-deprecation"
+			taskId={ TASK_EDITOR_DEPRECATION }
 			enableSkipOptions={ false }
 		/>
 	);

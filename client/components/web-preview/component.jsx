@@ -38,6 +38,8 @@ export class WebPreviewModal extends Component {
 		showDeviceSwitcher: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The URL that should be displayed in the iframe

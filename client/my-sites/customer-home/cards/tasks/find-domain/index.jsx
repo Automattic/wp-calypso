@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
  */
 import { preventWidows } from 'lib/formatting';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from '../task';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_FIND_DOMAIN } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
@@ -32,7 +33,7 @@ const FindDomain = ( { siteSlug } ) => {
 			actionUrl={ `/domains/add/${ siteSlug }` }
 			illustration={ findDomainIllustration }
 			timing={ 10 }
-			taskId="find-domain"
+			taskId={ TASK_FIND_DOMAIN }
 		/>
 	);
 };

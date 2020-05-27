@@ -15,7 +15,7 @@ const name = 'premium-content/container';
 const category = 'common';
 
 /**
- * @typedef { Object } Attributes
+ * @typedef {object} Attributes
  * @property { string } newPlanName
  * @property { string } newPlanCurrency
  * @property { number } newPlanPrice
@@ -144,7 +144,7 @@ export const SUPPORTED_CURRENCIES = {
  *
  * @type Array<CurrencyDetails>
  */
-export const CURRENCY_OPTIONS = Object.keys( SUPPORTED_CURRENCIES ).map( value => {
+export const CURRENCY_OPTIONS = Object.keys( SUPPORTED_CURRENCIES ).map( ( value ) => {
 	const { symbol } = getCurrencyDefaults( value );
 	const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
 	return { value, label };
@@ -155,7 +155,7 @@ export const CURRENCY_OPTIONS = Object.keys( SUPPORTED_CURRENCIES ).map( value =
  * known types it returns ...
  *
  * @param {string} currency_code three character currency code to get minimum charge for
- * @return {number} Minimum charge amount for the given currency_code
+ * @returns {number} Minimum charge amount for the given currency_code
  */
 export function minimumTransactionAmountForCurrency( currency_code ) {
 	const minimum = SUPPORTED_CURRENCIES[ currency_code ];
@@ -167,9 +167,8 @@ export function minimumTransactionAmountForCurrency( currency_code ) {
  *
  * @param {string} currency Currency for the given price.
  * @param {number} price Price to check.
- * @return {boolean} true if valid price
+ * @returns {boolean} true if valid price
  */
 export function isPriceValid( currency, price ) {
 	return ! isNaN( price ) && price >= minimumTransactionAmountForCurrency( currency );
 }
-

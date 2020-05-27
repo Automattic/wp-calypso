@@ -22,6 +22,7 @@ import {
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
 	domainManagementChangeSiteAddress,
+	domainManagementRedirectSettings,
 	domainTransferIn,
 	domainManagementSecurity,
 } from 'my-sites/domains/paths';
@@ -208,9 +209,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( ! privacyAvailable ) {
 			description = translate( 'Privacy protection: not available' );
 		} else if ( privateDomain ) {
-			description = translate( 'Privacy protection: yes' );
+			description = translate( 'Privacy protection: on' );
 		} else {
-			description = translate( 'Privacy protection: no' );
+			description = translate( 'Privacy protection: off' );
 		}
 
 		return (
@@ -475,6 +476,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			}
 		} else if ( domainTypes.MAPPED === domainType ) {
 			title = translate( 'Delete domain mapping' );
+		} else if ( domainTypes.SITE_REDIRECT === domainType ) {
+			title = translate( 'Delete site redirect' );
 		} else {
 			title = translate( 'Delete your domain permanently' );
 		}
@@ -509,6 +512,19 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
+	getRedirectSettings() {
+		const { domain, selectedSite, translate } = this.props;
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name ) }
+				materialIcon="language"
+				text={ translate( 'Redirect settings' ) }
+				description={ translate( 'Update your site redirect' ) }
+			/>
+		);
+	}
+
 	renderRegisteredDomainNavigation() {
 		return (
 			<React.Fragment>
@@ -518,6 +534,15 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getTransferDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
+				{ this.getDeleteDomain() }
+			</React.Fragment>
+		);
+	}
+
+	renderSiteRedirectNavigation() {
+		return (
+			<React.Fragment>
+				{ this.getRedirectSettings() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
@@ -559,6 +584,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ domainType === domainTypes.WPCOM && this.renderWpcomDomainNavigation() }
 				{ domainType === domainTypes.MAPPED && this.renderMappedDomainNavigation() }
 				{ domainType === domainTypes.REGISTERED && this.renderRegisteredDomainNavigation() }
+				{ domainType === domainTypes.SITE_REDIRECT && this.renderSiteRedirectNavigation() }
 				{ domainType === domainTypes.TRANSFER && this.renderTransferInDomainNavigation() }
 			</VerticalNav>
 		);

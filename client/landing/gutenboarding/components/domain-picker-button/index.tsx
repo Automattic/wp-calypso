@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
-import { Button, Dashicon } from '@wordpress/components';
-
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 
 /**
@@ -22,11 +22,9 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' | 'tracksName' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
-	hasContent?: boolean;
-	hasPlaceholder?: boolean;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
@@ -34,8 +32,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	className,
 	onDomainSelect,
 	currentDomain,
-	hasContent,
-	hasPlaceholder,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
@@ -78,14 +74,12 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
 					'is-modal-open': isDomainModalVisible,
-					'has-content': hasContent,
-					'has-placeholder': hasPlaceholder,
 				} ) }
 				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
 				ref={ buttonRef }
 			>
 				<span className="domain-picker-button__label">{ children }</span>
-				<Dashicon icon="arrow-down-alt2" size={ 16 } />
+				<Icon icon={ chevronDown } size={ 22 } />
 			</Button>
 			<DomainPickerPopover
 				isOpen={ isDomainPopoverVisible }

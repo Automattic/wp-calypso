@@ -73,11 +73,16 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				);
 
 			case 'STEP_LOAD_ERROR':
-				reduxDispatch( logStashEventAction( 'step_load', String( action.payload ) ) );
+				reduxDispatch(
+					logStashEventAction( 'step_load', String( action.payload.message ), {
+						stepId: action.payload.stepId,
+					} )
+				);
 
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
-						error_message: String( action.payload ),
+						error_message: String( action.payload.message ),
+						step_id: String( action.payload.stepId ),
 					} )
 				);
 
@@ -438,9 +443,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 
 			case 'calypso_checkout_composite_summary_help_click': {
 				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
-						is_support_chat_user: action.payload.isSupportChatUser,
-					} )
+					recordTracksEvent( 'calypso_checkout_composite_summary_help_click' )
 				);
 			}
 
@@ -455,7 +458,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 	};
 }
 
-function logStashEventAction( type, message ) {
+function logStashEventAction( type, message, additionalData = {} ) {
 	return logToLogstash( {
 		feature: 'calypso_client',
 		message: 'composite checkout load error',
@@ -464,6 +467,7 @@ function logStashEventAction( type, message ) {
 			env: config( 'env_id' ),
 			type,
 			message,
+			...additionalData,
 		},
 	} );
 }

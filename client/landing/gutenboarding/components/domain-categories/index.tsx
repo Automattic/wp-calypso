@@ -2,16 +2,17 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { useState } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-
-import { domainCategories, DomainCategory } from '../../domains-constants';
+import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 
 /**
  * Style dependencies
@@ -19,17 +20,21 @@ import { domainCategories, DomainCategory } from '../../domains-constants';
 import './style.scss';
 
 export interface Props {
-	onSelect: ( domainCategory?: DomainCategory ) => void;
-	selected?: DomainCategory;
+	onSelect: ( domainCategorySlug?: string ) => void;
+	selected?: string;
 }
 
 const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
 	const { __ } = useI18n();
+	const domainCategories = useSelect( ( select ) =>
+		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
+	);
+
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const handleSelect = ( domainCategory?: DomainCategory ) => {
+	const handleSelect = ( slug?: string ) => {
 		setIsOpen( false );
-		onSelect( domainCategory );
+		onSelect( slug );
 	};
 
 	return (
@@ -39,7 +44,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 				onClick={ () => setIsOpen( ! isOpen ) }
 			>
 				<span>{ ! selected ? __( 'All Categories' ) : selected }</span>
-				<Icon icon="arrow-down-alt2" size={ 12 }></Icon>
+				<Icon icon={ chevronDown } size={ 16 } />
 			</Button>
 			<ul className="domain-categories__item-group">
 				<li
@@ -54,14 +59,14 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 						}
 					</Button>
 				</li>
-				{ domainCategories.map( ( domainCategory ) => (
+				{ domainCategories.map( ( { slug, title } ) => (
 					<li
-						key={ domainCategory }
+						key={ slug }
 						className={ classNames( 'domain-categories__item', {
-							'is-selected': domainCategory === selected,
+							'is-selected': slug === selected,
 						} ) }
 					>
-						<Button onClick={ () => handleSelect( domainCategory ) }>{ domainCategory }</Button>
+						<Button onClick={ () => handleSelect( slug ) }>{ title }</Button>
 					</li>
 				) ) }
 			</ul>

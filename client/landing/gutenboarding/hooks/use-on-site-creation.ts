@@ -67,6 +67,12 @@ export default function useOnSiteCreation() {
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
+	const flowCompleteTrackingParams = {
+		isNewSite: !! newSite,
+		isNewUser: !! newUser,
+		blogId: newSite?.blogid,
+		hasCartItems: false,
+	};
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
@@ -107,6 +113,10 @@ export default function useOnSiteCreation() {
 							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					window.location.href = redirectionUrl;
 				};
+				recordOnboardingComplete( {
+					...flowCompleteTrackingParams,
+					hasCartItems: true,
+				} );
 				go();
 				return;
 			}
@@ -139,11 +149,7 @@ export default function useOnSiteCreation() {
 				return;
 			}
 
-			recordOnboardingComplete( {
-				isNewSite: !! newSite,
-				isNewUser: !! newUser,
-				blogId: newSite.blogid,
-			} );
+			recordOnboardingComplete( flowCompleteTrackingParams );
 			resetPlan();
 			resetOnboardStore();
 			setSelectedSite( newSite.blogid );

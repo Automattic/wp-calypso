@@ -843,7 +843,7 @@ module.exports = function () {
 		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
 			req.context.sectionName = section.name;
 
-			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+			if ( ! entrypoint ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
 			} else {
 				req.context.chunkFiles = EMPTY_ASSETS;

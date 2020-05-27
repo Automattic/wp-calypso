@@ -126,7 +126,7 @@ const ScanHistoryPage = ( {
 					'The scanning history contains a record of all previously active threats on your site.'
 				) }
 			</p>
-			{ filteredEntries.length > 0 && (
+			{ threats.length > 0 && (
 				<div className="history__filters-wrapper">
 					<ThreatStatusFilter
 						isPlaceholder={ isRequestingHistory }
@@ -150,6 +150,7 @@ const ScanHistoryPage = ( {
 						showDialog={ showThreatDialog }
 						onCloseDialog={ closeDialog }
 						onConfirmation={ fixThreat }
+						siteId={ siteId }
 						siteName={ siteName }
 						threat={ selectedThreat }
 						action={ 'fix' }
@@ -167,21 +168,22 @@ export default connect(
 		const siteName = site.name;
 		const siteSlug = getSelectedSiteSlug( state );
 		const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
+		const siteLogEntries = getSiteScanHistory( state, siteId );
 
-		const logEntries = isRequestingHistory
+		const showPlaceholders = isRequestingHistory && 0 === siteLogEntries.length;
+		const logEntries = showPlaceholders
 			? [
 					{ id: 1, status: 'fixed' },
 					{ id: 2, status: 'ignored' },
 					{ id: 3, status: 'fixed' },
 					{ id: 4, status: 'ignored' },
 			  ]
-			: getSiteScanHistory( state, siteId );
-
+			: siteLogEntries;
 		return {
 			siteId,
 			siteName,
 			siteSlug,
-			isRequestingHistory,
+			isRequestingHistory: showPlaceholders,
 			threats: logEntries,
 		};
 	},

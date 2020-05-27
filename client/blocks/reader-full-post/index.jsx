@@ -65,6 +65,8 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
+import { requestMarkAsSeen } from 'state/reader/seen-posts/actions';
+import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
 
 /**
  * Style dependencies
@@ -259,6 +261,13 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
+			config.isEnabled( 'reader/seen-posts' ) &&
+				this.props.requestMarkAsSeen( {
+					seenIds: [ post.seen_ids ],
+					globalIds: [ post.global_ID ],
+					source: SOURCE_READER_WEB,
+				} );
+
 			recordTrackForPost(
 				'calypso_reader_article_opened',
 				post,
@@ -513,5 +522,12 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen, setViewingFullPostKey, unsetViewingFullPostKey, likePost, unlikePost }
+	{
+		markPostSeen,
+		setViewingFullPostKey,
+		unsetViewingFullPostKey,
+		likePost,
+		unlikePost,
+		requestMarkAsSeen,
+	}
 )( FullPostView );

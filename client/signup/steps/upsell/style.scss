@@ -24,11 +24,11 @@
 
 	&__column-content {
 		padding-right: 10px;
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding-right: 0;
 		}
     }
-    
+
     &__section-title {
         font-size: 18px;
 		font-weight: 700;
@@ -38,7 +38,7 @@
 	&__column-doodle {
 		width: 120px;
 		flex-shrink: 0;
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: none;
 		}
 	}
@@ -60,7 +60,7 @@
 		margin-top: 0.5em;
 		margin-bottom: 1.4em;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			font-size: 21px;
 		}
     }
@@ -68,22 +68,22 @@
 	&__footer &__decline-offer-button {
 		color: var( --color-primary );
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			float: left;
 		}
 	}
 
 	&__footer &__accept-offer-button {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			float: right;
 		}
 	}

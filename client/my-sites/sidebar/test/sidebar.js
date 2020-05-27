@@ -11,7 +11,7 @@ import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
-jest.mock( 'lib/user', () => null );
+jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view', () => ( {} ) );
@@ -94,7 +94,7 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist'
+				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist&calypsoify=1'
 			);
 		} );
 

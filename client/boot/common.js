@@ -43,7 +43,7 @@ import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
@@ -52,6 +52,7 @@ import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
+import { requestUnseenStatusAny } from 'state/ui/reader/seen-posts/actions';
 
 const debug = debugFactory( 'calypso' );
 
@@ -121,6 +122,7 @@ const oauthTokenMiddleware = () => {
 			'/start',
 			'/authorize',
 			'/api/oauth/token',
+			'/connect',
 		];
 
 		// Forces OAuth users to the /login page if no token is present
@@ -130,7 +132,12 @@ const oauthTokenMiddleware = () => {
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				const isJetpackCloud = [
+					'jetpack-cloud-development',
+					'jetpack-cloud-stage',
+					'jetpack-cloud-production',
+				].includes( config( 'env_id' ) );
+				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
 				page( redirectPath );
 				return;
 			}
@@ -291,11 +298,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			return next();
 		}
 
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			context.store.dispatch( activateNextLayoutFocus() );
-		}
-
 		// Bump general stat tracking overall Newdash usage
 		bumpStat( { newdash_pageviews: 'route' } );
 
@@ -338,6 +340,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	const state = reduxStore.getState();
+	// get reader unread status
+	if ( config.isEnabled( 'reader/seen-posts' ) ) {
+		reduxStore.dispatch( requestUnseenStatusAny() );
+	}
+
 	if ( config.isEnabled( 'happychat' ) ) {
 		reduxStore.dispatch( requestHappychatEligibility() );
 	}

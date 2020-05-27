@@ -16,10 +16,9 @@ import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { abtest } from 'lib/abtest';
 import { logToLogstash } from 'state/logstash/actions';
-import { getTlds } from 'lib/cart-values/cart-items';
-import { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
@@ -42,6 +41,7 @@ export default function CheckoutSystemDecider( {
 	cart,
 } ) {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
 	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
 	const reduxDispatch = useDispatch();
@@ -67,7 +67,17 @@ export default function CheckoutSystemDecider( {
 		return null; // TODO: replace with loading page
 	}
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, purchaseId, isJetpack ) ) {
+	if (
+		shouldShowCompositeCheckout(
+			cart,
+			countryCode,
+			locale,
+			product,
+			purchaseId,
+			isJetpack,
+			isAtomic
+		)
+	) {
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 				<CompositeCheckout
@@ -110,7 +120,8 @@ function shouldShowCompositeCheckout(
 	locale,
 	productSlug,
 	purchaseId,
-	isJetpack
+	isJetpack,
+	isAtomic
 ) {
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
@@ -118,7 +129,7 @@ function shouldShowCompositeCheckout(
 	}
 
 	// Disable if this is a jetpack site
-	if ( isJetpack ) {
+	if ( isJetpack && ! isAtomic ) {
 		debug( 'shouldShowCompositeCheckout false because jetpack site' );
 		return false;
 	}
@@ -145,13 +156,6 @@ function shouldShowCompositeCheckout(
 	// Disable for non-US
 	if ( countryCode?.toLowerCase() !== 'us' ) {
 		debug( 'shouldShowCompositeCheckout false because country is not US' );
-		return false;
-	}
-	// Disable for TLDs that have special contact forms
-	if ( getTlds( cart ).find( ( tld ) => tldsWithAdditionalDetailsForms.includes( tld ) ) ) {
-		debug(
-			'shouldShowCompositeCheckout false because cart contains TLD with special contact form'
-		);
 		return false;
 	}
 

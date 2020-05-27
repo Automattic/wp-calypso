@@ -45,7 +45,7 @@
 }
 
 .export-card__advanced-settings-row {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -54,7 +54,7 @@
 .export-card__option-fieldset {
 	margin-top: 10px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-top: inherit;
 		flex: 1;
 	}

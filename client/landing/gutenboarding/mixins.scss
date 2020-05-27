@@ -13,6 +13,12 @@
 	line-height: 57px;
 }
 
+@mixin onboarding-heading-text-tablet {
+	@include onboarding-font-recoleta;
+	font-size: 36px;
+	line-height: 40px;
+}
+
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
 	font-size: 32px;
@@ -40,14 +46,14 @@
 }
 
 @mixin onboarding-block-margin {
-	margin: 0 20px;
+	margin: 0 $gutenboarding-block-margin-mobile;
 
 	@include break-small {
-		margin: 0 44px;
+		margin: 0 $gutenboarding-block-margin-small;
 	}
 
 	@include break-medium {
-		margin: 0 88px;
+		margin: 0 $gutenboarding-block-margin-medium;
 	}
 }
 
@@ -95,4 +101,64 @@
 	width: 100%;
 
 	background: var( --studio-white );
+}
+
+@mixin onboarding-block-edge2edge-container {
+	width: calc( 100% + #{$gutenboarding-block-margin-mobile * 2} );
+	margin-left: #{$gutenboarding-block-margin-mobile * -1};
+	margin-right: #{$gutenboarding-block-margin-mobile * -1};
+
+	@include break-small {
+		width: calc( 100% + #{$gutenboarding-block-margin-small * 2} );
+		margin-left: #{$gutenboarding-block-margin-small * -1};
+		margin-right: #{$gutenboarding-block-margin-small * -1};
+	}
+
+	@include break-medium {
+		width: calc( 100% + #{$gutenboarding-block-margin-medium * 2} );
+		margin-left: #{$gutenboarding-block-margin-medium * -1};
+		margin-right: #{$gutenboarding-block-margin-medium * -1};
+	}
+}
+
+@mixin onboarding-block-edge2edge-content {
+	border-left: $gutenboarding-block-margin-mobile solid transparent;
+	border-right: $gutenboarding-block-margin-mobile solid transparent;
+
+	@include break-small {
+		border-left: $gutenboarding-block-margin-small solid transparent;
+		border-right: $gutenboarding-block-margin-small solid transparent;
+	}
+
+	@include break-medium {
+		border-left: $gutenboarding-block-margin-medium solid transparent;
+		border-right: $gutenboarding-block-margin-medium solid transparent;
+	}
+}
+
+@mixin onboarding-block-edge2edge-columns {
+	&:first-child {
+		border-left: $gutenboarding-block-margin-mobile solid transparent;
+	}
+	&:last-child {
+		border-right: $gutenboarding-block-margin-mobile solid transparent;
+	}
+
+	@include break-small {
+		&:first-child {
+			border-left: $gutenboarding-block-margin-small solid transparent;
+		}
+		&:last-child {
+			border-right: $gutenboarding-block-margin-small solid transparent;
+		}
+	}
+
+	@include break-medium {
+		&:first-child {
+			border-left: $gutenboarding-block-margin-medium solid transparent;
+		}
+		&:last-child {
+			border-right: $gutenboarding-block-margin-medium solid transparent;
+		}
+	}
 }

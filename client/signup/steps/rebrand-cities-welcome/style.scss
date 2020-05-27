@@ -8,12 +8,12 @@
 		font-family: $serif;
 		color: var( --color-neutral-70 );
 		font-size: 34px;
-		font-weight: bold;
+		font-weight: 600;
 		line-height: 1.2em;
 		margin-bottom: 0.2em;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.formatted-header__subtitle {
 			margin: 0 10%;
 		}

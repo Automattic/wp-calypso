@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@automattic/react-i18n';
 
 interface SignupFormHeaderProps {
@@ -35,7 +36,7 @@ const SignupFormHeader = ( { onRequestClose }: SignupFormHeaderProps ) => {
 		<div className="signup-form__header">
 			<div className="signup-form__header-section">
 				<div className="signup-form__header-section-item signup-form__header-wp-logo">
-					<Icon icon="wordpress-alt" size={ 24 } />
+					<Icon icon={ wordpress } size={ 28 } />
 				</div>
 			</div>
 

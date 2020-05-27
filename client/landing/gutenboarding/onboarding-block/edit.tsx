@@ -26,13 +26,9 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const {
-		siteTitle,
-		siteVertical,
-		selectedDesign,
-		selectedFonts,
-		wasVerticalSkipped,
-	} = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const { createSite } = useDispatch( STORE_KEY );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
@@ -48,10 +44,6 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	React.useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ pathname ] );
-
-	const canUseDesignSelection = useCallback( (): boolean => {
-		return !! ( siteVertical || siteTitle || wasVerticalSkipped );
-	}, [ siteTitle, siteVertical, wasVerticalSkipped ] );
 
 	const canUseStyleStep = useCallback( (): boolean => {
 		return !! selectedDesign;
@@ -73,11 +65,8 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 		if ( canUseStyleStep() ) {
 			return makePath( Step.Style );
 		}
-		if ( canUseDesignSelection() ) {
-			return makePath( Step.DesignSelection );
-		}
 
-		return makePath( Step.IntentGathering );
+		return makePath( Step.DesignSelection );
 	};
 
 	useEffect( () => {
@@ -86,13 +75,11 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 			! newSite &&
 			currentUser &&
 			shouldTriggerCreate &&
-			canUseDesignSelection() &&
 			canUseStyleStep()
 		) {
 			createSite( currentUser.username, freeDomainSuggestion );
 		}
 	}, [
-		canUseDesignSelection,
 		canUseStyleStep,
 		createSite,
 		currentUser,
@@ -103,7 +90,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 	] );
 
 	return (
-		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
+		<div className="onboarding-block">
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
@@ -116,11 +103,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
-					{ canUseDesignSelection() ? (
-						<DesignSelector />
-					) : (
-						<Redirect to={ makePath( Step.IntentGathering ) } />
-					) }
+					<DesignSelector />
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>

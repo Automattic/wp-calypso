@@ -107,6 +107,7 @@ export class DomainDetailsForm extends PureComponent {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation(
 				fieldValues,
+				[],
 				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
 			);
 			return;

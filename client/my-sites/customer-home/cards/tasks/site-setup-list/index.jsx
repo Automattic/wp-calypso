@@ -7,16 +7,14 @@ import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelCta from 'components/action-panel/cta';
 import Badge from 'components/badge';
 import CardHeading from 'components/card-heading';
+import Spinner from 'components/spinner';
 import { getTaskList } from 'lib/checklist';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -30,7 +28,7 @@ import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestHomeLayout } from 'state/home/actions';
+import { skipCurrentViewHomeLayout } from 'state/home/actions';
 import NavItem from './nav-item';
 import { getTask } from './get-task';
 
@@ -63,8 +61,18 @@ const startTask = ( dispatch, task, siteId ) => {
 	}
 };
 
-const skipTask = ( dispatch, task, siteId ) => {
-	dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
+
+	if ( isLastTask ) {
+		// When skipping the last task, we request skipping the current layout view so it's refreshed afterwards.
+		// Task will be dismissed server-side to avoid race conditions.
+		setIsLoading( true );
+		dispatch( skipCurrentViewHomeLayout( siteId ) );
+	} else {
+		// Otherwise we simply skip the given task.
+		dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
+	}
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_dismiss', {
 			checklist_name: 'new_blog',
@@ -98,41 +106,46 @@ const SiteSetupList = ( {
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
+	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
 	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
 	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
 		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
 
+	// Move to first incomplete task on first load.
 	useEffect( () => {
-		// Initial task (first incomplete).
 		if ( ! currentTaskId && tasks.length ) {
 			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
-			if ( ! initialTask ) {
-				// Last task was skipped, refresh home layout
-				dispatch( requestHomeLayout( siteId ) );
-			} else {
+			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
+	}, [ currentTaskId, dispatch, tasks ] );
 
-		// Reset verification email state on first load.
+	// Reset verification email state on first load.
+	useEffect( () => {
 		if ( isEmailUnverified ) {
 			dispatch( resetVerifyEmailState() );
 		}
-	}, [ currentTaskId, isEmailUnverified, tasks, dispatch, siteId ] );
+	}, [ isEmailUnverified, dispatch ] );
 
-	// Move to next task after completing current one.
+	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
+		if ( userSelectedTask ) {
+			return;
+		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
+				setUserSelectedTask( false );
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ tasks ] );
+	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -153,12 +166,14 @@ const SiteSetupList = ( {
 		}
 	}, [
 		currentTaskId,
+		dispatch,
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
 		menusUrl,
 		siteId,
 		siteSlug,
+		tasks,
 		taskUrls,
 		userEmail,
 	] );
@@ -175,7 +190,8 @@ const SiteSetupList = ( {
 	}
 
 	return (
-		<Card className="site-setup-list">
+		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+			{ isLoading && <Spinner /> }
 			{ useDrillLayout && (
 				<CardHeading>
 					<>
@@ -202,6 +218,7 @@ const SiteSetupList = ( {
 							isCompleted={ task.isCompleted }
 							isCurrent={ task.id === currentTask.id }
 							onClick={ () => {
+								setUserSelectedTask( true );
 								setCurrentTaskId( task.id );
 								setCurrentDrillLayoutView( 'task' );
 							} }
@@ -211,52 +228,51 @@ const SiteSetupList = ( {
 				</div>
 			) }
 			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
-				<ActionPanel className="site-setup-list__task task">
-					<ActionPanelBody>
-						<div className="site-setup-list__task-text task__text">
-							{ currentTask.isCompleted ? (
-								<Badge type="info" className="site-setup-list__task-badge task__badge">
-									{ translate( 'Complete' ) }
-								</Badge>
-							) : (
-								<div className="site-setup-list__task-timing task__timing">
-									<Gridicon icon="time" size={ 18 } />
-									<p>
-										{ translate( '%d minute', '%d minutes', {
-											count: currentTask.timing,
-											args: [ currentTask.timing ],
-										} ) }
-									</p>
-								</div>
-							) }
-							<ActionPanelTitle>{ currentTask.title }</ActionPanelTitle>
-							<p className="site-setup-list__task-description task__description">
-								{ currentTask.description }
-							</p>
-							<ActionPanelCta>
+				<div className="site-setup-list__task task">
+					<div className="site-setup-list__task-text task__text">
+						{ currentTask.isCompleted ? (
+							<Badge type="info" className="site-setup-list__task-badge task__badge">
+								{ translate( 'Complete' ) }
+							</Badge>
+						) : (
+							<div className="site-setup-list__task-timing task__timing">
+								<Gridicon icon="time" size={ 18 } />
+								{ translate( '%d minute', '%d minutes', {
+									count: currentTask.timing,
+									args: [ currentTask.timing ],
+								} ) }
+							</div>
+						) }
+						<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+						<p className="site-setup-list__task-description task__description">
+							{ currentTask.description }
+						</p>
+						<div className="site-setup-list__task-actions task__actions">
+							<Button
+								className="site-setup-list__task-action task__action"
+								primary
+								onClick={ () => startTask( dispatch, currentTask, siteId ) }
+								disabled={
+									currentTask.isDisabled ||
+									( currentTask.isCompleted && currentTask.actionDisableOnComplete )
+								}
+							>
+								{ currentTask.actionText }
+							</Button>
+							{ currentTask.isSkippable && ! currentTask.isCompleted && (
 								<Button
-									className="site-setup-list__task-action task__action"
-									primary
-									onClick={ () => startTask( dispatch, currentTask, siteId ) }
-									disabled={
-										currentTask.isDisabled ||
-										( currentTask.isCompleted && currentTask.actionDisableOnComplete )
-									}
+									className="site-setup-list__task-skip task__skip is-link"
+									onClick={ () => {
+										setUserSelectedTask( false );
+										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+									} }
 								>
-									{ currentTask.actionText }
+									{ translate( 'Skip for now' ) }
 								</Button>
-								{ currentTask.isSkippable && ! currentTask.isCompleted && (
-									<Button
-										className="site-setup-list__task-skip task__skip is-link"
-										onClick={ () => skipTask( dispatch, currentTask, siteId ) }
-									>
-										{ translate( 'Skip for now' ) }
-									</Button>
-								) }
-							</ActionPanelCta>
+							) }
 						</div>
-					</ActionPanelBody>
-				</ActionPanel>
+					</div>
+				</div>
 			) }
 		</Card>
 	);

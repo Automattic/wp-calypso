@@ -227,6 +227,6 @@ or
 git tag "@automattic/components@1.0.0"
 ```
 
-Now `lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
+Now `npx lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
 
 The rest of the workflow is exactly the same as in the `from-package` case.

@@ -879,7 +879,7 @@ export function getDomainMappings( cart ) {
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  *
- * @param {string} product - the product object
+ * @param {string|object} product - the product object
  * @param {object} [properties] - properties to be included in the new CartItem object
  * @returns {CartItemValue} a CartItem object
  */

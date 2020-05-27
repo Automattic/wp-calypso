@@ -7,11 +7,11 @@
 		padding: 0;
 		width: auto;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			min-width: $sidebar-width-min;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			min-width: $sidebar-width-max;
 		}
 
@@ -38,6 +38,7 @@
 
 		.masterbar__item-content {
 			margin-top: 2px;
+			line-height: normal;
 			color: var( --color-neutral-80 );
 		}
 	}
@@ -45,5 +46,17 @@
 	.masterbar__item-me {
 		min-width: 18px;
 		flex: 0 0 auto;
+
+		// Calypso's masterbar hides this item content and we need to show it
+		// so we override its display property.
+		@include breakpoint-deprecated( '<480px' ) {
+			.masterbar__item-content {
+				display: block;
+			}
+		}
+	}
+
+	.masterbar__item-me--open {
+		box-shadow: 0 -1px 0 1px var( --studio-gray-20 );
 	}
 }

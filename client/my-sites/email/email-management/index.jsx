@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -38,6 +39,7 @@ import { domainManagementEdit, domainManagementList } from 'my-sites/domains/pat
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'lib/domains';
 import DocumentHead from 'components/data/document-head';
+import QueryEmailAccounts from 'components/data/query-email-accounts';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -81,6 +83,9 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
+				{ config.isEnabled( 'email-accounts/enabled' ) && selectedSiteId && (
+					<QueryEmailAccounts siteId={ selectedSiteId } />
+				) }
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />

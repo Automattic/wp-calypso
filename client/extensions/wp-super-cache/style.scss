@@ -30,7 +30,7 @@
 
 .wp-super-cache__cache-test-results-label {
 	display: inline-block;
-	font-weight: bold;
+	font-weight: 600;
 	margin-top: 1.5em;
 }
 
@@ -158,14 +158,14 @@
 	max-width: 140px;
 	overflow-wrap: break-word;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		max-width: none;
 		overflow-wrap: normal;
 	}
 }
 
 .wp-super-cache__stat-age {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 100%;
 	}
 }

@@ -71,7 +71,7 @@
 }
 
 .mce-container .mce-wpcom-insert-menu .wpcom-insert-menu__menu-label {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }

@@ -227,6 +227,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		let activityLink = '/activity-log' + siteSuffix,
 			activityLabel = translate( 'Activity' );
 
@@ -520,7 +524,7 @@ export class MySitesSidebar extends Component {
 
 		let storeLink = '/store' + siteSuffix;
 		if ( isEcommerce( site.plan ) ) {
-			storeLink = site.options.admin_url + 'admin.php?page=wc-setup-checklist';
+			storeLink = site.options.admin_url + 'admin.php?page=wc-setup-checklist&calypsoify=1';
 		}
 
 		return (

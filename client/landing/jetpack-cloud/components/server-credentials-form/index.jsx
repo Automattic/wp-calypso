@@ -39,10 +39,7 @@ const ServerCredentialsForm = ( {
 	showCancelButton = true,
 } ) => {
 	React.useEffect( () => {
-		// I'm letting the user jump to the next step even if the submission failed
-		// so one can test the UI without having to enter real credentials. On the next
-		// iteration we should fix this.
-		if ( formSubmissionStatus === 'failed' || formSubmissionStatus === 'success' ) {
+		if ( formSubmissionStatus === 'success' ) {
 			onComplete && onComplete();
 		}
 	}, [ formSubmissionStatus, onComplete ] );

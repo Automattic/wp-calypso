@@ -1,7 +1,7 @@
 .product-card {
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		min-width: 460px;
 	}
 }
@@ -11,11 +11,11 @@
 	padding: 16px 0;
 	border-bottom: solid 2px var( --color-jetpack );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: -24px -24px 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: baseline;
@@ -27,7 +27,7 @@
 	padding-left: 40px;
 	padding-right: 40px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 16px;
 		padding-right: 16px;
 	}
@@ -37,7 +37,7 @@
 	display: flex;
 	justify-content: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-grow: 1;
 	}
 
@@ -49,7 +49,7 @@
 		align-self: center;
 		margin: 0 8px 0 -26px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 16px;
 			height: 16px;
 			margin-left: 0;
@@ -69,7 +69,7 @@
 	font-size: 20px;
 	line-height: 24px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		font-size: 22px;
 	}
 
@@ -100,7 +100,7 @@
 
 		&,
 		& * {
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				font-size: 14px;
 				vertical-align: baseline;
 			}
@@ -114,11 +114,11 @@
 	line-height: 13px;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		font-style: italic;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		font-size: 12px;
 	}
 }
@@ -127,7 +127,7 @@
 .product-card__header {
 	.plan-price,
 	.plan-price * {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			font-weight: 600;
 		}
 	}
@@ -135,7 +135,7 @@
 	.product-card__billing-timeframe {
 		width: 100%;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: auto;
 			font-size: 12px;
 			font-weight: 600;
@@ -151,7 +151,7 @@
 		font-weight: 400;
 		vertical-align: baseline;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			font-size: 14px;
 		}
 	}
@@ -184,7 +184,7 @@
 	justify-content: space-around; // IE11 fallback.
 	justify-content: space-evenly;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-flow: row wrap;
 	}
 }
@@ -195,7 +195,7 @@
 	text-align: center;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex: 0 0 100%;
 	}
 
@@ -217,7 +217,7 @@
 	border-radius: 4px;
 	cursor: pointer;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: column;
 	}
 
@@ -230,7 +230,7 @@
 	& + .product-card__option.form-label {
 		margin-top: 0;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-top: 16px;
 			margin-left: 8px;
 		}
@@ -243,19 +243,19 @@
 	align-items: flex-start;
 	margin-left: 8px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 		margin-top: 6px;
 		margin-left: 0;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-top: 0;
 	}
 }
 
 .product-card__radio.form-radio {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 10px;
 	}
 }
@@ -353,13 +353,13 @@
 		height: 32px;
 		margin: 0 0 4px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			height: 18px;
 		}
 	}
 
 	.product-card__billing-timeframe {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: none;
 		}
 	}
@@ -379,7 +379,7 @@
 		height: 16px;
 		margin: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin: 5px 0 0;
 		}
 	}

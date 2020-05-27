@@ -1,116 +1,90 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import { Button } from '@automattic/components';
+import { isDesktop } from '@automattic/viewport';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import DismissibleCard from 'blocks/dismissible-card';
-import CardHeading from 'components/card-heading';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
+import Spinner from 'components/spinner';
+import { skipCurrentViewHomeLayout } from 'state/home/actions';
+import { savePreference } from 'state/preferences/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 
 /**
  * Image dependencies
  */
-import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
+import fireworksIllustration from 'assets/images/customer-home/illustration--fireworks-v2.svg';
 
 const CelebrateNotice = ( {
-	checklistMode,
-	currentTheme,
-	currentThemeId,
-	dismissalPreferenceName,
-	displayChecklist,
-	message,
+	actionText,
+	description,
+	noticeId,
+	illustration = fireworksIllustration,
+	onSkip,
+	showSkip = false,
+	skipText,
 	siteId,
-	user,
+	title,
 } ) => {
-	const translate = useTranslate();
+	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState( true );
+	const dispatch = useDispatch();
 
-	const getSecondaryText = () => {
-		if ( ! displayChecklist ) {
-			return translate(
-				'Next, use these quick links to continue maintaining and growing your site.'
-			);
-		}
+	if ( ! isVisible ) {
+		return null;
+	}
 
-		switch ( checklistMode ) {
-			case 'concierge':
-				return translate(
-					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
-						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
-					{
-						args: {
-							email: user.email,
-						},
-					}
-				);
-			case 'theme':
-				return translate(
-					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
-						'Next, use this quick list of setup tasks to get it ready to share.',
-					{
-						args: {
-							themeName: currentTheme && currentTheme.name,
-							themeAuthor: currentTheme && currentTheme.author,
-						},
-					}
-				);
-			case 'launched':
-				return translate( 'Make sure you share it with everyone and show it off.' );
-			case 'migrated':
-				return translate( 'Next, make sure everything looks the way you expected.' );
-			default:
-				return translate( 'Next, finish the following setup tasks before you share your site.' );
-		}
+	const dismissalPreferenceKey = `dismissible-card-${ noticeId }-${ siteId }`;
+
+	const showNextTask = () => {
+		setIsLoading( true );
+		dispatch( skipCurrentViewHomeLayout( siteId ) );
+	};
+
+	const skip = () => {
+		setIsVisible( false );
+		dispatch( savePreference( dismissalPreferenceKey, true ) );
+		onSkip && onSkip();
 	};
 
 	return (
-		<DismissibleCard
-			className="celebrate-notice"
-			highlight="info"
-			preferenceName={ `${ dismissalPreferenceName }-${ siteId }` } // Makes cards dismissable per site.
-		>
-			{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
-			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
-			<img
-				src={ fireworksIllustration }
-				aria-hidden="true"
-				className="celebrate-notice__fireworks"
-				alt=""
-			/>
-			<div className="celebrate-notice__text">
-				<CardHeading>{ message }</CardHeading>
-				<p className="celebrate-notice__secondary-text">{ getSecondaryText() }</p>
+		<div className={ classnames( 'celebrate-notice', 'task', { 'is-loading': isLoading } ) }>
+			{ isLoading && <Spinner /> }
+			<div className="celebrate-notice__text task__text">
+				<h2 className="celebrate-notice__title task__title">{ title }</h2>
+				<p className="celebrate-notice__description task__description">{ description }</p>
+				<div className="celebrate-notice__actions task__actions">
+					<Button
+						className="celebrate-notice__action task__action"
+						primary
+						onClick={ showNextTask }
+					>
+						{ actionText }
+					</Button>
+
+					{ showSkip && (
+						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
+							{ skipText }
+						</Button>
+					) }
+				</div>
 			</div>
-		</DismissibleCard>
+			{ isDesktop() && (
+				<div className="celebrate-notice__illustration task__illustration">
+					<img src={ illustration } alt="" />
+				</div>
+			) }
+		</div>
 	);
 };
 
-const mapStateToProps = ( state, { checklistMode } ) => {
-	const siteId = getSelectedSiteId( state );
-	let theme = {};
-	if ( 'theme' === checklistMode ) {
-		const currentThemeId = getActiveTheme( state, siteId );
-		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		theme = { currentTheme, currentThemeId };
-	}
-	return {
-		siteId,
-		user: getCurrentUser( state ),
-		...theme,
-	};
-};
+const mapStateToProps = ( state ) => ( {
+	siteId: getSelectedSiteId( state ),
+} );
 
 export default connect( mapStateToProps )( CelebrateNotice );
