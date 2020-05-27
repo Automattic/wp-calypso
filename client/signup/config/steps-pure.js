@@ -23,13 +23,11 @@ import {
 
 export function generateSteps( {
 	addPlanToCart = noop,
-	addPlanToCartWithoutSite = noop,
 	createAccount = noop,
 	createSite = noop,
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	addDomainToCartWithoutSite = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
@@ -37,7 +35,6 @@ export function generateSteps( {
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
 	removeDomainStepForPaidPlans = noop,
-	sitelessRemoveDomainStepForPaidPlans = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	addOrRemoveFromProgressStore = noop,
@@ -169,14 +166,6 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			fulfilledStepCallback: isPlanFulfilled,
-		},
-
-		'plans-siteless': {
-			stepName: 'plans-siteless',
-			apiRequestFunction: addPlanToCartWithoutSite,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem', 'newSiteParams' ],
 			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
 			optionalDependencies: [ 'siteId', 'siteSlug' ],
 			fulfilledStepCallback: isPlanFulfilled,
@@ -216,18 +205,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-personal-siteless': {
-			stepName: 'plans-personal-siteless',
-			apiRequestFunction: addPlanToCartWithoutSite,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem', 'newSiteParams' ],
-			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL,
-			},
-		},
-
 		'plans-premium': {
 			stepName: 'plans-premium',
 			apiRequestFunction: addPlanToCart,
@@ -239,36 +216,12 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-premium-siteless': {
-			stepName: 'plans-premium-siteless',
-			apiRequestFunction: addPlanToCartWithoutSite,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem', 'newSiteParams' ],
-			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM,
-			},
-		},
-
 		'plans-business': {
 			stepName: 'plans-business',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS,
-			},
-		},
-
-		'plans-business-siteless': {
-			stepName: 'plans-business-siteless',
-			apiRequestFunction: addPlanToCartWithoutSite,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem', 'newSiteParams' ],
-			providesDependencies: [ 'cartItem', 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
 			},
@@ -353,31 +306,12 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'newSiteParams',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'newSiteParams' ],
 			fulfilledStepCallback: removeDomainStepForPaidPlans,
 			props: {
 				isDomainOnly: false,
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
-		'domains-siteless': {
-			stepName: 'domains-siteless',
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-				'newSiteParams',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			apiRequestFunction: addDomainToCartWithoutSite,
-			fulfilledStepCallback: sitelessRemoveDomainStepForPaidPlans,
-			props: {
-				isDomainOnly: false,
-				isSiteless: true,
 			},
 			delayApiRequestUntilComplete: true,
 		},

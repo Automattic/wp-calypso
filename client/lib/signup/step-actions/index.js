@@ -59,6 +59,7 @@ import SignupCart from 'lib/signup/cart';
 
 // Others
 import flows from 'signup/config/flows';
+import { isSitelessCheckoutEnabledForFlow } from 'signup/siteless';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
@@ -132,17 +133,7 @@ function getSiteVertical( state ) {
 	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
-export function addDomainToCartWithoutSite( callback, dependencies, stepData, reduxStore ) {
-	return createSiteWithCart( callback, dependencies, stepData, reduxStore, { isSiteless: true } );
-}
-
-export function createSiteWithCart(
-	callback,
-	dependencies,
-	stepData,
-	reduxStore,
-	{ isSiteless = false } = {}
-) {
+export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
 	const {
 		cartItem,
 		domainItem,
@@ -247,6 +238,7 @@ export function createSiteWithCart(
 		( item ) => item
 	);
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
+	const isSiteless = isSitelessCheckoutEnabledForFlow( flowToCheck );
 
 	if ( isSiteless ) {
 		const cartKey = 'no-site';
@@ -317,21 +309,11 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		} );
 }
 
-export function addPlanToCartWithoutSite( callback, dependencies, stepProvidedItems, reduxStore ) {
-	return addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore, {
-		isSiteless: true,
-	} );
-}
-
-export function addPlanToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	{ isSiteless = false } = {}
-) {
+export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	const { siteSlug, siteId, domainItem, newSiteParams } = dependencies;
-	const { cartItem } = stepProvidedItems;
+	const { cartItem, flowName, lastKnownFlow } = stepProvidedItems;
+	const flowToCheck = flowName || lastKnownFlow;
+	const isSiteless = isSitelessCheckoutEnabledForFlow( flowToCheck );
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		if ( isSiteless && siteId === null && isEmpty( domainItem ) && ! isEmpty( newSiteParams ) ) {
@@ -707,32 +689,23 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function removeDomainStepForPaidPlans(
-	stepName,
-	defaultDependencies,
-	nextProps,
-	{ isSiteless = false } = {}
-) {
+export function removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep, flowName, lastKnownFlow } = nextProps;
+	const flowToCheck = flowName || lastKnownFlow;
+	const isSiteless = isSitelessCheckoutEnabledForFlow( flowToCheck );
 	// This is for domainStepPlanStepSwap A/B test.
 	// Remove the domain step if a paid plan is selected, check https://wp.me/pbxNRc-cj#comment-277
 	// Exit if not in the right flow.
-	if ( 'onboarding-plan-first' !== nextProps.flowName ) {
+	if ( 'onboarding-plan-first' !== flowToCheck ) {
 		return;
 	}
 
-	const { submitSignupStep } = nextProps;
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
 
 	if ( ! isEmpty( cartItem ) ) {
 		const tracksEventValue = null;
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep, { isSiteless } );
 	}
-}
-
-export function sitelessRemoveDomainStepForPaidPlans( stepName, defaultDependencies, nextProps ) {
-	return removeDomainStepForPaidPlans( stepName, defaultDependencies, nextProps, {
-		isSiteless: true,
-	} );
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {

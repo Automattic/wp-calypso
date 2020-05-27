@@ -56,7 +56,10 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+	if ( dependencies?.siteSlug !== 'no-site' ) {
+		return `/home/${ dependencies.siteSlug }`;
+	}
+	return `/checkout/thank-you/no-site`;
 }
 
 function getLaunchDestination( dependencies ) {
@@ -67,13 +70,6 @@ function getLaunchDestination( dependencies ) {
 }
 
 function getThankYouNoSiteDestination() {
-	return `/checkout/thank-you/no-site`;
-}
-
-function getSitelessFinalDestination( dependencies ) {
-	if ( dependencies?.siteSlug !== 'no-site' ) {
-		return `/home/${ dependencies.siteSlug }`;
-	}
 	return `/checkout/thank-you/no-site`;
 }
 
@@ -91,7 +87,6 @@ const flows = generateFlows( {
 	getSignupDestination,
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
-	getSitelessFinalDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 } );

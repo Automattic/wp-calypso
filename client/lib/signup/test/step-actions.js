@@ -8,6 +8,7 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
+import { isSitelessCheckoutEnabledForFlow } from 'signup/siteless';
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 import { isDomainStepSkippable } from 'signup/config/steps';
@@ -15,6 +16,9 @@ import { getUserStub } from 'lib/user';
 import SignupCart from 'lib/signup/cart';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'signup/siteless', () => ( {
+	isSitelessCheckoutEnabledForFlow: jest.fn(),
+} ) );
 
 jest.mock( 'lib/user', () => {
 	const getStub = jest.fn();
@@ -53,6 +57,7 @@ describe( 'createSiteWithCart()', () => {
 	beforeEach( () => {
 		SignupCart.createCart.mockReset();
 		SignupCart.addToCart.mockReset();
+		isSitelessCheckoutEnabledForFlow.mockRestore();
 		isDomainStepSkippable.mockReset();
 		getUserStub.mockReset();
 	} );
@@ -240,6 +245,9 @@ describe( 'createSiteWithCart()', () => {
 	} );
 
 	describe( 'when isSiteless option is enabled', () => {
+		beforeEach( () => {
+			isSitelessCheckoutEnabledForFlow.mockImplementation( ( flow ) => flow === 'onboarding' );
+		} );
 		test( 'adds the domain registration to the cart without creating a site', () => {
 			SignupCart.addToCart.mockImplementation( ( cartKey, newCartItems, callback ) => callback() );
 			return new Promise( ( done ) => {
@@ -267,6 +275,7 @@ describe( 'createSiteWithCart()', () => {
 					[],
 					{
 						siteUrl: undefined,
+						flowName: 'onboarding',
 						domainItem: {
 							product_slug: 'dotlive_domain',
 							meta: 'sitelessdomain.live',
