@@ -101,7 +101,13 @@ const TAB_EMAIL = 'email';
  */
 const TABS = [ TAB_GENERAL, TAB_EMAIL ];
 
-const RecurringPaymentsPlanAddEditModal = ( { closeDialog, product, siteId } ) => {
+const RecurringPaymentsPlanAddEditModal = ( {
+	addProduct,
+	closeDialog,
+	product,
+	siteId,
+	updateProduct,
+} ) => {
 	const translate = useTranslate();
 	const [ currentDialogTab, setCurrentDialogTab ] = useState( TAB_GENERAL );
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
@@ -171,7 +177,7 @@ const RecurringPaymentsPlanAddEditModal = ( { closeDialog, product, siteId } ) =
 
 	const onClose = ( reason ) => {
 		if ( reason === 'submit' && ! product ) {
-			requestAddProduct(
+			addProduct(
 				siteId,
 				{
 					currency: editedPrice.currency,
@@ -186,7 +192,7 @@ const RecurringPaymentsPlanAddEditModal = ( { closeDialog, product, siteId } ) =
 				translate( 'Added "%s" product.', { args: editedProductName } )
 			);
 		} else if ( reason === 'submit' && product ) {
-			requestUpdateProduct(
+			updateProduct(
 				siteId,
 				{
 					ID: product.ID,
@@ -394,5 +400,5 @@ export default connect(
 	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 	} ),
-	{ requestAddProduct, requestUpdateProduct }
+	{ addProduct: requestAddProduct, updateProduct: requestUpdateProduct }
 )( RecurringPaymentsPlanAddEditModal );
