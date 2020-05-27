@@ -46,13 +46,10 @@ class MembershipsProductsSection extends Component {
 
 	openProductDialog = ( editedProductId ) => {
 		if ( editedProductId ) {
-			const product = this.props.products.filter( ( prod ) => prod.ID === editedProductId ).pop();
-			this.setState( {
-				showDialog: 'editPlan',
-				product,
-			} );
+			const product = this.props.products.find( ( prod ) => prod.ID === editedProductId );
+			this.setState( { showDialog: true, product } );
 		} else {
-			this.setState( { showDialog: 'addNewPlan' } );
+			this.setState( { showDialog: true, product: null } );
 		}
 	};
 
@@ -71,26 +68,6 @@ class MembershipsProductsSection extends Component {
 	};
 
 	closeDialog = () => this.setState( { showDialog: false } );
-
-	renderAddNewPlanDialog() {
-		return (
-			<RecurringPaymentsPlanAddEditModal
-				closeDialog={ this.closeDialog }
-				isVisible={ this.state.showDialog === 'addNewPlan' }
-				product={ null }
-			/>
-		);
-	}
-
-	renderEditPlanDialog() {
-		return (
-			<RecurringPaymentsPlanAddEditModal
-				closeDialog={ this.closeDialog }
-				isVisible={ this.state.showDialog === 'editPlan' }
-				product={ this.state.product }
-			/>
-		);
-	}
 
 	render() {
 		return (
@@ -117,8 +94,12 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
-				{ this.renderAddNewPlanDialog() }
-				{ this.renderEditPlanDialog() }
+				{ this.state.showDialog && (
+					<RecurringPaymentsPlanAddEditModal
+						closeDialog={ this.closeDialog }
+						product={ this.state.product }
+					/>
+				) }
 				<Dialog
 					isVisible={ !! this.state.deletedProductId }
 					buttons={ [

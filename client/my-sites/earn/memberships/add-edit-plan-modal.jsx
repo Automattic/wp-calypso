@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'components/notice';
@@ -101,31 +101,28 @@ const TAB_EMAIL = 'email';
  */
 const TABS = [ TAB_GENERAL, TAB_EMAIL ];
 
-const RecurringPaymentsPlanAddEditModal = ( { closeDialog, isVisible, product, siteId } ) => {
+const RecurringPaymentsPlanAddEditModal = ( { closeDialog, product, siteId } ) => {
 	const translate = useTranslate();
 	const [ currentDialogTab, setCurrentDialogTab ] = useState( TAB_GENERAL );
-	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState( '' );
-	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState( false );
-	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState( false );
+	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
+		product?.welcome_email_content ?? ''
+	);
+	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState(
+		product?.multiple_per_user ?? false
+	);
+	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
+		product?.buyer_can_change_amount ?? false
+	);
 	const [ editedPrice, setEditedPrice ] = useState( {
-		currency: 'USD',
-		value: minimumCurrencyTransactionAmount( 'USD' ),
+		currency: product?.currency ?? 'USD',
+		value: product?.price ?? minimumCurrencyTransactionAmount( 'USD' ),
 	} );
-	const [ editedProductName, setEditedProductName ] = useState( '' );
-	const [ editedPostsEmail, setEditedPostsEmail ] = useState( false );
-	const [ editedSchedule, setEditedSchedule ] = useState( '1 month' );
+	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
+	const [ editedPostsEmail, setEditedPostsEmail ] = useState(
+		product?.subscribe_as_site_subscriber ?? false
+	);
+	const [ editedSchedule, setEditedSchedule ] = useState( product?.renewal_schedule ?? '1 month' );
 	const [ focusedName, setFocusedName ] = useState( false );
-
-	useEffect( () => {
-		if ( product ) {
-			setEditedPrice( { currency: product.currency, value: product.price } );
-			setEditedProductName( product.title );
-			setEditedPayWhatYouWant( product.buyer_can_change_amount );
-			setEditedSchedule( product.renewal_schedule );
-			setEditedCustomConfirmationMessage( product.welcome_email_content );
-			setEditedMultiplePerUser( product.multiple_per_user );
-		}
-	}, [ product ] );
 
 	const getTabName = ( tab ) => {
 		switch ( tab ) {
@@ -337,7 +334,7 @@ const RecurringPaymentsPlanAddEditModal = ( { closeDialog, isVisible, product, s
 
 	return (
 		<Dialog
-			isVisible={ isVisible }
+			isVisible={ true }
 			onClose={ onClose }
 			buttons={ [
 				{
@@ -345,7 +342,7 @@ const RecurringPaymentsPlanAddEditModal = ( { closeDialog, isVisible, product, s
 					action: 'cancel',
 				},
 				{
-					label: product ? translate( 'Edit' ) : translate( 'Add' ),
+					label: translate( 'Save' ),
 					action: 'submit',
 					disabled: ! isFormValid(),
 					isPrimary: true,
