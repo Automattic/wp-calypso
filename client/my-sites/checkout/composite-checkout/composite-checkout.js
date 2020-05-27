@@ -64,6 +64,7 @@ import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
+	freePurchaseProcessor,
 	stripeCardProcessor,
 	fullCreditsProcessor,
 	existingCardProcessor,
@@ -408,6 +409,7 @@ export default function CompositeCheckout( {
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': applePayProcessor,
+			'free-purchase': freePurchaseProcessor,
 			card: stripeCardProcessor,
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,

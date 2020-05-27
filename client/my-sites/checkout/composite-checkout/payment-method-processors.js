@@ -13,6 +13,7 @@ import {
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
+	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 	submitExistingCardPayment,
 	submitPayPalExpressRequest,
@@ -94,6 +95,25 @@ function createStripePaymentMethodToken( { stripe, name, country, postalCode } )
 			postal_code: postalCode,
 		},
 	} );
+}
+
+export async function freePurchaseProcessor( submitData ) {
+	const pending = submitFreePurchaseTransaction(
+		{
+			...submitData,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( select ),
+			// this data is intentionally empty so we do not charge taxes
+			country: null,
+			postalCode: null,
+		},
+		wpcomTransaction
+	);
+	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+	pending.then( ( result ) => {
+		dispatch( 'wpcom' ).setTransactionResponse( result );
+	} );
+	return pending;
 }
 
 export async function fullCreditsProcessor( submitData ) {
