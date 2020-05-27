@@ -92,11 +92,15 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
-When the `submitButton` component has been clicked, it should use the functions provided by [useFormStatus](#useFormStatus) to change the status to 'submitting'. If there is a problem, it should change the status back to 'ready' and display an appropriate error using [useMessages](#useMessages). If the payment is successful, it should change the status to 'complete', which will cause [Checkout](#Checkout) to call `onPaymentComplete` (see [CheckoutProvider](#CheckoutProvider)).
-
 When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument.
 
-The actual steps needed to submit the payment will vary for every payment method, but typically a payment processor function will return a Promise that will resolve when the payment is complete or reject for an error and the React component that called it can use the result to change the [form status](#useFormStatus) to 'complete' or 'ready' as appropriate. The component should also change the [transaction status](#useTransactionStatus) to 'complete' or 'error' (or whatever status is appropriate for that response).
+When the `submitButton` component has been clicked, it should do the following:
+
+1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to 'submitting' and disable the form.
+2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
+3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead. If the transaction requires 3DS auth, use `setTransactionAuthorizing(response: object)`.
+4. If the `Promise` rejects, call `setTransactionError(message: string)`.
+5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is 'complete' (call [onPaymentComplete](#CheckoutProvider)), 'error' (display the error and re-enable the form), or 'redirecting' (redirect to the url). No action will be taken if the status is 'authorizing'; the payment method must handle that status manually and eventually set one of the other statuses. If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
 ## Line Items
 
@@ -342,8 +346,8 @@ A React Hook that will return an object with the following properties. Used to r
 - `setFormReady: () => void`. Function to change the form status to 'ready'.
 - `setFormLoading: () => void`. Function to change the form status to 'loading'.
 - `setFormValidating: () => void`. Function to change the form status to 'validating'.
-- `setFormSubmitting: () => void`. Function to change the form status to 'submitting'.
-- `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider).
+- `setFormSubmitting: () => void`. Function to change the form status to 'submitting'. Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
+- `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
@@ -401,6 +405,7 @@ A React Hook that returns an object with the following properties to be used by 
 
 - `transactionStatus: string`. The current status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
 - `transactionError: string | null`. The most recent error message encountered by the transaction if its status is 'error'.
+- `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is 'redirecting'.
 - `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing`, `setTransactionRedirecting`, or `setTransactionComplete`.
 - `resetTransaction: () => void`. Function to change the transaction status to 'not-started'.
 - `setTransactionComplete: ( object ) => void`. Function to change the transaction status to 'complete' and save the response object in `transactionLastResponse`.
