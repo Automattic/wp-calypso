@@ -10,9 +10,11 @@ import {
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/home/layout';
 
-export const requestHomeLayout = ( siteId ) => ( {
+export const requestHomeLayout = ( siteId, isDev, forcedView ) => ( {
 	type: HOME_LAYOUT_REQUEST,
 	siteId,
+	isDev,
+	forcedView,
 } );
 
 export const skipCurrentViewHomeLayout = ( siteId, reminder = null ) => ( {
