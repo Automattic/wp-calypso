@@ -378,7 +378,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const {
 		transactionStatus,
 		transactionLastResponse,
@@ -387,6 +387,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 		setTransactionAuthorizing,
 		setTransactionRedirecting,
 		setTransactionError,
+		setTransactionPending,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
@@ -415,7 +416,6 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 		onEvent,
 		setTransactionComplete,
 		resetTransaction,
-		setFormReady,
 		showInfoMessage,
 		showErrorMessage,
 		transactionStatus,
@@ -431,7 +431,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isCreditCardFormValid( store ) ) {
 					debug( 'submitting stripe payment' );
-					setFormSubmitting();
+					setTransactionPending();
 					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
 					submitTransaction( {
 						stripe,

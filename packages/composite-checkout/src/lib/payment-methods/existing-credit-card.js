@@ -123,11 +123,12 @@ function ExistingCardPayButton( {
 		setTransactionComplete,
 		resetTransaction,
 		setTransactionRedirecting,
+		setTransactionPending,
 		setTransactionAuthorizing,
 		setTransactionError,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'existing-card' );
-	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
 	useEffect( () => {
@@ -154,7 +155,6 @@ function ExistingCardPayButton( {
 		resetTransaction,
 		setTransactionComplete,
 		setTransactionError,
-		setFormReady,
 		showInfoMessage,
 		showErrorMessage,
 		transactionStatus,
@@ -169,7 +169,7 @@ function ExistingCardPayButton( {
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
-				setFormSubmitting();
+				setTransactionPending();
 				submitTransaction( {
 					items,
 					total,

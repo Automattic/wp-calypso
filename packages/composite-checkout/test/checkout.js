@@ -24,7 +24,6 @@ import {
 	CheckoutSteps,
 	useSelect,
 	useDispatch,
-	useFormStatus,
 	createRegistry,
 	useRegisterStore,
 	useIsStepComplete,
@@ -570,11 +569,10 @@ function createMockMethod() {
 }
 
 function MockSubmitButton( { disabled } ) {
-	const { setFormSubmitting } = useFormStatus();
-	const { setTransactionComplete } = useTransactionStatus();
+	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
 	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		process().then( ( result ) => setTransactionComplete( result ) );
 	};
 	return (

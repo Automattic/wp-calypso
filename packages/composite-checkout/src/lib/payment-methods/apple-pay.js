@@ -16,7 +16,6 @@ import {
 import { useLocalize } from '../../lib/localize';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { useFormStatus } from '../form-status';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
@@ -49,14 +48,17 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 	const localize = useLocalize();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const { setFormSubmitting } = useFormStatus();
-	const { setTransactionError, setTransactionComplete } = useTransactionStatus();
+	const {
+		setTransactionError,
+		setTransactionComplete,
+		setTransactionPending,
+	} = useTransactionStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
-			setFormSubmitting();
+			setTransactionPending();
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			submitTransaction( {
 				stripe,
@@ -77,12 +79,12 @@ export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } 
 			submitTransaction,
 			setTransactionComplete,
 			setTransactionError,
+			setTransactionPending,
 			onEvent,
 			items,
 			total,
 			stripe,
 			stripeConfiguration,
-			setFormSubmitting,
 		]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {

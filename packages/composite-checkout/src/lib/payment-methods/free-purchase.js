@@ -39,13 +39,17 @@ function FreePurchaseLabel() {
 
 function FreePurchaseSubmitButton( { disabled } ) {
 	const [ items, total ] = useLineItems();
-	const { setTransactionComplete, setTransactionError } = useTransactionStatus();
-	const { formStatus, setFormSubmitting } = useFormStatus();
+	const {
+		setTransactionComplete,
+		setTransactionError,
+		setTransactionPending,
+	} = useTransactionStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'free-purchase' );
 
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
 		submitTransaction( {
 			items,

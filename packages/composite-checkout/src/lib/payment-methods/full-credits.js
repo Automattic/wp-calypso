@@ -40,13 +40,17 @@ function FullCreditsLabel() {
 
 function FullCreditsSubmitButton( { disabled } ) {
 	const [ items, total ] = useLineItems();
-	const { setTransactionComplete, setTransactionError } = useTransactionStatus();
-	const { formStatus, setFormSubmitting } = useFormStatus();
+	const {
+		setTransactionComplete,
+		setTransactionError,
+		setTransactionPending,
+	} = useTransactionStatus();
+	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const submitTransaction = usePaymentProcessor( 'full-credits' );
 
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		submitTransaction( {
 			items,
