@@ -81,6 +81,11 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPlans from 'components/data/query-plans';
+import QueryProducts from 'components/data/query-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -329,6 +334,12 @@ export default function CompositeCheckout( {
 
 		return (
 			<React.Fragment>
+				<QuerySitePlans siteId={ siteId } />
+				<QueryPlans />
+				<QueryProducts />
+				<QueryContactDetailsCache />
+				<QueryStoredCards />
+
 				<ManagedContactDetailsFormFields
 					needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 					contactDetails={ contactDetails }
