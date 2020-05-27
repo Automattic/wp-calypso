@@ -26,6 +26,7 @@ import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkou
  * Internal dependencies
  */
 import { requestPlans } from 'state/plans/actions';
+import { requestSite } from 'state/sites/actions';
 import {
 	computeProductsWithPrices,
 	getProductsList,
@@ -227,6 +228,10 @@ export default function CompositeCheckout( {
 	const onPaymentComplete = useCallback(
 		( { paymentMethodId } ) => {
 			debug( 'payment completed successfully' );
+
+			// Populate new site state for sites from Signup.
+			reduxDispatch( requestSite( siteId ) );
+
 			const url = getThankYouUrl();
 			recordEvent( {
 				type: 'PAYMENT_COMPLETE',
