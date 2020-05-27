@@ -41,23 +41,23 @@
 }
 
 .activity-card__time {
-	margin: 1.5rem 0 0.5rem;
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	margin: 24px 0 8px;
 }
 
 .activity-card__time-icon {
-	width: 1.1rem;
-	height: 1.1rem;
 	fill: var( --color-neutral-40 );
+	height: 17px;
+	width: 17px;
 }
 
 .activity-card__time-text {
-	position: relative;
-	display: inline-block;
-	top: -0.2rem;
-	left: 0.2rem;
-	color: #a7aaad;
-	font-size: 0.7rem;
-	margin-left: 0.2rem;
+	color: var( --color-neutral-40 );
+	font-size: 17px;
+	line-height: 17px;
+	margin-left: 4px;
 }
 
 .activity-card__activity-description {
