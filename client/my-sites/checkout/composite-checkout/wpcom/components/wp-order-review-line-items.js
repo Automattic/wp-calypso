@@ -56,20 +56,6 @@ function WPLineItem( {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<LineItemTitle id={ itemSpanId }>{ item.label }</LineItemTitle>
-			{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
-				<LineItemMonthlyBreakdown
-					monthlyPriceBreakdown={ translate(
-						'%(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
-						{
-							args: {
-								monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
-								monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-							},
-							comment: 'monthly breakdown of total cost',
-						}
-					) }
-				/>
-			) }
 			<span aria-labelledby={ itemSpanId }>
 				<LineItemPrice item={ item } />
 			</span>
@@ -86,6 +72,20 @@ function WPLineItem( {
 						: item.sublabel }
 					{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 						<DiscountCalloutUI>{ translate( 'First year free' ) }</DiscountCalloutUI>
+					) }
+					{ 'plan' === item.type && item.wpcom_meta?.months_per_bill_period && (
+						<LineItemMonthlyBreakdown
+							monthlyPriceBreakdown={ translate(
+								'%(monthlyPrice)s per month × %(monthsPerBillPeriod)s',
+								{
+									args: {
+										monthlyPrice: item.wpcom_meta.item_original_monthly_cost_display,
+										monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+									},
+									comment: 'monthly breakdown of total cost',
+								}
+							) }
+						/>
 					) }
 				</LineItemMeta>
 			) }
