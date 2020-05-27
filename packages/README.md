@@ -15,7 +15,7 @@ Packages are built on Calypso's `yarn` so you don't need to build them manually,
 If you must manually build a single package, run:
 
 ```bash
-npx lerna run prepare --scope="@automattic/package-name"
+yarn workspace @automattic/package-name run prepare
 ```
 
 ## Validating package.json
