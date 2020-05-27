@@ -10,7 +10,7 @@ import {
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/home/layout';
 
-export const requestHomeLayout = ( siteId, isDev, forcedView ) => ( {
+export const requestHomeLayout = ( siteId, isDev = false, forcedView = null ) => ( {
 	type: HOME_LAYOUT_REQUEST,
 	siteId,
 	isDev,
