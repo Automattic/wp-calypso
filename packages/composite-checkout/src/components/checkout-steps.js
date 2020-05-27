@@ -342,8 +342,12 @@ export function CheckoutStepBody( {
 	completeStepContent,
 	onError,
 } ) {
+	const localize = useLocalize();
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
+		<CheckoutErrorBoundary
+			errorMessage={ errorMessage || localize( 'There was an error with this step.' ) }
+			onError={ onError }
+		>
 			<StepWrapperUI
 				isActive={ isStepActive }
 				isComplete={ isStepComplete }
