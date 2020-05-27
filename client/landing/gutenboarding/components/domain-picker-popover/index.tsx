@@ -4,11 +4,14 @@
 import * as React from 'react';
 import { Popover } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '@automattic/domain-picker';
+import { recordEnterModal, recordCloseModal } from '../../lib/analytics';
+import { STORE_KEY } from '../../stores/onboard';
 
 /**
  * Style dependencies
@@ -17,18 +20,27 @@ import './style.scss';
 
 interface Props extends DomainPickerProps {
 	isOpen: boolean;
-	onOpen: () => void;
 }
 
-const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onOpen, ...props } ) => {
-	const onClose = props.onClose;
-
+const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onClose, ...props } ) => {
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
 
+	const tracksName = 'DomainPickerPopover';
+	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
+
 	React.useEffect( () => {
-		isOpen && onOpen && onOpen();
-	}, [ isOpen, onOpen ] );
+		if ( isOpen ) {
+			recordEnterModal( tracksName );
+		}
+	}, [ isOpen ] );
+
+	const handleClose = () => {
+		recordCloseModal( tracksName, {
+			selected_domain: getSelectedDomain()?.domain_name,
+		} );
+		onClose && onClose();
+	};
 
 	// Don't render popover when isOpen is false.
 	// We need this component to be hot because useViewportMatch
@@ -41,12 +53,12 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { isOpen, onOpen
 			<Popover
 				focusOnMount={ isMobile ? 'container' : 'firstElement' }
 				noArrow
-				onClose={ onClose }
-				onFocusOutside={ onClose }
+				onClose={ handleClose }
+				onFocusOutside={ handleClose }
 				position={ 'bottom center' }
 				expandOnMobile={ true }
 			>
-				<DomainPicker { ...props } />
+				<DomainPicker onClose={ handleClose } { ...props } />
 			</Popover>
 		</div>
 	);

@@ -16,8 +16,6 @@ import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
 import {
-	recordEnterModal,
-	recordCloseModal,
 	recordTrainTracksEvent,
 	getNewRailcarId,
 	RecordTrainTracksEventProps,
@@ -66,8 +64,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		}
 	}, [ domainSuggestions, setRailcarId ] );
 
-	const { getSelectedDomain } = useSelect( ( select ) => select( STORE_KEY ) );
-
 	const { domainSearch, domainCategory } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
@@ -76,28 +72,16 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
 
-	const handlePopoverOpen = () => {
-		recordEnterModal( 'DomainPickerPopover' );
-	};
-
 	const handlePopoverClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
 			return;
 		}
 		setDomainPopoverVisibility( false );
-		recordCloseModal( 'DomainPickerPopover', {
-			selected_domain: getSelectedDomain()?.domain_name,
-		} );
-	};
-
-	const handleModalOpen = () => {
-		recordEnterModal( 'DomainPickerModal' );
 	};
 
 	const handleModalClose = () => {
 		setDomainModalVisibility( false );
-		recordCloseModal( 'DomainPickerModal', { selected_domain: getSelectedDomain()?.domain_name } );
 	};
 
 	const handleMoreOptions = () => {
@@ -140,7 +124,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onMoreOptions={ handleMoreOptions }
-				onOpen={ handlePopoverOpen }
 				onClose={ handlePopoverClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
@@ -159,9 +142,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				showDomainCategories
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
-				onOpen={ handleModalOpen }
 				onClose={ handleModalClose }
-				onCancel={ handleModalClose }
 				recordAnalytics={ recordAnalytics }
 				railcarId={ railcarId }
 				domainSuggestionVendor={ DOMAIN_SUGGESTION_VENDOR }

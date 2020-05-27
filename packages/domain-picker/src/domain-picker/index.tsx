@@ -68,8 +68,6 @@ export interface Props {
 	 */
 	onClose: () => void;
 
-	onCancel?: () => void;
-
 	onMoreOptions?: () => void;
 
 	recordAnalytics?: RecordsAnalyticsHandler;
@@ -113,7 +111,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onClose,
-	onCancel,
 	onMoreOptions,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	currentDomain,
@@ -162,7 +159,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				isLink
 				className="domain-picker__cancel-button"
 				onClick={ () => {
-					onCancel && onCancel();
+					onClose();
 				} }
 				{ ...props }
 			>
