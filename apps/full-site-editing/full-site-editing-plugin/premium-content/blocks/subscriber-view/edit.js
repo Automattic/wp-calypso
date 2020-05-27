@@ -25,7 +25,13 @@ import Context from '../container/context';
 function Edit( props ) {
 	useEffect( () => {
 		props.selectBlock();
-	}, [] );
+		setBlockContext();
+	}, [ props.context ] );
+
+	function setBlockContext() {
+		const { context } = props;
+		props.setAttributes( context );
+	}
 
 	return (
 		<Context.Consumer>

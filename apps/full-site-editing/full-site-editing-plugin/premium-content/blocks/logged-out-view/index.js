@@ -59,6 +59,10 @@ const settings = {
 			type: 'string',
 			default: '',
 		},
+		'premium-content/container/selectedPlanId': {
+			type: 'number',
+			default: 0,
+		},
 	},
 
 	/* translators: block name */
@@ -73,6 +77,7 @@ const settings = {
 	},
 	edit,
 	save,
+	context: [ 'premium-content/container/selectedPlanId' ],
 };
 
 /**

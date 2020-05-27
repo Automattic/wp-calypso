@@ -13,6 +13,7 @@ import { _x } from '@wordpress/i18n';
 import * as container from './blocks/container';
 import * as subscriberView from './blocks/subscriber-view';
 import * as loggedOutView from './blocks/logged-out-view';
+import * as button from './blocks/button';
 
 /**
  * Function to register an individual block.
@@ -75,7 +76,7 @@ const addPaidBlockFlags = async () => {
  * Function to register blocks provided by CoBlocks.
  */
 export const registerPremiumContentBlocks = () => {
-	[ container, loggedOutView, subscriberView ].forEach( registerBlock );
+	[ container, loggedOutView, subscriberView, button ].forEach( registerBlock );
 
 	// Done after blocks are registered so the status API request doesn't suspend the execution.
 	addPaidBlockFlags();

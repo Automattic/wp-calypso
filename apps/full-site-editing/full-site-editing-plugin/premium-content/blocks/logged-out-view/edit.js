@@ -6,13 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Context from '../container/context';
-import SubmitButtons from './submit-buttons';
 
 /**
  * Block edit function
@@ -32,23 +30,13 @@ import SubmitButtons from './submit-buttons';
 function Edit( props ) {
 	useEffect( () => {
 		props.selectBlock();
-	}, [] );
+		setBlockContext();
+	}, [ props.context ] );
 
-	const buttons = (
-		<SubmitButtons
-			{ ...{
-				attributes: pick( props.attributes, [
-					'subscribeButtonText',
-					'loginButtonText',
-					'backgroundButtonColor',
-					'textButtonColor',
-					'customBackgroundButtonColor',
-					'customTextButtonColor',
-				] ),
-				setAttributes: props.setAttributes,
-			} }
-		/>
-	);
+	function setBlockContext() {
+		const { context } = props;
+		props.setAttributes( context );
+	}
 
 	return (
 		<Context.Consumer>
@@ -73,9 +61,22 @@ function Edit( props ) {
 									),
 								},
 							],
+							[
+								'core/columns',
+								{},
+								[
+									[
+										'premium-content/button',
+										{
+											buttonType: 'subscribe',
+											buttonText: __( 'Subscribe', 'premium-content' ),
+										},
+									],
+									[ 'premium-content/button' ],
+								],
+							],
 						] }
 					/>
-					{ buttons }
 				</div>
 			) }
 		</Context.Consumer>

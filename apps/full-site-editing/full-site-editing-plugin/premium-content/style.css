@@ -23,16 +23,12 @@
 	margin-right: 20px;
 }
 
-@media (min-width: 660px) {
-	.premium-content-logged-out-view-button.wp-block-button .wp-block-button__link,
-	.wp-block-premium-content-logged-out-view__buttons .wp-block-button .wp-block-button__link {
-		min-width: 200px;
-	}
-}
-
-.wp-block-premium-content-logged-out-view p:last-child,
 .wp-block-premium-content-logged-out-view h3 {
 	margin-bottom: 20px;
+}
+
+.wp-block-premium-content-logged-out-view .wp-block-columns {
+	margin-top: 20px;
 }
 
 /** Notices close button **/

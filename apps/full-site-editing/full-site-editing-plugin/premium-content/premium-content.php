@@ -16,7 +16,6 @@ use RuntimeException;
 use function register_block_type;
 use function plugin_dir_url;
 use function apply_filters;
-use A8C\FSE\Earn\PremiumContent\Premium_Content_Dom;
 use A8C\FSE\Earn\PremiumContent\SubscriptionService\{
 	Subscription_Service,
 	Jetpack_Token_Subscription_Service,
@@ -28,7 +27,6 @@ use A8C\FSE\Earn\PremiumContent\SubscriptionService\{
 const PAYWALL_FILTER = 'earn_premium_content_subscription_service';
 
 require_once __DIR__ . '/subscription-service/include.php';
-require_once __DIR__ . '/premium-content-dom.php';
 
 /**
  * Registers all block assets so that they can be enqueued through the block editor
@@ -86,12 +84,29 @@ function premium_content_block_init() {
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',
 		)
 	);
-	register_block_type( 'premium-content/subscriber-view' );
+	register_block_type(
+		'premium-content/subscriber-view',
+		array(
+			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_subscriber_view_render',
+		) );
 	register_block_type(
 		'premium-content/logged-out-view',
 		array(
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_block_logged_out_view_render',
 		)
+	);
+	register_block_type(
+		'premium-content/button',
+		array(
+			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_render_button_block',
+		)
+	);
+
+	wp_register_script(
+		'premium-content-frontend-button',
+		"$url_path/blocks/button/front.js",
+		array(),
+		$script_asset['version']
 	);
 
 	wp_set_script_translations( 'premium-content-container-block-editor', 'full-site-editing' );
@@ -117,12 +132,22 @@ function premium_content_current_visitor_can_access( $attributes ) {
 		return true;
 	}
 
-	if ( ! isset( $attributes['selectedPlanId'] ) ) {
+	$selected_plan_id = null;
+
+	if ( isset( $attributes['selectedPlanId'] ) ) {
+		$selected_plan_id = (int) $attributes['selectedPlanId'];
+	}
+
+	if ( isset( $attributes['premium-content/container/selectedPlanId'] ) ) {
+		$selected_plan_id = (int) $attributes['premium-content/container/selectedPlanId'];
+	}
+
+	if ( empty( $selected_plan_id ) ) {
 		return false;
 	}
 
 	$paywall  = premium_content_subscription_service();
-	$can_view = $paywall->visitor_can_view_content( array( $attributes['selectedPlanId'] ) );
+	$can_view = $paywall->visitor_can_view_content( array( $selected_plan_id ) );
 
 	if ( $can_view ) {
 		do_action( 'earn_remove_cache_headers' );
@@ -131,50 +156,27 @@ function premium_content_current_visitor_can_access( $attributes ) {
 	return $can_view;
 }
 
-// TODO: I am planning to kill the other render methods and pull everything here. The data is too tightly coupled for the render methods being seperate
+function premium_content_pre_render_checks() {
+	// If Jetpack is not yet configured, don't show anything ...
+	if ( ! class_exists( '\Jetpack_Memberships' ) ) {
+		return false;
+	}
+	// if stripe not connected don't show anything...
+	if ( empty( \Jetpack_Memberships::get_connected_account_id() ) ) {
+		return false;
+	}
+	return true;
+}
+
 /**
  * @param          array  $attributes
  * @param          string $content
  * @return         string
  * @psalm-suppress InvalidArgument
  */
-function premium_content_container_render( $attributes, $content ) {
-	// If Jetpack is not yet configured, don't show anything ...
-	if ( ! class_exists( '\Jetpack_Memberships' ) ) {
+function premium_content_container_render( $attributes, $content ){
+	if ( ! premium_content_pre_render_checks() ) {
 		return '';
-	}
-	// if stripe not connected don't show anything...
-	if ( empty( \Jetpack_Memberships::get_connected_account_id() ) ) {
-		return '';
-	}
-
-	// Parse the content so that subscribers see the subscriber view and logged out users see the logged-out view.
-	$visitor_has_access = premium_content_current_visitor_can_access( $attributes );
-	if ( ! $visitor_has_access ) {
-		$content = Premium_Content_Dom::logged_out( $content );
-		// TODO: consider moving this into the DOM editing class... (or javascript)
-		$content = preg_replace_callback(
-			'#<subscribeButtonText classNames="(.*?)" customTextButtonColor="(.*?)" customBackgroundButtonColor="(.*?)">(.*?)<\/subscribeButtonText>#is',
-			/**
-			* @param array $matches
-			*
-			* @return null|string
-			*/
-			function ( $matches ) use ( $attributes ) {
-				return \Jetpack_Memberships::get_instance()->render_button(
-					array(
-						'planId'                      => $attributes['selectedPlanId'],
-						'submitButtonClasses'         => $matches[1],
-						'customTextButtonColor'       => $matches[2],
-						'customBackgroundButtonColor' => $matches[3],
-						'submitButtonText'            => $matches[4], // This should be the text actually selected in the editor. I think I'll pass it in attributes.
-					)
-				);
-			},
-			$content
-		);
-	} else {
-		$content = Premium_Content_Dom::subscriber( $content );
 	}
 
 	return $content;
@@ -187,21 +189,49 @@ function premium_content_container_render( $attributes, $content ) {
  * Determines if the current visitor should be allowed to see the protected/premium
  * content contained within the block.
  *
- * TODO: consider moving this to the DOM editing class or in javascript
- *
  * @param  array  $attributes
  * @param  string $content
  * @return string
  */
 function premium_content_block_logged_out_view_render( $attributes, $content ) {
+	if ( ! premium_content_pre_render_checks() ) {
+		return '';
+	}
+
+	$visitor_has_access = premium_content_current_visitor_can_access( $attributes );
+	if ( !$visitor_has_access ) {
+		return $content;
+	}
+
+	return '';
+}
+
+function premium_content_block_subscriber_view_render( $attributes, $content ) {
+	if ( ! premium_content_pre_render_checks() ) {
+		return '';
+	}
+
+	$visitor_has_access = premium_content_current_visitor_can_access( $attributes );
+	if ( $visitor_has_access ) {
+		return $content;
+	}
+
+	return '';
+}
+
+function premium_content_render_button_block( $attributes ) {
+	if ( ! premium_content_pre_render_checks() ) {
+		return '';
+	}
+
 	wp_enqueue_style( 'premium-content-container-block' );
 	wp_enqueue_script( 'premium-content-frontend' );
 
 	$button_styles = array();
 	if ( ! empty( $attributes['customBackgroundButtonColor'] ) ) {
 		/**
-	* @psalm-suppress PossiblyNullArgument
-*/
+		 * @psalm-suppress PossiblyNullArgument
+		 */
 		array_push(
 			$button_styles,
 			sprintf(
@@ -212,8 +242,8 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
 	}
 	if ( ! empty( $attributes['customTextButtonColor'] ) ) {
 		/**
-	* @psalm-suppress PossiblyNullArgument
-*/
+		 * @psalm-suppress PossiblyNullArgument
+		 */
 		array_push(
 			$button_styles,
 			sprintf(
@@ -224,23 +254,32 @@ function premium_content_block_logged_out_view_render( $attributes, $content ) {
 	}
 	$button_styles = implode( ';', $button_styles );
 
-	$login_button = sprintf(
-		'<div class="wp-block-button"><a role="button" href="%1$s" class="%2$s" style="%3$s">%4$s</a></div>',
-		premium_content_subscription_service()->access_url(),
-		empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
-		esc_attr( $button_styles ),
-		empty( $attributes['loginButtonText'] ) ? __( 'Log In', 'full-site-editing' ) : $attributes['loginButtonText']
-	);
+	if ( $attributes['buttonType'] === 'subscribe' ) {
+		$button = \Jetpack_Memberships::get_instance()->render_button(
+			array(
+				'planId'                      => empty( $attributes['premium-content/container/selectedPlanId'] ) ? 0 : $attributes['premium-content/container/selectedPlanId'],
+				'submitButtonClasses'         => empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+				'customTextButtonColor'       => empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
+				'customBackgroundButtonColor' => empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
+				'submitButtonText'            => empty( $attributes['buttonText'] ) ? __( 'Subscribe', 'full-site-editing' ) : esc_attr( $attributes['buttonText'] ),
+			)
+		);
+	} else {
+		$button = sprintf(
+			'<div class="wp-block-button"><a role="button" href="%1$s" class="%2$s" style="%3$s">%4$s</a></div>',
+			premium_content_subscription_service()->access_url(),
+			empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
+			esc_attr( $button_styles ),
+			empty( $attributes['buttonText'] ) ? __( 'Log In', 'full-site-editing' ) : $attributes['buttonText']
+		);
+	}
 
-	$subscribe_button = sprintf(
-		'<subscribeButtonText classNames="%1$s" customTextButtonColor="%2$s" customBackgroundButtonColor="%3$s">%4$s</subscribeButtonText>', // I don't know how to pass this data in a different way. We could also turn it into a class and pass it via a variable.
-		empty( $attributes['buttonClasses'] ) ? 'wp-block-button__link' : esc_attr( $attributes['buttonClasses'] ),
-		empty( $attributes['customTextButtonColor'] ) ? '' : esc_attr( $attributes['customTextButtonColor'] ),
-		empty( $attributes['customBackgroundButtonColor'] ) ? '' : esc_attr( $attributes['customBackgroundButtonColor'] ),
-		empty( $attributes['subscribeButtonText'] ) ? __( 'Subscribe', 'full-site-editing' ) : esc_attr( $attributes['subscribeButtonText'] )
-	);
+	$align_class = '';
+	if ( isset( $attributes['align'] ) && in_array( $attributes['align'], [ 'left', 'center', 'right' ], true ) ) {
+		$align_class = 'align' . $attributes['align'];
+	}
 
-	return $content . "<div class='wp-block-premium-content-logged-out-view__buttons'>{$subscribe_button}{$login_button}</div>";
+	return "<div class='wp-block-premium-content-logged-out-view__buttons {$align_class}'>{$button}</div>";
 }
 
 /**
