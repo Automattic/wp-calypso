@@ -35,13 +35,14 @@ const Button = ( {
 );
 
 export default function WpcomBlockEditorNavSidebar() {
-	const [ items, isOpen, postType ] = useSelect( ( select ) => {
+	const [ items, isOpen, postType, selectedItemId ] = useSelect( ( select ) => {
 		const { getPostType } = select( 'core' ) as any;
 
 		return [
 			selectNavItems( select ),
 			select( STORE_KEY ).isSidebarOpened(),
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
+			select( 'core/editor' ).getCurrentPostId(),
 		];
 	} );
 
@@ -118,7 +119,7 @@ export default function WpcomBlockEditorNavSidebar() {
 			<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__controls">
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item ) => (
-						<NavItem key={ item.id } item={ item } />
+						<NavItem key={ item.id } item={ item } selected={ item.id === selectedItemId } />
 					) ) }
 				</ul>
 				<CreatePage postType={ postType } />
@@ -130,13 +131,20 @@ export default function WpcomBlockEditorNavSidebar() {
 
 interface NavItemProps {
 	item: Post;
+	selected: boolean;
 }
 
-function NavItem( { item }: NavItemProps ) {
+function NavItem( { item, selected }: NavItemProps ) {
+	const className = classNames( 'wpcom-block-editor-nav-sidebar__item-button', {
+		'is-selected': selected,
+	} );
+
 	return (
 		<li>
-			<div>{ item.title.rendered }</div>
-			<pre>{ `/${ item.slug }/` }</pre>
+			<Button className={ className }>
+				<div>{ item.title.rendered }</div>
+				<div className="wpcom-block-editor-nav-sidebar__slug">{ `/${ item.slug }/` }</div>
+			</Button>
 		</li>
 	);
 }
