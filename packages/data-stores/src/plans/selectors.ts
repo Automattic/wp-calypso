@@ -2,29 +2,26 @@
  * Internal dependencies
  */
 import { State, supportedPlanSlugs } from './reducer';
-import { planFeatures, planDetails, PLANS_LIST } from './plans-data';
-import { DEFAULT_PAID_PLAN, PLAN_FREE } from './constants';
+import { planDetails, PLANS_LIST } from './plans-data';
+import { DEFAULT_PAID_PLAN, PLAN_FREE, PLAN_ECOMMERCE } from './constants';
 import type { PlanSlug } from './types';
 
-function getFortifiedPlan( slug?: PlanSlug ) {
-	if ( ! slug ) {
-		return undefined;
+function getPlan( slug?: PlanSlug ) {
+	if ( slug ) {
+		return PLANS_LIST[ slug ];
 	}
-	return { ...planFeatures[ slug ], ...PLANS_LIST[ slug ] };
+	return null;
 }
 
-export const getSelectedPlan = ( state: State ) => getFortifiedPlan( state.selectedPlanSlug );
+export const getSelectedPlan = ( state: State ) => getPlan( state.selectedPlanSlug );
 
 export const getDefaultPlan = ( _: State, hasPaidDomain: boolean, hasPaidDesign: boolean ) =>
-	hasPaidDomain || hasPaidDesign
-		? getFortifiedPlan( DEFAULT_PAID_PLAN )
-		: getFortifiedPlan( PLAN_FREE );
+	hasPaidDomain || hasPaidDesign ? getPlan( DEFAULT_PAID_PLAN ) : getPlan( PLAN_FREE );
 
-export const getSupportedPlans = ( state: State ) =>
-	state.supportedPlanSlugs.map( getFortifiedPlan );
+export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
 
 export const getPlanByPath = ( _: State, path: PlanSlug | undefined ) =>
-	getFortifiedPlan( supportedPlanSlugs.find( ( slug ) => PLANS_LIST[ slug ].pathSlug === path ) );
+	getPlan( supportedPlanSlugs.find( ( slug ) => PLANS_LIST[ slug ].pathSlug === path ) );
 
 export const getPlansDetails = () => planDetails;
 
@@ -32,3 +29,7 @@ export const getPlansPaths = ( state: State ) =>
 	getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 
 export const getPrices = ( state: State ) => state.prices;
+
+export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
+	return planSlug === PLAN_ECOMMERCE;
+};

@@ -3,35 +3,16 @@
  */
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { Button, Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
-import { PLAN_FREE } from '../../../stores/plans/constants';
 
 /**
  * Internal dependencies
  */
 import Badge from '../../badge';
 
-const TickIcon = (
-	<Icon
-		icon={ () => (
-			<svg
-				width="16"
-				height="12"
-				viewBox="0 0 16 12"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M5.4987 9.50033L1.9987 6.00033L0.832031 7.16699L5.4987 11.8337L15.4987 1.83366L14.332 0.666992L5.4987 9.50033Z"
-					fill="white"
-				/>
-			</svg>
-		) }
-	/>
-);
+const TickIcon = <Icon icon={ check } size={ 16 } />;
 
 export interface Props {
 	slug: string;
@@ -98,9 +79,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 				</div>
 				<div className="plan-item__domain">
 					<div className="plan-item__domain-summary">
-						{ slug === PLAN_FREE
-							? __( 'Free WordPress.com subdomain' )
-							: __( 'Free domain for 1 year' ) }
+						{ isFree ? __( 'Free WordPress.com subdomain' ) : __( 'Free domain for 1 year' ) }
 					</div>
 					{ hasDomain && (
 						<div className="plan-item__domain-name">

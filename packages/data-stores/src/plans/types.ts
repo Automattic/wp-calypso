@@ -10,6 +10,16 @@ export type PlanAction = {
 	slug?: string;
 };
 
+export interface Plan {
+	title: string;
+	productId: number;
+	storeSlug: PlanSlug;
+	pathSlug: string;
+	features: string[];
+	isPopular?: boolean;
+	isFree?: boolean;
+}
+
 /**
  * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
  * can be super useful later

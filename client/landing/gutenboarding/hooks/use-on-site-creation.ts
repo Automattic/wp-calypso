@@ -14,7 +14,7 @@ import { Plans } from '@automattic/data-stores';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan } from './use-selected-plan';
+import { useSelectedPlan, useIsSelectedPlanEcommerce } from './use-selected-plan';
 
 const PLANS_STORE = Plans.STORE_KEY;
 
@@ -65,6 +65,7 @@ export default function useOnSiteCreation() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
+	const isEcommercePlan = useIsSelectedPlanEcommerce();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { resetPlan } = useDispatch( PLANS_STORE );
@@ -84,7 +85,7 @@ export default function useOnSiteCreation() {
 				const planProduct = {
 					meta: selectedPlan.title,
 					product_id: selectedPlan.productId,
-					product_slug: selectedPlan.pathSlug,
+					product_slug: selectedPlan.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -108,7 +109,7 @@ export default function useOnSiteCreation() {
 					resetOnboardStore();
 					setSelectedSite( newSite.blogid );
 
-					const redirectionUrl = selectedPlan.isPublicSite
+					const redirectionUrl = isEcommercePlan
 						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
 						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					window.location.href = redirectionUrl;
@@ -168,5 +169,6 @@ export default function useOnSiteCreation() {
 		setIsRedirecting,
 		setSelectedSite,
 		flowCompleteTrackingParams,
+		isEcommercePlan,
 	] );
 }

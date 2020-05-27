@@ -5,13 +5,14 @@ import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Path, SVG } from '@wordpress/primitives';
 import { Icon } from '@wordpress/icons';
-import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
+import { Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-
 /**
  * Internal dependencies
  */
 import './style.scss';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 const PlansDetails: React.FunctionComponent = ( props ) => {
 	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );

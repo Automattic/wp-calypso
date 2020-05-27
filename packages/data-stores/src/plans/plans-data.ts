@@ -7,70 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
-
-export const PLANS_LIST = {
-	[ PLAN_FREE ]: {
-		title: translate( 'Free' ),
-		productId: 1,
-		storeSlug: PLAN_FREE,
-		pathSlug: 'beginner',
-		isPublicSite: false,
-	},
-
-	[ PLAN_PERSONAL ]: {
-		title: translate( 'Personal' ),
-		productId: 1009,
-		storeSlug: PLAN_PERSONAL,
-		pathSlug: 'personal',
-		isPublicSite: false,
-	},
-
-	[ PLAN_PREMIUM ]: {
-		title: translate( 'Premium' ),
-		productId: 1003,
-		storeSlug: PLAN_PREMIUM,
-		pathSlug: 'premium',
-		isPublicSite: false,
-	},
-
-	[ PLAN_BUSINESS ]: {
-		title: translate( 'Business' ),
-		productId: 1008,
-		storeSlug: PLAN_BUSINESS,
-		pathSlug: 'business',
-		isPublicSite: false,
-	},
-
-	[ PLAN_ECOMMERCE ]: {
-		title: translate( 'eCommerce' ),
-		productId: 1011,
-		storeSlug: PLAN_ECOMMERCE,
-		pathSlug: 'ecommerce',
-		isPublicSite: true,
-	},
-};
-
-export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
-
-export type PlanDetail = {
-	id: string;
-	name: string | null;
-	features: Array< PlanFeature >;
-};
-
-export type PlanDetails = Array< PlanDetail >;
-
-export type FortifiedPlan = {
-	name?: string;
-	features?: Array< string >;
-	isPopular?: boolean;
-	isSelected?: boolean;
-	domainName?: string;
-	isFree?: boolean;
-	isPublicSite: boolean; // ecommerce sites need to be public
-};
-
-type FortifiedPlans = Record< string, FortifiedPlan >;
+import type { Plan } from './types';
 
 const mainFeatures = [
 	'Remove WordPress.com ads',
@@ -85,25 +22,59 @@ const mainFeatures = [
 	'Accept Payments in 60+ Countries',
 ];
 
-export const planFeatures: FortifiedPlans = {
+export const PLANS_LIST: Record< string, Plan > = {
 	[ PLAN_FREE ]: {
+		title: translate( 'Free' ) as string,
+		productId: 1,
+		storeSlug: PLAN_FREE,
+		pathSlug: 'beginner',
 		features: [ '3 GB' ],
 		isFree: true,
 	},
+
 	[ PLAN_PERSONAL ]: {
+		title: translate( 'Personal' ) as string,
+		productId: 1009,
+		storeSlug: PLAN_PERSONAL,
+		pathSlug: 'personal',
 		features: [ '6 GB', ...mainFeatures.slice( 0, 3 ) ],
 	},
+
 	[ PLAN_PREMIUM ]: {
+		title: translate( 'Premium' ) as string,
+		productId: 1003,
+		storeSlug: PLAN_PREMIUM,
+		pathSlug: 'premium',
 		features: [ '13 GB', ...mainFeatures.slice( 0, 8 ) ],
 		isPopular: true,
 	},
+
 	[ PLAN_BUSINESS ]: {
+		title: translate( 'Business' ) as string,
+		productId: 1008,
+		storeSlug: PLAN_BUSINESS,
+		pathSlug: 'business',
 		features: [ '200 GB', ...mainFeatures.slice( 0, 9 ) ],
 	},
+
 	[ PLAN_ECOMMERCE ]: {
+		title: translate( 'eCommerce' ) as string,
+		productId: 1011,
+		storeSlug: PLAN_ECOMMERCE,
+		pathSlug: 'ecommerce',
 		features: [ '200 GB', ...mainFeatures ],
 	},
 };
+
+export type PlanFeature = { name: string; type: string; data: Array< boolean | string > };
+
+export type PlanDetail = {
+	id: string;
+	name: string | null;
+	features: Array< PlanFeature >;
+};
+
+export type PlanDetails = Array< PlanDetail >;
 
 export const planDetails: PlanDetails = [
 	{

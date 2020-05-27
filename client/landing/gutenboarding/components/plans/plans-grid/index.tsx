@@ -7,11 +7,11 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
+import { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as PLANS_STORE } from '../../../stores/plans';
 import { Title, SubTitle } from '../../titles';
 import ActionButtons from '../../action-buttons';
 import PlansTable from '../plans-table';
@@ -22,6 +22,8 @@ import PlansDetails from '../plans-details';
  */
 import './style.scss';
 import { useSelectedPlan } from 'landing/gutenboarding/hooks/use-selected-plan';
+
+const PLANS_STORE = Plans.STORE_KEY;
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
 const isMobile = window.navigator.userAgent.indexOf( 'Mobi' ) > -1;
@@ -66,7 +68,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( { confirmButton, cancelBut
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
 					<PlansTable
-						selectedPlanSlug={ selectedPlan.getStoreSlug() }
+						selectedPlanSlug={ selectedPlan?.storeSlug ?? '' }
 						onPlanSelect={ setPlan }
 					></PlansTable>
 				</div>

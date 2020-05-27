@@ -6,7 +6,7 @@ import type { PlanAction } from './actions';
 import type { PlanSlug } from './types';
 
 type PricesMap = {
-	[ slug in PlanSlug ]?: string;
+	[ slug in PlanSlug ]: string;
 };
 
 export const supportedPlanSlugs: PlanSlug[] = [
@@ -24,7 +24,13 @@ const DEFAUlT_STATE: {
 } = {
 	supportedPlanSlugs,
 	selectedPlanSlug: undefined,
-	prices: {},
+	prices: {
+		[ PLAN_FREE ]: '',
+		[ PLAN_PERSONAL ]: '',
+		[ PLAN_PREMIUM ]: '',
+		[ PLAN_BUSINESS ]: '',
+		[ PLAN_ECOMMERCE ]: '',
+	},
 };
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {

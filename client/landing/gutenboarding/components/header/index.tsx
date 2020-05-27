@@ -21,7 +21,7 @@ import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans/plans-button';
 import SignupForm from '../../components/signup-form';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
-import { useSelectedPlan } from '../../hooks/use-selected-plan';
+import { useShouldSiteBePublicOnSelectedPlan } from '../../hooks/use-selected-plan';
 import {
 	getFreeDomainSuggestions,
 	getPaidDomainSuggestions,
@@ -41,7 +41,7 @@ const Header: React.FunctionComponent = () => {
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
-	const selectedPlan = useSelectedPlan();
+	const shouldSiteBePublic = useShouldSiteBePublicOnSelectedPlan();
 
 	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -139,9 +139,9 @@ const Header: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, selectedPlan?.isPublicSite );
+			handleCreateSite( newUser.username, newUser.bearerToken, shouldSiteBePublic );
 		}
-	}, [ newSite, newUser, handleCreateSite, selectedPlan ] );
+	}, [ newSite, newUser, handleCreateSite, shouldSiteBePublic ] );
 
 	const hasContent =
 		!! domain || !! recommendedDomainSuggestion || previousRecommendedDomain !== '';
