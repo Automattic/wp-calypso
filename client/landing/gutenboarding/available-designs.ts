@@ -12,19 +12,6 @@ import type { Design } from './stores/onboard/types';
 const availableDesigns: Readonly< AvailableDesigns > = {
 	featured: [
 		{
-			title: 'Edison',
-			slug: 'edison',
-			template: 'edison',
-			theme: 'stratford',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/stratford/edison/',
-			fonts: {
-				headings: 'Chivo',
-				base: 'Open Sans',
-			},
-			categories: [ 'featured', 'blog' ],
-			is_premium: true,
-		},
-		{
 			title: 'Cassel',
 			slug: 'cassel',
 			template: 'cassel',
@@ -36,6 +23,19 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			},
 			categories: [ 'featured', 'blog' ],
 			is_premium: false,
+		},
+		{
+			title: 'Edison',
+			slug: 'edison',
+			template: 'edison',
+			theme: 'stratford',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/stratford/edison/',
+			fonts: {
+				headings: 'Chivo',
+				base: 'Open Sans',
+			},
+			categories: [ 'featured', 'blog' ],
+			is_premium: true,
 		},
 		{
 			title: 'Vesta',
