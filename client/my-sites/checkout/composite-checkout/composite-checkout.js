@@ -67,6 +67,7 @@ import {
 	stripeCardProcessor,
 	fullCreditsProcessor,
 	existingCardProcessor,
+	payPalProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -266,14 +267,11 @@ export default function CompositeCheckout( {
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		onlyLoadPaymentMethods,
-		getThankYouUrl,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 		credits,
-		items,
-		couponItem,
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
@@ -413,8 +411,9 @@ export default function CompositeCheckout( {
 			card: stripeCardProcessor,
 			'full-credits': fullCreditsProcessor,
 			'existing-card': existingCardProcessor,
+			paypal: ( transactionData ) => payPalProcessor( transactionData, getThankYouUrl, couponItem ),
 		} ),
-		[]
+		[ couponItem, getThankYouUrl ]
 	);
 
 	return (

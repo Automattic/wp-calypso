@@ -13,15 +13,12 @@ import {
 	registerStore,
 	defaultRegistry,
 } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import {
-	makePayPalExpressRequest,
-	wpcomPayPalExpress,
 	getDomainDetails,
 	wpcomTransaction,
 	WordPressCreditsLabel,
@@ -34,7 +31,7 @@ import {
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
 const { select, dispatch } = defaultRegistry;
 
-function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems, getCouponItem } ) {
+function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'paypal' )
 		: true;
@@ -42,42 +39,8 @@ function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems, ge
 		if ( ! shouldLoadPayPalMethod ) {
 			return null;
 		}
-		return createPayPalMethod( { registerStore } );
+		return createPayPalMethod();
 	}, [ shouldLoadPayPalMethod ] );
-	if ( paypalMethod ) {
-		paypalMethod.id = 'paypal';
-		// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
-		paypalMethod.submitTransaction = () => {
-			const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-			const successUrl = formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname: getThankYouUrl(),
-			} );
-			const cancelUrl = formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname,
-			} );
-
-			return makePayPalExpressRequest(
-				{
-					items: getItems(),
-					successUrl,
-					cancelUrl,
-					siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-					domainDetails: getDomainDetails( select ),
-					couponId: getCouponItem()?.wpcom_meta?.couponCode,
-					country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
-					postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
-					subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
-				},
-				wpcomPayPalExpress
-			);
-		};
-	}
 	return paypalMethod;
 }
 
@@ -231,23 +194,17 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 
 export default function useCreatePaymentMethods( {
 	onlyLoadPaymentMethods,
-	getThankYouUrl,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
 	credits,
-	items,
-	couponItem,
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
 } ) {
 	const paypalMethod = useCreatePayPal( {
 		onlyLoadPaymentMethods,
-		getThankYouUrl,
-		getItems: () => items,
-		getCouponItem: () => couponItem,
 	} );
 
 	const stripeMethod = useCreateStripe( {
