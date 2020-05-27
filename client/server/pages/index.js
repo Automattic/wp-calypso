@@ -720,14 +720,6 @@ module.exports = function () {
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
-	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
-	app.use( function ( req, res, next ) {
-		if ( 'jetpack-cloud-production' === calypsoEnv ) {
-			res.redirect( 'https://jetpack.com/' );
-		}
-		next();
-	} );
-
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
 		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
