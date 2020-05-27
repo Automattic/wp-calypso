@@ -714,6 +714,11 @@
 	background: var( --studio-gray-0 );
 	min-height: 100%;
 
+	// make sure jetpack logo is the correct green
+	.jetpack-logo__icon-circle {
+		fill: var( --studio-jetpack-green-40 );
+	}
+
 	.step-wrapper .formatted-header {
 		margin-top: 0;
 	}
