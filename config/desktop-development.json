@@ -141,6 +141,7 @@
 		"upgrades/premium-themes": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
+		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"webpack/hot-loader": false,
 		"webpack/persistent-caching": false,
